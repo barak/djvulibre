@@ -112,7 +112,7 @@ strpool_fini(strpool *pool)
     }
 }
 
-const char *
+static const char *
 strconcat(strpool *pool, ...)
 {
   va_list ap;
