@@ -262,6 +262,10 @@ static int (*old_handler)(size_t) = _set_new_handler(throw_memory_error);
 #else // !_MSC_VER
 // Standard C++
 static void throw_memory_error() { G_THROW(GException::outofmemory); }
+#if !defined(WIN32) && !defined(__CYGWIN32__)
+// In general this is a bad idea since statics won't get initialized
+// under WINDOWS, even with CYGWIN.
 static void (*old_handler)() = set_new_handler(throw_memory_error);
+#endif // ! WIN32
 #endif // !_MSC_VER
 #endif // !NEED_DJVU_MEMORY

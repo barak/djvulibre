@@ -148,7 +148,10 @@ euclidian_ratio(int a, int b, int &q, int &r)
 // global lock used by some rare operations
 //////////////////////////////////////////////////
 
-static GMonitor pixmap_monitor;
+static GMonitor &pixmap_monitor() {
+  static GMonitor xpixmap_monitor;
+  return xpixmap_monitor;
+}
 
 
 //////////////////////////////////////////////////
@@ -626,7 +629,7 @@ color_correction_table_cache(double gamma, unsigned char gtable[256] )
     {
       static double lgamma = -1.0;
       static unsigned char ctable[256];
-      GMonitorLock lock(&pixmap_monitor);
+      GMonitorLock lock(&pixmap_monitor());
       if (gamma != lgamma)
         {
           color_correction_table(gamma, ctable);
@@ -1605,7 +1608,7 @@ GP<GPixmap> GPixmap::rotate(int count)
 
     GPixmap &dpixmap = *newpixmap;
 
-    GMonitorLock lock(&pixmap_monitor);
+    GMonitorLock lock(&pixmap_monitor());
     switch(count)
     {
     case 1: //// rotate 90 counter clockwise

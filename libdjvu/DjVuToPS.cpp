@@ -1760,17 +1760,20 @@ public:
 	  : name(xname), ztype(xztype), separator(xseparator) {}
 }; 
 
-static const zone_names_struct zone_names[] = 
-{
-  zone_names_struct("page",   DjVuTXT::PAGE,0),
-  zone_names_struct("column", DjVuTXT::COLUMN,    DjVuTXT::end_of_column ),
-  zone_names_struct("region", DjVuTXT::REGION,    DjVuTXT::end_of_region ),
-  zone_names_struct("para",   DjVuTXT::PARAGRAPH, DjVuTXT::end_of_paragraph ),
-  zone_names_struct("line",   DjVuTXT::LINE,      DjVuTXT::end_of_line ),
-  zone_names_struct("word",   DjVuTXT::WORD,      ' '),
-  zone_names_struct("char",   DjVuTXT::CHARACTER, 0 ),
-  zone_names_struct(0, (DjVuTXT::ZoneType)0 ,0)
-};
+static const zone_names_struct * zone_names() {
+  static const zone_names_struct xzone_names[] = 
+  {
+    zone_names_struct("page",   DjVuTXT::PAGE,0),
+    zone_names_struct("column", DjVuTXT::COLUMN,    DjVuTXT::end_of_column ),
+    zone_names_struct("region", DjVuTXT::REGION,    DjVuTXT::end_of_region ),
+    zone_names_struct("para",   DjVuTXT::PARAGRAPH, DjVuTXT::end_of_paragraph ),
+    zone_names_struct("line",   DjVuTXT::LINE,      DjVuTXT::end_of_line ),
+    zone_names_struct("word",   DjVuTXT::WORD,      ' '),
+    zone_names_struct("char",   DjVuTXT::CHARACTER, 0 ),
+    zone_names_struct(0, (DjVuTXT::ZoneType)0 ,0)
+  };
+  return xzone_names;
+}
 
 static void
 print_ps_string(const char *data, int length, ByteStream &out)
@@ -1803,15 +1806,15 @@ print_txt_sub(DjVuTXT &txt, DjVuTXT::Zone &zone, ByteStream &out,int &lastx,int 
 {
   // Zone header
   int zinfo;
-  for (zinfo=0; zone_names[zinfo].name; zinfo++)
-    if (zone.ztype == zone_names[zinfo].ztype)
+  for (zinfo=0; zone_names()[zinfo].name; zinfo++)
+    if (zone.ztype == zone_names()[zinfo].ztype)
       break;  
   // Zone children
   if (zone.children.isempty()) 
     {
       const char *data = (const char*)txt.textUTF8 + zone.text_start;
       int length = zone.text_length;
-      if (data[length-1] == zone_names[zinfo].separator)
+      if (data[length-1] == zone_names()[zinfo].separator)
         length -= 1;
       out.write("( ",2);
       print_ps_string(data,length,out);

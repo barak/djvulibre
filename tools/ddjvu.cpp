@@ -170,10 +170,17 @@ static int    flag_subsample = -1;
 static int    flag_segment = -1;
 static int    flag_verbose = 0;
 static int    flag_mode = 0;
+static bool use_rle=false;
 
-GRect fullrect;
-GRect segmentrect;
+static GRect &fullrect() {
+  static GRect xfullrect;
+  return xfullrect;
+}
 
+static GRect &segmentrect() {
+  static GRect xsegmentrect;
+  return xsegmentrect;
+}
 
 
 
@@ -236,10 +243,10 @@ convert(const GURL &from, const GURL &to, int page_num)
       int h = (int)(dimg->get_height() * flag_scale / info->dpi);
       if (w<1) w=1;
       if (h<1) h=1;
-      fullrect = GRect(0,0, w, h);
+      fullrect() = GRect(0,0, w, h);
     }
   if (flag_segment < 0)
-    segmentrect = fullrect;
+    segmentrect() = fullrect();
 
   // Render
   GP<GPixmap> pm;
@@ -248,18 +255,18 @@ convert(const GURL &from, const GURL &to, int page_num)
   switch(flag_mode)
     {
     case 's':
-      bm = dimg->get_bitmap(segmentrect, fullrect);
+      bm = dimg->get_bitmap(segmentrect(), fullrect());
       break;
     case 'f':
-      pm = dimg->get_fg_pixmap(segmentrect, fullrect);
+      pm = dimg->get_fg_pixmap(segmentrect(), fullrect());
       break;
     case 'b':
-      pm = dimg->get_bg_pixmap(segmentrect, fullrect);
+      pm = dimg->get_bg_pixmap(segmentrect(), fullrect());
       break;
     default:
-      pm = dimg->get_pixmap(segmentrect, fullrect);
+      pm = dimg->get_pixmap(segmentrect(), fullrect());
       if (! pm)
-        bm = dimg->get_bitmap(segmentrect, fullrect);
+        bm = dimg->get_bitmap(segmentrect(), fullrect());
       break;
     }
   stop = GOS::ticks();
@@ -277,10 +284,13 @@ convert(const GURL &from, const GURL &to, int page_num)
   else if (bm) 
     {
       GP<ByteStream> out=ByteStream::create(to,"wb");
-      if (bm->get_grays() == 2)
-        bm->save_pbm(*out);
-      else 
+      if (bm->get_grays() > 2) {
         bm->save_pgm(*out);
+      } else if(use_rle) {
+        bm->save_rle(*out);
+      } else {
+        bm->save_pbm(*out);
+      }
     }
   else 
     {
@@ -308,6 +318,7 @@ usage()
           "  -background         Only renders the background layer.\n"
           "  -N                  Subsampling factor from full resolution.\n"
 	  "  -page <page>        Decode page <page> (for multipage documents).\n"
+	  "  -rle                Decode black stencil to RLE.\n"
           "\n"
           "The output will be a PBM, PGM or PPM file depending of its content.\n"
           "If <pnmfile> is a single dash or omitted, the decompressed image\n"
@@ -424,9 +435,9 @@ main(int argc, char **argv)
               if (flag_subsample>=0 || flag_scale>=0 || flag_size>=0)
                 G_THROW( ERR_MSG("ddjvu.dupl_size"));
               argc -=1; dargv.shift(-1); s = dargv[1];
-              fullrect=geometry(s);
+              fullrect()=geometry(s);
               flag_size = 1;
-              if (fullrect.xmin || fullrect.ymin)
+              if (fullrect().xmin || fullrect().ymin)
                 G_THROW( ERR_MSG("ddjvu.bad_size"));
             }
           else if (s == "-segment")
@@ -436,8 +447,15 @@ main(int argc, char **argv)
               if (flag_segment>=0)
                 G_THROW( ERR_MSG("ddjvu.dupl_seg") );
               argc -=1; dargv.shift(-1); s = dargv[1];
-              segmentrect=geometry(s);
+              segmentrect()=geometry(s);
               flag_segment = 1;
+            }
+          else if (s == "-rle")
+            {
+              if (flag_mode)
+                G_THROW( ERR_MSG("ddjvu.dupl_render"));
+              flag_mode = 's';
+              use_rle=true;
             }
           else if (s == "-black")
             {

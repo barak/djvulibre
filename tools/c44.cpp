@@ -232,11 +232,19 @@
 
 // command line data
 
-GURL pnmurl;
-GURL iw4url;
-GURL mskurl;
+static GURL &pnmurl() {
+  static GURL xpnmurl;
+  return xpnmurl;
+}
+static GURL &iw4url() {
+  static GURL xiw4url;
+  return xiw4url;
+}
 
-GUTF8String percent;
+static GURL &mskurl() {
+  static GURL xmskurl;
+  return xmskurl; 
+}
 
 int flag_mask = 0;
 int flag_bpp = 0;
@@ -260,7 +268,10 @@ float argv_bpp[MAXCHUNKS];
 int   argv_size[MAXCHUNKS];
 int   argv_slice[MAXCHUNKS];
 float argv_decibel[MAXCHUNKS];
-IWEncoderParms parms[MAXCHUNKS];
+static IWEncoderParms* parms() {
+  static IWEncoderParms xparms[MAXCHUNKS];
+  return xparms;
+}
 
 
 // parse arguments
@@ -335,7 +346,6 @@ parse_bpp(const char *q)
 void 
 parse_size(const char *q)
 {
-  percent=GUTF8String();
   flag_size = 1;
   argc_size = 0;
   int lastx = 0;
@@ -469,9 +479,9 @@ resolve_quality(int npix)
   // Fill parm structure
   for(int i=0; i<nchunk; i++)
     {
-      parms[i].bytes = argv_size[i];
-      parms[i].slices = argv_slice[i];
-      parms[i].decibels = argv_decibel[i];
+      parms()[i].bytes = argv_size[i];
+      parms()[i].slices = argv_slice[i];
+      parms()[i].decibels = argv_decibel[i];
     }
   // Return number of chunks
   return nchunk;
@@ -531,9 +541,9 @@ parse(GArray<GUTF8String> &argv)
             {
               if (++i >= argc)
                 G_THROW( ERR_MSG("c44.no_mask_arg") );
-              if (! mskurl.is_empty())
+              if (! mskurl().is_empty())
                 G_THROW( ERR_MSG("c44.multiple_mask") );
-              mskurl = GURL::Filename::UTF8(argv[i]);
+              mskurl() = GURL::Filename::UTF8(argv[i]);
             }
           else if (argv[i] == "-dbfrac")
             {
@@ -610,24 +620,24 @@ parse(GArray<GUTF8String> &argv)
           else
             usage();
         }
-      else if (pnmurl.is_empty())
-        pnmurl = GURL::Filename::UTF8(argv[i]);
-      else if (iw4url.is_empty())
-        iw4url = GURL::Filename::UTF8(argv[i]);
+      else if (pnmurl().is_empty())
+        pnmurl() = GURL::Filename::UTF8(argv[i]);
+      else if (iw4url().is_empty())
+        iw4url() = GURL::Filename::UTF8(argv[i]);
       else
         usage();
     }
-  if (pnmurl.is_empty())
+  if (pnmurl().is_empty())
     usage();
-  if (iw4url.is_empty())
+  if (iw4url().is_empty())
     {
-      GURL codebase=pnmurl.base();
-      GUTF8String base = pnmurl.fname();
+      GURL codebase=pnmurl().base();
+      GUTF8String base = pnmurl().fname();
       int dot = base.rsearch('.');
       if (dot >= 1)
         base = base.substr(0,dot);
       const char *ext=".djvu";
-      iw4url = GURL::UTF8(base+ext,codebase);
+      iw4url() = GURL::UTF8(base+ext,codebase);
     }
 }
 
@@ -637,9 +647,9 @@ GP<GBitmap>
 getmask(int w, int h)
 {
   GP<GBitmap> msk8;
-  if (! mskurl.is_empty())
+  if (! mskurl().is_empty())
     {
-      GP<ByteStream> mbs=ByteStream::create(mskurl,"rb");
+      GP<ByteStream> mbs=ByteStream::create(mskurl(),"rb");
       msk8 = GBitmap::create(*mbs);
       if (msk8->columns() != (unsigned int)w || 
           msk8->rows()    != (unsigned int)h  )
@@ -651,7 +661,7 @@ getmask(int w, int h)
 
 static void 
 create_photo_djvu_file(IW44Image &iw, int w, int h,
-                       IFFByteStream &iff, int nchunks, IWEncoderParms parms[])
+                       IFFByteStream &iff, int nchunks, IWEncoderParms xparms[])
 {
   // Prepare info chunk
   GP<DjVuInfo> ginfo=DjVuInfo::create();
@@ -670,7 +680,7 @@ create_photo_djvu_file(IW44Image &iw, int w, int h,
   for (int i=0; flag && i<nchunks; i++)
     {
       iff.put_chunk("BG44");
-      flag = iw.encode_chunk(iff.get_bytestream(), parms[i]);
+      flag = iw.encode_chunk(iff.get_bytestream(), xparms[i]);
       iff.close_chunk();
     }
   // Close djvu chunk
@@ -691,7 +701,7 @@ main(int argc, char **argv)
       // Parse arguments
       parse(dargv);
       // Check input file
-      GP<ByteStream> gibs=ByteStream::create(pnmurl,"rb");
+      GP<ByteStream> gibs=ByteStream::create(pnmurl(),"rb");
       ByteStream &ibs=*gibs;
       char prefix[16];
       if (ibs.readall((void*)prefix, sizeof(prefix)) != sizeof(prefix))
@@ -746,7 +756,7 @@ main(int argc, char **argv)
           else
             G_THROW( ERR_MSG("c44.unrecognized") );
           // Check that no mask has been specified.
-          if (! mskurl.is_empty())
+          if (! mskurl().is_empty())
             G_THROW( ERR_MSG("c44.failed_mask") );
         }
       else  // just for kicks, try jpeg.
@@ -764,16 +774,16 @@ main(int argc, char **argv)
       // Perform compression PM44 or BM44 as required
       if (iw)
         {
-          iw4url.deletefile();
+          iw4url().deletefile();
           GP<IFFByteStream> iff =
-	    IFFByteStream::create(ByteStream::create(iw4url,"wb"));
+	    IFFByteStream::create(ByteStream::create(iw4url(),"wb"));
           if (flag_crcbdelay >= 0)
             iw->parm_crcbdelay(flag_crcbdelay);
           if (flag_dbfrac > 0)
             iw->parm_dbfrac((float)flag_dbfrac);
           int nchunk = resolve_quality(w*h);
           // Create djvu file
-          create_photo_djvu_file(*iw, w, h, *iff, nchunk, parms);
+          create_photo_djvu_file(*iw, w, h, *iff, nchunk, parms());
         }
     }
   G_CATCH(ex)

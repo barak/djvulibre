@@ -767,9 +767,9 @@ GListImpl<TI>::GListImpl()
 template<class TI> GCONT Node *
 GListImpl<TI>::newnode(const TI &elt)
 {
-  LNode *n = (LNode*) operator new (sizeof(LNode));
+  LNode  *n = (LNode *) operator new (sizeof(LNode ));
 #if GCONTAINER_ZERO_FILL
-  memset(n, 0, sizeof(LNode));
+  memset(n, 0, sizeof(LNode ));
 #endif
   new ((void*)&(n->val)) TI(elt);
   return (Node*) n;
@@ -790,7 +790,7 @@ GListImpl<TI>::search(const TI &elt, GPosition &pos) const
 {
   Node *n = (pos ? pos.check((void*)this) : head.next);
   for (; n; n=n->next) 
-    if ( ((LNode*)n)->val == elt ) 
+    if ( ((LNode *)n)->val == elt ) 
       break;
   if (n) pos = GPosition(n, (void*)this);
   return (n != 0);
@@ -825,7 +825,7 @@ public:
       segmentation violation. See \Ref{GPosition} for efficient operations on
       positions. */
   TYPE& operator[](GPosition pos)
-    { return (TYPE&) (((LNode*)pos.check((void*)this))->val); }
+    { return (TYPE&) (((typename GListImpl<TI>::LNode *)pos.check((void*)this))->val); }
   /** Returns a constant reference to the list element at position #pos#.
       This reference only be used for reading a list element.  An exception
       \Ref{GException} is thrown if #pos# is not a valid position. This
@@ -833,7 +833,7 @@ public:
       GList<TYPE>#.  See \Ref{GPosition} for efficient operations on
       positions. */
   const TYPE& operator[](GPosition pos) const
-    { return (const TYPE&) (((const LNode*)pos.check((void*)this))->val); }
+    { return (const TYPE&) (((const typename GListImpl<TI>::LNode *)pos.check((void*)this))->val); }
   // -- TEST
   /** Tests whether a list is empty.  
       Returns a non zero value if the list contains no elements. */
@@ -1094,7 +1094,7 @@ class GMapImpl : public GSetImpl<K>
 {
 protected:
   GMapImpl();
-  GMapImpl(const Traits &traits);
+  GMapImpl(const GCONT Traits &traits);
   typedef GCONT MapNode<K,TI> MNode;
   GCONT HNode* get_or_create(const K &key);
 };
@@ -1106,7 +1106,7 @@ GMapImpl<K,TI>::GMapImpl()
 }
 
 template<class K, class TI>
-GMapImpl<K,TI>::GMapImpl(const Traits &traits)
+GMapImpl<K,TI>::GMapImpl(const GCONT Traits &traits)
   : GSetImpl<K>(traits) 
 { 
 }
@@ -1114,7 +1114,7 @@ GMapImpl<K,TI>::GMapImpl(const Traits &traits)
 template<class K, class TI> GCONT HNode *
 GMapImpl<K,TI>::get_or_create(const K &key)
 {
-  HNode *m = get(key);
+  GCONT HNode *m = get(key);
   if (m) return m;
   MNode *n = (MNode*) operator new (sizeof(MNode));
 #if GCONTAINER_ZERO_FILL
@@ -1170,32 +1170,32 @@ public:
       #pos#.  An exception \Ref{GException} is thrown if position #pos# is not
       valid.  There is no direct way to change the key of a map entry. */
   const KTYPE &key(const GPosition &pos) const
-    { return (const KTYPE&)(((MNode*)(pos.check((void*)this)))->key); }
+    { return (const KTYPE&)(((typename GMapImpl<KTYPE,TI>::MNode*)(pos.check((void*)this)))->key); }
   /** Returns a reference to the value of the map entry at position #pos#.
       This reference can be used for both reading (as "#a[n]#") and modifying
       (as "#a[n]=v#").  An exception \Ref{GException} is thrown if position
       #pos# is not valid. */
   VTYPE& operator[](const GPosition &pos)
-    { return (VTYPE&)(((MNode*)(pos.check((void*)this)))->val); }
+    { return (VTYPE&)(((typename GMapImpl<KTYPE,TI>::MNode*)(pos.check((void*)this)))->val); }
   /** Returns a constant reference to the value of the map entry at position
       #pos#.  This reference can only be used for reading (as "#a[n]#") the
       entry value.  An exception \Ref{GException} is thrown if position #pos#
       is not valid. */
   const VTYPE& operator[](const GPosition &pos) const
-    { return (const VTYPE&)(((MNode*)(pos.check((void*)this)))->val); }
+    { return (const VTYPE&)(((typename GMapImpl<KTYPE,TI>::MNode*)(pos.check((void*)this)))->val); }
   /** Returns a constant reference to the value of the map entry for key
       #key#.  This reference can only be used for reading (as "#a[n]#") the
       entry value.  An exception \Ref{GException} is thrown if no entry
       contains key #key#. This variant of #operator[]# is necessary when
       dealing with a #const GMAP<KTYPE,VTYPE>#. */
   const VTYPE& operator[](const KTYPE &key) const
-    { return (const VTYPE&)(((const MNode*)(get_or_throw(key)))->val); }
+    { return (const VTYPE&)(((const typename GMapImpl<KTYPE,TI>::MNode*)(get_or_throw(key)))->val); }
   /** Returns a reference to the value of the map entry for key #key#.  This
       reference can be used for both reading (as "#a[n]#") and modifying (as
       "#a[n]=v#"). If there is no entry for key #key#, a new entry is created
       for that key with the null constructor #VTYPE::VTYPE()#. */
   VTYPE& operator[](const KTYPE &key)
-    { return (VTYPE&)(((MNode*)(get_or_create(key)))->val); }
+    { return (VTYPE&)(((typename GMapImpl<KTYPE,TI>::MNode*)(get_or_create(key)))->val); }
   /** Destroys the map entry for position #pos#.  
       Nothing is done if position #pos# is not a valid position. */
   void del(GPosition &pos)
