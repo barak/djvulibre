@@ -1,49 +1,5 @@
-plugin.o: ./plugin.cpp ../../config.h plugin.h ../../gui/npsdk/npapi.h \
+nsdejavu.o: ./nsdejavu.c ../../config.h ../../gui/shared/res/names.h \
+  ../../gui/shared/res/version.h ../../gui/npsdk/npapi.h \
   ../../gui/npsdk/jri.h ../../gui/npsdk/jritypes.h \
-  ../../gui/npsdk/jri_md.h path.h ../../libdjvu/GString.h \
-  ../../libdjvu/DjVuGlobal.h ../../libdjvu/GContainer.h \
-  ../../libdjvu/GException.h ../../libdjvu/GSmartPointer.h \
-  ../../gui/shared/res/names.h ../../gui/shared/res/version.h \
-  ../../gui/shared/res/saved_data.h ../../gui/shared/utils/io.h \
-  ../../libdjvu/Arrays.h ../../libdjvu/debug.h
-stubs.o: ./stubs.cpp ../../config.h ../../libdjvu/DjVuGlobal.h \
-  ../../libdjvu/DjVuMessageLite.h ../../libdjvu/GString.h \
-  ../../libdjvu/GContainer.h ../../libdjvu/GException.h \
-  ../../libdjvu/GSmartPointer.h
-path.o: ./path.cpp ../../config.h ../../libdjvu/debug.h path.h \
-  ../../libdjvu/GString.h ../../libdjvu/DjVuGlobal.h \
-  ../../libdjvu/GContainer.h ../../libdjvu/GException.h \
-  ../../libdjvu/GSmartPointer.h ../../gui/shared/res/names.h
-io.o: ../../gui/shared/utils/io.cpp ../../config.h \
-  ../../gui/shared/utils/io.h ../../libdjvu/GString.h \
-  ../../libdjvu/DjVuGlobal.h ../../libdjvu/GContainer.h \
-  ../../libdjvu/GException.h ../../libdjvu/GSmartPointer.h \
-  ../../libdjvu/Arrays.h ../../libdjvu/debug.h ../../libdjvu/GThreads.h
-saved_data.o: ../../gui/shared/res/saved_data.cpp ../../config.h \
-  ../../gui/shared/res/saved_data.h
-npunix.o: ../../gui/npsdk/npunix.cpp ../../gui/npsdk/npapi.h \
-  ../../gui/npsdk/jri.h ../../gui/npsdk/jritypes.h \
-  ../../gui/npsdk/jri_md.h ../../gui/npsdk/npupp.h
-GString.o: ../../libdjvu/GString.cpp ../../config.h \
-  ../../libdjvu/GString.h ../../libdjvu/DjVuGlobal.h \
-  ../../libdjvu/GContainer.h ../../libdjvu/GException.h \
-  ../../libdjvu/GSmartPointer.h ../../libdjvu/debug.h
-GException.o: ../../libdjvu/GException.cpp ../../config.h \
-  ../../libdjvu/GException.h ../../libdjvu/DjVuGlobal.h \
-  ../../libdjvu/DjVuMessageLite.h ../../libdjvu/GString.h \
-  ../../libdjvu/GContainer.h ../../libdjvu/GSmartPointer.h \
-  ../../libdjvu/debug.h
-GContainer.o: ../../libdjvu/GContainer.cpp ../../config.h \
-  ../../libdjvu/GContainer.h ../../libdjvu/GException.h \
-  ../../libdjvu/DjVuGlobal.h ../../libdjvu/GSmartPointer.h
-GSmartPointer.o: ../../libdjvu/GSmartPointer.cpp ../../config.h \
-  ../../libdjvu/GThreads.h ../../libdjvu/DjVuGlobal.h \
-  ../../libdjvu/GException.h ../../libdjvu/GSmartPointer.h
-GThreads.o: ../../libdjvu/GThreads.cpp ../../config.h \
-  ../../libdjvu/GThreads.h ../../libdjvu/DjVuGlobal.h \
-  ../../libdjvu/GException.h ../../libdjvu/DjVuMessageLite.h \
-  ../../libdjvu/GString.h ../../libdjvu/GContainer.h \
-  ../../libdjvu/GSmartPointer.h
-Arrays.o: ../../libdjvu/Arrays.cpp ../../config.h ../../libdjvu/Arrays.h \
-  ../../libdjvu/GException.h ../../libdjvu/DjVuGlobal.h \
-  ../../libdjvu/GSmartPointer.h
+  ../../gui/npsdk/jri_md.h ../../gui/npsdk/npunix.c \
+  ../../gui/npsdk/npupp.h

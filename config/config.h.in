@@ -1,4 +1,4 @@
-/* config/config.h.in.  Generated from configure.ac by autoheader.  */
+/* config/config.h.in.  Generated automatically from configure.ac by autoheader.  */
 
 
 #ifndef CONFIG_H
@@ -44,6 +44,9 @@
 
 /* define if the compiler supports exceptions */
 #undef HAVE_EXCEPTIONS
+
+/* Define if you have the `fork' function. */
+#undef HAVE_FORK
 
 /* Define if you have the `gethostname' function. */
 #undef HAVE_GETHOSTNAME
@@ -126,8 +129,17 @@
 /* Define if you have the <sys/types.h> header file. */
 #undef HAVE_SYS_TYPES_H
 
+/* Define if you have <sys/wait.h> that is POSIX.1 compatible. */
+#undef HAVE_SYS_WAIT_H
+
 /* Define if you have the <unistd.h> header file. */
 #undef HAVE_UNISTD_H
+
+/* Define if you have the `vfork' function. */
+#undef HAVE_VFORK
+
+/* Define if you have the <vfork.h> header file. */
+#undef HAVE_VFORK_H
 
 /* Define if you have the `vsnprintf' function. */
 #undef HAVE_VSNPRINTF
@@ -141,6 +153,12 @@
 /* Define if you have the `wcrtomb' function. */
 #undef HAVE_WCRTOMB
 
+/* Define if `fork' works. */
+#undef HAVE_WORKING_FORK
+
+/* Define if `vfork' works. */
+#undef HAVE_WORKING_VFORK
+
 /* Define if you have the ANSI C header files. */
 #undef STDC_HEADERS
 
@@ -149,6 +167,12 @@
 
 /* Define if the X Window System is missing or not being used. */
 #undef X_DISPLAY_MISSING
+
+/* Define to `int' if <sys/types.h> does not define. */
+#undef pid_t
+
+/* Define as `fork' if `vfork' does not work. */
+#undef vfork
 
 
 /* - Miscellaneous */

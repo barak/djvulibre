@@ -69,6 +69,7 @@ AC_CHECK_LIB(dl,dlopen)
 AC_HEADER_STDC
 AC_HEADER_DIRENT
 AC_HEADER_TIME
+AC_HEADER_SYS_WAIT     
 AC_CHECK_HEADERS(wchar.h sys/mman.h dlfcn.h iconv.h)
 AC_CHECK_HEADERS(sys/ipc.h sys/shm.h)
 
@@ -84,6 +85,7 @@ AC_CHECK_TYPES(mbstate_t,,,[#include "wchar.h"])
 # ----------------------------------------
 
 AC_FUNC_MMAP
+AC_FUNC_FORK
 AC_CHECK_FUNCS(wcrtomb strerror vsnprintf)
 AC_CHECK_FUNCS(gethostname dlopen iconv)
 
@@ -159,26 +161,22 @@ if test x${qt_version+set} = xset ; then
   fi
 fi
 
-# How to build the netscape plugin ?
-case ${host_os} in
-  hpux*)
-    NSDEJAVU_PROGRAM="nsdejavu.sl"
-    NSDEJAVU_LDFLAGS="-shared -Wl,-o,nsdejavu.sl,+I,plugin_init"
-    NSDEJAVU_LIBS="-Wl,-a,archive_shared -lgcc"
-    ;;
-  *)
-    NSDEJAVU_PROGRAM="nsdejavu.so"
-    NSDEJAVU_LDFLAGS="-shared"
-    if test -z "$x_libraries" ; then
-       NSDEJAVU_LIBS="-lXt -lX11 -lgcc -lm -lc"
-    else
-       NSDEJAVU_LIBS="-L$x_libraries -lXt -lX11 -lgcc -lm -lc"
-    fi
-    ;;
+# Rules for building the netscape plugin.
+NSDEJAVU='nsdejavu.so'
+NSDEJAVU_FLAGS='-fpic -DPIC'
+NSDEJAVU_LIBS= "-L${x_libraries:-.} -lXt -lX11"
+NSDEJAVU_LINK='${CC} -shared -o ${NSDEJAVU} ${CFLAGS} -shared ${OBJS} ${LIBS}'
+case ${host_os} in 
+  hpux*) NSDEJAVU="nsdejavu.sl" ;; 
 esac
-AC_SUBST(NSDEJAVU_PROGRAM)
-AC_SUBST(NSDEJAVU_LDFLAGS)
+if test x${GXX} != xyes ; then
+    AC_MSG_WARN([Check that gui/nsdejavu/Makefile works with this compiler.])
+fi
+AC_SUBST(NSDEJAVU)
+AC_SUBST(NSDEJAVU_FLAGS)
 AC_SUBST(NSDEJAVU_LIBS)
+AC_SUBST(NSDEJAVU_LINK)
+
 
 # Should libdjvu be a shared library ?
 ac_shared_libdjvu=no
