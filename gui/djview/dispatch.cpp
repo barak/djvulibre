@@ -973,7 +973,6 @@ Dispatch(void)
    } catch(PipeError & exc)
    {
       DEBUG_MSG("Dispatch(): caught exception '" << exc.get_cause() << "'\n");
-      exc.perror();
       instance.empty();
       PipesAreDead();
    }

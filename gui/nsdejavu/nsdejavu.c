@@ -1695,11 +1695,6 @@ StartProgram(void)
       close(3); dup(_pipe_read); close(_pipe_read);
       close(4); dup(_pipe_write); close(_pipe_write);
       close(5); dup(_rev_pipe); close(_rev_pipe);
-#ifdef NO_DEBUG
-      /* Workaround error message on exit ... */
-      if ((s = open("/dev/null", O_WRONLY)) >= 0)
-        { close(2); dup(s); }
-#endif
       /* Duplication above will guarantee, 
          that the new file descriptors will not be closed on exec.
          Now close all file descriptors which we don't use. For some reasons
