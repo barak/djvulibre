@@ -33,9 +33,15 @@ AR = @AR@
 LN_S = @LN_S@
 TOUCH = @TOUCH@
 INSTALL = @INSTALL@
+MKDIR = @MKDIR@
 RANLIB = @RANLIB@
 BIN2CPP = ${top_builddir}/gui/bin2cpp/bin2cpp
+
 MOC = @MOC@
+
+LUPDATE = @LUPDATE@
+LRELEASE = @LRELEASE@
+LANGUAGES = ja_JP
 
 DEFS = @DEFS@
 OPTS = @OPTS@
@@ -56,7 +62,7 @@ LIBDJVU_SO = ${top_builddir}/libdjvu/libdjvulibre-${PACKAGE_VERSION}.so
 
 PROGRAM = djview
 
-all: ${PROGRAM}
+all: ${PROGRAM} lrelease
 
 CIN_SOURCES = \
  ${top_srcdir}/gui/shared/cin_data/ppm_djvu_logo.cin \
@@ -152,7 +158,8 @@ include ${srcdir}/Makefile.add
 makeadd: FORCE
 	${SHELL} ${top_srcdir}/etc/makegen \
 	  --srcdir=${srcdir} --top_srcdir=${top_srcdir} \
-	${CPP_SOURCES} ${CIN_SOURCES} > ${srcdir}/Makefile.add ; 
+	  ${CPP_SOURCES} ${CIN_SOURCES} > ${srcdir}/Makefile.add
+
 
 INCS = -I${top_builddir} -I${top_srcdir}/libdjvu ${SRCINCS} -I.
 
@@ -180,13 +187,18 @@ install-man: FORCE
 
 install-data: FORCE
 	${INSTALL} -d ${DESTDIR}${datadir}/djvu/osi
+	for l in ${LANGUAGES} ; do \
+	  ${INSTALL} -d ${DESTDIR}${datadir}/djvu/osi/$$l ;\
+	  test -r i18n/$$l/djview.qm && \
+	   ${INSTALL} -m 0644 i18n/$$l/djview.qm \
+	     ${DESTDIR}${datadir}/djvu/osi/$$l ;\
+	done
 	-test -r ${srcdir}/djview_help.djvu && \
 	  ${INSTALL} -m 0644 ${srcdir}/djview_help.djvu \
 	    ${DESTDIR}${datadir}/djvu/osi
 	-test -r ${srcdir}/djview_help.html && \
 	  ${INSTALL} -m 0644 ${srcdir}/djview_help.html \
 	    ${DESTDIR}${datadir}/djvu/osi
-
 
 depend: ${MOCINCS} FORCE
 	( for n in ${CPP_SOURCES} ; do \
@@ -196,9 +208,31 @@ clean: FORCE
 	-${RM} 2>/dev/null ${PROGRAM}
 	-${RM} 2>/dev/null *.o *.a *.so *.stamp *_moc.cpp *_moc.inc
 	-for n in ${CIN_SOURCES} ; do rm 2>/dev/null `basename $$n .cin`.cpp ; done
+	-for n in ${LANGUAGES} ; do rm 2>/dev/null i18n/$$n/*.qm ; done
 
 distclean: clean 
-	-${RM} -r 2>/dev/null Makefile *.rpo ii_files
+	-${RM} -r 2>/dev/null Makefile Makefile.i18n *.rpo ii_files
+
+# I18N
+
+lupdate: FORCE
+	for l in ${LANGUAGES} ; do \
+	  ${LUPDATE} ${CPP_SOURCES} -ts ${srcdir}/i18n/$$l/djview.ts ; \
+	done
+
+lrelease: FORCE
+	@( echo -n "all: " ;\
+          for l in ${LANGUAGES} ; do echo -n " " i18n/$$l/djview.qm ; done ;\
+	  echo "" ;\
+	  for l in ${LANGUAGES} ; do \
+	    echo  "i18n/$$l/djview.ts: ${srcdir}/i18n/$$l/djview.ts" ;\
+	    echo  "	cp ${srcdir}/\$$@ \$$@" ;\
+	    echo  "i18n/$$l/djview.qm: i18n/$$l/djview.ts";\
+	    echo  "	${LRELEASE} i18n/$$l/djview.ts";\
+          done ) > Makefile.i18n
+	${MAKE} -f Makefile.i18n
+
+# Boilerplate
 
 FORCE:
 .PHONY: FORCE

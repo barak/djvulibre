@@ -747,6 +747,8 @@ AC_DEFUN([AC_PATH_QT],
         ac_has_qt=no
         QTDIR=no
     fi
+    AC_PATH_PROGS(LUPDATE, [lupdate], [unknown], [$QTDIR/bin $PATH])
+    AC_PATH_PROGS(LRELEASE,[lrelease], [unknown], [$QTDIR/bin $PATH])
   fi
   # Execute
   if test "x$ac_has_qt" != xno ; then

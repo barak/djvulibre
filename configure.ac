@@ -45,6 +45,7 @@ AC_PROG_LN_S
 AC_PATH_PROG(RM, rm)
 AC_PATH_PROG(AR, ar)
 AC_PATH_PROG(TOUCH, touch)
+AC_PATH_PROG(MKDIR, mkdir)
 
 # Prefer the shell script
 INSTALL='${top_srcdir}/config/install-sh -c' 
