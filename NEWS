@@ -1,3 +1,8 @@
+NEW IN VERSION 3.5.4
+--------------------
+- Fixed bug in djview print dialog.
+- Fixed bug in djvused.
+- Added CGI program djvuserve.
 
 NEW IN VERSION 3.5.3
 --------------------
