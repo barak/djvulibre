@@ -1391,7 +1391,7 @@ au Webmaistre qui utilise des outils obsolètes.</translation>
     </message>
     <message>
         <source>&amp;Export page</source>
-        <translation>E&amp;xporter la page</translation>
+        <translation>E&amp;xporter la Page</translation>
     </message>
     <message>
         <source>Print Pa&amp;ge</source>
@@ -1505,7 +1505,7 @@ au Webmaistre qui utilise des outils obsolètes.</translation>
     </message>
     <message>
         <source>&amp;Export page</source>
-        <translation>E&amp;xporter la page</translation>
+        <translation>E&amp;xporter la Page</translation>
     </message>
     <message>
         <source>&amp;Find</source>
