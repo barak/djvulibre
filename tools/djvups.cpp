@@ -70,7 +70,7 @@ usage(void)
                      "  -level=<1|2|3>                      (default: 2)\n"
                      "  -orientation=<portrait|landscape>   (default: portrait)\n"
                      "  -mode=<color|bw|fore|back>          (default: color)\n"
-                     "  -zoom=<fit|25...2400)               (default: fit)\n"
+                     "  -zoom=<auto|25...2400)              (default: auto)\n"
                      "  -color=<yes|no>                     (default: yes)\n"
                      "  -gray                               (same as -color=no)\n"
                      "  -colormatch=<yes|no>                (default: yes)\n"
@@ -166,7 +166,7 @@ main(int argc, char **argv)
             {
               if (arg == "c" || arg == "color" )
                 options.set_mode(DjVuToPS::Options::COLOR);
-              else if (arg == "bw")
+              else if (arg == "black" || arg == "bw")
                 options.set_mode(DjVuToPS::Options::BW);
               else if (arg == "fore" || arg == "foreground")
                 options.set_mode(DjVuToPS::Options::FORE);
@@ -178,8 +178,10 @@ main(int argc, char **argv)
             }
           else if (s == "zoom")
             {
-              if (arg == "fit" || arg == "fit_page")
+              if (arg == "auto" || arg == "fit" || arg == "fit_page")
                 options.set_zoom(DjVuToPS::Options::FIT_PAGE);
+              else if (arg == "1to1" || arg == "onetoone")
+                options.set_zoom((DjVuToPS::Options::Zoom)100);                
               else 
                 {
                   int endpos;
