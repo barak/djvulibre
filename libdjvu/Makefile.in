@@ -57,7 +57,6 @@ LIBS= ${JPEG_LIBS} ${THREAD_LIBS} @LIBS@
 CFLAGS = @CFLAGS@ ${FLAGS}
 CXXFLAGS = @CXXFLAGS@ ${CXXPICFLAGS} ${CXXRPOFLAGS} ${FLAGS}
 
-@RPO_YES@all: libdjvu-rpo
 all: ${LIBDJVU_A} 
 @SHARED_YES@all: ${LIBDJVU_SO}
 
@@ -88,7 +87,9 @@ ${LIBDJVU_A} : ${OBJS}
 @SHARED_YES@	@echo "[ linking $@ ... ]"
 @SHARED_YES@	${CXXSHARED} -o ${LIBDJVU_SO} ${CXXFLAGS} ${OBJS} ${LIBS}
 
-@RPO_YES@libdjvu-rpo: ${OBJS}
+@RPO_YES@${LIBDJVU_A} : libdjvu-rpo
+@RPO_YES@${LIBDJVU_SO} : libdjvu-rpo
+@RPO_YES@libdjvu-rpo : ${OBJS}
 @RPO_YES@	@echo "[ performing library closure ... ]"
 @RPO_YES@	@echo "int main() { return 0; }" > $@.cpp
 @RPO_YES@	${CXX} ${CXXFLAGS} -c $@.cpp
