@@ -1,4 +1,4 @@
-%define release 1
+%define release 2
 %define version 3.5.13
 %define prefix %{?_prefix:%{_prefix}}%{!?_prefix:/usr}
 %define mandir %{?_mandir:%{_mandir}}%{!?_mandir:%{prefix}/man}
@@ -63,7 +63,7 @@ find %{buildroot}%{_libdir} -name "*.so*" -exec chmod 755 {} \;
 rm -rf doc/CVS 2>/dev/null || :
 
 # Compute file list
-find %{buildroot} \( ! -type d \) -print | \
+find %{buildroot} -print | \
  sed -e 's:^%{buildroot}::'                \
      -e 's:^%{_mandir}/.*$:#&:'            \
      -e 's:^%{_datadir}/djvu/osi/.*$:#&:'  \
@@ -102,7 +102,7 @@ if test -x /usr/bin/update-menus; then /usr/bin/update-menus; fi
 %files -f files.list
 %defattr(-, root, root)
 %doc README COPYRIGHT COPYING INSTALL NEWS TODO doc
-%{_mandir}/man?/*
+%{_mandir}/man?
 %{_datadir}/djvu/osi/en
 %lang(ja) %{_datadir}/djvu/osi/ja*
 %lang(fr) %{_datadir}/djvu/osi/fr*
@@ -113,6 +113,8 @@ if test -x /usr/bin/update-menus; then /usr/bin/update-menus; fi
 %lang(de) %{_mandir}/de*
 
 %changelog
+* Wed May  5 2004 Leon Bottou <leon@bottou.org> 3.5.13-2
+- own all directories
 * Fri Apr  9 2004 Leon Bottou <leon@bottou.org> 3.5.13-1
 - release 3.5.13
 * Thu Apr  8 2004 Leon Bottou <leon@bottou.org> 3.5.13.0.4
