@@ -206,12 +206,12 @@ compute_line(GBitmap *bits)
   i = -1;
   j = h;
   m = 0;
-  while (i < j && m * 4 < totalmass)
+  while (i < j && m * 6 < totalmass)
     m += mass[++i];
   m = 0;
-  while (i < j && m * 4 < totalmass)
+  while (i < j && m * 6 < totalmass)
     m += mass[--j];
-  return (i * 3 + j)/4;
+  return (i + i + i + j) / 4;
 }
 
 // Reorganize jb2image on the basis of matchdata.
