@@ -1,5 +1,5 @@
-%define release 1
-%define version 3.5.8
+%define release 0p1
+%define version 3.5.9
 %define prefix %{?_prefix:%{_prefix}}%{!?_prefix:/usr}
 %define mandir %{?_mandir:%{_mandir}}%{!?_mandir:%{prefix}/man}
 
@@ -41,6 +41,8 @@ DjVulibre-3.5 contains:
 - An up-to-date version of the C++ DjVu Reference Library.
 
 %changelog
+* Sun Oct  6 2002 Leon Bottou <leonb@humbert.bottou.org> 3.5.9-0p1
+- version 3.5.9-0p1
 * Wed May 29 2002 Leon Bottou <leon@bottou.org>
 - bumped to version 3.5.6-1
 * Mon Apr 1 2002 Leon Bottou <leonb@users.sourceforge.net>
