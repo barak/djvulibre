@@ -418,7 +418,7 @@ public:
     const unsigned long *s,const int start,const int length=(-1));
 
   static GP<GStringRep> create_format(const char fmt[],...);
-  static GP<GStringRep> create(const char fmt[],va_list args);
+  static GP<GStringRep> create(const char fmt[],va_list& args);
 
   virtual unsigned char *UCS4toString(
     const unsigned long w,unsigned char *ptr, mbstate_t *ps=0) const;

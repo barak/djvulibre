@@ -235,7 +235,7 @@ GStringRep::UTF8::toThis(
 }
 
 GP<GStringRep> 
-GStringRep::UTF8::create(const char fmt[],va_list args)
+GStringRep::UTF8::create(const char fmt[],va_list& args)
 { 
   const GP<GStringRep> s(create(fmt));
   return (s?(s->vformat(args)):s);

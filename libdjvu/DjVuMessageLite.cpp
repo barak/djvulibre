@@ -354,7 +354,7 @@ DjVuMessageLite::InsertArg( GUTF8String &message,
     // argument target string
   const GUTF8String target= "%"+GUTF8String(ArgId)+"!";
     // location of target string
-  int format_start = message.search( target );
+  int format_start = message.search( (const char *)target );
   if( format_start >= 0 )
   {
     do
@@ -400,7 +400,7 @@ DjVuMessageLite::InsertArg( GUTF8String &message,
             +message.substr( format_end+1, -1 );
         }
       }
-      format_start=message.search(target,format_start+arg.length());
+      format_start=message.search((const char*)target, format_start+arg.length());
     } while(format_start >= 0);
   }
   else
