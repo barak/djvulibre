@@ -909,7 +909,9 @@ QDBase::setCursor(void)
    GPQCursor cur=in_hand_scroll ? cur_hand2 :
       in_zoom_select ? cur_zoom_select :
       isLensVisible() ? cur_blank :
+#ifdef DEBUG
       in_paint ? cur_wait :
+#endif
       pane_mode!=IDC_PANE ? cur_hand_hl :
       (cur_map_area && cur_map_area->isHyperlink()) ? cur_hand_hl : cur_hand1;
    
