@@ -96,7 +96,7 @@ class ByteStream;
 /** Current DjVu format version.  The value of this macro represents the
     version of the DjVu file format implemented by this release of the DjVu
     Reference Library. */
-#define DJVUVERSION              24
+#define DJVUVERSION              25
 /** This is the version which introduced orientations. */
 #define DJVUVERSION_ORIENTATION  22
 /** Oldest DjVu format version supported by this library.  This release of the
@@ -107,7 +107,7 @@ class ByteStream;
     the library will attempt to decode files whose version field is smaller
     than this macro.  If the version field is greater than or equal to this
     number, the decoder will just throw a \Ref{GException}.  */
-#define DJVUVERSION_TOO_NEW      27
+#define DJVUVERSION_TOO_NEW      50
 //@}
 
 
