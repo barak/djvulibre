@@ -41,7 +41,7 @@
 #endif
 
 #include "GString.h"
-#ifdef HAS_ICONV_H
+#if HAS_ICONV
 #include <iconv.h>
 #endif
 
