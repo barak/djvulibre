@@ -1,9 +1,9 @@
-bzz.o: ./bzz.cpp ../config.h ../libdjvu/GException.h ../libdjvu/DjVuGlobal.h \
-  ../libdjvu/ByteStream.h ../libdjvu/Arrays.h ../libdjvu/GSmartPointer.h \
-  ../libdjvu/BSByteStream.h ../libdjvu/ZPCodec.h ../libdjvu/GContainer.h \
-  ../libdjvu/GOS.h ../libdjvu/GString.h ../libdjvu/GURL.h \
-  ../libdjvu/GThreads.h ../libdjvu/DjVuMessage.h \
-  ../libdjvu/DjVuMessageLite.h
+bzz.o: ./bzz.cpp ../config.h ../libdjvu/GException.h \
+  ../libdjvu/DjVuGlobal.h ../libdjvu/ByteStream.h ../libdjvu/Arrays.h \
+  ../libdjvu/GSmartPointer.h ../libdjvu/BSByteStream.h \
+  ../libdjvu/ZPCodec.h ../libdjvu/GContainer.h ../libdjvu/GOS.h \
+  ../libdjvu/GString.h ../libdjvu/GURL.h ../libdjvu/GThreads.h \
+  ../libdjvu/DjVuMessage.h ../libdjvu/DjVuMessageLite.h
 c44.o: ./c44.cpp ../config.h ../libdjvu/GString.h ../libdjvu/DjVuGlobal.h \
   ../libdjvu/GContainer.h ../libdjvu/GException.h \
   ../libdjvu/GSmartPointer.h ../libdjvu/IW44Image.h ../libdjvu/ZPCodec.h \
@@ -106,6 +106,15 @@ djvused.o: ./djvused.cpp ../config.h ../libdjvu/IW44Image.h \
   ../libdjvu/GMapAreas.h ../libdjvu/GRect.h ../libdjvu/DjVuAnno.h \
   ../libdjvu/DjVuInfo.h ../libdjvu/IFFByteStream.h ../libdjvu/DataPool.h \
   ../libdjvu/DjVuFile.h ../libdjvu/DjVuPalette.h ../libdjvu/GPixmap.h
+djvuserve.o: ./djvuserve.cpp ../config.h ../libdjvu/DjVuDocument.h \
+  ../libdjvu/DjVuPort.h ../libdjvu/GThreads.h ../libdjvu/DjVuGlobal.h \
+  ../libdjvu/GException.h ../libdjvu/GURL.h ../libdjvu/GString.h \
+  ../libdjvu/GContainer.h ../libdjvu/GSmartPointer.h ../libdjvu/Arrays.h \
+  ../libdjvu/DjVmDir.h ../libdjvu/ByteStream.h ../libdjvu/IFFByteStream.h \
+  ../libdjvu/DjVuText.h ../libdjvu/GMapAreas.h ../libdjvu/GRect.h \
+  ../libdjvu/DjVuImage.h ../libdjvu/DjVuFile.h ../libdjvu/DjVuInfo.h \
+  ../libdjvu/DjVuPalette.h ../libdjvu/GPixmap.h ../libdjvu/DjVuAnno.h \
+  ../libdjvu/GOS.h ../libdjvu/DjVuMessage.h ../libdjvu/DjVuMessageLite.h
 djvutxt.o: ./djvutxt.cpp ../config.h ../libdjvu/DjVuDocument.h \
   ../libdjvu/DjVuPort.h ../libdjvu/GThreads.h ../libdjvu/DjVuGlobal.h \
   ../libdjvu/GException.h ../libdjvu/GURL.h ../libdjvu/GString.h \

@@ -89,7 +89,6 @@ usage(void)
 void
 fprintdate(FILE *f, const char *fmt, const time_t *tim)
 {
-#define HAVE_STRFTIME
 #ifdef HAVE_STRFTIME
   char ctim[128];
   struct tm *ttim = gmtime(tim);

@@ -4,7 +4,7 @@
 # ----------------------------------------
 
 AC_PREREQ(2.50)
-AC_INIT(djvulibre, 3.5.3)
+AC_INIT(djvulibre, 3.5.4)
 AC_REVISION($Id$)
 AC_CONFIG_AUX_DIR(config)
 AC_CONFIG_SRCDIR(INSTALL)
@@ -71,7 +71,7 @@ AC_HEADER_DIRENT
 AC_HEADER_TIME
 AC_HEADER_SYS_WAIT     
 AC_CHECK_HEADERS(wchar.h wctype.h sys/mman.h dlfcn.h iconv.h)
-AC_CHECK_HEADERS(sys/ipc.h sys/shm.h)
+AC_CHECK_HEADERS(sys/ipc.h sys/shm.h X11/extensions/Xext.h)
 
 # ----------------------------------------
 # Types
@@ -88,7 +88,7 @@ AC_CHECK_TYPES(mbstate_t,,,[#include "wchar.h"])
 AC_FUNC_MMAP
 AC_FUNC_FORK
 AC_CHECK_FUNCS(wcrtomb iswspace strerror vsnprintf)
-AC_CHECK_FUNCS(gethostname dlopen iconv)
+AC_CHECK_FUNCS(gethostname dlopen iconv strftime)
 
 # ----------------------------------------
 # Test auxilliary packages

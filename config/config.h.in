@@ -111,6 +111,9 @@
 /* Define if you have the `strerror' function. */
 #undef HAVE_STRERROR
 
+/* Define if you have the `strftime' function. */
+#undef HAVE_STRFTIME
+
 /* Define if you have the <strings.h> header file. */
 #undef HAVE_STRINGS_H
 
@@ -170,6 +173,9 @@
 
 /* Define if `vfork' works. */
 #undef HAVE_WORKING_VFORK
+
+/* Define if you have the <X11/extensions/Xext.h> header file. */
+#undef HAVE_X11_EXTENSIONS_XEXT_H
 
 /* Define if you have the ANSI C header files. */
 #undef STDC_HEADERS
