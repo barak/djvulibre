@@ -104,18 +104,20 @@ x11ErrorHandler(Display *displ, XErrorEvent *event)
       // do not even say anything
       break;  
 #endif
+    case BadMatch:
     case BadDrawable:
     case BadAtom:
     case BadCursor:
     case BadFont:
-    case BadMatch:
     case BadName:
     case BadValue:
     case BadGC:
-      // display message but try to continue
+#if QT_VERSION < 220
+      if (event->error_code == BadMatch && event->request_code == 42) break;
       XGetErrorText(displ, event->error_code, buffer, 1024);
       fprintf(stderr, "X11: %s\n", buffer);
       break;
+#endif
     default:
       // use whatever error handler was set by the toolkit
       if (x11PreviousErrorHandler)
