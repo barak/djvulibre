@@ -173,7 +173,7 @@ private:
 private slots:
    void		switchDetails(void);
 public:
-   QeExcMessage(const GException &exc, const char *title=0,
+   QeExcMessage(const GException &exc, QString title,
 		QWidget *parent=0, const char *name=0, bool modal=TRUE);
 };
 

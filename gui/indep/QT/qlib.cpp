@@ -52,7 +52,6 @@
 //C- +------------------------------------------------------------------
 // 
 // $Id$
-// $Name$
 
 #ifdef __GNUG__
 #pragma implementation
@@ -419,10 +418,10 @@ getExcMsg(const char *exc_cause)
       exc_tag="DjVuMessage.Unrecognized";
    }
 
-   GNativeString exc_msg=DjVuMessage::LookUpUTF8(exc_tag);
-
+   GUTF8String exc_msg=DjVuMessage::LookUpUTF8(exc_tag);
+   
    if ( exc_sep )
-      exc_msg += GNativeString(exc_cause+exc_tag_len);
+      exc_msg += GUTF8String(exc_cause+exc_tag_len);
 
    return exc_msg;
 }
@@ -452,11 +451,12 @@ QeExcMessage::switchDetails(void)
     }
 }
 
-QeExcMessage::QeExcMessage(const GException & exc, const char * title,
+QeExcMessage::QeExcMessage(const GException & exc, QString title,
 			   QWidget * parent, const char * pname, bool modal) :
       QeDialog(parent, pname, modal)
 {
-   if (title) setCaption(title);
+   if (!title.isNull()) 
+     setCaption(title);
    
    QVBoxLayout * vlay=new QVBoxLayout(this, 10, 5);
    QHBoxLayout * hlay=new QHBoxLayout(vlay);
@@ -534,7 +534,8 @@ showError(QWidget * parent, const GException & exc)
 #ifdef NO_DEBUG
    if (!exc.cmp_cause(DataPool::Stop)) return;
 #endif
-   QeExcMessage * msg=new QeExcMessage(exc, QeExcMessage::tr("Error"), parent, "exc_message");
+   QeExcMessage * msg=new QeExcMessage(exc, QeExcMessage::tr("Error"), 
+                                       parent, "exc_message");
    msg->exec();
    delete msg;
 }
@@ -588,36 +589,32 @@ void
 showMessage(QWidget * parent, const QString &qtitle, const QString &qmessage,
 	    bool draw_frame, bool use_fixed, bool word_wrap)
 {
-   const char *title=qtitle;
-   const char *message=qmessage;
    QeDialog * dialog=new QeDialog(parent, "msg_dialog", TRUE);
-   dialog->setCaption(title);
+   dialog->setCaption(qtitle);
    QWidget * start=dialog->startWidget();
    QVBoxLayout * vlay=new QVBoxLayout(start, 20, 10, "vlay");
-   QLabel * label=new QLabel(message, start, "msg_label");
+   QLabel * label=new QLabel(qmessage, start, "msg_label");
    if (draw_frame)
-   {
-      label->setFrameStyle(QFrame::Box | QFrame::Sunken);
-      label->setMargin(10);
-   }
+     {
+       label->setFrameStyle(QFrame::Box | QFrame::Sunken);
+       label->setMargin(10);
+     }
    if (use_fixed)
-   {
-      QFont font=label->font();
-      font.setFamily("Courier");
-      label->setFont(font);
-   }
+     {
+       QFont font=label->font();
+       font.setFamily("Courier");
+       label->setFont(font);
+     }
    if (word_wrap)
-   {
-      const char * ptr;
-      for(ptr=message;*ptr;ptr++)
-	 if (*ptr=='\n') break;
-      {
-        GUTF8String mesg=GUTF8String(message,ptr-message);
-        label->setText(QStringFromGString(mesg));
-      }
-      label->setMinimumWidth(label->sizeHint().width());
-      label->setText(message);
-      label->setAlignment(Qt::AlignLeft | Qt::AlignVCenter | Qt::WordBreak);
+     {
+       int i;
+       for (i=0; i<(int)qmessage.length(); i++)
+         if (qmessage[i] == QChar('\n'))
+           break;
+       label->setText(qmessage.left(i));
+       label->setMinimumWidth(label->sizeHint().width());
+       label->setText(qmessage);
+       label->setAlignment(Qt::AlignLeft | Qt::AlignVCenter | Qt::WordBreak);
    }
    vlay->addWidget(label);
    
