@@ -43,9 +43,6 @@
 /* Define to 1 if you have the <dlfcn.h> header file. */
 #undef HAVE_DLFCN_H
 
-/* Define to 1 if you have the `dlopen' function. */
-#undef HAVE_DLOPEN
-
 /* define if the compiler supports exceptions */
 #undef HAVE_EXCEPTIONS
 
@@ -72,9 +69,6 @@
 
 /* Define if you have the IJG JPEG library. */
 #undef HAVE_JPEG
-
-/* Define to 1 if you have the `dl' library (-ldl). */
-#undef HAVE_LIBDL
 
 /* Define to 1 if you have the `iconv' library (-liconv). */
 #undef HAVE_LIBICONV
@@ -282,13 +276,6 @@
 #define HAS_MEMMAP 1
 #else
 #define HAS_MEMMAP 0
-#endif
-
-/* - DLOPEN */
-#if defined(HAVE_DLFCN_H) && defined(HAVE_DLOPEN)
-#define HAS_DLOPEN 1
-#else
-#define HAS_DLOPEN 0
 #endif
 
 /* - QT */

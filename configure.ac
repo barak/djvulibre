@@ -81,7 +81,6 @@ dnl   not ready for general use with C++.
 # ----------------------------------------
 
 AC_CHECK_LIB(m,sqrt)
-AC_CHECK_LIB(dl,dlopen)
 AC_CHECK_LIB(iconv,libconv)
 
 # ----------------------------------------
@@ -111,7 +110,7 @@ AC_CHECK_TYPES(mbstate_t,,,[#include "wchar.h"])
 AC_FUNC_MMAP
 AC_FUNC_FORK
 AC_CHECK_FUNCS(wcrtomb iswspace strerror vsnprintf)
-AC_CHECK_FUNCS(gethostname dlopen iconv strftime)
+AC_CHECK_FUNCS(gethostname iconv strftime)
 
 # ----------------------------------------
 # Test auxilliary packages
@@ -235,7 +234,7 @@ else
   cxxver="`$CXX --version | sed -e 's/^gcc-//' -e 's/^egcs-//'`"
   action=none
   case "$cxxver" in
-changequote(<<, >>)dnl                                                                              
+changequote(<<, >>)dnl          
     1.*)            action=error  ;;
     2.[0-8]*)       action=error  ;;
     2.90*)          action=error  ;;
@@ -413,13 +412,6 @@ AH_BOTTOM([
 #define HAS_MEMMAP 1
 #else
 #define HAS_MEMMAP 0
-#endif
-
-/* - DLOPEN */
-#if defined(HAVE_DLFCN_H) && defined(HAVE_DLOPEN)
-#define HAS_DLOPEN 1
-#else
-#define HAS_DLOPEN 0
 #endif
 
 /* - QT */
