@@ -69,6 +69,10 @@ bool verbose = false;
 bool save = false;
 bool nosave = false;
 
+// Files selected by the select command
+GPList<DjVmDir::File> selected;
+
+// This is set when only one file is selected
 GP<DjVuFile> file = 0;
 GUTF8String fileid;
 
@@ -425,6 +429,7 @@ void
 command_dump(ParsingByteStream &)
 {
   GP<DataPool> pool;
+  // Need to be modified to handle "selected" list.
   if (file)
     pool = file->get_djvu_data(false, false);
   else
@@ -472,21 +477,60 @@ print_size(const GP<DjVuFile> &file)
 void
 command_size(ParsingByteStream &)
 {
-  if (file)
+  GPList<DjVmDir::File> &lst = selected;
+  for (GPosition p=lst; p; ++p)
     {
-      print_size(file);
-    }
-  else 
-    {
-      GPList<DjVmDir::File> lst = doc->get_djvm_dir()->get_files_list();
-       for (GPosition p=lst; p; ++p)
+      if (lst[p]->is_page())
         {
-          if (lst[p]->is_page())
-            {
-	      GUTF8String fileid = doc->page_to_id(lst[p]->get_page_num());
-              const GP<DjVuFile> f = doc->get_djvu_file(fileid);
-              print_size(f);
-            }
+          GUTF8String fileid = doc->page_to_id(lst[p]->get_page_num());
+          const GP<DjVuFile> f = doc->get_djvu_file(fileid);
+          print_size(f);
+        }
+    }
+}
+
+static void
+select_all(void)
+{
+  file = 0;
+  fileid = "";
+  selected = doc->get_djvm_dir()->get_files_list();
+}
+
+static void
+select_clear(void)
+{
+  file = 0;
+  fileid = "<all>";
+  selected.empty();
+}
+
+static void
+select_add(GP<DjVmDir::File> frec)
+{
+  GPosition selp = selected;
+  GPList<DjVmDir::File> all = doc->get_djvm_dir()->get_files_list();
+  GPosition allp = all;
+  while (allp)
+    {
+      if (all[allp] == frec)
+        break;
+      if ( selp && all[allp] == selected[selp])
+        ++ selp;
+      ++ allp;
+    }
+  if (allp && (!selp || all[allp] != selected[selp]))
+    {
+      selected.insert_before(selp, frec);
+      if (! file)
+        {
+          fileid = frec->get_load_name();
+          file = doc->get_djvu_file(fileid);
+        }
+      else
+        {
+          fileid = "<multiple>";
+          file = 0;
         }
     }
 }
@@ -498,53 +542,85 @@ command_select(ParsingByteStream &pbs)
   // Case of NULL
   if (pagid == "") 
     {
-      file = 0;
-      fileid = "";
+      select_all();
       vprint("select: selecting entire document");
       return;
     } 
-  // Case of page number
+  // Case of a single page number
   if (pagid.is_int())
     {
       int pageno = atoi(pagid);
-      if (pageno<=0 || pageno>doc->get_pages_num())
-        verror("incorrect page number:  %d", pageno);
-      pagid = doc->page_to_id(pageno-1);
+      GP<DjVmDir::File> frec = doc->get_djvm_dir()->page_to_file(pageno);
+      if (!frec)
+        verror("page \"%d\" not found", pageno);
+      select_clear();
+      select_add(frec);
+      vprint("select: selecting \"%s\"", (const char*)(GNativeString)fileid);
+      return;
     }
-  // General case
-  const GP<DjVuFile> f(doc->get_djvu_file(pagid));
-  if (!f)
-    verror("page \"%s\" not found", (const char*)(GNativeString)pagid);    
-  file = f;
-  fileid = pagid;
-  vprint("select: selecting \"%s\"", (const char*)(GNativeString)pagid);
-}
+  // Case of a single file id
+  GP<DjVmDir::File> frec = doc->get_djvm_dir()->id_to_file(pagid);
+  if (!frec)
+    frec = doc->get_djvm_dir()->name_to_file(pagid);
+  if (!frec)
+    frec = doc->get_djvm_dir()->title_to_file(pagid);
+  if (!frec)
+    verror("page \"%s\" not found", (const char*)(GNativeString)pagid);
+  select_clear();
+  select_add(frec);
+  vprint("select: selecting \"%s\"", (const char*)(GNativeString)fileid);
+}  
 
 void
 command_select_shared_ant(ParsingByteStream &)
 {
-  const GP<DjVuFile> f(doc->get_shared_anno_file());
-  if (!f) 
-    verror("select-shared-ant: no shared annotation file");
-  file = f;
-  fileid = "<shared_ant>";
+  GP<DjVmDir::File> frec = doc->get_djvm_dir()->get_shared_anno_file();
+  if (! frec)
+    verror("select-shared-ant: no shared annotation file"); 
+  select_clear();
+  select_add(frec);
   vprint("select-shared-ant: selecting shared annotation");
 }
 
 void
 command_create_shared_ant(ParsingByteStream &)
 {
-  GP<DjVuFile> f(doc->get_shared_anno_file());
-  if (!f) 
+  GP<DjVmDir::File> frec = doc->get_djvm_dir()->get_shared_anno_file();
+  if (! frec)
     {
       vprint("create-shared-ant: creating shared annotation file");
       doc->create_shared_anno_file();
-      f = doc->get_shared_anno_file();
-      if (!f) G_THROW("internal error");
+      frec = doc->get_djvm_dir()->get_shared_anno_file();
+      if (!frec) G_THROW("internal error");
     }
-  file = f;
-  fileid = "<shared_ant>";
-  vprint("create-shared-ant: selecting shared annotation");
+  select_clear();
+  select_add(frec);
+  vprint("select-shared-ant: selecting shared annotation");
+}
+
+void
+command_showsel(ParsingByteStream &)
+{
+  int pagenum = 0;
+  GPList<DjVmDir::File> &lst = selected;
+  for (GPosition p=lst; p; ++p) 
+    {
+      GP<DjVmDir::File> f = lst[p];
+      if (f->is_page())
+        fprintf(stdout,"%4d P ", ++pagenum);
+      else if (f->is_include())
+        fprintf(stdout,"     I ");
+      else if (f->is_thumbnails())
+        fprintf(stdout,"     T ");
+      else if (f->is_shared_anno())
+        fprintf(stdout,"     A ");
+      else
+        fprintf(stdout,"     ? ");
+      GUTF8String id = f->get_load_name();
+      fprintf(stdout,"%8d  %s\n", f->size, (const char*)(GNativeString)id);
+    }
+  if (doc->get_thumbnails_num() == doc->get_pages_num())
+    fprintf(stdout,"     T %8s  %s\n", "", "<thumbnails>");
 }
 
 static bool
@@ -629,7 +705,7 @@ void
 command_print_ant(ParsingByteStream &)
 {
   if (!file)
-    verror("you must first select a page");
+    verror("you must first select a single page");
   GP<ByteStream> out=ByteStream::create("w");
   GP<ByteStream> anno = file->get_anno();
   if (! (anno && anno->size())) return;
@@ -642,7 +718,7 @@ void
 command_print_merged_ant(ParsingByteStream &)
 {
   if (!file)
-    verror("you must first select a page");
+    verror("you must first select a single page");
   GP<ByteStream> out=ByteStream::create("w");
   GP<ByteStream> anno = file->get_merged_anno();
   if (! (anno && anno->size())) return;
@@ -684,19 +760,12 @@ file_remove_ant(const GP<DjVuFile> &f, const char *id)
 void
 command_remove_ant(ParsingByteStream &)
 {
-  if (file) 
+  GPList<DjVmDir::File> & lst = selected;
+  for (GPosition p=lst; p; ++p)
     {
-      file_remove_ant(file, fileid);
-    }
-  else 
-    {
-      GPList<DjVmDir::File> lst = doc->get_djvm_dir()->get_files_list();      
-      for (GPosition p=lst; p; ++p)
-        {
-          GUTF8String id = lst[p]->get_load_name();
-          const GP<DjVuFile> f(doc->get_djvu_file(id));
-          file_remove_ant(f, id);
-        }
+      GUTF8String id = lst[p]->get_load_name();
+      const GP<DjVuFile> f(doc->get_djvu_file(id));
+      file_remove_ant(f, id);
     }
 }
 
@@ -704,7 +773,7 @@ void
 command_set_ant(ParsingByteStream &pbs)
 {
   if (! file)
-    verror("must select a page first");
+    verror("must select a single page first");
   const GP<ByteStream> ant = ByteStream::create();
   {
     const GP<ByteStream> dsedant = ByteStream::create();
@@ -755,7 +824,7 @@ void
 command_print_meta(ParsingByteStream &)
 {
   if (!file)
-    verror("you must first select a page");
+    verror("you must first select a single page");
   GP<ByteStream> out=ByteStream::create("w");
   GP<ByteStream> anno = file->get_anno();
   if (! (anno && anno->size())) return;
@@ -817,19 +886,12 @@ file_remove_meta(const GP<DjVuFile> &f, const char *id)
 void 
 command_remove_meta(ParsingByteStream &)
 {
-  if (file) 
+  GPList<DjVmDir::File> &lst = selected;
+  for (GPosition p=lst; p; ++p)
     {
-      file_remove_meta(file, fileid);
-    }
-  else 
-    {
-      GPList<DjVmDir::File> lst = doc->get_djvm_dir()->get_files_list();      
-      for (GPosition p=lst; p; ++p)
-        {
-          GUTF8String id = lst[p]->get_load_name();
-          const GP<DjVuFile> f(doc->get_djvu_file(id));
-          file_remove_meta(f, id);
-        }
+      GUTF8String id = lst[p]->get_load_name();
+      const GP<DjVuFile> f(doc->get_djvu_file(id));
+      file_remove_meta(f, id);
     }
 }
 
@@ -837,7 +899,7 @@ void
 command_set_meta(ParsingByteStream &pbs)
 {
   if (!file)
-    verror("you must first select a page");
+    verror("you must first select a single page");
   // get metadata
   GP<ByteStream> metastream = ByteStream::create();
   get_data_from_file("set-meta", pbs, *metastream);
@@ -968,28 +1030,24 @@ print_txt(const GP<DjVuTXT> &txt, const GP<ByteStream> &out)
 {
   if (txt)
     print_txt_sub(txt, txt->page_zone, out, 0);
-  else
-    out->write("(page 0 0 0 0 \"\")\n",18);
 }
 
 void
 command_print_txt(ParsingByteStream &)
 {
   const GP<ByteStream> out = ByteStream::create("w");
-  if (file)
-    {
-      print_txt(get_text(file), out);
-    }
-  else
-    {
-      GPList<DjVmDir::File> lst = doc->get_djvm_dir()->get_files_list();
-      for (GPosition p=lst; p; ++p)
-        {
-          GUTF8String id = lst[p]->get_load_name();
-          const GP<DjVuFile> f(doc->get_djvu_file(id));
-          print_txt(get_text(f), out);
-        }
-    }
+  GPList<DjVmDir::File> &lst = selected;
+  for (GPosition p=lst; p; ++p)
+    if (lst[p]->is_page())
+      {
+        GUTF8String id = lst[p]->get_load_name();
+        const GP<DjVuFile> f(doc->get_djvu_file(id));
+        const GP<DjVuTXT> txt(get_text(f));
+        if (txt)
+          print_txt(txt, out);
+        else
+          out->write("(page 0 0 0 0 \"\")\n",18);
+      }
 }
 
 void
@@ -997,28 +1055,17 @@ command_print_pure_txt(ParsingByteStream &)
 {
   const GP<ByteStream> out = ByteStream::create("w");
   GP<DjVuTXT> txt;
-  if (file)
+  GPList<DjVmDir::File> &lst = selected;
+  for (GPosition p=lst; p; ++p)
     {
-      if ((txt = get_text(file)))
+      GUTF8String id = lst[p]->get_load_name();
+      const GP<DjVuFile> f(doc->get_djvu_file(id));
+      if ((txt = get_text(f)))
         {
           GUTF8String ntxt = txt->textUTF8;
           out->write((const char*)ntxt, ntxt.length());
         }
-    }
-  else
-    {
-      GPList<DjVmDir::File> lst = doc->get_djvm_dir()->get_files_list();
-      for (GPosition p=lst; p; ++p)
-        {
-          GUTF8String id = lst[p]->get_load_name();
-          const GP<DjVuFile> f(doc->get_djvu_file(id));
-          if ((txt = get_text(f)))
-            {
-              GUTF8String ntxt = txt->textUTF8;
-              out->write((const char*)ntxt, ntxt.length());
-            }
-          out->write("\f",1);
-        }
+      out->write("\f",1);
     }
 }
 
@@ -1054,19 +1101,12 @@ file_remove_txt(const GP<DjVuFile> &f, const char *id)
 void
 command_remove_txt(ParsingByteStream &)
 {
-  if (file) 
+  GPList<DjVmDir::File> &lst = selected;
+  for (GPosition p=lst; p; ++p)
     {
-      file_remove_txt(file, fileid);
-    }
-  else 
-    {
-      GPList<DjVmDir::File> lst = doc->get_djvm_dir()->get_files_list();      
-      for (GPosition p=lst; p; ++p)
-        {
-          GUTF8String id = lst[p]->get_load_name();
-          const GP<DjVuFile> f(doc->get_djvu_file(id));
-          file_remove_txt(f, id);
-        }
+      GUTF8String id = lst[p]->get_load_name();
+      const GP<DjVuFile> f(doc->get_djvu_file(id));
+      file_remove_txt(f, id);
     }
 }
 
@@ -1176,7 +1216,7 @@ void
 command_set_txt(ParsingByteStream &pbs)
 {
   if (! file)
-    verror("must select a page first");
+    verror("must select a single page first");
   const GP<ByteStream> txtbs(ByteStream::create());
   get_data_from_file("set-txt", pbs, *txtbs);
   txtbs->seek(0);
@@ -1250,7 +1290,7 @@ command_output_ant(ParsingByteStream &)
     {
       const char *pre = "select; remove-ant\n";
       out->write(pre, strlen(pre));
-      GPList<DjVmDir::File> lst = doc->get_djvm_dir()->get_files_list();
+      GPList<DjVmDir::File> &lst = selected;
       for (GPosition p=lst; p; ++p)
         {
           GUTF8String id = lst[p]->get_load_name();
@@ -1272,7 +1312,7 @@ command_output_txt(ParsingByteStream &)
     {
       const char *pre = "select; remove-txt\n";
       out->write(pre, strlen(pre));
-      GPList<DjVmDir::File> lst = doc->get_djvm_dir()->get_files_list();
+      GPList<DjVmDir::File> &lst = selected;
       for (GPosition p=lst; p; ++p)
         {
           GUTF8String id = lst[p]->get_load_name();
@@ -1294,7 +1334,7 @@ command_output_all(ParsingByteStream &)
     {
       const char *pre = "select; remove-ant; remove-txt\n";
       out->write(pre, strlen(pre));
-      GPList<DjVmDir::File> lst = doc->get_djvm_dir()->get_files_list();
+      GPList<DjVmDir::File> &lst = selected;
       for (GPosition p=lst; p; ++p)
         {
           GUTF8String id = lst[p]->get_load_name();
@@ -1340,7 +1380,7 @@ command_save_page(ParsingByteStream &pbs)
   if (! fname) 
     verror("empty filename");
   if (! file)
-    verror("must select a page first");
+    verror("must select a single page first");
   if (nosave)
     vprint("save_page: not saving anything (-n was specified)");
   if (nosave)
@@ -1360,7 +1400,7 @@ command_save_page_with(ParsingByteStream &pbs)
   if (! fname) 
     verror("empty filename");
   if (! file)
-    verror("must select a page first");
+    verror("must select a single page first");
   if (nosave)
     vprint("save-page-with: not saving anything (-n was specified)");
   if (nosave)
@@ -1440,6 +1480,7 @@ command_help(void)
           "   select <id>            -- selects a single page/file by name or page number\n"
           "   select-shared-ant      -- selects the shared annotations file\n"
           "   create-shared-ant      -- creates and select the shared annotations file\n"
+          "   showsel                -- displays currently selected pages/files\n"
           " . print-ant              -- prints annotations\n"
           " . print-merged-ant       -- prints annotations including the shared annotations\n"
           " . print-meta             -- prints file metadatas (a subset of the annotations\n"
@@ -1496,6 +1537,7 @@ init_command_map(void)
   command_map["n"] = command_n;
   command_map["dump"] = command_dump;
   command_map["size"] = command_size;
+  command_map["showsel"] = command_showsel;
   command_map["select"] = command_select;
   command_map["select-shared-ant"] = command_select_shared_ant;
   command_map["create-shared-ant"] = command_create_shared_ant;
@@ -1625,6 +1667,7 @@ main(int argc, char **argv)
         usage();
       // Open file
       doc = DjVuDocEditor::create_wait(GURL::Filename::UTF8(djvufile));
+      select_all();
       // Execute
       execute();
       if (modified)
