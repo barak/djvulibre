@@ -323,42 +323,41 @@ FCPools::clean(void)
   static int count=0;
   if(! count++)
   {
-    GPosition pos=map;
-    while(pos)
-    {
-      GPList<DataPool> &p=map[pos];
-      if(p.isempty())
+    bool restart = true;
+    while (restart)
       {
-        map.del(pos);
-        pos=map;
-      }else
-      {
-        GPosition pos2=p;
-        ++pos;
-        while(pos2)
-        {
-          GP<DataPool> &pp=p[pos2];      
-          if(pp->get_count() < 2)
+        restart = false;
+        for (GPosition posmap = map; posmap; ++posmap)
           {
-            p.del(pos2);
-            pos2=p;
-            pos=map;
-          }else
-          {
-            ++pos2;
+            GPList<DataPool> *lst;
+            lst = & map[posmap];
+            if (lst->isempty())
+              {
+                map.del(posmap);
+                restart = true;
+                break;
+              }
+            for (GPosition poslst = *lst; poslst; ++poslst)
+              if ((*lst)[poslst]->get_count() < 2) 
+                {
+                  lst->del(poslst);
+                  restart = true;
+                  break;
+                }
+            if (restart)
+              break;
           }
-        }
       }
-    }
   }
   --count;
 }
+
 void
 FCPools::add_pool(const GURL &url, GP<DataPool> pool)
 {
   DEBUG_MSG("FCPools::add_pool: url='" << url << "' pool=" << (void *)pool << "\n");
   DEBUG_MAKE_INDENT(3);
-   GCriticalSectionLock lock(&map_lock);
+  GCriticalSectionLock lock(&map_lock);
 
    if (url.is_local_file_url())
    {
@@ -409,7 +408,7 @@ FCPools::del_pool(const GURL &url, GP<DataPool> pool)
 {
   DEBUG_MSG("FCPools::del_pool: url='" << url << "' pool=" << (void *)pool << "\n");
   DEBUG_MAKE_INDENT(3);
-   GCriticalSectionLock lock(&map_lock);
+  GCriticalSectionLock lock(&map_lock);
 
   clean();
    if (url.is_local_file_url())
@@ -434,8 +433,8 @@ FCPools::load_file(const GURL &url)
 {
   DEBUG_MSG("FCPools::load_file: url='" << url << "'\n");
   DEBUG_MAKE_INDENT(3);
-   GCriticalSectionLock lock(&map_lock);
-
+  GCriticalSectionLock lock(&map_lock);
+   
   clean();
    if (url.is_local_file_url())
    {
