@@ -69,6 +69,10 @@
 #include <X11/Xlib.h>
 #include <X11/Xutil.h>
 
+#ifdef HAVE_X11_EXTENSIONS_XEXT_H
+#include <X11/extensions/Xext.h>
+#endif
+
 
 Display		* displ;
 Visual		* visual;
@@ -96,6 +100,7 @@ qtErrorHandler(QtMsgType type, const char *msg)
 }
 
 static int (*x11PreviousErrorHandler)(Display*,XErrorEvent*) = 0;
+static int (*x11PreviousExtErrorHandler)(Display *, char *, char *) = 0;
 
 static int
 x11ErrorHandler(Display *displ, XErrorEvent *event)
@@ -134,6 +139,16 @@ x11ErrorHandler(Display *displ, XErrorEvent *event)
   return 0;
 }
 
+static int
+x11ExtErrorHandler(Display *dpy, char *extname, char *cause)
+{
+  // Work around useless warning in Qt2
+  if (strcmp(extname,"RENDER") != 0)
+    if (x11PreviousExtErrorHandler)
+      return (*x11PreviousExtErrorHandler)(dpy, extname, cause);
+  return 0;
+}
+
 static void
 InstallErrorHandlers(void)
 {
@@ -141,6 +156,14 @@ InstallErrorHandlers(void)
    qInstallMsgHandler(&qtErrorHandler);
    if (x11PreviousErrorHandler == 0)
      x11PreviousErrorHandler = XSetErrorHandler(x11ErrorHandler);
+#ifdef QT2
+#ifdef HAVE_X11_EXTENSIONS_XEXT_H
+   if (x11PreviousExtErrorHandler == 0)
+     x11PreviousExtErrorHandler = XSetExtensionErrorHandler(x11ExtErrorHandler);
+   if (x11PreviousExtErrorHandler == 0)
+     x11PreviousExtErrorHandler = XSetExtensionErrorHandler(x11ExtErrorHandler);
+#endif
+#endif
 }
 
 
@@ -237,6 +260,9 @@ InitializeQT(int &argc, char ** argv)
          style = arg+6;
      }
 
+   // QT and X11 error handlers
+   InstallErrorHandlers();
+
    // initialize application
    QApplication::setColorSpec( QApplication::ManyColor );
    new QeApplication(argc, argv);
@@ -278,7 +304,6 @@ InitializeQT(int &argc, char ** argv)
 #endif
   
    // Qt twiddles
-   InstallErrorHandlers();
    InstallLangTranslator();
    
 #ifdef QT1
