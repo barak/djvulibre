@@ -6129,7 +6129,7 @@ fi;
   if test x$QTDIR != xno ; then
     echo "$as_me:6130: checking for Qt root directory" >&5
 echo $ECHO_N "checking for Qt root directory... $ECHO_C" >&6
-    if test $x{QT_CFLAGS+set} != set -a $x{QT_LIBS+set} != set ; then
+    if test $x{QT_CFLAGS+set} != xset -a $x{QT_LIBS+set} != xset ; then
        ac_qt_dirs="/usr/lib/qt /usr/local /usr/X11R6 /usr"
        for n in /usr/lib/qt-2.* ; do test -d $n && ac_qt_dirs="$n $ac_qt_dirs" ; done
        ac_qt_dirs="$QTDIR /usr/lib/qt2 $ac_qt_dirs"

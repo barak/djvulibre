@@ -546,7 +546,7 @@ AC_DEFUN([AC_PATH_QT],
   # Resolve variables
   if test x$QTDIR != xno ; then
     AC_MSG_CHECKING([for Qt root directory])
-    if test $x{QT_CFLAGS+set} != set -a $x{QT_LIBS+set} != set ; then
+    if test $x{QT_CFLAGS+set} != xset -a $x{QT_LIBS+set} != xset ; then
        ac_qt_dirs="/usr/lib/qt /usr/local /usr/X11R6 /usr"
        for n in /usr/lib/qt-2.* ; do test -d $n && ac_qt_dirs="$n $ac_qt_dirs" ; done
        ac_qt_dirs="$QTDIR /usr/lib/qt2 $ac_qt_dirs"
