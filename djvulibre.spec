@@ -1,4 +1,4 @@
-%define release 1
+%define release 2
 %define version 3.5.5
 %define prefix %{?_prefix:%{_prefix}}%{!?_prefix:/usr}
 %define mandir %{?_mandir:%{_mandir}}%{!?_mandir:%{prefix}/man}
@@ -9,7 +9,7 @@ Name: djvulibre
 Version: %{version}
 Release: %{release}
 Copyright: GPL
-Group: Applications/Graphics
+Group: Applications/Publishing
 Source: http://prdownloads.sourceforge.net/djvu/djvulibre-%{version}.tar.gz
 BuildRoot: /var/tmp/djvulibre-root
 URL: http://djvu.sourceforge.net
