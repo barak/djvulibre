@@ -62,7 +62,7 @@ find %{buildroot}%{_libdir} -name "*.so*" -exec chmod 755 {} \;
 rm -rf doc/CVS 2>/dev/null || :
 
 # Compute file list
-find %{buildroot} -type f \
+find %{buildroot} \( -type f -o -type l \) \
 | sed -e 's:^%{buildroot}::' \
 | grep -v '^%{_mandir}/' \
 | grep -v '^%{_datadir}/djvu/osi/' \
@@ -117,7 +117,6 @@ if test -x /usr/bin/update-menus; then /usr/bin/update-menus; fi
 %lang(de) %{_mandir}/de*
 
 %changelog
-* Sat Jul 24 2004 Leon Bottou <leon@bottou.org> 3.5.14-1
 * Thu Jun 17 2004 Leon Bottou <leon@bottou.org> 3.5.13-4
 - changed runtime generation of file list.
 * Mon May 31 2004 Leon Bottou <leon@bottou.org> 3.5.13-3
