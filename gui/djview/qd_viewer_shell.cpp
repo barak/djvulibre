@@ -143,11 +143,12 @@ QDViewerShell::openURL(const GURL & url)
       char ch;
       GP<ByteStream> gstr=ByteStream::create(GURL::Filename::UTF8(fname),"rb");
       gstr->read(&ch, 1);
-   } catch(...)
+   } 
+   catch(...)
      {
-       G_THROW(ERR_MSG("QDViewerShell.open_file_fail") 
-               + GUTF8String("\t")
-               + fname );
+       QCString msg = tr("Failed to open file '%1' for reading").
+         arg(QStringFromGString(fname)).utf8();
+       G_THROW((const char*)msg);
      }
    
    if (fname!="-") 
@@ -224,7 +225,8 @@ QDViewerShell::help(void)
   GURL helpurl = getDjVuDataFile(DJVIEW_HELP_DJVU);
   if (helpurl.is_empty() )
     {
-      QString mesg=tr("Failed to locate file '")+DJVIEW_HELP_DJVU+"'";
+      QString mesg = 
+        tr("Failed to locate file '%1'").arg(DJVIEW_HELP_DJVU);
       showError(this, tr("DjVu Error"), mesg);
     }
   else
@@ -346,8 +348,8 @@ QDViewerShell::slotGetURLTimeout(void)
 	    } catch(...)
 	    {
 		  // Don't want to report 'file not found' errors
-	       QString mesg=tr("Failed to open file '")
-                 + QStringFromGString(fname) + "'";
+	       QString mesg = tr("Failed to open file '%1'")
+                 .arg( QStringFromGString(fname) );
 	       slotShowStatus(mesg);
 	       DEBUG_MSG("Failed to open url=" << gu_url << "\n");
 	       return;
@@ -543,7 +545,7 @@ QDViewerShell::QDViewerShell(QWidget * parent, const char * name)
    help_pane->insertItem(tr("&About"), IDC_ABOUT_DEJAVU);
    GURL helpurl = getDjVuDataFile(DJVIEW_HELP_DJVU);
    if (! helpurl.is_empty() )
-     help_pane->insertItem("&Help", IDC_HELP_DEJAVU);
+     help_pane->insertItem(tr("&Help"), IDC_HELP_DEJAVU);
    connect(help_pane, SIGNAL(aboutToShow(void)), this, SLOT(slotAboutToShowMenu(void)));
    connect(help_pane, SIGNAL(activated(int)), this, SLOT(slotMenuCB(int)));
    menu->insertItem(tr("&Help"), help_pane);

@@ -399,11 +399,11 @@ init_qt.o: ../../gui/shared/QT/init_qt.cpp ../../config.h \
   ../../libdjvu/GBitmap.h ../../gui/shared/utils/djvu_file_cache.h \
   ../../libdjvu/DjVuFileCache.h ../../libdjvu/DjVuFile.h \
   ../../libdjvu/DjVuInfo.h ../../libdjvu/DjVuPalette.h \
-  ../../libdjvu/DjVuPort.h ../../gui/shared/QT/init_qt.h \
-  ../../gui/shared/utils/prefs.h /usr/X11R6/include/X11/Xlib.h \
-  /usr/X11R6/include/X11/X.h /usr/X11R6/include/X11/Xfuncproto.h \
-  /usr/X11R6/include/X11/Xosdefs.h /usr/X11R6/include/X11/Xutil.h \
-  /usr/X11R6/include/X11/extensions/Xext.h
+  ../../libdjvu/DjVuPort.h ../../gui/indep/utils/execdir.h \
+  ../../gui/shared/QT/init_qt.h ../../gui/shared/utils/prefs.h \
+  /usr/X11R6/include/X11/Xlib.h /usr/X11R6/include/X11/X.h \
+  /usr/X11R6/include/X11/Xfuncproto.h /usr/X11R6/include/X11/Xosdefs.h \
+  /usr/X11R6/include/X11/Xutil.h /usr/X11R6/include/X11/extensions/Xext.h
 qd_messenger.o: ../../gui/shared/QT/qd_messenger.cpp ../../config.h \
   ../../gui/shared/QT/qd_messenger.h ../../libdjvu/GThreads.h \
   ../../libdjvu/DjVuGlobal.h ../../libdjvu/GException.h \
@@ -800,8 +800,10 @@ main.o: main.cpp ../../config.h ../../libdjvu/DjVuGlobal.h \
   ../../gui/shared/QT/qd_pane.h ../../libdjvu/DjVuText.h \
   ../../gui/shared/res/saved_data.h \
   ../../gui/shared/QT/qd_port.h ../../gui/shared/QT/qd_messenger.h \
-  ../../gui/shared/res/djvu_base_res.h \
+  ../../gui/shared/res/djvu_base_res.h ../../libdjvu/DjVuMessage.h \
+  ../../libdjvu/DjVuMessageLite.h \
   ../../gui/shared/utils/djvu_file_cache.h ../../libdjvu/DjVuFileCache.h \
   ../../gui/indep/QT/qlib.h \
   ../../gui/indep/utils/execdir.h \
-  mime_check.h ../../gui/shared/res/version.h
+  mime_check.h ../../gui/shared/res/version.h main_moc.inc \
+  

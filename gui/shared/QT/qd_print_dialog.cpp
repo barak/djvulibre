@@ -97,13 +97,13 @@
 #include <signal.h>
 
 static const QString print_page_str
-  = QT_TRANSLATE_NOOP("QDPrintDialog","current page");
+  = QT_TRANSLATE_NOOP("QDPrintDialog","of the current page");
 static const QString print_custom_str
-  = QT_TRANSLATE_NOOP("QDPrintDialog","custom pages");
+  = QT_TRANSLATE_NOOP("QDPrintDialog","of the custom pages");
 static const QString print_doc_str
-  = QT_TRANSLATE_NOOP("QDPrintDialog","document");
+  = QT_TRANSLATE_NOOP("QDPrintDialog","of the document");
 static const QString print_win_str
-  = QT_TRANSLATE_NOOP("QDPrintDialog","window");
+  = QT_TRANSLATE_NOOP("QDPrintDialog","of the window");
 
 static const QString fit_page_str
   = QT_TRANSLATE_NOOP("QDPrintDialog","Scale to Fit");
@@ -481,7 +481,10 @@ QDPrintDialog::done(int rc)
           int what=str2id(what_menu->currentText());
           QString customPages=custompages_text->text();
           if (what==PRINT_CUSTOM && customPages.length()==0)
-	    G_THROW("Empty \"Custom pages\" list specified.");
+            {
+              QCString msg = tr("No custom pages were specified").utf8();
+              G_THROW((const char*)msg);
+            }
           
           if (file_butt->isChecked())
             {
@@ -489,9 +492,10 @@ QDPrintDialog::done(int rc)
               struct stat st;
               if (stat(fname, &st)>=0)
                 if (QMessageBox::warning(this, "DjVu",
-                      tr("File '") + fname + tr("' already exists.\n") +
-                      tr("Are you sure you want to overwrite it?"),
-                      tr("&Yes"), tr("&No"), 0, 0, 1))
+                                         tr("File '%1' already exists.\n"
+                                            "Are you sure you want to overwrite it?")
+                                         .arg(fname),
+                                         tr("&Yes"), tr("&No"), 0, 0, 1))
 		  return;
             }
           
@@ -559,8 +563,11 @@ QDPrintDialog::done(int rc)
 #endif
               // Open pipe to command
               fdesc = popen((const char*)printCommand, "w");
-              if (!fdesc)
-                G_THROW("Cannot launch specified print command");
+              if (! fdesc)
+                {
+                  QCString msg = tr("Cannot launch specified print command").utf8();
+                  G_THROW((const char*)msg);
+                }
               pstr = ByteStream::create(fdesc, "wb", false);
            }
 
@@ -775,8 +782,6 @@ QDPrintDialog::QDPrintDialog(const GP<DjVuDocument> & _doc,
    copies_spin->setSuffix(tr(" copies"));
    copies_spin->setValue(1);
    bg_hlay->addWidget(copies_spin);
-   label=new QLabel(tr("of the"), bg);
-   bg_hlay->addWidget(label);
    what_menu=new QComboBox(FALSE, bg, "print_menu");
    bg_hlay->addWidget(what_menu);
    bg_hlay=new QHBoxLayout(bg_lay);
@@ -877,7 +882,7 @@ QDPrintDialog::QDPrintDialog(const GP<DjVuDocument> & _doc,
    vlay = new QVBoxLayout(start, 10);
 
    // *** Creating 'File format' frame 
-   bg=format_bg=new QButtonGroup("PostScript File format", start);
+   bg=format_bg=new QButtonGroup(tr("PostScript File format"), start);
    vlay->addWidget(bg);
    bg_lay=new QVBoxLayout(bg, 10);
    bg_lay->addSpacing(bg->fontMetrics().height());
@@ -885,7 +890,7 @@ QDPrintDialog::QDPrintDialog(const GP<DjVuDocument> & _doc,
    ps_butt=new QRadioButton(tr("&PostScript File (*.ps)"), 
                             bg, "ps_butt");
    bg_lay->addWidget(ps_butt);
-   eps_butt=new QRadioButton("&Encapsulated PostScript File (*.eps)", 
+   eps_butt=new QRadioButton(tr("&Encapsulated PostScript File (*.eps)"), 
                              bg, "eps_butt");
    bg_lay->addWidget(eps_butt);
 #ifndef QT1
@@ -1008,17 +1013,17 @@ QDPrintDialog::QDPrintDialog(const GP<DjVuDocument> & _doc,
                                 bg);
    bg_lay->addWidget(bk_mode_butt);
    hlay = new QHBoxLayout(bg_lay);
-   label = new QLabel("Each booklet contains",bg);
+   label = new QLabel(tr("Each booklet contains"),bg);
    hlay->addWidget(label);
    bk_max_spin = new QSpinBox(bg);
    bk_max_spin->setMinValue(0);
-   bk_max_spin->setPrefix(tr("at most "));
-   bk_max_spin->setSuffix(tr(" sheet(s)."));
+   bk_max_spin->setPrefix(tr("at most") + " ");
+   bk_max_spin->setSuffix(" " + tr("sheet(s)."));
    bk_max_spin->setSpecialValueText(tr("as many sheets as needed."));
    hlay->addWidget(bk_max_spin);
    hlay->addStretch(1);
    hlay = new QHBoxLayout(bg_lay);
-   label = new QLabel("Print",bg);
+   label = new QLabel(tr("Print"),bg);
    hlay->addWidget(label);
    bk_mode_menu = new QComboBox(false, bg, "bk_mode_menu");
    bk_mode_menu->insertItem(tr(recto_verso_str));

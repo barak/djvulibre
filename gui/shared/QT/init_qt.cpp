@@ -73,6 +73,7 @@
 #include "qlib.h"
 #include "qx_imager.h"
 #include "djvu_file_cache.h"
+#include "execdir.h"
 #include "init_qt.h"
 
 #include "prefs.h"
@@ -218,30 +219,26 @@ InstallLangTranslator(void)
     }
    if ( font != QApplication::font() ) 
      QApplication::setFont( font, TRUE );
+#endif
    // load language translation files
-   QString encoding = QFont::encodingName(char_set);
-   QString lang = "lang_"+encoding+".qm";
-#else
-   QString lang = "lang.qm";
-#endif
-   bool have_translation=false;
-   GList<GURL> paths = DjVuMessage::GetProfilePaths();
-   for(GPosition pos=paths; !have_translation && pos; ++pos)
+   GURL urla = getDjVuDataFile("qt.qm");
+   if (urla.is_file()) 
      {
-       const GURL::UTF8 url(GStringFromQString(lang),paths[pos]);
-       if(url.is_file())
-         {
-           lang=QStringFromGString(url.pathname());
-           have_translation=true;
-         }
+       QTranslator *trans = new QTranslator(qApp);
+       if (trans->load(QStringFromGString(urla.pathname())))
+         qApp->installTranslator(trans);
      }
-   if (!have_translation)
-     return false;
-   QTranslator *translator = new QTranslator(qApp);
-   if ( translator->load(lang) )
-     qApp->installTranslator(translator);
-#endif
+   GURL pn = GURL::Filename::UTF8(DjVuMessage::programname());
+   GURL urlb = getDjVuDataFile(pn.fname() + ".qm");
+   if (urlb.is_file())
+     {
+       QTranslator *trans = new QTranslator(qApp);
+       if (trans->load(QStringFromGString(urlb.pathname())))
+         qApp->installTranslator(trans);
+     }
    return true;
+#endif
+   return false;
 }
 
 

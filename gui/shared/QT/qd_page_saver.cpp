@@ -117,9 +117,9 @@ QDFileFormatDialog::QDFileFormatDialog(QWidget * parent, const char * name) :
 
    QVBoxLayout * vlay=new QVBoxLayout(start, 10, 5, "vlay");
 
-   QLabel * label=new QLabel(tr("It seems that contents of this page are currently ")+
-			       tr("scattered over more than one file. ")+
-			       tr("So you can now do either of the following:"), start);
+   QLabel * label=new QLabel(tr("It seems that contents of this page are "
+                                "scattered over more than one file.\n"
+			        "You have the following options:"), start);
    label->setMinimumWidth(300);
    label->setAlignment(WordBreak);
    vlay->addWidget(label);
@@ -133,31 +133,32 @@ QDFileFormatDialog::QDFileFormatDialog(QWidget * parent, const char * name) :
    separate_butt=new QRadioButton("", start, "separate_butt");
    separate_butt->setChecked(FALSE);
    glay->addWidget(separate_butt, 0, 0);
-   label=new QLabel(tr("Create all these files. This is useful if you plan ")+
-		     tr("to save more than one page and then to insert them ")+
-		     tr("into another document: the shared files will remain shared."),
-		     start, "separate_label");
+   label=new QLabel(tr("Create all these files. This is useful if you plan to "
+                       "save several page to insert them into another document. "
+                       "The shared files will remain shared."),
+                    start, "separate_label");
    label->setAlignment(WordBreak);
    glay->addWidget(label, 0, 1);
 
    bundled_butt=new QRadioButton("", start, "bundled_butt");
    bundled_butt->setChecked(TRUE);
    glay->addWidget(bundled_butt, 1, 0);
-   label=new QLabel(tr("Pack all these files into one bundle ")+
-		     tr("(so called BUNDLED format). This is convenient because ")+
-		     tr("you will have only one file and will still be able ")+
-		     tr("to split it into many when necessary."), start, "bundled_label");
+   label=new QLabel(tr("Pack all these files into one bundle "
+                       "(so called BUNDLED format). This is convenient because "
+                       "you will have only one file and will still be able "
+                       "to split it into many when necessary."), 
+                    start, "bundled_label");
    label->setAlignment(WordBreak);
    glay->addWidget(label, 1, 1);
 
    merged_butt=new QRadioButton("", start, "merged_butt");
    merged_butt->setChecked(FALSE);
    glay->addWidget(merged_butt, 2, 0);
-   label=new QLabel(tr("Merge chunks from all files and store them ")+
-		     tr("into one file. ")+
-		     tr("Use this if you need the simplest structure of the file ")+
-		     tr("and you do not plan to separate the chunks again."),
-		     start, "merged_label");
+   label=new QLabel(tr("Merge chunks from all files and store them "
+                       "into one file. Use this if you need the simplest "
+                       "structure of the file and you do not plan to separate "
+                       "the chunks again."),
+                    start, "merged_label");
    label->setAlignment(WordBreak);
    glay->addWidget(label, 2, 1);
 
@@ -204,24 +205,32 @@ QDFilesListDialog::QDFilesListDialog(const GP<DjVmDoc> & doc,
 {
    QWidget * start=startWidget();
    
-   setCaption(tr("DjVu: Files list"));
+   setCaption(tr("DjVu: File list"));
 
-   QVBoxLayout * vlay=new QVBoxLayout(start, 10, 5, "vlay");
+   QVBoxLayout *vlay=new QVBoxLayout(start, 10, 5, "vlay");
 
-   QString msg=tr("The following files will be created in directory \"")
-     + dname + "\":\n\n";
-   GP<DjVmDir> dir = doc->get_djvm_dir();
-   GPList<DjVmDir::File> files_list = dir->get_files_list();
-   for(GPosition pos=files_list;pos;++pos)
-      msg+="\""+QStringFromGString(files_list[pos]->get_save_name())+"\", ";
-
-   msg[msg.length()-2] = '.';
-   msg+=tr("\n\nAre you sure you want to proceed?\n");
-   
-   QLabel * label=new QLabel(msg, start);
+   QLabel *label=new QLabel(tr("The following files will be "
+                               "created in directory '%1'.")
+                            .arg(dname), 
+                            start);
    label->setMinimumWidth(300);
    label->setAlignment(WordBreak);
    vlay->addWidget(label);
+   
+   QListBox * rc = new QListBox(start, "files_list");
+   rc->setSelectionMode(QListBox::NoSelection);
+   rc->setColumnMode(QListBox::FitToWidth);
+   GP<DjVmDir> dir = doc->get_djvm_dir();
+   GPList<DjVmDir::File> files_list = dir->get_files_list();
+   for(GPosition pos=files_list;pos;++pos)
+     rc->insertItem(QStringFromGString(files_list[pos]->get_save_name()));
+   vlay->addSpacing(10);
+   vlay->addWidget(rc);
+   
+   QLabel *label2 = new QLabel(tr("Do you want to proceed?"),start);
+   vlay->addSpacing(10);
+   vlay->addWidget(label2);
+   vlay->addSpacing(10);
    
    QHBoxLayout * butt_lay=new QHBoxLayout(10);
    vlay->addLayout(butt_lay);
@@ -338,7 +347,7 @@ QDPageSaver::saveBundled(void)
    
    QeFileDialog fd(save_dir, filters[0], parent, "djvu_fd", TRUE);
    fd.setFilters((const char **) filters);
-   fd.setCaption(QeFileDialog::tr("Select DjVu page output file name..."));
+   fd.setCaption(QeFileDialog::tr("Select a name for the DjVu page..."));
    {
      GUTF8String gfname=GURL::expand_name(file_url.fname(),
                                           GStringFromQString(save_dir));
@@ -373,7 +382,7 @@ QDPageSaver::saveMerged(void)
    
    QeFileDialog fd(save_dir, filters[0], parent, "djvu_fd", TRUE);
    fd.setFilters((const char **) filters);
-   fd.setCaption(QeFileDialog::tr("Select DjVu page output file name..."));
+   fd.setCaption(QeFileDialog::tr("Select a name for the DjVu page..."));
    {
      GUTF8String gfname=GURL::expand_name(file_url.fname(),
                                           GStringFromQString(save_dir));
@@ -440,8 +449,10 @@ QDPageSaver::save(void)
    DEBUG_MAKE_INDENT(3);
 
    if (!djvu_file->is_all_data_present())
-      G_THROW("Cannot save page because not all data is available.");
-   
+     {
+       QCString msg = tr("Cannot save the page because data is missing.").utf8();
+       G_THROW((const char*)msg);
+     }
    int format=QDFileFormatDialog::MERGED;
 
       // First see if we have a choice of formats...

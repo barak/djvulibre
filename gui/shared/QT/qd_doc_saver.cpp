@@ -113,7 +113,7 @@ QDDocNameDialog::slotBrowse(void)
                                    GStringFromQString(doc_dir));
    QeFileDialog fd(doc_dir, filters[0], this, "djvu_fd", TRUE);
    fd.setFilters((const char **) filters);
-   fd.setCaption("Select DjVu document file name...");
+   fd.setCaption(tr("Select DjVu document file name..."));
    fd.setSelection(QStringFromGString(doc_full_name));
       
    if (fd.exec()==QDialog::Accepted) text->setText(fd.selectedFile());
@@ -131,11 +131,11 @@ QDDocNameDialog::done(int rc)
 	 GP<ByteStream> str=ByteStream::create(GURL::Filename::UTF8(fname),"rb");
 	 char ch;
 	 str->read(&ch, 1);
-	 GUTF8String mesg="File '"+fname+"' already exists.\n"
-				  "Are you sure you want to overwrite it?\n";
 	 if (QMessageBox::warning(this, "File already exists",
-				  QStringFromGString(mesg),
-				  "&Yes", "&No", 0, 0, 1)==1)
+                                  tr("File '%1' already exists.\n"
+                                     "Are you sure you want to overwrite it?\n")
+                                  .arg( QStringFromGString(fname)),
+				  tr("&Yes"), tr("&No"), 0, 0, 1)==1)
          {
            return;
          }
@@ -146,7 +146,8 @@ QDDocNameDialog::done(int rc)
       {
 	 GUTF8String fname=GStringFromQString(text->text());
 	 GP<ByteStream> str=ByteStream::create(GURL::Filename::UTF8(fname),"a");
-      } catch(const GException & exc)
+      } 
+      catch(const GException & exc)
       {
          QString qmesg(exc.get_cause());
 	 showError(this, "DjVu Error", qmesg);
@@ -162,7 +163,7 @@ QDDocNameDialog::QDDocNameDialog(GUTF8String message, GUTF8String doc_name,
 {
    QWidget * start=startWidget();
 
-   setCaption("Document file name");
+   setCaption(tr("DjVu document file name"));
 
    QVBoxLayout * vlay=new QVBoxLayout(start, 10, 5, "vlay");
 
@@ -172,7 +173,7 @@ QDDocNameDialog::QDDocNameDialog(GUTF8String message, GUTF8String doc_name,
 
    QHBoxLayout * hlay=new QHBoxLayout(vlay);
 
-   label=new QLabel("File name: ", start, "fname_label");
+   label=new QLabel(tr("File name: "), start, "fname_label");
    hlay->addWidget(label);
    label->setMaximumHeight(label->sizeHint().height());
 
@@ -180,15 +181,15 @@ QDDocNameDialog::QDDocNameDialog(GUTF8String message, GUTF8String doc_name,
    text->setText(QStringFromGString(doc_name));
    hlay->addWidget(text, 1);
 
-   QPushButton * browse_butt=new QPushButton("&Browse", start, "browse_butt");
+   QPushButton * browse_butt=new QPushButton(tr("&Browse"), start, "browse_butt");
    hlay->addWidget(browse_butt);
    browse_butt->setMaximumHeight(browse_butt->sizeHint().height());
    
    QHBoxLayout * butt_lay=new QHBoxLayout(vlay);
    butt_lay->addStretch(1);
-   QPushButton * ok_butt=new QPushButton("&OK", start, "ok_butt");
+   QPushButton * ok_butt=new QPushButton(tr("&OK"), start, "ok_butt");
    butt_lay->addWidget(ok_butt);
-   QPushButton * cancel_butt=new QPushButton("&Cancel", start, "cancel_butt");
+   QPushButton * cancel_butt=new QPushButton(tr("&Cancel"), start, "cancel_butt");
    butt_lay->addWidget(cancel_butt);
    ok_butt->setDefault(TRUE);
    ok_butt->setMaximumHeight(ok_butt->sizeHint().height());
@@ -228,19 +229,21 @@ QDSavedFilesDialog::QDSavedFilesDialog(const GP<DjVuDocument> & doc,
    QWidget * start=startWidget();
 
    QVBoxLayout * vlay=new QVBoxLayout(start, 10, 0, "vlay");
-   QString message = tr("This will create the following files");
+   QString message;
    if (doc->get_doc_type()==DjVuDocument::OLD_BUNDLED ||
-       doc->get_doc_type()==DjVuDocument::OLD_INDEXED)
-     message = message + tr(" (plus additional included files)");
-   message = message + tr(" into the directory '") 
-     + QStringFromGString(dir_name) + "'.";
+       doc->get_doc_type()==DjVuDocument::OLD_INDEXED   )
+     message = tr("This will create the following files "
+                  "(plus additional included files) "
+                  "into the directory '%1'.");
+   else
+     message = tr("This will create the following files "
+                  "into the directory '%1'.");
+
+   message = message.arg(QStringFromGString(dir_name));
    QLabel *label = new QLabel(message, start);
    label->setAlignment(AlignLeft | WordBreak);
    vlay->addWidget(label);
    vlay->addStrut(300);
-
-   label=new QLabel("Are you sure you want to do it?\n", start);
-   vlay->addWidget(label);
 
    QListBox * rc = new QListBox(start, "files_list");
    rc->setSelectionMode(QListBox::NoSelection);
@@ -266,13 +269,19 @@ QDSavedFilesDialog::QDSavedFilesDialog(const GP<DjVuDocument> & doc,
 	   rc->insertItem(QStringFromGString(gfname));
 	 }
      }
-   vlay->addWidget(rc);
    vlay->addSpacing(10);
+   vlay->addWidget(rc);
+
+   label=new QLabel(tr("Do you want to proceed?"), start);
+   vlay->addSpacing(10);
+   vlay->addWidget(label);
+   vlay->addSpacing(10);
+
    QHBoxLayout * butt_lay=new QHBoxLayout(vlay, 5);
    butt_lay->addStretch(1);
-   QPushButton * yes_butt=new QPushButton("&Yes", start, "yes_butt");
+   QPushButton * yes_butt=new QPushButton(tr("&Yes"), start, "yes_butt");
    butt_lay->addWidget(yes_butt);
-   QPushButton * no_butt=new QPushButton("&No", start, "no_butt");
+   QPushButton * no_butt=new QPushButton(tr("&No"), start, "no_butt");
    butt_lay->addWidget(no_butt);
    yes_butt->setDefault(TRUE);
    
@@ -286,7 +295,7 @@ QDSavedFilesDialog::QDSavedFilesDialog(const GP<DjVuDocument> & doc,
 void
 QDDocSaver::slotNotifyError(const GP<DjVuPort> &, const GUTF8String &msg)
 {
-   ::showError(parent, "DjVu Error", QStringFromGString(msg));
+   ::showError(parent, tr("DjVu Error"), QStringFromGString(msg));
 }
 
 void
@@ -336,12 +345,14 @@ QDDocSaver::save(void)
    {
       if (doc->get_pages_num()>1)
       {
-	 switch(QMessageBox::information(parent, "File format",
-					 "Would you like to save the document in\n"
-					 "BUNDLED format (one file) or in INDIRECT\n"
-					 "format (many files: ideal for web browsing)?\n",
-					 "&Bundled", "&Indirect", "&Cancel", 0, 2))
-	 {
+	 switch(QMessageBox::information(parent, tr("File format"),
+		     tr( "Would you like to save the document in\n"
+                         "BUNDLED format (one file) or in INDIRECT\n"
+                         "format (many files: ideal for web browsing)?\n"),
+		     tr("&Bundled"), 
+                     tr("&Indirect"), 
+                     tr("&Cancel"), 0, 2))
+           {
 	    case 0: saveas_bundled=true; break;
 	    case 1: saveas_bundled=false; break;
 	    default: return;
@@ -375,10 +386,10 @@ QDDocSaver::save(void)
 
       GUTF8String message;
       if (saveas_bundled) 
-        message="Please enter the document file name in the field below.";
+        message=tr("Please enter the document file name.");
       else 
-        message="Please enter the name of the top-level file in the field below.\n"
-          "All other files will be saved in the same directory.";
+        message=tr("Please enter the name of the main document file.\n"
+                   "All other files will be saved in the same directory.");
       bool conflict=false;
       do
       {
@@ -410,11 +421,10 @@ QDDocSaver::save(void)
          }
          if (conflict)
          {
-           showError(parent, "DjVu Error",
-           QString("The chosen name coincides with the name of\n"
-             "one of the files composing this multipage document.\n"
-             "\n"
-             "Please try again."));
+           showError(parent, tr("DjVu Error"),
+                     tr("The chosen name coincides with the name of\n"
+                        "one of the files composing this multipage document.\n"
+                        "Please choose another name."));
          }
       } while(conflict); // IS THIS REALLY WHAT IS NEEDED HERE????
 
@@ -429,9 +439,11 @@ QDDocSaver::save(void)
 	    // to estimate %% completed
 	 GP<DataPool> data_pool=doc->get_init_data_pool();
 	 
-	 progress_dialog=new QProgressDialog("Please wait while the file is being downloaded...        ",
-					     "&Cancel", 100, parent, "progress_dialog", FALSE);
-	 progress_dialog->setCaption("Please wait");
+	 progress_dialog=new QProgressDialog(tr("Please wait while the file "
+                                                "is being downloaded...        "),
+					     tr("&Cancel"), 100, parent, 
+                                             "progress_dialog", FALSE);
+	 progress_dialog->setCaption(tr("Please wait"));
 	 progress_dialog->setProgress(0);
 	 progress_dialog->setMinimumDuration(0);
 	 progress_dialog->show();
@@ -448,7 +460,7 @@ QDDocSaver::save(void)
 	    if (data_pool->is_eof())
 	    {
 	       ::showInfo(parent, "DjVu",
-			  "Data stream from Netscape has been stopped.");
+			  tr("Data stream from Netscape has been stopped."));
 	       break;
 	    }
 	 }
@@ -466,9 +478,11 @@ QDDocSaver::save(void)
 	 DjVuPort::get_portcaster()->add_route(doc, port.getPort());
 	 for(int i=0;i<4;i++) preloadNextPage();
 
-	 progress_dialog=new QProgressDialog("Please wait while all pages are being loaded...        ",
-					     "&Cancel", 100, parent, "progress_dialog", FALSE);
-	 progress_dialog->setCaption("Please wait");
+	 progress_dialog=new QProgressDialog(tr("Please wait while all pages "
+                                                "are being loaded...        "),
+					     tr("&Cancel"), 100, parent, 
+                                             "progress_dialog", FALSE);
+	 progress_dialog->setCaption(tr("Please wait"));
 	 progress_dialog->setMinimumDuration(0);
 	 progress_dialog->setProgress(0);
 	 QeDialog::makeTransient(progress_dialog, parent);

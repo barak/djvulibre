@@ -329,12 +329,6 @@ DjVuMessage::GetProfilePaths(void)
 
     GPosition pos;
 #ifndef UNDER_CE
-    const GUTF8String oldlocale(setlocale(LC_CTYPE,0));
-    GUTF8String defaultlocale(setlocale(LC_CTYPE,""));
-    if(oldlocale != defaultlocale)
-    {
-      setlocale(LC_CTYPE,(const char *)oldlocale);
-    }
     GList< GMap<GUTF8String,GP<lt_XMLTags> > > localemaps;
     for(pos=paths;pos;++pos)
     {
@@ -360,7 +354,17 @@ DjVuMessage::GetProfilePaths(void)
     } 
     GList<GURL> localepaths;
     GList<GURL> osilocalepaths;
-    for(int loop=0;loop++<2;)
+
+    // Need to do it the right way!
+    GUTF8String defaultlocale = getenv("LANGUAGE");
+    if (! defaultlocale) 
+      {
+        const GUTF8String oldlocale(setlocale(LC_MESSAGES,0));
+        defaultlocale = setlocale(LC_MESSAGES,"");
+        setlocale(LC_MESSAGES,(const char *)oldlocale);
+      }
+    // Unfathomable search.
+    for(int loop=0; loop<2; loop++)
     {
       static const char sepchars[]=" _.@";
       const char *p=sepchars+sizeof(sepchars)-1;
@@ -376,30 +380,23 @@ DjVuMessage::GetProfilePaths(void)
             const GMap<GUTF8String,GP<lt_XMLTags> > &localemap=localemaps[pos];
             GPosition pos=localemap.contains(sublocale);
             if(!pos)
-            {
               pos=localemap.contains(downcasesublocale);
-             
-            }
             if(pos)
             {
-              const GMap<GUTF8String,GUTF8String> &args
-                =localemap[pos]->get_args();
-              pos=args.contains(srcstring);
-              if(pos)
+              const GMap<GUTF8String,GUTF8String>&args
+                = localemap[pos]->get_args();
+              pos = args.contains(srcstring);
+              if (pos)
               {
                 const GUTF8String src(args[pos]);
                 for(pos=paths;pos;++pos)
                 {
                   path=GURL::UTF8(src,paths[pos]);
                   if(path.is_dir())
-                  {
                     localepaths.append(path);
-                  }
                   path=GURL::UTF8(GUTF8String(opensourcedir)+"/"+src,paths[pos]);
                   if(path.is_dir())
-                  {
                     osilocalepaths.append(path);
-                  }
                 }
               }
               // We don't need to check anymore language files.
@@ -425,30 +422,24 @@ DjVuMessage::GetProfilePaths(void)
           }
         }
       } while(p-- != sepchars);
-      if((GPosition)localepaths)
+      if((GPosition) localepaths)
         break;
       defaultlocale="C";
     }
     for(pos=localepaths;pos;++pos)
-    {
       appendPath(localepaths[pos],pathsmap,realpaths);
-    }
 #endif
     for(pos=paths;pos;++pos)
-    {
       appendPath(paths[pos],pathsmap,realpaths);
-    }
 #ifndef UNDER_CE
     for(pos=osilocalepaths;pos;++pos)
-    {
       appendPath(osilocalepaths[pos],pathsmap,realpaths);
-    }
 #endif
     for(pos=paths;pos;++pos)
-    {
-      path=GURL::UTF8(opensourcedir,paths[pos]);
-      appendPath(path,pathsmap,realpaths);
-    }
+      {
+        path=GURL::UTF8(opensourcedir,paths[pos]);
+        appendPath(path,pathsmap,realpaths);
+      }
   }
   return realpaths;
 }
