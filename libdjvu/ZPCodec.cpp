@@ -68,9 +68,7 @@
 #include "ByteStream.h"
 #include "GException.h"
 #include <stdlib.h>
-#ifndef UNDER_CE
 #include <assert.h>
-#endif
 #include <math.h>
 #include <stdio.h>
 
@@ -735,10 +733,8 @@ ZPCodec::create(GP<ByteStream> gbs, const bool encoding, const bool djvucompat)
 void 
 ZPCodec::Decode::init(void)
 {
-#ifndef UNDER_CE
   assert(sizeof(unsigned int)==4);
   assert(sizeof(unsigned short)==2);
-#endif
   a = 0;
   /* Read first 16 bits of code */
   if (! bs->read((void*)&byte, 1))
@@ -976,10 +972,8 @@ ZPCodec::decode_sub_nolearn(int mps, unsigned int z)
 void 
 ZPCodec::Encode::init(void)
 {
-#ifndef UNDER_CE
   assert(sizeof(unsigned int)==4);
   assert(sizeof(unsigned short)==2);
-#endif
   a = 0;
   scount = 0;
   byte = 0;
@@ -1047,10 +1041,8 @@ ZPCodec::zemit(int b)
     case 0:
       nrun += 1;
       break;
-#ifndef UNDER_CE
     default:
       assert(0);
-#endif
     }
   /* Code bit counter */
 #ifdef ZPCODEC_BITCOUNT
