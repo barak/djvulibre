@@ -154,6 +154,41 @@ You can directly use the above
 .SM URL
 and save a round trip with the web server.
 
+.SH ACCESS CONTROL
+
+Program
+.BR djvuserve ,
+like many
+.SM CGI
+programs, 
+bypasses a number of access protections established in a web server.
+Assume for instance that your web site contains DjVu files protected by a
+password.  
+Program
+.B djvuserve
+knows nothing about this protection and will happily serve
+any DjVu file associated with a valid
+.SM URL.
+
+Access control with 
+.B djvuserve 
+can be implemented by first remembering that the web server 
+always executes program 
+.B djvuserve
+via shell script
+.IB /var/www/cgi\(enbin/ djvuserve.
+
+This script can decide to execute the real program
+.B djvuserve
+on the basis of the target filename available in 
+the environment variable
+.SM PATH_TRANSLATED.  
+
+There can be several such scripts providing access to various 
+collections of DjVu files.  Each of these scripts can be 
+password protected using the usual methods supported by
+your web server.
+
 .SH CREDITS
 This program was written by Leon Bottou <leonb@users.sourceforge.com>.
 
