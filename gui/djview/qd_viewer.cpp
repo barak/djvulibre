@@ -181,7 +181,10 @@ QDViewer::PluginData::parsePair(const GUTF8String &qname_in,
             toolbaropts |= OverrideFlags::TOOLBAR_AUTO;
           else if (key == "always" && !plus && !minus)
             toolbaropts |= OverrideFlags::TOOLBAR_ALWAYS;
-          else if (key=="fore" || key=="back" || key=="color" || key=="bw")
+          else if (key=="fore" || key=="back" || 
+                   key=="color" || key=="bw" ||
+                   key=="fore_button" || key=="back_button" || 
+                   key=="color_button" || key=="bw_button")
             set_reset(toolbaropts, plus, minus, OverrideFlags::TOOLBAR_NO_DISPCOMBO);
           else if (key=="rescombo")
             set_reset(toolbaropts, plus, minus, OverrideFlags::TOOLBAR_NO_RESCOMBO);
@@ -205,9 +208,9 @@ QDViewer::PluginData::parsePair(const GUTF8String &qname_in,
             set_reset(toolbaropts, plus, minus, OverrideFlags::TOOLBAR_NO_PAGECOMBO);
           else if (key=="backforw")
             set_reset(toolbaropts, plus, minus, OverrideFlags::TOOLBAR_NO_BACKFORW);
-          else if (key=="firstlast")
+          else if (key=="firstlast" || key=="firstlastpage" )
             set_reset(toolbaropts, plus, minus, OverrideFlags::TOOLBAR_NO_FIRSTLAST);
-          else if (key=="prevnext")
+          else if (key=="prevnext" || key=="prevnextpage" ) 
             set_reset(toolbaropts, plus, minus, OverrideFlags::TOOLBAR_NO_PREVNEXT);
           if (npos < (int)str.length())
             {
