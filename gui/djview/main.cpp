@@ -229,7 +229,7 @@ main(int argc, char ** argv)
           else if (!strcmp(arg,"-page") && i<argc-1)
             {
               if (page_num)
-                DjVuPrintError(QDJView::tr("djview: "
+                DjVuPrintError(QDJView::tr("djview: warning: "
                                   "duplicate page specification\n"));
               page_num = atoi(argv[++i]);
               continue;

@@ -224,10 +224,13 @@ QDFilesListDialog::QDFilesListDialog(const GP<DjVmDoc> & doc,
    GPList<DjVmDir::File> files_list = dir->get_files_list();
    for(GPosition pos=files_list;pos;++pos)
      rc->insertItem(QStringFromGString(files_list[pos]->get_save_name()));
+   vlay->addSpacing(10);
    vlay->addWidget(rc);
    
-   QLabel *label2 = new QLabel(tr("Are you sure you want to proceed?\n"),start);
+   QLabel *label2 = new QLabel(tr("Do you want to proceed?"),start);
+   vlay->addSpacing(10);
    vlay->addWidget(label2);
+   vlay->addSpacing(10);
    
    QHBoxLayout * butt_lay=new QHBoxLayout(10);
    vlay->addLayout(butt_lay);

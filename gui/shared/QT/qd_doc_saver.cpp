@@ -245,9 +245,6 @@ QDSavedFilesDialog::QDSavedFilesDialog(const GP<DjVuDocument> & doc,
    vlay->addWidget(label);
    vlay->addStrut(300);
 
-   label=new QLabel(tr("Are you sure you want to do this?\n"), start);
-   vlay->addWidget(label);
-
    QListBox * rc = new QListBox(start, "files_list");
    rc->setSelectionMode(QListBox::NoSelection);
    rc->setColumnMode(QListBox::FitToWidth);
@@ -272,8 +269,14 @@ QDSavedFilesDialog::QDSavedFilesDialog(const GP<DjVuDocument> & doc,
 	   rc->insertItem(QStringFromGString(gfname));
 	 }
      }
-   vlay->addWidget(rc);
    vlay->addSpacing(10);
+   vlay->addWidget(rc);
+
+   label=new QLabel(tr("Do you want to proceed?"), start);
+   vlay->addSpacing(10);
+   vlay->addWidget(label);
+   vlay->addSpacing(10);
+
    QHBoxLayout * butt_lay=new QHBoxLayout(vlay, 5);
    butt_lay->addStretch(1);
    QPushButton * yes_butt=new QPushButton(tr("&Yes"), start, "yes_butt");

@@ -403,8 +403,7 @@ You have the following options:</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Are you sure you want to proceed?
-</source>
+        <source>Do you want to proceed?</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -508,11 +507,6 @@ Options:
     <message>
         <source>     -fix                    - fix configuration of Netscape helpers
 
-</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>djview: duplicate page specification
 </source>
         <translation type="unfinished"></translation>
     </message>
@@ -680,22 +674,6 @@ Would  you like to update these files now?</source>
 <context>
     <name>QDPrintDialog</name>
     <message>
-        <source>current page</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>custom pages</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>document</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>window</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>Scale to Fit</source>
         <translation type="unfinished"></translation>
     </message>
@@ -763,10 +741,6 @@ automatic color matching.</source>
     </message>
     <message>
         <source> copies</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>of the</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
@@ -914,14 +888,6 @@ automatic color matching.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>at most </source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source> sheet(s).</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>as many sheets as needed.</source>
         <translation type="unfinished"></translation>
     </message>
@@ -982,16 +948,52 @@ automatic color matching.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>File &apos;%1 already exists.
-Are you sure you want to overwrite it?</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>Cannot launch specified print command</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <source>&amp;Encapsulated PostScript File (*.eps)</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>File &apos;%1&apos; already exists.
+Are you sure you want to overwrite it?</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>of the current page</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>of the custom pages</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>of the window</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>of the document</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>PostScript File format</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Each booklet contains</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Print</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>at most</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>sheet(s).</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -1006,16 +1008,15 @@ Are you sure you want to overwrite it?</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Are you sure you want to do this?
-</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>&amp;Yes</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <source>&amp;No</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Do you want to proceed?</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
