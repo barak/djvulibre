@@ -8,4 +8,6 @@ NEW IN VERSION 3.5.2
 
 NEW IN VERSION 3.5.1
 --------------------
-- Initial release
+- Initial release with: 
+  man pages, bug fixes, autoconf based build system,
+  more portable browser plugin, djvused, etc. 
