@@ -555,11 +555,7 @@ GStringRep::UCS4toNative(
       break;
     }
     ptr[i]=0;
-//    if((w0&~0x7f))
-//    {
-//      fprintf(stderr,"converted %lu to %s\n",w0,(char *)ptr);
-//    }
-    ptr+=i;
+    ptr += i;
   }
   ptr[0]=0;
   return ptr;
@@ -2113,29 +2109,34 @@ GStringRep::UCS4toUTF8(const unsigned long w,unsigned char *ptr)
   if(w <= 0x7f)
   {
     *ptr++ = (unsigned char)w;
-  }else if(w <= 0x7ff)
+  }
+  else if(w <= 0x7ff)
   {
     *ptr++ = (unsigned char)((w>>6)|0xC0);
     *ptr++ = (unsigned char)((w|0x80)&0xBF);
-  }else if(w <= 0xFFFF)
+  }
+  else if(w <= 0xFFFF)
   {
     *ptr++ = (unsigned char)((w>>12)|0xE0);
     *ptr++ = (unsigned char)(((w>>6)|0x80)&0xBF);
     *ptr++ = (unsigned char)((w|0x80)&0xBF);
-  }else if(w <= 0x1FFFFF)
+  }
+  else if(w <= 0x1FFFFF)
   {
     *ptr++ = (unsigned char)((w>>18)|0xF0);
     *ptr++ = (unsigned char)(((w>>12)|0x80)&0xBF);
     *ptr++ = (unsigned char)(((w>>6)|0x80)&0xBF);
     *ptr++ = (unsigned char)((w|0x80)&0xBF);
-  }else if(w <= 0x3FFFFFF)
+  }
+  else if(w <= 0x3FFFFFF)
   {
     *ptr++ = (unsigned char)((w>>24)|0xF8);
     *ptr++ = (unsigned char)(((w>>18)|0x80)&0xBF);
     *ptr++ = (unsigned char)(((w>>12)|0x80)&0xBF);
     *ptr++ = (unsigned char)(((w>>6)|0x80)&0xBF);
     *ptr++ = (unsigned char)((w|0x80)&0xBF);
-  }else if(w <= 0x7FFFFFF)
+  }
+  else if(w <= 0x7FFFFFFF)
   {
     *ptr++ = (unsigned char)((w>>30)|0xFC);
     *ptr++ = (unsigned char)(((w>>24)|0x80)&0xBF);
@@ -2143,17 +2144,10 @@ GStringRep::UCS4toUTF8(const unsigned long w,unsigned char *ptr)
     *ptr++ = (unsigned char)(((w>>12)|0x80)&0xBF);
     *ptr++ = (unsigned char)(((w>>6)|0x80)&0xBF);
     *ptr++ = (unsigned char)((w|0x80)&0xBF);
-  }else
-  {  // We code the illegal character into the string anyway...
-    const unsigned char winv=(unsigned int)(-1)-w;
-    if(winv<=0xff)
-    {
-      *ptr++ = winv;
-    }else
-    {
-      UCS4toUTF8(winv,ptr);
-    }
-//    *ptr++ = 0;
+  }
+  else
+  { 
+    *ptr++ = '?';
   }
   return ptr;
 }
