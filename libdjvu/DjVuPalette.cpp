@@ -406,7 +406,7 @@ DjVuPalette::color_to_index_slow(const unsigned char *bgr)
   // Store in pmap
   if (pmap && pmap->size()<0x8000)
     {
-      int key = (bgr[0]<<16)|(bgr[1]<<8)|(bgr[0]);
+      int key = (bgr[0]<<16)|(bgr[1]<<8)|(bgr[2]);
       (*pmap)[key] = found;
     }
   // Return
