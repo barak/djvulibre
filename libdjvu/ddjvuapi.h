@@ -98,7 +98,8 @@ typedef struct ddjvu_format_s   ddjvu_format_t;
 /* General conventions:
    Unless specified otherwise:
    - all strings use locale encoding,
-   - all errors are signaled with error event messages.
+   - all filenames are unencoded byte strings,
+   - all errors are signaled with error event messages,
    - all functions returning a pointer might return 
      a null pointer (this usually indicates an error 
      condition).
@@ -108,6 +109,11 @@ typedef struct ddjvu_format_s   ddjvu_format_t;
    - Please browse the file format specifications 
      <"doc/djvu3changes.txt"> and <"doc/djvu2spec.djvu">.
 */
+
+
+
+
+
    
 
 /* -------------------------------------------------- */
@@ -229,7 +235,7 @@ ddjvu_message_set_callback(ddjvu_context_t *context,
    specific kind of message.  Member <m_any> represents the
    information common to all kinds of messages.  Given a
    pointer <p> to a <djvu_message_t>, the message kind can
-   be accessed as <"p->m_any.kind">. */
+   be accessed as <"p->m_any.tag">. */
 
 
 /* ddjvu_message_tag_t ---
@@ -268,22 +274,13 @@ typedef struct ddjvu_message_any_s {
    Error messages are generated whenever the decoder or the
    DDJVU API encounters an error condition.  All errors are
    reported as error messages because they can occur
-   asynchronously.  Member <category> provides generic
-   information about the error.  Member <message> is a
-   specific error message.  Members <filename> and <lineno>
+   asynchronously.  Member <message> is the error message.
+   Members <function>, <filename> and <lineno>
    indicates the place where the error was detected.
 */
 
-typedef enum  { 
-  ddjvu_error_other,            /* generic decoding error */
-  ddjvu_error_api,              /* invalid argument */
-  ddjvu_error_eof,              /* premature end-of-file */
-  ddjvu_error_stop,             /* user initiated interruption */
-} ddjvu_error_t;
-
 struct ddjvu_message_error_s {  /* ddjvu_message_t::m_error */
   ddjvu_message_any_t   any;
-  ddjvu_error_t         category;
   const char           *message;
   const char           *function;
   const char           *filename;
@@ -331,10 +328,9 @@ struct ddjvu_message_status_s { /* ddjvu_message_t::m_status */
    The caller must then provide the raw data using
    <ddjvu_stream_write> and <ddjvu_stream_close>.
 
-   [VERIFY] URL encoding: Argument <url> is encoded
-   using the locale encoding. The URL encoding syntax (%2A%40..)
-   can be used within an URL to indicate UTF-8 encoded
-   characters. */
+   Localized characters in argument <url> should be in 
+   urlencoded utf-8 (like "%2A"). What is happening for non 
+   ascii characters is unclear (probably plain utf8). */
 
 DDJVUAPI ddjvu_document_t *
 ddjvu_document_create(ddjvu_context_t *context,
@@ -436,10 +432,9 @@ ddjvu_stream_write(ddjvu_document_t *document,
    particular stream.  Argument <stop> should most likely be
    set to <FALSE>. Setting argument <stop> to <TRUE>
    indicates that the user has interrupted the data transfer
-   (for instance by pressing the stop button in a web
-   browser) and that the decoding process should be stopped
-   as soon as feasible.  This will generate a flurry of 
-   <m_error> messages. */
+   (for instance by pressing the stop button of a browser)
+   and that the decoding threads should be stopped as 
+   soon as feasible. */
 
 DDJVUAPI void
 ddjvu_stream_close(ddjvu_document_t *document,
@@ -461,11 +456,32 @@ struct ddjvu_message_docinfo_s {
   ddjvu_message_any_t  any;
 };
 
+/* ddjvu_document_decoding_status ---
+   This function returns the status of the document header
+   decoding process. */
+   
+typedef enum {
+  DDJVU_DECODE_NOTSTARTED, /* decoding was not even started */
+  DDJVU_DECODE_STARTED,    /* decoding is in progress */
+  DDJVU_DECODE_OK,         /* decoding terminated successfully */
+  DDJVU_DECODE_FAILED,     /* decoding failed because of an error */
+  DDJVU_DECODE_STOPPED     /* decoding interrupted by user */
+} ddjvu_decoding_status_t;
+
+DDJVUAPI ddjvu_decoding_status_t
+ddjvu_document_decoding_status(ddjvu_document_t *doc);
+
+#define ddjvu_document_decoding_done(page) \
+    (ddjvu_document_decoding_status(page) >= DDJVU_DECODE_OK)
+
+#define ddjvu_document_decoding_error(page) \
+    (ddjvu_document_decoding_status(page) >= DDJVU_DECODE_FAILED)
+
 
 /* ddjvu_document_get_type ---
    Returns the type of a DjVu document.
-   Calling this function before receiving a <m_docinfo> message
-   always returns <DDJVU_DOCTYPE_UNKNOWN>. */
+   This function might return <DDJVU_DOCTYPE_UNKNOWN>
+   when called before receiving a <m_docinfo> message. */
 
 typedef enum {
   DDJVU_DOCTYPE_UNKNOWN=0,
@@ -482,8 +498,8 @@ ddjvu_document_get_type(ddjvu_document_t *document);
 
 /* ddjvu_document_get_pagenum ---
    Returns the number of pages in a DjVu document.
-   Calling this function before receiving a <m_docinfo> message
-   always returns zero. */
+   This function might return 1 when called 
+   before receiving a <m_docinfo> message */
    
 DDJVUAPI int
 ddjvu_document_get_pagenum(ddjvu_document_t *document);
@@ -499,10 +515,9 @@ ddjvu_document_get_pagenum(ddjvu_document_t *document);
    <ddjvu_page_t> object with this function.  Argument
    <pageno> indicates the page number, starting with page
    <0> to <pagenum-1>. This function can be called
-   immediately after creating the <ddjvu_document_t> object,
-   will return a valid <ddjvu_page_t> object, and will
-   initiate the data transfer and the decoding threads for
-   the specified page.  Various DDJVU messages will document
+   immediately after creating the <ddjvu_document_t> object.
+   It also initiates the data transfer and the decoding threads 
+   for the specified page.  Various messages will document
    the progress of these operations. Error messages will be
    generated if the page does not exists. */
 
@@ -596,14 +611,6 @@ struct ddjvu_message_chunk_s {     /* ddjvu_message_t::m_chunk */
 /* ddjvu_page_decoding_status ---
    This function returns the status of the page 
    decoding process. */
-
-typedef enum {
-  DDJVU_DECODE_NOTSTARTED, /* decoding was not even started */
-  DDJVU_DECODE_STARTED,    /* decoding is in progress */
-  DDJVU_DECODE_OK,         /* decoding terminated successfully */
-  DDJVU_DECODE_FAILED,     /* decoding failed because of an error */
-  DDJVU_DECODE_STOPPED     /* decoding interrupted by user */
-} ddjvu_decoding_status_t;
 
 DDJVUAPI ddjvu_decoding_status_t
 ddjvu_page_decoding_status(ddjvu_page_t *page);
@@ -770,10 +777,10 @@ ddjvu_page_render(ddjvu_page_t *page,
 /* ddjvu_format_create_truecolor ---
    Creates a <ddjvu_format_t> object describing a true color
    pixel format.  Argument <pixelsize> indicates the pixel
-   size in bytes and can take values <1>, <2>, <3> or <4>.
+   size in bytes and can take values <2>, <3> or <4>.
    Arguments <redmask>, <greenmask>, and <bluemask> are bit
    masks indicating the pixel bits for each color component.
-   Argument <top_to_bottom> is <TRUE> when the image rows
+   Argument <toptobottom> is <TRUE> when the image rows
    must be stored from top to bottom, and <FALSE> when the
    image rows must be stored from bottom to top. */
 
@@ -782,7 +789,7 @@ ddjvu_format_create_truecolor(int pixelsize,
                               unsigned long redmask,
                               unsigned long greenmask,
                               unsigned long bluemask,
-                              int top_to_bottom);
+                              int toptobottom);
 
 /* ddjvu_format_create_palette ---
    Creates a <ddjvu_format_t> object describing a pixel
@@ -790,13 +797,13 @@ ddjvu_format_create_truecolor(int pixelsize,
    indicates the pixel size in bytes and can take values
    <1>, <2> or <4>.  Argument <palette> indicate the pixel
    values for the 216 colors of a 6x6x6 web color cube.
-   Argument <top_to_bottom> is <TRUE> when the image rows
+   Argument <toptobottom> is <TRUE> when the image rows
    must be stored from top to bottom, and <FALSE> when the
    image rows must be stored from bottom to top. */
 DDJVUAPI ddjvu_format_t *
 ddjvu_format_create_palette(int pixelsize,
                             unsigned long palette[6*6*6],
-                            int top_to_bottom);
+                            int toptobottom);
 
 
 /* ddjvu_format_create_graylevel ---
@@ -804,7 +811,7 @@ ddjvu_format_create_palette(int pixelsize,
    pixel format. Argument <pixelsize> indicates the pixel
    size in bytes and must be <1>. Arguments <pixelwhite> and
    <pixelblack> give the pixel values for the pure white and
-   pure black colors.  Argument <top_to_bottom> is <TRUE>
+   pure black colors.  Argument <toptobottom> is <TRUE>
    when the image rows must be stored from top to bottom,
    and <FALSE> when the image rows must be stored from
    bottom to top. */
@@ -812,22 +819,20 @@ DDJVUAPI ddjvu_format_t *
 ddjvu_format_create_graylevel(int pixelsize,
                               int pixelwhite,
                               int pixelblack,
-                              int top_to_bottom);
+                              int toptobottom);
 
 
 /* ddjvu_format_create_bitonal ---
    Creates a <ddjvu_format_t> object describing a bit packed
-   black&white pixel format. Argument <lsb_to_msb> indicates
-   the pixel packing order.  Argument <min_is_white>
-   indicates the photometric interpretation. Argument
-   <top_to_bottom> is <TRUE> when the image rows must be
-   stored from top to bottom, and <FALSE> when the image
-   rows must be stored from bottom to top. */
+   black&white pixel format. Argument <lsbtomsb> indicates
+   the pixel packing order.  Argument <toptobottom> is 
+   <TRUE> when the image rows must be stored from top 
+   to bottom, and <FALSE> when the image rows must 
+   be stored from bottom to top. */
 
 DDJVUAPI ddjvu_format_t *
-ddjvu_format_create_bitonal(int lsb_to_msb,
-                            int min_is_white,
-                            int top_to_bottom);
+ddjvu_format_create_bitonal(int lsbtomsb,
+                            int toptobottom);
 
 
 /* ddjvu_format_set_gamma ---
