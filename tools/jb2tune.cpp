@@ -71,6 +71,8 @@
 #include "jb2tune.h"
 #include "jb2cmp.h"
 
+#include <math.h>
+
 #define REFINE_THRESHOLD 21
 
 // ----------------------------------------
@@ -183,13 +185,13 @@ compute_matchdata_lossy(JB2Image *jimg, MatchData *lib)
 }
 
 // Locate key lines in bitmap
+// (this needs more work)
 static int
 compute_line(GBitmap *bits)
 {
   int h = bits->rows();
   int w = bits->columns();
   GTArray<int> mass(h);
-  int totalmass = 0;
   int i, j, m;
   for (i=0; i<h; i++)
     {
@@ -200,24 +202,25 @@ compute_line(GBitmap *bits)
       for (m = w-j; m>0; m--)
         if (row[j+m-1])
           break;
-      totalmass += m;
       mass[i] = m;
     }
   i = -1;
   j = h;
   m = 0;
-  while (i < j && m * 6 < totalmass)
+  while (i < j && 6 * m <= tm)
     m += mass[++i];
   m = 0;
-  while (i < j && m * 6 < totalmass)
+  while (i < j && 6 * m <= tm)
     m += mass[--j];
-  return (i + i + i + j) / 4;
+  return (i + i + j) / 3;
 }
 
 // Reorganize jb2image on the basis of matchdata.
 // Also locate cross-coding buddys.
+// Flag lossy is not strictly necessary
+// but speeds up things when it is false.
 static void 
-tune_jb2image(JB2Image *jimg, MatchData *lib)
+tune_jb2image(JB2Image *jimg, MatchData *lib, bool lossy)
 {
   int nshapes = jimg->get_shape_count();
   // Loop on all shapes
@@ -225,21 +228,24 @@ tune_jb2image(JB2Image *jimg, MatchData *lib)
     {
       JB2Shape &jshp = jimg->get_shape(current);
       // Process substitutions.
-      int substitute = lib[current].match;
-      if (substitute >= 0)
+      if (lossy && !(jshp.userdata & JB2SHAPE_LOSSLESS))
         {
-          jshp.parent = substitute;
-          lib[current].bits = 0;
-          continue;
+          int substitute = lib[current].match;
+          if (substitute >= 0)
+            {
+              jshp.parent = substitute;
+              lib[current].bits = 0;
+              continue;
+            }
         }
-      // Process special shapes.
-      if (! lib[current].bits)
-        continue;
+      // Leave special shapes alone.
+      if (! jshp.bits) continue;
+      if (jshp.userdata & JB2SHAPE_SPECIAL) continue;
       // Compute matchdata info
       GBitmap &bitmap = *(jshp.bits);
       int rows = bitmap.rows();
-      int columns = bitmap.columns();
-      int best_score = (REFINE_THRESHOLD * rows * columns + 50) / 100;
+      int cols = bitmap.columns();
+      int best_score = (REFINE_THRESHOLD * rows * cols + 50) / 100;
       int black_pixels = lib[current].area;
       int closest = -1;
       // Search cross-coding buddy
@@ -253,23 +259,21 @@ tune_jb2image(JB2Image *jimg, MatchData *lib)
           if (! lib[candidate].bits) 
             continue;
           GBitmap &cross_bitmap = *lib[candidate].bits;
-          int cross_columns = cross_bitmap.columns();
+          int cross_cols = cross_bitmap.columns();
           int cross_rows = cross_bitmap.rows();
           // Prune
           if (abs (lib[candidate].area - black_pixels) > best_score) 
             continue;
           if (abs (cross_rows - rows) > 2) 
             continue;
-          if (abs (cross_columns - columns) > 2)
+          if (abs (cross_cols - cols) > 2)
             continue;
           // Compute alignment (these are always +1, 0 or -1)
-          int cross_column_adjust 
-            = (cross_columns  - cross_columns/2) - (columns - columns/2);
-          int cross_row_adjust 
-            = (cross_rows  - cross_rows/2) - (rows - rows/2);
+          int cross_col_adjust = (cross_cols-cross_cols/2)-(cols-cols/2);
+          int cross_row_adjust = (cross_rows-cross_rows/2)-(rows-rows/2);
           // Ensure adequate borders
-          cross_bitmap.minborder (2-cross_column_adjust);
-          cross_bitmap.minborder (2+columns-cross_columns+cross_column_adjust);
+          cross_bitmap.minborder (2-cross_col_adjust);
+          cross_bitmap.minborder (2+cols-cross_cols+cross_col_adjust);
           // Count pixel differences (including borders)
           int score = 0;
           unsigned char *p_row;
@@ -277,17 +281,19 @@ tune_jb2image(JB2Image *jimg, MatchData *lib)
           for (row = -1; row <= rows; row++) 
             {
               p_row = bitmap[row];
-              p_cross_row = cross_bitmap[row+cross_row_adjust] + cross_column_adjust;
-              for (column = -1; column <= columns; column++) 
-                if (p_row [column] != p_cross_row [column])
+              p_cross_row = cross_bitmap[row+cross_row_adjust];
+              p_cross_row += cross_col_adjust;
+              for (column = -1; column <= cols; column++) 
+                if (p_row[column] != p_cross_row[column])
                   score ++;
               if (score >= best_score)  // prune
                 break;
             }
-          if (score < best_score) {
-            best_score = score;
-            closest = candidate;
-          }
+          if (score < best_score) 
+            {
+              best_score = score;
+              closest = candidate;
+            }
         }
       // Decide what to do with the match.
       if (closest >= 0)
@@ -297,11 +303,11 @@ tune_jb2image(JB2Image *jimg, MatchData *lib)
           // Exact match ==> Substitution
           if (best_score == 0)
             lib[current].bits = 0;
-          // ISSUE: CROSS-IMPROVING
-          // When we decide not to do a substitution, we can slightly modify the
-          // current shape in order to make it closer to the matching shape,
-          // therefore improving the file size.  In fact there is a continuity
-          // between pure cross-coding and pure substitution...
+          // ISSUE: CROSS-IMPROVING.  When we decide not to do a substitution,
+          // we can slightly modify the current shape in order to make it
+          // closer to the matching shape, therefore improving the file size.
+          // In fact there is a continuity between pure cross-coding and pure
+          // substitution...
         }
     }
   
@@ -312,26 +318,27 @@ tune_jb2image(JB2Image *jimg, MatchData *lib)
       JB2Shape &jshp = jimg->get_shape(jblt->shapeno);
       if (lib[jblt->shapeno].bits==0 && jshp.parent>=0)
         {
-          // Compute coordinate adjustement
-          int columns = jshp.bits->columns();
+          // Compute coordinate adjustment.
+          int cols = jshp.bits->columns();
           int rows = jshp.bits->rows();
-          int cross_columns = lib[jshp.parent].bits->columns();
+          int cross_cols = lib[jshp.parent].bits->columns();
           int cross_rows = lib[jshp.parent].bits->rows();
-          int cross_column_adjust = 
-            (cross_columns  - cross_columns/2) - (columns - columns/2);
-          int cross_row_adjust = 
-            (cross_rows  - cross_rows/2) - (rows - rows/2);
+          int cross_col_adjust = (cross_cols-cross_cols/2)-(cols-cols/2);
+          int cross_row_adjust = (cross_rows-cross_rows/2)-(rows-rows/2);
           // Refine vertical adjustment
-          int baseline_adjust = 
-            compute_line(lib[jshp.parent].bits) -
-            compute_line(jshp.bits);
-          if (abs(baseline_adjust - cross_row_adjust) <= 1)
-            cross_row_adjust = baseline_adjust;
-          // Adjust blit record
-          jblt->shapeno = jshp.parent;
+          if (lossy)
+            {
+              int baseline_adjust = 
+                compute_line(lib[jshp.parent].bits) -
+                compute_line(jshp.bits);
+              if (abs(baseline_adjust - cross_row_adjust) <= 1)
+                cross_row_adjust = baseline_adjust;
+            }
+          // Update blit record.
           jblt->bottom -= cross_row_adjust;
-          jblt->left -= cross_column_adjust;
-          // Adjust shape record
+          jblt->left   -= cross_col_adjust;
+          jblt->shapeno = jshp.parent;
+          // Update shape record.
           jshp.bits = 0;
         }
     }
@@ -349,7 +356,7 @@ tune_jb2image_lossless(JB2Image *jimg)
   int nshapes = jimg->get_shape_count();
   GTArray<MatchData> lib(nshapes);
   compute_matchdata_lossless(jimg, lib);
-  tune_jb2image(jimg, lib);
+  tune_jb2image(jimg, lib, false);
 }
 
 
@@ -364,6 +371,6 @@ tune_jb2image_lossy(JB2Image *jimg)
   int nshapes = jimg->get_shape_count();
   GTArray<MatchData> lib(nshapes);
   compute_matchdata_lossy(jimg, lib);
-  tune_jb2image(jimg, lib);
+  tune_jb2image(jimg, lib, true);
 }
 
