@@ -1,0 +1,11 @@
+
+NEW IN VERSION 3.5.2
+--------------------
+- Added support for image/vnd.djvu mime type.
+- Configure changes for FreeBSD.
+- Bug fixes in djvused.
+
+
+NEW IN VERSION 3.5.1
+--------------------
+- Initial release
