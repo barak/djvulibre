@@ -9,6 +9,7 @@ NEW IN VERSION 3.5.10
 - Improved csepdjvu option -bgwhite.
 - Djview and djvups now can print booklets.
 - Djview main dialogs have a help button.
+- Annotation strings now recognize C escape sequences.
 
 NEW IN VERSION 3.5.9
 --------------------
