@@ -791,15 +791,20 @@ QDViewer::eventFilter(QObject *obj, QEvent *e)
 			return TRUE;
 		     }
 		     break;
-
+#ifdef QT1
 		  case Key_Hyper_L:
 		  case Key_Hyper_R:
 		  case Key_Pause:
-		     if (popup_menu) popup_menu->popup(QCursor::pos());
+#else
+                  case Key_Menu:
+		  case Key_Pause:
+#endif
+                     runPopupMenu(0);
 		     break;
 
 		  case '?':
-		     if (in_netscape) slotHelp();
+		     if (in_netscape) 
+                       slotHelp();
 		     break;
 
                   default:
