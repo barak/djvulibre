@@ -1406,8 +1406,9 @@ ddjvu_format_create(ddjvu_format_style_t style,
           return fmt_error(fmt);
         for (int k=0; k<6*6*6; k++)
           fmt->palette[k] = args[k];
+        int j=0;
         for(int i=0; i<6; i++)
-          for(int j=0; j<(i+1)*0x33 && j<256; j++)
+          for(; j < (i+1)*0x33 - 0x19 && j<256; j++)
             {
               fmt->rgb[0][j] = i * 6 * 6;
               fmt->rgb[1][j] = i * 6;
