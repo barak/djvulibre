@@ -5,7 +5,7 @@ dnl Define various installation paths
 dnl -------------------------------------------------------
 AC_DEFUN([AC_DEFINE_INSTALL_PATHS],[
   save_prefix="${prefix}"
-  save_exec_prefix="${prefix}"
+  save_exec_prefix="${exec_prefix}"
   test "x$prefix" = xNONE && prefix="$ac_default_prefix"
   test "x$exec_prefix" = xNONE && exec_prefix="$prefix"
   DIR_PREFIX="`eval echo \"$prefix\"`"
