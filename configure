@@ -7196,7 +7196,7 @@ else
   ;;
   *)
   as_save_IFS=$IFS; IFS=$PATH_SEPARATOR
-for as_dir in $QTDIR/bin:$PATH
+for as_dir in $QTDIR/bin $PATH
 do
   IFS=$as_save_IFS
   test -z "$as_dir" && as_dir=.
@@ -7241,7 +7241,7 @@ else
   ;;
   *)
   as_save_IFS=$IFS; IFS=$PATH_SEPARATOR
-for as_dir in $QTDIR/bin:$PATH
+for as_dir in $QTDIR/bin $PATH
 do
   IFS=$as_save_IFS
   test -z "$as_dir" && as_dir=.
