@@ -1291,7 +1291,7 @@ GBitmap::decode(unsigned char *runs)
   grle.resize(0);
   grlerows.resize(0);
   rlelength = 0;
-#ifndef NO_DEBUG
+#ifndef NDEBUG
   check_border();
 #endif
 }
@@ -1624,7 +1624,7 @@ GBitmap::rotate(int count)
   return newbitmap;
 }
 
-#ifndef NO_DEBUG
+#ifndef NDEBUG
 void 
 GBitmap::check_border() const
 {int col ;

@@ -871,19 +871,19 @@ DjVuANT::get_bg_color(GLParser & parser)
       DEBUG_MSG("color='" << color << "'\n");
       retval=cvt_color(color, 0xffffff);
     }
-#ifndef NO_DEBUG
+#ifndef NDEBUG
     if(retval == default_bg_color)
     {
       DEBUG_MSG("can't find any.\n");
     }
-#endif // NO_DEBUG
+#endif // NDEBUG
   } G_CATCH_ALL {} G_ENDCATCH;
-#ifndef NO_DEBUG
+#ifndef NDEBUG
   if(retval == default_bg_color)
   {
     DEBUG_MSG("resetting color to 0xffffffff (UNSPEC)\n");
   }
-#endif // NO_DEBUG
+#endif // NDEBUG
   return retval;
 }
 
@@ -924,19 +924,19 @@ DjVuANT::get_zoom(GLParser & parser)
         }
       }
     }
-#ifndef NO_DEBUG
+#ifndef NDEBUG
     if(retval == ZOOM_UNSPEC)
     {
       DEBUG_MSG("can't find any.\n");
     }
-#endif // NO_DEBUG
+#endif // NDEBUG
   } G_CATCH_ALL {} G_ENDCATCH;
-#ifndef NO_DEBUG
+#ifndef NDEBUG
   if(retval == ZOOM_UNSPEC)
   {
     DEBUG_MSG("resetting zoom to 0 (UNSPEC)\n");
   }
-#endif // NO_DEBUG
+#endif // NDEBUG
   return retval;
 }
 
@@ -962,19 +962,19 @@ DjVuANT::get_mode(GLParser & parser)
         }
       }
     }
-#ifndef NO_DEBUG
+#ifndef NDEBUG
     if(retval == MODE_UNSPEC)
     {
       DEBUG_MSG("can't find any.\n");
     }
-#endif // NO_DEBUG
+#endif // NDEBUG
   } G_CATCH_ALL {} G_ENDCATCH;
-#ifndef NO_DEBUG
+#ifndef NDEBUG
   if(retval == MODE_UNSPEC)
   {
     DEBUG_MSG("resetting mode to MODE_UNSPEC\n");
   }
-#endif // NO_DEBUG
+#endif // NDEBUG
   return retval;
 }
 
@@ -1038,19 +1038,19 @@ DjVuANT::get_hor_align(GLParser & parser)
         }
       }
     }
-#ifndef NO_DEBUG
+#ifndef NDEBUG
     if(retval == ALIGN_UNSPEC)
     {
       DEBUG_MSG("can't find any.\n");
     }
-#endif // NO_DEBUG
+#endif // NDEBUG
   } G_CATCH_ALL {} G_ENDCATCH;
-#ifndef NO_DEBUG
+#ifndef NDEBUG
   if(retval == ALIGN_UNSPEC)
   {
     DEBUG_MSG("resetting alignment to ALIGN_UNSPEC\n");
   }
-#endif // NO_DEBUG
+#endif // NDEBUG
   return retval;
 }
 
@@ -1077,19 +1077,19 @@ DjVuANT::get_ver_align(GLParser & parser)
         }
       }
     }
-#ifndef NO_DEBUG
+#ifndef NDEBUG
     if(retval == ALIGN_UNSPEC)
     {
       DEBUG_MSG("can't find any.\n");
     }
-#endif // NO_DEBUG
+#endif // NDEBUG
   } G_CATCH_ALL {} G_ENDCATCH;
-#ifndef NO_DEBUG
+#ifndef NDEBUG
   if(retval == ALIGN_UNSPEC)
   {
     DEBUG_MSG("resetting alignment to ALIGN_UNSPEC\n");
   }
-#endif // NO_DEBUG
+#endif // NDEBUG
   return retval;
 }
 

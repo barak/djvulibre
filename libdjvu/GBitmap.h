@@ -65,7 +65,7 @@
 
 
 #include "GSmartPointer.h"
-#ifndef NO_DEBUG
+#ifndef NDEBUG
 #include "GException.h"
 #endif
 
@@ -492,7 +492,7 @@ private:
   friend class DjVu_Stream;
   friend class DjVu_PixImage;
 public:
-#ifndef NO_DEBUG
+#ifndef NDEBUG
   void check_border() const;
 #endif
 };
@@ -569,7 +569,7 @@ GBitmap::operator[](int row)
 {
   if (!bytes) uncompress();
   if (row<0 || row>=nrows) {
-#ifndef NO_DEBUG
+#ifndef NDEBUG
     if (zerosize < bytes_per_row + border)
       G_THROW( ERR_MSG("GBitmap.zero_small") );
 #endif
@@ -583,7 +583,7 @@ GBitmap::operator[](int row) const
 {
   if (!bytes) ((GBitmap*)this)->uncompress();
   if (row<0 || row>=nrows) {
-#ifndef NO_DEBUG
+#ifndef NDEBUG
     if (zerosize < bytes_per_row + border)
       G_THROW( ERR_MSG("GBitmap.zero_small") );
 #endif

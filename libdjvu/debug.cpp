@@ -61,10 +61,6 @@
 # pragma implementation
 #endif
 
-#ifdef NO_DEBUG
-#undef NO_DEBUG
-#endif
-
 #include "debug.h"
 #include "GString.h"
 #include "ByteStream.h"

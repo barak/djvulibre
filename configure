@@ -2826,7 +2826,7 @@ fi;
      esac
    done
    if test x$ac_debug = xno ; then
-     OPTS=-DNO_DEBUG
+     OPTS=-DNDEBUG
 
  opt="-Wall"
  echo "$as_me:$LINENO: checking if $CXX accepts $opt" >&5

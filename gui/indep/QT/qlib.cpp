@@ -531,7 +531,7 @@ QeExcMessage::QeExcMessage(const GException & exc, QString title,
 void
 showError(QWidget * parent, const GException & exc)
 {
-#ifdef NO_DEBUG
+#ifdef NDEBUG
    if (!exc.cmp_cause(DataPool::Stop)) return;
 #endif
    QeExcMessage * msg=new QeExcMessage(exc, QeExcMessage::tr("Error"), 
@@ -544,7 +544,7 @@ void
 showError(QWidget * parent, const QString &qtitle, const GException & exc)
 {
    const char *title=qtitle;
-#ifdef NO_DEBUG
+#ifdef NDEBUG
    if (!exc.cmp_cause(DataPool::Stop)) return;
 #endif
    if (!title) title=QeExcMessage::tr("Error");
@@ -557,7 +557,7 @@ void
 showError(
   QWidget * parent, const QString &qtitle, const QString &qmessage)
 {
-#ifdef NO_DEBUG
+#ifdef NDEBUG
    const char *message=qmessage;
    if (!GException::cmp_cause(message, DataPool::Stop)) return;
 #endif
@@ -568,7 +568,7 @@ void
 showWarning(
   QWidget * parent, const QString &qtitle, const QString &qmessage)
 {
-#ifdef NO_DEBUG
+#ifdef NDEBUG
    const char *message=qmessage;
    if (!GException::cmp_cause(message, DataPool::Stop)) return;
 #endif
@@ -578,7 +578,7 @@ showWarning(
 void
 showInfo(QWidget * parent, const QString &qtitle, const QString &qmessage)
 {
-#ifdef NO_DEBUG
+#ifdef NDEBUG
    const char *message=qmessage;
    if (!GException::cmp_cause(message, DataPool::Stop)) return;
 #endif

@@ -132,7 +132,7 @@ static const char RootDjVuDir[] ="/etc/DjVu/";  // global last resort
 #ifdef LT_DEFAULT_PREFIX
 static const char DjVuPrefixDir[] = LT_DEFAULT_PREFIX "/profiles";
 #endif
-#ifndef NO_DEBUG
+#ifndef NDEBUG
 static const char DebugModuleDjVuDir[] ="../TOPDIR/SRCDIR/profiles";
 #endif
 #ifdef WIN32
@@ -292,7 +292,7 @@ DjVuMessage::GetProfilePaths(void)
     GURL mpath(GetModulePath());
     if(!mpath.is_empty() && mpath.is_dir())
     {
-#if defined(UNIX) && !defined(AUTOCONF) && !defined(NO_DEBUG)
+#if defined(UNIX) && !defined(AUTOCONF) && !defined(NDEBUG)
       appendPath(GURL::UTF8(DebugModuleDjVuDir,mpath),pathsmap,paths);
 #endif
       appendPath(mpath,pathsmap,paths);

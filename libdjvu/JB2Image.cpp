@@ -839,7 +839,7 @@ JB2Dict::JB2Codec::Decode::code_bitmap_directly(
           up1 = up0;
           up0 = bm[dy];
         }
-#ifndef NO_DEBUG
+#ifndef NDEBUG
       bm.check_border();
 #endif
 }
@@ -877,7 +877,7 @@ JB2Dict::JB2Codec::code_bitmap_by_cross_coding (GBitmap &bm, GP<GBitmap> &cbm, c
   // Initialize row pointers
   const int dy = dh - 1;
   const int cy = dy + yd2c;
-#ifndef NO_DEBUG
+#ifndef NDEBUG
   bm.check_border();
   cbm->check_border();
 #endif
@@ -910,7 +910,7 @@ JB2Dict::JB2Codec::Decode::code_bitmap_by_cross_coding (GBitmap &bm, GBitmap &cb
           xup1 = xup0;
           xup0 = xdn1;
           xdn1 = cbm[(--cy)-1] + xd2c;
-#ifndef NO_DEBUG
+#ifndef NDEBUG
           bm.check_border();
 #endif
         }

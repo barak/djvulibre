@@ -1770,7 +1770,7 @@ StartProgram(void)
       /* These three lines look crazy, but the this is the only way I know
 	 to orphan a child under all versions of Unix.  Otherwise the
 	 SIGCHLD may cause Netscape to crash. */
-#ifdef NO_DEBUG
+#ifdef NDEBUG
       setsid();
 #endif
       signal(SIGCHLD,SIG_IGN);

@@ -56,18 +56,18 @@
 
 #ifndef _DEBUG_H_
 #define _DEBUG_H_
+
 #ifdef HAVE_CONFIG_H
-#include "config.h"
+# include "config.h"
 #endif
 #if NEED_GNUG_PRAGMAS
 # pragma interface
 #endif
 
-
 #include <stdio.h>
 #ifdef WIN32
-#include <atlbase.h> // USES_CONVERSION, A2CT macro
-#include <windows.h> // OutputDebugString
+# include <atlbase.h> // USES_CONVERSION, A2CT macro
+# include <windows.h> // OutputDebugString
 #endif 
 
 
@@ -75,7 +75,7 @@
 namespace DJVU {
 # ifdef NOT_DEFINED // Just to fool emacs c++ mode
 }
-#endif
+# endif
 #endif
 
 /** @name debug.h
@@ -158,32 +158,32 @@ namespace DJVU {
 
 #if DEBUGLVL <= 0
 
-#ifndef NO_DEBUG
-#define NO_DEBUG
-#endif
-#ifndef NDEBUG
-#define NDEBUG
-#endif
-#ifdef _DEBUG
-#undef _DEBUG
-#endif
+# ifndef NO_DEBUG
+#  define NO_DEBUG
+# endif
+# ifndef NDEBUG
+#  define NDEBUG
+# endif
+# ifdef _DEBUG
+#  undef _DEBUG
+# endif
 
-#define DEBUG_MAKE_INDENT(x)
-#define DEBUG_SET_LEVEL(level)
-#define DEBUG_MSG_LVL(level,x)
-#define DEBUG_MSGN_LVL(level,x)
+# define DEBUG_MAKE_INDENT(x)
+# define DEBUG_SET_LEVEL(level)
+# define DEBUG_MSG_LVL(level,x)
+# define DEBUG_MSGN_LVL(level,x)
 
 #else
 
-#ifdef NO_DEBUG
-#undef NO_DEBUG
-#endif
-#ifdef NDEBUG
-#undef NDEBUG
-#endif
-#ifndef _DEBUG
-#define _DEBUG
-#endif
+# ifdef NO_DEBUG
+#  undef NO_DEBUG
+# endif
+# ifdef NDEBUG
+#  undef NDEBUG
+# endif
+# ifndef _DEBUG
+#  define _DEBUG
+# endif
 
 // ------------ SUPPORT
 
@@ -235,14 +235,11 @@ public:
 
 // ------------ MAIN MACROS
 
-/** Indents all messages in the current scope. */
-#define DEBUG_MAKE_INDENT(x)     DEBUG_MAKE_INDENT_1(x, __LINE__)
-/** Sets the current debugging level. */
-#define DEBUG_SET_LEVEL(level)   DjVuDebug::set_debug_level(level)
-
-#define DEBUG_MSG_LVL(level,x)   { ( DjVuDebug::lock(level,0) << x ).unlock(); }
-#define DEBUG_MSGN_LVL(level,x)  { ( DjVuDebug::lock(level,1) << x ).unlock(); }
-#define DEBUG_MSGF_LVL(level,x)  { ( DjVuDebug::lock(level,1) << x ).unlock(); }
+# define DEBUG_MAKE_INDENT(x)     DEBUG_MAKE_INDENT_1(x, __LINE__)
+# define DEBUG_SET_LEVEL(level)   DjVuDebug::set_debug_level(level)
+# define DEBUG_MSG_LVL(level,x)   { ( DjVuDebug::lock(level,0) << x ).unlock(); }
+# define DEBUG_MSGN_LVL(level,x)  { ( DjVuDebug::lock(level,1) << x ).unlock(); }
+# define DEBUG_MSGF_LVL(level,x)  { ( DjVuDebug::lock(level,1) << x ).unlock(); }
 
 #endif
 
@@ -251,35 +248,35 @@ public:
 
 #if ( DEBUGLVL >= 1 )
 /** Generates a level 1 message */
-#define DEBUG1_MSG(x)  DEBUG_MSG_LVL(1,x)
-#define DEBUG1_MSGF(x) DEBUG_MSGF_LVL(1,x)
+# define DEBUG1_MSG(x)  DEBUG_MSG_LVL(1,x)
+# define DEBUG1_MSGF(x) DEBUG_MSGF_LVL(1,x)
 #else
-#define DEBUG1_MSG(x)
-#define DEBUG1_MSGF(x)
+# define DEBUG1_MSG(x)
+# define DEBUG1_MSGF(x)
 #endif
 #if ( DEBUGLVL >= 2 )
 /** Generates a level 2 message */
-#define DEBUG2_MSG(x)  DEBUG_MSG_LVL(2,x)
-#define DEBUG2_MSGF(x) DEBUG_MSGF_LVL(2,x)
+# define DEBUG2_MSG(x)  DEBUG_MSG_LVL(2,x)
+# define DEBUG2_MSGF(x) DEBUG_MSGF_LVL(2,x)
 #else
-#define DEBUG2_MSG(x)
-#define DEBUG2_MSGF(x)
+# define DEBUG2_MSG(x)
+# define DEBUG2_MSGF(x)
 #endif
 #if ( DEBUGLVL >= 3 )
 /** Generates a level 3 message */
-#define DEBUG3_MSG(x)  DEBUG_MSG_LVL(3,x)
-#define DEBUG3_MSGF(x) DEBUG_MSGF_LVL(3,x)
+# define DEBUG3_MSG(x)  DEBUG_MSG_LVL(3,x)
+# define DEBUG3_MSGF(x) DEBUG_MSGF_LVL(3,x)
 #else
-#define DEBUG3_MSG(x)
-#define DEBUG3_MSGF(x)
+# define DEBUG3_MSG(x)
+# define DEBUG3_MSGF(x)
 #endif
 #if ( DEBUGLVL >= 4 )
 /** Generates a level 4 message */
-#define DEBUG4_MSG(x)  DEBUG_MSG_LVL(4,x)
-#define DEBUG4_MSGF(x) DEBUG_MSGF_LVL(4,x)
+# define DEBUG4_MSG(x)  DEBUG_MSG_LVL(4,x)
+# define DEBUG4_MSGF(x) DEBUG_MSGF_LVL(4,x)
 #else
-#define DEBUG4_MSG(x)
-#define DEBUG4_MSGF(x)
+# define DEBUG4_MSG(x)
+# define DEBUG4_MSGF(x)
 #endif
 
 #define DEBUG_RUNTIME_SET_LEVEL(level) DEBUG_SET_LEVEL(level)
@@ -300,4 +297,5 @@ public:
 using namespace DJVU;
 # endif
 #endif
-#endif
+
+#endif // DEBUG_H

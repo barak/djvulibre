@@ -124,7 +124,7 @@ ShowUsage(void)
    "     -cmap                   - install private colormap (8 bit display)\n"
    ));
 #endif
-#ifndef NO_DEBUG
+#ifndef NDEBUG
 #ifdef RUNTIME_DEBUG_ONLY
   DjVuPrintError(QDJView::tr
   ("     -debug[=<level>]        - print debug information\n"
@@ -159,7 +159,7 @@ main(int argc, char ** argv)
     }
   
   // Searches debug option
-#ifndef NO_DEBUG
+#ifndef NDEBUG
   const char *debug = 0;
   for (i=1; i<argc; i++)
     if (!strncmp(argv[i],"-debug",6)) 

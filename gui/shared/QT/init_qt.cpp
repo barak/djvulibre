@@ -131,7 +131,7 @@ x11ErrorHandler(Display *displ, XErrorEvent *event)
     {
     case BadPixmap:
     case BadAccess:
-#ifdef NO_DEBUG
+#ifdef NDEBUG
       // do not even say anything
       break;  
 #endif

@@ -97,7 +97,7 @@ AC_DEFUN(AC_CXX_OPTIMIZE,[
      esac
    done
    if test x$ac_debug = xno ; then
-     OPTS=-DNO_DEBUG
+     OPTS=-DNDEBUG
      AC_CHECK_CXX_OPT([-Wall],[OPTS="$OPTS -Wall"])
      AC_CHECK_CXX_OPT([-O3],[OPTS="$OPTS -O3"],
         [ AC_CHECK_CXX_OPT([-O2], [OPTS="$OPTS -O2"] ) ] )
