@@ -465,11 +465,11 @@ DjVuPortcaster::compute_closure(const DjVuPort * src, GPList<DjVuPort> &list, bo
        // Sort in depth order
        int max_dist=0;
        for(pos=set;pos;++pos)
-         if (max_dist < (long) set[pos])
-           max_dist = (long) set[pos];
+         if (max_dist < (int)(long)set[pos])
+           max_dist = (int)(long)set[pos];
        GArray<GList<const void*> > lists(0,max_dist);
        for(pos=set;pos;++pos)
-         lists[(long)set[pos]].append(set.key(pos));
+         lists[(int)(long)set[pos]].append(set.key(pos));
        for(int dist=0;dist<=max_dist;dist++)
          for(pos=lists[dist];pos;++pos)
            {

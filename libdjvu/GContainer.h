@@ -1312,10 +1312,10 @@ hash(const unsigned long & x)
 static inline unsigned int 
 hash(void * const & x) 
 { 
-  return (unsigned int) x; 
+  return (unsigned long) x; 
 }
 
-/** Hashing function (void *). */
+/** Hashing function (const void *). */
 static inline unsigned int 
 hash(const void * const & x) 
 { 
