@@ -24,26 +24,211 @@
 .SH \\0\\0\\0\\$*
 ..
 .SH NAME
-nsdejavu \- DjVU browser plugin
+nsdejavu \- DjVu browser plugin
 
 .SH SYNOPSIS
 .B LIBDIR/netscape/plugins/NSDEJAVUSO
 
 .SH DESCRIPTION
-To be written...
+The shared library 
+.B NSDEJAVUSO
+uses the Netscape browser plugin 
+.SM API 
+to display DjVu images in 
+in a number of popular web browsers.
+Different web browsers provide various level
+of support for Netscape plugins.
+Please check section "Browser Compatibility"
+for instructions on how to enable the
+DjVu browser plugin.
+Both the standalone viewer 
+.B djview
+and the DjVu browser plugin 
+.B NSDEJAVUSO
+offer similar features.  
+The DjVu browser plugin in fact is wrapper that invokes the standalone viewer
+program in remote control mode.  This man pages describes those features
+that are specific to the browser plugin.  Additional information can
+be found in the 
+.BR djview (1)
+man page.
+
+.SH MIME TYPES AND EXTENSIONS
+
+Typing the 
+.SM URL
+of a recognized DjVu document in your web browser
+should automatically invoke the DjVu browser plugin.
+Each browser uses different methods to determine that a particular
+.SM URL
+is in fact a DjVu document.  
+Web server normally provide a 
+.SM MIME 
+type to web browsers.  
+The MIME type for DjVu documents is
+.BR image/x-djvu .
+Web servers should be configured to send the proper information for 
+DjVu documents. See the DjVu tutorial for more information (
+.B http://www.djvuzone.org/support/tutorial/ 
+).  Most web browsers also recognize files ending with
+.B .djvu
+or
+.B .djv 
+as DjVu files.
 
 .SH CGI-STYLE FLAGS
-To be written...
 
-.SH EMBEDDING FLAGS
-To be written...
+The behavior of the DjVu browser plugin can be specified by
+by augmenting the 
+.SM URL 
+using a syntax similar to that used by the
+.SM CGI
+programs.  
+This syntax is described by the following template:
+.IP "" 3
+.BI "http://server/dir/file.djvu?djvuopts&" "keyword=value" "&" "keyword=value" "&" "..."
+.PP
+The DjVu browser plugin only recognizes keywords that appear
+after the word
+.BR djvuopts .
+Unrecognized keywords are silently ignored.
+The following keywords are recognized:
+.TP
+.BI passive= yes/no
+Cause the image to be displayed in a manner similar to an ordinary web image.
+The default zoom factor is changed to "Fit Page".
+The toolbar, the pop-up menu, the scroll bar, and the 
+keyboard shortcuts are disabled.
+The default is no.
+.TP
+.BI toolbar= yes/no
+Enable or disable the toolbar.
+The default is defined by the preferences dialog.
+.TP
+.BI scrollbars= yes/no
+Enable or disable the presence of scroll bars when the full 
+image size exceeds the plugin window size.  The default is yes.
+.TP
+.BI menu= yes/no
+Enable or disable the pop-up menu.
+The pop-up menu is enabled by default.
+.TP
+.BI keyboard= yes/no
+Enable or disable the DjVu plugin keyboard shortcuts.
+The default is yes (enabled).
+.TP
+.BI frame= yes/no
+Enable or disable the display of a thin gray frame around the DjVu image.
+Keyboard shortcuts are enabled by default.
+.TP
+.BI links= yes/no
+Enable or disable hyper-links in the DjVu image.
+Hyper-links are enabled by default.
+.TP
+.BI logo= yes/no
+Enable or disable the display of the DjVu log while the plug-in
+is downloading data.  This is enabled by default.
+.TP
+.BI zoom= zoomfactor
+Specify the initial zoom factor.
+Unless the toolbar, pop-up menu and keyboard are disabled, 
+the user will be able to change the zoom factor.
+Legal values for 
+.I zoomfactor
+are shown in the below:
+.br
+.TS
+center,box;
+lfI l
+lfB l
+.
+number	Magnification factor in range 10% to 999%.
+one2one	Select the "one-to-one" mode.
+width	Select the "fit width" mode.
+page	Select the "fit page" mode.
+stretch	Stretch the image to the plugin window size.
+.TE
+.PP
+.TP
+.BI mode= modespec
+Specify the initial display mode.
+Unless the toolbar and pop-up menu are disabled, 
+the user will be able to change it.
+Legal values for 
+.I modespec
+are shown in the below:
+.br
+.TS
+center,box;
+lfB l
+.
+color	Display the color image.
+bw	Display the foreground mask only.
+fore	Display the foreground only.
+back	Display the background only.
+.TE
+.PP
+.TP
+.BI page= pagenum
+Specify the initial page to be displayed.
+Page numbers are numbered from 1.
+.TP
+.BI highlight= x , y , w , h [, color ]
+Display a highlighted rectangle at the specified coordinates and with the
+specified color.  Coordinates
+.IR x ", " y ", " w ", and " h
+are measured in document image coordinates (not screen coordinates). 
+The origin is set at the bottom left corner of the image.  The color
+.I color
+must be given in hexadecimal
+.SM RRGGBB 
+format.  
+Omitting the color argument means to use 
+.SM XOR
+highlighting.  Multiple highlighted zone can be specified.
+.TP
+.BI cache= yes/no
+Enable or disable the caching of fully decoded pages of the document. 
+Caching is on by default.  Caching of documents whose 
+.SM URL
+does not contain extension 
+.BE .djvu " or " .djv
+is off by default.
+
+.SH EMBEDDING DJVU IMAGES
+
+A good way to integrate DjVu content on your web page is to use the 
+.SM EMBED 
+directive of the
+.SM HTML
+language.
+An advantage of this method is that it will work even if your web server 
+does not support the DjVu 
+.SM MIME 
+type. 
+Furthermore, the
+.SM CGI
+style flags can be directly used as attributes of the
+.SM EMBED
+tag.
+Here is an example:
+.IP "" 3
+.B "<embed src=""myfile.djvu"" type=""image/x-djvu"""
+.br
+.B "\0\0\0\0\0\0\0\0\0 width=""100%"" height=""100%"""
+.br
+.B "\0\0\0\0\0\0\0\0\0 passive=yes zoom=stretch >    
+.B </embed>
+.PP
 
 .SH BROWSER COMPATIBILITY
+The DjVu browser plugin has been tested with
+several popular web browsers:
 .SS Netscape 4
 .PP
 The DjVu browser plugin is normally installed in directory
 .BR /usr/local/lib/netscape/plugins .
-This is suficient to enable the DjVu browser plugin 
+This is sufficient to enable the DjVu browser plugin 
 because Netscape 4 always searches this directory for 
 plugins.
 .PP
