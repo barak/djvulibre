@@ -146,7 +146,7 @@ JB2Image.o: ./JB2Image.cpp ../config.h JB2Image.h GString.h DjVuGlobal.h \
   GContainer.h GException.h GSmartPointer.h ZPCodec.h GThreads.h GRect.h \
   GBitmap.h
 JPEGDecoder.o: ./JPEGDecoder.cpp ../config.h JPEGDecoder.h \
-  GSmartPointer.h DjVuGlobal.h /usr/include/jmorecfg.h ByteStream.h \
+  GSmartPointer.h DjVuGlobal.h ByteStream.h \
   Arrays.h GException.h GPixmap.h
 MMRDecoder.o: ./MMRDecoder.cpp ../config.h MMRDecoder.h GSmartPointer.h \
   DjVuGlobal.h JB2Image.h GString.h GContainer.h GException.h ZPCodec.h \

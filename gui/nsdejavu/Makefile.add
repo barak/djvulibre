@@ -1,3 +1,6 @@
+# This is generated automatically using "make makeadd".
+# DO NOT EDIT BY HAND
+# --------------------------------------------------------
 plugin.o : ${srcdir}/plugin.cpp
 	${CXX} ${CXXFLAGS} -c ${srcdir}/plugin.cpp
 stubs.o : ${srcdir}/stubs.cpp

@@ -1,0 +1,26 @@
+#!/bin/sh
+
+# This script is used to cleanup the dependency 
+# files that come with the distribution.
+# It removes dependencies on system or 
+# qt include files.
+
+for n 
+do
+  if test "`basename $n`" != Makefile.dep ; then
+     echo 1>&2 "$0: error: input file is not named Makefile.dep"
+     exit 1
+  fi
+
+  sed < $n > $n.new \
+        -e 's:/usr/include/[^ ]*\.h ::g' \
+        -e 's:/usr/lib/qt-[^ ]*\.h ::g' \
+        -e '/^  \\/d'
+
+  if cmp $n $n.new > /dev/null ; then
+        rm $n.new 
+  else
+        echo 1>&2 "$0: modified file \"$n\"."        
+        mv $n.new $n
+  fi
+done

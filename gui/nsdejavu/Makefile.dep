@@ -6,6 +6,10 @@ plugin.o: ./plugin.cpp ../../config.h plugin.h ../../gui/npsdk/npapi.h \
   ../../gui/shared/res/names.h ../../gui/shared/res/version.h \
   ../../gui/shared/res/saved_data.h ../../gui/shared/utils/io.h \
   ../../libdjvu/Arrays.h ../../libdjvu/debug.h
+stubs.o: ./stubs.cpp ../../config.h ../../libdjvu/DjVuGlobal.h \
+  ../../libdjvu/DjVuMessageLite.h ../../libdjvu/GString.h \
+  ../../libdjvu/GContainer.h ../../libdjvu/GException.h \
+  ../../libdjvu/GSmartPointer.h
 path.o: ./path.cpp ../../config.h ../../libdjvu/debug.h path.h \
   ../../libdjvu/GString.h ../../libdjvu/DjVuGlobal.h \
   ../../libdjvu/GContainer.h ../../libdjvu/GException.h \
@@ -40,25 +44,6 @@ GThreads.o: ../../libdjvu/GThreads.cpp ../../config.h \
   ../../libdjvu/GException.h ../../libdjvu/DjVuMessageLite.h \
   ../../libdjvu/GString.h ../../libdjvu/GContainer.h \
   ../../libdjvu/GSmartPointer.h
-debug.o: ../../libdjvu/debug.cpp ../../config.h ../../libdjvu/debug.h \
-  ../../libdjvu/GString.h ../../libdjvu/DjVuGlobal.h \
-  ../../libdjvu/GContainer.h ../../libdjvu/GException.h \
-  ../../libdjvu/GSmartPointer.h ../../libdjvu/ByteStream.h \
-  ../../libdjvu/Arrays.h ../../libdjvu/GURL.h ../../libdjvu/GThreads.h
 Arrays.o: ../../libdjvu/Arrays.cpp ../../config.h ../../libdjvu/Arrays.h \
   ../../libdjvu/GException.h ../../libdjvu/DjVuGlobal.h \
   ../../libdjvu/GSmartPointer.h
-ByteStream.o: ../../libdjvu/ByteStream.cpp ../../config.h \
-  ../../libdjvu/ByteStream.h ../../libdjvu/Arrays.h \
-  ../../libdjvu/GException.h ../../libdjvu/DjVuGlobal.h \
-  ../../libdjvu/GSmartPointer.h ../../libdjvu/GOS.h \
-  ../../libdjvu/GString.h ../../libdjvu/GContainer.h ../../libdjvu/GURL.h \
-  ../../libdjvu/GThreads.h ../../libdjvu/DjVuMessage.h \
-  ../../libdjvu/DjVuMessageLite.h
-DjVuMessageLite.o: ../../libdjvu/DjVuMessageLite.cpp ../../config.h \
-  ../../libdjvu/DjVuMessageLite.h ../../libdjvu/GString.h \
-  ../../libdjvu/DjVuGlobal.h ../../libdjvu/GContainer.h \
-  ../../libdjvu/GException.h ../../libdjvu/GSmartPointer.h \
-  ../../libdjvu/GOS.h ../../libdjvu/XMLTags.h ../../libdjvu/ByteStream.h \
-  ../../libdjvu/Arrays.h ../../libdjvu/GURL.h ../../libdjvu/GThreads.h \
-  ../../libdjvu/debug.h

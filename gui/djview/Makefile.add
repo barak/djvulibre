@@ -1,3 +1,6 @@
+# This is generated automatically using "make makeadd".
+# DO NOT EDIT BY HAND
+# --------------------------------------------------------
 exc_base.o : ${top_srcdir}/gui/indep/except/exc_base.cpp
 	${CXX} ${CXXFLAGS} -c ${top_srcdir}/gui/indep/except/exc_base.cpp
 exc_file.o : ${top_srcdir}/gui/indep/except/exc_file.cpp

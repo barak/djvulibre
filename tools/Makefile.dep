@@ -1,9 +1,3 @@
-annotate.o: ./annotate.cpp ../config.h ../libdjvu/GIFFManager.h \
-  ../libdjvu/IFFByteStream.h ../libdjvu/DjVuGlobal.h \
-  ../libdjvu/GException.h ../libdjvu/GString.h ../libdjvu/GContainer.h \
-  ../libdjvu/GSmartPointer.h ../libdjvu/ByteStream.h ../libdjvu/Arrays.h \
-  ../libdjvu/GOS.h ../libdjvu/GURL.h ../libdjvu/GThreads.h \
-  ../libdjvu/DjVuMessage.h ../libdjvu/DjVuMessageLite.h
 bzz.o: ./bzz.cpp ../config.h ../libdjvu/GException.h \
   ../libdjvu/DjVuGlobal.h ../libdjvu/ByteStream.h ../libdjvu/Arrays.h \
   ../libdjvu/GSmartPointer.h ../libdjvu/BSByteStream.h \
@@ -52,13 +46,6 @@ ddjvu.o: ./ddjvu.cpp ../config.h ../libdjvu/GException.h \
   ../libdjvu/GURL.h ../libdjvu/GString.h ../libdjvu/Arrays.h \
   ../libdjvu/DjVuAnno.h ../libdjvu/DjVuDocument.h ../libdjvu/GOS.h \
   ../libdjvu/ByteStream.h ../libdjvu/DjVuMessage.h \
-  ../libdjvu/DjVuMessageLite.h
-djthumb.o: ./djthumb.cpp ../config.h ../libdjvu/GString.h \
-  ../libdjvu/DjVuGlobal.h ../libdjvu/GContainer.h ../libdjvu/GException.h \
-  ../libdjvu/GSmartPointer.h ../libdjvu/DjVuDocEditor.h \
-  ../libdjvu/DjVuDocument.h ../libdjvu/DjVuPort.h ../libdjvu/GThreads.h \
-  ../libdjvu/GURL.h ../libdjvu/Arrays.h ../libdjvu/DjVmDoc.h \
-  ../libdjvu/DjVmDir.h ../libdjvu/GOS.h ../libdjvu/DjVuMessage.h \
   ../libdjvu/DjVuMessageLite.h
 djvm.o: ./djvm.cpp ../config.h ../libdjvu/GException.h \
   ../libdjvu/DjVuGlobal.h ../libdjvu/DjVuDocEditor.h \
