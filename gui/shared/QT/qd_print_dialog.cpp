@@ -563,6 +563,7 @@ QDPrintDialog::done(int rc)
 	 opt.set_copies(copies_spin->value());
 	 opt.set_frame(printFrame);
 #if 0
+         opt.set_cropmark(printCropMarks);
          if (!bookMode) 
            opt.set_book_signature( 0 );
          else if (bookSign < 4)

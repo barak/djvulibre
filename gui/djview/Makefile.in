@@ -180,19 +180,21 @@ djview: ${OBJS}
 install: install-bin install-man install-data
 
 install-bin: ${PROGRAM} FORCE
-	${INSTALL} -d ${bindir}
-	${INSTALL} -s -m 0755 ${PROGRAM} ${bindir}
+	${INSTALL} -d ${DESTDIR}${bindir}
+	${INSTALL} -s -m 0755 ${PROGRAM} ${DESTDIR}${bindir}
 
 install-man: FORCE
-	${INSTALL} -d ${mandir}/man1
-	${INSTALL} -m 0644 ${srcdir}/djview.1 ${mandir}/man1
+	${INSTALL} -d ${DESTDIR}${mandir}/man1
+	${INSTALL} -m 0644 ${srcdir}/djview.1 ${DESTDIR}${mandir}/man1
 
 install-data: FORCE
-	${INSTALL} -d ${datadir}/djvu/osi
+	${INSTALL} -d ${DESTDIR}${datadir}/djvu/osi
 	-test -r ${srcdir}/djview_help.djvu && \
-	  ${INSTALL} -m 0644 ${srcdir}/djview_help.djvu ${datadir}/djvu/osi
+	  ${INSTALL} -m 0644 ${srcdir}/djview_help.djvu \
+	    ${DESTDIR}${datadir}/djvu/osi
 	-test -r ${srcdir}/djview_help.html && \
-	  ${INSTALL} -m 0644 ${srcdir}/djview_help.html ${datadir}/djvu/osi
+	  ${INSTALL} -m 0644 ${srcdir}/djview_help.html \
+	    ${DESTDIR}${datadir}/djvu/osi
 
 
 depend: ${MOCINCS} FORCE

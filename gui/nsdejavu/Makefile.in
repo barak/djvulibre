@@ -67,12 +67,12 @@ nsdejavu.1: ${srcdir}/nsdejavu.1.in
 install: install-bin install-man
 
 install-bin: ${NSDEJAVU} FORCE
-	${INSTALL} -d ${plugindir}
-	${INSTALL} -m 0644 ${NSDEJAVU} ${plugindir}
+	${INSTALL} -d ${DESTDIR}${plugindir}
+	${INSTALL} -m 0644 ${NSDEJAVU} ${DESTDIR}${plugindir}
 
 install-man: nsdejavu.1 FORCE
-	${INSTALL} -d ${mandir}/man1
-	${INSTALL} -m 0644 nsdejavu.1 ${mandir}/man1
+	${INSTALL} -d ${DESTDIR}${mandir}/man1
+	${INSTALL} -m 0644 nsdejavu.1 ${DESTDIR}${mandir}/man1
 
 depend: FORCE
 	${CC} -MM ${CFLAGS} ${srcdir}/nsdejavu.c > Makefile.dep

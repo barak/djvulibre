@@ -63,24 +63,26 @@ all: ${PROGRAMS}
 install: install-bin install-data install-man
 
 install-bin: ${PROGRAMS} FORCE
-	${INSTALL} -d ${bindir}
+	${INSTALL} -d ${DESTDIR}${bindir}
 	for n in ${PROGRAMS} ; do \
-	  ${INSTALL} -s -m 0755 $$n ${bindir} || exit ; done
+	  ${INSTALL} -s -m 0755 $$n ${DESTDIR}${bindir} || exit ; done
 
 install-data: FORCE
 	${INSTALL} -d ${datadir}/djvu
-	for n in `cd ${top_srcdir}/share && find djvu -name '*.dtd' -print` ; do \
-	  src="${top_srcdir}/share/$$n" ; dir="`dirname ${datadir}/$$n`" ;\
-	  test -d $$dir || ${INSTALL} -d $$dir ; \
-	  ${INSTALL} -m 0644 $$src $$dir || exit ; done
+	for n in `cd ${top_srcdir}/share \
+	          && find djvu -name '*.dtd' -print` ; do \
+	  src="${top_srcdir}/share/$$n" ; \
+	  dir="`dirname ${datadir}/$$n`" ;\
+	  test -d ${DESTDIR}$$dir || ${INSTALL} -d ${DESTDIR}$$dir ; \
+	  ${INSTALL} -m 0644 $$src ${DESTDIR}$$dir || exit ; done
 
 install-man: FORCE
-	${INSTALL} -d ${mandir}/man1
+	${INSTALL} -d ${DESTDIR}${mandir}/man1
 	for n in ${srcdir}/*.1 ; do \
-	  ${INSTALL} -m 0644 $$n ${mandir}/man1 || exit ; done 
-	${INSTALL} -d ${mandir}/man3
+	  ${INSTALL} -m 0644 $$n ${DESTDIR}${mandir}/man1 || exit ; done 
+	${INSTALL} -d ${DESTDIR}${mandir}/man3
 	for n in ${srcdir}/*.3 ; do \
-	  ${INSTALL} -m 0644 $$n ${mandir}/man3 || exit ; done 
+	  ${INSTALL} -m 0644 $$n ${DESTDIR}${mandir}/man3 || exit ; done 
 
 depend: FORCE
 	${CXX} -MM ${CXXFLAGS} ${srcdir}/*.cpp > Makefile.dep

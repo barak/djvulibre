@@ -99,15 +99,17 @@ ${LIBDJVU_A} : ${OBJS}
 @RPO_YES@	${CXX} ${CXXFLAGS} -o $@ $@.o ${OBJS} ${LIBS} 
 
 install-data: FORCE
-	${INSTALL} -d ${datadir}/djvu
-	for n in `cd ${top_srcdir}/share && find djvu -name '*.xml' -print` ; do \
-	  src="${top_srcdir}/share/$$n" ; dir="`dirname ${datadir}/$$n`" ;\
-	  test -d $$dir || ${INSTALL} -d $$dir ; \
-	  ${INSTALL} -m 0644 $$src $$dir || exit ; done
+	${INSTALL} -d ${DESTDIR}${datadir}/djvu
+	for n in `cd ${top_srcdir}/share \
+	          && find djvu -name '*.xml' -print` ; do \
+	  src="${top_srcdir}/share/$$n" ; \
+	  dir="`dirname ${datadir}/$$n`" ;\
+	  test -d ${DESTDIR}$$dir || ${INSTALL} -d ${DESTDIR}$$dir ; \
+	  ${INSTALL} -m 0644 $$src ${DESTDIR}$$dir || exit ; done
 
 install-lib: ${LIBDJVU_SO} FORCE
-	${INSTALL} -d ${libdir}
-	${INSTALL} -m 644 ${LIBDJVU_SO} ${libdir}
+	${INSTALL} -d ${DESTDIR}${libdir}
+	${INSTALL} -m 644 ${LIBDJVU_SO} ${DESTDIR}${libdir}
 
 depend: FORCE
 	${CXX} -MM ${CXXFLAGS} ${srcdir}/*.cpp > Makefile.dep
