@@ -90,6 +90,11 @@
 # endif
 #endif
 
+/* Some day we'll redo i18n right. */
+#ifndef i18n
+# define i18n(x) (x)
+# define I18N(x) (x)
+#endif
 
 ddjvu_context_t *ctx;
 ddjvu_document_t *doc;
@@ -129,11 +134,8 @@ handle(int wait)
         {
         case DDJVU_ERROR:
           fprintf(stderr,"ddjvu: %s\n", msg->m_error.message);
-          if (msg->m_error.function)
-            fprintf(stderr,"ddjvu:   in function '%s'\n", 
-                    msg->m_error.function);
           if (msg->m_error.filename)
-            fprintf(stderr,"ddjvu:   in file '%s:%d'\n", 
+            fprintf(stderr,"ddjvu: '%s:%d'\n", 
                     msg->m_error.filename, msg->m_error.lineno);
           exit(10);
         case DDJVU_INFO:
@@ -164,24 +166,24 @@ die(const char *fmt, ...)
   exit(10);
 }
 
-
-
 void
 inform(ddjvu_page_t *page, int pageno)
 {
   if (flag_verbose)
     {
-      ddjvu_page_type_t type = ddjvu_page_get_type(page);
-      char *desctype = "a malformed DjVu image";
+      char *desctype;
       char *description = ddjvu_page_get_long_description(page);
-      fprintf(stderr,"\n-------- page %d -------\n", pageno);
+      ddjvu_page_type_t type = ddjvu_page_get_type(page);
+      fprintf(stderr,i18n("\n-------- page %d -------\n"), pageno);
       if (type == DDJVU_PAGETYPE_BITONAL)
-        desctype = "a legal Bitonal DjVu image";
+        desctype = i18n("This is a legal Bitonal DjVu image");
       else if (type == DDJVU_PAGETYPE_PHOTO)
-        desctype = "a legal Photo DjVu image";
+        desctype = i18n("This is a legal Photo DjVu image");
       else if (type == DDJVU_PAGETYPE_COMPOUND)
-        desctype = "a legal Compound DjVu image";
-      fprintf(stderr,"This is %s.\n", desctype);
+        desctype = i18n("This is a legal Compound DjVu image");
+      else
+        desctype = i18n("This is a malformed DjVu image");
+      fprintf(stderr,"%s.\n", desctype);
       if (description)
         fprintf(stderr,"%s\n", description);
       if (description)
@@ -314,7 +316,7 @@ render(ddjvu_page_t *page)
       break;
     }
   if (! (fmt = ddjvu_format_create(style, 0, 0)))
-    die("Cannot determine pixel style");
+    die(i18n("Cannot determine pixel style"));
   ddjvu_format_set_row_order(fmt, 1);
   /* Allocate buffer */
   if (style == DDJVU_FORMAT_MSBTOLSB)
@@ -324,11 +326,11 @@ render(ddjvu_page_t *page)
   else
     rowsize = rrect.w * 3; 
   if (! (image = (char*)malloc(rowsize * rrect.h)))
-    die("Cannot allocate image buffer");
+    die(i18n("Cannot allocate image buffer"));
 
   /* Render */
   if (! ddjvu_page_render(page, mode, &prect, &rrect, fmt, rowsize, image))
-    die("Cannot render image");
+    die(i18n("Cannot render image"));
 
   /* Output */
   switch (flag_format)
@@ -343,20 +345,20 @@ render(ddjvu_page_t *page)
         char *s = image;
         if (style == DDJVU_FORMAT_MSBTOLSB) {
           if (flag_verbose) 
-            fprintf(stderr,"Producing PBM file.\n");
+            fprintf(stderr,i18n("Producing PBM file.\n"));
           fprintf(fout,"P4\n%d %d\n", rrect.w, rrect.h);
         } else if (style == DDJVU_FORMAT_GREY8) {
           if (flag_verbose) 
-            fprintf(stderr,"Producing PGM file.\n");
+            fprintf(stderr,i18n("Producing PGM file.\n"));
           fprintf(fout,"P5\n%d %d\n255\n", rrect.w, rrect.h);
         } else {
           if (flag_verbose) 
-            fprintf(stderr,"Producing PPM file.\n");
+            fprintf(stderr,i18n("Producing PPM file.\n"));
           fprintf(fout,"P6\n%d %d\n255\n", rrect.w, rrect.h);
         }
         for (i=0; i<(int)rrect.h; i++,s+=rowsize)
           if (fwrite(s, 1, rowsize, fout) < (size_t)rowsize)
-            die("writing pnm file: %s", strerror(errno));
+            die(i18n("writing pnm file: %s"), strerror(errno));
         break;
       }
       /* -------------- RLE output */
@@ -365,7 +367,7 @@ render(ddjvu_page_t *page)
         int i;
         unsigned char *s = (unsigned char *)image;
         if (flag_verbose)
-          fprintf(stderr,"Producing RLE file.\n");
+          fprintf(stderr,i18n("Producing RLE file.\n"));
         fprintf(fout,"R4\n%d %d\n", rrect.w, rrect.h);
         for (i=0; i<(int)rrect.h; i++,s+=rowsize)
           {
@@ -392,6 +394,8 @@ render(ddjvu_page_t *page)
                 }
               }
           }
+        if (ferror(fout))
+          die(i18n("writing rle file: %s"), strerror(errno));
         break;
       }
       /* -------------- TIFF output */
@@ -432,20 +436,20 @@ render(ddjvu_page_t *page)
         }
         if (flag_verbose) {
           if (compression == COMPRESSION_CCITT_T6)
-            fprintf(stderr,"Producing TIFF/G4 file.\n");
+            fprintf(stderr,i18n("Producing TIFF/G4 file.\n"));
           else if (compression == COMPRESSION_JPEG)
-            fprintf(stderr,"Producing TIFF/JPEG file.\n");
+            fprintf(stderr,i18n("Producing TIFF/JPEG file.\n"));
           else if (compression == COMPRESSION_PACKBITS)
-            fprintf(stderr,"Producing TIFF/PACKBITS file.\n");
+            fprintf(stderr,i18n("Producing TIFF/PACKBITS file.\n"));
           else
-            fprintf(stderr,"Producing TIFF file.\n");
+            fprintf(stderr,i18n("Producing TIFF file.\n"));
         }
         if (rowsize != TIFFScanlineSize(tiff))
           die("internal error (%d!=%d)", rowsize, (int)TIFFScanlineSize(tiff));
         for (i=0; i<(int)rrect.h; i++,s+=rowsize)
           TIFFWriteScanline(tiff, s, i, 0);
 #else
-        die("TIFF output is not compiled");
+        die(i18n("TIFF output is not compiled"));
 #endif
       }
     }
@@ -463,7 +467,7 @@ dopage(int pageno)
   ddjvu_page_t *page;
   /* Decode page */
   if (! (page = ddjvu_page_create_by_pageno(doc, pageno-1)))
-    die("Cannot access page %d.", pageno);
+    die(i18n("Cannot access page %d."), pageno);
   while (! ddjvu_page_decoding_done(page))
     handle(TRUE);
   /* Open files */
@@ -473,17 +477,17 @@ dopage(int pageno)
       if (! tiff) 
         {
           if (! strcmp(outputfilename,"-"))
-            die("Tiff output requires a valid output file name.");
+            die(i18n("Tiff output requires a valid output file name."));
           else if (! (tiff = TIFFOpen(outputfilename, "w")))
-            die("Cannot open output tiff file '%s'.", outputfilename);
+            die(i18n("Cannot open output tiff file '%s'."), outputfilename);
         } 
       else 
         {
           if (! TIFFWriteDirectory(tiff))
-            die("Problem writing TIFF directory.");
+            die(i18n("Problem writing TIFF directory."));
         }
 #else
-      die("TIFF output is not compiled");
+      die(i18n("TIFF output is not compiled"));
 #endif
     } 
   else if (! fout) 
@@ -496,7 +500,7 @@ dopage(int pageno)
         setmode(fileno(fout), O_BINARY);
 #endif
       } else if (! (fout = fopen(outputfilename, "wb")))
-        die("Cannot open output file '%s'.", outputfilename);
+        die(i18n("Cannot open output file '%s'."), outputfilename);
     }
   /* Render */
   inform(page, pageno);
@@ -509,7 +513,7 @@ dopage(int pageno)
 void
 parse_pagespec(const char *s, int max_page, void (*dopage)(int))
 {
-  static const char *err = "invalid page specification: %s";
+  static char *err = I18N("invalid page specification: %s");
   int spec = 0;
   int both = 1;
   int start_page = 1;
@@ -549,11 +553,11 @@ parse_pagespec(const char *s, int max_page, void (*dopage)(int))
       while (*p==' ')
         p += 1;
       if (*p && *p != ',')
-        die(err, s);
+        die(i18n(err), s);
       if (*p == ',')
         p += 1;
       if (! spec)
-        die(err, s);
+        die(i18n(err), s);
       if (end_page < 0)
         end_page = 0;
       if (start_page < 0)
@@ -570,7 +574,7 @@ parse_pagespec(const char *s, int max_page, void (*dopage)(int))
           (*dopage)(pageno);
     }
   if (! spec)
-    die(err, s);
+    die(i18n(err), s);
 }
 
 
@@ -578,17 +582,17 @@ parse_pagespec(const char *s, int max_page, void (*dopage)(int))
 void
 parse_geometry(const char *s, ddjvu_rect_t *r)
 {
-  static const char *fmt = "syntax error in geometry specification: %s";
+  static char *fmt = I18N("syntax error in geometry specification: %s");
   char *curptr = (char*) s;
   char *endptr;
 
   r->w = strtol(curptr, &endptr, 10);
   if (endptr<=curptr || r->w<=0 || *endptr!='x')
-    die(fmt, s);
+    die(i18n(fmt), s);
   curptr = endptr+1;
   r->h = strtol(curptr, &endptr, 10);
   if (endptr<=curptr || r->h<=0)
-    die(fmt, s);
+    die(i18n(fmt), s);
   curptr = endptr;
   r->x = 0;
   r->y = 0;
@@ -597,7 +601,7 @@ parse_geometry(const char *s, ddjvu_rect_t *r)
       if (curptr[0]=='+')
         curptr++;
       else if (curptr[0]!='-')
-        die(fmt, s);
+        die(i18n(fmt), s);
       r->x = strtol(curptr, &endptr, 10);
       curptr = endptr;
       if (curptr[0])
@@ -605,10 +609,10 @@ parse_geometry(const char *s, ddjvu_rect_t *r)
           if (curptr[0]=='+')
             curptr++;
           else if (curptr[0]!='-')
-            die(fmt, s);
+            die(i18n(fmt), s);
           r->y = strtol(curptr, &endptr, 10);
           if (endptr[0])
-            die(fmt, s);
+            die(i18n(fmt), s);
         }
     }
 }
@@ -618,30 +622,30 @@ parse_geometry(const char *s, ddjvu_rect_t *r)
 void
 usage()
 {
-  die("%s",
 #ifdef DJVULIBRE_VERSION
-      "DDJVU --- DjVuLibre-" DJVULIBRE_VERSION "\n"
+  fprintf(stderr, "DDJVU --- DjVuLibre-" DJVULIBRE_VERSION "\n");
 #endif
-      "DjVu decompression utility\n\n"
-      "Usage: ddjvu [options] [<djvufile> [<outputfile>]]\n\n"
-      "Options:\n"
-      "  -verbose          Prints various informational messages.\n"
-      "  -format=FMT       Selects output format: pbm,pgm,ppm,pnm,rle,tiff.\n"
-      "  -scale=N          Selects display scale.\n"
-      "  -size=WxH         Selects size of rendered image.\n"
-      "  -subsample=N      Selects direct subsampling factor.\n"
-      "  -aspect=no        Authorizes aspect ratio changes\n"
-      "  -segment=WxH+X+Y  Selects which segment of the rendered image\n"
-      "  -mode=black       Renders a meaningful bitonal image.\n"
-      "  -mode=mask        Only renders the mask layer.\n"
-      "  -mode=foreground  Only renders the foreground layer.\n"
-      "  -mode=background  Only renders the background layer.\n"
-      "  -page=PAGESPEC    Selects page(s) to be decoded.\n"
-      "  -quality=QUALITY  Specifies jpeg quality for lossy tiff output.\n"
-      "\n"
-      "If <outputfile> is a single dash or omitted, the decompressed image\n"
-      "is sent to the standard output.  If <djvufile> is a single dash or\n"
-      "omitted, the djvu file is read from the standard input.\n\n");
+  fprintf(stderr, "%s",
+    i18n("DjVu decompression utility\n\n"
+         "Usage: ddjvu [options] [<djvufile> [<outputfile>]]\n\n"
+         "Options:\n"
+         "  -verbose          Prints various informational messages.\n"
+         "  -format=FMT       Selects output format: pbm,pgm,ppm,pnm,rle,tiff.\n"
+         "  -scale=N          Selects display scale.\n"
+         "  -size=WxH         Selects size of rendered image.\n"
+         "  -subsample=N      Selects direct subsampling factor.\n"
+         "  -aspect=no        Authorizes aspect ratio changes\n"
+         "  -segment=WxH+X+Y  Selects which segment of the rendered image\n"
+         "  -mode=black       Renders a meaningful bitonal image.\n"
+         "  -mode=mask        Only renders the mask layer.\n"
+         "  -mode=foreground  Only renders the foreground layer.\n"
+         "  -mode=background  Only renders the background layer.\n"
+         "  -page=PAGESPEC    Selects page(s) to be decoded.\n"
+         "  -quality=QUALITY  Specifies jpeg quality for lossy tiff output.\n"
+         "\n"
+         "If <outputfile> is a single dash or omitted, the decompressed image\n"
+         "is sent to the standard output.  If <djvufile> is a single dash or\n"
+         "omitted, the djvu file is read from the standard input.\n\n" ));
   exit(1);
 }
 
@@ -650,11 +654,11 @@ usage()
 int 
 parse_option(int argc, char **argv, int i)
 {
-  static const char *errarg = "option '-%s' needs no argument.";
-  static const char *errnoarg = "option '-%s' needs an argument.";
-  static const char *errbadarg = "valid arguments for option '-%s' %s.";
-  static const char *errdupl= "option '%s' specified multiple times.";
-  static const char *errconfl = "option '%s' conflicts with another option.";
+  static char *errarg = I18N("option '-%s' needs no argument.");
+  static char *errnoarg = I18N("option '-%s' needs an argument.");
+  static char *errbadarg = I18N("valid arguments for option '-%s' %s.");
+  static char *errdupl= I18N("option '%s' specified multiple times.");
+  static char *errconfl = I18N("option '%s' conflicts with another option.");
   
   char buf[32];
   const char *s = argv[i];
@@ -710,68 +714,68 @@ parse_option(int argc, char **argv, int i)
       !strcmp(opt,"verbose"))
     {
       if (arg) 
-        die(errarg, opt);
+        die(i18n(errarg), opt);
       flag_verbose = 1;
     }
   else if (!strcmp(opt,"scale"))
     {
       if (!arg) 
-        die(errnoarg, opt);
+        die(i18n(errnoarg), opt);
       if (flag_subsample>=0 || flag_scale>=0 || flag_size>=0)
-        die(errconfl, s);
+        die(i18n(errconfl), s);
       flag_scale = strtol(arg, &end, 10);
       if (*end == '%')
         end++;
       if (*end || flag_scale<1 || flag_scale>999)
-        die(errbadarg, opt, "range from 1% to 999%");
+        die(i18n(errbadarg), opt, i18n("range from 1% to 999%"));
     }
   else if (!strcmp(opt,"aspect"))
     {
       if (flag_aspect >= 0)
-        die(errdupl, opt);
+        die(i18n(errdupl), opt);
       if (!arg || !strcmp(arg,"no"))
         flag_aspect = 1;
       else if (!strcmp(arg,"yes"))
         flag_aspect = 0;
       else
-        die(errbadarg, opt, "are 'yes' or 'no'");
+        die(i18n(errbadarg), opt, i18n("are 'yes' or 'no'"));
     }
   else if (!strcmp(opt,"size"))
     {
       if (!arg) 
-        die(errnoarg, opt);
+        die(i18n(errnoarg), opt);
       if (flag_subsample>=0 || flag_scale>=0 || flag_size>=0)
-        die(errconfl, s);
+        die(i18n(errconfl), s);
       parse_geometry(arg, &info_size);
       if (info_size.x || info_size.y)
-        die(errbadarg, opt, "have the form <width>x<height>");
+        die(i18n(errbadarg), opt, i18n("have the form <width>x<height>"));
       flag_size = 1;
     }
   else if (!strcmp(opt,"subsample"))
     {
       if (!arg) 
-        die(errnoarg, opt);
+        die(i18n(errnoarg), opt);
       if (flag_subsample>=0 || flag_scale>=0 || flag_size>=0)
-        die(errconfl, s);
+        die(i18n(errconfl), s);
       flag_subsample = strtol(arg, &end, 10);
       if (*end || flag_subsample<1)
-        die(errbadarg,opt,"are positive integers");
+        die(i18n(errbadarg),opt,i18n("are positive integers"));
     }
   else if (!strcmp(opt,"segment"))
     {
       if (!arg) 
-        die(errnoarg, opt);
+        die(i18n(errnoarg), opt);
       if (flag_segment)
-        die(errdupl, opt);
+        die(i18n(errdupl), opt);
       parse_geometry(arg, &info_segment);
       flag_segment = 1;
     }
   else if (!strcmp(opt,"format"))
     {
       if (!arg) 
-        die(errnoarg, opt);
+        die(i18n(errnoarg), opt);
       if (flag_format)
-        die(errdupl, opt);
+        die(i18n(errdupl), opt);
       if (!strcmp(arg,"pbm"))
         flag_format='4';
       else if (!strcmp(arg,"pgm"))
@@ -785,14 +789,14 @@ parse_option(int argc, char **argv, int i)
       else if (!strcmp(arg,"tiff") || !strcmp(arg,"tif"))
         flag_format='t';
       else
-        die(errbadarg,opt,"are: pbm,pgm,ppm,pnm,rle,tiff");
+        die(i18n(errbadarg),opt,i18n("are: pbm,pgm,ppm,pnm,rle,tiff"));
     }
   else if (!strcmp(opt,"mode"))
     {
       if (!arg) 
-        die(errnoarg, opt);
+        die(i18n(errnoarg), opt);
       if (flag_mode)
-        die(errdupl, opt);
+        die(i18n(errdupl), opt);
       if (!strcmp(arg,"color") )
         flag_mode = 'c';
       else if (!strcmp(arg,"black"))
@@ -804,29 +808,29 @@ parse_option(int argc, char **argv, int i)
       else if (!strcmp(arg,"background") || !strcmp(arg,"bg"))
         flag_mode = 'b';
       else
-        die(errbadarg,opt,"are: color,black,mask,fg,bg");
+        die(i18n(errbadarg),opt,i18n("are: color,black,mask,fg,bg"));
     }
   else if (! strcmp(opt, "page") ||
            ! strcmp(opt, "pages") )
     {
       if (!arg) 
-        die(errnoarg, opt);
+        die(i18n(errnoarg), opt);
       if (flag_pagespec)
-        die(errdupl, opt);
+        die(i18n(errdupl), opt);
       flag_pagespec = arg;
     }
   else if (!strcmp(opt,"quality") ||
            !strcmp(opt,"jpeg") )
     {
       if (flag_quality >= 0)
-        die(errdupl, opt);
+        die(i18n(errdupl), opt);
       else if (!arg) 
         flag_quality = 100;
       else 
         {
           flag_quality = strtol(arg,&end,10);
           if (*end || flag_quality<25 || flag_quality>150)
-            die(errbadarg,opt,"an integer between 25 and 150");
+            die(i18n(errbadarg),opt,i18n("an integer between 25 and 150"));
         }
     }
   else if (! strcmp(opt, "help"))
@@ -835,7 +839,7 @@ parse_option(int argc, char **argv, int i)
     }
   else
     {
-      die("Invalid option '%s'. Try 'ddjvu --help'.", s);
+      die(i18n("Invalid option '%s'. Try 'ddjvu --help'."), s);
     }
   return i;
 }
@@ -870,9 +874,9 @@ main(int argc, char **argv)
 
   /* Create context and document */
   if (! (ctx = ddjvu_context_create(argv[0])))
-    die("Cannot create djvu context.");
+    die(i18n("Cannot create djvu context."));
   if (! (doc = ddjvu_document_create_by_filename(ctx, inputfilename, TRUE)))
-    die("Cannot open djvu document '%s'.", inputfilename);
+    die(i18n("Cannot open djvu document '%s'."), inputfilename);
   while (! ddjvu_document_decoding_done(doc))
     handle(TRUE);
   
@@ -885,7 +889,7 @@ main(int argc, char **argv)
   if (tiff)
     {
       if (! TIFFFlush(tiff))
-        die("Error while flushing tiff file.");
+        die(i18n("Error while flushing tiff file."));
       TIFFClose(tiff);
       tiff = 0;
     }
@@ -893,7 +897,7 @@ main(int argc, char **argv)
   if (fout)
     {
       if (fflush(fout) < 0)
-        die("Error while flushing output file: %s", strerror(errno));
+        die(i18n("Error while flushing output file: %s"), strerror(errno));
       fclose(fout);
       fout = 0;
     }

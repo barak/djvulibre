@@ -126,7 +126,9 @@ struct DJVUNS ddjvu_context_s : public GPEnabled
   GMonitor monitor;
   GP<DjVuFileCache> cache;
   GPList<ddjvu_message_p> mlist;
-  ddjvu_message_callback_t callback;
+  int uniqueid;
+  ddjvu_message_callback_t callbackfun;
+  void *callbackarg;
 };
 
 struct DJVUNS ddjvu_document_s : public DjVuPort
@@ -259,23 +261,28 @@ xhead(ddjvu_message_tag_t tag,
 ddjvu_context_t *
 ddjvu_context_create(const char *programname)
 {
+  ddjvu_context_t *ctx = 0;
   G_TRY
     {
       setlocale(LC_ALL,"");
       DjVuMessage::use_language();
       if (programname)
         djvu_programname(programname);
-      ddjvu_context_t *ctx = new ddjvu_context_s;
-      ctx->cache = DjVuFileCache::create();
-      ctx->callback = 0;
+      ctx = new ddjvu_context_s;
       ref(ctx);
-      return ctx;
+      ctx->uniqueid = 0;
+      ctx->callbackfun = 0;
+      ctx->callbackarg = 0;
+      ctx->cache = DjVuFileCache::create();
     }
   G_CATCH(ex)
     {
+      if (ctx)
+        unref(ctx);
+      ctx = 0;
     }
   G_ENDCATCH;
-  return 0;
+  return ctx;
 }
 
 void 
@@ -304,15 +311,13 @@ msg_push(const ddjvu_message_any_t &head,
   ddjvu_context_t *ctx = head.context;
   if (! msg) msg = new ddjvu_message_p;
   msg->p.m_any = head;
-  int size = 0;
   {
     GMonitorLock lock(&ctx->monitor);
     ctx->mlist.append(msg);
     ctx->monitor.broadcast();
-    size = ctx->mlist.size();
   }
-  if (ctx->callback) 
-    (ctx->callback)(ctx, size);
+  if (ctx->callbackfun) 
+    (ctx->callbackfun)(ctx, ctx->callbackarg);
 }
 
 static void
@@ -513,14 +518,14 @@ ddjvu_message_pop(ddjvu_context_t *ctx)
   G_ENDCATCH;
 }
 
-ddjvu_message_callback_t
+void
 ddjvu_message_set_callback(ddjvu_context_t *ctx,
-                           ddjvu_message_callback_t callback)
+                           ddjvu_message_callback_t callback,
+                           void *closure)
 {
   GMonitorLock(&ctx->monitor);
-  ddjvu_message_callback_t oldcallback = ctx->callback;
-  ctx->callback = callback;
-  return oldcallback;
+  ctx->callbackfun = callback;
+  ctx->callbackarg = closure;
 }
 
 
@@ -609,11 +614,12 @@ ddjvu_document_create(ddjvu_context_t *ctx,
                       const char *url,
                       int cache)
 {
+  ddjvu_document_t *d = 0;
   G_TRY
     {
       DjVuFileCache *xcache = ctx->cache;
       if (! cache) xcache = 0;
-      ddjvu_document_t *d = new ddjvu_document_s;
+      d = new ddjvu_document_s;
       ref(d);
       d->streams[0] = DataPool::create();
       d->streamid = -1;
@@ -630,19 +636,21 @@ ddjvu_document_create(ddjvu_context_t *ctx,
       else
         {
           GUTF8String s;
-          s.format("ddjvu:///%p/index.djvu", d);
+          s.format("ddjvu:///doc%d/index.djvu", ++(ctx->uniqueid));;
           GURL gurl = s;
           d->urlflag = false;
           d->doc->start_init(gurl, d, xcache);
         }
-      return d;
     }
   G_CATCH(ex)
     {
+      if (d) 
+        unref(d);
+      d = 0;
       ERROR(ctx, ex);
     }
   G_ENDCATCH;
-  return 0;
+  return d;
 }
 
 ddjvu_document_t *
@@ -650,12 +658,13 @@ ddjvu_document_create_by_filename(ddjvu_context_t *ctx,
                                   const char *filename,
                                   int cache)
 {
+  ddjvu_document_t *d = 0;
   G_TRY
     {
       DjVuFileCache *xcache = ctx->cache;
       if (! cache) xcache = 0;
       GURL gurl = GURL::Filename::UTF8(filename);
-      ddjvu_document_t *d = new ddjvu_document_s;
+      d = new ddjvu_document_s;
       ref(d);
       d->streamid = -1;
       d->fileflag = true;
@@ -664,14 +673,16 @@ ddjvu_document_create_by_filename(ddjvu_context_t *ctx,
       d->myctx = ctx;
       d->doc = DjVuDocument::create_noinit();
       d->doc->start_init(gurl, d, xcache);
-      return d;
     }
   G_CATCH(ex)
     {
+      if (d)
+        unref(d);
+      d = 0;
       ERROR(ctx, ex);
     }
   G_ENDCATCH;
-  return 0;
+  return d;
 }
 
 void
@@ -753,12 +764,12 @@ ddjvu_stream_close(ddjvu_document_t *doc,
       { 
         GMonitorLock lock(&doc->monitor); 
         pool = doc->streams[p];
+        doc->streams.del(p);
       }
       if (stop)
         pool->stop();
       else
         pool->set_eof();
-      doc->streams.del(p);
     }
   G_CATCH(ex)
     {
@@ -854,48 +865,54 @@ ddjvu_page_t *
 ddjvu_page_create_by_pageno(ddjvu_document_t *document,
                             int pageno)
 {
+  ddjvu_page_t *p = 0;
   G_TRY
     {
       DjVuDocument *doc = document->doc;
       if (! doc) return 0;
-      ddjvu_page_t *p = new ddjvu_page_s;
+      p = new ddjvu_page_s;
       ref(p);
       p->mydoc = document;
       p->img = doc->get_page(pageno, false, p);
       p->userdata = 0;
       p->pageinfoflag = false;
-      return p;
     }
   G_CATCH(ex)
     {
+      if (p)
+        unref(p);
+      p = 0;
       ERROR(document, ex);
     }
   G_ENDCATCH;
-  return 0;
+  return p;
 }
 
 ddjvu_page_t *
 ddjvu_page_create_by_pageid(ddjvu_document_t *document,
                             const char *pageid)
 {
+  ddjvu_page_t *p = 0;
   G_TRY
     {
       DjVuDocument *doc = document->doc;
       if (! doc) return 0;
-      ddjvu_page_t *p = new ddjvu_page_s;
+      p = new ddjvu_page_s;
       ref(p);
       p->mydoc = document;
       p->img = doc->get_page(GNativeString(pageid), false, p);
       p->userdata = 0;
       p->pageinfoflag = false;
-      return p;
     }
   G_CATCH(ex)
     {
+      if (p)
+        unref(p);
+      p = 0;
       ERROR(document, ex);
     }
   G_ENDCATCH;
-  return 0;
+  return p;
 }
 
 void

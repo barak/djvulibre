@@ -219,12 +219,12 @@ ddjvu_message_pop(ddjvu_context_t *context);
    the presence of data. */
 
 typedef void 
-(*ddjvu_message_callback_t)(ddjvu_context_t *context,
-                            int howmanymessages);
+(*ddjvu_message_callback_t)(ddjvu_context_t *context, void *closure);
 
-DDJVUAPI ddjvu_message_callback_t
+DDJVUAPI void
 ddjvu_message_set_callback(ddjvu_context_t *context,
-                           ddjvu_message_callback_t callback);
+                           ddjvu_message_callback_t callback,
+                           void *closure);
 
 
 /* ------- MESSAGES ------- */
