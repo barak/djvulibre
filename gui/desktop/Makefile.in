@@ -26,18 +26,99 @@ datadir = @datadir@
 libdir = @libdir@
 mandir = @mandir@
 
-all:
+INSTALL = @INSTALL@
+RM = @RM@
+
+# These are probed by acdesktop.m4
+dtop_applications = @dtop_applications@
+dtop_icons = @dtop_icons@
+dtop_pixmaps = @dtop_pixmaps@
+dtop_mime_info = @dtop_mime_info@
+dtop_application_registry = @dtop_application_registry@
+dtop_applnk = @dtop_applnk@
+dtop_mimelnk = @dtop_mimelnk@
+dtop_menu = @dtop_menu@
+
+ALLTARGETS = djview.menu
+
+all: ${ALLTARGETS}
+
+djview.menu: Makefile
+	( echo '?package(djview):needs=X11  '\\;\
+	  echo '    section="Apps/Graphics" '\\;\
+	  echo '    title="DjView" command="${bindir}/djview" '\\;\
+	  echo '    icon="${dtop_pixmaps}/djvu.xpm"';\
+	) > djview.menu
+
+install: install-xdg install-kde install-gnome install-debian 
+
+install-xdg: FORCE
+	if test -n "${dtop_applications}" ; then \
+	    ${INSTALL} -d ${DESTDIR}${dtop_applications};\
+	    ${INSTALL} -m 644 ${srcdir}/djview.desktop \
+	        ${DESTDIR}${dtop_applications}/djview.desktop;\
+	fi
+
+install-debian: djview.menu FORCE
+	if test -n "${dtop_menu}" ; then \
+	  if test -n "${dtop_pixmaps}"; then \
+	    ${INSTALL} -d ${DESTDIR}${dtop_pixmaps};\
+	    ${INSTALL} -m 644 ${srcdir}/djvu.xpm \
+	        ${DESTDIR}${dtop_pixmaps}/djvu.xpm;\
+	  fi;\
+	  ${INSTALL} -d ${DESTDIR}${dtop_menu};\
+	  ${INSTALL} -m 644 djview.menu \
+	      ${DESTDIR}${dtop_menu}/djview.menu;\
+	fi
+
+install-kde: FORCE
+	if test -n "${dtop_icons}"; then \
+	    ${INSTALL} -d ${DESTDIR}${dtop_icons}/hicolor/48x48/mimetypes;\
+	    ${INSTALL} -d ${DESTDIR}${dtop_icons}/hicolor/32x32/mimetypes;\
+	    ${INSTALL} -d ${DESTDIR}${dtop_icons}/hicolor/22x22/mimetypes;\
+	    ${INSTALL} -m 644 ${srcdir}/hi48-mimetype-djvu.png \
+	        ${DESTDIR}${dtop_icons}/hicolor/48x48/mimetypes/djvu.png;\
+	    ${INSTALL} -m 644 ${srcdir}/hi32-mimetype-djvu.png \
+	        ${DESTDIR}${dtop_icons}/hicolor/32x32/mimetypes/djvu.png;\
+	    ${INSTALL} -m 644 ${srcdir}/hi22-mimetype-djvu.png \
+		${DESTDIR}${dtop_icons}/hicolor/22x22/mimetypes/djvu.png;\
+	fi
+	if test -n "${dtop_mimelnk}"; then \
+	    ${INSTALL} -d ${DESTDIR}${dtop_mimelnk}/image;\
+	    ${INSTALL} -m 644 ${srcdir}/x-djvu.desktop \
+	        ${DESTDIR}${dtop_mimelnk}/image/x-djvu.desktop;\
+	fi
+	if test -n "${dtop_applnk}"; then \
+	    ${INSTALL} -d ${DESTDIR}${dtop_applnk}/Graphics;\
+	    ${INSTALL} -m 644 ${srcdir}/djview.desktop \
+	        ${DESTDIR}${dtop_applnk}/Graphics/djview.desktop;\
+	fi
+
+install-gnome: FORCE
+	if test -n "${dtop_pixmaps}"; then \
+	    ${INSTALL} -d ${DESTDIR}${dtop_pixmaps};\
+	    ${INSTALL} -m 644 ${srcdir}/hi48-mimetype-djvu.png \
+	        ${DESTDIR}${dtop_pixmaps}/djvu.png;\
+	fi
+	if test -n "${dtop_mime_info}"; then \
+	    ${INSTALL} -d ${DESTDIR}${dtop_mime_info};\
+	    ${INSTALL} -m 644 ${srcdir}/djvu.mime \
+	        ${DESTDIR}${dtop_mime_info}/djvu.mime;\
+	    ${INSTALL} -m 644 ${srcdir}/djvu.keys \
+	        ${DESTDIR}${dtop_mime_info}/djvu.keys;\
+	fi
+	if test -n "${dtop_application_registry}"; then \
+	    ${INSTALL} -d ${DESTDIR}${dtop_application_registry};\
+	    ${INSTALL} -m 644 ${srcdir}/djvu.applications \
+	        ${DESTDIR}${dtop_application_registry};\
+	fi
 
 depend:
 
 clean:
+	-${RM} 2>/dev/null ${ALLTARGETS}
 
 distclean:
-
-install: FORCE
-	${SHELL} ${srcdir}/installer.sh --destdir=${DESTDIR} \
-	   --bindir=${bindir} --srcdir=${srcdir}
-
 
 FORCE:
 .PHONY: FORCE

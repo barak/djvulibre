@@ -57,7 +57,6 @@ make
 %install
 rm -rf %{buildroot}
 make DESTDIR=%{buildroot} install
-make DESTDIR=%{buildroot} install-desktop-files
 
 # Quick fix to stop ldconfig from complaining
 find %{buildroot}%{_libdir} -name "*.so*" -exec chmod 755 {} \;

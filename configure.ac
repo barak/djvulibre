@@ -259,6 +259,12 @@ AC_SUBST(I18N_YES)
 AC_SUBST(I18N_NO)   
 
 
+# Locate desktop files (gui/desktop/acdesktop.m4)
+if test $ac_enable_djview != no 
+then
+    AC_FIND_DESKTOP_DIRS
+fi
+
 
 
 # ----------------------------------------

@@ -892,6 +892,8 @@ Optional Features:
   --enable-xmltools       enable compilation of the djvu xml tools.
   --enable-djview         enable compilation of djview (default).
   --enable-i18n           enable compilation of locales (default:all).
+  --enable-desktopfiles   Install icons and menu files (default: only when
+                          prefix=/usr).
   --enable-shared         Enable shared libdjvu (default: linux only)
 
 Optional Packages:
@@ -8162,6 +8164,251 @@ fi
 
 
 
+# Locate desktop files (gui/desktop/acdesktop.m4)
+if test $ac_enable_djview != no
+then
+
+   if test "${prefix}" == "/usr" ; then
+     ac_desktopfiles=yes
+   else
+     ac_desktopfiles=no
+   fi
+   # Check whether --enable-desktopfiles or --disable-desktopfiles was given.
+if test "${enable_desktopfiles+set}" = set; then
+  enableval="$enable_desktopfiles"
+  ac_desktopfiles=$enableval
+fi;
+
+   dtop_applications=          # XDG menu entries
+   dtop_icons=                 # KDE-style icon directories
+   dtop_pixmaps=               # Gnome-style icon directories
+   dtop_mime_info=             # Gnome mime database
+   dtop_application_registry=  # Gnome mime associations
+   dtop_applnk=                # KDE menu entries (KDE<3.2)
+   dtop_mimelnk=               # KDE mime database
+   dtop_menu=                  # DEBIAN menus
+
+   if test $ac_desktopfiles != no
+   then
+       # kde-config
+       KDE_CONFIG=
+       # Extract the first word of "kde-config", so it can be a program name with args.
+set dummy kde-config; ac_word=$2
+echo "$as_me:$LINENO: checking for $ac_word" >&5
+echo $ECHO_N "checking for $ac_word... $ECHO_C" >&6
+if test "${ac_cv_path_KDE_CONFIG+set}" = set; then
+  echo $ECHO_N "(cached) $ECHO_C" >&6
+else
+  case $KDE_CONFIG in
+  [\\/]* | ?:[\\/]*)
+  ac_cv_path_KDE_CONFIG="$KDE_CONFIG" # Let the user override the test with a path.
+  ;;
+  *)
+  as_save_IFS=$IFS; IFS=$PATH_SEPARATOR
+for as_dir in $PATH
+do
+  IFS=$as_save_IFS
+  test -z "$as_dir" && as_dir=.
+  for ac_exec_ext in '' $ac_executable_extensions; do
+  if $as_executable_p "$as_dir/$ac_word$ac_exec_ext"; then
+    ac_cv_path_KDE_CONFIG="$as_dir/$ac_word$ac_exec_ext"
+    echo "$as_me:$LINENO: found $as_dir/$ac_word$ac_exec_ext" >&5
+    break 2
+  fi
+done
+done
+
+  ;;
+esac
+fi
+KDE_CONFIG=$ac_cv_path_KDE_CONFIG
+
+if test -n "$KDE_CONFIG"; then
+  echo "$as_me:$LINENO: result: $KDE_CONFIG" >&5
+echo "${ECHO_T}$KDE_CONFIG" >&6
+else
+  echo "$as_me:$LINENO: result: no" >&5
+echo "${ECHO_T}no" >&6
+fi
+
+
+       # dtop_menu
+       echo "$as_me:$LINENO: checking for Debian menu directory" >&5
+echo $ECHO_N "checking for Debian menu directory... $ECHO_C" >&6
+       if test -d /etc/menu-methods -a -d /usr/lib/menu ; then
+           dtop_menu="/usr/lib/menu"
+       fi
+
+    xdir="`eval echo \"$libdir\"`"
+    dtop_menu=`echo $dtop_menu | sed -e 's:^'"$xdir"'/:${libdir}/:'`
+    xdir="`eval echo \"$datadir\"`"
+    dtop_menu=`echo $dtop_menu | sed -e 's:^'"$xdir"'/:${datadir}/:'`
+    xdir="`eval echo \"$bindir\"`"
+    dtop_menu=`echo $dtop_menu | sed -e 's:^'"$xdir"'/:${bindir}/:'`
+    xdir="`eval echo \"$prefix\"`"
+    dtop_menu=`echo $dtop_menu | sed -e 's:^'"$xdir"'/:${prefix}/:'`
+
+       echo "$as_me:$LINENO: result: ${dtop_menu-\"no\"}" >&5
+echo "${ECHO_T}${dtop_menu-\"no\"}" >&6
+
+       # dtop_applications
+       if test -z "$dtop_menu" ; then
+           echo "$as_me:$LINENO: checking for XDG menu directory" >&5
+echo $ECHO_N "checking for XDG menu directory... $ECHO_C" >&6
+           if test -d /usr/share/applications ; then
+               if test -r /etc/xdg/menus/applications.menu ||
+                  test -r /etc/X11/desktop-menus/applications.menu ; then
+                    dtop_applications="/usr/share/applications"
+               fi
+           fi
+
+    xdir="`eval echo \"$libdir\"`"
+    dtop_applications=`echo $dtop_applications | sed -e 's:^'"$xdir"'/:${libdir}/:'`
+    xdir="`eval echo \"$datadir\"`"
+    dtop_applications=`echo $dtop_applications | sed -e 's:^'"$xdir"'/:${datadir}/:'`
+    xdir="`eval echo \"$bindir\"`"
+    dtop_applications=`echo $dtop_applications | sed -e 's:^'"$xdir"'/:${bindir}/:'`
+    xdir="`eval echo \"$prefix\"`"
+    dtop_applications=`echo $dtop_applications | sed -e 's:^'"$xdir"'/:${prefix}/:'`
+
+           echo "$as_me:$LINENO: result: ${dtop_applications-\"no\"}" >&5
+echo "${ECHO_T}${dtop_applications-\"no\"}" >&6
+       fi
+
+       # dtop_pixmaps
+       echo "$as_me:$LINENO: checking for Gnome icon directory" >&5
+echo $ECHO_N "checking for Gnome icon directory... $ECHO_C" >&6
+       if test -d "/usr/share/pixmaps" ; then
+           dtop_pixmaps="/usr/share/pixmaps"
+       fi
+
+    xdir="`eval echo \"$libdir\"`"
+    dtop_pixmaps=`echo $dtop_pixmaps | sed -e 's:^'"$xdir"'/:${libdir}/:'`
+    xdir="`eval echo \"$datadir\"`"
+    dtop_pixmaps=`echo $dtop_pixmaps | sed -e 's:^'"$xdir"'/:${datadir}/:'`
+    xdir="`eval echo \"$bindir\"`"
+    dtop_pixmaps=`echo $dtop_pixmaps | sed -e 's:^'"$xdir"'/:${bindir}/:'`
+    xdir="`eval echo \"$prefix\"`"
+    dtop_pixmaps=`echo $dtop_pixmaps | sed -e 's:^'"$xdir"'/:${prefix}/:'`
+
+       echo "$as_me:$LINENO: result: ${dtop_pixmaps-\"no\"}" >&5
+echo "${ECHO_T}${dtop_pixmaps-\"no\"}" >&6
+
+       # dtop_mime_info
+       echo "$as_me:$LINENO: checking for Gnome mimetype directory" >&5
+echo $ECHO_N "checking for Gnome mimetype directory... $ECHO_C" >&6
+       if test -d "/usr/share/mime-info" ; then
+           dtop_mime_info="/usr/share/mime-info"
+       fi
+
+    xdir="`eval echo \"$libdir\"`"
+    dtop_mime_info=`echo $dtop_mime_info | sed -e 's:^'"$xdir"'/:${libdir}/:'`
+    xdir="`eval echo \"$datadir\"`"
+    dtop_mime_info=`echo $dtop_mime_info | sed -e 's:^'"$xdir"'/:${datadir}/:'`
+    xdir="`eval echo \"$bindir\"`"
+    dtop_mime_info=`echo $dtop_mime_info | sed -e 's:^'"$xdir"'/:${bindir}/:'`
+    xdir="`eval echo \"$prefix\"`"
+    dtop_mime_info=`echo $dtop_mime_info | sed -e 's:^'"$xdir"'/:${prefix}/:'`
+
+       echo "$as_me:$LINENO: result: ${dtop_mime_info-\"no\"}" >&5
+echo "${ECHO_T}${dtop_mime_info-\"no\"}" >&6
+
+       # dtop_application_registry
+       echo "$as_me:$LINENO: checking for Gnome association directory" >&5
+echo $ECHO_N "checking for Gnome association directory... $ECHO_C" >&6
+       if test -d "/usr/share/application-registry" ; then
+           dtop_application_registry="/usr/share/application-registry"
+       fi
+
+    xdir="`eval echo \"$libdir\"`"
+    dtop_application_registry=`echo $dtop_application_registry | sed -e 's:^'"$xdir"'/:${libdir}/:'`
+    xdir="`eval echo \"$datadir\"`"
+    dtop_application_registry=`echo $dtop_application_registry | sed -e 's:^'"$xdir"'/:${datadir}/:'`
+    xdir="`eval echo \"$bindir\"`"
+    dtop_application_registry=`echo $dtop_application_registry | sed -e 's:^'"$xdir"'/:${bindir}/:'`
+    xdir="`eval echo \"$prefix\"`"
+    dtop_application_registry=`echo $dtop_application_registry | sed -e 's:^'"$xdir"'/:${prefix}/:'`
+
+       echo "$as_me:$LINENO: result: ${dtop_application_registry-\"no\"}" >&5
+echo "${ECHO_T}${dtop_application_registry-\"no\"}" >&6
+
+       # dtop_icons
+       echo "$as_me:$LINENO: checking for KDE icon directory" >&5
+echo $ECHO_N "checking for KDE icon directory... $ECHO_C" >&6
+       if test -x "$KDE_CONFIG" ; then
+           dtop_icons=`$KDE_CONFIG --expandvars --install icon`
+       elif test -d "/usr/share/icons" ; then
+           dtop_icons="/usr/share/icons"
+       fi
+
+    xdir="`eval echo \"$libdir\"`"
+    dtop_icons=`echo $dtop_icons | sed -e 's:^'"$xdir"'/:${libdir}/:'`
+    xdir="`eval echo \"$datadir\"`"
+    dtop_icons=`echo $dtop_icons | sed -e 's:^'"$xdir"'/:${datadir}/:'`
+    xdir="`eval echo \"$bindir\"`"
+    dtop_icons=`echo $dtop_icons | sed -e 's:^'"$xdir"'/:${bindir}/:'`
+    xdir="`eval echo \"$prefix\"`"
+    dtop_icons=`echo $dtop_icons | sed -e 's:^'"$xdir"'/:${prefix}/:'`
+
+       echo "$as_me:$LINENO: result: ${dtop_icons-\"no\"}" >&5
+echo "${ECHO_T}${dtop_icons-\"no\"}" >&6
+
+       # dtop_applnk
+       if test -z "$dtop_menu" -a -z "$dtop_applications" ; then
+           echo "$as_me:$LINENO: checking for KDE menu directory" >&5
+echo $ECHO_N "checking for KDE menu directory... $ECHO_C" >&6
+           if test -x "$KDE_CONFIG" ; then
+               dtop_applnk=`$KDE_CONFIG --expandvars --install apps`
+           elif test -d "/usr/share/applnk" ; then
+               dtop_applnk="/usr/share/applnk"
+           fi
+
+    xdir="`eval echo \"$libdir\"`"
+    dtop_applnk=`echo $dtop_applnk | sed -e 's:^'"$xdir"'/:${libdir}/:'`
+    xdir="`eval echo \"$datadir\"`"
+    dtop_applnk=`echo $dtop_applnk | sed -e 's:^'"$xdir"'/:${datadir}/:'`
+    xdir="`eval echo \"$bindir\"`"
+    dtop_applnk=`echo $dtop_applnk | sed -e 's:^'"$xdir"'/:${bindir}/:'`
+    xdir="`eval echo \"$prefix\"`"
+    dtop_applnk=`echo $dtop_applnk | sed -e 's:^'"$xdir"'/:${prefix}/:'`
+
+           echo "$as_me:$LINENO: result: ${dtop_applnk-\"no\"}" >&5
+echo "${ECHO_T}${dtop_applnk-\"no\"}" >&6
+       fi
+
+       # dtop_mimelnk
+       echo "$as_me:$LINENO: checking for KDE mimetype directory" >&5
+echo $ECHO_N "checking for KDE mimetype directory... $ECHO_C" >&6
+       if test -x "$KDE_CONFIG" ; then
+           dtop_mimelnk=`$KDE_CONFIG --expandvars --install mime`
+       elif test -d "/usr/share/mimelnk" ; then
+           dtop_mimelnk="/usr/share/mimelnk"
+       fi
+
+    xdir="`eval echo \"$libdir\"`"
+    dtop_mimelnk=`echo $dtop_mimelnk | sed -e 's:^'"$xdir"'/:${libdir}/:'`
+    xdir="`eval echo \"$datadir\"`"
+    dtop_mimelnk=`echo $dtop_mimelnk | sed -e 's:^'"$xdir"'/:${datadir}/:'`
+    xdir="`eval echo \"$bindir\"`"
+    dtop_mimelnk=`echo $dtop_mimelnk | sed -e 's:^'"$xdir"'/:${bindir}/:'`
+    xdir="`eval echo \"$prefix\"`"
+    dtop_mimelnk=`echo $dtop_mimelnk | sed -e 's:^'"$xdir"'/:${prefix}/:'`
+
+       echo "$as_me:$LINENO: result: ${dtop_mimelnk-\"no\"}" >&5
+echo "${ECHO_T}${dtop_mimelnk-\"no\"}" >&6
+   fi
+
+
+
+
+
+
+
+
+
+
+fi
+
 
 
 # ----------------------------------------
@@ -9044,6 +9291,15 @@ s,@GUI_NO@,$GUI_NO,;t t
 s,@LINGUAS@,$LINGUAS,;t t
 s,@I18N_YES@,$I18N_YES,;t t
 s,@I18N_NO@,$I18N_NO,;t t
+s,@KDE_CONFIG@,$KDE_CONFIG,;t t
+s,@dtop_applications@,$dtop_applications,;t t
+s,@dtop_icons@,$dtop_icons,;t t
+s,@dtop_pixmaps@,$dtop_pixmaps,;t t
+s,@dtop_mime_info@,$dtop_mime_info,;t t
+s,@dtop_application_registry@,$dtop_application_registry,;t t
+s,@dtop_applnk@,$dtop_applnk,;t t
+s,@dtop_mimelnk@,$dtop_mimelnk,;t t
+s,@dtop_menu@,$dtop_menu,;t t
 s,@SHARED_YES@,$SHARED_YES,;t t
 s,@SHARED_NO@,$SHARED_NO,;t t
 s,@NSDEJAVU@,$NSDEJAVU,;t t

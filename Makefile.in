@@ -53,7 +53,7 @@ distclean: FORCE
 	-${RM} Makefile libtool
 
 install-desktop-files: FORCE
-	( cd gui/desktop && ${MAKE} install )
+	make -C gui/desktop install
 
 FORCE:
 .PHONY: FORCE

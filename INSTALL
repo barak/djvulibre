@@ -20,13 +20,18 @@ compiler.  Early versions of gcc-2.96 have serious bugs.  See
 <http://www.redhat.com/support/errata/RHBA-2001-082.html>.
 
 
-1.2 - LIBJPEG
--------------
+1.2 - LIBJPEG/LIBTIFF
+---------------------
 
-A small number of DjVu files internally use JPEG encoding instead of IW44
-wavelet encoding.  These files are processed using either version 6a or 6b of
-the IJG libjpeg library <http://www.ijg.org>.  You can also choose to compile
-DjVu without JPEG support.  You might even never notice the difference.
+A small number of DjVu files internally use JPEG encoding instead 
+of IW44 wavelet encoding.  These files are processed using either 
+version 6a or 6b of the IJG libjpeg library <http://www.ijg.org>.  
+
+Some utility programs are able to read TIFF files. These programs
+rely on the LIBTIFF library <http://libtiff.org>.
+
+You can also compile DjVuLibre with neither JPEG nor TIFF support.  
+You might never notice the difference.
 
 
 1.3 - QT
@@ -40,15 +45,15 @@ The source code of the Qt library can be downloaded from
 <ftp://ftp.trolltech.com/qt/source/qt-x11-2.3.1.tar.gz>.
 
 Avoid versions earlier than 2.2.0.
-Suggested versions are 2.3.1 and 3.1.1
+Suggested versions are 2.3.1 and 3.1+
 
 
 1.4 - THREADS
 -------------
 
-The DjVu viewer makes heavy use of multiple threads of execution.  Modern Unix
-operating systems come with the standardized Posix threads.  DjVuLibre-3.5
-fully supports detecting and using Posix threads.
+The DjVu viewer makes heavy use of multiple threads of execution.  Modern 
+Unix operating systems come with the standardized Posix threads.  
+DjVuLibre-3.5 fully supports detecting and using Posix threads.
 
 For the sake of older operating systems, DjVuLibre-3.5 offers a custom
 threading model called CoThreads.  CoThreads work best with a two line patch
@@ -61,8 +66,7 @@ applying the GCC patch when it is needed.
 ----------
 
 There are various kind of "make" programs around with various capabilities.  
-We have only one recommendation: use gnu-make !
-
+If you run into problems, get gnu-make !
 
 
 
@@ -71,8 +75,8 @@ We have only one recommendation: use gnu-make !
 2- COMPILE
 ==========
 
-Chances are that everything will work by simply running commands "configure",
-"make" and "make install". 
+Chances are that everything will work by simply running 
+commands "configure", "make" and "make install". 
 
 
 2.1- CONFIGURE
@@ -87,12 +91,29 @@ configuration script.  A complete list can be obtained by typing
   This option specifies where the DjVuLibre software will be installed.
   The default prefix is /usr/local.  
 
+* Option "--enable-desktopfiles[=(yes|no)]"
+
+  Selecting this option installs icons and menu entries
+  compatible with several desktop environments such as KDE or GNOME.  
+  This is enabled by default when ${prefix} is /usr.
+
+* Option "--enable-i18n[=(yes|no|languages)]"
+
+  Enable generation of translation files and man pages 
+  for the specified languages.  By default, translation files 
+  and man pages are generated for all available languages
+
+* Options "--with-extra-includes=DIR" 
+      and "--with-extra-libraries=DIR"
+
+  This option defines additional directories for 
+  searching include files or libraries.
+
 * Option "--with-qt=QTDIR"
 
   This option specifies the base location of the Qt library.
   Without this option, the configuration script will inspect
   environment variable QTDIR as well as a few typical locations.
-
   When everything else fails (that should not happen), you 
   can simply define the environment variables 
   QT_CFLAGS, QT_LIBS and MOC.
@@ -103,9 +124,17 @@ configuration script.  A complete list can be obtained by typing
   compiled. This directory contains both the include files and the 
   library.  Without this option, the configuration script will search 
   the JPEG library in standard places.
-
   When everything else fails, you can simply define the environment
   variables JPEG_CFLAGS and JPEG_LIBS.
+
+* Option "--with-tiff=TIFFDIR"
+
+  This option specifies a directory where the LIBTIFF library has been
+  compiled. This directory contains both the include files and the 
+  library.  Without this option, the configuration script will search 
+  the LIBTIFF library in standard places.
+  When everything else fails, you can simply define the environment
+  variables TIFF_CFLAGS and TIFF_LIBS.
 
 * Option "--enable-threads=(posix|cothread)"
 
@@ -146,6 +175,7 @@ The installation procedure will:
 - install the man pages under "${prefix}/man or ${prefix}/share/man".
 - install the Netscape plug-in as "${prefix}/lib/netscape/plugins/nsdejavu.so".
 - install various ancillary files under "${prefix}/share/djvu".
+- optionally install information files for desktop environments.
 
 The where ${prefix} refers to the directory specified by the prefix option of
 the configuration script.  The default prefix is /usr/local.
@@ -156,13 +186,7 @@ To perform the installation, simply type :
 
 Of course you must have the appropriate permissions to 
 perform the installation.  Chances are that you need to
-be root to install something into /usr/local.
-
-If you are using KDE or GNOME, you can additionally
-type the following command to install icons and menu entries:
-
-        $ make install-desktop-files
-
+be root to install something into /usr or /usr/local.
 
 
 
@@ -253,11 +277,10 @@ installed in /usr/local/lib/netscape/plugins.
 You can then run Netscape 6.1 and view DjVu images.
 
 
-3.3- KONQUEROR-2.2
-------------------
+3.3- KONQUEROR
+--------------
 
-The DjVu plug-in works decently with the Konqueror web browser.  There are some
-problems with embedded DjVu images.  You need KDE-2.2 or better for that.
+The DjVu plug-in works nicely with the Konqueror web browser. 
 
 In Konqueror, select "Settings->Configure Konqueror".  When the dialog
 appears, select the icon "Netscape Plugins".  Make sure that directory
@@ -289,9 +312,9 @@ Install the plugin for mozilla and it will work for galeon.
 3.6- MOZILLA FIREBIRD/FIREFOX
 -----------------------------
 
-You must establish a link from the mozilla plugin directory.  Let us assume
-that mozilla is installed under /usr/lib/mozilla-firebird and 
-that the DjVu plug-in is installed in /usr/local/lib/netscape/plugins.
+You must establish a link from the appropriate plugin directory.  
+Let us assume that mozilla is installed under /usr/lib/mozilla-firebird 
+and that the DjVu plug-in is installed in /usr/local/lib/netscape/plugins.
 
     $ cd /usr/lib/mozilla-firebird/plugins
     $ ln -s /usr/local/lib/netscape/plugins/nsdejavu.so nsdejavu.so

@@ -14,7 +14,7 @@ SHELL = @SHELL@
 INSTALL = @INSTALL@
 RM = @RM@ 
 
-SUBDIRS= bin2cpp djview nsdejavu
+SUBDIRS= bin2cpp djview nsdejavu desktop
 
 all install depend clean: FORCE
 	for d in ${SUBDIRS} ;\
