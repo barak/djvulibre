@@ -1,0 +1,169 @@
+.\" Copyright (c) 2001 Leon Bottou, Yann Le Cun, Patrick Haffner,
+.\"                    AT&T Corp., and Lizardtech, Inc.
+.\"
+.\" This is free documentation; you can redistribute it and/or
+.\" modify it under the terms of the GNU General Public License as
+.\" published by the Free Software Foundation; either version 2 of
+.\" the License, or (at your option) any later version.
+.\"
+.\" The GNU General Public License's references to "object code"
+.\" and "executables" are to be interpreted as the output of any
+.\" document formatting or typesetting system, including
+.\" intermediate and printed output.
+.\"
+.\" This manual is distributed in the hope that it will be useful,
+.\" but WITHOUT ANY WARRANTY; without even the implied warranty of
+.\" MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+.\" GNU General Public License for more details.
+.\"
+.\" You should have received a copy of the GNU General Public
+.\" License along with this manual. Otherwise check the web site
+.\" of the Free Software Foundation at http://www.fsf.org.
+.TH DDJVU 1 "10/11/2001" "DjVuLibre-3.5" "DjVuLibre-3.5"
+.SH NAME
+ddjvu \- Command line DjVu decoder.
+
+.SH SYNOPSIS
+.BI "ddjvu  [" "options" "] [" "djvufile" "] [" "pnmfile" "]"
+
+.SH DESCRIPTION
+
+This program decodes DjVu file
+.IR djvufile ,
+produces a raw image, and saves it into file
+.IR pnmfile
+using the well known
+.SM PNM
+file formats.
+
+Omitting the 
+.I djvufile
+argument, or specifying a single dash causes the program to read the DjVu data
+from the standard input.  Similarly, omitting the
+.I pnmfile
+argument or specifying a single dash causes the program to write the
+.SM PNM
+data to the standard output.
+
+.SH RESOLUTION OPTIONS
+Three options control the resolution of the output image.  At most one of
+these three options can be specified.  The default resolution is equivalent to
+specifying
+.BR "-scale 100" .
+.TP
+.BI "-" "n"
+Specify an integer sub-sampling factor.  
+The dimensions of the full output image will be 
+.I n
+times smaller than the DjVu image size.
+The legal values for argument
+.I n
+range from 1 to 12.  Option
+.BR -1 ,
+for instance, produces an output image whose resolution
+is equal to the resolution of the input DjVu image file.
+.TP
+.BI "-scale " "mag"
+Specify a magnification factor relative to the resolution stored 
+in the DjVu image.  Specifying magnification of 100 produces an image 
+suitable for displaying on a 100 dpi device such as a computer screen.  
+The magnification factor
+.I mag
+can also be interpreted as the resolution
+of the output image expressed in dot per inch.
+.TP
+.BI "-size " "w" "x" "h"
+Specify the size of the full output image.
+Rendering the full DjVu image would create an output image 
+whose width and height are given by arguments
+.I w
+and 
+.IR h .
+This option provides full control on the resolution
+and the aspect ratio of the output image.
+
+.SH RENDERING MODE OPTIONS
+The default rendering mode merges all the layers of the DjVu image 
+and outputs an adequate 
+.SM PNM
+file. DjVuPhoto and DjVuDocument images are always rendered as 
+.SM PPM
+files. DjVuBitonal images are rendered as 
+.SM PBM 
+files if the output image
+resolution is exactly equal to the DjVu image resolution.  Use option
+.B -1
+to ensure this behavior.  
+DjVuBitonal images are otherwise rendered as anti-aliased
+.SM PGM 
+files. 
+Three options alter this default behavior.
+.TP
+.B "-black"
+Only render the foreground layer mask.  This mode does not
+work with DjVuPhoto images because these files have no foreground 
+layer mask.  The output file will be a 
+.SM
+PBM 
+file if the output image
+resolution is exactly equal to the DjVu image resolution.
+Otherwise an anti-aliased
+.SM PGM
+file will be generated.
+.TP
+.B "-foreground"
+Only render the foreground layer on a white background.  
+This mode works only with DjVuDocument images. 
+The output file will always be a 
+.SM PPM
+file.
+.TP
+.B "-background"
+Only render the foreground layer on a white background.  
+This mode works only with DjVuDocument images. 
+The output file will always be a 
+.SM PPM
+file.
+
+.SH OTHER OPTIONS
+.TP
+.B -v
+Display informational messages describing the structure of the DjVu 
+image and the
+.SM CPU
+times required to decode and render the image.
+.TP
+.BI "-page " "n"
+Specify which page of a multi-page DjVu document should be decoded.  The
+default is the first page of the document (page 1).
+.TP
+.BI "-segment " "w" "x" "h" "+" "x" "+" "y"
+Specify an image segment to render. 
+Program
+.B ddjvu
+conceptually renders the full page using the specified resolution, 
+and then extracts a sub-image of width
+.I w 
+and height
+.IR h ,
+starting at position 
+.IR "" ( x , y )
+relative to the bottom left corner of the page.
+Both operations of course happen simultaneously.  Rendering a small
+sub-image is much faster than rendering the complete image.  
+The output file will always have size
+.IR w x h 
+when this option is specified.
+
+.SH CREDITS
+This program was written by L\('eon Bottou <leonb@users.sourceforge.net> and
+was then improved by Andrei Erofeev <andrew_erofeev@yahoo.com>, Bill Riemers
+<bcr@lizardtech.com> and many others.
+
+.SH SEE ALSO
+.BR djvu (1),
+.BR djview (1),
+.BR pnm (5),
+.BR pbm (5),
+.BR pgm (5),
+.BR ppm (5)
