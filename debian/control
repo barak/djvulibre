@@ -10,7 +10,7 @@ Section: libs
 Architecture: any
 Depends: ${shlibs:Depends}
 Conflicts: libdjvulibre1-dev (<< 3.5.10)
-Description: Runtime support for the extraordinary DjVu image format
+Description: Runtime support for the DjVu image format
  DjVu runtime library and support files.
  .
  DjVu is a set of compression technologies, a file format, and a
@@ -30,7 +30,7 @@ Section: graphics
 Architecture: any
 Depends: ${shlibs:Depends}
 Suggests: djvulibre-bin
-Description: Viewer for the extraordinary DjVu image format
+Description: Viewer for the DjVu image format
  DjVu viewer djview.
  .
  DjVu is a set of compression technologies, a file format, and a
@@ -73,7 +73,7 @@ Section: graphics
 Architecture: any
 Depends: curl, ${shlibs:Depends}
 Suggests: djview
-Description: Utilities for the extraordinary DjVu image format
+Description: Utilities for the DjVu image format
  Executables including utilities for conversion between DjVu and other
  formats.
  .
@@ -96,7 +96,7 @@ Depends: ${shlibs:Depends}, djview
 Enhances: mozilla-browser, mozilla, mozilla-firebird, konqueror, galeon
 Recommends: mozilla-browser | mozilla | mozilla-firebird | konqueror | galeon | netscape-base-4 | netscape
 Suggests: mime-support
-Description: Browser plugin for the extraordinary DjVu image format
+Description: Browser plugin for the DjVu image format
  DjVu browser plugin.
  .
  DjVu is a set of compression technologies, a file format, and a
