@@ -1,4 +1,4 @@
-%define release 3
+%define release 4
 %define version 3.5.13
 %define prefix %{?_prefix:%{_prefix}}%{!?_prefix:/usr}
 %define mandir %{?_mandir:%{_mandir}}%{!?_mandir:%{prefix}/man}
