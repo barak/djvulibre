@@ -15,12 +15,9 @@ give it up.  Just ask.  (In fact, that goes for all my packages!)  If
 someone does take it over, I'm happy to serve as an interface to the
 upstream authors as I am in contact with them professionally anyway.
 
-If you use CVS, be sure to use "cvs admin -ko" for all files outside
-the debian/ subdir to preserve upstream keywords, and "cvs admin -kb"
-on *.djvu and *.cin because they are binary images.
-
-The Debian CVS repository is now shared with upstream.  This makes the
-appropriate build command something like:
+The Debian CVS repository is now shared with upstream.
+ cvs -d :ext:UID@cvs.sourceforge.net:/cvsroot/djvu checkout djvulibre-3.5
+This makes the appropriate build command something like
  cvs-buildpackage -U debian_version_3_5_13_pre14-4 -M djvulibre-3.5 -F
 
- -- Barak A. Pearlmutter <bap@debian.org>, Thu Jul  8 20:24:31 2004
+ -- Barak A. Pearlmutter <bap@debian.org>, Thu Jul  8 20:27:34 2004
