@@ -85,9 +85,10 @@ depend:
 
 clean: FORCE
 	-test ${LRELEASE} = ":" || ${RM} *.qm
+	-${RM} 2>/dev/null nsdejavu.1
 
 distclean: clean
-	-${RM} Makefile
+	-${RM} 2>/dev/null Makefile
 
 FORCE:
 .PHONY: FORCE

@@ -84,6 +84,7 @@ depend: FORCE
 	${CXX} -MM ${CXXFLAGS} ${srcdir}/*.cpp > Makefile.dep
 
 clean: FORCE
+	-${RM} 2>/dev/null djvuxml.1
 	-${RM} 2>/dev/null ${PROGRAMS}
 	-${RM} 2>/dev/null *.o *.a *.so *.stamp
 
