@@ -109,7 +109,8 @@ public:
   /** These constants are used to tell what a zone describes.
       This can be useful for a copy/paste application. 
       The deeper we go into the hierarchy, the higher the constant. */
-  enum ZoneType { PAGE=1, COLUMN=2, REGION=3, PARAGRAPH=4, LINE=5, WORD=6, CHARACTER=7 };
+  enum ZoneType { PAGE=1, COLUMN=2, REGION=3, PARAGRAPH=4, 
+                  LINE=5, WORD=6, CHARACTER=7 };
   /** Data structure representing document textual components.
       The text structure is represented by a hierarchy of rectangular zones. */
   class Zone 
@@ -131,11 +132,11 @@ public:
         zone. */
     Zone *append_child();
     /// Find the text_start and text_end indicated by the given box.
-    void get_text_with_rect(
-      const GRect &box, int &string_start,int &string_end) const;
+    void get_text_with_rect(const GRect &box, 
+                            int &string_start,int &string_end ) const;
     /// Find the zones used by the specified string and append them to the list.
-    void find_zones(
-      GList<Zone *> &list, const int string_start, const int string_end) const;
+    void find_zones(GList<Zone *> &list, 
+                    const int string_start, const int string_end) const;
     /// Finds the smallest rectangles and appends them to the list.
     void get_smallest(GList<GRect> &list) const;
     /** Finds the smallest rectangles and appends them to the list after 

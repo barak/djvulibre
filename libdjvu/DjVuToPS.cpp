@@ -1885,22 +1885,6 @@ get_text(GP<DjVuFile> file)
   return 0;
 }
 
-struct zone_names_struct 
-{
-  const char *name;
-  DjVuTXT::ZoneType ztype;
-  char separator;
-} zone_names[] = {
-  {"page",     DjVuTXT::PAGE,      0 },
-  {"column",   DjVuTXT::COLUMN,    DjVuTXT::end_of_column },
-  {"region",   DjVuTXT::REGION,    DjVuTXT::end_of_region },
-  {"para",     DjVuTXT::PARAGRAPH, DjVuTXT::end_of_paragraph },
-  {"line",     DjVuTXT::LINE,      DjVuTXT::end_of_line },
-  {"word",     DjVuTXT::WORD,      ' ' },
-  {"char",     DjVuTXT::CHARACTER, 0 },
-  {0, (DjVuTXT::ZoneType)0, 0}
-};
-
 static void
 print_ps_string(const char *data, int length, ByteStream &out)
 {
@@ -1931,17 +1915,27 @@ static void
 print_txt_sub(DjVuTXT &txt, DjVuTXT::Zone &zone, 
               ByteStream &out,int &lastx,int &lasty)
 {
-  // Zone header
-  int zinfo;
-  for (zinfo=0; zone_names[zinfo].name; zinfo++)
-    if (zone.ztype == zone_names[zinfo].ztype)
-      break;  
+  // Get separator
+  char separator = 0;
+  switch(zone.ztype)
+    {
+    case DjVuTXT::COLUMN: 
+      separator = DjVuTXT::end_of_column; break;
+    case DjVuTXT::REGION: 
+      separator = DjVuTXT::end_of_region; break;
+    case DjVuTXT::PARAGRAPH: 
+      separator = DjVuTXT::end_of_paragraph; break;
+    case DjVuTXT::LINE: 
+      separator = DjVuTXT::end_of_line; break;
+    case DjVuTXT::WORD: 
+      separator = ' '; break;
+    }
   // Zone children
   if (zone.children.isempty()) 
     {
       const char *data = (const char*)txt.textUTF8 + zone.text_start;
       int length = zone.text_length;
-      if (data[length-1] == zone_names[zinfo].separator)
+      if (data[length-1] == separator)
         length -= 1;
       out.write("( ",2);
       print_ps_string(data,length,out);
@@ -1949,8 +1943,7 @@ print_txt_sub(DjVuTXT &txt, DjVuTXT::Zone &zone,
       GUTF8String message;
       int tmpx= zone.rect.xmin-lastx;
       int tmpy= zone.rect.ymin-lasty;
-      message.format(" %d %d S \n",
-                     tmpx, tmpy);
+      message.format(" %d %d S \n", tmpx, tmpy);
       lastx=zone.rect.xmin;
       lasty=zone.rect.ymin;
       out.write((const char*)message, message.length());
@@ -2399,13 +2392,12 @@ process_double_page(ByteStream &str,
   int off = abs(inf->offset);
   write(str,
         "%%%%Page: (%d,%d) %d\n"
+        "gsave\n"
         "/fold-dict 8 dict dup 3 1 roll def begin\n"
-        " clippath pathbbox newpath\n"
-        " 2 index sub exch 3 index sub\n"
-        " /pw exch def\n"
+        " clippath pathbbox newpath pop pop translate\n"
+        " clippath pathbbox newpath 4 2 roll pop pop\n"
         " /ph exch def\n"
-        " /py exch def\n"
-        " /px exch def\n"
+        " /pw exch def\n"
         " /w ph %d sub 2 div def\n"
         " /m1 %d def\n"
         " /m2 %d def\n"
@@ -2420,13 +2412,13 @@ process_double_page(ByteStream &str,
           "fold-dict begin\n"
           " 0 setgray 0.5 setlinewidth\n"
           " ph m1 m2 add add 2 div dup\n"
-          " px exch moveto 36 0 rlineto stroke\n"
-          " px pw add exch moveto -36 0 rlineto stroke\n"
+          " 0 exch moveto 36 0 rlineto stroke\n"
+          " pw exch moveto -36 0 rlineto stroke\n"
           "end\n");
   write(str,
         "%% -- first page\n"
         "gsave fold-dict begin\n"
-        " px ph 2 div w add m1 add translate 270 rotate\n"
+        " 0 ph 2 div w add m1 add translate 270 rotate\n"
         " 0 0 w pw rectclip end\n");
   if (inf->page1 >= 0)
     process_single_page(str, doc, inf->page1, cnt*2, todo*2, +1);
@@ -2434,11 +2426,12 @@ process_double_page(ByteStream &str,
         "grestore\n"
         "%% -- second page\n"
         "gsave fold-dict begin\n"
-        " px ph 2 div m2 add translate 270 rotate\n"
+        " 0 ph 2 div m2 add translate 270 rotate\n"
         " 0 0 w pw rectclip end\n");
   if (inf->page2 >= 0)
     process_single_page(str, doc, inf->page2, cnt*2+1, todo*2, -1);
   write(str,
+        "grestore\n"
         "grestore\n"
         "showpage\n");
 }
