@@ -132,12 +132,6 @@
 inline int MIN(int a, int b) { return ( a<b ?a :b); }
 inline int MAX(int a, int b) { return ( a>b ?a :b); }
 
-static const double cpuspeed=535e6;
-static const double dtimefactor=cpuspeed*(1e-16);
-static const double dsizefactor=2.2;
-
-
-
 
 // --------------------------------------------------
 // COLOR CONNECTED COMPONENT ANALYSIS
@@ -654,10 +648,11 @@ struct cpaldjvuopts
 
 // -- Compresses low color pixmap.
 void 
-cpaldjvu(const GPixmap &input, GURL &urlout, const cpaldjvuopts &opts)
+cpaldjvu(ByteStream *ibs, GURL &urlout, const cpaldjvuopts &opts)
 {
-  int w = input.columns();
-  int h = input.rows();
+  GP<GPixmap> ginput=GPixmap::create(*ibs);
+  int w = ginput->columns();
+  int h = ginput->rows();
   int dpi = MAX(200, MIN(900, opts.dpi));
   int largesize = MIN(500, MAX(64, dpi));
   int smallsize = MAX(2, dpi/150);
@@ -666,22 +661,20 @@ cpaldjvu(const GPixmap &input, GURL &urlout, const cpaldjvuopts &opts)
   GP<DjVuPalette> gpal=DjVuPalette::create();
   DjVuPalette &pal=*gpal;
   GPixel bgcolor;
-  int bgindex;
-
+  int bgindex = -1;
   if (! opts.bgwhite)
     {
-      bgindex = pal.compute_pixmap_palette(input, opts.ncolors);
+      bgindex = pal.compute_pixmap_palette(*ginput, opts.ncolors);
       pal.index_to_color(bgindex, bgcolor);
     }
   else
     {
-      bgindex = -1;
       bgcolor = GPixel::WHITE;
       pal.histogram_clear();
-      for (int j=0; j<(int)input.rows(); j++)
+      for (int j=0; j<h; j++)
         {
-          const GPixel *p = input[j];
-          for (int i=0; i<(int)input.columns(); i++)
+          const GPixel *p = (*ginput)[j];
+          for (int i=0; i<w; i++)
             if (p[i] != GPixel::WHITE)
               pal.histogram_add(p[i], 1);
         }
@@ -709,7 +702,7 @@ cpaldjvu(const GPixmap &input, GURL &urlout, const cpaldjvuopts &opts)
   for (int y=0; y<h; y++)
     {
       int x;
-      const GPixel *row = input[y];
+      const GPixel *row = (*ginput)[y];
       for(x=0;x<w;x++)
         {
           line[x] = pal.color_to_index(row[x]);
@@ -731,23 +724,7 @@ cpaldjvu(const GPixmap &input, GURL &urlout, const cpaldjvuopts &opts)
         if(prevline[x] != line[x]) yruncount++;
       gprevline.swap(gline);
     }
-  if(xruncount && yruncount)
-    {
-      const double dyruncount=(double)yruncount;
-      const double dxruncount=(double)xruncount;
-      const double dpixsize=(double)(w*h+w);
-      double xd=dpixsize/dxruncount;
-      double xdd=xd/dsizefactor;
-      double xs=dxruncount/(xdd-log(xdd));
-      double yd=dpixsize/dyruncount;
-      double ydd=yd/dsizefactor;
-      double ys=dyruncount/(ydd-log(ydd));
-      unsigned int s=(unsigned int)((xs+ys)*(double)0.5);
-      int t=(int)((dpixsize*dtimefactor*xs+dpixsize*dtimefactor*ys)*(double)0.5);
-      if (opts.verbose)
-        DjVuPrintErrorUTF8("cpaldjvu: predict: Time: %u:%02u.%02u Size: %u\n",
-                           t/6000,(t/100)%60,t%100,s);
-    }
+  ginput = 0; //save memory
   if (opts.verbose)
     DjVuFormatErrorUTF8( "%s\t%d", ERR_MSG("cpaldjvu.color_runs"), 
                          rimg.runs.size());
@@ -930,7 +907,7 @@ main(int argc, const char **argv)
             opts.verbose = true;
           else if (arg == "-bgwhite")
             opts.bgwhite = true;
-          else if (arg[0] == '-')
+          else if (arg[0] == '-' && arg[1])
             usage();
           else if (inputppmurl.is_empty())
             inputppmurl = GURL::Filename::UTF8(arg);
@@ -943,8 +920,7 @@ main(int argc, const char **argv)
         usage();
       // Load and run
       GP<ByteStream> ibs=ByteStream::create(inputppmurl,"rb");
-      GP<GPixmap> ginput=GPixmap::create(*ibs);
-      cpaldjvu(*ginput, outputdjvuurl, opts);
+      cpaldjvu(ibs, outputdjvuurl, opts);
     }
   G_CATCH(ex)
     {
