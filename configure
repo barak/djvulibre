@@ -6328,8 +6328,20 @@ else
 fi;
 if test x$no_threads = xyes ||
    test x$no_qt = xyes ; then
-   { echo "$as_me:6331: WARNING: Disabling compilation of djview" >&5
-echo "$as_me: WARNING: Disabling compilation of djview" >&2;}
+   { echo "$as_me:6331: WARNING: Disabling compilation of djview.
+--------------------------------------------------------
+*** The GUI portion of this package will not be compiled.
+*** This is probably not what you want.  Chech the output
+*** of configure for warning messages.  Read file INSTALL.
+*** Investigate options --with-qt and --enable-threads.
+--------------------------------------------------------" >&5
+echo "$as_me: WARNING: Disabling compilation of djview.
+--------------------------------------------------------
+*** The GUI portion of this package will not be compiled.
+*** This is probably not what you want.  Chech the output
+*** of configure for warning messages.  Read file INSTALL.
+*** Investigate options --with-qt and --enable-threads.
+--------------------------------------------------------" >&2;}
    GUI_YES='#'
    GUI_NO=''
 else
@@ -6363,14 +6375,14 @@ fi
 
 # Work around broken compilers with the famous LPR0 bug
 if test x$ac_shared_libdjvu != xno && test x$GXX = xyes; then
-    echo "$as_me:6366: checking if $CXX has the LPR0 bug" >&5
+    echo "$as_me:6378: checking if $CXX has the LPR0 bug" >&5
 echo $ECHO_N "checking if $CXX has the LPR0 bug... $ECHO_C" >&6
     echo 'extern "C" { inline int sqr(int x) throw() { return x * x ; } } int main() {} ' > conftest.cc
     if ${CXX} -fPIC ${OPTS} conftest.cc -o conftest >/dev/null 2>/dev/null ; then
-        echo "$as_me:6370: result: no" >&5
+        echo "$as_me:6382: result: no" >&5
 echo "${ECHO_T}no" >&6
     else
-        echo "$as_me:6373: result: yes" >&5
+        echo "$as_me:6385: result: yes" >&5
 echo "${ECHO_T}yes" >&6
         OPTS=`echo $OPTS | sed -e 's/-mcpu=i686/-mpentium/'`
     fi
@@ -6378,33 +6390,85 @@ fi
 
 # What compiler are we using ?
 if test x$GXX != xyes ; then
-  { echo "$as_me:6381: WARNING: g++ is the recommended compiler: expect trouble." >&5
-echo "$as_me: WARNING: g++ is the recommended compiler: expect trouble." >&2;}
+  { echo "$as_me:6393: WARNING: The recommended c++ compiler is g++." >&5
+echo "$as_me: WARNING: The recommended c++ compiler is g++." >&2;}
   if test $ac_cv_cxx_exceptions = no ; then
-    { { echo "$as_me:6384: error: exception support in c++ compiler is mandatory." >&5
-echo "$as_me: error: exception support in c++ compiler is mandatory." >&2;}
+    { { echo "$as_me:6396: error: Exception support in c++ compiler is mandatory." >&5
+echo "$as_me: error: Exception support in c++ compiler is mandatory." >&2;}
    { (exit 1); exit 1; }; }
   fi
 else
-  case "`$CXX --version`" in
-    *2.95.*) ;;
-    *2.96*) ;;
-    *3.*) ;;
-    *2.91.*) { echo "$as_me:6393: WARNING: strongly suggesting g++ 2.95.3 or better" >&5
-echo "$as_me: WARNING: strongly suggesting g++ 2.95.3 or better" >&2;} ;;
-    *) { { echo "$as_me:6395: error: use a better compiler such as g++ 2.95.3 or better" >&5
-echo "$as_me: error: use a better compiler such as g++ 2.95.3 or better" >&2;}
-   { (exit 1); exit 1; }; } ;;
+  cxxver="`$CXX --version | sed -e 's/^gcc-//' -e 's/^egcs-//'`"
+  action=none
+  case "$cxxver" in
+    1.*)            action=error  ;;
+    2.[0-8]*)       action=error  ;;
+    2.90*)          action=error  ;;
+    2.91.[6-9]*)    ;;
+    2.91*)          action=warn2  ;;
+    2.96*)          action=redhat ;;
+    2.9*)           ;;
+    3.0)            action=warn3  ;;
+  esac
+  case $action in
+    error)
+        { { echo "$as_me:6415: error: Your c++ compiler ($cxxver) is outdated. Read the INSTALL file." >&5
+echo "$as_me: error: Your c++ compiler ($cxxver) is outdated. Read the INSTALL file." >&2;}
+   { (exit 1); exit 1; }; }
+        ;;
+    warn2)
+        { echo "$as_me:6420: WARNING: Your c++ compiler ($cxxver) has known problems.
+-------------------------------------------
+*** Please upgrade to gcc-2.95.3 or better.
+-------------------------------------------" >&5
+echo "$as_me: WARNING: Your c++ compiler ($cxxver) has known problems.
+-------------------------------------------
+*** Please upgrade to gcc-2.95.3 or better.
+-------------------------------------------" >&2;}
+        ;;
+    warn3)
+        { echo "$as_me:6430: WARNING: Your c++ compiler ($cxxver) has known problems.
+-------------------------------------------
+*** Please upgrade to gcc-3.0.2 or better.
+-------------------------------------------" >&5
+echo "$as_me: WARNING: Your c++ compiler ($cxxver) has known problems.
+-------------------------------------------
+*** Please upgrade to gcc-3.0.2 or better.
+-------------------------------------------" >&2;}
+        ;;
+    redhat)
+        # Check for the infamous early 2.96 compiler
+        for n in `g++ -v 2>&1 | grep version` ; do rhversion=$n ; done
+        case "$rhversion" in
+          2.96-8[5-9]*) ;;
+          2.97-9*) ;;
+          *)
+             { echo "$as_me:6446: WARNING: Your c++ compiler ($cxxver) has known problems.
+-------------------------------------------------------
+*** You have an early version of the gcc-2.96 compiler.
+*** The good news is that the new version works nicely.
+*** Check <http://www.redhat.com/support/errata/RHBA-2001-082.html>.
+*** Please upgrade.
+-------------------------------------------------------" >&5
+echo "$as_me: WARNING: Your c++ compiler ($cxxver) has known problems.
+-------------------------------------------------------
+*** You have an early version of the gcc-2.96 compiler.
+*** The good news is that the new version works nicely.
+*** Check <http://www.redhat.com/support/errata/RHBA-2001-082.html>.
+*** Please upgrade.
+-------------------------------------------------------" >&2;}
+            ;;
+        esac
   esac
 fi
 
 # What version of QT are we using
 if test x${qt_version+set} = xset ; then
   if test "$qt_version" -lt 220 ; then
-     { echo "$as_me:6404: WARNING: We suggest using QT-2.2.0 or better." >&5
+     { echo "$as_me:6468: WARNING: We suggest using QT-2.2.0 or better." >&5
 echo "$as_me: WARNING: We suggest using QT-2.2.0 or better." >&2;}
   elif test "$qt_version" -ge 300 ; then
-     { echo "$as_me:6407: WARNING: We do not yet support QT-3.x." >&5
+     { echo "$as_me:6471: WARNING: We do not yet support QT-3.x." >&5
 echo "$as_me: WARNING: We do not yet support QT-3.x." >&2;}
   fi
 fi
@@ -6419,7 +6483,7 @@ case ${host_os} in
   hpux*) NSDEJAVU="nsdejavu.sl" ;;
 esac
 if test x${GXX} != xyes ; then
-    { echo "$as_me:6422: WARNING: Please verify that gui/nsdejavu/Makefile works with this compiler." >&5
+    { echo "$as_me:6486: WARNING: Please verify that gui/nsdejavu/Makefile works with this compiler." >&5
 echo "$as_me: WARNING: Please verify that gui/nsdejavu/Makefile works with this compiler." >&2;}
 fi
 
@@ -6566,7 +6630,7 @@ DEFS=-DHAVE_CONFIG_H
 : ${CONFIG_STATUS=./config.status}
 ac_clean_files_save=$ac_clean_files
 ac_clean_files="$ac_clean_files $CONFIG_STATUS"
-{ echo "$as_me:6569: creating $CONFIG_STATUS" >&5
+{ echo "$as_me:6633: creating $CONFIG_STATUS" >&5
 echo "$as_me: creating $CONFIG_STATUS" >&6;}
 cat >$CONFIG_STATUS <<_ACEOF
 #! $SHELL
@@ -6738,7 +6802,7 @@ cat >>$CONFIG_STATUS <<\EOF
     echo "$ac_cs_version"; exit 0 ;;
   --he | --h)
     # Conflict between --help and --header
-    { { echo "$as_me:6741: error: ambiguous option: $1
+    { { echo "$as_me:6805: error: ambiguous option: $1
 Try \`$0 --help' for more information." >&5
 echo "$as_me: error: ambiguous option: $1
 Try \`$0 --help' for more information." >&2;}
@@ -6757,7 +6821,7 @@ Try \`$0 --help' for more information." >&2;}
     ac_need_defaults=false;;
 
   # This is an error.
-  -*) { { echo "$as_me:6760: error: unrecognized option: $1
+  -*) { { echo "$as_me:6824: error: unrecognized option: $1
 Try \`$0 --help' for more information." >&5
 echo "$as_me: error: unrecognized option: $1
 Try \`$0 --help' for more information." >&2;}
@@ -6800,7 +6864,7 @@ do
   "gui/djview/Makefile" ) CONFIG_FILES="$CONFIG_FILES gui/djview/Makefile" ;;
   "gui/nsdejavu/Makefile" ) CONFIG_FILES="$CONFIG_FILES gui/nsdejavu/Makefile" ;;
   "config.h" ) CONFIG_HEADERS="$CONFIG_HEADERS config.h:config/config.h.in" ;;
-  *) { { echo "$as_me:6803: error: invalid argument: $ac_config_target" >&5
+  *) { { echo "$as_me:6867: error: invalid argument: $ac_config_target" >&5
 echo "$as_me: error: invalid argument: $ac_config_target" >&2;}
    { (exit 1); exit 1; }; };;
   esac
@@ -7044,7 +7108,7 @@ done; }
   esac
 
   if test x"$ac_file" != x-; then
-    { echo "$as_me:7047: creating $ac_file" >&5
+    { echo "$as_me:7111: creating $ac_file" >&5
 echo "$as_me: creating $ac_file" >&6;}
     rm -f "$ac_file"
   fi
@@ -7062,7 +7126,7 @@ echo "$as_me: creating $ac_file" >&6;}
       -) echo $tmp/stdin ;;
       [\\/$]*)
          # Absolute (can't be DOS-style, as IFS=:)
-         test -f "$f" || { { echo "$as_me:7065: error: cannot find input file: $f" >&5
+         test -f "$f" || { { echo "$as_me:7129: error: cannot find input file: $f" >&5
 echo "$as_me: error: cannot find input file: $f" >&2;}
    { (exit 1); exit 1; }; }
          echo $f;;
@@ -7075,7 +7139,7 @@ echo "$as_me: error: cannot find input file: $f" >&2;}
            echo $srcdir/$f
          else
            # /dev/null tree
-           { { echo "$as_me:7078: error: cannot find input file: $f" >&5
+           { { echo "$as_me:7142: error: cannot find input file: $f" >&5
 echo "$as_me: error: cannot find input file: $f" >&2;}
    { (exit 1); exit 1; }; }
          fi;;
@@ -7135,7 +7199,7 @@ for ac_file in : $CONFIG_HEADERS; do test "x$ac_file" = x: && continue
   * )   ac_file_in=$ac_file.in ;;
   esac
 
-  test x"$ac_file" != x- && { echo "$as_me:7138: creating $ac_file" >&5
+  test x"$ac_file" != x- && { echo "$as_me:7202: creating $ac_file" >&5
 echo "$as_me: creating $ac_file" >&6;}
 
   # First look for the input files in the build tree, otherwise in the
@@ -7146,7 +7210,7 @@ echo "$as_me: creating $ac_file" >&6;}
       -) echo $tmp/stdin ;;
       [\\/$]*)
          # Absolute (can't be DOS-style, as IFS=:)
-         test -f "$f" || { { echo "$as_me:7149: error: cannot find input file: $f" >&5
+         test -f "$f" || { { echo "$as_me:7213: error: cannot find input file: $f" >&5
 echo "$as_me: error: cannot find input file: $f" >&2;}
    { (exit 1); exit 1; }; }
          echo $f;;
@@ -7159,7 +7223,7 @@ echo "$as_me: error: cannot find input file: $f" >&2;}
            echo $srcdir/$f
          else
            # /dev/null tree
-           { { echo "$as_me:7162: error: cannot find input file: $f" >&5
+           { { echo "$as_me:7226: error: cannot find input file: $f" >&5
 echo "$as_me: error: cannot find input file: $f" >&2;}
    { (exit 1); exit 1; }; }
          fi;;
@@ -7276,7 +7340,7 @@ cat >>$CONFIG_STATUS <<\EOF
   rm -f $tmp/in
   if test x"$ac_file" != x-; then
     if cmp -s $ac_file $tmp/config.h 2>/dev/null; then
-      { echo "$as_me:7279: $ac_file is unchanged" >&5
+      { echo "$as_me:7343: $ac_file is unchanged" >&5
 echo "$as_me: $ac_file is unchanged" >&6;}
     else
       ac_dir=`$as_expr X"$ac_file" : 'X\(.*[^/]\)//*[^/][^/]*/*$' \| \

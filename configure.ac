@@ -122,7 +122,13 @@ AC_ARG_ENABLE(djview,
    [ac_enable_djview=no] ) 
 if test x$no_threads = xyes ||
    test x$no_qt = xyes ; then
-   AC_MSG_WARN([Disabling compilation of djview])
+   AC_MSG_WARN([Disabling compilation of djview.
+--------------------------------------------------------
+*** The GUI portion of this package will not be compiled.
+*** This is probably not what you want.  Chech the output
+*** of configure for warning messages.  Read file INSTALL. 
+*** Investigate options --with-qt and --enable-threads.
+--------------------------------------------------------])
    GUI_YES='#'
    GUI_NO=''
 else
@@ -172,17 +178,59 @@ fi
 
 # What compiler are we using ?
 if test x$GXX != xyes ; then
-  AC_MSG_WARN([g++ is the recommended compiler: expect trouble.])
+  AC_MSG_WARN([The recommended c++ compiler is g++.])
   if test $ac_cv_cxx_exceptions = no ; then
-    AC_MSG_ERROR([exception support in c++ compiler is mandatory.]) 
+    AC_MSG_ERROR([Exception support in c++ compiler is mandatory.]) 
   fi
 else
-  case "`$CXX --version`" in
-    *2.95.*) ;;
-    *2.96*) ;;
-    *3.*) ;;
-    *2.91.*) AC_MSG_WARN([strongly suggesting g++ 2.95.3 or better]) ;;
-    *) AC_MSG_ERROR([use a better compiler such as g++ 2.95.3 or better]) ;;
+  cxxver="`$CXX --version | sed -e 's/^gcc-//' -e 's/^egcs-//'`"
+  action=none
+  case "$cxxver" in
+changequote(<<, >>)dnl                                                                              
+    1.*)            action=error  ;;
+    2.[0-8]*)       action=error  ;;
+    2.90*)          action=error  ;;
+    2.91.[6-9]*)    ;;
+    2.91*)          action=warn2  ;;
+    2.96*)          action=redhat ;;
+    2.9*)           ;;
+    3.0)            action=warn3  ;;
+changequote([, ])dnl 
+  esac
+  case $action in
+    error)
+        AC_MSG_ERROR([Your c++ compiler ($cxxver) is outdated. Read the INSTALL file.])
+        ;;
+    warn2)
+        AC_MSG_WARN([Your c++ compiler ($cxxver) has known problems.
+-------------------------------------------
+*** Please upgrade to gcc-2.95.3 or better.
+-------------------------------------------])
+        ;;
+    warn3)
+        AC_MSG_WARN([Your c++ compiler ($cxxver) has known problems.
+-------------------------------------------
+*** Please upgrade to gcc-3.0.2 or better.
+-------------------------------------------])
+        ;;
+    redhat)
+        # Check for the infamous early 2.96 compiler
+        for n in `g++ -v 2>&1 | grep version` ; do rhversion=$n ; done 
+        case "$rhversion" in
+changequote(<<, >>)dnl                                                                              
+          2.96-8[5-9]*) ;;
+          2.97-9*) ;;
+          *)
+changequote([, ])dnl 
+             AC_MSG_WARN([Your c++ compiler ($cxxver) has known problems.
+-------------------------------------------------------
+*** You have an early version of the gcc-2.96 compiler.
+*** The good news is that the new version works nicely.
+*** Check <http://www.redhat.com/support/errata/RHBA-2001-082.html>.
+*** Please upgrade.
+-------------------------------------------------------])
+            ;;
+        esac
   esac
 fi
 
