@@ -264,7 +264,10 @@ that mozilla is installed under /usr and that the DjVu plug-in is installed in
     $ cd /usr/lib/mozilla/plugins
     $ ln -s /usr/local/lib/netscape/plugins/nsdejavu.so nsdejavu.so
 
-Works nicely then.
+Works nicely.
+
+You might need to remove the file "$HOME/.mime.types".
+See <http://bugzilla.mozilla.org/show_bug.cgi?id=108234>
 
 
 3.5- GALEON
