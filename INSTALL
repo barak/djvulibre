@@ -7,6 +7,9 @@ DjVuLibre-3.5 relies on various components available from the web.
 Most recent Linux distribution already come with these.  
 You can also download and compile them if you wish.
 
+Be sure to read the system specific notes 
+at the end of this file.
+
 
 1.1 - C++ COMPILER
 ------------------
@@ -404,19 +407,28 @@ The configure command line was:
 
 
 
-4.5- MACOX-10.3.2
------------------
+4.5- MAC OS X 10.3.2
+--------------------
 
-The DjVuLibre distribution assumes that you 
-have the Fink distribution installed in directory /sw.
-Among the required packages: libjpeg qt3 qt3-linguist qt3-dev.
+We envision two ways to compile DjVuLibre on the Mac.
+- Either using the FINK distribution
+- Or using XCode and the native OS-X utilities.
 
+4.5.1- USING XCODE AND THE NATIVE UTILITIES
+
+Not much has been done at this point.
+Please check the file djvulibre-3.5/mac/README.
+
+4.5.2- USING THE FINK DISTRIBUTION
+
+DjVuLibre assumes that you have the Fink distribution in /sw.
+Required packages: libjpeg qt3 qt3-linguist qt3-dev.
 The configure command line is
   $ ./configure --prefix=/sw
 
-DjVuLibre should then compile and install without problems. 
-
-REMARK: The DjVuLibre viewer 'djview' runs under X11.
-Similarly, the DjVuLibre plugin does not run in Safari or MSIE. 
+DjVuLibre should then compile and install without problems.
+The DjVuLibre/Fink viewer 'djview' runs under X11.
+Similarly, the DjVuLibre/Fink plugin does not run in Safari or MSIE.
 It only runs in X11 based browsers such as mozilla or konqueror.
 
+Missing: a fink package "djvulibre".
