@@ -68,15 +68,14 @@ want to jump to individual pages of the document without waiting for the
 entire document to download.  Efficient browsing requires efficient random
 page access, fast sequential page flipping, and quick rendering. This can be
 achieved with a combination of advanced compression, pre-fetching,
-pre-decoding, caching, and progressive rendering. Lastly, advanced document
-image compression systems, such as the one described in this paper, decompose
-each page into multiple components (text, backgrounds, images, libraries of
-common shapes...)  that may be shared by several pages and downloaded on
-demand.  All these requirements call for a very sophisticated but parsimonious
-control mechanism to handle on-demand downloading, pre-fetching, decoding,
-caching, and progressive rendering of the page images.  What is being
-considered here is not just a document image compression technique, but a
-whole platform for document delivery.
+pre-decoding, caching, and progressive rendering. DjVu decomposes each page
+into multiple components (text, backgrounds, images, libraries of common
+shapes...)  that may be shared by several pages and downloaded on demand.  All
+these requirements call for a very sophisticated but parsimonious control
+mechanism to handle on-demand downloading, pre-fetching, decoding, caching,
+and progressive rendering of the page images.  What is being considered here
+is not just a document image compression technique, but a whole platform for
+document delivery.
 .PP
 DjVu is an image compression technique, a document format, and a software
 platform for delivering documents images over the Internet that fulfills the
@@ -95,7 +94,7 @@ DjVuBitonal, also known as JB2, is a bitonal image compression that takes
 advantage of repetitions of nearly identical shapes on the page (such as
 characters) to efficiently compress text images.  It is best used to compress
 black and white images representing text and simple drawings.  A typical
-300dpi page in DjVuBitonal occupies 5 to 25KB (3 to 8 times better than
+300 dpi page in DjVuBitonal occupies 5 to 25KB (3 to 8 times better than
 TIFF-G4 or PDF).
 .SS DjVuDocument
 DjVuDocument is a compression technique specifically designed for color
@@ -107,10 +106,10 @@ and contains the background texture and the pictures at lower resolution.
 
 .SH DJVU DOCUMENT DELIVERY PLATFORM
 
-The DjVu technology is designed from the gound up to support the efficient
+The DjVu technology is designed from the ground up to support the efficient
 delivery of digital documents over the Internet.  It provides various ways to
 deal with multi-page documents, and various ways to enrich the content with
-hyperlinks, metadata, searchable text, etc.
+hyper-links, meta-data, searchable text, etc.
 .SS Bundled multi-page documents
 Bundled multi-page DjVu document uses a single file to represent the entire
 document.  This single file contains all the pages as well as ancillary
@@ -124,15 +123,15 @@ available.  You can immediately navigate to other pages using the DjVu
 toolbar.  Suppose however that the document is stored on a remote web server.
 You can easily access the first page and see that this is not the document you
 wanted.  Although you will never display the other pages the browser is
-transferring data for these pages and is wasting the bandwith of your server
-(and the bandwith of the Internet too).  You could also see the summary of the
+transferring data for these pages and is wasting the bandwidth of your server
+(and the bandwidth of the Internet too).  You could also see the summary of the
 document on the first page and jump to page 100.  But page 100 cannot be
 displayed until data for pages 1 to 99 has been received.  You may have to
 wait for the transmission of unnecessary page data.  This second problem (the
 unnecessary wait) can be solved using the ``byte serving'' options of the
 HTTP/1.1 protocol.  This option has to be supported by the web server, the
 proxies, the caches and the browser.  Byte serving however does not solve the
-first problem (the waste of bandwith).
+first problem (the waste of bandwidth).
 .SS Indirect multi-page documents
 Indirect multi-page DjVu documents solve both problems.  An indirect
 multi-page DjVu document is composed of several files.  The main file is named
@@ -143,15 +142,15 @@ secondary files containing the page data.  When you browse an indirect
 multi-page document, the browser only accesses data for the pages you are
 viewing.  This can be done at a reasonable speed because the browser maintains
 a cache of pages and sometimes pre-fetches a few pages ahead of the current
-page.  This model uses the web serving bandwith much more effectively.  It
+page.  This model uses the web serving bandwidth much more effectively.  It
 also eliminates unnecessary delays when jumping ahead to pages located
 anywhere in a long document.
 .SS Annotations
 Every DjVu image optionally includes so-called annotation chunks.  The
-annotation chunk is often used to define hyperlinks to other document pages or
+annotation chunk is often used to define hyper-links to other document pages or
 to arbitrary web pages.  Annotation chunks can also be used for other purposes
-such as setting the initial viewing mode of a page, defining hilited zones, or
-storing arbitrary metadata about the page or the document.
+such as setting the initial viewing mode of a page, defining highlighted zones, or
+storing arbitrary meta-data about the page or the document.
 .SS Hidden text
 Every DjVu image optionally includes a hidden text layer that associated
 graphical features with the corresponding text.  The hidden text layer is
@@ -159,7 +158,7 @@ usually generated by running an Optical Character Recognition software.  This
 textual information provides for indexing DjVu documents and copying/pasting
 text from DjVu page images.
 .SS Thumbnails
-DjVu documents sometimes contain precomputed page thumbnails.
+DjVu documents sometimes contain pre-computed page thumbnails.
 
 .SH DJVUZONE AND DJVULIBRE
 
@@ -179,8 +178,8 @@ by providing an independent source of information about DjVu.
 Understanding how little room there is for a proprietary document format,
 Lizardtech released the DjVu Reference Library under the GNU Public License in
 December 2000.  This library entirely defines the compression format and the
-elementary coders and decoders.  Six month later, Lizardtech released an
-updated DjVu Reference Library as well as the source code of the Unix viewer.
+elementary codecs.  Six month later, Lizardtech released an updated DjVu
+Reference Library as well as the source code of the Unix viewer.
 .PP
 These two releases form the basis of our initial DjVuLibre software.  We
 modified the build system to comply with the expectations of the open source
@@ -200,7 +199,7 @@ produces DjVuPhoto images from PPM or JPEG images.
 .TP
 .BR cjb2 (1)
 A DjVuBitonal command line encoder. This soft-pattern-matching compressor
-produces DjVuBitonal images from PBM images.  It can encode images losslessly,
+produces DjVuBitonal images from PBM images.  It can encode images without loss,
 or introduce small changes in order to improve the compression ratio.  The
 lossless encoding mode is competitive with that of the Lizardtech commercial
 encoders.
@@ -208,7 +207,7 @@ encoders.
 .BR cpaldjvu (1)
 A DjVuDocument command line encoder for images with few colors.  This encoder
 is well suited to compressing images with a small number of distinct colors
-(e.g. screenshots).  The dominant color is encoded by the background layer.
+(e.g. screen-shots).  The dominant color is encoded by the background layer.
 The other colors are encoded by the foreground layer.
 .TP
 .BR csepdjvu (1)
@@ -221,8 +220,8 @@ A command line decoder for DjVu images.  This program produces a PNM image
 representing any segment of any page of a DjVu document at any resolution.
 .TP
 .BR djview (1)
-A standalone viewer for DjVu images.  This sophisticated viewer displays DjVu
-documents.  It implements document navigation as well as seemless zooming and
+A stand-alone viewer for DjVu images.  This sophisticated viewer displays DjVu
+documents.  It implements document navigation as well as fast zooming and
 panning.
 .TP
 .BR nsdejavu.so (1)
@@ -237,11 +236,11 @@ document.
 .TP
 .BR djvmcvt (1)
 A command line tool for converting bundled documents to indirect documents and
-vice-versa.
+conversely.
 .TP
 .BR djvused (1)
 A powerful command line tool for manipulating multi-page documents, editing
-annotation chunks, editing hidden text layers, precomputing thumbnail images,
+annotation chunks, editing hidden text layers, pre-computing thumbnail images,
 and more...
 .TP
 .BR djvutxt (1)
