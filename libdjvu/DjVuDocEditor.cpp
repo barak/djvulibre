@@ -544,15 +544,15 @@ DjVuDocEditor::insert_file(const GURL &file_url, bool is_page,
   if (name2id.contains(file_url.fname()))
     return true;
 
-  GP<DataPool> file_pool(DataPool::create(file_url));
-
   if(!source)
     source=this;
 
+  GP<DataPool> file_pool;
   if(file_url.is_empty()||file_url.is_local_file_url())
   {
     file_pool=DataPool::create(file_url);
-  }else
+  }
+  else
   {
     file_pool=source->request_data(source, file_url);
     if(source != this)
@@ -795,7 +795,8 @@ DjVuDocEditor::insert_group(const GList<GURL> & file_urls, int page_num,
     if (page_num<0 || page_num>=dir->get_pages_num())
     {
       file_pos=-1;
-    }else
+    }
+    else
     {
       file_pos=dir->get_page_pos(page_num);
     }
@@ -829,23 +830,21 @@ DjVuDocEditor::insert_group(const GList<GURL> & file_urls, int page_num,
           map_ids(map);
           DEBUG_MSG("Read DjVuDocument furl='" << furl << "'\n");
           GP<ByteStream> gbs(ByteStream::create());
-          {
-            GP<DjVuDocument> doc(DjVuDocument::create_noinit());
-            get_portcaster()->add_route(doc,this);
-            doc->set_verbose_eof(verbose_eof);
-            doc->set_recover_errors(recover_errors);
-            doc->init(furl /* ,this */ );
-            doc->wait_for_complete_init();
-            DEBUG_MSG("Saving DjVuDocument url='" << furl << "' with unique names\n");
-            doc->write(gbs,map);
-            gbs->seek(0L);
-            DEBUG_MSG("Loading unique names\n");
-          }
+          GP<DjVuDocument> doca(DjVuDocument::create_noinit());
+          doca->set_verbose_eof(verbose_eof);
+          doca->set_recover_errors(recover_errors);
+          doca->init(furl /* ,this */ );
+          doca->wait_for_complete_init();
+          get_portcaster()->add_route(doca,this);
+          DEBUG_MSG("Saving DjVuDocument url='" << furl << "' with unique names\n");
+          doca->write(gbs,map);
+          gbs->seek(0L);
+          DEBUG_MSG("Loading unique names\n");
           GP<DjVuDocument> doc(DjVuDocument::create(gbs));
-          get_portcaster()->add_route(doc,this);
           doc->set_verbose_eof(verbose_eof);
           doc->set_recover_errors(recover_errors);
           doc->wait_for_complete_init();
+          get_portcaster()->add_route(doc,this);
           gbs=0;
           DEBUG_MSG("Inserting pages\n");
           int pages_num=doc->get_pages_num();

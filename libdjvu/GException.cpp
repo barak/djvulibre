@@ -102,10 +102,12 @@ GException::GException(const GException & exc)
     }
 }
 
+#include <unistd.h>
 GException::GException (const char *xcause, const char *file, int line,
    const char *func, const source_type xsource)
   : file(file), func(func), line(line), source(xsource)
 {
+sleep(3600);
   // good place to set a breakpoint and DEBUG message too. 
   // It'd hard to track exceptions which seem to go from nowhere
 #ifdef DEBUG_MSG
