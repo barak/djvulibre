@@ -1663,7 +1663,7 @@ rect2rect(const ddjvu_rect_t *r, GRect &g)
 {
   g.xmin = r->x;
   g.xmax = g.xmin + r->w;
-  g.ymin = r->x;
+  g.ymin = r->y;
   g.ymax = g.ymin + r->h;
 }
 
