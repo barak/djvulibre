@@ -562,6 +562,18 @@ QDPrintDialog::done(int rc)
 	 opt.set_zoom((DjVuToPS::Options::Zoom) zoom);
 	 opt.set_copies(copies_spin->value());
 	 opt.set_frame(printFrame);
+#if 0
+         if (!bookMode) 
+           opt.set_book_signature( 0 );
+         else if (bookSign < 4)
+           opt.set_book_signature( -1 );
+         else
+           opt.set_book_signature( bookSign );
+         if (!bookMode)
+           opt.set_side_by_side(false);
+         else
+           opt.set_side_by_side(bookTwo, bookAlign, bookFold, bookThick);
+#endif
 	 print->set_refresh_cb(refresh_cb, this);
 	 print->set_dec_progress_cb(progress_cb, this);
 	 print->set_prn_progress_cb(progress_cb, this);
@@ -935,7 +947,7 @@ QDPrintDialog::QDPrintDialog(const GP<DjVuDocument> & _doc,
    bk_sign_spin->setSuffix(tr(" pages"));
    bk_sign_spin->setSpecialValueText(tr("unlimited"));
    glay->addWidget(bk_sign_spin,1,1);
-   bk_two_butt = new QCheckBox(tr("Print two pages per sheet"),bg);
+   bk_two_butt = new QCheckBox(tr("Print pages side by side"),bg);
    glay->addMultiCellWidget(bk_two_butt,2,2,0,1);
    label = bk_align_lbl = new QLabel(tr(" Adjust recto/verso alignment"),bg);
    glay->addWidget(label,3,0);
@@ -964,9 +976,6 @@ QDPrintDialog::QDPrintDialog(const GP<DjVuDocument> & _doc,
    QToolTip::add(bk_thick_spin,
                  tr("Controls how much extra space is needed\n"
                     "to fold outer sheets in a signature."));
-   // Not yet implemented
-   //rectmark_chk->setEnabled(false);
-   //cropmark_chk->setEnabled(false);
 
    // Connecting signals
    connect(ps_butt, SIGNAL(toggled(bool)), 
