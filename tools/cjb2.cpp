@@ -914,8 +914,8 @@ usage()
          "Usage: cjb2 [options] <input-pbm-or-tiff> <output-djvu>\n"
          "Options are:\n"
          "   -dpi <n> Specify image resolution (default 300).\n"
-         "   -clean   Remove small flyspecs (lossy).\n"
-         "   -loose   Substitute patterns with small variations (lossy).\n"
+         "   -clean   Cleanup image by remove small flyspecs.\n"
+         "   -lossy   Lossy compression (implies -clean as well)\n"
          "   -verbose Displays additional messages.\n"
          "Encoding is lossless unless one or several lossy options\n"
          "are selected.\n" );
@@ -960,7 +960,6 @@ main(int argc, const char **argv)
           else if (arg == "-loose")
             {
               DjVuPrintErrorUTF8("cjb2: option -loose is deprecated. use -lossy.");
-              opts.clean = false;
               opts.lossy = true;
             }
           else if (arg == "-verbose" || arg == "-v")

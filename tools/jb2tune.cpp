@@ -185,6 +185,38 @@ compute_matchdata_lossy(JB2Image *jimg, MatchData *lib)
       free_comparable_image(handles[i]);
 }
 
+// Locate key lines in bitmap
+static int
+compute_line(GBitmap *bits)
+{
+  int h = bits->rows();
+  int w = bits->columns();
+  GTArray<int> mass(h);
+  int totalmass = 0;
+  int i, j, m;
+  for (i=0; i<h; i++)
+    {
+      unsigned char *row = (*bits)[i];
+      for (j=0; j<w; j++)
+        if (row[j])
+          break;
+      for (m = w-j; m>0; m--)
+        if (row[j+m-1])
+          break;
+      totalmass += m;
+      mass[i] = m;
+    }
+  i = -1;
+  j = h;
+  m = 0;
+  while (i < j && m * 4 < totalmass)
+    m += mass[++i];
+  m = 0;
+  while (i < j && m * 4 < totalmass)
+    m += mass[--j];
+  return (i * 3 + j)/4;
+}
+
 // Reorganize jb2image on the basis of matchdata.
 // Also locate cross-coding buddys.
 static void 
@@ -248,8 +280,7 @@ tune_jb2image(JB2Image *jimg, MatchData *lib)
           for (row = -1; row <= rows; row++) 
             {
               p_row = bitmap[row];
-              p_cross_row  
-                = cross_bitmap[row+cross_row_adjust] + cross_column_adjust;
+              p_cross_row = cross_bitmap[row+cross_row_adjust] + cross_column_adjust;
               for (column = -1; column <= columns; column++) 
                 if (p_row [column] != p_cross_row [column])
                   score ++;
@@ -293,6 +324,12 @@ tune_jb2image(JB2Image *jimg, MatchData *lib)
             (cross_columns  - cross_columns/2) - (columns - columns/2);
           int cross_row_adjust = 
             (cross_rows  - cross_rows/2) - (rows - rows/2);
+          // Refine vertical adjustment
+          int baseline_adjust = 
+            compute_line(lib[jshp.parent].bits) -
+            compute_line(jshp.bits);
+          if (abs(baseline_adjust - cross_row_adjust) <= 1)
+            cross_row_adjust = baseline_adjust;
           // Adjust blit record
           jblt->shapeno = jshp.parent;
           jblt->bottom -= cross_row_adjust;
