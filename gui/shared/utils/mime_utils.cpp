@@ -252,6 +252,7 @@ static const char *mime_types[] = {
   "type=image/x-djvu desc=\"DjVu File\" exts=\"djvu,djv\"",
   "type=image/x-dejavu desc=\"DjVu File (obsolete mime type)\"",
   "type=image/x-iw44 desc=\"DjVu File (obsolete mime type)\" exts=\"iw44,iw4\"",
+  "type=image/vnd.djvu desc=\"DjVu File\"",
   "type=image/djvu desc=\"DjVu File\"",
 };
 
