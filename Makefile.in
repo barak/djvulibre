@@ -13,6 +13,8 @@
 SHELL = @SHELL@
 INSTALL = @INSTALL@
 RM = @RM@ 
+LIBTOOL = @LIBTOOL@
+LIBTOOL_DEPS = @LIBTOOL_DEPS@
 
 srcdir = @srcdir@
 prefix = @prefix@
@@ -55,6 +57,9 @@ distclean: FORCE
 install-desktop-files: FORCE
 	@echo "*** No need to do 'make install-desktop-files'."
 	@echo "*** Use 'configure --enable-desktopfiles' instead"
+
+libtool: ${LIBTOOL_DEPS} configure.ac
+	${SHELL} ./config.status --recheck
 
 FORCE:
 .PHONY: FORCE

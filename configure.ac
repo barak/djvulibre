@@ -82,7 +82,6 @@ esac
 AC_PROG_MAKE_SET
 
 # Programs
-AC_PROG_RANLIB
 AC_PROG_LN_S
 AC_PATH_PROG(RM, rm)
 AC_PATH_PROG(AR, ar)
@@ -96,6 +95,13 @@ AC_SUBST(INSTALL)
 # Compilers
 AC_PROG_CC
 AC_PROG_CXX
+
+# Libtool
+AC_DISABLE_STATIC
+AC_PROG_LIBTOOL
+AC_SUBST(LIBTOOL_DEPS)
+
+# C++
 AC_LANG(C++)
 AC_CXX_OPTIMIZE
 AC_CXX_BOOL
@@ -274,27 +280,6 @@ fi
 # Extra
 # ----------------------------------------
 
-# Should libdjvu be a shared library ?
-ac_shared_libdjvu=no
-if test x$ac_debug = xno ; then
-  case "${host_os}" in
-    *linux*) ac_shared_libdjvu=yes ;;
-  esac
-fi
-AC_ARG_ENABLE([shared],
-  AC_HELP_STRING([--enable-shared],
-                 [Enable shared libdjvu (default: linux only)]),
-  [ac_shared_libdjvu=$enableval] )
-if test x$ac_shared_libdjvu != xno ; then
-  SHARED_YES=''
-  SHARED_NO='#'
-else
-  SHARED_YES='#'
-  SHARED_NO=''
-fi
-AC_SUBST(SHARED_YES)
-AC_SUBST(SHARED_NO)
-
 # Work around broken compilers with the famous LPR0 bug
 if test x$ac_shared_libdjvu != xno && test x$GXX = xyes; then
     AC_MSG_CHECKING([if $CXX has the LPR0 bug])
@@ -389,31 +374,6 @@ if test x${qt_version+set} = xset ; then
      AC_MSG_WARN([We suggest using QT-2.2.0 or better.])
   fi
 fi
-
-# Rules for building the netscape plugin.
-NSDEJAVU='nsdejavu.so'
-NSDEJAVU_FLAGS="-fpic -DPIC $X_CFLAGS"
-NSDEJAVU_LIBS="$X_LIBS"
-NSDEJAVU_LINK='${CC} -shared -o ${NSDEJAVU} ${CFLAGS} ${OBJS} ${LIBS}'
-case ${host_os} in 
-  hpux*) 
-	NSDEJAVU="nsdejavu.sl" 
-	;;
-  darwin*|macos10*)
-	NSDEJAVU_FLAGS="$X_CFLAGS -fno-common"
-	NSDEJAVU_LINK='${CC} -bundle -flat_namespace -undefined suppress'
-	NSDEJAVU_LINK="$NSDEJAVU_LINK"' -o ${NSDEJAVU} ${CFLAGS} ${OBJS} ${LIBS}'
-	;;
-esac
-if test x${GXX} != xyes ; then
-    AC_MSG_WARN([Please verify that gui/nsdejavu/Makefile works with this compiler.])
-fi
-AC_SUBST(NSDEJAVU)
-AC_SUBST(NSDEJAVU_FLAGS)
-AC_SUBST(NSDEJAVU_LIBS)
-AC_SUBST(NSDEJAVU_LINK)
-
-
 
 
 # ----------------------------------------

@@ -33,7 +33,7 @@ AR = @AR@
 LN_S = @LN_S@
 TOUCH = @TOUCH@
 INSTALL = @INSTALL@
-RANLIB = @RANLIB@
+LIBTOOL = @LIBTOOL@
 
 DEFS = @DEFS@
 OPTS = @OPTS@
@@ -45,11 +45,7 @@ TIFF_CFLAGS=@TIFF_CFLAGS@
 THREAD_LIBS = @THREAD_LIBS@
 THREAD_CFLAGS = @THREAD_CFLAGS@
 
-LIBDJVU_A = ${top_builddir}/libdjvu/libdjvulibre.a
-LIBDJVU_SO = ${top_builddir}/libdjvu/libdjvulibre-${PACKAGE_VERSION}.so
-
-@SHARED_YES@LIBDJVU = -Wl,-rpath,${libdir} ${LIBDJVU_SO}
-@SHARED_NO@LIBDJVU = ${LIBDJVU_A}
+LIBDJVU = ${top_builddir}/libdjvu/libdjvulibre-3.5.la
 
 INCS = -I${top_builddir} -I${top_srcdir}/libdjvu -I${srcdir}
 FLAGS = ${DEFS} ${INCS} ${OPTS} ${JPEG_CFLAGS} ${TIFF_CFLAGS} ${THREAD_CFLAGS}
@@ -70,7 +66,9 @@ install: install-bin install-man
 install-bin: ${PROGRAMS} FORCE
 	${INSTALL} -d ${DESTDIR}${bindir}
 	for n in ${PROGRAMS} ; do \
-	  ${INSTALL} -s -m 0755 $$n ${DESTDIR}${bindir} || exit ; done
+	  ${LIBTOOL} --mode=install \
+	    ${INSTALL} -s -m 0755 $$n ${DESTDIR}${bindir} \
+          || exit ; done
 
 install-man: FORCE
 	${INSTALL} -d ${DESTDIR}${mandir}/man1
@@ -81,7 +79,7 @@ depend: FORCE
 	${CXX} -MM ${CXXFLAGS} ${srcdir}/*.cpp > Makefile.dep
 
 clean: FORCE
-	-${RM} 2>/dev/null ${PROGRAMS}
+	-${LIBTOOL} --mode=clean ${RM} 2>/dev/null ${PROGRAMS}
 	-${RM} 2>/dev/null *.o *.a *.so *.stamp
 
 distclean: clean 
@@ -89,7 +87,7 @@ distclean: clean
 
 FORCE:
 .PHONY: FORCE
-.SUFFIXES: .c .cpp
+.SUFFIXES: .c .cpp .o
 
 .c.o:
 	${CC} ${CFLAGS} -c $<
@@ -102,54 +100,70 @@ FORCE:
 JB2OBJS= jb2cmp.o jb2tune.o
 
 annotate: annotate.o
-	${CXX} -o $@ ${CXXFLAGS} annotate.o ${LIBDJVU} ${LIBS}
+	${LIBTOOL} --mode=link \
+	  ${CXX} -o $@ ${CXXFLAGS} annotate.o ${LIBDJVU} ${LIBS}
 
 bzz: bzz.o
-	${CXX} -o $@ ${CXXFLAGS} bzz.o ${LIBDJVU} ${LIBS}
+	${LIBTOOL} --mode=link \
+	  ${CXX} -o $@ ${CXXFLAGS} bzz.o ${LIBDJVU} ${LIBS}
 
 c44: c44.o
-	${CXX} -o $@ ${CXXFLAGS} c44.o ${LIBDJVU} ${LIBS}
+	${LIBTOOL} --mode=link \
+	  ${CXX} -o $@ ${CXXFLAGS} c44.o ${LIBDJVU} ${LIBS}
 
 cjb2: cjb2.o ${JB2OBJS}
-	${CXX} -o $@ ${CXXFLAGS} cjb2.o ${JB2OBJS} ${LIBDJVU} ${MORELIBS}
+	${LIBTOOL} --mode=link \
+	  ${CXX} -o $@ ${CXXFLAGS} cjb2.o ${JB2OBJS} ${LIBDJVU} ${MORELIBS}
 
 cpaldjvu: cpaldjvu.o ${JB2OBJS}
-	${CXX} -o $@ ${CXXFLAGS} cpaldjvu.o ${JB2OBJS} ${LIBDJVU} ${LIBS}
+	${LIBTOOL} --mode=link \
+	  ${CXX} -o $@ ${CXXFLAGS} cpaldjvu.o ${JB2OBJS} ${LIBDJVU} ${LIBS}
 
 csepdjvu: csepdjvu.o ${JB2OBJS}
-	${CXX} -o $@ ${CXXFLAGS} csepdjvu.o ${JB2OBJS} ${LIBDJVU} ${LIBS}
+	${LIBTOOL} --mode=link \
+	  ${CXX} -o $@ ${CXXFLAGS} csepdjvu.o ${JB2OBJS} ${LIBDJVU} ${LIBS}
 
 ddjvu: ddjvu.o
-	${CXX} -o $@ ${CXXFLAGS} ddjvu.o ${LIBDJVU} ${LIBS}
+	${LIBTOOL} --mode=link \
+	  ${CXX} -o $@ ${CXXFLAGS} ddjvu.o ${LIBDJVU} ${LIBS}
 
 djvm: djvm.o
-	${CXX} -o $@ ${CXXFLAGS} djvm.o ${LIBDJVU} ${LIBS}
+	${LIBTOOL} --mode=link \
+	  ${CXX} -o $@ ${CXXFLAGS} djvm.o ${LIBDJVU} ${LIBS}
 
 djvmcvt: djvmcvt.o
-	${CXX} -o $@ ${CXXFLAGS} djvmcvt.o ${LIBDJVU} ${LIBS}
+	${LIBTOOL} --mode=link \
+	  ${CXX} -o $@ ${CXXFLAGS} djvmcvt.o ${LIBDJVU} ${LIBS}
 
 djvudump: djvudump.o
-	${CXX} -o $@ ${CXXFLAGS} djvudump.o ${LIBDJVU} ${LIBS}
+	${LIBTOOL} --mode=link \
+	  ${CXX} -o $@ ${CXXFLAGS} djvudump.o ${LIBDJVU} ${LIBS}
 
 djvups: djvups.o
-	${CXX} -o $@ ${CXXFLAGS} djvups.o ${LIBDJVU} ${LIBS}
+	${LIBTOOL} --mode=link \
+	  ${CXX} -o $@ ${CXXFLAGS} djvups.o ${LIBDJVU} ${LIBS}
 
 djvuextract: djvuextract.o
-	${CXX} -o $@ ${CXXFLAGS} djvuextract.o ${LIBDJVU} ${LIBS}
+	${LIBTOOL} --mode=link \
+	  ${CXX} -o $@ ${CXXFLAGS} djvuextract.o ${LIBDJVU} ${LIBS}
 
 djvumake: djvumake.o
-	${CXX} -o $@ ${CXXFLAGS} djvumake.o ${LIBDJVU} ${LIBS}
+	${LIBTOOL} --mode=link \
+	  ${CXX} -o $@ ${CXXFLAGS} djvumake.o ${LIBDJVU} ${LIBS}
 
 djvused: djvused.o
-	${CXX} -o $@ ${CXXFLAGS} djvused.o ${LIBDJVU} ${LIBS}
+	${LIBTOOL} --mode=link \
+	  ${CXX} -o $@ ${CXXFLAGS} djvused.o ${LIBDJVU} ${LIBS}
 
 djvutxt: djvutxt.o
-	${CXX} -o $@ ${CXXFLAGS} djvutxt.o ${LIBDJVU} ${LIBS}
+	${LIBTOOL} --mode=link \
+	  ${CXX} -o $@ ${CXXFLAGS} djvutxt.o ${LIBDJVU} ${LIBS}
 
 djvuserve: djvuserve.o
-	${CXX} -o $@ ${CXXFLAGS} djvuserve.o ${LIBDJVU} ${LIBS}
+	${LIBTOOL} --mode=link \
+	  ${CXX} -o $@ ${CXXFLAGS} djvuserve.o ${LIBDJVU} ${LIBS}
 
-@SHARED_NO@${PROGRAMS}: ${LIBDJVU_A}
+${PROGRAMS}: ${LIBDJVU}
 
 Makefile.dep: ${srcdir}/Makefile.dep
 	cp ${srcdir}/Makefile.dep $@

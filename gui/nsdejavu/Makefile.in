@@ -34,14 +34,9 @@ AR = @AR@
 LN_S = @LN_S@
 TOUCH = @TOUCH@
 INSTALL = @INSTALL@
-RANLIB = @RANLIB@
-
+LIBTOOL = @LIBTOOL@
 DEFS = @DEFS@ 
 OPTS = @OPTS@
-NSDEJAVU = @NSDEJAVU@
-NSDEJAVU_FLAGS = @NSDEJAVU_FLAGS@
-NSDEJAVU_LIBS = @NSDEJAVU_LIBS@
-NSDEJAVU_LINK = @NSDEJAVU_LINK@
 
 INCS = \
  -I${srcdir} \
@@ -49,16 +44,17 @@ INCS = \
  -I${top_srcdir}/gui/shared/res \
  -I${top_srcdir}/gui/npsdk 
 
-CFLAGS = @CPPFLAGS@ ${DEFS} ${OPTS} ${INCS} ${NSDEJAVU_FLAGS}
+CFLAGS = @CPPFLAGS@ ${DEFS} ${OPTS} ${INCS} ${X_CFLAGS} 
 
-OBJS = nsdejavu.o
+LIBS = @LDFLAGS@ ${NSDEJAVU_LIBS} ${X_LIBS}
 
-LIBS = @LDFLAGS@ ${NSDEJAVU_LIBS}
+all: nsdejavu.la nsdejavu.1
 
-all: ${NSDEJAVU} nsdejavu.1
+nsdejavu.lo: nsdejavu.c
 
-${NSDEJAVU} : ${OBJS}
-	${NSDEJAVU_LINK}
+nsdejavu.la: nsdejavu.lo
+	${LIBTOOL} --mode=link ${CC} ${CFLAGS} nsdejavu.lo ${LIBS} \
+	  -rpath ${plugindir} -module -o $@
 
 nsdejavu.1: ${srcdir}/nsdejavu.1.in
 	sed < ${srcdir}/nsdejavu.1.in > nsdejavu.1 \
@@ -66,9 +62,11 @@ nsdejavu.1: ${srcdir}/nsdejavu.1.in
 
 install: install-bin install-man
 
-install-bin: ${NSDEJAVU} FORCE
-	${INSTALL} -d ${DESTDIR}${plugindir}
-	${INSTALL} -m 0644 ${NSDEJAVU} ${DESTDIR}${plugindir}
+install-bin: nsdejavu.la FORCE
+	${INSTALL} -d ${DESTDIR}${plugindir}	
+	eval `grep '^dlname=' nsdejavu.la` \
+	  && so=`echo $${dlname-nsdejavu.so} | sed -e 's/\.[0-9.]*$$//'` \
+	  && ${INSTALL} -m 0644 .libs/$$so ${DESTDIR}${plugindir}
 
 install-man: nsdejavu.1 FORCE
 	${INSTALL} -d ${DESTDIR}${mandir}/man1
@@ -78,14 +76,21 @@ depend: FORCE
 	${CC} -MM ${CFLAGS} ${srcdir}/nsdejavu.c > Makefile.dep
 
 clean: FORCE
+	-${LIBTOOL} --mode=clean ${RM} 2>/dev/null *.lo *.la 
 	-${RM} 2>/dev/null ${NSDEJAVU} nsdejavu.1
-	-${RM} 2>/dev/null *.o *.a *.so *.stamp 
 
 distclean: clean 
 	-${RM} -r 2>/dev/null Makefile *.rpo ii_files
 
 FORCE:
 .PHONY: FORCE
+.SUFFIXES: .c .cpp .o .lo
+
+.c.o:
+	${CC} ${CFLAGS} -c $< -o $@
+
+.c.lo:
+	${LIBTOOL} --mode=compile ${CC} ${CFLAGS} -c $< -o $@
 
 # Dependencies
 

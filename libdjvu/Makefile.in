@@ -33,7 +33,7 @@ AR = @AR@
 LN_S = @LN_S@
 TOUCH = @TOUCH@
 INSTALL = @INSTALL@
-RANLIB = @RANLIB@
+LIBTOOL = @LIBTOOL@
 
 DEFS = @DEFS@
 OPTS = @OPTS@
@@ -43,13 +43,8 @@ JPEG_CFLAGS=@JPEG_CFLAGS@
 THREAD_LIBS = @THREAD_LIBS@
 THREAD_CFLAGS = @THREAD_CFLAGS@
 
-LIBDJVU_A = libdjvulibre.a
-LIBDJVU_SO = libdjvulibre-${PACKAGE_VERSION}.so
-
-@SHARED_YES@CXXPICFLAGS = -fPIC -DPIC
-@SHARED_NO@CXXPICFLAGS =
-@SHARED_YES@CXXSHARED = ${CXX} -shared -Wl,-soname,${LIBDJVU_SO}
-@SHARED_NO@CXXSHARED =
+LIBDJVU_LA = libdjvulibre-3.5.la
+LIBDJVU_VER = `echo ${PACKAGE_VERSION} | sed -e 's/^3\.5\.//'`:0:0
 
 INCS = -I${top_builddir} -I${srcdir}
 FLAGS = ${DEFS} ${INCS} ${OPTS} ${JPEG_CFLAGS} ${THREAD_CFLAGS}
@@ -57,42 +52,35 @@ LIBS= @LDFLAGS@ ${JPEG_LIBS} ${THREAD_LIBS} @LIBS@
 CFLAGS = @CPPFLAGS@ @CFLAGS@ ${FLAGS}
 CXXFLAGS = @CPPFLAGS@ @CXXFLAGS@ ${CXXPICFLAGS} ${CXXRPOFLAGS} ${FLAGS}
 
-all: ${LIBDJVU_A} 
-@SHARED_YES@all: ${LIBDJVU_SO}
+all: ${LIBDJVU_LA} 
 
-install: install-data
-@SHARED_YES@install: install-lib
+install: install-lib install-data
 
 OBJS = \
-	DjVuGlobal.o DjVuGlobalMemory.o GOS.o GException.o GContainer.o \
-        GString.o GThreads.o GRect.o GSmartPointer.o  MMX.o Arrays.o debug.o \
-	GBitmap.o GPixmap.o GScaler.o DjVuPalette.o ByteStream.o \
-	IFFByteStream.o BSByteStream.o BSEncodeByteStream.o ZPCodec.o \
-	JB2Image.o JB2EncodeCodec.o IW44Image.o IW44EncodeCodec.o \
-	MMRDecoder.o JPEGDecoder.o DataPool.o GURL.o DjVuFileCache.o \
-	DjVuPort.o GMapAreas.o DjVuAnno.o GIFFManager.o DjVuText.o \
-	DjVuInfo.o DjVuFile.o DjVuImage.o DjVuDocument.o \
-	DjVmDir.o DjVmDoc.o DjVmDir0.o DjVuNavDir.o DjVuErrorList.o \
-	DjVuDocEditor.o DjVuToPS.o DjVuDumpHelper.o \
-	DjVuMessageLite.o DjVuMessage.o GUnicode.o UnicodeByteStream.o \
-	XMLParser.o XMLTags.o ddjvuapi.o
+	DjVuGlobal.lo DjVuGlobalMemory.lo GOS.lo GException.lo GContainer.lo \
+        GString.lo GThreads.lo GRect.lo GSmartPointer.lo  MMX.lo Arrays.lo \
+	GBitmap.lo GPixmap.lo GScaler.lo DjVuPalette.lo ByteStream.lo \
+	IFFByteStream.lo BSByteStream.lo BSEncodeByteStream.lo ZPCodec.lo \
+	JB2Image.lo JB2EncodeCodec.lo IW44Image.lo IW44EncodeCodec.lo \
+	MMRDecoder.lo JPEGDecoder.lo DataPool.lo GURL.lo DjVuFileCache.lo \
+	DjVuPort.lo GMapAreas.lo DjVuAnno.lo GIFFManager.lo DjVuText.lo \
+	DjVuInfo.lo DjVuFile.lo DjVuImage.lo DjVuDocument.lo \
+	DjVmDir.lo DjVmDoc.lo DjVmDir0.lo DjVuNavDir.lo DjVuErrorList.lo \
+	DjVuDocEditor.lo DjVuToPS.lo DjVuDumpHelper.lo \
+	DjVuMessageLite.lo DjVuMessage.lo GUnicode.lo UnicodeByteStream.lo \
+	XMLParser.lo XMLTags.lo ddjvuapi.lo debug.lo
 
-${LIBDJVU_A} : ${OBJS}
+${LIBDJVU_LA} : ${OBJS}
 	@echo "[ generating $@ ... ]"
-	-${RM} 2>/dev/null ${LIBDJVU_A}
-	${AR} cru ${LIBDJVU_A} ${OBJS}
-	${RANLIB} ${LIBDJVU_A}
+	${LIBTOOL} --mode=link ${CXX} ${CXXFLAGS} \
+	    -rpath ${libdir} -version-info ${LIBDJVU_VER} \
+	    ${OBJS} ${LIBS} -o ${LIBDJVU_LA}
 
-@SHARED_YES@${LIBDJVU_SO} : ${OBJS}
-@SHARED_YES@	@echo "[ linking $@ ... ]"
-@SHARED_YES@	${CXXSHARED} -o ${LIBDJVU_SO} ${CXXFLAGS} ${OBJS} ${LIBS}
-
-@RPO_YES@${LIBDJVU_A} : libdjvu-rpo
-@RPO_YES@${LIBDJVU_SO} : libdjvu-rpo
+@RPO_YES@${LIBDJVU_LA} : libdjvu-rpo
 @RPO_YES@libdjvu-rpo : ${OBJS}
 @RPO_YES@	@echo "[ performing library closure ... ]"
 @RPO_YES@	@echo "int main() { return 0; }" > $@.cpp
-@RPO_YES@	${CXX} ${CXXFLAGS} -c $@.cpp
+@RPO_YES@	${LIBTOOL} --mode=compile ${CXX} ${CXXFLAGS} -c $@.cpp
 @RPO_YES@	${CXX} ${CXXFLAGS} -o $@ $@.o ${OBJS} ${LIBS} || \
 @RPO_YES@	${CXX} ${CXXFLAGS} -o $@ $@.o ${OBJS} ${LIBS} || \
 @RPO_YES@	${CXX} ${CXXFLAGS} -o $@ $@.o ${OBJS} ${LIBS} || \
@@ -107,28 +95,30 @@ install-data: FORCE
 	  test -d ${DESTDIR}$$dir || ${INSTALL} -d ${DESTDIR}$$dir ; \
 	  ${INSTALL} -m 0644 $$src ${DESTDIR}$$dir || exit ; done
 
-install-lib: ${LIBDJVU_SO} FORCE
+install-lib: ${LIBDJVU_LA} FORCE
 	${INSTALL} -d ${DESTDIR}${libdir}
-	${INSTALL} -m 644 ${LIBDJVU_SO} ${DESTDIR}${libdir}
+	${LIBTOOL} --mode=install \
+	   ${INSTALL} -m 644 ${LIBDJVU_LA} ${DESTDIR}${libdir}
 
 depend: FORCE
 	${CXX} -MM ${CXXFLAGS} ${srcdir}/*.cpp > Makefile.dep
 
 clean: FORCE
-	-${RM} 2>/dev/null *.o *.a *.so libdjvu*
+	-${LIBTOOL} --mode=clean ${RM} 2>/dev/null *.lo *.la 
+	-${RM} 2>/dev/null libdjvu-rpo
 
 distclean: clean 
 	-${RM} -r 2>/dev/null Makefile *.rpo ii_files
 
 FORCE:
 .PHONY: FORCE
-.SUFFIXES: .c .cpp
+.SUFFIXES: .c .cpp .lo
 
-.c.o:
-	${CC} ${CFLAGS} -c $<
+.c.lo:
+	${LIBTOOL} --mode=compile ${CC} ${CFLAGS} -c $<
 
-.cpp.o:
-	${CXX} ${CXXFLAGS} -c $<
+.cpp.lo:
+	${LIBTOOL} --mode=compile ${CXX} ${CXXFLAGS} -c $<
 
 # Dependencies
 

@@ -33,7 +33,7 @@ AR = @AR@
 LN_S = @LN_S@
 TOUCH = @TOUCH@
 INSTALL = @INSTALL@
-RANLIB = @RANLIB@
+LIBTOOL = @LIBTOOL@
 
 DEFS = @DEFS@
 OPTS = @OPTS@
@@ -42,11 +42,7 @@ JPEG_CFLAGS=@JPEG_CFLAGS@
 THREAD_LIBS = @THREAD_LIBS@
 THREAD_CFLAGS = @THREAD_CFLAGS@
 
-LIBDJVU_A = ${top_builddir}/libdjvu/libdjvulibre.a
-LIBDJVU = ${LIBDJVU_A}
-# Note: we always use the static version of libdjvu
-# because bin2cpp is used during the build process
-# and cannot rely on an installed shared library
+LIBDJVU = ${top_builddir}/libdjvu/libdjvulibre-3.5.la
 
 INCS = -I${top_builddir} -I${top_srcdir}/libdjvu -I${srcdir}
 FLAGS = ${DEFS} ${INCS} ${OPTS} ${JPEG_CFLAGS} ${THREAD_CFLAGS}
@@ -64,7 +60,7 @@ depend: FORCE
 	${CXX} -MM ${CXXFLAGS} ${srcdir}/*.cpp > Makefile.dep
 
 clean: FORCE
-	-${RM} 2>/dev/null ${PROGRAMS}
+	-${LIBTOOL} --mode=clean ${RM} 2>/dev/null ${PROGRAMS}
 	-${RM} 2>/dev/null *.o *.a *.so *.stamp
 
 distclean: clean 
@@ -72,7 +68,7 @@ distclean: clean
 
 FORCE:
 .PHONY: FORCE
-.SUFFIXES: .c .cpp
+.SUFFIXES: .c .cpp .o
 
 .c.o:
 	${CC} ${CFLAGS} -c $<
@@ -80,15 +76,11 @@ FORCE:
 .cpp.o:
 	${CXX} ${CXXFLAGS} -c $<
 
-.o:
-	${CXX} -o $@ ${CXXFLAGS} $< ${LIBDJVU} ${LIBS}
+bin2cpp: bin2cpp.o 
+	${LIBTOOL} --mode=link \
+	  ${CXX} -o $@ ${CXXFLAGS} bin2cpp.o ${LIBDJVU} ${LIBS}
 
-
-# Dependencies
-
-bin2cpp: bin2cpp.o
-
-@SHARED_NO@${PROGRAMS}: ${LIBDJVU_A}
+${PROGRAMS}: ${LIBDJVU}
 
 Makefile.dep: ${srcdir}/Makefile.dep
 	cp ${srcdir}/Makefile.dep $@

@@ -33,7 +33,7 @@ AR = @AR@
 LN_S = @LN_S@
 TOUCH = @TOUCH@
 INSTALL = @INSTALL@
-RANLIB = @RANLIB@
+LIBTOOL = @LIBTOOL@
 
 DEFS = @DEFS@
 OPTS = @OPTS@
@@ -43,11 +43,7 @@ JPEG_CFLAGS=@JPEG_CFLAGS@
 THREAD_LIBS = @THREAD_LIBS@
 THREAD_CFLAGS = @THREAD_CFLAGS@
 
-LIBDJVU_A = ${top_builddir}/libdjvu/libdjvulibre.a
-LIBDJVU_SO = ${top_builddir}/libdjvu/libdjvulibre-${PACKAGE_VERSION}.so
-
-@SHARED_YES@LIBDJVU = -Wl,-rpath,${libdir} ${LIBDJVU_SO}
-@SHARED_NO@LIBDJVU = ${LIBDJVU_A}
+LIBDJVU = ${top_builddir}/libdjvu/libdjvulibre-3.5.la
 
 INCS = -I${top_builddir} -I${top_srcdir}/libdjvu -I${srcdir}
 FLAGS = ${DEFS} ${INCS} ${OPTS} ${JPEG_CFLAGS} ${THREAD_CFLAGS}
@@ -64,7 +60,9 @@ install: install-bin install-data install-man
 install-bin: ${PROGRAMS} FORCE
 	${INSTALL} -d ${DESTDIR}${bindir}
 	for n in ${PROGRAMS} ; do \
-	  ${INSTALL} -s -m 0755 $$n ${DESTDIR}${bindir} || exit ; done
+	  ${LIBTOOL} --mode=install \
+	    ${INSTALL} -s -m 0755 $$n ${DESTDIR}${bindir} \
+          || exit ; done
 
 install-data: FORCE
 	${INSTALL} -d ${DESTDIR}${datadir}/djvu
@@ -97,7 +95,7 @@ djvuxml.1: ${srcdir}/djvuxml.1.in
 
 FORCE:
 .PHONY: FORCE
-.SUFFIXES: .c .cpp
+.SUFFIXES: .c .cpp .o
 
 .c.o:
 	${CC} ${CFLAGS} -c $<
@@ -105,14 +103,15 @@ FORCE:
 .cpp.o:
 	${CXX} ${CXXFLAGS} -c $<
 
-.o:
-	${CXX} -o $@ ${CXXFLAGS} $< ${LIBDJVU} ${LIBS}
-
-# Dependencies
 djvutoxml: djvutoxml.o
-djvuxmlparser: djvuxmlparser.o
+	${LIBTOOL} --mode=link \
+	  ${CXX} -o $@ ${CXXFLAGS} djvutoxml.o ${LIBDJVU} ${LIBS}
 
-@SHARED_NO@${PROGRAMS}: ${LIBDJVU_A}
+djvuxmlparser: djvuxmlparser.o
+	${LIBTOOL} --mode=link \
+	  ${CXX} -o $@ ${CXXFLAGS} djvuxmlparser.o ${LIBDJVU} ${LIBS}
+
+${PROGRAMS}: ${LIBDJVU}
 
 Makefile.dep: ${srcdir}/Makefile.dep
 	cp ${srcdir}/Makefile.dep $@

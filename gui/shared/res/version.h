@@ -59,9 +59,6 @@
 #ifdef HAVE_CONFIG_H
 #include "config.h"
 #endif
-#if NEED_GNUG_PRAGMAS
-# pragma interface
-#endif
 
 #ifdef DJVULIBRE_VERSION
 #define DJVIEW_VERSION_STR	DJVULIBRE_VERSION
