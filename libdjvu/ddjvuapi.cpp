@@ -105,8 +105,8 @@ using namespace DJVU;
 #if HAVE_STDINT_H
 # include <stdint.h>
 #else
-typedef unsigned short uint16_t
-typedef unsigned int uint32_t
+typedef unsigned short uint16_t;
+typedef unsigned int uint32_t;
 #endif
 
 
