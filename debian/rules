@@ -1,6 +1,7 @@
 #!/usr/bin/make -f
-# Sample debian/rules that uses debhelper.
-# GNU copyright 1997 to 1999 by Joey Hess.
+# Based on sample debian/rules that uses debhelper,
+# GNU copyright, 1997 to 1999 by Joey Hess,
+# modified 2002 to 2004 by Barak A. Pearlmutter.
 
 # Uncomment this to turn on verbose mode.
 #export DH_VERBOSE=1
@@ -105,7 +106,7 @@ binary-arch: build install
 	dh_strip
 	dh_compress --exclude=.djvu
 	dh_fixperms
-	dh_makeshlibs
+	dh_makeshlibs --exclude=/plugins
 	dh_installdeb
 #	dh_perl
 	dh_shlibdeps -l libdjvu
