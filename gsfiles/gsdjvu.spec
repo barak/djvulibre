@@ -1,5 +1,5 @@
 %define release 1
-%define version 7.07
+%define version 8.01
 %define prefix %{?_prefix:%{_prefix}}%{!?_prefix:/usr}
 %define mandir %{?_mandir:%{_mandir}}%{!?_mandir:%{prefix}/man}
 
@@ -35,24 +35,26 @@ a ghostscript interpreter.
 %setup -n ghostscript-%{version} -T -D -a 5
 
 %build
-gsdjvu-1.0/gsdjvu_configure.sh
+gsfiles/gsdjvu_configure.sh
 make
 
 %install
 rm -rf %{buildroot}
-DESTDIR=%{buildroot} gsdjvu-1.0/gsdjvu_install.sh
+DESTDIR=%{buildroot} gsfiles/gsdjvu_install.sh
 
 %clean
 rm -rf %{buildroot}
 
 %files
 %defattr(-, root, root)
-%doc gsdjvu-1.0/README
+%doc gsfiles/README
 %{_bindir}/*
 %{_libdir}/*
 
 %changelog
+* Sat Aug 28 2004 Leon Bottou <leon@bottou.org>
+- Now uses ghostscript-8.01
 * Thu Apr  8 2004 Leon Bottou <leon@bottou.org>
-- Initial version
+- Initial version using ghostscript-7.07
 
 
