@@ -75,6 +75,7 @@
 # include <io.h>
 #endif
 #if HAVE_PUTC_UNLOCKED
+# undef putc
 # define putc putc_unlocked
 #endif
 #if HAVE_TIFF
