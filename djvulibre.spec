@@ -3,7 +3,7 @@
 Prefix: %{prefix}
 Summary: DjVu viewers, encoders and utilities.
 Name: djvulibre
-Version: 3.5.1
+Version: 3.5.2
 Release: 1
 Copyright: GPL
 Group: Applications/Graphics
