@@ -557,7 +557,7 @@ QDViewer::setCaption(void)
    {
       QWidget * w=this;
       while(w->parentWidget()) w=w->parentWidget();
-      QString mesg=tr("DjVu Viewer - ")+
+      QString mesg=tr("DjView - ")+
 	 QStringFromGString((dimg->get_djvu_file()->get_url()).UTF8Filename());
       w->setCaption(mesg);
    }

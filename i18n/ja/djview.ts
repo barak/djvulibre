@@ -973,10 +973,6 @@ automatic color matching.</source>
         <translation>ポイント</translation>
     </message>
     <message>
-        <source>&lt;b&gt;詳細ブックレットオプション:&lt;/b&gt;&lt;br&gt;ページのアラインメントは左右の余白を調整します。中央のマージンはページを折って装丁するための余白を調整します。この値は内側の用紙から外側の用紙へ行くにつれて増えていきます。</source>
-        <translation></translation>
-    </message>
-    <message>
         <source>&amp;Save settings</source>
         <translation>設定を保存する(&amp;S)</translation>
     </message>
@@ -1041,6 +1037,10 @@ Are you sure you want to overwrite it?</source>
     <message>
         <source>sheet(s).</source>
         <translation>ページ</translation>
+    </message>
+    <message>
+        <source>&lt;b&gt;Advanced booklet options:&lt;/b&gt;&lt;br&gt;Shifting rectos and versos is useful with poorly aligned duplex printers. The center margins determine how much space is left between the pages to fold the sheets. This space slowly increases from the inner sheet to the outer sheet.</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -1349,7 +1349,7 @@ OCR エンジンがテキストを認識できなかった
     <name>QDViewer</name>
     <message>
         <source>DjVu Viewer - </source>
-        <translation>DjVu Viewer - </translation>
+        <translation type="obsolete">DjVu Viewer - </translation>
     </message>
     <message>
         <source>Printing prohibited</source>
@@ -1597,6 +1597,10 @@ uses outdated tools.
     <message>
         <source>DjVu: Page Information</source>
         <translation>DjVu: ページ情報</translation>
+    </message>
+    <message>
+        <source>DjView - </source>
+        <translation>DjView - </translation>
     </message>
 </context>
 <context>

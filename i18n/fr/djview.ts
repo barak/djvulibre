@@ -1372,7 +1372,7 @@ La recherche est impossible.</translation>
     <name>QDViewer</name>
     <message>
         <source>DjVu Viewer - </source>
-        <translation>DjVu Viewer - </translation>
+        <translation type="obsolete">DjVu Viewer - </translation>
     </message>
     <message>
         <source>Printing prohibited</source>
@@ -1620,6 +1620,10 @@ au Webmaistre qui utilise des outils obsolètes.</translation>
     <message>
         <source>DjVu: Page Information</source>
         <translation>DjVu: Informations sur la page</translation>
+    </message>
+    <message>
+        <source>DjView - </source>
+        <translation>DjView - </translation>
     </message>
 </context>
 <context>

@@ -1293,10 +1293,6 @@ The search is impossible.</source>
 <context>
     <name>QDViewer</name>
     <message>
-        <source>DjVu Viewer - </source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>Printing prohibited</source>
         <translation type="unfinished"></translation>
     </message>
@@ -1530,6 +1526,10 @@ uses outdated tools.
     </message>
     <message>
         <source>DjVu: Page Information</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>DjView - </source>
         <translation type="unfinished"></translation>
     </message>
 </context>
