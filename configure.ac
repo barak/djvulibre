@@ -302,9 +302,12 @@ if test x$GXX != xyes ; then
     AC_MSG_ERROR([Exception support in c++ compiler is mandatory.]) 
   fi
 else
+  AC_MSG_CHECKING([g++ version]) 
+changequote(<<, >>)dnl
   cxxver="`$CXX --version | head -1 | 
-             sed -e 's/^.*[ -]\([2-4]\.[0-9.]*\).*$/\1/'`"
-  # BUG: The line above does not work with gcc greater than 3...
+             sed -e 's/^.*[^0-9.]\([2-4]\.[0-9.]*\).*$/\1/'`"
+changequote([, ])dnl 
+  AC_MSG_RESULT($cxxver)
   action=none
   case "$cxxver" in
 changequote(<<, >>)dnl          
