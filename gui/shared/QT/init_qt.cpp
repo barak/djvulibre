@@ -283,7 +283,7 @@ InitializeQT(int &argc, char ** argv)
      qeApp->setName(name);
    
    // Customize CDE style
-#ifndef QT1
+#ifdef QT2
    if (qApp->style().inherits("QCDEStyle"))
      {
        QPalette p( QColor( 75, 123, 130 ) );

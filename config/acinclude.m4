@@ -452,6 +452,8 @@ AC_SUBST(THREAD_CFLAGS)
 AC_MSG_CHECKING([threading model])
 AC_MSG_RESULT($ac_threads)
 if test $ac_threads != no ; then
+   AC_MSG_RESULT([setting THREAD_CFLAGS=$THREAD_CFLAGS])
+   AC_MSG_RESULT([setting THREAD_LIBS=$THREAD_LIBS])
    ifelse([$1],,:,[$1])
 else
    ifelse([$2],,:,[$2])
@@ -513,6 +515,8 @@ jpeg_CreateDecompress(0,0,0);],
       ifelse([$2],,:,[$2])
    else
       AC_DEFINE(HAVE_JPEG,1,[Define if you have the IJG JPEG library.])
+      AC_MSG_RESULT([setting JPEG_CFLAGS=$JPEG_CFLAGS])
+      AC_MSG_RESULT([setting JPEG_LIBS=$JPEG_LIBS])
       ifelse([$1],,:,[$1])
    fi
 ])
@@ -547,10 +551,12 @@ AC_DEFUN([AC_PATH_QT],
   ac_has_qt=no
   if test x$QTDIR != xno ; then
     AC_MSG_CHECKING([for Qt root directory])
+    ac_has_qt=no
+    ac_userdef_qt=no
     if test x${QT_CFLAGS+set} = xset || test x${QT_LIBS+set} = xset ; then
-       ac_has_qt=yes   # no questions asked
+       ac_userdef_qt=yes
+       ac_has_qt="user defined QT_CFLAGS and QT_LIBS" # no questions asked
     else
-       ac_has_qt=no    # check QTDIR
        ac_qt_dirs="/usr/lib/qt /usr/local /usr/X11R6 /usr"
        for n in /usr/lib/qt-3.* ; do test -d $n && ac_qt_dirs="$n $ac_qt_dirs" ; done
        test -d /usr/lib/qt3 && ac_qt_dirs="/usr/lib/qt3 $ac_qt_dirs"
@@ -559,7 +565,7 @@ AC_DEFUN([AC_PATH_QT],
        test -d "$QTDIR" && ac_qt_dirs="$QTDIR $ac_qt2_dirs"
        for dir in $ac_qt_dirs ; do
           if test -r $dir/include/qwidget.h ; then
-            ac_has_qt="$dir/include+$dir/lib"
+            ac_has_qt=$dir
             QTDIR=$dir
             break
           fi
@@ -567,7 +573,7 @@ AC_DEFUN([AC_PATH_QT],
     fi
     # Unusual install
     if test "x$ac_has_qt" = xno ; then
-      ac_qt_names="qt qt2 qt3"
+      ac_qt_names="qt3 qt2 qt"
       ac_qt_dirs="$QTDIR /usr /usr/X11R6 /usr/local"
       for d in $ac_qt_dirs ; do
         for n in $ac_qt_names ; do
@@ -577,7 +583,7 @@ AC_DEFUN([AC_PATH_QT],
                 QT_CFLAGS="-I$d/include/$n"
                 QT_LIBS="-L$d -l$n"
                 QTDIR=$d
-                ac_has_qt="$d/include/$n+$d/lib"
+                ac_has_qt="non standard Qt install"
                 break 3
               fi
             done
@@ -590,8 +596,35 @@ AC_DEFUN([AC_PATH_QT],
   fi
   # Programs
   if test "x$ac_has_qt" != xno ; then
-    test x${QT_CFLAGS+set} != xset && QT_CFLAGS="-I$QTDIR/include"
-    test x${QT_LIBS+set} != xset && QT_LIBS="-L$QTDIR/lib -lqt"
+    if test "x$ac_userdef_qt" != xyes ; then
+        test x${QT_CFLAGS+set} != xset && QT_CFLAGS="-I$QTDIR/include"
+        test x${QT_LIBS+set} != xset && QT_LIBS="-L$QTDIR/lib -lqt"
+        # KDE-3.0 styles require qt-mt even in non KDE applications. 
+        # Bero dixit. See kde bug #40823.
+        qt_libdir=
+        qt_libname=
+        AC_MSG_CHECKING([for multithreaded Qt3 library])
+        for n in `echo $QT_LIBS` ; do case $n in
+           -L*) qt_libdir=`echo "$n" | sed -e 's:^-L::'` ;;
+           -l*) qt_libname=`echo "$n" | sed -e 's:^-l::'` ;;
+          esac
+        done
+        ac_has_qt_mt=no
+        for n in ${qt_libdir}/lib${qt_libname}.so.3.* ; do
+          if test -r $n && test -r "${qt_libdir}/lib${qt_libname}-mt.so" ; then
+              ac_has_qt_mt=yes
+          fi
+        done
+        AC_MSG_RESULT($ac_has_qt_mt)
+        if test $ac_has_qt_mt = yes ; then
+          newqtlibs=
+          for n in `echo $QT_LIBS` ; do 
+            test "$n" = "-l$qt_libname"  &&  n="$n-mt"
+            newqtlibs="$newqtlibs $n"
+          done
+          QT_LIBS="$newqtlibs"
+        fi
+    fi
     AC_PATH_PROGS(MOC, [moc moc2 moc3], [unknown], [$QTDIR/bin:$PATH])
     AC_PATH_PROGS(UIC, [uic uic2 uic3], [unknown], [$QTDIR/bin:$PATH])
     if test -x "$MOC" ; then : ; else 
@@ -606,8 +639,8 @@ AC_DEFUN([AC_PATH_QT],
     AC_LANG_PUSH(C++)
     save_CXXFLAGS="$CXXFLAGS"
     save_LIBS="$LIBS"
-    CXXFLAGS="$CXXFLAGS $CFLAGS $QT_CFLAGS $X_CFLAGS"
-    LIBS="$QT_LIBS $X_LIBS $LIBS"
+    CXXFLAGS="$CXXFLAGS $CFLAGS $THREAD_CFLAGS $QT_CFLAGS $X_CFLAGS"
+    LIBS="$THREAD_LIBS $QT_LIBS $X_LIBS $LIBS"
     AC_TRY_RUN([
 #include <qfile.h>
 #include <qtextstream.h>
@@ -638,6 +671,8 @@ QTextStream ts(&qf); ts << QT_VERSION; return 0;
     QT_CFLAGS= ; QT_LIBS= ; QTDIR= ; MOC=moc ;
     ifelse([$2],,:,[$2])        
   else
+    AC_MSG_RESULT([setting QT_CFLAGS=$QT_CFLAGS])
+    AC_MSG_RESULT([setting QT_LIBS=$QT_LIBS])
     ifelse([$1],,:,[$1])        
   fi
 ])
