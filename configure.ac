@@ -219,7 +219,7 @@ changequote([, ])dnl
         case "$rhversion" in
 changequote(<<, >>)dnl                                                                              
           2.96-8[5-9]*) ;;
-          2.97-9*) ;;
+          2.96-9*) ;;
           *)
 changequote([, ])dnl 
              AC_MSG_WARN([Your c++ compiler ($cxxver) has known problems.
