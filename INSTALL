@@ -316,10 +316,10 @@ Install the plugin for mozilla and it will work for galeon.
 -----------------------------
 
 You must establish a link from the appropriate plugin directory.  
-Let us assume that mozilla is installed under /usr/lib/mozilla-firebird 
+Let us assume that mozilla is installed under /usr/lib/mozilla-firefox
 and that the DjVu plug-in is installed in /usr/local/lib/netscape/plugins.
 
-    $ cd /usr/lib/mozilla-firebird/plugins
+    $ cd /usr/lib/mozilla-firefox/plugins
     $ ln -s /usr/local/lib/netscape/plugins/nsdejavu.so nsdejavu.so
 
 Works nicely.
