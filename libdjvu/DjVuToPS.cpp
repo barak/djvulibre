@@ -1181,7 +1181,9 @@ DjVuToPS::print_bg(ByteStream &str, const GP<DjVuImage> &dimg,
                       int row, y1;
                       unsigned char *ptr, *ptr1;
                       // Doing R component of current chunk
-                      for (row=0,ptr=rle_in,y1=y; row<ps_chunk_height && y1<grectBand.height(); row++,y1++)
+                      for (row=0,ptr=rle_in,y1=y; 
+                           row<ps_chunk_height && y1<grectBand.height(); 
+                           row++,y1++)
                         {
                           GPixel *pix = (*pm)[y1];
                           for (int x=grectBand.width(); x>0; x--,pix++)
@@ -1192,7 +1194,9 @@ DjVuToPS::print_bg(ByteStream &str, const GP<DjVuImage> &dimg,
                       buf_ptr = ASCII85_encode(buf_ptr, rle_out, ptr1);
                       *buf_ptr++ = '~'; *buf_ptr++ = '>'; *buf_ptr++ = '\n';
                       // Doing G component of current chunk
-                      for (row=0,ptr=rle_in,y1=y; row<ps_chunk_height && y1<grectBand.height(); row++,y1++)
+                      for (row=0,ptr=rle_in,y1=y; 
+                           row<ps_chunk_height && y1<grectBand.height(); 
+                           row++,y1++)
                         {
                           GPixel *pix = (*pm)[y1];
                           for (int x=grectBand.width(); x>0; x--,pix++)
@@ -1205,7 +1209,9 @@ DjVuToPS::print_bg(ByteStream &str, const GP<DjVuImage> &dimg,
                       *buf_ptr++ = '>'; 
                       *buf_ptr++ = '\n';
                       // Doing B component of current chunk
-                      for (row=0, ptr=rle_in, y1=y;row<ps_chunk_height && y1<grectBand.height(); row++,y1++)
+                      for (row=0, ptr=rle_in, y1=y;
+                           row<ps_chunk_height && y1<grectBand.height(); 
+                           row++,y1++)
                         {
                           GPixel *pix = (*pm)[y1];
                           for (int x=grectBand.width(); x>0; x--,pix++)
@@ -1229,7 +1235,9 @@ DjVuToPS::print_bg(ByteStream &str, const GP<DjVuImage> &dimg,
                   while(y<grectBand.height())
                     {
                       unsigned char *ptr = rle_in;
-                      for(int row=0; row<ps_chunk_height && y<grectBand.height(); row++,y++)
+                      for(int row=0; 
+                          row<ps_chunk_height && y<grectBand.height(); 
+                          row++,y++)
                         {
                           GPixel *pix = (*pm)[y];
                           for (int x=grectBand.width(); x>0; x--,pix++)
@@ -1555,7 +1563,9 @@ DjVuToPS::print_image_lev2(ByteStream &str, const GP<DjVuImage> &dimg,
                   int row, y1;
                   unsigned char *ptr, *ptr1;
                   // Doing R component of current chunk
-                  for (row=0,ptr=rle_in,y1=y; row<ps_chunk_height && y1<grectBand.height(); row++,y1++)
+                  for (row=0,ptr=rle_in,y1=y; 
+                       row<ps_chunk_height && y1<grectBand.height(); 
+                       row++,y1++)
                     {
                       GPixel *pix = (*pm)[y1];
                       for (int x=grectBand.width(); x>0; x--,pix++)
@@ -1566,7 +1576,9 @@ DjVuToPS::print_image_lev2(ByteStream &str, const GP<DjVuImage> &dimg,
                   buf_ptr = ASCII85_encode(buf_ptr, rle_out, ptr1);
                   *buf_ptr++ = '~'; *buf_ptr++ = '>'; *buf_ptr++ = '\n';
                   // Doing G component of current chunk
-                  for (row=0,ptr=rle_in,y1=y; row<ps_chunk_height && y1<grectBand.height(); row++,y1++)
+                  for (row=0,ptr=rle_in,y1=y; 
+                       row<ps_chunk_height && y1<grectBand.height(); 
+                       row++,y1++)
                     {
                       GPixel *pix = (*pm)[y1];
                       for (int x=grectBand.width(); x>0; x--,pix++)
@@ -1579,7 +1591,9 @@ DjVuToPS::print_image_lev2(ByteStream &str, const GP<DjVuImage> &dimg,
                   *buf_ptr++ = '>'; 
                   *buf_ptr++ = '\n';
                   // Doing B component of current chunk
-                  for (row=0, ptr=rle_in, y1=y;row<ps_chunk_height && y1<grectBand.height(); row++,y1++)
+                  for (row=0, ptr=rle_in, y1=y;
+                       row<ps_chunk_height && y1<grectBand.height(); 
+                       row++,y1++)
                     {
                       GPixel *pix = (*pm)[y1];
                       for (int x=grectBand.width(); x>0; x--,pix++)
@@ -1603,7 +1617,9 @@ DjVuToPS::print_image_lev2(ByteStream &str, const GP<DjVuImage> &dimg,
               while(y<grectBand.height())
                 {
                   unsigned char *ptr = rle_in;
-                  for(int row=0; row<ps_chunk_height && y<grectBand.height(); row++,y++)
+                  for(int row=0;
+                      row<ps_chunk_height && y<grectBand.height(); 
+                      row++,y++)
                     {
                       GPixel *pix = (*pm)[y];
                       for (int x=grectBand.width(); x>0; x--,pix++)
@@ -1726,15 +1742,14 @@ static const zone_names_struct zone_names[] =
   zone_names_struct(0, (DjVuTXT::ZoneType)0 ,0)
 };
 
-void
-print_c_string(const char *data, int length, ByteStream &out)
+static void
+print_ps_string(const char *data, int length, ByteStream &out)
 {
-  out.write(" \"",2);
   while (*data && length>0) 
     {
       int span = 0;
-      while (span<length && data[span]>=0x20 && 
-             data[span]<0x7f && data[span]!='"' && data[span]!='\\' )
+      while (span<length && data[span]>=0x20 && data[span]<0x7f 
+             && data[span]!='(' && data[span]!=')' && data[span]!='\\' )
         span++;
       if (span > 0) 
         {
@@ -1751,10 +1766,9 @@ print_c_string(const char *data, int length, ByteStream &out)
           length -= 1;
         }
     }
-  out.write("\"",1);
 }
 
-void
+static void
 print_txt_sub(DjVuTXT &txt, DjVuTXT::Zone &zone, ByteStream &out,int &lastx,int &lasty)
 {
   // Zone header
@@ -1769,9 +1783,9 @@ print_txt_sub(DjVuTXT &txt, DjVuTXT::Zone &zone, ByteStream &out,int &lastx,int 
       int length = zone.text_length;
       if (data[length-1] == zone_names[zinfo].separator)
         length -= 1;
-      out.write8('(');
-      print_c_string(data,length,out);
-      out.write8(')');      
+      out.write("( ",2);
+      print_ps_string(data,length,out);
+      out.write(")",1);
       GUTF8String message;
       int tmpx= zone.rect.xmin-lastx;
       int tmpy= zone.rect.ymin-lasty;
@@ -1794,7 +1808,7 @@ print_txt_sub(DjVuTXT &txt, DjVuTXT::Zone &zone, ByteStream &out,int &lastx,int 
     }
 }
 
-void
+static void
 print_txt(const GP<DjVuTXT> &txt, ByteStream &out)
 {
   if (txt)
