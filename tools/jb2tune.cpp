@@ -67,14 +67,11 @@
 #include "GRect.h"
 #include "GBitmap.h"
 #include "JB2Image.h"
+
 #include "jb2tune.h"
 #include "jb2cmp.h"
 
-
 #define REFINE_THRESHOLD 21
-#define SUBSTITUTE_THRESHOLD 6
-
-
 
 // ----------------------------------------
 // UTILS
