@@ -761,7 +761,6 @@ public:
   GUTF8String(const unsigned long *dat, unsigned int len);
 
   /// Construct from base class.
-  GUTF8String(GStringRep *str);
   GUTF8String(const GP<GStringRep> &str);
   GUTF8String(const GBaseString &str);
   GUTF8String(const GUTF8String &str);
@@ -959,7 +958,6 @@ public:
   GNativeString(const unsigned short *dat, unsigned int len);
   GNativeString(const unsigned long *dat, unsigned int len);
   /// Construct from base class.
-  GNativeString(const GStringRep *str);
   GNativeString(const GP<GStringRep> &str);
   GNativeString(const GBaseString &str);
 #if HAS_WCHAR
@@ -1413,9 +1411,6 @@ inline GUTF8String::GUTF8String(void) { }
 inline GUTF8String::GUTF8String(const GUTF8String &str)
 { init(str); }
 
-inline GUTF8String::GUTF8String(GStringRep *str)
-{ init(str); }
-
 inline GUTF8String& GUTF8String::operator= (const GP<GStringRep> &str)
 { return init(str); }
 
@@ -1457,10 +1452,6 @@ inline GNativeString::GNativeString(void) {}
 
 inline
 GNativeString::GNativeString(const GUTF8String &str)
-: GUTF8String(str) {}
-
-inline
-GNativeString::GNativeString(GStringRep *str)
 : GUTF8String(str) {}
 
 inline
