@@ -204,7 +204,7 @@ FORCE:
 
 # Dependencies
 
-@SHARED_NO@${PROGRAMS}: ${LIBDJVU_A}
+@SHARED_NO@${PROGRAM}: ${LIBDJVU_A}
 
 Makefile.dep: ${srcdir}/Makefile.dep
 	cp ${srcdir}/$@ $@
