@@ -122,18 +122,40 @@ usage(void)
    exit(10);
 }
 
+static const char * 
+day_name(int d)
+{
+   static const char *n[] = {
+     "Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat" 
+   };
+   if (d>=0 && d<7)
+     return n[d];
+   return "???";
+}
+
+static const char* 
+month_name(int d)
+{
+   static const char *n[] = {
+     "Jan", "Feb", "Mar", "Apr", "May", "Jun",
+     "Jul", "Aug", "Sep", "Oct", "Nov", "Dec" 
+   };
+   if (d>=0 && d<12)
+     return n[d];
+   return "???";
+}
+
 void
 fprintdate(FILE *f, const char *fmt, const time_t *tim)
 {
-#ifdef HAVE_STRFTIME
   char ctim[128];
   struct tm *ttim = gmtime(tim);
-  strftime(ctim, sizeof(ctim)-1, "%a, %d %b %Y %H:%M:%S GMT", ttim);
+  /* strftime(ctim, sizeof(ctim)-1, "%a, %d %b %Y %H:%M:%S GMT", ttim); */
+  sprintf(ctim,"%3s, %02d %3s %04d %02d:%02d:%02d GMT",
+	  day_name(ttim->tm_wday), ttim->tm_mday,
+	  month_name(ttim->tm_mon), 1900+ttim->tm_year,
+	  ttim->tm_hour, ttim->tm_min, ttim->tm_sec);
   fprintf(stdout, fmt, ctim);
-#else
-  struct tm *ttim = gmtime(tim);
-  fprintf(stdout,fmt, asctime(ttim));
-#endif
 }
 
 void
