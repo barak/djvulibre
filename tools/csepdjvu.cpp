@@ -1016,7 +1016,7 @@ read_background(BufferByteStream &bs, int w, int h, int &bgred)
     {
       int subw = (w + bgred - 1) / bgred;
       int subh = (h + bgred - 1) / bgred;
-      if (subh == (int)pix->rows() || subw == (int)pix->columns())
+      if (subh == (int)pix->rows() && subw == (int)pix->columns())
         // Found reduction factor
         return pix;
     }
