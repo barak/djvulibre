@@ -104,7 +104,7 @@ void
 headers(const struct stat *statbuf)
 {
   fprintf(stdout,"Content-Type: image/x.djvu\n");
-  fprintf(stdout,"Content-Length: %ld\n", statbuf->st_size);
+  fprintf(stdout,"Content-Length: %ld\n", (long)statbuf->st_size);
   time_t tim = time(0) + 360 * 24 * 3600;
   fprintdate(stdout, "Last-Modified: %s\n", &statbuf->st_mtime);
   fprintdate(stdout, "Expires: %s\n", &tim);
