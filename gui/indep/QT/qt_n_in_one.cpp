@@ -50,9 +50,6 @@
 
 #include "qt_n_in_one.h"
 #include "qlib.h"
-#ifndef QT1
-#include <q1xcompatibility.h>
-#endif
 
 #ifdef QT1
 void QeNInOne::recomputeMinMax(void)
@@ -223,14 +220,14 @@ bool QeNInOne::event(QEvent * ev)
 {
    try
    {
-      if (ev->type()==Event_ChildRemoved) 
+      if (ev->type()==QEvent::ChildRemoved) 
       {
          checkActiveWidget();
 #ifndef QT1
          updateGeometry();
 #endif
       }
-      else if (ev->type()==Event_ChildInserted)
+      else if (ev->type()==QEvent::ChildInserted)
       {
 #ifdef QT1
 	 QWidget * w_ins=((QChildEvent *) ev)->child();
@@ -242,7 +239,7 @@ bool QeNInOne::event(QEvent * ev)
 #ifndef QT1
          updateGeometry();
 #endif
-      } else if (ev->type()==Event_LayoutHint)
+      } else if (ev->type()==QEvent::LayoutHint)
       {
 	    // Looks like min/max dimensions of a child changed...
 	 if (resizable && isVisible())

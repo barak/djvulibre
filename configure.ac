@@ -236,7 +236,9 @@ fi
 
 # What version of QT are we using
 if test x${qt_version+set} = xset ; then
-  if test "$qt_version" -lt 220 ; then
+  if test "$qt_version" -lt 200 ; then
+     AC_MSG_ERROR([We no longer support Qt-1x.])
+  elif test "$qt_version" -lt 220 ; then
      AC_MSG_WARN([We suggest using QT-2.2.0 or better.])
   elif test "$qt_version" -ge 300 ; then
      AC_MSG_WARN([We do not yet support QT-3.x.])
@@ -369,9 +371,10 @@ AH_BOTTOM([
 #ifdef HAVE_QT
 #if HAVE_QT < 200
 #define QT1
-#endif
-#if HAVE_QT < 300
+#elif HAVE_QT < 300
 #define QT2
+#else
+#define QT3
 #endif
 #endif
 

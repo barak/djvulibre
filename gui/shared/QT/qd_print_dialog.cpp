@@ -71,12 +71,6 @@
 
 #include "qt_fix.h"
 
-#ifndef QT1
-#include <qmotifstyle.h>
-#include <q1xcompatibility.h>
-static QMotifStyle *motif=0;
-#endif
-
 #include <unistd.h>
 #include <errno.h>
 #include <signal.h>
@@ -846,10 +840,6 @@ QDPrintDialog::QDPrintDialog(const GP<DjVuDocument> & _doc,
    prog_widget=new QeNInOne(start, "prog_widget");
    prg_lay->addWidget(prog_widget, 1);
    progress=new QeProgressBar(20, prog_widget, "progress_bar");
-
-   if(!motif)
-     motif=new QMotifStyle();
-   progress->setStyle(motif);
 
    save_butt=new QeCheckBox(tr("&Save settings to disk"), prog_widget, "save_butt");
    save_butt->setChecked(TRUE);

@@ -62,13 +62,6 @@
 
 #include "qt_fix.h"
 
-#ifdef QT1
-#define QTNAMESPACE_QT /* */
-#else
-#include <q1xcompatibility.h>
-#define QTNAMESPACE_QT Qt
-#endif
-
 #define MIN_ITEM_WIDTH	64
 #define MAX_ITEM_WIDTH	256
 #define VMARGIN		8
@@ -180,7 +173,7 @@ QDThumbItem::paint(QPainter * p)
    //    drawFocusRect. however, a side effect comes with it is that 
    //    the rect drawn for the current use a dash line style - i just 
    //    don't know how to change it to solid style. trying enforcing 
-   //    p->setPen(QTNAMESPACE_QT::SolidLine) won't work ... which 
+   //    p->setPen(Qt::SolidLine) won't work ... which 
    //    may be a bad idea anyway
 
    QRect r (HMARGIN/2, VMARGIN/2, width()-HMARGIN, height()-VMARGIN-VMARGIN_FIX);
@@ -195,7 +188,7 @@ QDThumbItem::paint(QPainter * p)
    int h=height()-2*VMARGIN-VMARGIN_FIX;
    QString buffer=QDThumbnails::tr("Page ")+QString::number(page_num+1);
    p->drawText(0, h-text_height, w, text_height,
-	       QTNAMESPACE_QT::AlignHCenter | QTNAMESPACE_QT::AlignVCenter, buffer);
+	       Qt::AlignHCenter | Qt::AlignVCenter, buffer);
 
    h-=text_height;
    float coeff_x=(float) w/page_width;
@@ -241,7 +234,7 @@ QDThumbItem::paint(QPainter * p)
       } else
 	 p->drawPixmap(prect.xmin, prect.ymin, qpix);
 	    
-      p->setPen(QTNAMESPACE_QT::black);
+      p->setPen(Qt::black);
       p->drawRect(prect.xmin+1, prect.ymin+1, prect.width()-2, prect.height()-2);
 
    }

@@ -62,10 +62,6 @@
 
 #include "qt_fix.h"
 
-#ifndef QT1
-#include <q1xcompatibility.h>
-#endif
-
 
 //****************************************************************************
 //***************************** DjVuViewerPort *******************************
@@ -195,7 +191,7 @@ DjVuViewer::eventFilter(QObject * obj, QEvent * ev)
       if (obj->isWidgetType())
       {
 	 QWidget * w=(QWidget *) obj;
-	 if (ev->type()==Event_Resize && viewer)
+	 if (ev->type()==QEvent::Resize && viewer)
 	 {
 	    DEBUG_MSG("DjVuViewer::eventFilter(): resizing the viewer...\n");
 	    viewer->resize(w->size());

@@ -83,11 +83,6 @@
 #include <unistd.h>
 #endif
 
-#ifndef QT1
-#include <q1xcompatibility.h>
-#endif
-
-
 #ifdef UNIX
 #define DJVU_ZOOM_PROP		"_DJVU_ZOOM"
 #define DJVU_DETACH_TIME_PROP   "_DJVU_DETACH_TIME"
@@ -461,9 +456,9 @@ QDViewer::event(QEvent * ev)
 {
    try
    {
-      if (ev->type()==Event_Show)
+      if (ev->type()==QEvent::Show)
       {
-	 DEBUG_MSG("QDViewer::event(): got Event_Show\n");
+	 DEBUG_MSG("QDViewer::event(): got QEvent::Show\n");
 	 DEBUG_MAKE_INDENT(3);
 
 	 checkWMProps();
@@ -476,7 +471,7 @@ QDViewer::event(QEvent * ev)
 	    welcome_timer.start(0, TRUE);
 	    connect(&welcome_timer, SIGNAL(timeout(void)), this, SLOT(slotShowWelcome(void)));
 	 }
-      }	// if (ev->type()==Event_Show)
+      }	// if (ev->type()==QEvent::Show)
    } catch(const GException & exc)
    {
       showError(this, exc);
@@ -496,11 +491,11 @@ QDViewer::eventFilter(QObject *obj, QEvent *e)
    {
       switch(e->type())
       {
-         case Event_Enter:
+         case QEvent::Enter:
          {
            if (in_netscape)
              {
-               DEBUG_MSG("QDViewer::eventFilter(): Got Event_Enter\n");
+               DEBUG_MSG("QDViewer::eventFilter(): Got QEvent::Enter\n");
                // Reparenting prevent the window manager to send proper focus events.
                Window w;
                XEvent focusevent;
@@ -513,9 +508,9 @@ QDViewer::eventFilter(QObject *obj, QEvent *e)
            return FALSE;
          }
 
-	 case Event_MouseButtonPress:
+	 case QEvent::MouseButtonPress:
 	 {
-	    DEBUG_MSG("QDViewer::eventFilter(): Got Event_MousePress\n");
+	    DEBUG_MSG("QDViewer::eventFilter(): Got QEvent::MousePress\n");
 	    DEBUG_MAKE_INDENT(3);
 	    
 	    QMouseEvent * ev=(QMouseEvent *) e;
@@ -526,7 +521,7 @@ QDViewer::eventFilter(QObject *obj, QEvent *e)
 	       if (ev->state() & LeftButton)
 	       {
 		     // Simulate Btn1Up event
-		  QMouseEvent sev(Event_MouseButtonRelease,
+		  QMouseEvent sev(QEvent::MouseButtonRelease,
 				  ev->pos(), LeftButton, ev->state());
 		  QApplication::sendEvent(pane, &sev);
 	       }
@@ -539,9 +534,9 @@ QDViewer::eventFilter(QObject *obj, QEvent *e)
 #ifdef KeyRelease
 #undef KeyRelease
 #endif
-	 case Event_KeyRelease:
+	 case QEvent::KeyRelease:
 	 {
-	    DEBUG_MSG("QDViewer::eventFilter(): Got Event_KeyRelease\n");
+	    DEBUG_MSG("QDViewer::eventFilter(): Got QEvent::KeyRelease\n");
 	    DEBUG_MAKE_INDENT(3);
 
 	    hlinks_timer.stop();
@@ -552,15 +547,15 @@ QDViewer::eventFilter(QObject *obj, QEvent *e)
 #ifdef KeyPress
 #undef KeyPress
 #endif	    
-	 case Event_KeyPress:
+	 case QEvent::KeyPress:
 	 {
-	    DEBUG_MSG("QDViewer::eventFilter(): Got Event_KeyPress\n");
+	    DEBUG_MSG("QDViewer::eventFilter(): Got QEvent::KeyPress\n");
 	    DEBUG_MAKE_INDENT(3);
 
 	    if (override_flags.keyboard)
 	    {
 	       int doc_page=0, doc_pages=1;
-	       if (dimg && e->type()!=Event_MouseMove)
+	       if (dimg && e->type()!=QEvent::MouseMove)
 	       {
 		  doc_page=djvu_doc->url_to_page(dimg->get_djvu_file()->get_url());
 		  doc_pages=djvu_doc->get_pages_num();
@@ -674,7 +669,7 @@ QDViewer::eventFilter(QObject *obj, QEvent *e)
                      break;
 	       } // switch(ev->key())
 	    } // if (override_flags.keyboard)
-	 } // case Event_KeyPress
+	 } // case QEvent::KeyPress
          default:
            break;
       } // switch(e->type())

@@ -55,10 +55,6 @@
 
 #include "qt_fix.h"
 
-#ifndef QT1
-#include <q1xcompatibility.h>
-#endif
-
 #include "debug.h"
 
 void
@@ -467,7 +463,7 @@ QDBase::eventFilter(QObject *obj, QEvent *e)
       {
 	 switch(e->type())
 	 {
-	    case Event_Enter:
+	    case QEvent::Enter:
 	       showToolBar();
 	       break;
             default:
@@ -477,11 +473,11 @@ QDBase::eventFilter(QObject *obj, QEvent *e)
       {
 	 switch(e->type())
 	 {
-	    case Event_Resize:
+	    case QEvent::Resize:
 	       layout(true);
 	       break;
 
-	    case Event_LayoutHint:
+	    case QEvent::LayoutHint:
 	       if (isToolBarEnabled() && isToolBarStuck() && toolbar->isVisible())
 		  if (toolbar->isVisible()) layout(true);
 	       break;
@@ -491,7 +487,7 @@ QDBase::eventFilter(QObject *obj, QEvent *e)
 	 }
       } else if (obj==pane)
       {
-	 if (e->type()!=Event_MouseMove)
+	 if (e->type()!=QEvent::MouseMove)
 	 {
 	    DEBUG_MSG("QDBase::eventFilter(): Got event...");
 	    DEBUG_MAKE_INDENT(3);
@@ -499,7 +495,7 @@ QDBase::eventFilter(QObject *obj, QEvent *e)
 
 	 switch(e->type())
 	 {
-	    case Event_MouseButtonPress:
+	    case QEvent::MouseButtonPress:
 	    {     
 	       DEBUG_MSGN("Event_MousePress\n");
 	       QMouseEvent * ev=(QMouseEvent *) e;
@@ -554,9 +550,9 @@ QDBase::eventFilter(QObject *obj, QEvent *e)
 	       }
 	       break;
 	    }
-	    case Event_MouseButtonRelease:
+	    case QEvent::MouseButtonRelease:
 	    {
-	       DEBUG_MSGN("Event_MouseRelease\n");
+	       DEBUG_MSGN("QEvent::MouseRelease\n");
 	       QMouseEvent * ev=(QMouseEvent *) e;
 	       hideToolBar(0);
 	       if (ev->button()==LeftButton)
@@ -667,22 +663,21 @@ QDBase::eventFilter(QObject *obj, QEvent *e)
 	       }
 	       break;
 	    }
-	    case Event_MouseMove:
+	    case QEvent::MouseMove:
 	    {
-		  //DEBUG_MSGN("Event_MouseMove\n");
 	       if (processMouseMoveEvent((QMouseEvent *) e)) return TRUE;
 	       break;
 	    }
-	    case Event_Paint:
+	    case QEvent::Paint:
 	    {
-	       DEBUG_MSGN("Event_Paint\n");
+	       DEBUG_MSGN("QEvent::Paint\n");
 	       QPaintEvent * ev=(QPaintEvent *) e;
 	       paint(Q2G(ev->rect()));
 	       return TRUE;
 	    }
-	    case Event_Leave:
+	    case QEvent::Leave:
 	    {
-	       DEBUG_MSGN("Event_Leave\n");
+	       DEBUG_MSGN("QEvent::Leave\n");
 	       showStatus(" ");
 
 	       if (cur_map_area)
@@ -702,20 +697,20 @@ QDBase::eventFilter(QObject *obj, QEvent *e)
 	       hideLens();
 	       return TRUE;
 	    }
-	    case Event_Enter:
+	    case QEvent::Enter:
 	    {
-	       DEBUG_MSGN("Event_Enter\n");
+	       DEBUG_MSGN("QEvent::Enter\n");
 	       if (needToShowToolBar()) showToolBar();
 	       return TRUE;
 	    }
-	    case Event_Resize:
+	    case QEvent::Resize:
 	    {
-	       DEBUG_MSGN("Event_Resize\n");
-	       return TRUE;	// Don't want automatic Event_Paint
+	       DEBUG_MSGN("QEvent::Resize\n");
+	       return TRUE;	// Don't want automatic QEvent::Paint
 	    }
-	    case Event_KeyPress:
+	    case QEvent::KeyPress:
 	    {
-	       DEBUG_MSGN("Event_KeyPress\n");
+	       DEBUG_MSGN("QEvent::KeyPress\n");
 
 	       if (override_flags.keyboard)
 	       {
@@ -818,10 +813,10 @@ QDBase::eventFilter(QObject *obj, QEvent *e)
 		  } // switch(ev->key())
 		  return TRUE;
 	       } // if (override_flags.keyboard)
-	    } // case Event_KeyPress:
-	    case Event_KeyRelease:
+	    } // case QEvent::KeyPress:
+	    case QEvent::KeyRelease:
 	    {
-	       DEBUG_MSGN("Event_KeyRelease\n");
+	       DEBUG_MSGN("QEvent::KeyRelease\n");
 
 	       if (override_flags.keyboard)
 	       {
@@ -838,7 +833,7 @@ QDBase::eventFilter(QObject *obj, QEvent *e)
 			break;
 		  }
 	       }
-	    } // case Event_KeyRelease:
+	    } // case QEvent::KeyRelease:
 	    default:
 	       DEBUG_MSGN("number " << e->type() << "\n");
 	 } // switch(e->type())

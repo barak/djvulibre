@@ -51,11 +51,6 @@
 
 #include <X11/Xlib.h>
 
-#ifndef QT1
-#include <q1xcompatibility.h>
-#endif
-
-
 #ifdef UNIX
 bool
 QDPane::x11Event(XEvent * ev)
@@ -100,7 +95,7 @@ QDPane::x11Event(XEvent * ev)
 	 if (ev_state & ShiftMask) qstate|=ShiftButton;
 	 if (ev_state & ControlMask) qstate|=ControlButton;
 	 if (ev_state & Mod1Mask) qstate|=AltButton;
-	 QMouseEvent qev(Event_MouseMove, point, NoButton, qstate);
+	 QMouseEvent qev(QEvent::MouseMove, point, NoButton, qstate);
 	 QApplication::sendEvent(this, &qev);
 	 return TRUE;
 	 

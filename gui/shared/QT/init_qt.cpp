@@ -63,8 +63,6 @@
 #include <signal.h>
 #include <stdio.h>
 
-#include <q1xcompatibility.h>
-
 Display		* displ;
 Visual		* visual;
 Colormap	colormap;

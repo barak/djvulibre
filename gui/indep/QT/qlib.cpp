@@ -73,14 +73,6 @@
 
 #include "qt_fix.h"
 
-#ifdef QT1
-#define QNAMESPACE_QT /* */
-#else
-#include <qnamespace.h>
-#define QNAMESPACE_QT Qt
-#include <q1xcompatibility.h>
-#endif
-
 //****************************************************************************
 //******************************** QeExcMessage ******************************
 //****************************************************************************
@@ -254,7 +246,7 @@ GeoLink::delSlave(QWidget * widget)
 bool
 GeoLink::eventFilter(QObject * obj, QEvent * ev)
 {
-   if (obj==master && ev->type()==Event_Resize)
+   if (obj==master && ev->type()==QEvent::Resize)
       for(GPosition pos=slaves;pos;++pos)
       {
 	 GP<Slave> slave=slaves[pos];
@@ -385,7 +377,7 @@ QeRowColumn::event(QEvent * ev)
 {
    try
    {
-      if (ev->type()==Event_ChildRemoved)
+      if (ev->type()==QEvent::ChildRemoved)
       {
 	 DEBUG_MSG("QeRowColumn::event(): Got one child removed...\n");
 	 QWidget * w=(QWidget *)((QChildEvent *) ev)->child();
@@ -403,7 +395,7 @@ QeRowColumn::event(QEvent * ev)
 	    layout();
 	    repaint(TRUE);
 	 }
-      } else if (ev->type()==Event_ChildInserted)
+      } else if (ev->type()==QEvent::ChildInserted)
       {
 	 DEBUG_MSG("QeRowColumn::event(): Got one child inserted...\n");
 	 QWidget * w=(QWidget *)((QChildEvent *) ev)->child();
@@ -461,7 +453,7 @@ QeRowColumn::QeRowColumn(QWidget * parent, const char * name) :
       QTableView(parent, name), do_layout(true),
       hor_interval(5), ver_interval(5),
       min_visible_rows(0), min_visible_cols(0),
-      alignment(QNAMESPACE_QT::AlignCenter)
+      alignment(Qt::AlignCenter)
 {
    setTableFlags(Tbl_autoVScrollBar | Tbl_clipCellPainting);
    setFrameStyle(Panel | Sunken);
@@ -561,7 +553,7 @@ showMessage(QWidget * parent, const QString &qtitle, const QString &qmessage,
       }
       label->setMinimumWidth(label->sizeHint().width());
       label->setText(message);
-      label->setAlignment(QNAMESPACE_QT::AlignLeft | QNAMESPACE_QT::AlignVCenter | QNAMESPACE_QT::WordBreak);
+      label->setAlignment(Qt::AlignLeft | Qt::AlignVCenter | Qt::WordBreak);
    }
    vlay->addWidget(label);
    
@@ -775,7 +767,7 @@ QeGrid::event(QEvent * ev)
 {
    try
    {
-      if (ev->type()==Event_LayoutHint)
+      if (ev->type()==QEvent::LayoutHint)
       {
 	 DEBUG2_MSG("QeGrid::event(): one of the child changed its min/max dims\n");
 	 recalcMinMax();
@@ -875,7 +867,7 @@ createIcon(const GPixmap & gpix_in)
 	 if (pixel!=trans_pix) qimg.setPixel(j, height-i-1, 1);
       }
    QBitmap qbmp(width, height);
-   qbmp.convertFromImage(qimg, QNAMESPACE_QT::MonoOnly);
+   qbmp.convertFromImage(qimg, Qt::MonoOnly);
 
    QPixmap qpix(width, height);
    

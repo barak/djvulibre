@@ -76,10 +76,6 @@
 #include <X11/Xutil.h>
 #endif
 
-#ifndef QT1
-#include <q1xcompatibility.h>
-#endif
-
 QeApplication * qeApp;
 
 void
@@ -697,7 +693,7 @@ QeSpinBox::eventFilter(QObject * obj, QEvent * ev)
 #ifdef KeyPress
 #undef KeyPress
 #endif
-   if ((obj==editor())&&(ev->type()==(Event_KeyPress)))
+   if ((obj==editor())&&(ev->type()==(QEvent::KeyPress)))
    {
       int key=((QKeyEvent *) ev)->key();
       if (key==Key_Return || key==Key_Enter)
@@ -813,11 +809,11 @@ QeDialog::event(QEvent * ev)
 #ifdef QT1
    if (aux_widget)
    {
-      if (ev->type()==Event_Resize)
+      if (ev->type()==QEvent::Resize)
       {
 	    // Resize the aux_widget to respond to manual (mouse) resize
 	 aux_widget->resize(width(), height());
-      } else if (ev->type()==Event_LayoutHint)
+      } else if (ev->type()==QEvent::LayoutHint)
       {
 	 int min_width=aux_widget->minimumSize().width();
 	 int min_height=aux_widget->minimumSize().height();
@@ -838,7 +834,7 @@ QeDialog::resize(int w, int h)
    if (aux_widget)
    {
 	 // Take into account the aux_widget's min/max dimensions a little
-	 // bit earlier than we learn about them from an Event_LayoutHint
+	 // bit earlier than we learn about them from an QEvent::LayoutHint
       int minw=aux_widget->minimumSize().width();
       int minh=aux_widget->minimumSize().height();
       int maxw=aux_widget->maximumSize().width();
@@ -869,7 +865,7 @@ QeDialog::setGeometry(int x, int y, int w, int h)
    if (aux_widget)
    {
 	 // Take into account the aux_widget's min/max dimensions a little
-	 // bit earlier than we learn about them from an Event_LayoutHint
+	 // bit earlier than we learn about them from an QEvent::LayoutHint
       int minw=aux_widget->minimumSize().width();
       int minh=aux_widget->minimumSize().height();
       int maxw=aux_widget->maximumSize().width();
@@ -896,7 +892,7 @@ QeDialog::eventFilter(QObject * obj, QEvent * ev)
 	 // Called when there is a valid parent
 {
 #ifdef QT1
-   if (ev->type()==Event_LayoutHint)
+   if (ev->type()==QEvent::LayoutHint)
    {
       int width, height;
       if (!wresizable && (width=minimumSize().width())) setMaximumWidth(width);
@@ -963,7 +959,7 @@ QeDialog::show(void)
       // shown.
       //
       // This is useful for the case with the aux_widget only because only
-      // in this case it takes some time to deliver Event_LayoutHint from
+      // in this case it takes some time to deliver QEvent::LayoutHint from
       // the aux_widget to this dialog. Note, that QLayouts modify the
       // aux_widget's min/max size directly, while the dialog learns about it
       // only via a posted (delayed) event.

@@ -50,11 +50,6 @@
 
 #include "qt_fix.h"
 
-#ifndef QT1
-#include <q1xcompatibility.h>
-#endif
-
-
 #define margin 2
 
 //****************************************************************************
@@ -74,9 +69,9 @@ public:
 bool
 QTBWidget::event(QEvent * ev)
 {
-   if (ev->type()==Event_LayoutHint ||
-       ev->type()==Event_ChildInserted ||
-       ev->type()==Event_ChildRemoved)
+   if (ev->type()==QEvent::LayoutHint ||
+       ev->type()==QEvent::ChildInserted ||
+       ev->type()==QEvent::ChildRemoved)
    {
       const QObjectList * childList=children();
       if (childList)
@@ -102,7 +97,7 @@ QTBWidget::event(QEvent * ev)
 	    // No children? Oops :( Commit suicide
 	 qeApp->killWidget(this);
       }
-   } else if (ev->type()==Event_Resize)
+   } else if (ev->type()==QEvent::Resize)
    {
       const QObjectList * childList=children();
       if (childList)
@@ -258,10 +253,10 @@ QDToolBar::computeHeight(int width)
 bool
 QDToolBar::event(QEvent * ev)
 {
-   if (ev->type()==Event_LayoutHint ||
-       ev->type()==Event_ChildInserted ||
-       ev->type()==Event_ChildRemoved ||
-       ev->type()==Event_Resize)
+   if (ev->type()==QEvent::LayoutHint ||
+       ev->type()==QEvent::ChildInserted ||
+       ev->type()==QEvent::ChildRemoved ||
+       ev->type()==QEvent::Resize)
       adjustPositions();
    return QFrame::event(ev);
 }

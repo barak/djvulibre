@@ -251,9 +251,10 @@
 #ifdef HAVE_QT
 #if HAVE_QT < 200
 #define QT1
-#endif
-#if HAVE_QT < 300
+#elif HAVE_QT < 300
 #define QT2
+#else
+#define QT3
 #endif
 #endif
 

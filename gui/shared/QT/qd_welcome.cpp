@@ -54,14 +54,9 @@
 
 #include "qt_fix.h"
 
-#ifndef QT1
-#include <q1xcompatibility.h>
-#endif
-
-
 bool QDWelcome::eventFilter(QObject *, QEvent * ev)
 {
-   if (ev->type()==Event_Resize)
+   if (ev->type()==QEvent::Resize)
       close_butt->setFixedSize(((QResizeEvent *) ev)->size());
    return FALSE;	// Continue dispatching normally
 }

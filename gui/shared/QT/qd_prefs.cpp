@@ -65,11 +65,6 @@
 
 #include "qt_fix.h"
 
-#ifndef QT1
-#include <q1xcompatibility.h>
-#endif
-
-
 //***************************************************************************
 //***************************** QDGammaDispl ********************************
 //***************************************************************************
@@ -79,7 +74,7 @@ QDGammaDispl::event(QEvent * ev)
 {
    try
    {
-      if (ev->type()==Event_User)
+      if (ev->type()==QEvent::User)
       {
 	 DEBUG_MSG("Gamma::event(): resizing: width=" << width() << ", height=" << height() << "\n");
 	 setMinimumWidth(height());
@@ -98,7 +93,7 @@ void
 QDGammaDispl::resizeEvent(QResizeEvent * ev)
 {
    DEBUG_MSG("QDGammaDispl::resizeEvent(): delaying resize...\n");
-   QEvent * uev=new QEvent(Event_User);
+   QEvent * uev=new QEvent(QEvent::User);
    QApplication::postEvent(this, uev);
 
    if (ev->oldSize()!=ev->size())
