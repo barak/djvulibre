@@ -362,6 +362,8 @@ print_c_string(const char *data, int length, ByteStream &out,
 	    out.write("\\\"",2);
 	  else
 	    out.write(&data[span],1);
+          data += 1;
+          length -= 1;
 	}
       else
         {
@@ -699,8 +701,10 @@ command_set_ant(ParsingByteStream &pbs)
   {
     const GP<ByteStream> dsedant = ByteStream::create();
     get_data_from_file("set-ant", pbs, *dsedant);
+    dsedant->seek(0);
     GP<ByteStream> bsant = BSByteStream::create(ant,100);
     filter_ant(dsedant, bsant, false, true);
+    bsant = 0;
   }
   modify_ant(file, "ANTz", ant);
   vprint("set-ant: modified \"%s\"", (const char*)(GNativeString)fileid);
