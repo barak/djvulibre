@@ -2010,7 +2010,7 @@ DjVuToPS::print(ByteStream &str, const GP<DjVuDocument> &doc,
     if (end>start)
     {
       int dash = page_range.search('-', start);
-      if (dash < 0)
+      if (dash < 0 || dash > end)
         dash = end;
       int pos;
       int start_page = page_range.toLong(start,pos,10);
