@@ -75,7 +75,7 @@ as an indirect multi-page DjVu document
 using the following 
 .SM URL.
 .IP "" 3
-.IB http "" ://server /cgi\(enbin/djvuserve/ dir/doc.djvu /index
+.IB http "" ://server /cgi\(enbin/djvuserve/ dir/doc.djvu /index.djvu
 .PP
 Serving indirect multi-page DjVu documents provides
 for efficiently browsing large document without
@@ -138,7 +138,7 @@ as in the following
 .IB http "" ://server /cgi\(enbin/djvuserve/ dir/doc.djvu ?djvuopts&page=12
 .PP
 The special component file name
-.B index
+.B index.djvu
 is recognized as a request for the index of the corresponding
 indirect multi-page document.  In fact, when you access a bundled
 document using 
@@ -146,7 +146,7 @@ document using
 the browser gets redirected to the following 
 .SM URL:
 .IP "" 3
-.IB http "" ://server /cgi\(enbin/djvuserve/ dir/doc.djvu /index
+.IB http "" ://server /cgi\(enbin/djvuserve/ dir/doc.djvu /index.djvu
 .PP
 and then behaves as if the bundled file was a directory containing 
 the various component files of an equivalent indirect document.
@@ -203,7 +203,7 @@ changes the apparent document
 .IB http://server/dir/doc.djvu
 into the more complicated 
 .SM URL
-.IB http://server /cgi\(enbin/djvuserve/ dir/doc.djvu /index.
+.IB http://server /cgi\(enbin/djvuserve/ dir/doc.djvu /index.djvu.
 The extra components change the interpretation of relative 
 .SM URLs.
 

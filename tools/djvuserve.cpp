@@ -191,7 +191,7 @@ djvuserver_file(GURL pathurl)
     {
       // It is bundled
       GUTF8String id = pathurl.name();
-      fprintf(stdout,"Location: %s/index", (const char*)id);
+      fprintf(stdout,"Location: %s/index.djvu", (const char*)id);
       if (g().querystring.length())
         fprintf(stdout,"?%s", (const char*)g().querystring);
       fprintf(stdout,"\n\n");

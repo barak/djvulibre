@@ -264,6 +264,7 @@ changequote([, ])dnl
         for n in `g++ -v 2>&1 | grep version` ; do rhversion=$n ; done 
         case "$rhversion" in
 changequote(<<, >>)dnl                                                                              
+          2.96-1[0-9][0-9]*) ;;
           2.96-8[5-9]*) ;;
           2.96-9*) ;;
           *)
