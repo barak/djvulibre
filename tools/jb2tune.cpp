@@ -169,15 +169,16 @@ compute_matchdata_lossy(JB2Image *jimg, MatchData *lib)
   int maxtag = classify_images(handles, tags, nshapes);
   // Extract substitutions
   GTArray<int> reps(maxtag);
-  for (i=0; i<maxtag; i++)
+  for (i=0; i<=maxtag; i++)
     reps[i] = -1;
   for (i=0; i<nshapes; i++)
-    {
-      int &r = reps[tags[i]];
-      lib[i].match = r;
-      if (r < 0) 
-        reps[tags[i]] = i;
-    }
+    if (handles[i])
+      {
+        int r = reps[tags[i]];
+        lib[i].match = r;
+        if (r < 0) 
+          reps[tags[i]] = i;
+      }
   // Free Ilya's data structures.
   for (i=0; i<nshapes; i++)
     if (handles[i])
