@@ -107,7 +107,7 @@ install-include: FORCE
 
 depend: FORCE
 	for n in ${srcdir}/*.cpp ; do \
-	  ${CXX} -MM ${CXXFLAGS} $$n -o `basename $$n .cpp`.lo ; \
+	  ${CXX} -MM ${CXXFLAGS} $$n ; \
 	done > Makefile.dep
 
 clean: FORCE
