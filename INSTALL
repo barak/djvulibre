@@ -290,6 +290,7 @@ The DjVu plugin then works okay.
 
 4.1- GNU/LINUX
 --------------
+
 Simply typing "configure ; make" should work on 
 most recent distributions.
 
