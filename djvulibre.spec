@@ -96,6 +96,7 @@ rm -rf %{buildroot}
 %{_libdir}/*/plugins/*.so*
 %{_datadir}/djvu/languages.xml
 %{_datadir}/djvu/osi/en
+%{_datadir}/djvu/pubtext
 %{_mandir}/man?/*
 %lang(ja) %{_datadir}/djvu/osi/ja*
 %lang(fr) %{_datadir}/djvu/osi/fr*
