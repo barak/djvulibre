@@ -192,9 +192,9 @@ install-man: FORCE
 
 install-data: FORCE
 	${INSTALL} -d ${datadir}/djvu/osi
-	test -r ${srcdir}/djview_help.djvu && \
+	-test -r ${srcdir}/djview_help.djvu && \
 	  ${INSTALL} -m 0644 ${srcdir}/djview_help.djvu ${datadir}/djvu/osi
-	test -r ${srcdir}/djview_help.html && \
+	-test -r ${srcdir}/djview_help.html && \
 	  ${INSTALL} -m 0644 ${srcdir}/djview_help.html ${datadir}/djvu/osi
 
 
