@@ -289,26 +289,6 @@ ddjvu_context_release(ddjvu_context_t *ctx)
 // ----------------------------------------
 
 
-// remove messages
-static void 
-msg_remove(ddjvu_context_t *ctx, 
-           ddjvu_message_tag_t tag,
-           ddjvu_page_t *pag)
-{
-  GMonitorLock(&ctx->monitor);
-  GPosition p = ctx->mlist;
-  while (p)
-    {
-      ddjvu_message_any_t &any = ctx->mlist[p]->p.m_any;
-      if (any.tag == tag && any.page == pag)
-        {
-          GPosition c = p; --p;
-          ctx->mlist.del(c);
-        }
-      ++p;
-    }
-}
-
 // post a new message
 static void
 msg_push(const ddjvu_message_any_t &head,
@@ -687,6 +667,7 @@ ddjvu_document_release(ddjvu_document_t *document)
     {
       if (document)
         {
+          document->userdata = 0;
           document->doc = 0;
           unref(document);
         }
@@ -910,6 +891,7 @@ ddjvu_page_release(ddjvu_page_t *page)
     {
       if (page)
         {
+          page->userdata = 0;
           page->img = 0;
           unref(page);
         }
@@ -965,27 +947,19 @@ ddjvu_page_s::notify_file_flags_changed(const DjVuFile*, long, long)
 void 
 ddjvu_page_s::notify_relayout(const DjVuImage *dimg)
 {
-  if (img!=dimg || !img) return;
-  ddjvu_context_t *ctx = mydoc->myctx;
-  ctx->monitor.enter();
-  bool needpageinfo = !pageinfoflag;
+  if (! img) return;
+  if (! pageinfoflag) msg_push(xhead(DDJVU_PAGEINFO, this));
   pageinfoflag = true;
-  msg_remove(ctx, DDJVU_RELAYOUT, this);
-  msg_remove(ctx, DDJVU_REDISPLAY, this);
-  if (needpageinfo) msg_push(xhead(DDJVU_PAGEINFO, this));
   msg_push(xhead(DDJVU_RELAYOUT, this));
-  ctx->monitor.leave();
 }
 
 void 
 ddjvu_page_s::notify_redisplay(const DjVuImage *dimg)
 {
-  if (img!=dimg || !img) return;
-  ddjvu_context_t *ctx = mydoc->myctx;
-  ctx->monitor.enter();
-  msg_remove(ctx, DDJVU_REDISPLAY, this);
+  if (! img) return;
+  if (! pageinfoflag) msg_push(xhead(DDJVU_PAGEINFO, this));
+  pageinfoflag = true;
   msg_push(xhead(DDJVU_REDISPLAY, this));
-  ctx->monitor.leave();
 }
 
 void 
@@ -1240,8 +1214,9 @@ struct DJVUNS ddjvu_format_s
   ddjvu_format_style_t style;
   uint32_t rgb[3][256];
   uint32_t palette[6*6*6];
-  bool toptobottom;
   double gamma;
+  char ditherbits;
+  bool toptobottom;
 };
 
 static ddjvu_format_t *
@@ -1257,10 +1232,18 @@ ddjvu_format_create(ddjvu_format_style_t style,
 {
   ddjvu_format_t *fmt = new ddjvu_format_s;
   memset(fmt, 0, sizeof(ddjvu_format_t));
-  fmt->style = style;
+  fmt->style = style;  
   fmt->toptobottom = false;
   fmt->gamma = 2.2;
-  // Misc
+  // Ditherbits
+  fmt->ditherbits = 32;
+  if (style==DDJVU_FORMAT_RGBMASK16)
+    fmt->ditherbits = 16;
+  else if (style==DDJVU_FORMAT_PALETTE8)
+    fmt->ditherbits = 8;
+  else if (style==DDJVU_FORMAT_MSBTOLSB || style==DDJVU_FORMAT_LSBTOMSB)
+    fmt->ditherbits = 1;
+  // Args
   switch(style)
     {
     case DDJVU_FORMAT_RGBMASK16:
@@ -1301,7 +1284,9 @@ ddjvu_format_create(ddjvu_format_style_t style,
     case DDJVU_FORMAT_RGB24:
     case DDJVU_FORMAT_BGR24:
     case DDJVU_FORMAT_GREY8:
-      if (! nargs) 
+    case DDJVU_FORMAT_LSBTOMSB:
+    case DDJVU_FORMAT_MSBTOLSB:
+      if (!nargs) 
         break;
     default:
       return fmt_error(fmt);
@@ -1313,6 +1298,13 @@ void
 ddjvu_format_set_row_order(ddjvu_format_t *format, int top_to_bottom)
 {
   format->toptobottom = !! top_to_bottom;
+}
+
+void
+ddjvu_format_set_ditherbits(ddjvu_format_t *format, int bits)
+{
+  if (bits>0 && bits<=64)
+    format->ditherbits = bits;
 }
 
 void
@@ -1381,6 +1373,26 @@ fmt_convert_row(const GPixel *p, int w,
           buf[0] = u[r[0][p->b]+r[1][p->b]+r[2][p->b]]; 
           buf+=1; p+=1; 
         }
+        break;
+      }
+    case DDJVU_FORMAT_MSBTOLSB: /* packed bits, msb on the left */
+      {
+        unsigned char s=0, m=0x80;
+        while (--w >= 0) {
+          if ( 5*p->b + 9*p->g + 2*p->b < 128*16 ) { m |= s; }
+          if (! (m >>= 1)) { *buf++ = s; s=0; m=0x80; }
+        }
+        if (s < 0x80) { *buf++ = s; }
+        break;
+      }
+    case DDJVU_FORMAT_LSBTOMSB: /* packed bits, lsb on the left */
+      {
+        unsigned char s=0, m=0x1;
+        while (--w >= 0) {
+          if ( 5*p->b + 9*p->g + 2*p->b < 128*16 ) { m |= s; }
+          if (! (m <<= 1)) { *buf++ = s; s=0; m=0x1; }
+        }
+        if (s > 0x1) { *buf++ = s; }
         break;
       }
     }
@@ -1457,6 +1469,26 @@ fmt_convert_row(unsigned char *p, unsigned char *g, int w,
         }
         break;
       }
+    case DDJVU_FORMAT_MSBTOLSB: /* packed bits, msb on the left */
+      {
+        unsigned char s=0, m=0x80;
+        while (--w >= 0) {
+          if (g[*p] < 128) { m |= s; }
+          if (! (m >>= 1)) { *buf++ = s; s=0; m=0x80; }
+        }
+        if (s < 0x80) { *buf++ = s; }
+        break;
+      }
+    case DDJVU_FORMAT_LSBTOMSB: /* packed bits, lsb on the left */
+      {
+        unsigned char s=0, m=0x1;
+        while (--w >= 0) {
+          if (g[*p] < 128) { m |= s; }
+          if (! (m <<= 1)) { *buf++ = s; s=0; m=0x1; }
+        }
+        if (s > 0x1) { *buf++ = s; }
+        break;
+      }
     }
 }
 
@@ -1489,17 +1521,10 @@ fmt_convert(GBitmap *bm, const ddjvu_format_t *fmt, char *buffer, int rowsize)
 static void
 fmt_dither(GPixmap *pm, const ddjvu_format_t *fmt, int x, int y)
 {
-  switch (fmt->style)
-    {
-    case DDJVU_FORMAT_RGBMASK16:
-      pm->ordered_32k_dither(x, y);
-      break;
-    case DDJVU_FORMAT_PALETTE8:
-      pm->ordered_666_dither(x, y);
-      break;
-    default:
-      break;
-    }
+  if (fmt->ditherbits < 15)
+    pm->ordered_666_dither(x, y);
+  else if (fmt->ditherbits < 24)
+    pm->ordered_32k_dither(x, y);
 }
 
 
@@ -1537,8 +1562,10 @@ ddjvu_page_render(ddjvu_page_t *page,
           switch (mode)
             {
             case DDJVU_RENDER_DEFAULT:
-              pm = img->get_pixmap(rrect, prect, pixelformat->gamma);
-              if (! pm) bm = img->get_bitmap(rrect, prect);
+              if (pixelformat->ditherbits < 8)
+                pm = img->get_pixmap(rrect, prect, pixelformat->gamma);
+              if (! pm) 
+                bm = img->get_bitmap(rrect, prect);
               break;
             case DDJVU_RENDER_COLORONLY:
               pm = img->get_pixmap(rrect, prect, pixelformat->gamma);
@@ -1556,7 +1583,9 @@ ddjvu_page_render(ddjvu_page_t *page,
         }
       if (pm)
         {
-          fmt_dither(pm, pixelformat, rrect.xmin, rrect.ymin);
+          int dx = rrect.xmin - prect.xmin;
+          int dy = rrect.ymin - prect.xmin;
+          fmt_dither(pm, pixelformat, dx, dy);
           fmt_convert(pm, pixelformat, imagebuffer, rowsize);
           return 2;
         }

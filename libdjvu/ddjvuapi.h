@@ -801,6 +801,8 @@ typedef enum {
   DDJVU_FORMAT_RGBMASK32,       /* truecolor 32 bits with masks */
   DDJVU_FORMAT_GREY8,           /* greylevel 8 bits */
   DDJVU_FORMAT_PALETTE8,        /* paletized 8 bits (6x6x6 color cube) */
+  DDJVU_FORMAT_MSBTOLSB,        /* packed bits, msb on the left */
+  DDJVU_FORMAT_LSBTOMSB,        /* packed bits, lsb on the left */
 } ddjvu_format_style_t;
    
 
@@ -829,6 +831,14 @@ ddjvu_format_create(ddjvu_format_style_t style,
 
 DDJVUAPI void
 ddjvu_format_set_row_order(ddjvu_format_t *format, int top_to_bottom);
+
+/* ddjvu_format_set_ditherbits ---
+   Specifies the final depth of the image on the screen.
+   This is used to decide which dithering algorithm should be used.
+   The default is usually appropriate. */
+
+DDJVUAPI void
+ddjvu_format_set_ditherbits(ddjvu_format_t *format, int bits);
 
 /* ddjvu_format_set_gamma ---
    Sets the gamma of the display for which the pixels are
