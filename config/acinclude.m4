@@ -620,6 +620,9 @@ QTextStream ts(&qf); ts << QT_VERSION; return 0;
     LIBS="$save_LIBS"
     AC_LANG_POP(C++)
     AC_MSG_RESULT($okay)
+    if test "x$okay" = xno ; then
+      ac_has_qt=no
+    fi
   fi
   # Version
   if test "x$ac_has_qt" != xno ; then
