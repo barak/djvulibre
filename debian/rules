@@ -1,0 +1,117 @@
+#!/usr/bin/make -f
+# Sample debian/rules that uses debhelper.
+# GNU copyright 1997 to 1999 by Joey Hess.
+
+# Uncomment this to turn on verbose mode.
+#export DH_VERBOSE=1
+
+# These are used for cross-compiling and for saving the configure script
+# from having to guess our platform (since we know it already)
+DEB_HOST_GNU_TYPE   ?= $(shell dpkg-architecture -qDEB_HOST_GNU_TYPE)
+DEB_BUILD_GNU_TYPE  ?= $(shell dpkg-architecture -qDEB_BUILD_GNU_TYPE)
+
+
+ifneq (,$(findstring debug,$(DEB_BUILD_OPTIONS)))
+	CFLAGS += -g
+endif
+ifeq (,$(findstring nostrip,$(DEB_BUILD_OPTIONS)))
+	INSTALL_PROGRAM += -s
+endif
+
+config.status: configure
+	dh_testdir
+	./configure --host=$(DEB_HOST_GNU_TYPE)		\
+		    --build=$(DEB_BUILD_GNU_TYPE)	\
+		    --prefix=/usr			\
+		    --enable-desktopfiles		\
+		    --mandir=\$${prefix}/share/man	\
+		    --infodir=\$${prefix}/share/info
+
+build: build-stamp
+build-stamp:  config.status
+	dh_testdir
+	$(MAKE) -k depend	# otherwise a missing Makefile.dep blows up
+	$(MAKE) # OPTS="-hotwire -compiler -options"
+	touch build-stamp
+
+clean:
+	dh_testdir
+	rm -f build-stamp  config.status
+	-$(MAKE) distclean
+	-test -r /usr/share/misc/config.sub && \
+	  cp -f /usr/share/misc/config.sub config/config.sub
+	-test -r /usr/share/misc/config.guess && \
+	  cp -f /usr/share/misc/config.guess config/config.guess
+	dh_clean
+
+plugsubdir=netscape/plugins-libc6
+plug=$(plugsubdir)/nsdejavu.so
+
+install: build
+	dh_testdir
+	dh_clean -k
+	dh_installdirs
+	$(MAKE) install							\
+		DESTDIR=$(CURDIR)/debian/tmp				\
+		plugindir=/usr/lib/$(plugsubdir)			\
+		kdedatadir='$${datadir}'				\
+		dtop_applications='$${prefix}/share/applications'	\
+		dtop_icons='$${kdedatadir}/icons'			\
+		dtop_pixmaps='$${datadir}/pixmaps'			\
+		dtop_mime_info='$${datadir}/mime-info'			\
+		dtop_application_registry='$${datadir}/application-registry' \
+		dtop_mimelnk='$${kdedatadir}/mimelnk'			\
+		dtop_menu='$${prefix}/lib/menu'
+#	-chrpath --delete debian/tmp/usr/bin/*
+	cp tools/any2djvu.sh debian/tmp/usr/bin/any2djvu
+	chmod +x debian/tmp/usr/bin/any2djvu
+	mkdir --parents debian/tmp/usr/lib/cgi-bin
+	cp debian/djvuserve.sh debian/tmp/usr/lib/cgi-bin/djvuserve
+	chmod +x debian/tmp/usr/lib/cgi-bin/djvuserve
+	mkdir --parents      debian/tmp/usr/lib/mozilla/plugins
+	ln -sf ../../$(plug) debian/tmp/usr/lib/mozilla/plugins/
+	mkdir --parents      debian/tmp/usr/lib/mozilla-firebird/plugins
+	ln -sf ../../$(plug) debian/tmp/usr/lib/mozilla-firebird/plugins/
+	mv debian/tmp/usr/lib/menu/djview.menu debian/tmp/usr/lib/menu/djview
+	cmp debian/tmp/usr/share/{pixmaps,icons/hicolor/48x48/mimetypes}/djvu.png \
+		&& ln -sf ../icons/hicolor/48x48/mimetypes/djvu.png	\
+			debian/tmp/usr/share/pixmaps/djvu.png
+#	mkdir --parents debian/tmp/usr/include/djvu/
+#	cp libdjvu/*.h  debian/tmp/usr/include/djvu/
+
+# Build architecture-independent files here.
+binary-indep: build install
+# We have nothing to do by default.
+
+# Build architecture-dependent files here.
+binary-arch: build install
+	dh_testdir
+	dh_testroot
+	dh_movefiles
+#	dh_installdebconf
+	dh_installdocs --noscripts
+	dh_installexamples
+	dh_installmenu
+#	dh_installlogrotate
+#	dh_installemacsen
+#	dh_installpam
+	dh_installmime
+#	dh_installinit
+	dh_installcron
+	dh_installman
+	dh_installinfo
+	dh_installchangelogs
+	dh_link
+	dh_strip
+	dh_compress --exclude=.djvu
+	dh_fixperms
+	dh_makeshlibs
+	dh_installdeb
+#	dh_perl
+	dh_shlibdeps -l libdjvu
+	dh_gencontrol
+	dh_md5sums
+	dh_builddeb
+
+binary: binary-indep binary-arch
+.PHONY: build clean binary-indep binary-arch binary install

@@ -1,0 +1,10 @@
+*.debhelper
+*.substvars
+djview
+djvulibre-bin
+djvulibre-plugin
+djvuserve
+files
+libdjvulibre1
+libdjvulibre1-dev
+tmp

@@ -1,0 +1,219 @@
+djvulibre (3.5.13.pre14-3) unstable; urgency=low
+
+  * incorporate new upstream materials in appropriate packages
+  * force installation of desktop stuff even when dirs are missing
+  * add some quotes to menu file
+
+ -- Barak A. Pearlmutter <bap@debian.org>  Tue, 18 May 2004 01:50:31 -0600
+
+djvulibre (3.5.13.pre14-2) unstable; urgency=low
+
+  * back out patch in djvuserve; upstream patch buggy
+  * add any2djvu security warnings
+
+ -- Barak A. Pearlmutter <bap@debian.org>  Sun, 16 May 2004 14:35:49 -0600
+
+djvulibre (3.5.13.pre14-1) unstable; urgency=low
+
+  * upstream release; see NEWS file for new features
+  * any2djvu option -q for quiet, instead of older -s
+
+ -- Barak A. Pearlmutter <bap@debian.org>  Sun, 16 May 2004 08:11:32 -0600
+
+djvulibre (3.5.13-1) unstable; urgency=low
+
+  * upstream release
+
+ -- Barak A. Pearlmutter <bap@debian.org>  Sun, 25 Apr 2004 05:03:23 -0600
+
+djvulibre (3.5.12-5) unstable; urgency=low
+
+  * sleazy workaround in fprintdate (closes: #241017)
+
+ -- Barak A. Pearlmutter <bap@debian.org>  Tue, 30 Mar 2004 16:05:44 +0100
+
+djvulibre (3.5.12-4) unstable; urgency=low
+
+  * add image/vnd.djvu as mime type handled by djview (closes: #234913)
+  * rev config.{guess,sub}
+  * upstream man page fix, rev djvused.1 to CVS 1.9 (closes: #231612)
+
+ -- Barak A. Pearlmutter <bap@debian.org>  Fri, 27 Feb 2004 00:06:27 +0000
+
+djvulibre (3.5.12-3) unstable; urgency=low
+
+  * add more options to any2djvu.sh script; fix man page
+
+ -- Barak A. Pearlmutter <bap@debian.org>  Wed, 21 Jan 2004 08:09:04 -0700
+
+djvulibre (3.5.12-2) unstable; urgency=low
+
+  * update any2djvu.sh to work with new CGI script; add option processing
+
+ -- Barak A. Pearlmutter <bap@debian.org>  Mon, 19 Jan 2004 17:04:53 -0700
+
+djvulibre (3.5.12-1) unstable; urgency=low
+
+  * New upstream version
+  * Fix mozilla-firebird plugin symlink typo (closes: #217744)
+  * Remove -Wl,-rpath,${libdir} from Makefiles.in instead of post-processing
+    chrpath --delete bin/*, for political correctness (closes: #221780)
+
+ -- Barak A. Pearlmutter <bap@debian.org>  Thu, 20 Nov 2003 08:14:59 -0700
+
+djvulibre (3.5.11.2003.06.04-6) unstable; urgency=low
+
+  * rev deb policy
+  * add enhances: field, fiddle with recommends: field
+  * fix secondary build dependency (closes: #206130)
+  * make chrpath optional to avoid autobuild problem on the hurd
+
+ -- Barak A. Pearlmutter <bap@debian.org>  Mon, 25 Aug 2003 20:10:22 +0100
+
+djvulibre (3.5.11.2003.06.04-5) unstable; urgency=low
+
+  * work around more ANSI C++ asymmetric horror
+
+ -- Barak A. Pearlmutter <bap@debian.org>  Fri, 11 Jul 2003 20:40:50 +0100
+
+djvulibre (3.5.11.2003.06.04-4) unstable; urgency=low
+
+  * work around enforcement of C++ horribleness by GCC 3.3.1 (closes #199766)
+
+ -- Barak A. Pearlmutter <bap@debian.org>  Tue,  8 Jul 2003 07:57:23 -0600
+
+djvulibre (3.5.11.2003.06.04-3) unstable; urgency=low
+
+  * handle mozilla-firebird (closes: 197054) thanks Emil Soleyman-Zomalan
+
+ -- Barak A. Pearlmutter <bap@debian.org>  Wed,  2 Jul 2003 21:08:14 +0100
+
+djvulibre (3.5.11.2003.06.04-2) unstable; urgency=low
+
+  * solve 64-bit compilation issue in the worst possible way (closes: #196720)
+
+ -- Barak A. Pearlmutter <bap@debian.org>  Tue, 10 Jun 2003 22:51:21 +0100
+
+djvulibre (3.5.11.2003.06.04-1) unstable; urgency=low
+
+  * CVS snapshot, fixes GCC 3.3 issues (closes: #195341)
+
+ -- Barak A. Pearlmutter <bap@debian.org>  Tue,  3 Jun 2003 19:39:56 -0600
+
+djvulibre (3.5.11-1) unstable; urgency=low
+
+  * New upstream version
+  * upstream fixes djview menu in UTF-8 encoded directories (closes: #186167)
+  * UTF8-endectomy for bin2cpp failure under GCC 3.2/3.3 (closes: #193507)
+  * djview libs need GCC 3.2/3.3 recompile (closes: #193233)
+
+ -- Barak A. Pearlmutter <bap@debian.org>  Thu, 29 May 2003 23:46:08 +0100
+
+djvulibre (3.5.10-5) unstable; urgency=low
+
+  * modify compiler options in package config scripts
+
+ -- Barak A. Pearlmutter <bap@debian.org>  Sun,  9 Mar 2003 18:38:34 +0000
+
+djvulibre (3.5.10-4) unstable; urgency=low
+
+  * hotwire compilation options for GCC 3.2 in debian/rules (closes: #183561)
+    DONT FORGET: remove when gcc bug is fixed.
+    Un-hotwired default is "-O3 -funroll-loops", tested behavior of
+    i386 gcc version 3.2.3 20030228 (Debian prerelease):
+    flags                   djview lizard2002.djvu
+    -O3 -funroll-loops      FAILS
+    -O2 -funroll-loops      FAILS
+    -O1 -funroll-loops      works
+    -funroll-loops          works
+    -O3                     works
+
+ -- Barak A. Pearlmutter <bap@debian.org>  Sun,  9 Mar 2003 02:04:19 +0000
+
+djvulibre (3.5.10-3) unstable; urgency=low
+
+  * simplify qt version check !hic!
+
+ -- Barak A. Pearlmutter <bap@debian.org>  Thu,  6 Mar 2003 00:19:49 +0000
+
+djvulibre (3.5.10-2.1) unstable; urgency=low
+
+  * remove workaround for old chrpath bug
+  * trick for -lqt vs -lqt-mt !blech! (closes: #181588)
+
+ -- Barak A. Pearlmutter <bap@debian.org>  Wed, 19 Feb 2003 12:16:56 -0700
+
+djvulibre (3.5.10-2) unstable; urgency=low
+
+  * use either /usr/include/qt3 or /usr/include/qt as available (closes: #181351)
+
+ -- Barak A. Pearlmutter <bap@cs.unm.edu>  Mon, 17 Feb 2003 19:48:29 +0000
+
+djvulibre (3.5.10-1) unstable; urgency=low
+
+  * new upstream version
+  * (closes: #180598) see below
+  * upstream fixed menu key (closes: #173483)
+
+ -- Barak Pearlmutter <bap@cs.unm.edu>  Wed, 12 Feb 2003 06:55:04 -0700
+
+djvulibre (3.5.9-5) unstable; urgency=low
+
+  * build-depend libqt3c102-mt for simplicity (closes: #180598)
+  * stop generating unnecessary binary package libdjvulibre1-dev
+
+ -- Barak Pearlmutter <bap@cs.unm.edu>  Wed, 12 Feb 2003 03:47:04 -0700
+
+djvulibre (3.5.9-4) unstable; urgency=low
+
+  * capitalize descriptions (closes: #164709)
+  * add script any2djvu
+  * mime entry remains (closes: #172465)
+  * just a compiler bug maybe maybe I hope (closes: #159590)
+
+ -- Barak Pearlmutter <bap@cs.unm.edu>  Mon,  3 Feb 2003 17:04:54 -0700
+
+djvulibre (3.5.9-3) unstable; urgency=low
+
+  * set up mime entry for djview
+  * break out djvuserve cgi script into its own package
+  * capitalize one-line descriptions (closes: #164709)
+
+ -- Barak Pearlmutter <bap@cs.unm.edu>  Sun, 13 Oct 2002 12:51:01 -0600
+
+djvulibre (3.5.9-2) unstable; urgency=low
+
+  * Flush debian mods.  Leave Makefile.in -rpath, use chrpath --delete.
+  * Break out djview binary into separate package.
+
+ -- Barak Pearlmutter <bap@cs.unm.edu>  Tue,  8 Oct 2002 12:34:03 -0600
+
+djvulibre (3.5.9-1) unstable; urgency=low
+
+  * New upstream release, fixes ddjvu (closes: #163081) and MMX with GCC 3.2
+
+ -- Barak Pearlmutter <bap@cs.unm.edu>  Tue,  8 Oct 2002 09:54:30 -0600
+
+djvulibre (3.5.8-1) unstable; urgency=low
+
+  * New upstream release (fixes for: print b&w docs, menu problem, gcc-3.1)
+
+ -- Barak Pearlmutter <bap@cs.unm.edu>  Tue, 17 Sep 2002 12:12:10 -0600
+
+djvulibre (3.5.7-2) unstable; urgency=low
+
+  * bin package to section graphics and plugin to section web
+
+ -- Barak Pearlmutter <bap@cs.unm.edu>  Mon, 29 Jul 2002 16:04:00 -0600
+
+djvulibre (3.5.7-1) unstable; urgency=low
+
+  * New upstream release, with copyright fix.  (closes: #94442)
+
+ -- Barak Pearlmutter <bap@cs.unm.edu>  Mon, 22 Jul 2002 16:55:55 -0600
+
+djvulibre (3.5.5-1) unstable; urgency=low
+
+  * Initial Release.  (closes: #94442)
+
+ -- Barak Pearlmutter <bap@cs.unm.edu>  Wed, 29 May 2002 15:43:15 -0600

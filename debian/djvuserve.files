@@ -1,0 +1,4 @@
+usr/bin/djvuserve
+usr/lib/cgi-bin/djvuserve
+usr/share/man/man1/djvuserve.1
+usr/share/man/*/man1/djvuserve.1

@@ -1,0 +1,15 @@
+upstream default optimization options were -O3 -funroll-loops which
+combined with -mcpu=i386 caused a failure with GCC 3.2.  It was okay
+with -mcpu=i686 though.
+
+ i386 gcc version 3.2.3 20030228 (Debian prerelease)
+
+   flags                   djview lizard2002.djvu
+
+   -O3 -funroll-loops      FAILS    <- this was the default
+   -O2 -funroll-loops      FAILS
+   -O1 -funroll-loops      works
+   -funroll-loops          works
+   -O3                     works
+
+I've removed the -funroll-loops option from config/acinclude.m4
