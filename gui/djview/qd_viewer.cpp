@@ -1260,20 +1260,20 @@ QDViewer::getURL(const GUTF8String &url_in,
              {
                int n = str.toInt();
                if (base=='+')
-                 doc_page = doc_page + n;
+                 n = doc_page + n;
                else if (base=='-')
-                 doc_page = doc_page - n;
+                 n = doc_page - n;
                else
-                 doc_page = n - 1;
-               if (doc_page >= doc_pages)
-                 doc_page = doc_pages - 1;
-               if (doc_page < 0)
-                 doc_page = 0;
-               url=djvu_doc->page_to_url(doc_page);
+                 n = n - 1;
+               if (n >= doc_pages)
+                 n = doc_pages - 1;
+               if (n < 0)
+                 n = 0;
+               url = djvu_doc->page_to_url(n);
              }
            else
              {
-               url=djvu_doc->id_to_url(s);
+               url = djvu_doc->id_to_url(s);
              }
          } 
        catch(const GException & exc)
@@ -1308,7 +1308,8 @@ QDViewer::getURL(const GUTF8String &url_in,
                if (page_num == doc_page)
                  new_dimg = dimg;
                else if (page_num >= 0) 
-                 new_dimg = djvu_doc->get_page(page_num, false, page_port.getPort());
+                 new_dimg = djvu_doc->get_page(page_num, false, 
+                                               page_port.getPort());
              }
            if (new_dimg && new_dimg != dimg)
              {
