@@ -70,6 +70,10 @@
 #include <fcntl.h>
 #include <errno.h>
 
+#ifdef UNIX
+# include <sys/time.h>
+#endif
+
 #include "libdjvu/ddjvuapi.h"
 
 #if defined(WIN32) || defined(__CYGWIN32__)
@@ -98,8 +102,22 @@
 # define I18N(x) (x)
 #endif
 
+
+unsigned long 
+ticks(void)
+{
+#ifdef UNIX
+  struct timeval tv;
+  if (gettimeofday(&tv, NULL) >= 0)
+    return (unsigned long)(((tv.tv_sec & 0xfffff)*1000)+(tv.tv_usec/1000));
+#endif
+  return 0;
+}
+
 ddjvu_context_t *ctx;
 ddjvu_document_t *doc;
+
+unsigned long timingdata[4];
 
 double       flag_scale = -1;
 int          flag_size = -1;
@@ -121,6 +139,9 @@ FILE *fout;
 TIFF *tiff;
 #endif
 
+
+
+/* Djvuapi events */
 
 void
 handle(int wait)
@@ -151,7 +172,6 @@ handle(int wait)
 }
 
 
-
 void 
 die(const char *fmt, ...)
 {
@@ -167,6 +187,7 @@ die(const char *fmt, ...)
   /* Terminates */
   exit(10);
 }
+
 
 void
 inform(ddjvu_page_t *page, int pageno)
@@ -190,9 +211,11 @@ inform(ddjvu_page_t *page, int pageno)
         fprintf(stderr,"%s\n", description);
       if (description)
         free(description);
+      if (timingdata[0] != timingdata[1])
+	fprintf(stderr,"Decoding time:  %5ld ms\n",
+		timingdata[1] - timingdata[0] );
     }
 }
-
 
 
 void
@@ -331,8 +354,14 @@ render(ddjvu_page_t *page)
     die(i18n("Cannot allocate image buffer"));
 
   /* Render */
+  timingdata[2] = ticks();
   if (! ddjvu_page_render(page, mode, &prect, &rrect, fmt, rowsize, image))
     die(i18n("Cannot render image"));
+  timingdata[3] = ticks();
+  if (flag_verbose)
+    if (timingdata[2] != timingdata[3])
+      fprintf(stderr,"Rendering time: %5ld ms\n",
+	      timingdata[3] - timingdata[2] );
 
   /* Output */
   switch (flag_format)
@@ -408,8 +437,10 @@ render(ddjvu_page_t *page)
         char *s = image;
         TIFFSetField(tiff, TIFFTAG_IMAGEWIDTH, (uint32)rrect.w);
         TIFFSetField(tiff, TIFFTAG_IMAGELENGTH, (uint32)rrect.h);
-        TIFFSetField(tiff, TIFFTAG_XRESOLUTION, (float)((dpi*rrect.w+iw/2)/iw));
-        TIFFSetField(tiff, TIFFTAG_YRESOLUTION, (float)((dpi*rrect.h+ih/2)/ih));
+        TIFFSetField(tiff, TIFFTAG_XRESOLUTION, 
+		     (float)((dpi*rrect.w+iw/2)/iw));
+        TIFFSetField(tiff, TIFFTAG_YRESOLUTION, 
+		     (float)((dpi*rrect.h+ih/2)/ih));
         TIFFSetField(tiff, TIFFTAG_PLANARCONFIG, PLANARCONFIG_CONTIG);
         TIFFSetField(tiff, TIFFTAG_ORIENTATION, ORIENTATION_TOPLEFT);
         TIFFSetField(tiff, TIFFTAG_ROWSPERSTRIP, (uint32)64);
@@ -468,10 +499,12 @@ dopage(int pageno)
 {
   ddjvu_page_t *page;
   /* Decode page */
+  timingdata[0] = ticks();
   if (! (page = ddjvu_page_create_by_pageno(doc, pageno-1)))
     die(i18n("Cannot access page %d."), pageno);
   while (! ddjvu_page_decoding_done(page))
     handle(TRUE);
+  timingdata[1] = ticks();
   /* Open files */
   if (flag_format == 't') 
     {
