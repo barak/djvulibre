@@ -95,7 +95,6 @@ rm -rf %{buildroot}
 %changelog
 * Fri Jan 24 2003 Leon Bottou <leon@bottou.org> 3.5.10-1
 - prepared for version 3.5.10
-- added option -n in setup.
 * Wed Oct  9 2002 Leon Bottou <leonb@users.sourceforge.net> 3.5.9-2
 - fixed logic for uninstalling nsdejavu links.
 - copy stuff from the freshrpms spec file.
