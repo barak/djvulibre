@@ -406,13 +406,16 @@ QDBase::processMouseMoveEvent(QMouseEvent * ev)
 	    lastrect=currect;
 	 }
       }
-   } else if (!(ev->state() & (LeftButton | MidButton | RightButton |
-			       getLensHotKey())))
+   } 
+   else if (!(ev->state() & 
+              (LeftButton|MidButton|RightButton|getLensHotKey())))
    {
-	 // Pure motion
-      if (needToShowToolBar()) showToolBar();
+      // Pure motion
+      if (needToShowToolBar()) 
+        showToolBar();
 	       
-      if (!override_flags.links || !map_areas.size()) return false;
+      if (!override_flags.links || !map_areas.size()) 
+        return false;
       
       GRect grect;
       grect.intersect(rectVisible, rectDocument);
@@ -425,18 +428,17 @@ QDBase::processMouseMoveEvent(QMouseEvent * ev)
       {
 	 GP<MapArea> ma=map_areas[pos];
 	 if (ma->getComment() != search_results_name &&
-	     ma->is_point_inside(_xPos, _yPos))
-	 {
-	    if (!new_cur_map_area || ma->isHyperlink()) new_cur_map_area=ma;
-	    if (new_cur_map_area->isHyperlink()) break;
-	 }
+	     ma->is_point_inside(_xPos, _yPos) &&
+             ma->isHyperlink() ) 
+           new_cur_map_area = ma;
       }
-      if (new_cur_map_area!=cur_map_area)
+      if (new_cur_map_area != cur_map_area)
       {
 	 if (cur_map_area)
 	 {
 	    cur_map_area->setActive(false, true);
-	    delete map_area_tip; map_area_tip=0;
+	    delete map_area_tip; 
+            map_area_tip=0;
 	 }
 	 if (new_cur_map_area)
 	 {
@@ -490,7 +492,8 @@ QDBase::eventFilter(QObject *obj, QEvent *e)
             default:
                break;
 	 }
-      } else if (obj==main_widget)
+      } 
+      else if (obj==main_widget)
       {
 	 switch(e->type())
 	 {
@@ -506,7 +509,8 @@ QDBase::eventFilter(QObject *obj, QEvent *e)
             default:
                break;
 	 }
-      } else if (obj==pane)
+      } 
+      else if (obj==pane)
       {
 	 if (e->type()!=QEvent::MouseMove)
 	 {
@@ -534,16 +538,20 @@ QDBase::eventFilter(QObject *obj, QEvent *e)
 		     // issues Event_Leave and Event_Enter right before this
 		     // Event_MouseButtonPress. This effectively deselects
 		     // the current hyperlink. So we want it back.
-		     if (ev->state()==0) processMouseMoveEvent(ev);
+		     if (ev->state()==0) 
+                       processMouseMoveEvent(ev);
 	       
 		     if (!cur_map_area)
 		     {
 			preScroll();
 			in_hand_scroll=1;
 			setCursor();
-		     }  // If we're over a hyperlink - wait before we either
-		     // release the mouse button (and go to URL) or displace far enough
-		  } else
+		     }  
+                     // If we're over a hyperlink - wait before we either
+		     // release the mouse button (and go to URL)
+                     // or displace far enough
+		  } 
+                  else
 		  {
 		     in_zoom_select=1;
 		     zoom_select_x0=ev->x();
@@ -551,13 +559,15 @@ QDBase::eventFilter(QObject *obj, QEvent *e)
 		     setCursor();
 		  }   
 		  return TRUE;
-	       } else if (ev->button()==MidButton)
+	       } 
+               else if (ev->button()==MidButton)
 	       {
 		     // Unfortunately, in "focus follows mouse" mode KWM
 		     // issues Event_Leave and Event_Enter right before this
 		     // Event_MouseButtonPress. This effectively deselects
 		     // the current hyperlink. So we want it back.
-		  if (ev->state()==0) processMouseMoveEvent(ev);
+		  if (ev->state()==0) 
+                    processMouseMoveEvent(ev);
 
 		     // The order is right. First we should call
 		     // processMouseMoveEvent() above
@@ -584,7 +594,8 @@ QDBase::eventFilter(QObject *obj, QEvent *e)
 		     postScroll();
 		     in_hand_scroll=0;
 		     setCursor();
-		  } else if (in_zoom_select)
+		  } 
+                  else if (in_zoom_select)
 		  {
 		     in_zoom_select=0;
 		     setCursor();
@@ -601,8 +612,12 @@ QDBase::eventFilter(QObject *obj, QEvent *e)
 			   zoom_rect.intersect(zoom_rect, rectDocument);
 
 			   int cur_zoom_factor=getZoom();
-			   int hzoom = int(cur_zoom_factor*((float)rectVisible.height()/zoom_rect.height()));
-			   int wzoom = int(cur_zoom_factor*((float)rectVisible.width()/zoom_rect.width()));
+			   int hzoom = int(cur_zoom_factor * 
+                                           ((float)rectVisible.height() /
+                                            zoom_rect.height()));
+			   int wzoom = int(cur_zoom_factor * 
+                                           ((float)rectVisible.width() / 
+                                            zoom_rect.width()));
 			
 			   int new_zoom_factor=hzoom<wzoom?hzoom:wzoom;
 			   int new_zoom_cmd=new_zoom_factor+IDC_ZOOM_MIN;
@@ -612,16 +627,22 @@ QDBase::eventFilter(QObject *obj, QEvent *e)
 			      setZoom(new_zoom_cmd, true, SRC_MANUAL);
 
 			      // centering the new zoomed area 
-			      int dx = (zoom_rect.xmax+zoom_rect.xmin-rectVisible.xmax-rectVisible.xmin)/2;
-			      int dy = (zoom_rect.ymax+zoom_rect.ymin-rectVisible.ymax-rectVisible.ymin)/2;
-			      float zf = new_zoom_factor/float(cur_zoom_factor);
-			      dx = (int)(dx*zf); dy = (int)(dy*zf);
+			      int dx = (zoom_rect.xmax+zoom_rect.xmin
+                                        -rectVisible.xmax-rectVisible.xmin)/2;
+			      int dy = (zoom_rect.ymax+zoom_rect.ymin
+                                        -rectVisible.ymax-rectVisible.ymin)/2;
+			      float zf = new_zoom_factor / 
+                                (float)cur_zoom_factor;
+			      dx = (int)(dx*zf); 
+                              dy = (int)(dy*zf);
 			      scroll(dx,dy);
-			   } else
+			   } 
+                           else
 			   {
 			      drawSelectionRect(G2Q(zoom_rect));
 			   }
-			} else // IDC_TEXT_SELECT
+			} 
+                        else // IDC_TEXT_SELECT
 			{
 			   drawSelectionRect(G2Q(*lastrect));
 			   GRect text_rect=*lastrect;
@@ -640,7 +661,9 @@ QDBase::eventFilter(QObject *obj, QEvent *e)
 			      djvutext->decode(bs);
 			      if( djvutext->txt )
 			      {
-				 GList<GRect> rects=djvutext->txt->find_text_with_rect(text_rect,UTF8selectedtext);
+				 GList<GRect> rects=djvutext->txt->
+                                   find_text_with_rect(text_rect,
+                                                       UTF8selectedtext);
 				 search_results_name="Selected Text";
 				 for(GPosition pos=rects;pos;++pos)
 				 {
@@ -654,7 +677,9 @@ QDBase::eventFilter(QObject *obj, QEvent *e)
 				    GP<MapArea> ma=new MapRect(gma);
 				    map_areas.append(ma);
 				    ma->attachWindow(pane, &ma_mapper);
-				    ma->layout(GRect(0, 0, dimg->get_width(), dimg->get_height()));
+				    ma->layout(GRect(0, 0, 
+                                                     dimg->get_width(),
+                                                     dimg->get_height()));
 				    ma->repaint();
 				 }
                                  
@@ -666,11 +691,14 @@ QDBase::eventFilter(QObject *obj, QEvent *e)
 			delete lastrect;
 			lastrect=0;
 		     }
-		  } else if ( pane_mode == IDC_PANE )
+		  } 
+                  else if ( pane_mode == IDC_PANE )
 		     if (cur_map_area && cur_map_area->isHyperlink())
-			getURL(cur_map_area->getURL(), cur_map_area->getTarget());
+			getURL(cur_map_area->getURL(), 
+                               cur_map_area->getTarget());
 		  return TRUE;
-	       } else if (ev->button()==MidButton)
+	       } 
+               else if (ev->button()==MidButton)
 	       {
 		  if (getLensHotKey()==MidButton)
 		     hideLens();
