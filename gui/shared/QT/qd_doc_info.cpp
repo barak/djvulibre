@@ -1061,5 +1061,7 @@ QDDocInfo::QDDocInfo(const GP<DjVuDocument> & _doc, QWidget * parent,
 	   this, SLOT(slotNotifyFileFlagsChanged(const GP<DjVuFile> &, long, long)));
 
    DjVuPort::get_portcaster()->add_route(doc, port.getPort());
+
+   QeDialog::makeTransient(this, parent);
 }
 
