@@ -63,9 +63,7 @@ CIN_SOURCES = \
  ${top_srcdir}/gui/shared/cin_data/ppm_vzoom_in.cin \
  ${top_srcdir}/gui/shared/cin_data/ppm_vzoom_out.cin \
  ${top_srcdir}/gui/shared/cin_data/ppm_vnpage.cin \
- ${top_srcdir}/gui/shared/cin_data/ppm_vnnpage.cin \
  ${top_srcdir}/gui/shared/cin_data/ppm_vppage.cin \
- ${top_srcdir}/gui/shared/cin_data/ppm_vpppage.cin \
  ${top_srcdir}/gui/shared/cin_data/ppm_vfpage.cin \
  ${top_srcdir}/gui/shared/cin_data/ppm_vlpage.cin \
  ${top_srcdir}/gui/shared/cin_data/ppm_vdjvu.cin \
@@ -80,7 +78,9 @@ CIN_SOURCES = \
  ${top_srcdir}/gui/shared/cin_data/ppm_rotate270.cin \
  ${top_srcdir}/gui/shared/cin_data/ppm_zoomselect.cin \
  ${top_srcdir}/gui/shared/cin_data/ppm_textselect.cin \
- ${top_srcdir}/gui/shared/cin_data/ppm_hand1.cin 
+ ${top_srcdir}/gui/shared/cin_data/ppm_hand1.cin \
+ ${top_srcdir}/gui/shared/cin_data/ppm_back.cin \
+ ${top_srcdir}/gui/shared/cin_data/ppm_forw.cin 
 
 CPP_SOURCES = \
  ${top_srcdir}/gui/indep/QX/qx_imager.cpp \

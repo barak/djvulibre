@@ -261,18 +261,10 @@ ppm_vnpage.o : ppm_vnpage.cpp
 	${CXX} ${CXXFLAGS} -c ppm_vnpage.cpp
 ppm_vnpage.cpp : ${top_srcdir}/gui/shared/cin_data/ppm_vnpage.cin
 	${BIN2CPP} ppm_vnpage < ${top_srcdir}/gui/shared/cin_data/ppm_vnpage.cin > ppm_vnpage.cpp
-ppm_vnnpage.o : ppm_vnnpage.cpp
-	${CXX} ${CXXFLAGS} -c ppm_vnnpage.cpp
-ppm_vnnpage.cpp : ${top_srcdir}/gui/shared/cin_data/ppm_vnnpage.cin
-	${BIN2CPP} ppm_vnnpage < ${top_srcdir}/gui/shared/cin_data/ppm_vnnpage.cin > ppm_vnnpage.cpp
 ppm_vppage.o : ppm_vppage.cpp
 	${CXX} ${CXXFLAGS} -c ppm_vppage.cpp
 ppm_vppage.cpp : ${top_srcdir}/gui/shared/cin_data/ppm_vppage.cin
 	${BIN2CPP} ppm_vppage < ${top_srcdir}/gui/shared/cin_data/ppm_vppage.cin > ppm_vppage.cpp
-ppm_vpppage.o : ppm_vpppage.cpp
-	${CXX} ${CXXFLAGS} -c ppm_vpppage.cpp
-ppm_vpppage.cpp : ${top_srcdir}/gui/shared/cin_data/ppm_vpppage.cin
-	${BIN2CPP} ppm_vpppage < ${top_srcdir}/gui/shared/cin_data/ppm_vpppage.cin > ppm_vpppage.cpp
 ppm_vfpage.o : ppm_vfpage.cpp
 	${CXX} ${CXXFLAGS} -c ppm_vfpage.cpp
 ppm_vfpage.cpp : ${top_srcdir}/gui/shared/cin_data/ppm_vfpage.cin
@@ -333,6 +325,14 @@ ppm_hand1.o : ppm_hand1.cpp
 	${CXX} ${CXXFLAGS} -c ppm_hand1.cpp
 ppm_hand1.cpp : ${top_srcdir}/gui/shared/cin_data/ppm_hand1.cin
 	${BIN2CPP} ppm_hand1 < ${top_srcdir}/gui/shared/cin_data/ppm_hand1.cin > ppm_hand1.cpp
+ppm_back.o : ppm_back.cpp
+	${CXX} ${CXXFLAGS} -c ppm_back.cpp
+ppm_back.cpp : ${top_srcdir}/gui/shared/cin_data/ppm_back.cin
+	${BIN2CPP} ppm_back < ${top_srcdir}/gui/shared/cin_data/ppm_back.cin > ppm_back.cpp
+ppm_forw.o : ppm_forw.cpp
+	${CXX} ${CXXFLAGS} -c ppm_forw.cpp
+ppm_forw.cpp : ${top_srcdir}/gui/shared/cin_data/ppm_forw.cin
+	${BIN2CPP} ppm_forw < ${top_srcdir}/gui/shared/cin_data/ppm_forw.cin > ppm_forw.cpp
 
 
 SRCINCS = \
@@ -435,9 +435,7 @@ OBJS = \
  ppm_vzoom_in.o \
  ppm_vzoom_out.o \
  ppm_vnpage.o \
- ppm_vnnpage.o \
  ppm_vppage.o \
- ppm_vpppage.o \
  ppm_vfpage.o \
  ppm_vlpage.o \
  ppm_vdjvu.o \
@@ -453,6 +451,8 @@ OBJS = \
  ppm_zoomselect.o \
  ppm_textselect.o \
  ppm_hand1.o \
+ ppm_back.o \
+ ppm_forw.o \
 
 
 MOCINCS = \

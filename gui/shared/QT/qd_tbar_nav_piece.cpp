@@ -137,8 +137,6 @@ QDTBarNavPiece::setEnabled(bool en)
   page_menu->setEnabled(en);
   npage_butt->setEnabled(en);
   ppage_butt->setEnabled(en);
-  nnpage_butt->setEnabled(en);
-  pppage_butt->setEnabled(en);
   fpage_butt->setEnabled(en);
   lpage_butt->setEnabled(en);
 }
@@ -156,16 +154,10 @@ QDTBarNavPiece::QDTBarNavPiece(QWidget * toolbar) : QDTBarPiece(toolbar)
    connect(page_menu, SIGNAL(activated(const QString &)),
 	   this, SLOT(slotPage(const QString &)));
    QToolTip::add(page_menu, tr("Page"));
-   if ( qdtoolbar_child ) 
-     ((QDToolBar *)toolbar)->addLeftWidget(page_menu);
-   
+
    fpage_butt=new QDToolButton(*CINData::get("ppm_vfpage"), true,
 			       IDC_NAV_FIRST_PAGE, toolbar, tr("First page"));
    connect(fpage_butt, SIGNAL(clicked(void)), this, SLOT(slotPage(void)));
-   
-   pppage_butt=new QDToolButton(*CINData::get("ppm_vpppage"), true,
-				IDC_NAV_PREV_PAGE10, toolbar, tr("-10 pages"));
-   connect(pppage_butt, SIGNAL(clicked(void)), this, SLOT(slotPage(void)));
    
    ppage_butt=new QDToolButton(*CINData::get("ppm_vppage"), true,
 			       IDC_NAV_PREV_PAGE, toolbar, tr("Previous Page"));
@@ -175,22 +167,29 @@ QDTBarNavPiece::QDTBarNavPiece(QWidget * toolbar) : QDTBarPiece(toolbar)
 			       IDC_NAV_NEXT_PAGE, toolbar, tr("Next Page"));
    connect(npage_butt, SIGNAL(clicked(void)), this, SLOT(slotPage(void)));
    
-   nnpage_butt=new QDToolButton(*CINData::get("ppm_vnnpage"), true,
-				IDC_NAV_NEXT_PAGE10, toolbar, tr("+10 pages"));
-   connect(nnpage_butt, SIGNAL(clicked(void)), this, SLOT(slotPage(void)));
-   
    lpage_butt=new QDToolButton(*CINData::get("ppm_vlpage"), true,
 			       IDC_NAV_LAST_PAGE, toolbar, tr("Last page"));
    connect(lpage_butt, SIGNAL(clicked(void)), this, SLOT(slotPage(void)));
    
-   if ( qdtoolbar_child ) 
-     ((QDToolBar *)toolbar)->addLeftWidgets(fpage_butt, pppage_butt, ppage_butt,
-                                            npage_butt, nnpage_butt, lpage_butt);
+   back_butt=new QDToolButton(*CINData::get("ppm_back"), true,
+			       IDC_HISTORY_BACK, toolbar, tr("Back"));
+   connect(back_butt, SIGNAL(clicked(void)), this, SLOT(slotPage(void)));
    
+   forw_butt=new QDToolButton(*CINData::get("ppm_forw"), true,
+			       IDC_HISTORY_FORW, toolbar, tr("Forward"));
+   connect(forw_butt, SIGNAL(clicked(void)), this, SLOT(slotPage(void)));
+   
+   if ( qdtoolbar_child ) 
+     ((QDToolBar *)toolbar)->addLeftWidgets(back_butt, forw_butt);
+   if ( qdtoolbar_child ) 
+     ((QDToolBar *)toolbar)->addLeftWidget(page_menu);
+   if ( qdtoolbar_child ) 
+     ((QDToolBar *)toolbar)->addLeftWidgets(fpage_butt, ppage_butt,
+                                            npage_butt, lpage_butt);
    options = 0;
    active = false;
    if ( qdtoolbar_child )
-      ((QDToolBar *)toolbar)->addPiece(this);
+     ((QDToolBar *)toolbar)->addPiece(this);
 }
 
 void
@@ -204,51 +203,55 @@ QDTBarNavPiece::setOptions(int opts)
   showOrHide(fpage_butt, b);
   showOrHide(lpage_butt, b);
   b = active && !(opts & QDBase::OverrideFlags::TOOLBAR_NO_PREVNEXT);
-  showOrHide(pppage_butt, b);
   showOrHide(ppage_butt, b);
   showOrHide(npage_butt, b);
-  showOrHide(nnpage_butt, b);
+  b = active && !(opts & QDBase::OverrideFlags::TOOLBAR_NO_BACKFORW);
+  showOrHide(back_butt, b);
+  showOrHide(forw_butt, b);
 }
 
 void
-QDTBarNavPiece::update(int page_num, int pages_num)
+QDTBarNavPiece::update(int page_num, int pages_num, 
+                       bool back, bool forw)
 {
   if (!qdtoolbar_child || pages_num>1)
-   {
-     if (! active)
-       {
-         active = true;
-         setOptions(options);
-       }
-     if (page_menu->count()!=pages_num) 
-       page_menu->clear();
-     if (!page_menu->count())
-       {
-	 for(int i=0;i<pages_num;i++)
-           {
-             char buffer[128];
-             sprintf(buffer, "%d", i+1);
-             page_menu->insertItem(buffer);
-           }
-       }
-     page_menu->setCurrentItem(page_num);
-     page_menu->setEnabled(pages_num>1);
-     page_menu->setFixedSize(page_menu->sizeHint());
-     npage_butt->setEnabled(page_num+1<pages_num);
-     ppage_butt->setEnabled(page_num>0);
-     nnpage_butt->setEnabled(page_num+10<pages_num);
-     pppage_butt->setEnabled(page_num>=10);
-     fpage_butt->setEnabled(page_num>0);
-     lpage_butt->setEnabled(page_num+1<pages_num);
-   }
-   else
-   {
-     if (active)
-       {
-         active = false;
-         setOptions(options);
-       }
-   }
+    {
+      if (! active)
+        {
+          active = true;
+          setOptions(options);
+        }
+      if (page_menu->count()!=pages_num) 
+        page_menu->clear();
+      if (!page_menu->count())
+        {
+          for(int i=0;i<pages_num;i++)
+            {
+              char buffer[128];
+              sprintf(buffer, "%d", i+1);
+              page_menu->insertItem(buffer);
+            }
+        }
+      page_menu->setCurrentItem(page_num);
+      page_menu->setEnabled(pages_num>1);
+      page_menu->setFixedSize(page_menu->sizeHint());
+      npage_butt->setEnabled(page_num+1<pages_num);
+      ppage_butt->setEnabled(page_num>0);
+      fpage_butt->setEnabled(page_num>0);
+      lpage_butt->setEnabled(page_num+1<pages_num);
+      if (back_butt)
+        back_butt->setEnabled(back);
+      if (forw_butt)
+        forw_butt->setEnabled(forw);
+    }
+  else
+    {
+      if (active)
+        {
+          active = false;
+          setOptions(options);
+        }
+    }
   // Keep everything disabled if the toolbar is disabled.
   if (!toolbar->isEnabled()) 
     setEnabled(false);

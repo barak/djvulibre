@@ -87,7 +87,8 @@
 #define IDC_DISPLAY_BACKGROUND		40103
 #define IDC_DISPLAY_FOREGROUND		40104
 #define IDC_ZOOM			40200
-// It's important, that PAGE==MIN-1, WIDTH==MIN-2 and STRETCH=MIN-3.
+
+// PAGE==MIN-1, WIDTH==MIN-2 and STRETCH=MIN-3.
 // Don't change it!
 #define IDC_ZOOM_STRETCH		40201
 #define IDC_ZOOM_CUSTOM			(IDC_ZOOM_STRETCH+1)
@@ -109,12 +110,13 @@
 #define IDC_ZOOM_SELECT                 42010
 #define IDC_TEXT_SELECT                 42020
 
-#define IDC_ROTATE_0                    42100
-#define IDC_ROTATE_90                   42110
-#define IDC_ROTATE_180                  42120
-#define IDC_ROTATE_270                  42130
-#define IDC_ROTATE_RIGHT                42140
-#define IDC_ROTATE_LEFT                 42150
+#define IDC_ROTATE                      42100
+#define IDC_ROTATE_0                    42101
+#define IDC_ROTATE_90                   42102
+#define IDC_ROTATE_180                  42103
+#define IDC_ROTATE_270                  42104
+#define IDC_ROTATE_RIGHT                42105
+#define IDC_ROTATE_LEFT                 42106
 
 #define IDC_OPEN			41300
 #define IDC_CLOSE			41301
@@ -132,9 +134,15 @@
 #define IDC_NAV_PREV_PAGE10		41406
 #define IDC_NAV_GOTO_PAGE		41407
 
+#define IDC_HISTORY                     41450
+#define IDC_HISTORY_BACK	        41451
+#define IDC_HISTORY_FORW	        41452
+
 #define IDC_THUMB_SHOW			41500
 #define IDC_THUMB_GENERATE		41502
 #define IDC_THUMB_REMOVE		41503
+
+#define IDC_BOOKMARKS_SHOW		41550
 
 #define IDC_SEARCH			41600
 #define IDC_VIEW			41601

@@ -91,9 +91,9 @@ public:
    {
    public:
      enum CACHE { CACHE_UNSPEC=-1, CACHE_OFF=0, CACHE_ON=1 };
-     SavedData	saved;
-     bool	full_mode;
-     int	cache;
+     SavedData	 saved;
+     bool	 full_mode;
+     int	 cache;
      GUTF8String rel_url;
      GUTF8String page_id;
      // helpers
@@ -108,33 +108,28 @@ public:
 
 private:
      // Operation modes
-   int		saved_data_known;
-   int		in_netscape;
-   PluginData	plugin_data;
-
-   static bool	once_welcomed;
-
-   QPopupMenu	* popup_menu;
-   int		popup_menu_id;
-   QWidget	* welcome;
-   QDialog      * about;
+   int		          saved_data_known;
+   int		          in_netscape;
+   PluginData	          plugin_data;
+   static bool	          once_welcomed;
+   QPopupMenu	        * popup_menu;
+   int		          popup_menu_id;
+   QWidget	        * welcome;
+   QDialog              * about;
 
    class QDPrintDialog	* print_win;
-
    class QDThumbnails	* thumbnails;
-
    class QDTBarNavPiece	* nav_tbar;
+   QTimer	          hlinks_timer, welcome_timer;
+   int		          start_page_num;
+   GP<DjVuDocument>	  djvu_doc;
+   QDPort		  page_port, doc_port;
+   GP<DjVuImage>	  predecode_dimg1, predecode_dimg2;
+   GList<int>             hundo, hredo;
 
-   QTimer	hlinks_timer, welcome_timer;
-
-      // The number of the first page viewed in this class. Initially
-      // ZERO. Is set to smth real after document init is over.
-   int		start_page_num;
-   
-   GP<DjVuDocument>	djvu_doc;
-   QDPort		page_port, doc_port;
-   GP<DjVuImage>	predecode_dimg1, predecode_dimg2;
-
+   void         history_add(int page);
+   int          history_undo(void);
+   int          history_redo(void);
    void		createPopupMenu(void);
    void		runPopupMenu(QMouseEvent * ev);
    void		checkWMProps(void);
@@ -146,12 +141,16 @@ private slots:
       // QDPort connected slots
    void		slotNotifyRedisplay(const GP<DjVuImage> & source);
    void		slotNotifyRelayout(const GP<DjVuImage> & source);
-   void		slotNotifyChunkDone(const GP<DjVuPort> & source, const GUTF8String &name);
-   void		slotNotifyFileFlagsChanged(const GP<DjVuFile> & source, long, long);
-   void		slotNotifyDocFlagsChanged(const GP<DjVuDocument> & source, long, long);
+   void		slotNotifyChunkDone(const GP<DjVuPort> & source, 
+                                    const GUTF8String &name);
+   void		slotNotifyFileFlagsChanged(const GP<DjVuFile> & source, 
+                                           long, long);
+   void		slotNotifyDocFlagsChanged(const GP<DjVuDocument> & source, 
+                                          long, long);
 
    void		slotSearchClosed(void);
-   void		slotDisplaySearchResults(int page_num, const GList<DjVuTXT::Zone *> & zones_list);
+   void		slotDisplaySearchResults(int page_num, 
+                                         const GList<DjVuTXT::Zone *> & zones_list);
    void		slotPrintClosed(void);
    
    void		slotPopupCB(int id) { popup_menu_id=id; };
@@ -170,25 +169,28 @@ private slots:
 protected:
    virtual bool	event(QEvent * ev);
    virtual bool eventFilter(QObject *obj, QEvent *ev);
-
+  
    virtual void	setDjVuImage(const GP<DjVuImage> & _dimg, int do_redraw);
-
+  
    virtual QWidget * createThumbnails(bool _rowMajor);
    
    virtual void	fillToolBar(class QDToolBar * toolbar);
    virtual void	updateToolBar(void);
    virtual void	getURL(const GUTF8String &url, const GUTF8String &target);
+   virtual void	getURL(const GUTF8String &url, const GUTF8String &target, 
+                       bool history );
 signals:
    void		sigGetURL(const GURL & url, const GUTF8String &target);
    void		sigPageChanged(int page_num);
    void         sigToggleFullScreen(void);
 public:
    SavedData	getSavedData(void) const;
-   void		gotoPage(int page_num);
+   void		gotoPage(int page_num, bool history=true);
    void		print(void);
    void		savePageAs(void);
    void		saveDocumentAs(void);
-   void		setDjVuDocument(GP<DjVuDocument> & doc,	const GUTF8String &key=(const char *)0);
+   void		setDjVuDocument(GP<DjVuDocument> & doc,	
+                                const GUTF8String &key=(const char *)0);
    void		search(void);
    virtual void	imageUpdated(void);
    void		processCommand(int cmd);

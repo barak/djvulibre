@@ -97,7 +97,8 @@ QDViewer::createPopupMenu(void)
    popup_menu->insertItem(tr("&Display"), displ_pane, IDC_DISPLAY);
 
    QPopupMenu * zoom_pane=new QPopupMenu(this, "zoom_pane");
-   connect(zoom_pane, SIGNAL(activated(int)), popup_menu, SIGNAL(activated(int)));
+   connect(zoom_pane, SIGNAL(activated(int)), 
+           popup_menu, SIGNAL(activated(int)));
    zoom_pane->setCheckable(TRUE);
    zoom_pane->insertItem("&300 %", IDC_ZOOM_300);
    zoom_pane->insertItem("15&0 %", IDC_ZOOM_150);
@@ -116,16 +117,33 @@ QDViewer::createPopupMenu(void)
    zoom_pane->insertItem(tr("Zoom &Out"), IDC_ZOOM_ZOOMOUT);
    popup_menu->insertItem(tr("&Zoom"), zoom_pane, IDC_ZOOM);
 
+   QPopupMenu * rot_pane=new QPopupMenu(this, "rot_pane");
+   connect(rot_pane, SIGNAL(activated(int)), 
+           popup_menu, SIGNAL(activated(int)));
+   rot_pane->insertItem(tr("Normal"), IDC_ROTATE_0);
+   rot_pane->insertItem(tr("Left side down"), IDC_ROTATE_90);
+   rot_pane->insertItem(tr("Upside down"), IDC_ROTATE_180);
+   rot_pane->insertItem(tr("Right side down"), IDC_ROTATE_270);
+   popup_menu->insertItem(tr("&Rotation"), rot_pane, IDC_ROTATE);
+
+   popup_menu->insertSeparator();
+
    QPopupMenu * nav_pane=new QPopupMenu(this, "nav_pane");
-   connect(nav_pane, SIGNAL(activated(int)), popup_menu, SIGNAL(activated(int)));
+   connect(nav_pane, SIGNAL(activated(int)), 
+           popup_menu, SIGNAL(activated(int)));
    nav_pane->insertItem(tr("&Next Page"), IDC_NAV_NEXT_PAGE);
    nav_pane->insertItem(tr("&Previous Page"), IDC_NAV_PREV_PAGE);
-   nav_pane->insertItem(tr("&+10 Pages"), IDC_NAV_NEXT_PAGE10);
-   nav_pane->insertItem(tr("&-10 Pages"), IDC_NAV_PREV_PAGE10);
    nav_pane->insertItem(tr("&First Page"), IDC_NAV_FIRST_PAGE);
    nav_pane->insertItem(tr("&Last Page"), IDC_NAV_LAST_PAGE);
    nav_pane->insertItem(tr("&Goto Page..."), IDC_NAV_GOTO_PAGE);
    popup_menu->insertItem(tr("&Navigate"), nav_pane, IDC_NAVIGATE);
+
+   QPopupMenu * hist_pane=new QPopupMenu(this, "hist_pane");
+   connect(hist_pane, SIGNAL(activated(int)), 
+           popup_menu, SIGNAL(activated(int)));
+   hist_pane->insertItem(tr("&Back"), IDC_HISTORY_BACK);
+   hist_pane->insertItem(tr("&Forward"), IDC_HISTORY_FORW);
+   popup_menu->insertItem(tr("&History"), hist_pane, IDC_HISTORY);
 
    popup_menu->insertSeparator();
 
@@ -134,6 +152,7 @@ QDViewer::createPopupMenu(void)
    popup_menu->insertItem(tr("Page &Information"), IDC_ABOUT_PAGE);
    popup_menu->insertItem(tr("Document In&formation"), IDC_ABOUT_DOC);
    popup_menu->insertItem(tr("Show &Thumbnails"), IDC_THUMB_SHOW);
+   popup_menu->insertItem(tr("Show &Bookmarks"), IDC_BOOKMARKS_SHOW);
 
    popup_menu->insertSeparator();
    
@@ -180,22 +199,36 @@ QDViewer::setupMenu(QMenuData * menu)
       int doc_page=djvu_doc->url_to_page(djvu_file->get_url());
       int doc_pages=djvu_doc->get_pages_num();
 
-      menu->setItemChecked(IDC_DISPLAY_COLOR, getMode(true)==IDC_DISPLAY_COLOR);
-      menu->setItemChecked(IDC_DISPLAY_BLACKWHITE, getMode(true)==IDC_DISPLAY_BLACKWHITE);
-      menu->setItemChecked(IDC_DISPLAY_FOREGROUND, getMode(true)==IDC_DISPLAY_FOREGROUND);
-      menu->setItemChecked(IDC_DISPLAY_BACKGROUND, getMode(true)==IDC_DISPLAY_BACKGROUND);
+      menu->setItemChecked(IDC_DISPLAY_COLOR, 
+                           getMode(true)==IDC_DISPLAY_COLOR);
+      menu->setItemChecked(IDC_DISPLAY_BLACKWHITE, 
+                           getMode(true)==IDC_DISPLAY_BLACKWHITE);
+      menu->setItemChecked(IDC_DISPLAY_FOREGROUND, 
+                           getMode(true)==IDC_DISPLAY_FOREGROUND);
+      menu->setItemChecked(IDC_DISPLAY_BACKGROUND, 
+                           getMode(true)==IDC_DISPLAY_BACKGROUND);
 
-      menu->setItemChecked(IDC_ZOOM_25, getCMDZoom()==IDC_ZOOM_25);
-      menu->setItemChecked(IDC_ZOOM_50, getCMDZoom()==IDC_ZOOM_50);
-      menu->setItemChecked(IDC_ZOOM_75, getCMDZoom()==IDC_ZOOM_75);
-      menu->setItemChecked(IDC_ZOOM_100, getCMDZoom()==IDC_ZOOM_100);
-      menu->setItemChecked(IDC_ZOOM_150, getCMDZoom()==IDC_ZOOM_150);
-      menu->setItemChecked(IDC_ZOOM_300, getCMDZoom()==IDC_ZOOM_300);
-      menu->setItemChecked(IDC_ZOOM_ONE2ONE, getCMDZoom()==IDC_ZOOM_ONE2ONE);
-      menu->setItemChecked(IDC_ZOOM_STRETCH, getCMDZoom()==IDC_ZOOM_STRETCH);
-      menu->setItemChecked(IDC_ZOOM_WIDTH, getCMDZoom()==IDC_ZOOM_WIDTH);
-      menu->setItemChecked(IDC_ZOOM_PAGE, getCMDZoom()==IDC_ZOOM_PAGE);
-
+      menu->setItemChecked(IDC_ZOOM_25, 
+                           getCMDZoom()==IDC_ZOOM_25);
+      menu->setItemChecked(IDC_ZOOM_50, 
+                           getCMDZoom()==IDC_ZOOM_50);
+      menu->setItemChecked(IDC_ZOOM_75, 
+                           getCMDZoom()==IDC_ZOOM_75);
+      menu->setItemChecked(IDC_ZOOM_100, 
+                           getCMDZoom()==IDC_ZOOM_100);
+      menu->setItemChecked(IDC_ZOOM_150, 
+                           getCMDZoom()==IDC_ZOOM_150);
+      menu->setItemChecked(IDC_ZOOM_300, 
+                           getCMDZoom()==IDC_ZOOM_300);
+      menu->setItemChecked(IDC_ZOOM_ONE2ONE, 
+                           getCMDZoom()==IDC_ZOOM_ONE2ONE);
+      menu->setItemChecked(IDC_ZOOM_STRETCH, 
+                           getCMDZoom()==IDC_ZOOM_STRETCH);
+      menu->setItemChecked(IDC_ZOOM_WIDTH, 
+                           getCMDZoom()==IDC_ZOOM_WIDTH);
+      menu->setItemChecked(IDC_ZOOM_PAGE, 
+                           getCMDZoom()==IDC_ZOOM_PAGE);
+      
       menu->setItemChecked(IDC_ZOOM_CUSTOM,
 			   !menu->isItemChecked(IDC_ZOOM_25) &&
 			   !menu->isItemChecked(IDC_ZOOM_50) &&
@@ -209,36 +242,59 @@ QDViewer::setupMenu(QMenuData * menu)
 			   !menu->isItemChecked(IDC_ZOOM_PAGE));
 
 	 // ZoomIn and ZoomOut cases
-      menu->setItemEnabled(IDC_ZOOM_ZOOMIN, getZoom()<IDC_ZOOM_MAX-IDC_ZOOM_MIN);
-      menu->setItemEnabled(IDC_ZOOM_ZOOMOUT, getZoom()>5);
+      menu->setItemEnabled(IDC_ZOOM_ZOOMIN, 
+                           getZoom()<IDC_ZOOM_MAX-IDC_ZOOM_MIN);
+      menu->setItemEnabled(IDC_ZOOM_ZOOMOUT, 
+                           getZoom()>5);
 
+      if (menu->findItem(IDC_ROTATE))
+        {
+          menu->setItemChecked(IDC_ROTATE_0,
+                               getRotate()==IDC_ROTATE_0);
+          menu->setItemChecked(IDC_ROTATE_90,
+                               getRotate()==IDC_ROTATE_90);
+          menu->setItemChecked(IDC_ROTATE_180,
+                               getRotate()==IDC_ROTATE_180);
+          menu->setItemChecked(IDC_ROTATE_270,
+                               getRotate()==IDC_ROTATE_270);
+        }
+      
       if (menu->findItem(IDC_NAVIGATE))
-      {
-	    // Doing 'Navigate'
-	 menu->setItemEnabled(IDC_NAVIGATE, doc_pages>1);
-	 menu->setItemEnabled(IDC_NAV_PREV_PAGE, doc_page>0);
-	 menu->setItemEnabled(IDC_NAV_NEXT_PAGE, doc_page<=doc_pages-2);
-	 menu->setItemEnabled(IDC_NAV_PREV_PAGE10, doc_page>=10);
-	 menu->setItemEnabled(IDC_NAV_NEXT_PAGE10, doc_page<=doc_pages-11);
-	 menu->setItemEnabled(IDC_NAV_FIRST_PAGE, doc_page>0);
-	 menu->setItemEnabled(IDC_NAV_LAST_PAGE, doc_page!=doc_pages-1);
-	 menu->setItemEnabled(IDC_NAV_GOTO_PAGE, doc_pages>1);
-      }
+        {
+          menu->setItemEnabled(IDC_NAVIGATE, doc_pages>1);
+          menu->setItemEnabled(IDC_NAV_PREV_PAGE, doc_page>0);
+          menu->setItemEnabled(IDC_NAV_NEXT_PAGE, doc_page<=doc_pages-2);
+          menu->setItemEnabled(IDC_NAV_FIRST_PAGE, doc_page>0);
+          menu->setItemEnabled(IDC_NAV_LAST_PAGE, doc_page!=doc_pages-1);
+          menu->setItemEnabled(IDC_NAV_GOTO_PAGE, doc_pages>1);
+        }
 
-      menu->setItemEnabled(IDC_SAVE_PAGE_AS, djvu_file->is_all_data_present());
-      menu->setItemEnabled(IDC_SAVE_DOC_AS, djvu_doc->is_init_complete() &&
-			   djvu_doc->get_doc_type() != DjVuDocument::SINGLE_PAGE);
-      menu->setItemEnabled(IDC_EXPORT_PAGE, djvu_file->is_all_data_present());
-
-      menu->setItemEnabled(IDC_THUMB_SHOW, doc_pages>1);
-      menu->setItemChecked(IDC_THUMB_SHOW, thumbnailsShown());
-
-      menu->setItemEnabled(IDC_PRINT_PAGE, print_win==0 &&
-			   getOverrideFlags().print);
-      menu->setItemEnabled(IDC_PRINT_DOC, print_win==0 &&
-			   getOverrideFlags().print);
-      menu->setItemEnabled(IDC_PRINT_WIN, print_win==0 &&
-			   getOverrideFlags().print);
+      if (menu->findItem(IDC_HISTORY))
+        {
+          menu->setItemEnabled(IDC_HISTORY_BACK, hundo.size());
+          menu->setItemEnabled(IDC_HISTORY_FORW, hredo.size());
+        }
+      
+      menu->setItemEnabled(IDC_SAVE_PAGE_AS, 
+                           djvu_file->is_all_data_present());
+      menu->setItemEnabled(IDC_SAVE_DOC_AS, 
+                           djvu_doc->is_init_complete() &&
+			   djvu_doc->get_doc_type()
+                           != DjVuDocument::SINGLE_PAGE);
+      menu->setItemEnabled(IDC_EXPORT_PAGE, 
+                           djvu_file->is_all_data_present());
+      menu->setItemEnabled(IDC_THUMB_SHOW, 
+                           doc_pages>1);
+      menu->setItemChecked(IDC_THUMB_SHOW, 
+                           thumbnailsShown());
+      menu->setItemEnabled(IDC_BOOKMARKS_SHOW, 
+                           false);
+      menu->setItemEnabled(IDC_PRINT_PAGE, 
+                           print_win==0 && getOverrideFlags().print);
+      menu->setItemEnabled(IDC_PRINT_DOC, 
+                           print_win==0 && getOverrideFlags().print);
+      menu->setItemEnabled(IDC_PRINT_WIN, 
+                           print_win==0 && getOverrideFlags().print);
    }
 }
 
@@ -251,23 +307,24 @@ QDViewer::runPopupMenu(QMouseEvent * ev)
    DEBUG_MAKE_INDENT(3);
 
    try
-   {
-      setupMenu(popup_menu);
-      bool fullscreen = false;
-      emit sigQueryFullScreen(fullscreen);
-      popup_menu->setItemChecked(IDC_FULL_SCREEN, fullscreen);
-      
-	 // Strange as it may seem, but I can't process popup menu commands
-	 // directly from a slot connected to the proper activated() signal.
-	 // The reason is the fact, that QT dislikes when a modal dialog
-	 // is created while the popup menu is still running.
-      popup_menu_id=-1;
-      popup_menu->exec(QCursor::pos());
-      if (popup_menu_id>=0) processCommand(popup_menu_id);
-   } catch(const GException & exc)
-   {
-      showError(this, exc);
-   }
+     {
+       setupMenu(popup_menu);
+       bool fullscreen = false;
+       emit sigQueryFullScreen(fullscreen);
+       popup_menu->setItemChecked(IDC_FULL_SCREEN, fullscreen);
+       // Strange as it may seem, but I can't process popup menu commands
+       // directly from a slot connected to the proper activated() signal.
+       // The reason is the fact, that QT dislikes when a modal dialog
+       // is created while the popup menu is still running.
+       popup_menu_id=-1;
+       popup_menu->exec(QCursor::pos());
+       if (popup_menu_id >= 0) 
+         processCommand(popup_menu_id);
+     } 
+   catch(const GException & exc)
+     {
+       showError(this, exc);
+     }
 }
 
 void
@@ -278,148 +335,177 @@ QDViewer::processCommand(int cmd)
 
    try
    {
-      int doc_page=0, doc_pages=1;
+     int doc_page=0, doc_pages=1;
       if (dimg)
-      {
-	 doc_page=djvu_doc->url_to_page(dimg->get_djvu_file()->get_url());
-	 doc_pages=djvu_doc->get_pages_num();
-      }
+        {
+          doc_page=djvu_doc->url_to_page(dimg->get_djvu_file()->get_url());
+          doc_pages=djvu_doc->get_pages_num();
+        }
       
       switch(cmd)
-      {
-	 case IDC_DISPLAY_COLOR:
-	 case IDC_DISPLAY_BLACKWHITE:
-	 case IDC_DISPLAY_FOREGROUND:
-	 case IDC_DISPLAY_BACKGROUND:
-	    setMode(cmd, true, SRC_MANUAL);
-	    break;
-
-	 case IDC_ZOOM_25:
-	 case IDC_ZOOM_50:
-	 case IDC_ZOOM_75:
-	 case IDC_ZOOM_100:
-	 case IDC_ZOOM_150:
-	 case IDC_ZOOM_300:
-	 case IDC_ZOOM_ONE2ONE:
-	 case IDC_ZOOM_STRETCH:
-	 case IDC_ZOOM_WIDTH:
-	 case IDC_ZOOM_PAGE:
-	 case IDC_ZOOM_ZOOMIN:
-	 case IDC_ZOOM_ZOOMOUT:
-	    setZoom(cmd, true, SRC_MANUAL);
-	    break;
-
-	 case IDC_ZOOM_CUSTOM:
-	 {
+        {
+        case IDC_DISPLAY_COLOR:
+        case IDC_DISPLAY_BLACKWHITE:
+        case IDC_DISPLAY_FOREGROUND:
+        case IDC_DISPLAY_BACKGROUND:
+          setMode(cmd, true, SRC_MANUAL);
+          break;
+          
+        case IDC_ZOOM_25:
+        case IDC_ZOOM_50:
+        case IDC_ZOOM_75:
+        case IDC_ZOOM_100:
+        case IDC_ZOOM_150:
+        case IDC_ZOOM_300:
+        case IDC_ZOOM_ONE2ONE:
+        case IDC_ZOOM_STRETCH:
+        case IDC_ZOOM_WIDTH:
+        case IDC_ZOOM_PAGE:
+        case IDC_ZOOM_ZOOMIN:
+        case IDC_ZOOM_ZOOMOUT:
+          setZoom(cmd, true, SRC_MANUAL);
+          break;
+          
+        case IDC_ROTATE_0:
+        case IDC_ROTATE_90:
+        case IDC_ROTATE_180:
+        case IDC_ROTATE_270:
+          setRotate(cmd, true, SRC_MANUAL);
+          break;
+          
+        case IDC_ZOOM_CUSTOM:
+          {
 	    QDSetZoom zoom_d(getZoom(), this, "qd_set_zoom");
 	    if (zoom_d.exec()==QDialog::Accepted)
-	       setZoom(zoom_d.getZoom()+IDC_ZOOM_MIN, 1, SRC_MANUAL);
+              setZoom(zoom_d.getZoom()+IDC_ZOOM_MIN, 1, SRC_MANUAL);
 	    break;
 	 }
-
-	 case IDC_NAV_PREV_PAGE:
-	    if (doc_page>0) gotoPage(doc_page-1);
-	    break;
-
-	 case IDC_NAV_NEXT_PAGE:
-	    if (doc_page<doc_pages-1) gotoPage(doc_page+1);
-	    break;
-
-	 case IDC_NAV_PREV_PAGE10:
-	    if (doc_page>=10) gotoPage(doc_page-10);
-	    break;
-
-	 case IDC_NAV_NEXT_PAGE10:
-	    if (doc_page<=doc_pages-11) gotoPage(doc_page+10);
-	    break;
-
-	 case IDC_NAV_FIRST_PAGE:
-	    if (doc_page>0) gotoPage(0);
-	    break;
-
-	 case IDC_NAV_LAST_PAGE:
-	    if (doc_page!=doc_pages-1) gotoPage(doc_pages-1);
-	    break;
-
-	 case IDC_NAV_GOTO_PAGE:
-	 {
-	    QDNavGotoPage d(djvu_doc, dimg, this, "goto_page_dialog");
-	    if (d.exec()==QDialog::Accepted)
-	       gotoPage(d.getPageNum());
-	    break;
-	 }
-
-	 case IDC_PREFERENCES:
-	    slotShowPrefs();
-	    break;
-
-	 case IDC_ABOUT_DEJAVU:
-            slotAbout();
+          
+        case IDC_NAV_PREV_PAGE:
+          if (doc_page>0) 
+            gotoPage(doc_page-1, false);
+          break;
+        case IDC_NAV_NEXT_PAGE:
+          if (doc_page<doc_pages-1) 
+            gotoPage(doc_page+1, false);
+          break;
+        case IDC_NAV_PREV_PAGE10:
+          if (doc_page>=10) 
+            gotoPage(doc_page-10);
+          break;
+        case IDC_NAV_NEXT_PAGE10:
+          if (doc_page<=doc_pages-11) 
+            gotoPage(doc_page+10);
+          break;
+          
+        case IDC_NAV_FIRST_PAGE:
+          if (doc_page>0) 
+            gotoPage(0);
+          break;
+          
+        case IDC_NAV_LAST_PAGE:
+          if (doc_page!=doc_pages-1) 
+            gotoPage(doc_pages-1);
+          break;
+          
+        case IDC_NAV_GOTO_PAGE:
+          {
+            QDNavGotoPage d(djvu_doc, dimg, this, "goto_dialog");
+            if (d.exec()==QDialog::Accepted)
+              gotoPage(d.getPageNum());
             break;
-           
-         case IDC_HELP_DEJAVU:
-            slotHelp();
-            break;
+          }
 
-	 case IDC_SEARCH:
-	    search();
+        case IDC_HISTORY_BACK:
+          {
+            int pageno = history_undo();
+            if (pageno>=0 && pageno<doc_pages)
+              gotoPage(pageno, false);
+          }
+          break;
+          
+        case IDC_HISTORY_FORW:
+          {
+            int pageno = history_redo();
+            if (pageno>=0 && pageno<doc_pages)
+              gotoPage(pageno, false);
+          }
+          break;
+          
+        case IDC_PREFERENCES:
+          slotShowPrefs();
+          break;
+          
+        case IDC_ABOUT_DEJAVU:
+          slotAbout();
+          break;
+          
+        case IDC_HELP_DEJAVU:
+          slotHelp();
+          break;
+          
+        case IDC_SEARCH:
+          search();
+          break;
+          
+        case IDC_ABOUT_PAGE:
+          if (dimg && dimg->get_width() && dimg->get_height())
+            {
+              GUTF8String desc = dimg->get_long_description();
+              GUTF8String ldesc = DjVuMessageLite::LookUpUTF8(desc);
+              showMessage(this, tr("DjVu: Page Information"), 
+                          QStringFromGString(ldesc), 1, 1);
+            }
+          break;
+          
+        case IDC_ABOUT_DOC:
+          if (djvu_doc)
+            {
+              QDDocInfo info(djvu_doc, this, "doc_info", TRUE);
+              connect(&info, SIGNAL(sigGotoPage(int)),
+                      this, SLOT(slotGotoPage(int)));
+              info.exec();
+            }
+          break;
+          
+        case IDC_THUMB_SHOW:
+          {
+	    if (thumbnailsShown()) 
+              hideThumbnails();
+	    else 
+              showThumbnails();
 	    break;
-	    
-	 case IDC_ABOUT_PAGE:
-	   if (dimg && dimg->get_width() && dimg->get_height())
-	      {
-		GUTF8String desc = dimg->get_long_description();
-		GUTF8String ldesc = DjVuMessageLite::LookUpUTF8(desc);
-		showMessage(this, tr("DjVu: Page Information"), 
-			    QStringFromGString(ldesc), 1, 1);
-	      }
-	   break;
-	   
-	 case IDC_ABOUT_DOC:
-	    if (djvu_doc)
-	      {
-		QDDocInfo info(djvu_doc, this, "doc_info", TRUE);
-		connect(&info, SIGNAL(sigGotoPage(int)),
-			this, SLOT(slotGotoPage(int)));
-		info.exec();
-	      }
-	    break;
+          }
+          
+        case IDC_PRINT_DOC:
+        case IDC_PRINT_PAGE:
+        case IDC_PRINT_WIN:
+          print(cmd);
+          break;
+          
+        case IDC_SAVE_PAGE_AS:
+          savePageAs();
+          break;
+          
+        case IDC_SAVE_DOC_AS:
+          saveDocumentAs();
+          break;
 
-	 case IDC_THUMB_SHOW:
-	 {
-	    if (thumbnailsShown()) hideThumbnails();
-	    else showThumbnails();
-	    break;
-	 }
-
-	 case IDC_PRINT_DOC:
-	 case IDC_PRINT_PAGE:
-	 case IDC_PRINT_WIN:
-	    print(cmd);
-	    break;
-      
-	 case IDC_SAVE_PAGE_AS:
-	    savePageAs();
-	    break;
-
-	 case IDC_SAVE_DOC_AS:
-	    saveDocumentAs();
-	    break;
-
-	 case IDC_EXPORT_PAGE:
-	    exportToPNM();
-	    break;
-
-         case IDC_FULL_SCREEN:
-            emit sigToggleFullScreen();
-            break;
-
-	 case IDC_GOTO_DJVU:
-	    getURL("http://www.lizardtech.com", "_blank");
-	    break;
-      }
-   } catch(const GException & exc)
+        case IDC_EXPORT_PAGE:
+          exportToPNM();
+          break;
+          
+        case IDC_FULL_SCREEN:
+          emit sigToggleFullScreen();
+          break;
+          
+        case IDC_GOTO_DJVU:
+          getURL("http://www.lizardtech.com", "_blank");
+          break;
+        }
+   } 
+   catch(const GException & exc)
    {
-      showError(this, exc);
+     showError(this, exc);
    }
 }

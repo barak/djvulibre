@@ -733,97 +733,99 @@ QDViewer::eventFilter(QObject *obj, QEvent *e)
 		  // Go on with key processing
 	       switch(ev->key())
 	       {
-		  case Key_F:
-		  case Key_F3:
-		     search();
-		     break;
-
-		  case Key_G:
-		     processCommand(IDC_NAV_GOTO_PAGE);
-		     break;
-		  
-		  case Key_Home:
-		     if (ev->state() & ControlButton)
-		     {
-			gotoPage(0); return TRUE;
-		     }
-		     break;
-
-		  case Key_End:
-		     if (ev->state() & ControlButton)
-		     {
-			gotoPage(doc_pages-1);
-			return TRUE;
-		     }
-		     break;
-
-                  case Key_PageUp:
-		     if (doc_page>0 && dimg && dimg->get_info())
-		     {
-                        gotoPage(doc_page-1);
-                        return TRUE;
-		     }
-                     break;
-
-		  case Key_Backspace:
-		     if (rectDocument.ymin>=rectVisible.ymin && doc_page>0 &&
-			 dimg && dimg->get_info())
-		     {
-			gotoPage(doc_page-1);
-                        if (dimg && dimg->get_height() && dimg->get_width()) 
-                          {
-                            // This will only work if the image is cached.
-                            scroll(rectDocument.xmax-rectVisible.xmax,
-                                   rectDocument.ymax-rectVisible.ymax);
-                          }
-			return TRUE;
-		     }
-		     break;
-
-		  case Key_PageDown:
-		     if (doc_page<doc_pages-1 && dimg && dimg->get_info())
-		     {
-                        gotoPage(doc_page+1);
-                        return TRUE;
-		     }
-
-		  case Key_Space:
-		  case Key_Return:
-		  case Key_Enter:
-		     if (rectDocument.ymax<=rectVisible.ymax &&
-			 doc_page<doc_pages-1 && dimg && dimg->get_info())
-		     {
-			gotoPage(doc_page+1);
-			return TRUE;
-		     }
-		     break;
+               case Key_F:
+               case Key_F3:
+                 search();
+                 break;
+                 
+               case Key_G:
+                 processCommand(IDC_NAV_GOTO_PAGE);
+                 break;
+                 
+               case Key_Home:
+                 if (ev->state() & ControlButton)
+                   {
+                     gotoPage(0); 
+                     return TRUE;
+                   }
+                 break;
+                 
+               case Key_End:
+                 if (ev->state() & ControlButton)
+                   {
+                     gotoPage(doc_pages-1);
+                     return TRUE;
+                   }
+                 break;
+                 
+               case Key_PageUp:
+                 if (doc_page>0 && dimg && dimg->get_info())
+                   {
+                     gotoPage(doc_page-1, false);
+                     return TRUE;
+                   }
+                 break;
+                 
+               case Key_Backspace:
+                 if (rectDocument.ymin>=rectVisible.ymin && doc_page>0 &&
+                     dimg && dimg->get_info())
+                   {
+                     gotoPage(doc_page-1, false);
+                     if (dimg && dimg->get_height() && dimg->get_width()) 
+                       {
+                         // This will only work if the image is cached.
+                         scroll(rectDocument.xmax-rectVisible.xmax,
+                                rectDocument.ymax-rectVisible.ymax);
+                       }
+                     return TRUE;
+                   }
+                 break;
+                 
+               case Key_PageDown:
+                 if (doc_page<doc_pages-1 && dimg && dimg->get_info())
+                   {
+                     gotoPage(doc_page+1, false);
+                     return TRUE;
+                   }
+                 
+               case Key_Space:
+               case Key_Return:
+               case Key_Enter:
+                 if (rectDocument.ymax<=rectVisible.ymax &&
+                     doc_page<doc_pages-1 && dimg && dimg->get_info())
+                   {
+                     gotoPage(doc_page+1, false);
+                     return TRUE;
+                   }
+                 break;
 #ifdef QT1
-		  case Key_Hyper_L:
-		  case Key_Hyper_R:
-		  case Key_Pause:
+               case Key_Hyper_L:
+               case Key_Hyper_R:
+               case Key_Pause:
 #else
-                  case Key_Menu:
-		  case Key_Pause:
+               case Key_Menu:
+               case Key_Pause:
 #endif
-                     runPopupMenu(0);
-		     break;
-
-		  case '?':
-		     if (in_netscape) 
-                       slotHelp();
-		     break;
-
-                  default:
-                     break;
+                 runPopupMenu(0);
+                 break;
+                 
+               case '?':
+                 if (in_netscape) 
+                   slotHelp();
+                 break;
+                 
+               default:
+                 break;
 	       } // switch(ev->key())
 	    } // if (override_flags.keyboard)
 	 } // case QEvent::KeyPress
-         default:
-           break;
+      default:
+        break;
       } // switch(e->type())
-   } catch(const GException & exc)
+   } 
+   catch(const GException & exc)
    {
-      showError(this, exc);
+     showError(this, exc);
    }
    return QDBase::eventFilter(obj, e);
 }
@@ -881,7 +883,7 @@ QDViewer::setDjVuDocument(GP<DjVuDocument> & doc, const GUTF8String &qkey_in)
    djvu_doc=doc;
    pcaster->add_route(djvu_doc, doc_port.getPort());
 
-      // Check if the key_in contains number, and if so - decrement it
+   // Check if the key_in contains number, and if so - decrement it
    GP<DjVuImage> new_dimg;
    GUTF8String key=qkey_in;
    if ( key.length() && key.is_int() )
@@ -904,8 +906,10 @@ QDViewer::setDjVuDocument(GP<DjVuDocument> & doc, const GUTF8String &qkey_in)
      }
    setDjVuImage(new_dimg, 1);
 
-   if (doc->get_pages_num()>1 &&
-       plugin_data.thumbnails) showThumbnails();
+   hundo.empty();
+   hredo.empty();
+   if (doc->get_pages_num()>1 && plugin_data.thumbnails) 
+     showThumbnails();
    if (thumbnails)
      thumbnails->setDjVuDocument(doc);
 
@@ -941,7 +945,7 @@ QDViewer::print(int what)
    {
       if (!getOverrideFlags().print)
 	 showError(this, tr("Printing prohibited"),
-		   tr("We are sorry, but printing of this image\nhas been disallowed."));
+		   tr("Printing of this image\nhas been disallowed."));
       else
       {
 	 if (print_win)
@@ -1085,7 +1089,8 @@ QDViewer::slotNotifyFileFlagsChanged(const GP<DjVuFile> & source, long set_mask,
 }
 
 void
-QDViewer::slotNotifyDocFlagsChanged(const GP<DjVuDocument> & source, long set_mask, long)
+QDViewer::slotNotifyDocFlagsChanged(const GP<DjVuDocument> & source, 
+                                    long set_mask, long)
       // Connected to the whole document
 {
    if (set_mask & DjVuDocument::DOC_INIT_FAILED)
@@ -1109,7 +1114,8 @@ QDViewer::slotNotifyDocFlagsChanged(const GP<DjVuDocument> & source, long set_ma
 	    // because otherwise QDBase will treat it relative to the
 	    // PAGE location (inside the same document), while it should
 	    // be relative to the DOCUMENT
-	 plugin_data.url=GURL::UTF8(plugin_data.rel_url,djvu_doc->get_init_url().base());
+	 plugin_data.url=GURL::UTF8(plugin_data.rel_url,
+                                    djvu_doc->get_init_url().base());
 	 setOverrideFlags(plugin_data);
       }
 
@@ -1118,10 +1124,51 @@ QDViewer::slotNotifyDocFlagsChanged(const GP<DjVuDocument> & source, long set_ma
 }
 
 //***************************** GoTo stuff ***********************************
+
 void
-QDViewer::gotoPage(int new_page)
+QDViewer::history_add(int pageno)
 {
-   DEBUG_MSG("QDViewer::gotoPage(): Request to go to page #" << new_page << "\n");
+  if (hundo.size()==0 || hundo[hundo]!=pageno)
+    hundo.prepend(pageno);
+  hredo.empty();
+}
+
+int
+QDViewer::history_undo(void)
+{
+  int res = -1;
+  int doc_page = djvu_doc->url_to_page(dimg->get_djvu_file()->get_url());
+  if (hundo.size())
+    {
+      GPosition pos = hundo;
+      res = hundo[pos];
+      hundo.del(pos);
+      hredo.prepend(doc_page);
+    }
+  return res;
+}
+
+int
+QDViewer::history_redo(void)
+{
+  int res = -1;
+  int doc_page = djvu_doc->url_to_page(dimg->get_djvu_file()->get_url());
+  if (hredo.size())
+    {
+      GPosition pos = hredo;
+      res = hredo[pos];
+      hredo.del(pos);
+      hundo.prepend(doc_page);
+    }
+  return res;
+}
+
+
+void
+QDViewer::gotoPage(int new_page, bool history)
+{
+   DEBUG_MSG("QDViewer::gotoPage(): "
+            "Request to go to page #" << new_page << "\n");
    DEBUG_MAKE_INDENT(3);
 
    if (dimg)
@@ -1150,7 +1197,7 @@ QDViewer::gotoPage(int new_page)
 	    }
 	 }
 	 GURL url=djvu_doc->page_to_url(new_page);
-	 getURL(url.get_string(), "_self");
+	 getURL(url.get_string(), "_self", history);
       }
    }
 }
@@ -1159,31 +1206,44 @@ void
 QDViewer::slotGotoPage(int new_page)
 {
    try
-   {
-      gotoPage(new_page);
-   } catch(const GException & exc)
-   {
-      ::showError(this, exc);
-   }
+     {
+       gotoPage(new_page);
+     } 
+   catch(const GException & exc)
+     {
+       ::showError(this, exc);
+     }
 }
 
 void
-QDViewer::getURL(const GUTF8String &url_in, const GUTF8String &target)
+QDViewer::getURL(const GUTF8String &url_in, 
+                 const GUTF8String &target)
 {
-   DEBUG_MSG("QDViewer::getURL(): url_in='" << url_in << "', target='" << target << "'\n");
+  getURL(url_in, target, true);
+}
+
+void
+QDViewer::getURL(const GUTF8String &url_in, 
+                 const GUTF8String &target, 
+                 bool history)
+{
+   DEBUG_MSG("QDViewer::getURL(): url_in='" << url_in << 
+             "', target='" << target << "'\n");
    DEBUG_MAKE_INDENT(3);
-
+   
    if (!url_in.length()) return;
-
+   
    if (print_win)
-   {
-      QMessageBox::information(this, tr("Finish printing first"),
-			       tr("Please close the Print dialog first."),
-			       "&OK", 0, 0, 0, 0);
-      return;
-   }
+     {
+       QMessageBox::information(this, tr("Finish printing first"),
+                                tr("Please close the Print dialog first."),
+                                "&OK", 0, 0, 0, 0);
+       return;
+     }
    
    GURL url;
+   int doc_page = djvu_doc->url_to_page(dimg->get_djvu_file()->get_url());
+   int doc_pages = djvu_doc->get_pages_num();
    
    // See if it starts with '#'
    if (url_in[0]=='#')
@@ -1192,8 +1252,6 @@ QDViewer::getURL(const GUTF8String &url_in, const GUTF8String &target)
          {
            char base = 0;
            const char *s = (const char*)url_in + 1;
-           int doc_page = djvu_doc->url_to_page(dimg->get_djvu_file()->get_url());
-           int doc_pages = djvu_doc->get_pages_num();
            const char *q = s;
            if (*q == '+' || *q == '-')
              base = *q++;
@@ -1231,33 +1289,41 @@ QDViewer::getURL(const GUTF8String &url_in, const GUTF8String &target)
      }
    
    if (!url.is_empty())
-   {
-      if ( !target.length() || (target=="_self") )
-      {
-	 GP<DjVuImage> new_dimg;
-
-	    // Check: maybe it's predecoded
-	 if (predecode_dimg1 && predecode_dimg1->get_djvu_file()->get_url()==url)
-	    new_dimg=predecode_dimg1;
-	 else if (predecode_dimg2 && predecode_dimg2->get_djvu_file()->get_url()==url)
-	    new_dimg=predecode_dimg2;
-	 else
-	 {
-	       // Check: maybe it's in the same document
-	    int page_num=djvu_doc->url_to_page(url);
-	    if (page_num>=0) new_dimg=djvu_doc->get_page(page_num, false, page_port.getPort());
-	 }
-	 if (new_dimg)
-	 {
-	    setDjVuImage(new_dimg, 1);
-	    setCaption();
-	    return;
-	 }
-      }
-      QString mesg=tr("Requesting URL ")+QStringFromGString(url.get_string());
-      showStatus(mesg);
-      emit sigGetURL(url, target);
-   }
+     {
+       if ( !target.length() || (target=="_self") )
+         {
+           GP<DjVuImage> new_dimg;
+        
+           // Check: maybe it's predecoded
+           if (predecode_dimg1 && 
+               predecode_dimg1->get_djvu_file()->get_url()==url)
+             new_dimg=predecode_dimg1;
+           else if (predecode_dimg2 && 
+                    predecode_dimg2->get_djvu_file()->get_url()==url)
+             new_dimg=predecode_dimg2;
+           else
+             {
+               // Check: maybe it's in the same document
+               int page_num = djvu_doc->url_to_page(url);
+               if (page_num == doc_page)
+                 new_dimg = dimg;
+               else if (page_num >= 0) 
+                 new_dimg = djvu_doc->get_page(page_num, false, page_port.getPort());
+             }
+           if (new_dimg && new_dimg != dimg)
+             {
+               if (history)
+                 history_add(doc_page);
+               setDjVuImage(new_dimg, 1);
+               setCaption();
+             }
+           if (new_dimg)
+             return;
+         }
+       QString mesg=tr("Requesting URL ")+QStringFromGString(url.get_string());
+       showStatus(mesg);
+       emit sigGetURL(url, target);
+     }
 }
 
 void
@@ -1654,12 +1720,13 @@ void
 QDViewer::slotDoCmd(int cmd)
 {
    try
-   {
-      processCommand(cmd);
-   } catch(const GException & exc)
-   {
-      ::showError(this, exc);
-   }
+     {
+       processCommand(cmd);
+     } 
+   catch(const GException & exc)
+     {
+       ::showError(this, exc);
+     }
 }
 
 void
@@ -1683,12 +1750,16 @@ QDViewer::updateToolBar(void)
    QDBase::updateToolBar();
    
    if (toolbar && nav_tbar)
-      if (dimg)
-      {
-	 int doc_page=djvu_doc->url_to_page(dimg->get_djvu_file()->get_url());
-	 int doc_pages=djvu_doc->get_pages_num();
-	 nav_tbar->update(doc_page, doc_pages);
-      } else nav_tbar->update(-1, 0);
+     if (dimg)
+       {
+         int doc_page=djvu_doc->url_to_page(dimg->get_djvu_file()->get_url());
+         int doc_pages=djvu_doc->get_pages_num();
+         nav_tbar->update(doc_page, doc_pages, hundo.size(), hredo.size());
+       } 
+     else
+       {
+         nav_tbar->update(-1, 0, false, false);
+       }
 }
 
 void

@@ -68,28 +68,29 @@
 
 class QDTBarNavPiece : public QDTBarPiece
 {
-   Q_OBJECT
+  Q_OBJECT
 private:
-   bool                   qdtoolbar_child;   
-   bool	                  active;
-   int                    options;
-   class QComboBox	* page_menu;
-   class QDToolButton	* npage_butt, * ppage_butt;
-   class QDToolButton	* nnpage_butt, * pppage_butt;
-   class QDToolButton	* fpage_butt, * lpage_butt;
+  bool                   qdtoolbar_child;   
+  bool	                 active;
+  int                    options;
+  class QComboBox	* page_menu;
+  class QDToolButton	* npage_butt, * ppage_butt;
+  class QDToolButton	* fpage_butt, * lpage_butt;
+  class QDToolButton	* back_butt, * forw_butt;
 private slots:
-   void		slotPage(const QString &);
-   void		slotPage(void);
+  void		slotPage(const QString &);
+  void		slotPage(void);
 protected:
-signals:
-   void		sigGotoPage(int page_num);
-   void		sigDoCmd(int cmd);
+  signals:
+  void		sigGotoPage(int page_num);
+  void		sigDoCmd(int cmd);
 public:
-   virtual void	setEnabled(bool en);
-   virtual void	setOptions(int opts);
-   void		update(int page_num, int pages_num);
+  virtual void	setEnabled(bool en);
+  virtual void	setOptions(int opts);
+  void		update(int page_num, int pages_num,
+                       bool back=false, bool forw=false);
    
-   QDTBarNavPiece(QWidget * toolbar);
+  QDTBarNavPiece(QWidget * toolbar);
 };
 
 #endif
