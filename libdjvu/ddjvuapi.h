@@ -96,7 +96,7 @@ typedef struct ddjvu_page_s     ddjvu_page_t;
 typedef struct ddjvu_format_s   ddjvu_format_t;
 
 
-/* General conventions:
+/* GENERAL CONVENTIONS:
    Unless specified otherwise:
    - all strings use locale encoding,
    - all filenames are unencoded byte strings,
@@ -105,7 +105,16 @@ typedef struct ddjvu_format_s   ddjvu_format_t;
      a null pointer (this usually indicates an error 
      condition).
 
-   Prerequisites:
+   HEADER:
+   Always use the following idiom to include this file.
+
+     #include <libdjvu/ddjvuapi.h>
+
+   This file does not declare functions ddjvu_get_DjVuImage() 
+   and djvu_get_DjVuDocument() unless you include files 
+   "DjVuImage.h" and "DjVuDocument.h" before this file.
+
+   PREREQUISITES:
    - Please read the djvu man page: <"tools/djvu.1">.
    - Please browse the file format specifications 
      <"doc/djvu3changes.txt"> and <"doc/djvu2spec.djvu">.
