@@ -57,11 +57,13 @@
 #include <stdio.h>
 #include <string.h>
 #if HAS_WCHAR
-#include <locale.h>
-#include <wchar.h>
-#endif
-#if HAS_WCTYPE
-#include <wctype.h>
+# include <locale.h>
+# if !defined(AUTOCONF) || HAVE_WCHAR_H
+#  include <wchar.h>
+# endif
+# if HAS_WCTYPE
+#  include <wctype.h>
+# endif
 #endif
 #include <ctype.h>
 
@@ -670,7 +672,7 @@ GBaseString::NativeToUTF8(void) const
       {
         if(GStringRep::cmp(retval->toNative(),source))
         {
-          retval=GStringRep::UTF8::create((size_t)0);
+          retval=GStringRep::UTF8::create((unsigned int)0);
         }
       }
 #if DO_CHANGELOCALE
@@ -1923,7 +1925,7 @@ GStringRep::UTF8::toNative(const EscapeMode escape) const
     retval = NATIVE_CREATE( (const char *)buf );
   } else
   {
-    retval = NATIVE_CREATE( (size_t)0 );
+    retval = NATIVE_CREATE( (unsigned int)0 );
   }
   return retval;
 }
