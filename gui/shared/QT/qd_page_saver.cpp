@@ -102,13 +102,15 @@ public:
 void
 QDPageNameDialog::slotBrowse(void)
 {
+   static const char* filters[]={ "*.djvu", "*.djv", 0, 0 };
+   QString filter2 = tr("All files (*)");
+   filters[2] = filter2;
+
    GUTF8String page_full_name=GStringFromQString(text->text());
    QString page_dir=QFileInfo(QStringFromGString(page_full_name)).dirPath();
    if (!QFileInfo(page_dir).isDir()) page_dir=QeFileDialog::lastSaveDir;
    if (!QFileInfo(page_dir).isDir()) page_dir=QDir::currentDirPath();
    page_full_name=GURL::expand_name(GOS::basename(page_full_name), page_dir);
-   
-   static const char * filters[]={ "*.djvu", "*.djv", tr("All files (*)"), 0 };
    QeFileDialog fd(page_dir, filters[0], this, "djvu_fd", TRUE);
    fd.setFilters((const char **) filters);
    fd.setCaption(tr("Select DjVu page file name..."));
@@ -425,7 +427,9 @@ QDPageSaver::saveSeparate(void)
 void
 QDPageSaver::saveBundled(void)
 {
-   static const char * filters[]={ "*.djvu", "*.djv", tr("All files (*)"), 0 };
+   const char * filters[]={ "*.djvu", "*.djv", 0, 0 };
+   QString filter2 = tr("All files (*)");
+   filters[2] = filter2;
  
    GURL file_url=djvu_file->get_url();
 
@@ -457,7 +461,9 @@ QDPageSaver::saveBundled(void)
 void
 QDPageSaver::saveMerged(void)
 {
-   static const char * filters[]={ "*.djvu", "*.djv", tr("All files (*)"), 0 };
+   static const char* filters[]={ "*.djvu", "*.djv", 0, 0 };
+   QString filter2 = tr("All files (*)");
+   filters[2] = filter2;
  
    GURL file_url=djvu_file->get_url();
 

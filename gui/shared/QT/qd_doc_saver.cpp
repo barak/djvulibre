@@ -100,14 +100,16 @@ public:
 void
 QDDocNameDialog::slotBrowse(void)
 {
+   static const char * filters[]={ "*.djvu", "*.djv", 0, 0 };
+   QString filter2 = tr("All files (*)");
+   filters[2] = filter2;
+
    GUTF8String doc_full_name=GStringFromQString(text->text());
    QFileInfo fi=QFileInfo(QStringFromGString(doc_full_name));
    QString doc_dir=fi.dirPath();
    if (!QFileInfo(doc_dir).isDir()) doc_dir=QeFileDialog::lastSaveDir;
    if (!QFileInfo(doc_dir).isDir()) doc_dir=QDir::currentDirPath();
    doc_full_name=GURL::expand_name(GOS::basename(doc_full_name), doc_dir);
-   
-   static char * filters[]={ "*.djvu", "*.djv", "All files (*)", 0 };
    QeFileDialog fd(doc_dir, filters[0], this, "djvu_fd", TRUE);
    fd.setFilters((const char **) filters);
    fd.setCaption("Select DjVu document file name...");

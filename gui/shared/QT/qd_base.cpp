@@ -991,20 +991,25 @@ QDBase::exportToPNM(void)
    
    bool raw=0;
    {
-      QString mesg=tr("This will export the DjVu image in either 'Raw ")+format_str+"'\n"+
-	 tr("or 'ASCII ")+format_str+tr("' format. Which one do you prefer?\n");
-
-     switch(QMessageBox::information(this, tr("Exporting DjVu image..."), mesg,
-       tr("&Raw"), tr("&Ascii"), tr("&Cancel"), 0, 2))
-     {
-        case 0: raw=1; break;
-        case 1: raw=0; break;
-        default: return;
-     }
+     QString mesg = tr("This will export the DjVu image in either 'Raw ")
+       + format_str + "'\n" + tr("or 'ASCII ") 
+       + format_str + tr("' format. Which one do you prefer?\n");
+     
+     switch(QMessageBox::information(this, 
+                                     tr("Exporting DjVu image..."), mesg,
+                                     tr("&Raw"), tr("&Ascii"), tr("&Cancel"), 
+                                     0, 2))
+       {
+       case 0: raw=1; break;
+       case 1: raw=0; break;
+       default: return;
+       }
    }
-
-   static const char * filters[]={ 0, tr("All files (*)"), 0 };
-   if (bw) filters[0]="*.pbm"; else filters[0]="*.ppm";
+   
+   static const char *filters[] = { 0, 0, 0 };
+   QString filter1 = tr("All files (*)");
+   filters[0]= ((bw) ? "*.pbm" : "*.ppm");
+   filters[1] = filter1;
  
    GURL file_url=dimg->get_djvu_file()->get_url();
    QString save_dir=QeFileDialog::lastSaveDir;
