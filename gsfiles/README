@@ -1,0 +1,121 @@
+
+DJVUDIGITAL -- CONVERTING PS/PDF FILES TO DJVU
+
+Program 'djvudigital' converts PS/PDF files to DJVU.
+
+###############################################
+###
+### WARNING: FILE 'GDEVDJVU.C' CONTAINING THE
+##   SOURCE FOR THE DJVU GHOSTSCRIPT DRIVER
+###  IS NOT YET AVAILABLE. 
+### ADDITIONAL INFORMATION CAN BE FOUND AT
+###  <HTTP://DJVU.SOURCEFORGE.NET/GSDJVU>.
+###
+################################################
+
+The foreground/background segmentation is based on 
+the structured information contained in the PS/PDF files.
+This works best with electronically produced PS/PDF files,
+and works poorly with scanned PS/PDF files.
+
+This conversion relies on a special ghostscript device that 
+must be compiled into ghostscript, and on the djvulibre 
+program 'csepdjvu'. 
+
+The script 'djvudigital' attempts to locate a ghostscript 
+interpreter that supports the djvu output device.
+This leaves two options:
+
+1) Compile the djvu driver into the default
+   ghostscript interpreter of your unix box.
+
+2) Compile the djvu driver into a separate
+   ghostscript interpreter named 'gsdjvu' 
+
+Both options are discussed in detail below.
+
+
+A- COMPILING THE DJVU DRIVER INTO THE DEFAULT GS.
+-------------------------------------------------
+
+Tweaking the default Ghostscript interpreter is best
+left to experts because many systems provide highly
+customized versions of Ghostscript for their
+printing subsystem.
+
+People interested in integrating the djvu output driver
+into the default ghostscript should start from the 
+source code package for their default ghostscript,
+and read section "Adding a driver" from file
+"ghostscript/doc/Drivers.htm".
+
+Reading the shell script 'gsdjvu_configure.sh'
+provides a lot of useful hints regarding the
+compilation process.  Three files must be 
+integrated into ghostscript:
+
+- File 'gdevdjvu.c' contains the driver itself
+  and goes into directory "ghostscript/src".
+- File 'ps2utf8.ps' is used for text extraction.
+  It goes into directory "ghostscript/lib".
+- File 'contrib.mak.add' contains additionnal lines
+  to be inserted into 'ghostscript/src/contrib.mak'
+
+
+
+B- COMPILING A SEPARATE GS INTERPRETER NAMED GSDJVU.
+----------------------------------------------------
+
+It is much easier to compile a separate 
+ghostscript interpreter with the djvu output device.
+A step-by-step compilation is described below.
+
+   i)   Collect source tarballs.
+        The source code of ghostscript and  
+        the ghostscript fonts are mandatory.
+        The jpeg, png, and zlib packages are optional.
+
+        We use the following tarballs
+        available from their respective web sites:
+
+          ghostscript-7.07.tar.bz2      
+          ghostscript-fonts-std-8.11.tar.gz
+                (from http://www.cs.wisc.edu/~ghost/)
+
+          jpegsrc.v6b.tar.gz
+                (from http://www.ijg.org/)
+
+          libpng-1.2.5.tar.bz2
+                (from http://www.libpng.org/)
+
+          zlib-1.1.4.tar.bz2
+                (from http://www.zlib.org/)
+
+   ii)  Unpack the ghostscript source code:
+
+        $ bzip2 -dc ghostscript-7.07.tar.bz2 | tar xvf -
+        $ cd ghostscript-7.07
+
+        Unpack the remaining tarballs inside the 
+        ghostscript build directory:
+
+        $ cd ghostscript-7.07
+        $ gzip -dc ghostscript-fonts-std-8.11.tar.gz | tar xvf -
+        $ gzip -dc jpegsrc.v6b.tar.gz | tar xvf -
+        $ bzip2 -dc libpng-1.2.5.tar.bz2 | tar xvf -
+        $ bzip2 -dc zlib-1.1.4.tar.bz2 | tar xvf -
+
+   iii) Use script 'gsdjvu_configure.sh' to 
+        prepare the compilation:
+
+        $ /full/path/to/djvulibre-3.5/gsfiles/gsdjvu_configure.sh
+
+   iv)  Compile
+
+        $ make
+
+   v)   Install using script 'gsdjvu_install.sh'
+
+        $ /full/path/to/djvulibre-3.5/gsfiles/gsdjvu_install.sh
+
+

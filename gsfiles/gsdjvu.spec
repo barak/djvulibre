@@ -1,0 +1,59 @@
+%define release 1
+%define version 1.0
+%define gsversion 7.07
+%define prefix %{?_prefix:%{_prefix}}%{!?_prefix:/usr}
+%define mandir %{?_mandir:%{_mandir}}%{!?_mandir:%{prefix}/man}
+
+Prefix: %{prefix}
+Summary: Alternate ghostscript interpreter with djvu devices.
+Name: gsdjvu
+Version: %{version}
+Release: %{release}
+License: GPL
+Group: Applications/Publishing
+BuildRoot: %{_tmppath}/%{name}-root
+URL: http://djvu.sourceforge.net
+
+Source0: ghostscript-%{gsversion}.tar.bz2
+Source1: ghostscript-fonts-std-8.11.tar.gz
+Source2: gsdjvu-1.0.tar.gz
+Source3: jpegsrc.v6b.tar.gz
+Source4: libpng-1.2.5.tar.bz2
+Source5: zlib-1.1.4.tar.bz2
+
+%description 
+The djvulibre program 'djvudigital' attempts to 
+locate a ghostscript interpreter that supports the 
+djvu output device. This package provides such 
+a ghostscript interpreter.
+
+%prep
+%setup -n ghostscript-%{gsversion}
+%setup -n ghostscript-%{gsversion} -T -D -a 1
+%setup -n ghostscript-%{gsversion} -T -D -a 2
+%setup -n ghostscript-%{gsversion} -T -D -a 3
+%setup -n ghostscript-%{gsversion} -T -D -a 4
+%setup -n ghostscript-%{gsversion} -T -D -a 5
+
+%build
+gsdjvu-1.0/gsdjvu_configure.sh
+make
+
+%install
+rm -rf %{buildroot}
+DESTDIR=%{buildroot} gsdjvu-1.0/gsdjvu_install.sh
+
+%clean
+rm -rf %{buildroot}
+
+%files
+%defattr(-, root, root)
+%doc README
+%{_bindir}/*
+%{_libdir}/*
+
+%changelog
+* Thu Apr  8 2004 Leon Bottou <leon@bottou.org>
+- Initial version
+
+
