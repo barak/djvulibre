@@ -673,7 +673,8 @@ AC_DEFUN([AC_PATH_QT],
       for d in $ac_qt_dirs ; do
         for n in $ac_qt_names ; do
           if test -r $d/include/$n/qwidget.h ; then
-            for l in lib$n.so lib$n-mt.so lib$n.a lib$n-mt.a ; do
+            for l in lib$n.so lib$n-mt.so lib$n.a lib$n-mt.a \
+                     libqt.so libqt-mt.so ; do
               if test -r $d/lib/$l ; then
                 QT_CFLAGS="-I$d/include/$n"
                 QT_LIBS="-L$d/lib -l$n"
