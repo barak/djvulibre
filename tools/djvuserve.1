@@ -19,8 +19,8 @@
 .\" You should have received a copy of the GNU General Public
 .\" License along with this manual. Otherwise check the web site
 .\" of the Free Software Foundation at http://www.fsf.org.
-.TH DJVUTXT 1 "10/11/2001" "DjVuLibre-3.5" "DjVuLibre-3.5"
-.de SS
+.TH DJVUSERVE 1 "10/11/2001" "DjVuLibre-3.5" "DjVuLibre-3.5"
+.DE SS
 .SH \\0\\0\\0\\$*
 ..
 .SH NAME
@@ -34,7 +34,7 @@ is a
 program that can be executed by a 
 .S< HTTP 
 server for serving DjVu documents.
-This program is able to convert a bundled multipage document
+This program is able to convert a bundled multi-page document
 into an indirect document on the fly.  
 
 .SH USING DJVUSERVE
@@ -62,7 +62,7 @@ containing the following lines:
 .br
 .B exec djvuserver
 .PP
-Suppose that a large bundled multipage DjVu document
+Suppose that a large bundled multi-page DjVu document
 is available at the following
 .SM URL.
 .IP "" 3
@@ -73,15 +73,15 @@ The
 program
 .B djvuserve
 lets you access this same document 
-as an indirect multipage DjVu document
+as an indirect multi-page DjVu document
 using the following 
 .SM URL.
 .IP "" 3
 .IB http "" ://server /cgi\(enbin/djvuserve/ dir/doc.djvu /index
 .PP
-Serving indirect multipage DjVu documents provides
+Serving indirect multi-page DjVu documents provides
 for efficiently browsing large document without
-transferring unneeded pages over the network.
+transferring unnecessary pages over the network.
 See 
 .BR djvu(1)
 for more information.
@@ -94,8 +94,8 @@ in the above
 .SM URL
 is simply a conventional name that causes 
 .B djvuserve
-to generate the index of an indirect multipage document.
-In fact, all the component files of a bundled multipage DjVu 
+to generate the index of an indirect multi-page document.
+In fact, all the component files of a bundled multi-page DjVu 
 document can be accessed using extended 
 .SM URL.
 Suppose that the component file representing page 1
@@ -141,7 +141,7 @@ Adding
 .B /index
 to the 
 .SM URL
-of a bundled multipage DjVu document
+of a bundled multi-page DjVu document
 will serve it as an indirect DjVu document,
 as in the following 
 .SM URL.
