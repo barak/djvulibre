@@ -204,6 +204,8 @@ back	Display the background only.
 .TP
 .BI hor_align= keyword
 Specify the horizontal position of the page in the viewer window.
+(This does not specify what part of the page will be shown, but rather
+how margins will be laid out around the page in the plugin window.)
 Argument
 .I keyword
 must be
@@ -214,6 +216,8 @@ or
 .TP
 .BI ver_align= keyword
 Specify the vertical position of the page in the viewer window.
+(This does not specify what part of the page will be shown, but rather
+how margins will be laid out around the page in the plugin window.)
 Argument
 .I keyword
 must be
