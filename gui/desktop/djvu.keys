@@ -1,4 +1,9 @@
 
-image/x-djvu:
-        open=djview %f
-        icon_filename=djvu.png
+image/x-djvu
+	open=djview %f
+	view=djview %f
+	default_action_type=application
+	default_application_id=djview
+	category=Documents
+	icon_filename=djvu.png
+	description=DjVu file
