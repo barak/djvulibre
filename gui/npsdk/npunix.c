@@ -1,8 +1,3 @@
-/*C-  -*- C -*-
- * $Id$
- * $Name$
- */
-
 /* -*- Mode: C; tab-width: 4; -*- */
 /*
  * npunix.c

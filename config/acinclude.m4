@@ -1,4 +1,22 @@
-
+dnl DjVuLibre-3.5
+dnl Copyright (c) 2002  Leon Bottou and Yann Le Cun.
+dnl Copyright (c) 2001  AT&T
+dnl
+dnl This software is subject to, and may be distributed under, the
+dnl GNU General Public License, Version 2. The license should have
+dnl accompanied the software or you may obtain a copy of the license
+dnl from the Free Software Foundation at http://www.fsf.org .
+dnl
+dnl This program is distributed in the hope that it will be useful,
+dnl but WITHOUT ANY WARRANTY; without even the implied warranty of
+dnl MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+dnl GNU General Public License for more details.
+dnl 
+dnl DjVuLibre-3.5 is derived from the DjVu(r) Reference Library
+dnl distribued by Lizardtech Software.  On July 19th 2002, Lizardtech 
+dnl Software authorized us to replace the original DjVu(r) Reference 
+dnl Library by the following notice (see etc/PATENT.djvu):
+dnl
 dnl -------------------------------------------------------
 dnl @synopsis AC_DEFINE_INSTALL_PATHS
 dnl Define various installation paths
@@ -578,10 +596,10 @@ AC_DEFUN([AC_PATH_QT],
       for d in $ac_qt_dirs ; do
         for n in $ac_qt_names ; do
           if test -r $d/include/$n/qwidget.h ; then
-            for l in lib$n.so lib$n.a ; do
-              if test -r $d/include/$n/qwidget.h ; then
+            for l in lib$n.so lib$n-mt.so lib$n.a lib$n-mt.a ; do
+              if test -r $d/lib/$l ; then
                 QT_CFLAGS="-I$d/include/$n"
-                QT_LIBS="-L$d -l$n"
+                QT_LIBS="-L$d/lib -l$n"
                 QTDIR=$d
                 ac_has_qt="non standard Qt install"
                 break 3
@@ -610,9 +628,9 @@ AC_DEFUN([AC_PATH_QT],
           esac
         done
         ac_has_qt_mt=no
-        for n in ${qt_libdir}/lib${qt_libname}.so.3.* ; do
-          if test -r $n && test -r "${qt_libdir}/lib${qt_libname}-mt.so" ; then
-              ac_has_qt_mt=yes
+        for n in ${qt_libdir}/lib${qt_libname}-mt.so.3.* ; do
+          if test -r $n ; then
+            ac_has_qt_mt=yes
           fi
         done
         AC_MSG_RESULT($ac_has_qt_mt)

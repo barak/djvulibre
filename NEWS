@@ -1,3 +1,10 @@
+NEW IN VERSION 3.5.7
+--------------------
+- Fixes for cygwin
+- Fixes for configuration script
+- Updated copyright notices with clarified 
+  patent statement from Lizardtech.
+
 NEW IN VERSION 3.5.6
 --------------------
 - Fixes for gcc-3.1 and qt3
