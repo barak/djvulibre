@@ -60,7 +60,7 @@ class ByteStream;
     and saving DjVu single page and multi page documents.
 
     @memo DjVu document class.
-    @author Andrei Erofeev <eaf@geocities.com>, L\'eon Bottou <leonb@research.att.com>
+    @author Andrei Erofeev <eaf@geocities.com>
     @version #$Id$#
 */
 

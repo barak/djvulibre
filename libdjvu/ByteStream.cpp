@@ -33,6 +33,12 @@
 // $Id$
 // $Name$
 
+// From: Leon Bottou, 1/31/2002
+// This file has very little to do with my initial implementation.
+// It has been practically rewritten by Lizardtech for i18n changes.
+// Our original implementation consisted of multiple classes.
+// <http://prdownloads.sourceforge.net/djvu/DjVu2_2b-src.tgz>.
+
 #ifdef __GNUG__
 #pragma implementation
 #endif

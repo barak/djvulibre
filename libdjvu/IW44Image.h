@@ -133,6 +133,11 @@
     Wavelet encoded images.
     @author
     L\'eon Bottou <leonb@research.att.com>
+
+// From: Leon Bottou, 1/31/2002
+// Lizardtech has split the corresponding cpp file into a decoder and an encoder.
+// Only superficial changes.  The meat is mine.
+
     @version
     #$Id$# */
 //@{

@@ -40,6 +40,9 @@
 #include "config.h"
 #endif
 
+// From: Leon Bottou, 1/31/2002
+// All these XML messages are Lizardtech innovations.
+
 #include "DjVuMessage.h"
 #include "GOS.h"
 #include "XMLTags.h"

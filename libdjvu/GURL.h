@@ -52,6 +52,14 @@
     \Ref{GURL} class used to store URLs in a system independent format.
     @memo System independent URL representation.
     @author Andrei Erofeev <eaf@geocities.com>
+
+// From: Leon Bottou, 1/31/2002
+// This has been heavily changed by Lizardtech.
+// They decided to use URLs for everyting, including
+// the most basic file access.  The URL class now is a unholy 
+// mixture of code for syntactically parsing the urls (which is was)
+// and file status code (only for local file: urls).
+
     @version #$Id$#
 */
 

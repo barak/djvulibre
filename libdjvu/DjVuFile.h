@@ -73,7 +73,7 @@ class DjVuNavDir;
     \Ref{DjVuDocument} and work with {\bf it} when decoding the image.
 
     @memo Classes representing DjVu files.
-    @author Andrei Erofeev <eaf@geocities.com>, L\'eon Bottou <leonb@research.att.com>
+    @author Andrei Erofeev <eaf@geocities.com>
     @version #$Id$#
 */
 

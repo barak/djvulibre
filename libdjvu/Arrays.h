@@ -94,7 +94,6 @@
     
     @memo Template array classes.
     @author 
-    L\'eon Bottou <leonb@research.att.com> -- initial implementation.\\
     Andrei Erofeev <eaf@geocities.com> -- Copy-on-demand implementation.
     @version 
     #$Id$# */

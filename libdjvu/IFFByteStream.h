@@ -94,6 +94,11 @@
     IFF file parser.
     @author
     L\'eon Bottou <leonb@research.att.com>
+
+// From: Leon Bottou, 1/31/2002
+// This has been changed by Lizardtech to fit better 
+// with their re-implementation of ByteStreams.
+
     @version
     #$Id$# */
 //@{

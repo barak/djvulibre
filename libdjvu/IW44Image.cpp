@@ -42,8 +42,12 @@
 
 // - Author: Leon Bottou, 08/1998
 
+// From: Leon Bottou, 1/31/2002
+// Lizardtech has split this file into a decoder and an encoder.
+// Only superficial changes.  The meat is mine.
 
 #define IW44IMAGE_IMPLIMENTATION /* */
+// -------------------^  not my spelling mistake (Leon Bottou)
 
 #include "IW44Image.h"
 #include "ZPCodec.h"

@@ -33,6 +33,15 @@
 // $Id$
 // $Name$
 
+// From: Leon Bottou, 1/31/2002
+// This file has very little to do with my initial implementation.
+// It has been practically rewritten by Lizardtech for i18n changes.
+// My original implementation was very small in comparison
+// <http://prdownloads.sourceforge.net/djvu/DjVu2_2b-src.tgz>.
+// In my opinion, the duplication of the string classes is a failed
+// attempt to use the type system to enforce coding policies.
+// This could be fixed.  But there are better things to do in djvulibre.
+
 #ifdef __GNUG__
 #pragma implementation
 #endif

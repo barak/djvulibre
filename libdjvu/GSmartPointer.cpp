@@ -42,6 +42,11 @@
 
 // - Author: Leon Bottou, 05/1997
 
+// From: Leon Bottou, 1/31/2002
+// Class GPBuffer has been added (but not documented) by Lizardtech.
+// Our original implementation consisted of multiple classes.
+// <http://prdownloads.sourceforge.net/djvu/DjVu2_2b-src.tgz>.
+
 #include <string.h>
 #include "GThreads.h"
 #include "GSmartPointer.h"

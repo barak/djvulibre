@@ -43,6 +43,10 @@
 // -- Implementation of IFFByteStream
 // - Author: Leon Bottou, 06/1998
 
+// From: Leon Bottou, 1/31/2002
+// This has been changed by Lizardtech to fit better 
+// with their re-implementation of ByteStreams.
+
 #ifndef UNDER_CE
 #include <assert.h>
 #endif

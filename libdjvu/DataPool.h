@@ -67,7 +67,7 @@ class ByteStream;
     routines, \Ref{DataPool} supports file mode as well.
 
     @memo Thread safe data storage
-    @author Andrei Erofeev <eaf@geocities.com>, L\'eon Bottou <leonb@research.att.com>
+    @author Andrei Erofeev <eaf@geocities.com>
     @version #$Id$#
 */
 

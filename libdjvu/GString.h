@@ -60,15 +60,27 @@
     logically derived the new class name.  Native English speakers
     kept laughing in hiding.  This is ironic because we completely
     forgot this letter 'G' when creating more challenging things
-    like the ZP Coder or the IW44 wavelets.  When converting to
-    I18N, we realized two string classes where needing, replacing
-    the original GString with \Ref{GUTF8String} and
+    like the ZP Coder or the IW44 wavelets.  
+
+    {\bf Later Changes} 
+    When converting to I18N, we (Lizardtech) decided that two string classes
+    where needing, replacing the original GString with \Ref{GUTF8String} and
     \Ref{GNativeString}.
 
     @memo
     General purpose string class.
     @author
-    L\'eon Bottou <leonb@research.att.com> -- initial implementation.
+    L\'eon Bottou <leonb@research.att.com> -- initial implementation.\\
+
+// From: Leon Bottou, 1/31/2002
+// This file has very little to do with my initial implementation.
+// It has been practically rewritten by Lizardtech for i18n changes.
+// My original implementation was very small in comparison
+// <http://prdownloads.sourceforge.net/djvu/DjVu2_2b-src.tgz>.
+// In my opinion, the duplication of the string classes is a failed
+// attempt to use the type system to enforce coding policies.
+// This could be fixed.  But there are better things to do in djvulibre.
+    
     @version
     #$Id$# */
 //@{

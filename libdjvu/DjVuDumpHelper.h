@@ -51,8 +51,8 @@
     @memo
     DjVu Dump Helper.
     @author
-    L\'eon Bottou <leonb@research.att.com>,
-    Andrei Erofeev <eaf@geocities.com>
+    L\'eon Bottou <leonb@research.att.com> -- as a separate program.\\
+    Andrei Erofeev <eaf@geocities.com> -- as a class.
     @version
     #$Id$# */
 //@{

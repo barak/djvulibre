@@ -40,6 +40,9 @@
 #include "config.h"
 #endif
 
+// From: Leon Bottou, 1/31/2002
+// This is purely Lizardtech stuff.
+
 #include "XMLParser.h"
 #include "XMLTags.h"
 #include "ByteStream.h"

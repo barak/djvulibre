@@ -40,6 +40,11 @@
 #include "config.h"
 #endif
 
+// From: Leon Bottou, 1/31/2002
+// All these I18N XML messages are Lizardtech innovations.
+// For DjvuLibre, I changed the path extraction logic
+// and added support for non I18N messages. 
+
 #include "DjVuMessageLite.h"
 #include "GOS.h"
 #include "XMLTags.h"

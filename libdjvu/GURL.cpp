@@ -40,6 +40,13 @@
 #include "config.h"
 #endif
 
+// From: Leon Bottou, 1/31/2002
+// This has been heavily changed by Lizardtech.
+// They decided to use URLs for everyting, including
+// the most basic file access.  The URL class now is a unholy 
+// mixture of code for syntactically parsing the urls (which is was)
+// and file status code (only for local file: urls).
+
 #include "GException.h"
 #include "GOS.h"
 #include "GURL.h"

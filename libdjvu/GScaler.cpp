@@ -41,6 +41,8 @@
 #endif
 
 // Rescale images with fast bilinear interpolation
+// From: Leon Bottou, 1/31/2002
+// Almost equal to my initial code.
 
 #include "GScaler.h"
 

@@ -40,6 +40,9 @@
 #include "config.h"
 #endif
 
+// From: Leon Bottou, 1/31/2002
+// This is purely Lizardtech stuff.
+
 #include "GException.h"
 #include "DjVuDynamic.h"
 #include "GURL.h"

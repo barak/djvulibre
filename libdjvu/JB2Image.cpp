@@ -40,6 +40,10 @@
 #include "config.h"
 #endif
 
+// From: Leon Bottou, 1/31/2002
+// Lizardtech has split the corresponding cpp file into a decoder and an encoder.
+// Only superficial changes.  The meat is mine.
+
 #include "JB2Image.h"
 #include "GThreads.h"
 #include "GRect.h"

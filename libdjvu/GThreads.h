@@ -100,6 +100,11 @@
     @author
     L\'eon Bottou <leonb@research.att.com> -- initial implementation.\\
     Praveen Guduru <praveen@sanskrit.lz.att.com> -- mac implementation.
+
+// From: Leon Bottou, 1/31/2002
+// Almost unchanged by Lizardtech.
+// GSafeFlags should go because it not as safe as it claims.
+
     @version
     #$Id$# */
 //@{

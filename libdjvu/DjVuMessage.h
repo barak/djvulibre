@@ -33,6 +33,7 @@
 // $Id$
 // $Name$
 
+
 #ifndef __DJVU_MESSAGE_H__
 #define __DJVU_MESSAGE_H__
 #ifdef HAVE_CONFIG_H
@@ -41,6 +42,11 @@
 #ifdef __GNUG__
 #pragma interface
 #endif
+
+// From: Leon Bottou, 1/31/2002
+// All these I18N XML messages are Lizardtech innovations.
+// For DjvuLibre, I changed the path extraction logic
+// and added support for non I18N messages. 
 
 
 #include "DjVuMessageLite.h"

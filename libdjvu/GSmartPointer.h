@@ -58,6 +58,12 @@
     @author 
     L\'eon Bottou <leonb@research.att.com> -- initial implementation\\
     Andrei Erofeev <eaf@geocities.com> -- bug fix.
+
+// From: Leon Bottou, 1/31/2002
+// Class GPBuffer has been added (but not documented) by Lizardtech.
+// Our original implementation consisted of multiple classes.
+// <http://prdownloads.sourceforge.net/djvu/DjVu2_2b-src.tgz>.
+
     @version 
     #$Id$# 
     @args
