@@ -1,4 +1,4 @@
-%define release 1
+%define release 3
 %define version 3.5.12
 %define prefix %{?_prefix:%{_prefix}}%{!?_prefix:/usr}
 %define mandir %{?_mandir:%{_mandir}}%{!?_mandir:%{prefix}/man}
@@ -54,13 +54,25 @@ make
 %install
 rm -rf %{buildroot}
 %makeinstall
+
+# Apply i18n overlays
+for lang in ja fr de zh ; do \
+  test -d %{buildroot}%{mandir} || mkdir %{buildroot}%{mandir} ;\
+  test -d i18n/ja && %makeinstall -C i18n/ja ;\
+done ; true
+
 # Quick fix to stop ldconfig from complaining
 find %{buildroot}%{_libdir} -name "*.so*" -exec chmod 755 {} \;
+
 # Quick cleanup of the docs
 rm -rf doc/CVS 2>/dev/null || :
 
+
+
 %clean
 rm -rf %{buildroot}
+
+
 
 %post 
 /sbin/ldconfig
@@ -73,6 +85,8 @@ rm -rf %{buildroot}
    ln -s ../../netscape/plugins/nsdejavu.so $n/plugins/nsdjvu.so ; \
  fi ; done ) 2>/dev/null || true
 
+
+
 %postun 
 /sbin/ldconfig
 # Remove links to nsdejavu.so in all mozilla dirs
@@ -83,29 +97,39 @@ rm -rf %{buildroot}
      rmdir $n/plugins ; \
   fi ; done ; fi ) 2>/dev/null || true
 
+
+
 %files
 %defattr(-, root, root)
 %doc README COPYRIGHT COPYING INSTALL NEWS TODO doc
 %{_bindir}/*
 %{_libdir}/*.so*
 %{_libdir}/*/plugins/*.so*
-%{_datadir}/djvu
+%{_datadir}/djvu/languages.xml
+%{_datadir}/djvu/osi/en
 %{_mandir}/man?/*
+%lang(ja) %{_datadir}/djvu/osi/ja_JP
+%lang(ja) %{_mandir}/ja*/man?/*
+%lang(fr) %{_datadir}/djvu/osi/fr_FR
+%lang(fr) %{_mandir}/fr*/man?/*
+%lang(de) %{_datadir}/djvu/osi/de_DE
+%lang(de) %{_mandir}/de*/man?/*
+%lang(zh) %{_datadir}/djvu/osi/Chinese_PRC
+%lang(zh) %{_mandir}/zh*/man?/*
 
 %changelog
+* Wed Nov  5 2003 Leon Bottou <leon@bottou.org> 3.5.12-3
+- begin support for i18n files.
+* Mon Jul  7 2003 Leon Bottou <leon@bottou.org> 3.5.12-1
 * Thu Apr 24 2003 Leon Bottou <leon@bottou.org> 3.5.11-1
-- version 3.5.11-1
 * Thu Feb  6 2003 Leon Bottou <leon@bottou.org> 3.5.10-2
-- version 3.5.10-2
 * Fri Jan 24 2003 Leon Bottou <leon@bottou.org> 3.5.10-1
-- prepared for version 3.5.10
 * Wed Oct  9 2002 Leon Bottou <leonb@users.sourceforge.net> 3.5.9-2
 - fixed logic for uninstalling nsdejavu links.
 - copy stuff from the freshrpms spec file.
 * Sun Oct  6 2002 Leon Bottou <leonb@users.sourceforge.net> 3.5.9-1
 - added logic to install nsdejavu for mozilla.
 * Wed May 29 2002 Leon Bottou <leonb@users.sourceforge.net> 3.5.6-1
-- bumped to version 3.5.6-1
 * Mon Apr 1 2002  Leon Bottou <leonb@users.sourceforge.net> 3.5.5-2
 - changed group to Applications/Publishing
 * Tue Mar 25 2002 Leon Bottou <leonb@users.sourceforge.net> 3.5.5-2
