@@ -7,6 +7,10 @@ objs=
 dirs=
 mocs=
 
+echo "# This is generated automatically using \"make makeadd\"".
+echo "# DO NOT EDIT BY HAND"
+echo "# --------------------------------------------------------"
+
 for src
 do
     dir=`dirname $src`
