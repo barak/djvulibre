@@ -191,7 +191,7 @@ fi
 
 if [ "$application_registry" != no ] ; then
   makedir $DESTDIR$application_registry
-  install djvu.applications $DESTDIR$application_registry
+  install djvu.applications $DESTDIR$application_registry/djvu.applications
 fi
 
 if [ "$mimelnk" != no ] ; then
