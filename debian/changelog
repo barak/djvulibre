@@ -1,3 +1,11 @@
+djvulibre (3.5.14-1) unstable; urgency=high
+
+  * New upstream release, with no real changes from last upload
+  * Account for name change firebird to firefox (closes: #267247)
+  * disable sleazy debian/rules hack (see 3.5.13.pre14-5)
+
+ -- Barak A. Pearlmutter <bap@debian.org>  Sat, 21 Aug 2004 06:19:01 -0600
+
 djvulibre (3.5.13.pre14-5) unstable; urgency=medium
 
   * debnonmoduluarstupidity: rebuild with libtiff4 (closes: #262848)

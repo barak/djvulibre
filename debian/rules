@@ -51,8 +51,8 @@ clean:
 #  mac/DjVuFilter/English.lproj/InfoPlist.strings
 #  mac/DjVuFilter/English.lproj/Localizable.strings
 #  tools/jb2cmp.djvu
-	-rm -r mac
-	-rm tools/jb2cmp.djvu
+#	-rm -r mac
+#	-rm tools/jb2cmp.djvu
 
 plugsubdir=netscape/plugins-libc6
 plug=$(plugsubdir)/nsdejavu.so
@@ -80,8 +80,8 @@ install: build
 	chmod +x debian/tmp/usr/lib/cgi-bin/djvuserve
 	mkdir --parents      debian/tmp/usr/lib/mozilla/plugins
 	ln -sf ../../$(plug) debian/tmp/usr/lib/mozilla/plugins/
-	mkdir --parents      debian/tmp/usr/lib/mozilla-firebird/plugins
-	ln -sf ../../$(plug) debian/tmp/usr/lib/mozilla-firebird/plugins/
+	mkdir --parents      debian/tmp/usr/lib/mozilla-firefox/plugins
+	ln -sf ../../$(plug) debian/tmp/usr/lib/mozilla-firefox/plugins/
 	mv debian/tmp/usr/lib/menu/djview.menu debian/tmp/usr/lib/menu/djview
 	cmp debian/tmp/usr/share/{pixmaps,icons/hicolor/48x48/mimetypes}/djvu.png \
 		&& ln -sf ../icons/hicolor/48x48/mimetypes/djvu.png	\

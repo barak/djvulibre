@@ -93,8 +93,8 @@ Package: djvulibre-plugin
 Section: web
 Architecture: any
 Depends: ${shlibs:Depends}, djview
-Enhances: mozilla-browser, mozilla, mozilla-firebird, konqueror, galeon
-Recommends: mozilla-browser | mozilla | mozilla-firebird | konqueror | galeon | netscape-base-4 | netscape
+Enhances: mozilla-browser, mozilla, mozilla-firefox, konqueror, galeon
+Recommends: mozilla-browser | mozilla | mozilla-firefox | konqueror | galeon | netscape-base-4 | netscape
 Suggests: mime-support
 Description: Browser plugin for the DjVu image format
  DjVu browser plugin.
