@@ -14,9 +14,11 @@ Source: http://prdownloads.sourceforge.net/djvu/djvulibre-%{version}.tar.gz
 BuildRoot: %{_tmppath}/%{name}-root
 URL: http://djvu.sourceforge.net
 
-#These are RH specific:
-# Requires: qt, libstdc++
-# BuildRequires: qt-devel, libstdc++-devel
+# BuildRequires: qt-devel
+# BuildRequires: libjpeg-devel
+# BuildRequires: libtiff-devel
+# BuildRequires: glibc-devel
+# BuildRequires: gcc-c++
 
 %description 
 
