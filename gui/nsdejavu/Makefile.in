@@ -88,7 +88,7 @@ ${NSDEJAVU_PROGRAM} : ${OBJS}
 
 install: ${NSDEJAVU_PROGRAM} FORCE
 	${INSTALL} -d ${plugindir}
-	${INSTALL} -s -m 0755 ${NSDEJAVU_PROGRAM} ${plugindir}	
+	${INSTALL} -m 0755 ${NSDEJAVU_PROGRAM} ${plugindir}	
 
 depend: FORCE
 	( for n in ${SOURCES} ; do \
