@@ -737,6 +737,7 @@ struct cpaldjvuopts
   int ncolors;
   int dpi;
   bool verbose;
+  bool bgwhite;
 };
 
 
@@ -756,14 +757,29 @@ cpaldjvu(const GPixmap &input, GURL &urlout, const cpaldjvuopts &opts)
   int bgindex = pal.compute_pixmap_palette(input, opts.ncolors);
   if (opts.verbose)
     DjVuFormatErrorUTF8( "%s\t%d\t%d\t%d",
-                     ERR_MSG("cpaldjvu.quantizied"), 
-                     w, h, pal.size());
+                         ERR_MSG("cpaldjvu.quantizied"), 
+                         w, h, pal.size());
+  // Choose background color
   GPixel bgcolor;
+  if (opts.bgwhite)
+    {
+      int best = -1;
+      for (int i=0; i<pal.size(); i++)
+        {
+          pal.index_to_color(i, bgcolor);
+          int whiteness = 5*bgcolor.r + 9*bgcolor.g + 2*bgcolor.b; 
+          if (whiteness > best) 
+            {
+              best = whiteness;
+              bgindex = i;
+            }
+        }
+    }
   pal.index_to_color(bgindex, bgcolor);
   if (opts.verbose)
     DjVuFormatErrorUTF8( "%s\t%02x\t%02x\t%02x", 
-                     ERR_MSG("cpaldjvu.bkgnd"), 
-                     bgcolor.r, bgcolor.g, bgcolor.b);
+                         ERR_MSG("cpaldjvu.bkgnd"), 
+                         bgcolor.r, bgcolor.g, bgcolor.b);
 
   // Fill CCImage with color runs
   int xruncount=0,yruncount=0;
@@ -943,10 +959,12 @@ usage()
 #endif
          "DjVu encoder for images with few colors\n\n"
          "Usage: cpaldjvu [options] <inputppmfile> <outputdjvufile>\n"
-          "Options are:\n"
-          "   -colors [2-1024] Maximum number of colors during quantization (default 256).\n"
-          "   -dpi [25-1200]   Resolution written into the output file (default 100).\n"
-          "   -verbose     Displays additional messages.\n" );
+         "Options are:\n"
+         "   -colors [2-1024] Maximum number of colors during quantization (default 256).\n"
+         "   -dpi [25-1200]   Resolution written into the output file (default 100).\n"
+         "   -verbose         Displays additional messages.\n"
+         "   -bgwhite         Use the lightest color for background (usually white).\n"
+         );
   exit(10);
 }
 
@@ -968,6 +986,7 @@ main(int argc, const char **argv)
       opts.dpi = 100;
       opts.ncolors = 256;
       opts.verbose = false;
+      opts.bgwhite = false;
       // Parse options
       for (int i=1; i<argc; i++)
         {
@@ -987,6 +1006,8 @@ main(int argc, const char **argv)
                 usage();
             }
           else if (arg == "-verbose")
+            opts.verbose = true;
+          else if (arg == "-bgwhite")
             opts.verbose = true;
           else if (arg[0] == '-')
             usage();
