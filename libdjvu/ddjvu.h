@@ -91,7 +91,6 @@ extern "C" {
 typedef struct ddjvu_context_s  ddjvu_context_t;
 typedef union  ddjvu_message_s  ddjvu_message_t;
 typedef struct ddjvu_document_s ddjvu_document_t;
-typedef struct ddjvu_stream_s   ddjvu_stream_t;
 typedef struct ddjvu_page_s     ddjvu_page_t;
 typedef struct ddjvu_format_s   ddjvu_format_t;
 
@@ -390,15 +389,19 @@ ddjvu_document_get_user_data(ddjvu_document_t *document);
 
    In the case of indirect documents, a single decoder 
    might simultaneously request several streams of data.  
-   Each stream is identified by the opaque handle <streamid>.
+   Each stream is identified by a small integer <streamid>.
 
-   Member <name> in the first <m_newstream> message is
-   always the null pointer.  It indicates that the decoder
-   needs to access the data in the main DjVu file.  Further
-   <m_newstream> messages are generated to access the
-   auxilliary files of indirect or indexed DjVu documents.
-   Argument <name> then provides the basename of the
-   auxilliary file.
+   The first <m_newstream> message always has member
+   <streamid> set to zero and member <name> set to the null
+   pointer.  It indicates that the decoder needs to access
+   the data in the main DjVu file.  In fact, data can be
+   written to stream <0> as soon as the <ddjvu_document_t>
+   object is created.
+
+   Further <m_newstream> messages are generated to access
+   the auxilliary files of indirect or indexed DjVu
+   documents.  Argument <name> then provides the basename of
+   the auxilliary file.
 
    Member <url> is set according to the url argument
    provided to function <ddjvu_document_create>.  The first
@@ -409,7 +412,7 @@ ddjvu_document_get_user_data(ddjvu_document_t *document);
    
 struct ddjvu_message_newstream_s { /* ddjvu_message_t::m_newstream */
   ddjvu_message_any_t  any;
-  ddjvu_stream_t      *streamid;
+  int                  streamid;
   const char          *name;
   const char          *url;
 }; 
@@ -422,7 +425,8 @@ struct ddjvu_message_newstream_s { /* ddjvu_message_t::m_newstream */
  */
 
 DDJVUAPI void
-ddjvu_stream_write(ddjvu_stream_t *streamid,
+ddjvu_stream_write(ddjvu_document_t *document,
+                   int streamid,
                    const char *data,
                    unsigned long datalen );
 
@@ -437,7 +441,8 @@ ddjvu_stream_write(ddjvu_stream_t *streamid,
    <m_error> messages. */
 
 DDJVUAPI void
-ddjvu_stream_close(ddjvu_stream_t *streamid,
+ddjvu_stream_close(ddjvu_document_t *document,
+                   int streamid,
                    int stop );
 
 
@@ -587,7 +592,7 @@ struct ddjvu_message_chunk_s {     /* ddjvu_message_t::m_chunk */
 
 /* ------- QUERIES ------- */
 
-/* ddjvu_page_status ---
+/* ddjvu_page_decoding_status ---
    This function returns the status of the page 
    decoding process. */
 
@@ -596,11 +601,17 @@ typedef enum {
   DDJVU_DECODE_STARTED,    /* decoding is in progress */
   DDJVU_DECODE_OK,         /* decoding terminated successfully */
   DDJVU_DECODE_FAILED,     /* decoding failed because of an error */
-  DDJVU_DECODE_STOPPED     /* decoding failed because it was stopped by the user*/
+  DDJVU_DECODE_STOPPED     /* decoding interrupted by user */
 } ddjvu_decoding_status_t;
 
 DDJVUAPI ddjvu_decoding_status_t
-ddjvu_page_status(ddjvu_page_t *page);
+ddjvu_page_decoding_status(ddjvu_page_t *page);
+
+#define ddjvu_page_decoding_done(page) \
+    (ddjvu_page_decoding_status(page) >= DDJVU_DECODE_OK)
+
+#define ddjvu_page_decoding_error(page) \
+    (ddjvu_page_decoding_status(page) >= DDJVU_DECODE_FAILED)
 
 
 /* ddjvu_page_get_width ---
