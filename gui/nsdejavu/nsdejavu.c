@@ -1265,9 +1265,9 @@ Simulate_focus(Display *dpy, Window client, int yes)
 static void
 Event_hnd(Widget w, XtPointer cl_data, XEvent * event, Boolean * cont)
 {
-  *cont = True;
   Instance *inst;
   void *id = (void*)cl_data;
+  *cont = True;
   if (map_lookup(&instance, id, (void**)&inst) >= 0)
     {
       Widget   wid = inst->widget;
