@@ -576,50 +576,51 @@ GStringRep::Native::toUTF8(const bool) const
     memset(&ps,0,sizeof(mbstate_t));
     int i=0;
     if(sizeof(wchar_t) == sizeof(unsigned long))
-    {
-      for(wchar_t w;(n>0)
-        &&((i=mbrtowc(&w,source,n,&ps))>=0);
-        n-=i,source+=i)
       {
-        ptr=UCS4toUTF8(w,ptr);
-      }
-    }else
-    { 
-      for(wchar_t w;
-        (n>0)&&((i=mbrtowc(&w,source,n,&ps))>=0);
-        n-=i,source+=i)
-      {
-        unsigned short s[2];
-        s[0]=w;
-        unsigned long w0;
-        if(UTF16toUCS4(w0,s,s+1)<=0)
-        {
-          source+=i;
-          n-=i;
-          if((n>0)&&((i=mbrtowc(&w,source,n,&ps))>=0))
+        wchar_t w = 0;
+        for(;(n>0)&&((i=mbrtowc(&w,source,n,&ps))>=0); n-=i,source+=i)
           {
-            s[1]=w;
-            if(UTF16toUCS4(w0,s,s+2)<=0)
-            {
-              i=(-1);
-              break;
-            }
-          }else
-          {
-            i=(-1);
-            break;
+            ptr=UCS4toUTF8(w,ptr);
           }
-        }
-        ptr=UCS4toUTF8(w0,ptr);
       }
-    }
+    else
+      { 
+        wchar_t w = 0;
+        for(;(n>0)&&((i=mbrtowc(&w,source,n,&ps))>=0);n-=i,source+=i)
+          {
+            unsigned short s[2];
+            s[0]=w;
+            unsigned long w0;
+            if(UTF16toUCS4(w0,s,s+1)<=0)
+              {
+                source+=i;
+                n-=i;
+                if((n>0)&&((i=mbrtowc(&w,source,n,&ps))>=0))
+                  {
+                    s[1]=w;
+                    if(UTF16toUCS4(w0,s,s+2)<=0)
+                      {
+                        i=(-1);
+                        break;
+                      }
+                  }
+                else
+                  {
+                    i=(-1);
+                    break;
+                  }
+              }
+            ptr=UCS4toUTF8(w0,ptr);
+          }
+      }
     if(i<0)
-    {
-      gbuf.resize(0);
-    }else
-    {
-      ptr[0]=0;
-    }
+      {
+        gbuf.resize(0);
+      }
+    else
+      {
+        ptr[0]=0;
+      }
   }
   return GStringRep::UTF8::create((const char *)buf);
 }
@@ -1069,7 +1070,7 @@ GStringRep::substr(const char *s,const int start,const int len) const
     {
       retval=blank((size_t)(endptr-startptr));
       char *data=retval->data;
-      for(; *startptr&&(startptr<endptr); ++startptr,++data)
+      for(; (startptr<endptr) && *startptr; ++startptr,++data)
       {
         data[0]=startptr[0];
       }

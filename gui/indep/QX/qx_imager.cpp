@@ -192,7 +192,7 @@ DXImage::~DXImage(void)
 #endif
    if (ximage)
    {
-      delete ximage->data; ximage->data=0;
+      delete [] ximage->data; ximage->data=0;
       XDestroyImage(ximage);
       ximage=0;
    }

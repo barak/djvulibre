@@ -183,8 +183,6 @@ lt_XMLTags::init(XMLByteStream &xmlbs)
     G_THROW( ERR_MSG("XMLTags.no_GP") );
   }
   GPList<lt_XMLTags> level;
-//  GMap<GUTF8String,GPList<lt_XMLTags> > allTags;
-//  GMap<GUTF8String,GMap<GUTF8String,GPList<lt_XMLTags> > > namedTags;
   GUTF8String tag,raw(xmlbs.gets(0,'<',false));
   int linesread=xmlbs.get_lines_read();
   if(!isspaces(raw))
@@ -212,7 +210,8 @@ lt_XMLTags::init(XMLByteStream &xmlbs)
           len=((tag+=cont).length());
         }
         char const *n;
-        GUTF8String xname=tagtoname(tag.substr(2,-1),n);
+        GUTF8String xtag = tag.substr(2,-1);
+        GUTF8String xname = tagtoname(xtag,n);
         if(xname.downcase() == "xml")
         {
           ParseValues(n,args);
@@ -224,23 +223,9 @@ lt_XMLTags::init(XMLByteStream &xmlbs)
               if(e != encoding)
               {
                 xmlbs.set_encoding((encoding=e));
-//                if(e != "UTF-8" && e != "UTF-16"
-//                  && e != "ISO-10645-UCS-2" && e != "ISO-10646-UCS-4")
-//                {
-//                  G_THROW( (ERR_MSG("XMLTags.bad_PI") "\t")+tag.get_string());
-//                }
-//                DjVuPrintMessage("Got XMLDecl: %s",(const char *)tag);
-//            }else if(encoding.length())
-//            {
-//                G_THROW( (ERR_MSG("XMLTags.bad_PI") "\t")+tag.get_string());
               }
             }
           }
-//        DjVuPrintMessage("Got XMLDecl: %s",(const char *)tag);
-//      }else
-//      {
-//
-//        DjVuPrintMessage("Got PI: %s",(const char *)tag);
         }
         break;
       }
@@ -260,10 +245,6 @@ lt_XMLTags::init(XMLByteStream &xmlbs)
             }
             len=((tag+=cont).length());
           }
-//          DjVuPrintMessage("Got Comment: %s\n",(const char *)tag);
-        }else
-        {
-//          DjVuPrintMessage("Got declaration: %s\n",(const char *)tag);
         }
         break;
       }
@@ -279,7 +260,6 @@ lt_XMLTags::init(XMLByteStream &xmlbs)
               +level[last]->name+("\t"+GUTF8String(level[last]->get_Line()))
               +("\t"+xname)+("\t"+GUTF8String(linesread+1)));
           }
-//          DjVuPrintMessage("Got end tag: %s\n",(const char *)name);
           level.del(last);
         }else
         {
@@ -289,8 +269,6 @@ lt_XMLTags::init(XMLByteStream &xmlbs)
       }
       default:
       {
-//        DjVuPrintMessage("Got tag: %s\n",(const char *)tag);
-//        DjVuPrintMessage("Got tag: %s\n",(const char *)xname);
         GPosition last=level.lastpos();
         GP<lt_XMLTags> t;
         if(last)
@@ -300,14 +278,12 @@ lt_XMLTags::init(XMLByteStream &xmlbs)
           if(tag[len-2] != '/')
           {
             level.append(t);
-//          }else
-//          {
-//            level[last]->addtag(t);
           }
         }else if(tag[len-2] != '/')
         {
           char const *n;
-          name=tagtoname(tag.substr(1,-1),n);
+          GUTF8String xtag = tag.substr(1,-1); 
+          name=tagtoname(xtag, n);
           ParseValues(n,args);
           t=this;
           level.append(t);
@@ -316,11 +292,6 @@ lt_XMLTags::init(XMLByteStream &xmlbs)
           G_THROW( ERR_MSG("XMLTags.no_body") );
         }
         t->set_Line(linesread+1);
-//        allTags[t->name].append(t);
-//        for(GPosition pos=t->args;pos;++pos)
-//        {
-//          namedTags[t->args.key(pos)][t->args[pos]].append(t);
-//        }
         break;
       }
     }
@@ -331,7 +302,6 @@ lt_XMLTags::init(XMLByteStream &xmlbs)
       if(last)
       {
         level[last]->addraw(raw);
-//        DjVuPrintMessage("Got raw %s: %s\n",(const char *)(level[last]->name),(const char *)raw);
       }else if(!isspaces(raw))
       {
         G_THROW(( ERR_MSG("XMLTags.raw_string") "\t")+raw);
@@ -349,7 +319,10 @@ lt_XMLTags::get_Tags(char const tagname[]) const
 }
 
 void
-lt_XMLTags::get_Maps(char const tagname[],char const argn[],GPList<lt_XMLTags> list, GMap<GUTF8String, GP<lt_XMLTags> > &map)
+lt_XMLTags::get_Maps(char const tagname[],
+                     char const argn[],
+                     GPList<lt_XMLTags> list,
+                     GMap<GUTF8String, GP<lt_XMLTags> > &map)
 {
   for(GPosition pos=list;pos;++pos)
   {
@@ -370,7 +343,6 @@ lt_XMLTags::get_Maps(char const tagname[],char const argn[],GPList<lt_XMLTags> l
             if((gpos=args.contains(argn)))
             {
               map[args[gpos]]=gtag;
-//              DjVuPrintErrorUTF8("Inserting %s\n",(const char *)(args[gpos]));
             }
           }
         }

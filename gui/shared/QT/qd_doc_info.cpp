@@ -652,7 +652,6 @@ QDDocInfo::QDDocInfo(const GP<DjVuDocument> & _doc, QWidget * parent,
      label=new QLabel(tr("Document Information"), summary_widget, "title_label");
      label->setAlignment(AlignCenter);
      font=label->font();
-     font.setPointSize(font.pointSize()+2);
      font.setWeight(QFont::Bold);
      label->setFont(font);
      summary_vlay->addWidget(label);
@@ -682,7 +681,9 @@ QDDocInfo::QDDocInfo(const GP<DjVuDocument> & _doc, QWidget * parent,
         summary_glay->addWidget(label, row, 0);
         GUTF8String fname_str=doc->get_init_url().fname();
         label=new QLabel(QStringFromGString(fname_str), summary_widget);
-        label->setFont(QFont("courier", label->font().pointSize()));
+        font=label->font();
+        font.setFamily("Courier");
+        label->setFont(font);
         label->setFrameStyle(QFrame::WinPanel | QFrame::Sunken);
         summary_glay->addWidget(label, row++, 1);
      }
@@ -696,7 +697,9 @@ QDDocInfo::QDDocInfo(const GP<DjVuDocument> & _doc, QWidget * parent,
                      doc_type==DjVuDocument::OLD_INDEXED ? tr("Obsolete INDEXED") :
                      doc_type==DjVuDocument::SINGLE_PAGE ? tr("SINGLE_PAGE") :
                      tr("UNKNOWN"), summary_widget);
-     label->setFont(QFont("courier", label->font().pointSize()));
+     font=label->font();
+     font.setFamily("Courier");
+     label->setFont(font);
      label->setFrameStyle(QFrame::WinPanel | QFrame::Sunken);
      summary_glay->addWidget(label, row++, 1);
 
@@ -704,7 +707,9 @@ QDDocInfo::QDDocInfo(const GP<DjVuDocument> & _doc, QWidget * parent,
      label=new QLabel(tr("Total size:"), summary_widget);
      summary_glay->addWidget(label, row, 0);
      size_label=label=new QLabel(tr("unknown"), summary_widget);
-     label->setFont(QFont("courier", label->font().pointSize()));
+     font=label->font();
+     font.setFamily("Courier");
+     label->setFont(font);
      label->setFrameStyle(QFrame::WinPanel | QFrame::Sunken);
      summary_glay->addWidget(label, row++, 1);
 
@@ -715,7 +720,9 @@ QDDocInfo::QDDocInfo(const GP<DjVuDocument> & _doc, QWidget * parent,
        GUTF8String mesg=GUTF8String(doc->get_pages_num());
        label=new QLabel(QStringFromGString(mesg), summary_widget);
      }
-     label->setFont(QFont("courier", label->font().pointSize()));
+     font=label->font();
+     font.setFamily("Courier");
+     label->setFont(font);
      label->setFrameStyle(QFrame::WinPanel | QFrame::Sunken);
      summary_glay->addWidget(label, row++, 1);
 
@@ -737,7 +744,9 @@ QDDocInfo::QDDocInfo(const GP<DjVuDocument> & _doc, QWidget * parent,
          GUTF8String mesg=doc->get_djvm_dir0()->get_files_num();
          label=new QLabel(QStringFromGString(mesg), summary_widget);
        }
-       label->setFont(QFont("courier", label->font().pointSize()));
+       font=label->font();
+       font.setFamily("Courier");
+       label->setFont(font);
        label->setFrameStyle(QFrame::WinPanel | QFrame::Sunken);
        summary_glay->addWidget(label, row++, 1);
      }

@@ -491,18 +491,23 @@ GURL::init(const bool nothrow)
    }
 }
 
-GURL::GURL(void) : validurl(false) {}
-
-GURL::GURL(const char * url_in) : url(url_in ? url_in : ""), validurl(false)
+GURL::GURL(void) 
+  : validurl(false) 
 {
 }
 
-GURL::GURL(const GUTF8String & url_in) : url(url_in), validurl(false)
+GURL::GURL(const char * url_in) 
+  : url(url_in ? url_in : ""), validurl(false)
+{
+}
+
+GURL::GURL(const GUTF8String & url_in)
+  : url(url_in), validurl(false)
 {
 }
 
 GURL::GURL(const GNativeString & url_in)
-: url(url_in.getNative2UTF8()), validurl(false)
+  : url(url_in.getNative2UTF8()), validurl(false)
 {
 #ifdef WIN32
   if(is_valid() && is_local_file_url())
@@ -514,7 +519,8 @@ GURL::GURL(const GNativeString & url_in)
 #endif
 }
 
-GURL::GURL(const GURL & url_in) : validurl(false)
+GURL::GURL(const GURL & url_in)
+  : validurl(false)
 {
   if(url_in.is_valid())
   {
@@ -533,11 +539,11 @@ GURL::operator=(const GURL & url_in)
    if(url_in.is_valid())
    {
      url=url_in.get_string();
-	   init(true);
+     init(true);
    }else
    {
      url=url_in.url;
-	   validurl=false;
+     validurl=false;
    }
    return *this;
 }
@@ -1262,6 +1268,7 @@ GURL::UTF8::UTF8(const GUTF8String &xurl,const GURL &codebase)
 : GURL(xurl,codebase) {}
 
 GURL::GURL(const GUTF8String &xurl,const GURL &codebase)
+  : validurl(false)
 {
   if(GURL::UTF8(xurl).is_valid())
   {
@@ -1291,6 +1298,7 @@ GURL::Native::Native(const GNativeString &xurl,const GURL &codebase)
 : GURL(xurl,codebase) {}
 
 GURL::GURL(const GNativeString &xurl,const GURL &codebase)
+  : validurl(false)
 {
   GURL retval(xurl.getNative2UTF8(),codebase);
   if(retval.is_valid())

@@ -182,7 +182,7 @@ struct DDJVUGlobal
 
 static DDJVUGlobal& g(void)
 {
-  DDJVUGlobal g;
+  static DDJVUGlobal g;
   return g;
 }
 
