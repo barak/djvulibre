@@ -48,7 +48,9 @@
 static unsigned char nill=0;
 
 static void const * 
-checkmarks(void const * const xbuf,size_t &bufsize,GStringRep::EncodeType &rep)
+checkmarks(void const * const xbuf,
+           unsigned int &bufsize,
+           GStringRep::EncodeType &rep)
 {
   unsigned char const *buf=(unsigned char const *)xbuf;
   if(bufsize >= 2 || (xbuf && !bufsize && rep != GStringRep::XOTHER))
@@ -138,8 +140,8 @@ public:
   virtual ~Unicode();
 
   static GP<GStringRep> create(const unsigned int sz);
-  static GP<GStringRep> create(void const * const buf,const size_t,const EncodeType,
-    const GP<GStringRep> &encoding);
+  static GP<GStringRep> create(void const * const buf, unsigned int bufsize,
+                               const EncodeType, const GP<GStringRep> &encoding);
   static GP<GStringRep> create( void const * const buf,
     unsigned int size, const EncodeType encodetype );
   static GP<GStringRep> create( void const * const buf,
@@ -187,7 +189,7 @@ GStringRep::Unicode::~Unicode() {}
 GP<GStringRep>
 GStringRep::Unicode::create(
   void const * const xbuf,
-  const unsigned int bufsize,
+  unsigned int bufsize,
   const EncodeType t,
   const GP<GStringRep> &encoding)
 {
