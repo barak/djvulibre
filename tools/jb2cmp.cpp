@@ -763,7 +763,9 @@ donut_transform_graymap(byte **pixels, int w, int h,
     for (i = 0; i < h; i++) for (j = 0; j < w; j++)
     {
         buf[w * i + j] =
-            donut_transform_pixel(pixels[i-1] + j, pixels[i] + j, pixels[i+1] + j);
+            donut_transform_pixel(pixels[i-1] + j, 
+                                  pixels[i] + j,
+                                  pixels[i+1] + j);
     }
 
     for (i = 0; i < h; i++)
@@ -821,7 +823,8 @@ find_pith_and_signature(Image *img)
     for (i = 0; i < h; i++)
         ranks[i] = ranks_buf + w * i;
 
-    while(donut_transform_graymap(pointers + 1, w, h, passes, ranks)) passes++;
+    while(donut_transform_graymap(pointers + 1, w, h, passes, ranks)) 
+        passes++;
 
     colors = MALLOCV(byte, passes + 1);
 

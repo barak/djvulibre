@@ -117,10 +117,8 @@ compute_matchdata_lossless(JB2Image *jimg, MatchData *lib)
       lib[i].bits = 0;
       lib[i].area = 0;
       lib[i].match = -1;
-      if (! jshp.bits) 
-        continue;
-      if (jshp.userdata & JB2SHAPE_SPECIAL)
-        continue;
+      if (! jshp.bits) continue;
+      if (jshp.userdata & JB2SHAPE_SPECIAL) continue;
       lib[i].bits = jshp.bits;
       lib[i].area = compute_area(jshp.bits);
     }
@@ -133,8 +131,7 @@ compute_comparable_image(GBitmap *bits)
   int w = bits->columns();
   int h = bits->rows();
   GTArray<unsigned char*> p(h);
-  for (int i=0; i<h; i++) 
-    p[h-i-1] = (*bits)[i];
+  for (int i=0; i<h; i++) p[h-i-1] = (*bits)[i];
   return prepare_comparable_image(p, w, h);  
 }
 
@@ -153,14 +150,10 @@ compute_matchdata_lossy(JB2Image *jimg, MatchData *lib)
       lib[i].area = 0;
       lib[i].match = -1;
       handles[i] = 0;
-      if (! jshp.bits) 
-        continue;
-      if (jshp.userdata & JB2SHAPE_SPECIAL)
-        continue;
+      if (! jshp.bits) continue;
+      if (jshp.userdata & JB2SHAPE_SPECIAL) continue;
       lib[i].bits = jshp.bits;
       lib[i].area = compute_area(jshp.bits);
-      if (jshp.userdata & JB2SHAPE_LOSSLESS)
-        continue;
       handles[i] = compute_comparable_image(jshp.bits);
     }
   // Run Ilya's pattern matcher.
