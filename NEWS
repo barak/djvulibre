@@ -2,12 +2,13 @@ NEW IN VERSION 3.5.10
 --------------------
 - Added support for mouse wheel.
 - Added support for LT toolbar control args.
-- Incremented djvuversion to 23 (why did they do this?)
-- Modified key bindings (space does continuous reading)
+- Added DESTDIR in Makefiles.
+- Incremented djvuversion to 23.
+- Djview key space now does continuous reading
 - Fixed thumbnail generation on empty pages.
 - Improved csepdjvu option -bgwhite.
-- Improved djvu printing with booklet mode.
-- Help button in djview preferences and print dialogs.
+- Djview and djvups now can print booklets.
+- Djview main dialogs have a help button.
 
 NEW IN VERSION 3.5.9
 --------------------

@@ -97,7 +97,7 @@ class JB2Image;
     MMR form or ``striped'' MMR form.  This is indicated by bit 1 of the
     fourth header byte (#<s>#).  This bit is set to indicate ``striped''
     data.  The ``regular'' data format consists of ordinary MMR encoded data.
-    The ``striped'' data format isconsists of one sixteen bit integer (msb
+    The ``striped'' data format consists of one sixteen bit integer (msb
     first) containing the number of rows per stripe, followed by data for each
     stripe as follows.
     \begin{verbatim}
@@ -113,7 +113,7 @@ class JB2Image;
     #striped# as obtained when decoding the header.  One can also decode raw
     MMR data by simply initialising a \Ref{MMRDecoder} object with flag
     #striped# unset.  Each call to \Ref{MMRDecoder::scanruns},
-    \Ref{MMRDecoder::scanrle} or \Ref{MMRDecoder::scanline} wil then decode a
+    \Ref{MMRDecoder::scanrle} or \Ref{MMRDecoder::scanline} will then decode a
     row of the MMR encoded image.
 
     Function \Ref{MMRDecoder::decode} is a convenience function for decoding
@@ -155,8 +155,8 @@ public:
   static GP<JB2Image> decode(GP<ByteStream> gbs);
 
   /// Only decode the header.
-  static bool decode_header(
-     ByteStream &inp, int &width, int &height, int &invert);
+  static bool decode_header(ByteStream &inp, 
+                            int &width, int &height, int &invert);
 
 public:
   /// Non-virtual destructor.
@@ -164,9 +164,9 @@ public:
   /** Create a MMRDecoder object for decoding an image
       of size #width# by #height#. Flag $striped# must be set
       if the image is composed of multiple stripes. */
-  static GP<MMRDecoder> create(
-    GP<ByteStream> gbs, const int width, const int height,
-    const bool striped=false );
+  static GP<MMRDecoder> create(GP<ByteStream> gbs, 
+                               const int width, const int height,
+                               const bool striped=false );
 
   /** Decodes a scanline and returns a pointer to an array of run lengths.
       The returned buffer contains the length of alternative white and black
@@ -183,7 +183,8 @@ public:
       stored in the pointer specified by the optional argument #endptr#.  The
       buffer data should be processed before calling this function again. This
       is implemented by calling \Ref{MMRDecoder::scanruns}. */
-  const unsigned char  *scanrle(const bool invert, const unsigned char **endptr=0);
+  const unsigned char  *scanrle(const bool invert, 
+                                const unsigned char **endptr=0);
 #if 0
   /** Decodes a scanline and returns a pointer to an array of #0# or #1# bytes.
       Returns a pointer to the scanline buffer containing one byte per pixel. 

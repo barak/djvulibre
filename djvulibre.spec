@@ -45,7 +45,7 @@ DjVulibre-3.5 contains:
 - An up-to-date version of the C++ DjVu Reference Library.
 
 %prep
-%setup -q
+%setup -q -n djvulibre-3.5
 
 %build
 %configure
@@ -93,6 +93,9 @@ rm -rf %{buildroot}
 %{_mandir}/man?/*
 
 %changelog
+* Fri Jan 24 2003 Leon Bottou <leon@bottou.org> 3.5.10-1
+- prepared for version 3.5.10
+- added option -n in setup.
 * Wed Oct  9 2002 Leon Bottou <leonb@users.sourceforge.net> 3.5.9-2
 - fixed logic for uninstalling nsdejavu links.
 - copy stuff from the freshrpms spec file.
