@@ -88,8 +88,8 @@ ${LIBDJVU_LA} : ${OBJS}
 
 install-data: FORCE
 	${INSTALL} -d ${DESTDIR}${datadir}/djvu
-	for n in `cd ${top_srcdir}/share \
-	          && find djvu -name '*.xml' -print` ; do \
+	for n in `cd ${top_srcdir}/share && \
+	          find djvu -name '*.xml' -print` ; do \
 	  src="${top_srcdir}/share/$$n" ; \
 	  dir="`dirname ${datadir}/$$n`" ;\
 	  test -d ${DESTDIR}$$dir || ${INSTALL} -d ${DESTDIR}$$dir ; \
