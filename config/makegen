@@ -1,5 +1,10 @@
 #!/bin/sh
 
+# This script is used to generate the files Makefile.add
+# in directories gui/djview and gui/nsdejavu.
+# It should be used via command "make makeadd" in these
+# same directories.
+
 srcdir=
 top_srcdir=
 

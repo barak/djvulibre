@@ -72,7 +72,7 @@ all: ${NSDEJAVU_PROGRAM}
 include ${srcdir}/Makefile.add
 
 makeadd: FORCE
-	${SHELL} ${top_srcdir}/gui/makegen \
+	${SHELL} ${top_srcdir}/config/makegen \
 	  --srcdir=${srcdir} --top_srcdir=${top_srcdir} \
 	  ${SOURCES} > ${srcdir}/Makefile.add ; 
 
