@@ -78,7 +78,8 @@ depend: FORCE
 	${CC} -MM ${CFLAGS} ${srcdir}/nsdejavu.c > Makefile.dep
 
 clean: FORCE
-	-${RM} 2>/dev/null *.o *.a *.so *.stamp
+	-${RM} 2>/dev/null ${NSDEJAVU} nsdejavu.1
+	-${RM} 2>/dev/null *.o *.a *.so *.stamp 
 
 distclean: clean 
 	-${RM} -r 2>/dev/null Makefile *.rpo ii_files

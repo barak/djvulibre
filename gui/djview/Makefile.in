@@ -200,7 +200,9 @@ depend: ${MOCINCS} FORCE
 	  ${CXX} -MM ${CXXFLAGS} $$n || exit ; done ) > Makefile.dep
 
 clean: FORCE
+	-${RM} 2>/dev/null ${PROGRAM}
 	-${RM} 2>/dev/null *.o *.a *.so *.stamp *_moc.cpp *_moc.inc
+	-for n in ${CIN_SOURCES} ; do rm 2>/dev/null `basename $$n .cin`.cpp ; done
 
 distclean: clean 
 	-${RM} -r 2>/dev/null Makefile *.rpo ii_files

@@ -64,6 +64,7 @@ depend: FORCE
 	${CXX} -MM ${CXXFLAGS} ${srcdir}/*.cpp > Makefile.dep
 
 clean: FORCE
+	-${RM} 2>/dev/null ${PROGRAMS}
 	-${RM} 2>/dev/null *.o *.a *.so *.stamp
 
 distclean: clean 
