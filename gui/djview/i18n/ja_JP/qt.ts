@@ -3,283 +3,283 @@
     <name>QAccel</name>
     <message>
         <source>Space</source>
-        <translation type="unfinished"></translation>
+        <translation>Space</translation>
     </message>
     <message>
         <source>Esc</source>
-        <translation type="unfinished"></translation>
+        <translation>Esc</translation>
     </message>
     <message>
         <source>Tab</source>
-        <translation type="unfinished"></translation>
+        <translation>Tab</translation>
     </message>
     <message>
         <source>Backtab</source>
-        <translation type="unfinished"></translation>
+        <translation>Backtab</translation>
     </message>
     <message>
         <source>Backspace</source>
-        <translation type="unfinished"></translation>
+        <translation>Backspace</translation>
     </message>
     <message>
         <source>Return</source>
-        <translation type="unfinished"></translation>
+        <translation>Return</translation>
     </message>
     <message>
         <source>Enter</source>
-        <translation type="unfinished"></translation>
+        <translation>Enter</translation>
     </message>
     <message>
         <source>Ins</source>
-        <translation type="unfinished"></translation>
+        <translation>Ins</translation>
     </message>
     <message>
         <source>Del</source>
-        <translation type="unfinished"></translation>
+        <translation>Del</translation>
     </message>
     <message>
         <source>Pause</source>
-        <translation type="unfinished"></translation>
+        <translation>Pause</translation>
     </message>
     <message>
         <source>Print</source>
-        <translation type="unfinished"></translation>
+        <translation>Print</translation>
     </message>
     <message>
         <source>SysReq</source>
-        <translation type="unfinished"></translation>
+        <translation>SysReq</translation>
     </message>
     <message>
         <source>Home</source>
-        <translation type="unfinished"></translation>
+        <translation>Home</translation>
     </message>
     <message>
         <source>End</source>
-        <translation type="unfinished"></translation>
+        <translation>End</translation>
     </message>
     <message>
         <source>Left</source>
-        <translation type="unfinished"></translation>
+        <translation>左</translation>
     </message>
     <message>
         <source>Up</source>
-        <translation type="unfinished"></translation>
+        <translation>上</translation>
     </message>
     <message>
         <source>Right</source>
-        <translation type="unfinished"></translation>
+        <translation>右</translation>
     </message>
     <message>
         <source>Down</source>
-        <translation type="unfinished"></translation>
+        <translation>下</translation>
     </message>
     <message>
         <source>PgUp</source>
-        <translation type="unfinished"></translation>
+        <translation>PgUp</translation>
     </message>
     <message>
         <source>PgDown</source>
-        <translation type="unfinished"></translation>
+        <translation>PgDown</translation>
     </message>
     <message>
         <source>CapsLock</source>
-        <translation type="unfinished"></translation>
+        <translation>CapsLock</translation>
     </message>
     <message>
         <source>NumLock</source>
-        <translation type="unfinished"></translation>
+        <translation>NumLock</translation>
     </message>
     <message>
         <source>ScrollLock</source>
-        <translation type="unfinished"></translation>
+        <translation>ScrollLock</translation>
     </message>
     <message>
         <source>Ctrl</source>
-        <translation type="unfinished"></translation>
+        <translation>Ctrl</translation>
     </message>
     <message>
         <source>Alt</source>
-        <translation type="unfinished"></translation>
+        <translation>Alt</translation>
     </message>
     <message>
         <source>Shift</source>
-        <translation type="unfinished"></translation>
+        <translation>Shift</translation>
     </message>
     <message>
         <source>+</source>
-        <translation type="unfinished"></translation>
+        <translation>+</translation>
     </message>
     <message>
         <source>F%1</source>
-        <translation type="unfinished"></translation>
+        <translation>F%1</translation>
     </message>
     <message>
         <source>Menu</source>
-        <translation type="unfinished"></translation>
+        <translation>メニュー</translation>
     </message>
     <message>
         <source>Help</source>
-        <translation type="unfinished"></translation>
+        <translation>ヘルプ</translation>
     </message>
     <message>
         <source>Back</source>
-        <translation type="unfinished"></translation>
+        <translation>戻る</translation>
     </message>
     <message>
         <source>Forward</source>
-        <translation type="unfinished"></translation>
+        <translation>進む</translation>
     </message>
     <message>
         <source>Stop</source>
-        <translation type="unfinished"></translation>
+        <translation>停止</translation>
     </message>
     <message>
         <source>Refresh</source>
-        <translation type="unfinished"></translation>
+        <translation>更新</translation>
     </message>
     <message>
         <source>Volume Down</source>
-        <translation type="unfinished"></translation>
+        <translation>音量下げる</translation>
     </message>
     <message>
         <source>Volume Mute</source>
-        <translation type="unfinished"></translation>
+        <translation>消音</translation>
     </message>
     <message>
         <source>Volume Up</source>
-        <translation type="unfinished"></translation>
+        <translation>音量上げる</translation>
     </message>
     <message>
         <source>Bass Boost</source>
-        <translation type="unfinished"></translation>
+        <translation>ベースブースト</translation>
     </message>
     <message>
         <source>Bass Up</source>
-        <translation type="unfinished"></translation>
+        <translation>ベース上げる</translation>
     </message>
     <message>
         <source>Bass Down</source>
-        <translation type="unfinished"></translation>
+        <translation>ベース下げる</translation>
     </message>
     <message>
         <source>Treble Up</source>
-        <translation type="unfinished"></translation>
+        <translation>トレブル上げる</translation>
     </message>
     <message>
         <source>Treble Down</source>
-        <translation type="unfinished"></translation>
+        <translation>トレブル下げる</translation>
     </message>
     <message>
         <source>Media Play</source>
-        <translation type="unfinished"></translation>
+        <translation>メディア再生</translation>
     </message>
     <message>
         <source>Media Stop</source>
-        <translation type="unfinished"></translation>
+        <translation>メディア停止</translation>
     </message>
     <message>
         <source>Media Previous</source>
-        <translation type="unfinished"></translation>
+        <translation>前のメディア</translation>
     </message>
     <message>
         <source>Media Next</source>
-        <translation type="unfinished"></translation>
+        <translation>次のメディア</translation>
     </message>
     <message>
         <source>Media Record</source>
-        <translation type="unfinished"></translation>
+        <translation>メディア録音</translation>
     </message>
     <message>
         <source>Favorites</source>
-        <translation type="unfinished"></translation>
+        <translation>お気に入り</translation>
     </message>
     <message>
         <source>Search</source>
-        <translation type="unfinished"></translation>
+        <translation>検索</translation>
     </message>
     <message>
         <source>Standby</source>
-        <translation type="unfinished"></translation>
+        <translation>スタンバイ</translation>
     </message>
     <message>
         <source>Open URL</source>
-        <translation type="unfinished"></translation>
+        <translation>URL を開く</translation>
     </message>
     <message>
         <source>Launch Mail</source>
-        <translation type="unfinished"></translation>
+        <translation>メールを起動する</translation>
     </message>
     <message>
         <source>Launch Media</source>
-        <translation type="unfinished"></translation>
+        <translation>メディアを起動する</translation>
     </message>
     <message>
         <source>Launch (0)</source>
-        <translation type="unfinished"></translation>
+        <translation>(0) の起動</translation>
     </message>
     <message>
         <source>Launch (1)</source>
-        <translation type="unfinished"></translation>
+        <translation>(1) の起動</translation>
     </message>
     <message>
         <source>Launch (2)</source>
-        <translation type="unfinished"></translation>
+        <translation>(2) の起動</translation>
     </message>
     <message>
         <source>Launch (3)</source>
-        <translation type="unfinished"></translation>
+        <translation>(3) の起動</translation>
     </message>
     <message>
         <source>Launch (4)</source>
-        <translation type="unfinished"></translation>
+        <translation>(4) の起動</translation>
     </message>
     <message>
         <source>Launch (5)</source>
-        <translation type="unfinished"></translation>
+        <translation>(5) の起動</translation>
     </message>
     <message>
         <source>Launch (6)</source>
-        <translation type="unfinished"></translation>
+        <translation>(6) の起動</translation>
     </message>
     <message>
         <source>Launch (7)</source>
-        <translation type="unfinished"></translation>
+        <translation>(7) の起動</translation>
     </message>
     <message>
         <source>Launch (8)</source>
-        <translation type="unfinished"></translation>
+        <translation>(8) の起動</translation>
     </message>
     <message>
         <source>Launch (9)</source>
-        <translation type="unfinished"></translation>
+        <translation>(9) の起動</translation>
     </message>
     <message>
         <source>Launch (A)</source>
-        <translation type="unfinished"></translation>
+        <translation>(A) の起動</translation>
     </message>
     <message>
         <source>Launch (B)</source>
-        <translation type="unfinished"></translation>
+        <translation>(B) の起動</translation>
     </message>
     <message>
         <source>Launch (C)</source>
-        <translation type="unfinished"></translation>
+        <translation>(C) の起動</translation>
     </message>
     <message>
         <source>Launch (D)</source>
-        <translation type="unfinished"></translation>
+        <translation>(D) の起動</translation>
     </message>
     <message>
         <source>Launch (E)</source>
-        <translation type="unfinished"></translation>
+        <translation>(E) の起動</translation>
     </message>
     <message>
         <source>Launch (F)</source>
-        <translation type="unfinished"></translation>
+        <translation>(F) の起動</translation>
     </message>
     <message>
         <source>Meta</source>
-        <translation type="unfinished"></translation>
+        <translation>メタ</translation>
     </message>
 </context>
 <context>
@@ -287,849 +287,860 @@
     <message>
         <source>QT_LAYOUT_DIRECTION</source>
         <comment>Translate this string to the string &apos;LTR&apos; in left-to-right languages or to &apos;RTL&apos; in right-to-left languages (such as Hebrew and Arabic) to get proper widget layout.</comment>
-        <translation type="unfinished"></translation>
+        <translation>正しいレイアウトを得るために、この文字列を左から右へ書く言語では「LTR」へ、ブライ語やアラビア語のように右から左へ書く言語では「RTL」へ変換してください。</translation>
     </message>
     <message>
         <source>Executable &apos;%1&apos; requires Qt %2, found Qt %3.</source>
-        <translation type="unfinished"></translation>
+        <translation>実行ファイル「%1」は Qt %2 が必要です。Qt %3 が見つかりました。</translation>
     </message>
     <message>
         <source>Incompatible Qt Library Error</source>
-        <translation type="unfinished"></translation>
+        <translation>互換性のない Qt ライブラリのエラー</translation>
     </message>
 </context>
 <context>
     <name>QAquaStyle</name>
     <message>
         <source>OK</source>
-        <translation type="unfinished"></translation>
+        <translation>OK</translation>
     </message>
     <message>
         <source>Cancel</source>
-        <translation type="unfinished"></translation>
+        <translation>キャンセル</translation>
     </message>
 </context>
 <context>
     <name>QColorDialog</name>
     <message>
         <source>Hu&amp;e:</source>
-        <translation type="unfinished"></translation>
+        <translation>色相(&amp;E):</translation>
     </message>
     <message>
         <source>&amp;Sat:</source>
-        <translation type="unfinished"></translation>
+        <translation>彩度(&amp;S):</translation>
     </message>
     <message>
         <source>&amp;Val:</source>
-        <translation type="unfinished"></translation>
+        <translation>明度(&amp;V):</translation>
     </message>
     <message>
         <source>&amp;Red:</source>
-        <translation type="unfinished"></translation>
+        <translation>赤(&amp;R):</translation>
     </message>
     <message>
         <source>&amp;Green:</source>
-        <translation type="unfinished"></translation>
+        <translation>緑(&amp;G):</translation>
     </message>
     <message>
         <source>Bl&amp;ue:</source>
-        <translation type="unfinished"></translation>
+        <translation>青(&amp;U):</translation>
     </message>
     <message>
         <source>A&amp;lpha channel:</source>
-        <translation type="unfinished"></translation>
+        <translation>アルファチャンネル(&amp;L):</translation>
     </message>
     <message>
         <source>&amp;Basic colors</source>
-        <translation type="unfinished"></translation>
+        <translation>基本色(&amp;B)</translation>
     </message>
     <message>
         <source>&amp;Custom colors</source>
-        <translation type="unfinished"></translation>
+        <translation>カスタムカラー(&amp;C)</translation>
     </message>
     <message>
         <source>&amp;Define Custom Colors &gt;&gt;</source>
-        <translation type="unfinished"></translation>
+        <translation>カスタムカラーの定義(&amp;D)&gt;&gt;</translation>
     </message>
     <message>
         <source>OK</source>
-        <translation type="unfinished"></translation>
+        <translation>OK</translation>
     </message>
     <message>
         <source>Cancel</source>
-        <translation type="unfinished"></translation>
+        <translation>キャンセル</translation>
     </message>
     <message>
         <source>&amp;Add to Custom Colors</source>
-        <translation type="unfinished"></translation>
+        <translation>カスタムカラーの追加(&amp;A)</translation>
     </message>
     <message>
         <source>Select color</source>
-        <translation type="unfinished"></translation>
+        <translation>色の選択</translation>
     </message>
 </context>
 <context>
     <name>QDataTable</name>
     <message>
         <source>True</source>
-        <translation type="unfinished"></translation>
+        <translation>真</translation>
     </message>
     <message>
         <source>False</source>
-        <translation type="unfinished"></translation>
+        <translation>偽</translation>
     </message>
     <message>
         <source>Insert</source>
-        <translation type="unfinished"></translation>
+        <translation>挿入</translation>
     </message>
     <message>
         <source>Update</source>
-        <translation type="unfinished"></translation>
+        <translation>アップデート</translation>
     </message>
     <message>
         <source>Delete</source>
-        <translation type="unfinished"></translation>
+        <translation>削除</translation>
     </message>
 </context>
 <context>
     <name>QDialog</name>
     <message>
         <source>What&apos;s This?</source>
-        <translation type="unfinished"></translation>
+        <translation>これは何ですか？</translation>
     </message>
 </context>
 <context>
     <name>QErrorMessage</name>
     <message>
         <source>&amp;Show this message again</source>
-        <translation type="unfinished"></translation>
+        <translation>このメッセージをもう一度表示する(&amp;S)</translation>
     </message>
     <message>
         <source>&amp;OK</source>
-        <translation type="unfinished"></translation>
+        <translation>OK(&amp;O)</translation>
     </message>
     <message>
         <source>Debug Message:</source>
-        <translation type="unfinished"></translation>
+        <translation>デバッグメッセージ:</translation>
     </message>
     <message>
         <source>Warning:</source>
-        <translation type="unfinished"></translation>
+        <translation>警告:</translation>
     </message>
     <message>
         <source>Fatal Error:</source>
-        <translation type="unfinished"></translation>
+        <translation>致命的なエラー:</translation>
     </message>
 </context>
 <context>
     <name>QFileDialog</name>
     <message>
         <source>Copy or Move a File</source>
-        <translation type="unfinished"></translation>
+        <translation>コピーまたはファイルの移動</translation>
     </message>
     <message>
         <source>Read: %1</source>
-        <translation type="unfinished"></translation>
+        <translation>読み込み: %1</translation>
     </message>
     <message>
         <source>Write: %1</source>
-        <translation type="unfinished"></translation>
+        <translation>書き込み: %1</translation>
     </message>
     <message>
         <source>Cancel</source>
-        <translation type="unfinished"></translation>
+        <translation>キャンセル</translation>
     </message>
     <message>
         <source>All Files (*)</source>
-        <translation type="unfinished"></translation>
+        <translation>すべてのファイル (*)</translation>
     </message>
     <message>
         <source>Name</source>
-        <translation type="unfinished"></translation>
+        <translation>名前</translation>
     </message>
     <message>
         <source>Size</source>
-        <translation type="unfinished"></translation>
+        <translation>サイズ</translation>
     </message>
     <message>
         <source>Type</source>
-        <translation type="unfinished"></translation>
+        <translation>タイプ</translation>
     </message>
     <message>
         <source>Date</source>
-        <translation type="unfinished"></translation>
+        <translation>日付</translation>
     </message>
     <message>
         <source>Attributes</source>
-        <translation type="unfinished"></translation>
+        <translation>属性</translation>
     </message>
     <message>
         <source>OK</source>
-        <translation type="unfinished"></translation>
+        <translation>OK</translation>
     </message>
     <message>
         <source>Look &amp;in:</source>
-        <translation type="unfinished"></translation>
+        <translation>検索(&amp;I)</translation>
     </message>
     <message>
         <source>File &amp;name:</source>
-        <translation type="unfinished"></translation>
+        <translation>ファイル名(&amp;N):</translation>
     </message>
     <message>
         <source>File &amp;type:</source>
-        <translation type="unfinished"></translation>
+        <translation>ファイルタイプ(&amp;T):</translation>
     </message>
     <message>
         <source>Back</source>
-        <translation type="unfinished"></translation>
+        <translation>戻る</translation>
     </message>
     <message>
         <source>One directory up</source>
-        <translation type="unfinished"></translation>
+        <translation>ひとつ上のディレクトリ</translation>
     </message>
     <message>
         <source>Create New Folder</source>
-        <translation type="unfinished"></translation>
+        <translation>新しいフォルダの作成</translation>
     </message>
     <message>
         <source>List View</source>
-        <translation type="unfinished"></translation>
+        <translation>リスト表示</translation>
     </message>
     <message>
         <source>Detail View</source>
-        <translation type="unfinished"></translation>
+        <translation>詳細表示</translation>
     </message>
     <message>
         <source>Preview File Info</source>
-        <translation type="unfinished"></translation>
+        <translation>ファイル情報のプレビュー</translation>
     </message>
     <message>
         <source>Preview File Contents</source>
-        <translation type="unfinished"></translation>
+        <translation>ファイルの内容のプレビュー</translation>
     </message>
     <message>
         <source>Read-write</source>
-        <translation type="unfinished"></translation>
+        <translation>読み込み/書き込み</translation>
     </message>
     <message>
         <source>Read-only</source>
-        <translation type="unfinished"></translation>
+        <translation>読み込みのみ</translation>
     </message>
     <message>
         <source>Write-only</source>
-        <translation type="unfinished"></translation>
+        <translation>書き込みのみ</translation>
     </message>
     <message>
         <source>Inaccessible</source>
-        <translation type="unfinished"></translation>
+        <translation>アクセス不可</translation>
     </message>
     <message>
         <source>Symlink to File</source>
-        <translation type="unfinished"></translation>
+        <translation>ファイルのシンボリックリンク</translation>
     </message>
     <message>
         <source>Symlink to Directory</source>
-        <translation type="unfinished"></translation>
+        <translation>ディレクトリのシンボリックリンク</translation>
     </message>
     <message>
         <source>Symlink to Special</source>
-        <translation type="unfinished"></translation>
+        <translation>特殊なシンボリックリンク</translation>
     </message>
     <message>
         <source>File</source>
-        <translation type="unfinished"></translation>
+        <translation>ファイル</translation>
     </message>
     <message>
         <source>Dir</source>
-        <translation type="unfinished"></translation>
+        <translation>ディレクトリ</translation>
     </message>
     <message>
         <source>Special</source>
-        <translation type="unfinished"></translation>
+        <translation>スペシャル</translation>
     </message>
     <message>
         <source>Open</source>
-        <translation type="unfinished"></translation>
+        <translation>開く</translation>
     </message>
     <message>
         <source>Save As</source>
-        <translation type="unfinished"></translation>
+        <translation>名前をつけて保存</translation>
     </message>
     <message>
         <source>&amp;Open</source>
-        <translation type="unfinished"></translation>
+        <translation>開く(&amp;O)</translation>
     </message>
     <message>
         <source>&amp;Save</source>
-        <translation type="unfinished"></translation>
+        <translation>保存(&amp;S)</translation>
     </message>
     <message>
         <source>&amp;Rename</source>
-        <translation type="unfinished"></translation>
+        <translation>名前の変更(&amp;R)</translation>
     </message>
     <message>
         <source>&amp;Delete</source>
-        <translation type="unfinished"></translation>
+        <translation>削除(&amp;D)</translation>
     </message>
     <message>
         <source>R&amp;eload</source>
-        <translation type="unfinished"></translation>
+        <translation>再読み込み(&amp;R)</translation>
     </message>
     <message>
         <source>Sort by &amp;Name</source>
-        <translation type="unfinished"></translation>
+        <translation>名前で並べ替え(&amp;N)</translation>
     </message>
     <message>
         <source>Sort by &amp;Size</source>
-        <translation type="unfinished"></translation>
+        <translation>サイズで並べ替え(&amp;S)</translation>
     </message>
     <message>
         <source>Sort by &amp;Date</source>
-        <translation type="unfinished"></translation>
+        <translation>日付で並べ替え(&amp;D)</translation>
     </message>
     <message>
         <source>&amp;Unsorted</source>
-        <translation type="unfinished"></translation>
+        <translation>並べ替えなし(&amp;U)</translation>
     </message>
     <message>
         <source>Sort</source>
-        <translation type="unfinished"></translation>
+        <translation>並べ替え</translation>
     </message>
     <message>
         <source>Show &amp;hidden files</source>
-        <translation type="unfinished"></translation>
+        <translation>隠しファイルを表示する(&amp;H)</translation>
     </message>
     <message>
         <source>the file</source>
-        <translation type="unfinished"></translation>
+        <translation>ファイル</translation>
     </message>
     <message>
         <source>the directory</source>
-        <translation type="unfinished"></translation>
+        <translation>ディレクトリ</translation>
     </message>
     <message>
         <source>the symlink</source>
-        <translation type="unfinished"></translation>
+        <translation>シンボリックリンク</translation>
     </message>
     <message>
         <source>Delete %1</source>
-        <translation type="unfinished"></translation>
+        <translation>%1 を削除</translation>
     </message>
     <message>
         <source>&lt;qt&gt;Are you sure you wish to delete %1 &quot;%2&quot;?&lt;/qt&gt;</source>
-        <translation type="unfinished"></translation>
+        <translation>&lt;qt&gt;本当に %1 「%2」を削除しますか？&lt;/qt&gt;</translation>
     </message>
     <message>
         <source>&amp;Yes</source>
-        <translation type="unfinished"></translation>
+        <translation>はい(&amp;Y)</translation>
     </message>
     <message>
         <source>&amp;No</source>
-        <translation type="unfinished"></translation>
+        <translation>いいえ(&amp;N)</translation>
     </message>
     <message>
         <source>New Folder 1</source>
-        <translation type="unfinished"></translation>
+        <translation>新しいフォルダ 1</translation>
     </message>
     <message>
         <source>New Folder</source>
-        <translation type="unfinished"></translation>
+        <translation>新しいフォルダ</translation>
     </message>
     <message>
         <source>New Folder %1</source>
-        <translation type="unfinished"></translation>
+        <translation>新しいフォルダ %1</translation>
     </message>
     <message>
         <source>Find Directory</source>
-        <translation type="unfinished"></translation>
+        <translation>ディレクトリの検索</translation>
     </message>
     <message>
         <source>Directories</source>
-        <translation type="unfinished"></translation>
+        <translation>ディレクトリ</translation>
     </message>
     <message>
         <source>Save</source>
-        <translation type="unfinished"></translation>
+        <translation>保存</translation>
     </message>
     <message>
         <source>Error</source>
-        <translation type="unfinished"></translation>
+        <translation>エラー</translation>
     </message>
     <message>
         <source>%1
 File not found.
 Check path and filename.</source>
-        <translation type="unfinished"></translation>
+        <translation>%1
+ファイルが見つかりません。
+パスまたはファイル名を確認して下さい。</translation>
     </message>
     <message>
         <source>All Files (*.*)</source>
-        <translation type="unfinished"></translation>
+        <translation>すべてのファイル (*.*)</translation>
     </message>
     <message>
         <source>Open </source>
-        <translation type="unfinished"></translation>
+        <translation>開く </translation>
     </message>
     <message>
         <source>Select a Directory</source>
-        <translation type="unfinished"></translation>
+        <translation>ディレクトリの選択</translation>
     </message>
     <message>
         <source>Directory:</source>
-        <translation type="unfinished"></translation>
+        <translation>ディレクトリ:</translation>
     </message>
 </context>
 <context>
     <name>QFont</name>
     <message>
         <source>Latin</source>
-        <translation type="unfinished"></translation>
+        <translation>Latin</translation>
     </message>
     <message>
         <source>Greek</source>
-        <translation type="unfinished"></translation>
+        <translation>Greek</translation>
     </message>
     <message>
         <source>Cyrillic</source>
-        <translation type="unfinished"></translation>
+        <translation>Cyrillic</translation>
     </message>
     <message>
         <source>Armenian</source>
-        <translation type="unfinished"></translation>
+        <translation>Armenian</translation>
     </message>
     <message>
         <source>Georgian</source>
-        <translation type="unfinished"></translation>
+        <translation>Georgian</translation>
     </message>
     <message>
         <source>Runic</source>
-        <translation type="unfinished"></translation>
+        <translation>Runic</translation>
     </message>
     <message>
         <source>Ogham</source>
-        <translation type="unfinished"></translation>
+        <translation>Ogham</translation>
     </message>
     <message>
         <source>Hebrew</source>
-        <translation type="unfinished"></translation>
+        <translation>Hebrew</translation>
     </message>
     <message>
         <source>Arabic</source>
-        <translation type="unfinished"></translation>
+        <translation>Arabic</translation>
     </message>
     <message>
         <source>Syriac</source>
-        <translation type="unfinished"></translation>
+        <translation>Syriac</translation>
     </message>
     <message>
         <source>Thaana</source>
-        <translation type="unfinished"></translation>
+        <translation>Thaana</translation>
     </message>
     <message>
         <source>Devanagari</source>
-        <translation type="unfinished"></translation>
+        <translation>Devanagari</translation>
     </message>
     <message>
         <source>Bengali</source>
-        <translation type="unfinished"></translation>
+        <translation>Bengali</translation>
     </message>
     <message>
         <source>Gurmukhi</source>
-        <translation type="unfinished"></translation>
+        <translation>Gurmukhi</translation>
     </message>
     <message>
         <source>Gujarati</source>
-        <translation type="unfinished"></translation>
+        <translation>Gujarati</translation>
     </message>
     <message>
         <source>Oriya</source>
-        <translation type="unfinished"></translation>
+        <translation>Oriya</translation>
     </message>
     <message>
         <source>Tamil</source>
-        <translation type="unfinished"></translation>
+        <translation>Tamil</translation>
     </message>
     <message>
         <source>Telugu</source>
-        <translation type="unfinished"></translation>
+        <translation>Telugu</translation>
     </message>
     <message>
         <source>Kannada</source>
-        <translation type="unfinished"></translation>
+        <translation>Kannada</translation>
     </message>
     <message>
         <source>Malayalam</source>
-        <translation type="unfinished"></translation>
+        <translation>Malayalam</translation>
     </message>
     <message>
         <source>Sinhala</source>
-        <translation type="unfinished"></translation>
+        <translation>Sinhala</translation>
     </message>
     <message>
         <source>Thai</source>
-        <translation type="unfinished"></translation>
+        <translation>Thai</translation>
     </message>
     <message>
         <source>Lao</source>
-        <translation type="unfinished"></translation>
+        <translation>Lao</translation>
     </message>
     <message>
         <source>Tibetan</source>
-        <translation type="unfinished"></translation>
+        <translation>Tibetan</translation>
     </message>
     <message>
         <source>Myanmar</source>
-        <translation type="unfinished"></translation>
+        <translation>Myanmar</translation>
     </message>
     <message>
         <source>Khmer</source>
-        <translation type="unfinished"></translation>
+        <translation>Khmer</translation>
     </message>
     <message>
         <source>Han</source>
-        <translation type="unfinished"></translation>
+        <translation>Han</translation>
     </message>
     <message>
         <source>Hiragana</source>
-        <translation type="unfinished"></translation>
+        <translation>ひらがな</translation>
     </message>
     <message>
         <source>Katakana</source>
-        <translation type="unfinished"></translation>
+        <translation>カタカナ</translation>
     </message>
     <message>
         <source>Hangul</source>
-        <translation type="unfinished"></translation>
+        <translation>Hangul</translation>
     </message>
     <message>
         <source>Bopomofo</source>
-        <translation type="unfinished"></translation>
+        <translation>Bopomofo</translation>
     </message>
     <message>
         <source>Yi</source>
-        <translation type="unfinished"></translation>
+        <translation>Yi</translation>
     </message>
     <message>
         <source>Ethiopic</source>
-        <translation type="unfinished"></translation>
+        <translation>Ethiopic</translation>
     </message>
     <message>
         <source>Cherokee</source>
-        <translation type="unfinished"></translation>
+        <translation>Cherokee</translation>
     </message>
     <message>
         <source>Canadian Aboriginal</source>
-        <translation type="unfinished"></translation>
+        <translation>Canadian Aboriginal</translation>
     </message>
     <message>
         <source>Mongolian</source>
-        <translation type="unfinished"></translation>
+        <translation>Mongolian</translation>
     </message>
     <message>
         <source>Currency Symbols</source>
-        <translation type="unfinished"></translation>
+        <translation>通貨記号</translation>
     </message>
     <message>
         <source>Letterlike Symbols</source>
-        <translation type="unfinished"></translation>
+        <translation>文字記号</translation>
     </message>
     <message>
         <source>Number Forms</source>
-        <translation type="unfinished"></translation>
+        <translation>数字</translation>
     </message>
     <message>
         <source>Mathematical Operators</source>
-        <translation type="unfinished"></translation>
+        <translation>数学記号</translation>
     </message>
     <message>
         <source>Technical Symbols</source>
-        <translation type="unfinished"></translation>
+        <translation>技術記号</translation>
     </message>
     <message>
         <source>Geometric Symbols</source>
-        <translation type="unfinished"></translation>
+        <translation>地理記号</translation>
     </message>
     <message>
         <source>Miscellaneous Symbols</source>
-        <translation type="unfinished"></translation>
+        <translation>その他の記号</translation>
     </message>
     <message>
         <source>Enclosed and Square</source>
-        <translation type="unfinished"></translation>
+        <translation>囲み文字と図形</translation>
     </message>
     <message>
         <source>Braille</source>
-        <translation type="unfinished"></translation>
+        <translation>点字</translation>
     </message>
     <message>
         <source>Unicode</source>
-        <translation type="unfinished"></translation>
+        <translation>Unicode</translation>
     </message>
 </context>
 <context>
     <name>QFontDialog</name>
     <message>
         <source>&amp;Font</source>
-        <translation type="unfinished"></translation>
+        <translation>フォント(&amp;F)</translation>
     </message>
     <message>
         <source>Font st&amp;yle</source>
-        <translation type="unfinished"></translation>
+        <translation>フォントスタイル(&amp;Y)</translation>
     </message>
     <message>
         <source>&amp;Size</source>
-        <translation type="unfinished"></translation>
+        <translation>サイズ(&amp;S)</translation>
     </message>
     <message>
         <source>Effects</source>
-        <translation type="unfinished"></translation>
+        <translation>効果</translation>
     </message>
     <message>
         <source>Stri&amp;keout</source>
-        <translation type="unfinished"></translation>
+        <translation>取り消し線(&amp;K)</translation>
     </message>
     <message>
         <source>&amp;Underline</source>
-        <translation type="unfinished"></translation>
+        <translation>下線(&amp;U)</translation>
     </message>
     <message>
         <source>&amp;Color</source>
-        <translation type="unfinished"></translation>
+        <translation>カラー(&amp;C)</translation>
     </message>
     <message>
         <source>Sample</source>
-        <translation type="unfinished"></translation>
+        <translation>サンプル</translation>
     </message>
     <message>
         <source>Scr&amp;ipt</source>
-        <translation type="unfinished"></translation>
+        <translation>スクリプト(&amp;I)</translation>
     </message>
     <message>
         <source>OK</source>
-        <translation type="unfinished"></translation>
+        <translation>OK</translation>
     </message>
     <message>
         <source>Apply</source>
-        <translation type="unfinished"></translation>
+        <translation>適用</translation>
     </message>
     <message>
         <source>Cancel</source>
-        <translation type="unfinished"></translation>
+        <translation>キャンセル</translation>
     </message>
     <message>
         <source>Close</source>
-        <translation type="unfinished"></translation>
+        <translation>閉じる</translation>
     </message>
     <message>
         <source>Select Font</source>
-        <translation type="unfinished"></translation>
+        <translation>フォントの選択</translation>
     </message>
 </context>
 <context>
     <name>QFtp</name>
     <message>
         <source>Host %1 found</source>
-        <translation type="unfinished"></translation>
+        <translation>ホスト %1 が見つかりました</translation>
     </message>
     <message>
         <source>Host found</source>
-        <translation type="unfinished"></translation>
+        <translation>ホストが見つかりました</translation>
     </message>
     <message>
         <source>Connected to host %1</source>
-        <translation type="unfinished"></translation>
+        <translation>ホスト %1 へ接続しました</translation>
     </message>
     <message>
         <source>Connected to host</source>
-        <translation type="unfinished"></translation>
+        <translation>ホストへ接続しました</translation>
     </message>
     <message>
         <source>Connection to %1 closed</source>
-        <translation type="unfinished"></translation>
+        <translation>%1 への接続が閉じられました</translation>
     </message>
     <message>
         <source>Connection closed</source>
-        <translation type="unfinished"></translation>
+        <translation>接続が閉じられました</translation>
     </message>
     <message>
         <source>Host %1 not found</source>
-        <translation type="unfinished"></translation>
+        <translation>ホスト %1 が見つかりませんでした</translation>
     </message>
     <message>
         <source>Connection refused to host %1</source>
-        <translation type="unfinished"></translation>
+        <translation>ホスト %1 への接続が拒否されました</translation>
     </message>
     <message>
         <source>Unknown error</source>
-        <translation type="unfinished"></translation>
+        <translation>未知のエラー</translation>
     </message>
     <message>
         <source>Connecting to host failed:
 %1</source>
-        <translation type="unfinished"></translation>
+        <translation>ホストへの接続が失敗しました:
+%1</translation>
     </message>
     <message>
         <source>Login failed:
 %1</source>
-        <translation type="unfinished"></translation>
+        <translation>ログインが失敗しました:
+%1</translation>
     </message>
     <message>
         <source>Listing directory failed:
 %1</source>
-        <translation type="unfinished"></translation>
+        <translation>ディレクトリの列挙が失敗しました:
+%1</translation>
     </message>
     <message>
         <source>Changing directory failed:
 %1</source>
-        <translation type="unfinished"></translation>
+        <translation>ディレクトリの移動が失敗しました:
+%1</translation>
     </message>
     <message>
         <source>Downloading file failed:
 %1</source>
-        <translation type="unfinished"></translation>
+        <translation>ファイルのダウンロードが失敗しました:
+%1</translation>
     </message>
     <message>
         <source>Uploading file failed:
 %1</source>
-        <translation type="unfinished"></translation>
+        <translation>ファイルのアップロードが失敗しました:
+%1</translation>
     </message>
     <message>
         <source>Removing file failed:
 %1</source>
-        <translation type="unfinished"></translation>
+        <translation>ファイルの削除が失敗しました:
+%1</translation>
     </message>
     <message>
         <source>Creating directory failed:
 %1</source>
-        <translation type="unfinished"></translation>
+        <translation>ディレクトリの作成が失敗しました:
+%1</translation>
     </message>
     <message>
         <source>Removing directory failed:
 %1</source>
-        <translation type="unfinished"></translation>
+        <translation>ディレクトリの削除が失敗しました:
+%1</translation>
     </message>
     <message>
         <source>Not connected</source>
-        <translation type="unfinished"></translation>
+        <translation>接続されていません</translation>
     </message>
     <message>
         <source>Connection refused for data connection</source>
-        <translation type="unfinished"></translation>
+        <translation>データ接続が拒否されました</translation>
     </message>
 </context>
 <context>
     <name>QHeader</name>
     <message>
         <source>%1</source>
-        <translation type="unfinished"></translation>
+        <translation>%1</translation>
     </message>
 </context>
 <context>
     <name>QHttp</name>
     <message>
         <source>Connection refused</source>
-        <translation type="unfinished"></translation>
+        <translation>接続が拒否されました</translation>
     </message>
     <message>
         <source>Host %1 not found</source>
-        <translation type="unfinished"></translation>
+        <translation>ホスト %1 が見つかりません</translation>
     </message>
     <message>
         <source>Wrong content length</source>
-        <translation type="unfinished"></translation>
+        <translation>コンテンツの長さが不正です</translation>
     </message>
     <message>
         <source>HTTP request failed</source>
-        <translation type="unfinished"></translation>
+        <translation>HTTP リクエストが失敗しました</translation>
     </message>
     <message>
         <source>Host %1 found</source>
-        <translation type="unfinished"></translation>
+        <translation>ホスト %1 が見つかりました</translation>
     </message>
     <message>
         <source>Host found</source>
-        <translation type="unfinished"></translation>
+        <translation>ホストが見つかりました</translation>
     </message>
     <message>
         <source>Connected to host %1</source>
-        <translation type="unfinished"></translation>
+        <translation>ホスト %1 へ接続しました</translation>
     </message>
     <message>
         <source>Connected to host</source>
-        <translation type="unfinished"></translation>
+        <translation>ホストへ接続しました</translation>
     </message>
     <message>
         <source>Connection to %1 closed</source>
-        <translation type="unfinished"></translation>
+        <translation>%1 への接続は閉じられました</translation>
     </message>
     <message>
         <source>Connection closed</source>
-        <translation type="unfinished"></translation>
+        <translation>接続は閉じられました</translation>
     </message>
     <message>
         <source>Unknown error</source>
-        <translation type="unfinished"></translation>
+        <translation>未知のエラー</translation>
     </message>
     <message>
         <source>Request aborted</source>
-        <translation type="unfinished"></translation>
+        <translation>要求が中断されました</translation>
     </message>
     <message>
         <source>No server set to connect to</source>
-        <translation type="unfinished"></translation>
+        <translation>接続先サーバが設定されていません</translation>
     </message>
     <message>
         <source>Server closed connection unexpectedly</source>
-        <translation type="unfinished"></translation>
+        <translation>サーバは予期せず接続を閉じました</translation>
     </message>
     <message>
         <source>Invalid HTTP response header</source>
-        <translation type="unfinished"></translation>
+        <translation>HTTP レスポンスヘッダ無効です</translation>
     </message>
     <message>
         <source>Invalid HTTP chunked body</source>
-        <translation type="unfinished"></translation>
+        <translation>HTTP チャンクボディが無効です</translation>
     </message>
 </context>
 <context>
     <name>QInputDialog</name>
     <message>
         <source>OK</source>
-        <translation type="unfinished"></translation>
+        <translation>OK</translation>
     </message>
     <message>
         <source>Cancel</source>
-        <translation type="unfinished"></translation>
+        <translation>キャンセル</translation>
     </message>
 </context>
 <context>
     <name>QLineEdit</name>
     <message>
         <source>&amp;Undo</source>
-        <translation type="unfinished"></translation>
+        <translation>やり直し(&amp;U)</translation>
     </message>
     <message>
         <source>&amp;Redo</source>
-        <translation type="unfinished"></translation>
+        <translation>やり直しのやり直し(&amp;R)</translation>
     </message>
     <message>
         <source>Cu&amp;t</source>
-        <translation type="unfinished"></translation>
+        <translation>切り取り(&amp;T)</translation>
     </message>
     <message>
         <source>&amp;Copy</source>
-        <translation type="unfinished"></translation>
+        <translation>コピー(&amp;C)</translation>
     </message>
     <message>
         <source>&amp;Paste</source>
-        <translation type="unfinished"></translation>
+        <translation>貼り付け(&amp;P)</translation>
     </message>
     <message>
         <source>Clear</source>
-        <translation type="unfinished"></translation>
+        <translation>クリア</translation>
     </message>
     <message>
         <source>Select All</source>
-        <translation type="unfinished"></translation>
+        <translation>すべて選択</translation>
     </message>
 </context>
 <context>
@@ -1139,845 +1150,853 @@ Check path and filename.</source>
 %1
 to
 %2</source>
-        <translation type="unfinished"></translation>
+        <translation>%1
+を
+%2
+へ変更できませんでした</translation>
     </message>
     <message>
         <source>Could not open
 %1</source>
-        <translation type="unfinished"></translation>
+        <translation>%1
+を開けません</translation>
     </message>
     <message>
         <source>Could not write
 %1</source>
-        <translation type="unfinished"></translation>
+        <translation>%1
+を書き込めません</translation>
     </message>
     <message>
         <source>Could not read directory
 %1</source>
-        <translation type="unfinished"></translation>
+        <translation>ディレクトリ %1
+を読み込めません</translation>
     </message>
     <message>
         <source>Could not create directory
 %1</source>
-        <translation type="unfinished"></translation>
+        <translation>ディレクトリ %1
+を作成できません</translation>
     </message>
     <message>
         <source>Could not remove file or directory
 %1</source>
-        <translation type="unfinished"></translation>
+        <translation>ファイルまたはディレクトリ %1
+を削除できません</translation>
     </message>
 </context>
 <context>
     <name>QMainWindow</name>
     <message>
         <source>Line up</source>
-        <translation type="unfinished"></translation>
+        <translation>整列</translation>
     </message>
     <message>
         <source>Customize...</source>
-        <translation type="unfinished"></translation>
+        <translation>カスタマイズ...</translation>
     </message>
 </context>
 <context>
     <name>QMenuBar</name>
     <message>
         <source>About</source>
-        <translation type="unfinished"></translation>
+        <translation>About</translation>
     </message>
     <message>
         <source>Config</source>
-        <translation type="unfinished"></translation>
+        <translation>設定</translation>
     </message>
     <message>
         <source>Preference</source>
-        <translation type="unfinished"></translation>
+        <translation>初期設定</translation>
     </message>
     <message>
         <source>Options</source>
-        <translation type="unfinished"></translation>
+        <translation>オプション</translation>
     </message>
     <message>
         <source>Setting</source>
-        <translation type="unfinished"></translation>
+        <translation>設定</translation>
     </message>
     <message>
         <source>Setup</source>
-        <translation type="unfinished"></translation>
+        <translation>セットアップ</translation>
     </message>
     <message>
         <source>Quit</source>
-        <translation type="unfinished"></translation>
+        <translation>終了</translation>
     </message>
     <message>
         <source>Exit</source>
-        <translation type="unfinished"></translation>
+        <translation>終了</translation>
     </message>
 </context>
 <context>
     <name>QMessageBox</name>
     <message>
         <source>OK</source>
-        <translation type="unfinished"></translation>
+        <translation>OK</translation>
     </message>
     <message>
         <source>Cancel</source>
-        <translation type="unfinished"></translation>
+        <translation>キャンセル</translation>
     </message>
     <message>
         <source>&amp;Yes</source>
-        <translation type="unfinished"></translation>
+        <translation>はい(&amp;Y)</translation>
     </message>
     <message>
         <source>&amp;No</source>
-        <translation type="unfinished"></translation>
+        <translation>いいえ(&amp;N)</translation>
     </message>
     <message>
         <source>&amp;Abort</source>
-        <translation type="unfinished"></translation>
+        <translation>中止(&amp;A)</translation>
     </message>
     <message>
         <source>&amp;Retry</source>
-        <translation type="unfinished"></translation>
+        <translation>再試行(&amp;R)</translation>
     </message>
     <message>
         <source>&amp;Ignore</source>
-        <translation type="unfinished"></translation>
+        <translation>無視(&amp;I)</translation>
     </message>
     <message>
         <source>&lt;h3&gt;About Qt&lt;/h3&gt;&lt;p&gt;This program uses Qt version %1.&lt;/p&gt;&lt;p&gt;Qt is a C++ toolkit for multiplatform GUI &amp;amp; application development.&lt;/p&gt;&lt;p&gt;Qt provides single-source portability across MS&amp;nbsp;Windows, Mac&amp;nbsp;OS&amp;nbsp;X, Linux, and all major commercial Unix variants.&lt;br&gt;Qt is also available for embedded devices.&lt;/p&gt;&lt;p&gt;Qt is a Trolltech product. See &lt;tt&gt;http://www.trolltech.com/qt/&lt;/tt&gt; for more information.&lt;/p&gt;</source>
-        <translation type="unfinished"></translation>
+        <translation>&lt;h3&gt;Qt について&lt;/h3&gt;&lt;p&gt;このプログラムは Qt バージョン %1 を使用しています。&lt;/p&gt;&lt;p&gt;Qt はマルチプラットフォームの GUI &amp;amp; アプリケーション開発のための C++ ツールキットです。&lt;/p&gt;&lt;p&gt;Qt は MS&amp;nbsp;Windows や Mac&amp;nbsp;OS&amp;nbsp;X、Linux、その他のすべての主要な商用 Unix で使用できるシングルソースポータビリティを提供します。&lt;br&gt;Qt はエンベッドデバイスでも利用することが出来ます。&lt;/p&gt;&lt;p&gt;Qt は Trolltech の製品です。詳細は &lt;tt&gt;http://www.trolltech.com/qt/&lt;/tt&gt; をご覧ください。&lt;/p&gt;</translation>
     </message>
 </context>
 <context>
     <name>QNetworkProtocol</name>
     <message>
         <source>Operation stopped by the user</source>
-        <translation type="unfinished"></translation>
+        <translation>操作はユーザにより中止されました</translation>
     </message>
 </context>
 <context>
     <name>QPrintDialog</name>
     <message>
         <source>locally connected</source>
-        <translation type="unfinished"></translation>
+        <translation>ローカル接続</translation>
     </message>
     <message>
         <source>Aliases: %1</source>
-        <translation type="unfinished"></translation>
+        <translation>エイリアス: %1</translation>
     </message>
     <message>
         <source>unknown</source>
-        <translation type="unfinished"></translation>
+        <translation>不明</translation>
     </message>
     <message>
         <source>Unknown Location</source>
-        <translation type="unfinished"></translation>
+        <translation>不明の場所</translation>
     </message>
     <message>
         <source>OK</source>
-        <translation type="unfinished"></translation>
+        <translation>OK</translation>
     </message>
     <message>
         <source>Cancel</source>
-        <translation type="unfinished"></translation>
+        <translation>キャンセル</translation>
     </message>
     <message>
         <source>Printer settings</source>
-        <translation type="unfinished"></translation>
+        <translation>印刷設定</translation>
     </message>
     <message>
         <source>Print in color if available</source>
-        <translation type="unfinished"></translation>
+        <translation>可能ならカラーで印刷する</translation>
     </message>
     <message>
         <source>Print in grayscale</source>
-        <translation type="unfinished"></translation>
+        <translation>グレースケールで印刷する</translation>
     </message>
     <message>
         <source>Print destination</source>
-        <translation type="unfinished"></translation>
+        <translation>印刷先</translation>
     </message>
     <message>
         <source>Print to printer:</source>
-        <translation type="unfinished"></translation>
+        <translation>プリンタへ印刷:</translation>
     </message>
     <message>
         <source>Printer</source>
-        <translation type="unfinished"></translation>
+        <translation>プリンタ</translation>
     </message>
     <message>
         <source>Host</source>
-        <translation type="unfinished"></translation>
+        <translation>ホスト</translation>
     </message>
     <message>
         <source>Comment</source>
-        <translation type="unfinished"></translation>
+        <translation>コメント</translation>
     </message>
     <message>
         <source>Print to file:</source>
-        <translation type="unfinished"></translation>
+        <translation>ファイルへ印刷:</translation>
     </message>
     <message>
         <source>Browse...</source>
-        <translation type="unfinished"></translation>
+        <translation>ブラウズ...</translation>
     </message>
     <message>
         <source>Options</source>
-        <translation type="unfinished"></translation>
+        <translation>オプション</translation>
     </message>
     <message>
         <source>Print all</source>
-        <translation type="unfinished"></translation>
+        <translation>すべて印刷</translation>
     </message>
     <message>
         <source>Print range</source>
-        <translation type="unfinished"></translation>
+        <translation>印刷範囲</translation>
     </message>
     <message>
         <source>From page:</source>
-        <translation type="unfinished"></translation>
+        <translation>開始ページ:</translation>
     </message>
     <message>
         <source>To page:</source>
-        <translation type="unfinished"></translation>
+        <translation>終了ページ:</translation>
     </message>
     <message>
         <source>Print first page first</source>
-        <translation type="unfinished"></translation>
+        <translation>最初のページから印刷する</translation>
     </message>
     <message>
         <source>Print last page first</source>
-        <translation type="unfinished"></translation>
+        <translation>最後のページから印刷する</translation>
     </message>
     <message>
         <source>Number of copies:</source>
-        <translation type="unfinished"></translation>
+        <translation>部数:</translation>
     </message>
     <message>
         <source>Paper format</source>
-        <translation type="unfinished"></translation>
+        <translation>用紙サイズ</translation>
     </message>
     <message>
         <source>Portrait</source>
-        <translation type="unfinished"></translation>
+        <translation>縦</translation>
     </message>
     <message>
         <source>Landscape</source>
-        <translation type="unfinished"></translation>
+        <translation>横</translation>
     </message>
     <message>
         <source>A0 (841 x 1189 mm)</source>
-        <translation type="unfinished"></translation>
+        <translation>A0 (841 x 1189 mm)</translation>
     </message>
     <message>
         <source>A1 (594 x 841 mm)</source>
-        <translation type="unfinished"></translation>
+        <translation>A1 (594 x 841 mm)</translation>
     </message>
     <message>
         <source>A2 (420 x 594 mm)</source>
-        <translation type="unfinished"></translation>
+        <translation>A2 (420 x 594 mm)</translation>
     </message>
     <message>
         <source>A3 (297 x 420 mm)</source>
-        <translation type="unfinished"></translation>
+        <translation>A3 (297 x 420 mm)</translation>
     </message>
     <message>
         <source>A4 (210x297 mm, 8.26x11.7 inches)</source>
-        <translation type="unfinished"></translation>
+        <translation>A4 (210x297 mm, 8.26x11.7 inches)</translation>
     </message>
     <message>
         <source>A5 (148 x 210 mm)</source>
-        <translation type="unfinished"></translation>
+        <translation>A5 (148 x 210 mm)</translation>
     </message>
     <message>
         <source>A6 (105 x 148 mm)</source>
-        <translation type="unfinished"></translation>
+        <translation>A6 (105 x 148 mm)</translation>
     </message>
     <message>
         <source>A7 (74 x 105 mm)</source>
-        <translation type="unfinished"></translation>
+        <translation>A7 (74 x 105 mm)</translation>
     </message>
     <message>
         <source>A8 (52 x 74 mm)</source>
-        <translation type="unfinished"></translation>
+        <translation>A8 (52 x 74 mm)</translation>
     </message>
     <message>
         <source>A9 (37 x 52 mm)</source>
-        <translation type="unfinished"></translation>
+        <translation>A9 (37 x 52 mm)</translation>
     </message>
     <message>
         <source>B0 (1000 x 1414 mm)</source>
-        <translation type="unfinished"></translation>
+        <translation>B0 (1000 x 1414 mm)</translation>
     </message>
     <message>
         <source>B1 (707 x 1000 mm)</source>
-        <translation type="unfinished"></translation>
+        <translation>B1 (707 x 1000 mm)</translation>
     </message>
     <message>
         <source>B2 (500 x 707 mm)</source>
-        <translation type="unfinished"></translation>
+        <translation>B2 (500 x 707 mm)</translation>
     </message>
     <message>
         <source>B3 (353 x 500 mm)</source>
-        <translation type="unfinished"></translation>
+        <translation>B3 (353 x 500 mm)</translation>
     </message>
     <message>
         <source>B4 (250 x 353 mm)</source>
-        <translation type="unfinished"></translation>
+        <translation>B4 (250 x 353 mm)</translation>
     </message>
     <message>
         <source>B5 (176 x 250 mm, 6.93x9.84 inches)</source>
-        <translation type="unfinished"></translation>
+        <translation>B5 (176 x 250 mm, 6.93x9.84 inches)</translation>
     </message>
     <message>
         <source>B6 (125 x 176 mm)</source>
-        <translation type="unfinished"></translation>
+        <translation>B6 (125 x 176 mm)</translation>
     </message>
     <message>
         <source>B7 (88 x 125 mm)</source>
-        <translation type="unfinished"></translation>
+        <translation>B7 (88 x 125 mm)</translation>
     </message>
     <message>
         <source>B8 (62 x 88 mm)</source>
-        <translation type="unfinished"></translation>
+        <translation>B8 (62 x 88 mm)</translation>
     </message>
     <message>
         <source>B9 (44 x 62 mm)</source>
-        <translation type="unfinished"></translation>
+        <translation>9 (44 x 62 mm)</translation>
     </message>
     <message>
         <source>B10 (31 x 44 mm)</source>
-        <translation type="unfinished"></translation>
+        <translation>B10 (31 x 44 mm</translation>
     </message>
     <message>
         <source>C5E (163 x 229 mm)</source>
-        <translation type="unfinished"></translation>
+        <translation>C5E (163 x 229 mm)</translation>
     </message>
     <message>
         <source>DLE (110 x 220 mm)</source>
-        <translation type="unfinished"></translation>
+        <translation>DLE (110 x 220 mm)</translation>
     </message>
     <message>
         <source>Executive (7.5x10 inches, 191x254 mm)</source>
-        <translation type="unfinished"></translation>
+        <translation>Executive (7.5x10 inches, 191x254 mm)</translation>
     </message>
     <message>
         <source>Folio (210 x 330 mm)</source>
-        <translation type="unfinished"></translation>
+        <translation>Folio (210 x 330 mm)</translation>
     </message>
     <message>
         <source>Ledger (432 x 279 mm)</source>
-        <translation type="unfinished"></translation>
+        <translation>Ledger (432 x 279 mm)</translation>
     </message>
     <message>
         <source>Legal (8.5x14 inches, 216x356 mm)</source>
-        <translation type="unfinished"></translation>
+        <translation>Legal (8.5x14 inches, 216x356 mm)</translation>
     </message>
     <message>
         <source>Letter (8.5x11 inches, 216x279 mm)</source>
-        <translation type="unfinished"></translation>
+        <translation>Letter (8.5x11 inches, 216x279 mm)</translation>
     </message>
     <message>
         <source>Tabloid (279 x 432 mm)</source>
-        <translation type="unfinished"></translation>
+        <translation>Tabloid (279 x 432 mm)</translation>
     </message>
     <message>
         <source>US Common #10 Envelope (105 x 241 mm)</source>
-        <translation type="unfinished"></translation>
+        <translation>US Common #10 Envelope (105 x 241 mm)</translation>
     </message>
     <message>
         <source>Setup Printer</source>
-        <translation type="unfinished"></translation>
+        <translation>プリンタの設定</translation>
     </message>
     <message>
         <source>PostScript Files (*.ps);;All Files (*)</source>
-        <translation type="unfinished"></translation>
+        <translation>PS ファイル (*.ps);;すべてのファイル (*)</translation>
     </message>
 </context>
 <context>
     <name>QProgressDialog</name>
     <message>
         <source>Cancel</source>
-        <translation type="unfinished"></translation>
+        <translation>キャンセル</translation>
     </message>
 </context>
 <context>
     <name>QRegExp</name>
     <message>
         <source>no error occurred</source>
-        <translation type="unfinished"></translation>
+        <translation>エラーはありません</translation>
     </message>
     <message>
         <source>disabled feature used</source>
-        <translation type="unfinished"></translation>
+        <translation>使用できない機能が使用されました</translation>
     </message>
     <message>
         <source>bad char class syntax</source>
-        <translation type="unfinished"></translation>
+        <translation>文字クラスのシンタックスが不正です</translation>
     </message>
     <message>
         <source>bad lookahead syntax</source>
-        <translation type="unfinished"></translation>
+        <translation>lookahead のシンタックスが不正です</translation>
     </message>
     <message>
         <source>bad repetition syntax</source>
-        <translation type="unfinished"></translation>
+        <translation>repetition のシンタックスが不正です</translation>
     </message>
     <message>
         <source>invalid octal value</source>
-        <translation type="unfinished"></translation>
+        <translation>無効な 8 進数値</translation>
     </message>
     <message>
         <source>missing left delim</source>
-        <translation type="unfinished"></translation>
+        <translation>左側の区切り文字が見つかりません</translation>
     </message>
     <message>
         <source>unexpected end</source>
-        <translation type="unfinished"></translation>
+        <translation>予期せぬ終端</translation>
     </message>
     <message>
         <source>met internal limit</source>
-        <translation type="unfinished"></translation>
+        <translation>internal limit に達しました</translation>
     </message>
 </context>
 <context>
     <name>QSql</name>
     <message>
         <source>Delete</source>
-        <translation type="unfinished"></translation>
+        <translation>削除</translation>
     </message>
     <message>
         <source>Delete this record?</source>
-        <translation type="unfinished"></translation>
+        <translation>レコードを削除しますか?</translation>
     </message>
     <message>
         <source>Yes</source>
-        <translation type="unfinished"></translation>
+        <translation>はい</translation>
     </message>
     <message>
         <source>No</source>
-        <translation type="unfinished"></translation>
+        <translation>いいえ</translation>
     </message>
     <message>
         <source>Insert</source>
-        <translation type="unfinished"></translation>
+        <translation>挿入</translation>
     </message>
     <message>
         <source>Update</source>
-        <translation type="unfinished"></translation>
+        <translation>更新</translation>
     </message>
     <message>
         <source>Save edits?</source>
-        <translation type="unfinished"></translation>
+        <translation>変更を保存しますか?</translation>
     </message>
     <message>
         <source>Cancel</source>
-        <translation type="unfinished"></translation>
+        <translation>キャンセル</translation>
     </message>
     <message>
         <source>Confirm</source>
-        <translation type="unfinished"></translation>
+        <translation>確認</translation>
     </message>
     <message>
         <source>Cancel your edits?</source>
-        <translation type="unfinished"></translation>
+        <translation>変更を取り消しますか?</translation>
     </message>
 </context>
 <context>
     <name>QTabDialog</name>
     <message>
         <source>OK</source>
-        <translation type="unfinished"></translation>
+        <translation>OK</translation>
     </message>
     <message>
         <source>Apply</source>
-        <translation type="unfinished"></translation>
+        <translation>適用</translation>
     </message>
     <message>
         <source>Help</source>
-        <translation type="unfinished"></translation>
+        <translation>ヘルプ</translation>
     </message>
     <message>
         <source>Defaults</source>
-        <translation type="unfinished"></translation>
+        <translation>デフォルト</translation>
     </message>
     <message>
         <source>Cancel</source>
-        <translation type="unfinished"></translation>
+        <translation>キャンセル</translation>
     </message>
 </context>
 <context>
     <name>QTextEdit</name>
     <message>
         <source>&amp;Undo</source>
-        <translation type="unfinished"></translation>
+        <translation>やり直し(&amp;U)</translation>
     </message>
     <message>
         <source>&amp;Redo</source>
-        <translation type="unfinished"></translation>
+        <translation>やり直しのやり直し(&amp;R)</translation>
     </message>
     <message>
         <source>Cu&amp;t</source>
-        <translation type="unfinished"></translation>
+        <translation>切り取り(&amp;T)</translation>
     </message>
     <message>
         <source>&amp;Copy</source>
-        <translation type="unfinished"></translation>
+        <translation>コピー(&amp;C)</translation>
     </message>
     <message>
         <source>&amp;Paste</source>
-        <translation type="unfinished"></translation>
+        <translation>貼り付け(&amp;P)</translation>
     </message>
     <message>
         <source>Clear</source>
-        <translation type="unfinished"></translation>
+        <translation>クリア</translation>
     </message>
     <message>
         <source>Select All</source>
-        <translation type="unfinished"></translation>
+        <translation>全て選択</translation>
     </message>
 </context>
 <context>
     <name>QTitleBar</name>
     <message>
         <source>System Menu</source>
-        <translation type="unfinished"></translation>
+        <translation>システムメニュー</translation>
     </message>
     <message>
         <source>Shade</source>
-        <translation type="unfinished"></translation>
+        <translation>シェード</translation>
     </message>
     <message>
         <source>Unshade</source>
-        <translation type="unfinished"></translation>
+        <translation>アンシェード</translation>
     </message>
     <message>
         <source>Normalize</source>
-        <translation type="unfinished"></translation>
+        <translation>ノーマライズ</translation>
     </message>
     <message>
         <source>Minimize</source>
-        <translation type="unfinished"></translation>
+        <translation>最小化</translation>
     </message>
     <message>
         <source>Maximize</source>
-        <translation type="unfinished"></translation>
+        <translation>最大化</translation>
     </message>
     <message>
         <source>Close</source>
-        <translation type="unfinished"></translation>
+        <translation>閉じる</translation>
     </message>
 </context>
 <context>
     <name>QToolBar</name>
     <message>
         <source>More...</source>
-        <translation type="unfinished"></translation>
+        <translation>詳細...</translation>
     </message>
 </context>
 <context>
     <name>QUrlOperator</name>
     <message>
         <source>The protocol `%1&apos; is not supported</source>
-        <translation type="unfinished"></translation>
+        <translation>プロトコル %1 はサポートされていません。</translation>
     </message>
     <message>
         <source>The protocol `%1&apos; does not support listing directories</source>
-        <translation type="unfinished"></translation>
+        <translation>プロトコル %1 はディレクトリのリスティングをサポートしていません。</translation>
     </message>
     <message>
         <source>The protocol `%1&apos; does not support creating new directories</source>
-        <translation type="unfinished"></translation>
+        <translation>プロトコル %1 は新規ディレクトリの作成をサポートしていません。</translation>
     </message>
     <message>
         <source>The protocol `%1&apos; does not support removing files or directories</source>
-        <translation type="unfinished"></translation>
+        <translation>プロトコル %1 はディレクトリまたはファイルの削除をサポートしていません。</translation>
     </message>
     <message>
         <source>The protocol `%1&apos; does not support renaming files or directories</source>
-        <translation type="unfinished"></translation>
+        <translation>プロトコル %1 はディレクトリ名またはファイル名の変更をサポートしていません。</translation>
     </message>
     <message>
         <source>The protocol `%1&apos; does not support getting files</source>
-        <translation type="unfinished"></translation>
+        <translation>プロトコル %1 はファイルの get をサポートしていません。</translation>
     </message>
     <message>
         <source>The protocol `%1&apos; does not support putting files</source>
-        <translation type="unfinished"></translation>
+        <translation>プロトコル %1 はファイルの put をサポートしていません。</translation>
     </message>
     <message>
         <source>The protocol `%1&apos; does not support copying or moving files or directories</source>
-        <translation type="unfinished"></translation>
+        <translation>プロトコル %1 はディレクトリまたはファイルのコピーおよび移動をサポートしていません。</translation>
     </message>
     <message>
         <source>(unknown)</source>
-        <translation type="unfinished"></translation>
+        <translation>(不明)</translation>
     </message>
 </context>
 <context>
     <name>QWSDecoration</name>
     <message>
         <source>&amp;Restore</source>
-        <translation type="unfinished"></translation>
+        <translation>リストア(&amp;R)</translation>
     </message>
     <message>
         <source>&amp;Move</source>
-        <translation type="unfinished"></translation>
+        <translation>移動(&amp;M)</translation>
     </message>
     <message>
         <source>&amp;Size</source>
-        <translation type="unfinished"></translation>
+        <translation>サイズ(&amp;S)</translation>
     </message>
     <message>
         <source>Mi&amp;nimize</source>
-        <translation type="unfinished"></translation>
+        <translation>最小化(&amp;N)</translation>
     </message>
     <message>
         <source>Ma&amp;ximize</source>
-        <translation type="unfinished"></translation>
+        <translation>最大化(&amp;X)</translation>
     </message>
     <message>
         <source>Close</source>
-        <translation type="unfinished"></translation>
+        <translation>閉じる</translation>
     </message>
     <message>
         <source>Windows</source>
-        <translation type="unfinished"></translation>
+        <translation>ウィンドウ</translation>
     </message>
     <message>
         <source>KDE</source>
-        <translation type="unfinished"></translation>
+        <translation>KDE</translation>
     </message>
     <message>
         <source>KDE2</source>
-        <translation type="unfinished"></translation>
+        <translation>KDE2</translation>
     </message>
     <message>
         <source>BeOS</source>
-        <translation type="unfinished"></translation>
+        <translation>BeOS</translation>
     </message>
     <message>
         <source>Hydro</source>
-        <translation type="unfinished"></translation>
+        <translation>Hydro</translation>
     </message>
     <message>
         <source>Default</source>
-        <translation type="unfinished"></translation>
+        <translation>デフォルト</translation>
     </message>
 </context>
 <context>
     <name>QWhatsThisButton</name>
     <message>
         <source>What&apos;s this?</source>
-        <translation type="unfinished"></translation>
+        <translation>これは何ですか?</translation>
     </message>
 </context>
 <context>
     <name>QWizard</name>
     <message>
         <source>&amp;Cancel</source>
-        <translation type="unfinished"></translation>
+        <translation>キャンセル(&amp;C)</translation>
     </message>
     <message>
         <source>&lt; &amp;Back</source>
-        <translation type="unfinished"></translation>
+        <translation>&lt; 戻る(&amp;B)</translation>
     </message>
     <message>
         <source>&amp;Next &gt;</source>
-        <translation type="unfinished"></translation>
+        <translation>次へ(&amp;N) &gt;</translation>
     </message>
     <message>
         <source>&amp;Finish</source>
-        <translation type="unfinished"></translation>
+        <translation>終了(&amp;F)</translation>
     </message>
     <message>
         <source>&amp;Help</source>
-        <translation type="unfinished"></translation>
+        <translation>ヘルプ(&amp;H)</translation>
     </message>
 </context>
 <context>
     <name>QWorkspace</name>
     <message>
         <source>&amp;Restore</source>
-        <translation type="unfinished"></translation>
+        <translation>リストア(&amp;R)</translation>
     </message>
     <message>
         <source>&amp;Move</source>
-        <translation type="unfinished"></translation>
+        <translation>移動(&amp;M)</translation>
     </message>
     <message>
         <source>&amp;Size</source>
-        <translation type="unfinished"></translation>
+        <translation>サイズ(&amp;S)</translation>
     </message>
     <message>
         <source>Mi&amp;nimize</source>
-        <translation type="unfinished"></translation>
+        <translation>最小化(&amp;N)</translation>
     </message>
     <message>
         <source>Ma&amp;ximize</source>
-        <translation type="unfinished"></translation>
+        <translation>最大化(&amp;X)</translation>
     </message>
     <message>
         <source>&amp;Close</source>
-        <translation type="unfinished"></translation>
+        <translation>閉じる(&amp;C)</translation>
     </message>
     <message>
         <source>Stay on &amp;Top</source>
-        <translation type="unfinished"></translation>
+        <translation>常に手前に表示(&amp;T)</translation>
     </message>
     <message>
         <source>Sh&amp;ade</source>
-        <translation type="unfinished"></translation>
+        <translation>シェード(&amp;A)</translation>
     </message>
     <message>
         <source>%1 - [%2]</source>
-        <translation type="unfinished"></translation>
+        <translation>%1 - [%2]</translation>
     </message>
     <message>
         <source>Minimize</source>
-        <translation type="unfinished"></translation>
+        <translation>最小化</translation>
     </message>
     <message>
         <source>Restore Down</source>
-        <translation type="unfinished"></translation>
+        <translation>リストアダウン</translation>
     </message>
     <message>
         <source>Close</source>
-        <translation type="unfinished"></translation>
+        <translation>閉じる</translation>
     </message>
     <message>
         <source>&amp;Unshade</source>
-        <translation type="unfinished"></translation>
+        <translation>アンシェード(&amp;U)</translation>
     </message>
 </context>
 <context>
     <name>QXml</name>
     <message>
         <source>no error occurred</source>
-        <translation type="unfinished"></translation>
+        <translation>エラーはありませんでした</translation>
     </message>
     <message>
         <source>error triggered by consumer</source>
-        <translation type="unfinished"></translation>
+        <translation>エラーは呼び出し側から発行されました</translation>
     </message>
     <message>
         <source>unexpected end of file</source>
-        <translation type="unfinished"></translation>
+        <translation>予期せぬ EOF</translation>
     </message>
     <message>
         <source>more than one document type definition</source>
-        <translation type="unfinished"></translation>
+        <translation>複数のドキュメントタイプが定義されています</translation>
     </message>
     <message>
         <source>error occurred while parsing element</source>
-        <translation type="unfinished"></translation>
+        <translation>要素の解析中にエラーが発生しました</translation>
     </message>
     <message>
         <source>tag mismatch</source>
-        <translation type="unfinished"></translation>
+        <translation>タグが一致しません</translation>
     </message>
     <message>
         <source>error occurred while parsing content</source>
-        <translation type="unfinished"></translation>
+        <translation>コンテンツの解析中にエラーが発生しました</translation>
     </message>
     <message>
         <source>unexpected character</source>
-        <translation type="unfinished"></translation>
+        <translation>予期せぬ文字</translation>
     </message>
     <message>
         <source>invalid name for processing instruction</source>
-        <translation type="unfinished"></translation>
+        <translation>処理命令の名前が無効です</translation>
     </message>
     <message>
         <source>version expected while reading the XML declaration</source>
-        <translation type="unfinished"></translation>
+        <translation>XML 宣言の読み込みにはにバージョンが必要です</translation>
     </message>
     <message>
         <source>wrong value for standalone declaration</source>
-        <translation type="unfinished"></translation>
+        <translation>スタンドアロン宣言の値が違います</translation>
     </message>
     <message>
         <source>encoding declaration or standalone declaration expected while reading the XML declaration</source>
-        <translation type="unfinished"></translation>
+        <translation>XML 宣言の読み込みにはエンコーディング宣言またはスタンドアロン宣言が必要です</translation>
     </message>
     <message>
         <source>standalone declaration expected while reading the XML declaration</source>
-        <translation type="unfinished"></translation>
+        <translation>XML 宣言の読み込みにはスタンドアロンの宣言が必要です</translation>
     </message>
     <message>
         <source>error occurred while parsing document type definition</source>
-        <translation type="unfinished"></translation>
+        <translation>DTD の解析中にエラーが発生しました</translation>
     </message>
     <message>
         <source>letter is expected</source>
-        <translation type="unfinished"></translation>
+        <translation>文字が必要です</translation>
     </message>
     <message>
         <source>error occurred while parsing comment</source>
-        <translation type="unfinished"></translation>
+        <translation>コメントの解析中にえらーが発生しました</translation>
     </message>
     <message>
         <source>error occurred while parsing reference</source>
-        <translation type="unfinished"></translation>
+        <translation>参照の解析中にエラーが発生しました</translation>
     </message>
     <message>
         <source>internal general entity reference not allowed in DTD</source>
-        <translation type="unfinished"></translation>
+        <translation>DTD では内部の解析済み一般実態への参照は許可されていません</translation>
     </message>
     <message>
         <source>external parsed general entity reference not allowed in attribute value</source>
-        <translation type="unfinished"></translation>
+        <translation>属性では外部への解析済み一般実態への参照は許可されていません</translation>
     </message>
     <message>
         <source>external parsed general entity reference not allowed in DTD</source>
-        <translation type="unfinished"></translation>
+        <translation>DTD では外部への解析済み一般実態への参照は許可されていません</translation>
     </message>
     <message>
         <source>unparsed entity reference in wrong context</source>
-        <translation type="unfinished"></translation>
+        <translation>あやまたコンテキストに解析されない実態への参照があります</translation>
     </message>
     <message>
         <source>recursive entities</source>
-        <translation type="unfinished"></translation>
+        <translation>実態が再帰しています</translation>
     </message>
     <message>
         <source>error in the text declaration of an external entity</source>
-        <translation type="unfinished"></translation>
+        <translation>外部実態のテキスト宣言にエラーがあります</translation>
     </message>
 </context>
 <context>
     <name>QtMultiLineEdit</name>
     <message>
         <source>Undo</source>
-        <translation type="unfinished"></translation>
+        <translation>やり直し</translation>
     </message>
     <message>
         <source>Redo</source>
-        <translation type="unfinished"></translation>
+        <translation>やり直しのやり直し</translation>
     </message>
     <message>
         <source>Cut</source>
-        <translation type="unfinished"></translation>
+        <translation>切り取り</translation>
     </message>
     <message>
         <source>Copy</source>
-        <translation type="unfinished"></translation>
+        <translation>コピー</translation>
     </message>
     <message>
         <source>Paste</source>
-        <translation type="unfinished"></translation>
+        <translation>貼り付け</translation>
     </message>
     <message>
         <source>Paste special...</source>
-        <translation type="unfinished"></translation>
+        <translation>形式を選択して貼り付け...</translation>
     </message>
     <message>
         <source>Clear</source>
-        <translation type="unfinished"></translation>
+        <translation>クリア</translation>
     </message>
     <message>
         <source>Select All</source>
-        <translation type="unfinished"></translation>
+        <translation>全て選択</translation>
     </message>
 </context>
 </TS>
