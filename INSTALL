@@ -214,6 +214,17 @@ that the DjVu plug-in is properly recognized.  The Netscape plug-in search rules
 are explained in the README file that usually comes with the Netscape
 distribution.
 
+3.1.3- TROUBLESHOOTING
+
+Sometimes Netscape creates a huge mess in configuration files
+named ${HOME}/.mailcap and ${HOME}/.mime.types.  The following
+command cleans the djvu related entries in these files:
+
+     $ djview -fix
+
+Then restart Netscape and hope for the best.
+
+
 
 3.2- NETSCAPE 6.1
 -----------------
