@@ -410,6 +410,6 @@ QStringFromGString(const GUTF8String & x)
   QString retval=QString::fromUtf8((const char *)x);
   return retval;
 }
-//#endif /* QT1 */
+
 #endif /* __QT_FIX_H_ */
 
