@@ -775,32 +775,36 @@ cpaldjvu(const GPixmap &input, GURL &urlout, const cpaldjvuopts &opts)
   // Compute optimal palette and quantize input pixmap
   GP<DjVuPalette> gpal=DjVuPalette::create();
   DjVuPalette &pal=*gpal;
-  int bgindex = pal.compute_pixmap_palette(input, opts.ncolors);
+  GPixel bgcolor;
+  int bgindex;
+
+  if (! opts.bgwhite)
+    {
+      bgindex = pal.compute_pixmap_palette(input, opts.ncolors);
+      pal.index_to_color(bgindex, bgcolor);
+    }
+  else
+    {
+      bgindex = -1;
+      bgcolor = GPixel::WHITE;
+      pal.histogram_clear();
+      for (int j=0; j<(int)input.rows(); j++)
+        {
+          const GPixel *p = input[j];
+          for (int i=0; i<(int)input.columns(); i++)
+            if (p[i] != GPixel::WHITE)
+              pal.histogram_add(p[i], 1);
+        }
+      pal.compute_palette(opts.ncolors);
+    }
   if (opts.verbose)
     DjVuFormatErrorUTF8( "%s\t%d\t%d\t%d",
                          ERR_MSG("cpaldjvu.quantizied"), 
                          w, h, pal.size());
-  // Choose background color
-  GPixel bgcolor;
-  if (opts.bgwhite)
-    {
-      int best = -1;
-      for (int i=0; i<pal.size(); i++)
-        {
-          pal.index_to_color(i, bgcolor);
-          int whiteness = 5*bgcolor.r + 9*bgcolor.g + 2*bgcolor.b; 
-          if (whiteness > best) 
-            {
-              best = whiteness;
-              bgindex = i;
-            }
-        }
-    }
-  pal.index_to_color(bgindex, bgcolor);
-  if (opts.verbose)
+  if (opts.verbose && !opts.bgwhite)
     DjVuPrintErrorUTF8("cpaldjvu: background color is #%02x%02x%02x.\n", 
                        bgcolor.r, bgcolor.g, bgcolor.b);
-
+  
   // Fill CCImage with color runs
   int xruncount=0,yruncount=0;
   CCImage rimg(w, h);
@@ -818,7 +822,9 @@ cpaldjvu(const GPixmap &input, GURL &urlout, const cpaldjvuopts &opts)
       const GPixel *row = input[y];
       for(x=0;x<w;x++)
         {
-          line[x]=pal.color_to_index(row[x]);
+          line[x] = pal.color_to_index(row[x]);
+          if (opts.bgwhite && row[x]==GPixel::WHITE)
+            line[x] = bgindex;
         }
       for(x=0;x<w;)
         {
@@ -826,16 +832,16 @@ cpaldjvu(const GPixmap &input, GURL &urlout, const cpaldjvuopts &opts)
           int index = line[x++];
           while (x<w && line[x]==index) { x++; }
           if (index != bgindex)
-          {
-            xruncount++;
-            rimg.add_single_run(y, x1, x-1, index);
-          }
+            {
+              xruncount++;
+              rimg.add_single_run(y, x1, x-1, index);
+            }
         }
       for(x=0;x<w;x++)
         if(prevline[x] != line[x]) yruncount++;
       gprevline.swap(gline);
     }
-    if(xruncount && yruncount)
+  if(xruncount && yruncount)
     {
       const double dyruncount=(double)yruncount;
       const double dxruncount=(double)xruncount;
@@ -849,20 +855,23 @@ cpaldjvu(const GPixmap &input, GURL &urlout, const cpaldjvuopts &opts)
       unsigned int s=(unsigned int)((xs+ys)*(double)0.5);
       int t=(int)((dpixsize*dtimefactor*xs+dpixsize*dtimefactor*ys)*(double)0.5);
       if (opts.verbose)
-        DjVuPrintErrorUTF8("cpaldjvu: predict: Time: %u:%02u.%02u Size: %u\n"
-          ,t/6000,(t/100)%60,t%100,s);
+        DjVuPrintErrorUTF8("cpaldjvu: predict: Time: %u:%02u.%02u Size: %u\n",
+                           t/6000,(t/100)%60,t%100,s);
     }
   if (opts.verbose)
-    DjVuFormatErrorUTF8( "%s\t%d", ERR_MSG("cpaldjvu.color_runs"), rimg.runs.size());
+    DjVuFormatErrorUTF8( "%s\t%d", ERR_MSG("cpaldjvu.color_runs"), 
+                         rimg.runs.size());
 
   // Perform Color Connected Component Analysis
   rimg.make_ccids_by_analysis();                  // Obtain ccids
   rimg.make_ccs_from_ccids();                     // Compute cc descriptors
   if (opts.verbose)
-    DjVuFormatErrorUTF8( "%s\t%d", ERR_MSG("cpaldjvu.ccs_before"), rimg.ccs.size());
+    DjVuFormatErrorUTF8( "%s\t%d", ERR_MSG("cpaldjvu.ccs_before"), 
+                         rimg.ccs.size());
   rimg.merge_and_split_ccs(smallsize,largesize);  // Eliminates gross ccs
   if (opts.verbose)
-    DjVuFormatErrorUTF8( "%s\t%d", ERR_MSG("cpaldjvu.ccs_after"), rimg.ccs.size());
+    DjVuFormatErrorUTF8( "%s\t%d", ERR_MSG("cpaldjvu.ccs_after"), 
+                         rimg.ccs.size());
   rimg.sort_in_reading_order();                   // Sort cc descriptors
   
   // Create JB2Image and fill colordata
