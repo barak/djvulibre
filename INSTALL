@@ -335,10 +335,10 @@ The configure command line was:
 
 
 
-4.3- SUN SPARC SOLARIS 5
+4.3- SUN SOLARIS 5
 --------------------------
 
-SOLARIS-5.6:
+SPARC-SUN-SOLARIS-5.6:
 
 Successful compilation using qt-2.3.0
 Compilation was made with gcc-3.0.2 with option -fpermissive.
@@ -348,7 +348,7 @@ The configure command line was:
         --with-jpeg=/home/leonb/djvulibre-3.5/BUILDS/libjpeg \
         CXX='g++ -fpermissive'
 
-SOLARIS-5.9:
+I386-SUN-SOLARIS-5.9:
 
 Successful compilation using qt-3.2 and gcc-3.3.
   1) Installed gcc 3.3
