@@ -752,38 +752,37 @@ QDViewer::eventFilter(QObject *obj, QEvent *e)
 		     }
 		     break;
 
-		  case Key_Backspace:
+                  case Key_PageUp:
 		     if (doc_page>0 && dimg && dimg->get_info())
 		     {
-                       bool fs = false;
-                       emit sigQueryFullScreen(fs);
-                       if (fs) 
-                         {
-                           gotoPage(doc_page-1);
-                           return TRUE;
-                         }
+                        gotoPage(doc_page-1);
+                        return TRUE;
 		     }
-                  case Key_PageUp:
+                     break;
+
+		  case Key_Backspace:
 		     if (rectDocument.ymin>=rectVisible.ymin && doc_page>0 &&
 			 dimg && dimg->get_info())
 		     {
 			gotoPage(doc_page-1);
+                        if (dimg && dimg->get_height() && dimg->get_width()) 
+                          {
+                            // This will only work if the image is cached.
+                            scroll(rectDocument.xmax-rectVisible.xmax,
+                                   rectDocument.ymax-rectVisible.ymax);
+                          }
 			return TRUE;
 		     }
 		     break;
 
-		  case Key_Space:
-		     if (doc_page<doc_pages-1 && dimg )
-		     {
-                       bool fs = false;
-                       emit sigQueryFullScreen(fs);
-                       if (fs && dimg->get_info())
-                         {
-                           gotoPage(doc_page+1);
-                           return TRUE;
-                         }
-		     }
 		  case Key_PageDown:
+		     if (doc_page<doc_pages-1 && dimg && dimg->get_info())
+		     {
+                        gotoPage(doc_page+1);
+                        return TRUE;
+		     }
+
+		  case Key_Space:
 		  case Key_Return:
 		  case Key_Enter:
 		     if (rectDocument.ymax<=rectVisible.ymax &&
