@@ -542,11 +542,11 @@ AC_DEFUN([AC_PATH_QT],
       AC_HELP_STRING([--with-qt=DIR],
                      [where the Qt root is installed.]),
       [ test x$withval != xyes && QTDIR=$withval ])
-  test x$no_x = yes && QTDIR=no
+  test x$no_x = xyes && QTDIR=no
   # Resolve variables
   if test x$QTDIR != xno ; then
     AC_MSG_CHECKING([for Qt root directory])
-    if test $x{QT_CFLAGS+set} != xset -a $x{QT_LIBS+set} != xset ; then
+    if test x${QT_CFLAGS+set} != xset -a x${QT_LIBS+set} != xset ; then
        ac_qt_dirs="/usr/lib/qt /usr/local /usr/X11R6 /usr"
        for n in /usr/lib/qt-2.* ; do test -d $n && ac_qt_dirs="$n $ac_qt_dirs" ; done
        ac_qt_dirs="$QTDIR /usr/lib/qt2 $ac_qt_dirs"
@@ -562,8 +562,8 @@ AC_DEFUN([AC_PATH_QT],
   fi
   # Programs
   if test x$QTDIR != xno ; then
-    test x{$QT_CFLAGS+set} != set && QT_CFLAGS="-I$QTDIR/include"
-    test x{$QT_LIBS+set} != set && QT_LIBS="-L$QTDIR/lib -lqt"
+    test x${QT_CFLAGS+set} != xset && QT_CFLAGS="-I$QTDIR/include"
+    test x${QT_LIBS+set} != xset && QT_LIBS="-L$QTDIR/lib -lqt"
     AC_PATH_PROG(MOC, moc, [unknown], "$QTDIR/bin:$PATH")
     AC_PATH_PROG(UIC, uic, [unknown], "$QTDIR/bin:$PATH")
     if test -x "$MOC" ; then : ; else 
