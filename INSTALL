@@ -1,30 +1,160 @@
 
 
-
 1- PREREQUISITES
 ================
 
+DjVuLibre-3.5 relies on various components available from the web.  
+Most recent Linux distribution already come with these.  
+You can also download and compile them if you wish.
+
+
+1.1 - C++ COMPILER
+------------------
+
+We strongly suggest to use the well known g++ compiler on all platforms.  You
+need at least version gcc-2.91.66 (also known as egcs-1.1.2).  Development was
+achieved using gcc-2.95.3 and gcc-2.96 (redhat specific).  No tests have been
+performed with gcc-3 yet.
+
+
+1.2 - LIBJPEG
+-------------
+
+A small number of DjVu files internally use JPEG encoding instead of IW44
+wavelet encoding.  These files are processed using either version 6a or 6b of
+the IJG libjpeg library <http://www.ijg.org>.  You can also choose to compile
+DjVu without JPEG support.  You might even never notice the difference.
+
+
+1.3 - QT
+--------
+
+The graphical user interface of the viewer relies on the Qt2 library
+from TrollTech <http://www.trolltech.com>.  The command line tools 
+do not rely on Qt and can be compiled independently.
+
+The source code of the Qt2 library can be downloaded from 
+<ftp://ftp.trolltech.com/qt/source/qt-x11-2.3.1.tar.gz>.
+Avoid versions earlier than 2.2.0.  
+
+No tests have been performed with Qt3 yet.
+
+
+1.4 - THREADS
+-------------
+
+The DjVu viewer makes heavy use of multiple threads of execution.  Modern Unix
+operating systems come with the standardized Posix threads.  DjVuLibre-3.5
+fully supports detecting and using Posix threads.
+
+For the sake of older operating systems, DjVuLibre-3.5 offers a custom
+threading model called CoThreads.  CoThreads work best with a two line patch
+to the GCC compiler.  This is described in files "etc/README.libgcc".  The
+configuration script will auto-detect the available threading model and suggest
+applying the GCC patch when it is needed.
+
+
+
 
 
 2- COMPILE
 ==========
 
+Chances are that everything will work by simply running commands "configure",
+"make" and "make install". 
+
 
 2.1- CONFIGURE
 -------------
+
+Various options and environment variables affect the execution of the
+configuration script.  A complete list can be obtained by typing 
+"configure --help".  Here are the most important ones.
+
+* Option "--prefix=PREFIXDIR"
+
+  This option specifies where the DjVuLibre software will be installed.
+  The default prefix is /usr/local.  
+
+* Option "--with-qt=QTDIR"
+
+  This option specifies the base location of the Qt library.
+  Without this option, the configuration script will inspect
+  environment variable QTDIR as well as a few typical locations.
+
+  When everything else fails (that should not happen), you 
+  can simply define the environment variables 
+  QT_CFLAGS, QT_LIBS and MOC.
+
+* Option "--with-jpeg=JPEGDIR"
+
+  This option specifies a directory where the JPEG library has been
+  compiled. This directory contains both the include files and the 
+  library.  Without this option, the configuration script will search 
+  the JPEG library in standard places.
+
+  When everything else fails, you can simply define the environment
+  variables JPEG_CFLAGS and JPEG_LIBS.
+
+* Option "--enable-threads=(posix|cothread)"
+
+  This option specifies which threading model should be used.
+  Without this option, the configuration script will first 
+  try to detect how to use posix threads and fall back to cothreads.
+  You can help the search process by defining environment
+  variables PTHREAD_CFLAGS and PTHREAD_LIBS.
+
+Always check the output of the configuration script for warnings and errors.  
+You should see the following lines after a successful execution:
+
+        Configuration is done.
+        Compile with command:
+            $ make depend
+            $ make
+        Then install the binaries in /usr/local with command:
+            # make install
+
 
 
 2.2- MAKE
 ---------
 
+You can then perform the compilation by typing 
+
+        $ make
+
+The compilation can last a few minutes.  Again check the output for warnings
+and errors.  Finally a brief message lets you know that the compilation was
+successful.  You can then proceed with the installation.
+
 
 2.2- INSTALL
----------
+------------
+
+The installation procedure will:
+
+- install the executable programs into "${prefix}/bin".
+- possibly install the shared library "${prefix}/lib/libdjvu-3.5.so".
+- install the man pages under "${prefix}/man or ${prefix}/share/man".
+- install the Netscape plug-in as "${prefix}/lib/netscape/plugins/nsdejavu.so".
+- install various ancillary files under "${prefix}/share/djvu".
+
+The where ${prefix} refers to the directory specified by the prefix option of
+the configuration script.  The default prefix is /usr/local.
+
+To perform the installation, simply type :
+
+        $ make install
+
+Of course you must have the appropriate permissions to 
+perform the installation.  Chances are that you need to
+be root to install something into /usr/local.
 
 
+
 
 
-3- PLUGIN ISSUES
+3- PLUG-IN ISSUES
 ================
 
 
@@ -32,20 +162,20 @@
 -----------------
 
 
-The DjVu netscape plugin is a shared library which runs program djview
+The DjVu Netscape plug-in is a shared library which runs program djview
 in slave mode. This shared library is normally installed in:
 
         ${prefix}/lib/netscape/plugins/nsdejavu.so.
 
 Therefore, unless you specified a different prefix to the configure program,
 the shared library is installed in /usr/local/lib/netscape/plugins.  This is a
-good thing since Netscape 4 always searches this directory for plugins.
+good thing since Netscape 4 always searches this directory for plug-ins.
 
-3.1.1- DISABLING PREVIOUS VERSIONS OF THE DJVU PLUGIN
+3.1.1- DISABLING PREVIOUS VERSIONS OF THE DJVU PLUG-IN
 
-You might have however to first disable any previous version of the plugin.
+You might have however to first disable any previous version of the plug-in.
 Selecting menu "Help->About Plugins" in Netscape displays the current list of
-plugins.  Previous versions of the plugin were often installed in one of the
+plug-ins.  Previous versions of the plug-in were often installed in one of the
 following locations.
 
         ${HOME}/.netscape/plugins/nsdejavu.so
@@ -53,24 +183,24 @@ following locations.
         /opt/netscape/plugins/nsdejavu.so
 
 You can safely remove these files to disable the previous version of the DjVu
-plugin. You can also remove the directory "DjVu" that was installed under the
+plug-in. You can also remove the directory "DjVu" that was installed under the
 corresponding "netscape" or ".netscape" directory.  Note that "nsdejavu.so"
 and "DjVu" are often symbolic links to the actual installation directory.
-Removing the symbolic links is sufficient to disable the plugin.
+Removing the symbolic links is sufficient to disable the plug-in.
 
-3.1.2- ALTERNATIVE PLUGIN INSTALLATION STRATEGIES
+3.1.2- ALTERNATIVE PLUG-IN INSTALLATION STRATEGIES
 
 More complicated cases can be dealt using one of the following strategies.
 
-- You can explicitely set the plugin search path by setting the
-  environment variable NPX_PLUGIN_PATH before starting netscape.
+- You can explicitly set the plug-in search path by setting the
+  environment variable NPX_PLUGIN_PATH before starting Netscape.
   Setting this variable overrides Netscape default search directories.
 
     $ NPX_PLUGIN_PATH="${prefix}/lib/netscape/plugins:$HOME/.netscape/plugins"
     $ export NPX_PLUGIN_PATH ; netscape
 
 - You can create a symbolic link to nsdejavu.so from a place that
-  is normally searched by netscape.
+  is normally searched by Netscape.
 
     $ cd $HOME/.netscape ; mkdir plugins ; cd plugins
     $ ln -s ${prefix}/lib/netscape/plugins/nsdejavu.so nsdejavu.so
@@ -80,28 +210,17 @@ More complicated cases can be dealt using one of the following strategies.
   following the symbolic link, and then will locate the DjVu viewer djview.
   
 You can then restart Netscape and select menu "Help->About Plugins" to check
-that the DjVu plugin is properly recognized.  The netscape plugin search rules
-are explained in the README file that usually comes with the netscape
+that the DjVu plug-in is properly recognized.  The Netscape plug-in search rules
+are explained in the README file that usually comes with the Netscape
 distribution.
-
-
-3.1.3- TROUBLESHOOTING
-
-Sometimes Netscape gets really confused.
-It is then time to try the following method:
-
-   $ cd $HOME
-   $ rm .mime.types .mailcap .netscape/plugin-list*
-   $ netscape
-
 
 
 3.2- NETSCAPE 6.1
 -----------------
 
-It seems that netscape 6 only recognize plugins installed inside its own
-plugin directory.  This can be done using a symbolic link.  Let us assume that
-netscape 6 is installed in /usr/local/netscape6 and that the DjVu plugin is
+It seems that Netscape 6 only recognize plug-ins installed inside its own
+plug-in directory.  This can be done using a symbolic link.  Let us assume that
+Netscape 6 is installed in /usr/local/netscape6 and that the DjVu plug-in is
 installed in /usr/local/lib/netscape/plugins.  
 
     $ cd /usr/local/netscape6/plugins
@@ -113,14 +232,14 @@ You can then run Netscape 6.1 and view DjVu images.
 3.3- KONQUEROR-2.2
 ------------------
 
-The DjVu plugin works decently with the konqueror web browser.  There are some
+The DjVu plug-in works decently with the Konqueror web browser.  There are some
 problems with embedded DjVu images.  You need KDE-2.2 or better for that.
 
 In Konqueror, select "Settings->Configure Konqueror".  When the dialog
 appears, select the icon "Netscape Plugins".  Make sure that directory
-"${prefix}/lib/netscape/plugins" appears in the list of plugin directories.
+"${prefix}/lib/netscape/plugins" appears in the list of plug-in directories.
 Then press button "Scan for new plugins".  Clicking the "Plugins" tab button
-should display a list of recognized plugins.  Check that "nsdejavu.so" appears
+should display a list of recognized plug-ins.  Check that "nsdejavu.so" appears
 there.  You should now be able to use DjVu with Konqueror.
 
 
@@ -130,8 +249,10 @@ there.  You should now be able to use DjVu with Konqueror.
 I was not even able to launch mozilla on my rh7.1+ box.
 
 
+
 
 
-4- MAKING RPMS
-==============
+4- MAKING A RPM
+===============
 
+To be detailed.
