@@ -1,5 +1,5 @@
-%define release 2
-%define version 3.5.5
+%define release 1
+%define version 3.5.6
 %define prefix %{?_prefix:%{_prefix}}%{!?_prefix:/usr}
 %define mandir %{?_mandir:%{_mandir}}%{!?_mandir:%{prefix}/man}
 
@@ -41,21 +41,23 @@ DjVulibre-3.5 contains:
 - An up-to-date version of the C++ DjVu Reference Library.
 
 %changelog
+* Wed May 29 2002 Leon Bottou <leon@bottou.org>
+- bumped to version 3.5.6-1
 * Mon Apr 1 2002 Leon Bottou <leonb@users.sourceforge.net>
-    - bumped to version 3.5.5-2
-    - changed group to Applications/Publishing
+- bumped to version 3.5.5-2
+- changed group to Applications/Publishing
 * Tue Mar 25 2002 Leon Bottou <leonb@users.sourceforge.net>
-    - bumped to version 3.5.5-2
+- bumped to version 3.5.5-2
 * Tue Jan 22 2002 Leon Bottou <leonb@users.sourceforge.net>
-    - bumped to version 3.5.4-1.
-    - fixed for properly locating the man directory.
-    - bumped to version 3.5.4-2.
+- bumped to version 3.5.4-1.
+- fixed for properly locating the man directory.
+- bumped to version 3.5.4-2.
 * Wed Jan 16 2002 Leon Bottou <leonb@users.sourceforge.net>
-    - bumped to version 3.5.3-1
+- bumped to version 3.5.3-1
 * Fri Dec  7 2001 Leon Bottou <leonb@users.sourceforge.net>
-    - bumped to version 3.5.2-1.
+- bumped to version 3.5.2-1.
 * Wed Dec  5 2001 Leon Bottou <leonb@users.sourceforge.net>
-    - created spec file for rh7.x.
+- created spec file for rh7.x.
 
 %prep
 %setup

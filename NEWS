@@ -1,3 +1,9 @@
+NEW IN VERSION 3.5.6
+--------------------
+- Fixes for gcc-3.1 and qt3
+- Fixes for macosx compilation
+- Added option -bgwhite in cpaldjvu
+
 NEW IN VERSION 3.5.5
 --------------------
 - Removed annoying flicker with djview/Qt3.
