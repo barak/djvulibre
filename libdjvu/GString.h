@@ -1,7 +1,18 @@
 //C-  -*- C++ -*-
-//C- DjVu® Reference Library (v. 3.5)
+//C- -----------------------------------------------------------
+//C- DjVuLibre-3.5
+//C- Copyright (c) 2002  Leon Bottou and Yann Le Cun.
+//C- Copyright (c) 2001  AT&T
 //C-
-//C- Copyright © 1999-2001 LizardTech, Inc. All Rights Reserved.
+//C- This software is subject to, and may be distributed under, the
+//C- GNU General Public License, Version 2. The license should have
+//C- accompanied the software or you may obtain a copy of the license
+//C- from the Free Software Foundation at http://www.fsf.org .
+//C- 
+//C- DjVuLibre-3.5 is derived from the DjVu (r) Reference Library.
+//C- 
+//C- DjVu (r) Reference Library (v. 3.5)
+//C- Copyright (c) 1999-2001 LizardTech, Inc. All Rights Reserved.
 //C- The DjVu Reference Library is protected by U.S. Pat. No.
 //C- 6,058,214 and patents pending.
 //C-
@@ -29,6 +40,7 @@
 //C- OF ANY KIND, EITHER EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED
 //C- TO ANY WARRANTY OF NON-INFRINGEMENT, OR ANY IMPLIED WARRANTY OF
 //C- MERCHANTIBILITY OR FITNESS FOR A PARTICULAR PURPOSE.
+//C- -----------------------------------------------------------
 //
 // $Id$
 // $Name$
