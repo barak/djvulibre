@@ -31,11 +31,13 @@ Standalone viewer for DjVu files.
 Features include navigating documents,
 zooming and panning page images, 
 producing and displaying thumbnails,
+searching documents for particular words in the hidden text layer,
+copying hidden text to the clipboard,
 exporting page images as
 .SM PNM
 files, 
 saving pages and documents as bundled or indirect multi-page files, 
-and printing page and documents to PostScript printers.
+and printing page and documents to Postscript printers.
 
 .SH OPTIONS
 .TP
@@ -114,8 +116,44 @@ Checks the files
 .B $HOME/.mailcap 
 and
 .B $HOME/.mime.types
-and attempt to reconstruct sensible entries for the DjVu mime types.  
+and attempt to reconstruct sensible DjVu entries.
 This is sometimes useful to make the DjVu plugin work.
+
+.SH USAGE
+
+Most features can be accessed using the menus, the toolbar, or the popup menu.
+The popup menu is shown when the right mouse button is depressed over a DjVu
+image.  The toolbar is usually located at the bottom of a DjVu image.  The
+preference dialog provides the option to disable to toolbar or set the
+"auto-hide" mode.
+
+The following keyboard shortcuts are recognized:
+.PP
+.TS
+center,box;
+lfB lfB
+l l
+.
+Key	Action
+=
+1,2, and 3	Change zoom to to 100%, 200% and 300% respectively.
+Up, Down, Left, Right	Scroll the image in the given direction.
+Home	Display top left corner of the image.
+End	Display bottom right corner of the image.
+Control+Home	Go to the beginning of the multipage document.
+Control+End	Go to the end of the multipage document.
+Page Up	Go to the top of the page or to the previous page.
+Page Down	Go to the bottom of the page or to the next page.
+Space	Go to the next page.
+Backspace	Go to the previous page.
++, -	Zoom in and out.
+W	Select the "Fit Width" zooming mode.
+P	Select the "Fit Page" zooming mode.
+G	Display the "Goto page" dialog box.
+F, F3, CTRL+F	Search the hidden text layer.
+CTRL	Show the magnifier lens.
+.TE
+.PP
 
 .SH CREDITS
 This program was written by Andrei Erofeev <andrew_erofeev@yahoo.com>
