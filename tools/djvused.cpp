@@ -117,7 +117,7 @@ static DJVUSEDGlobal& g(void)
 class ParsingByteStream : public ByteStream 
 {
 private:
-  static const size_t bufsize = 512;
+  enum { bufsize=512 };
   const GP<ByteStream> &gbs;
   ByteStream &bs;
   unsigned char buffer[bufsize];
@@ -1030,9 +1030,9 @@ command_set_meta(ParsingByteStream &pbs)
 
 struct  zone_names_struct
 { 
-  const char *name;
+  char *name;
   DjVuTXT::ZoneType ztype;
-  const char separator;
+  char separator;
 };
 
 static zone_names_struct* zone_names() {
