@@ -53,7 +53,7 @@ make
 
 %install
 rm -rf %{buildroot}
-%makeinstall
+make DESTDIR=%{buildroot} install
 
 # Quick fix to stop ldconfig from complaining
 find %{buildroot}%{_libdir} -name "*.so*" -exec chmod 755 {} \;
@@ -107,6 +107,8 @@ rm -rf %{buildroot}
 %lang(de) %{_mandir}/de*
 
 %changelog
+* Fri Apr  2 2004 Leon Bottou <leon@bottou.org>
+- Use DESTDIR instead of %makeinstall
 * Tue Nov 18 2003 Leon Bottou <leon@bottou.org> 3.5.13-0.1
 - new version
 * Wed Nov  5 2003 Leon Bottou <leon@bottou.org> 3.5.12-3
