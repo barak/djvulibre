@@ -62,7 +62,10 @@ fi
 # Special cases
 case "$host" in
   *-darwin* | *-macos10*)
-     if test -d /sw ; then
+     if test -d /opt/local ; then
+       CPPFLAGS="$CPPFLAGS -I/opt/local/include"
+       LDFLAGS="$LDFLAGS -L/opt/local/lib"
+     elif test -d /sw ; then
        CPPFLAGS="$CPPFLAGS -I/sw/include"
        LDFLAGS="$LDFLAGS -L/sw/lib"
      fi
