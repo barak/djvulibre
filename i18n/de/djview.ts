@@ -1063,15 +1063,6 @@ automatic color matching.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>After looking through every page of this document
-we have found, that neither of them contain
-textual information. This means, that the document
-creator did not run an OCR engine on this document.
-
-The search is impossible.</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>This page does not contain textual information,
 which means that either the creator of this document
 did not run an OCR engine on it, or the OCR engine
@@ -1122,6 +1113,16 @@ The search is impossible.</source>
     </message>
     <message>
         <source>C&amp;lose</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>After looking through every page of this document,
+we have found that none of them contain
+textual information. This means that either the document
+creator did not run an OCR engine on this document,
+or the OCR engine did not recognize any text.
+
+The search is impossible.</source>
         <translation type="unfinished"></translation>
     </message>
 </context>

@@ -1159,7 +1159,7 @@ textual information. This means, that the document
 creator did not run an OCR engine on this document.
 
 The search is impossible.</source>
-        <translation>すべてのページを検索しましたが、
+        <translation type="obsolete">すべてのページを検索しましたが、
 どのページにもテキスト情報がありません。
 この文書は OCR が実行されていない可能性があります。
 
@@ -1176,6 +1176,20 @@ The search is impossible.</source>
 これは、OCR が実行されていないか、
 OCR エンジンがテキストを認識できなかった
 可能性があります。
+
+検索は実行できません。</translation>
+    </message>
+    <message>
+        <source>After looking through every page of this document,
+we have found that none of them contain
+textual information. This means that either the document
+creator did not run an OCR engine on this document,
+or the OCR engine did not recognize any text.
+
+The search is impossible.</source>
+        <translation>すべてのページを検索しましたが、
+どのページにもテキスト情報がありません。
+この文書は OCR が実行されていない可能性があります。
 
 検索は実行できません。</translation>
     </message>

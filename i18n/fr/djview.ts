@@ -1181,7 +1181,7 @@ textual information. This means, that the document
 creator did not run an OCR engine on this document.
 
 The search is impossible.</source>
-        <translation>Aucune page du document ne contient d&apos;information sur le texte
+        <translation type="obsolete">Aucune page du document ne contient d&apos;information sur le texte
 Cela signifie que le créateur du document n&apos;a pas fourni ces
 informations.
 
@@ -1198,6 +1198,21 @@ The search is impossible.</source>
 Cela signifie soit que le créateur du document n&apos;a pas
 fourni ces informations, soit que ses outils n&apos;ont pas
 identifié de texte sur cette page.
+
+La recherche est impossible.</translation>
+    </message>
+    <message>
+        <source>After looking through every page of this document,
+we have found that none of them contain
+textual information. This means that either the document
+creator did not run an OCR engine on this document,
+or the OCR engine did not recognize any text.
+
+The search is impossible.</source>
+        <translation>Aucune page du document ne contient d&apos;information sur le texte
+Cela signifie soit que le créateur du document n&apos;a pas utilisé de
+logiciel de lecture automatique (OCR), soit que le logiciel de lecture 
+automatique n&apos;a pas localisé de texte.
 
 La recherche est impossible.</translation>
     </message>
