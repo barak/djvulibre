@@ -99,8 +99,11 @@ qtErrorHandler(QtMsgType type, const char *msg)
    }
 }
 
-static int (*x11PreviousErrorHandler)(Display*,XErrorEvent*) = 0;
-static int (*x11PreviousExtErrorHandler)(Display *, char *, char *) = 0;
+typedef int x11_error_handler_t(Display*,XErrorEvent*);
+x11_error_handler_t *x11PreviousErrorHandler = 0;
+
+typedef int x11_ext_error_handler_t(Display *, char *, char *);
+x11_ext_error_handler_t *x11PreviousExtErrorHandler = 0;
 
 static int
 x11ErrorHandler(Display *displ, XErrorEvent *event)
@@ -155,13 +158,16 @@ InstallErrorHandlers(void)
    DEBUG_MSG("InstallErrorHandlers(): Installing custom error handlers\n");
    qInstallMsgHandler(&qtErrorHandler);
    if (x11PreviousErrorHandler == 0)
-     x11PreviousErrorHandler = XSetErrorHandler(x11ErrorHandler);
+     x11PreviousErrorHandler = (x11_error_handler_t *)
+       XSetErrorHandler(x11ErrorHandler);
 #ifdef QT2
 #ifdef HAVE_X11_EXTENSIONS_XEXT_H
    if (x11PreviousExtErrorHandler == 0)
-     x11PreviousExtErrorHandler = XSetExtensionErrorHandler(x11ExtErrorHandler);
+     x11PreviousExtErrorHandler = (x11_ext_error_handler_t *) 
+       XSetExtensionErrorHandler(x11ExtErrorHandler);
    if (x11PreviousExtErrorHandler == 0)
-     x11PreviousExtErrorHandler = XSetExtensionErrorHandler(x11ExtErrorHandler);
+     x11PreviousExtErrorHandler = (x11_ext_error_handler_t *)
+       XSetExtensionErrorHandler(x11ExtErrorHandler);
 #endif
 #endif
 }
