@@ -474,7 +474,7 @@ DjVmDoc::read(const GURL &url)
    iff.get_chunk(chkid);
    if (chkid!="DIRM")
       G_THROW( ERR_MSG("DjVmDoc.no_dirm_chunk") );
-   dir->decode(str);
+   dir->decode(iff.get_bytestream());
    iff.close_chunk();
 
    if (dir->is_bundled())
