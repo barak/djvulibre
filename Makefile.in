@@ -39,6 +39,7 @@ all install depend clean: FORCE
 
 distclean: FORCE
 	for d in ${SUBDIRS}; do ( cd $$d && ${MAKE} $@ ); done
+	-find . -name Makefile -exec ${RM} {} \;
 	-${RM} config.h config.log config.status
 	-${RM} Makefile libtool
 

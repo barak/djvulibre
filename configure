@@ -8636,6 +8636,10 @@ _ACEOF
 
           ac_config_files="$ac_config_files gui/nsdejavu/Makefile"
 
+# L18N overlays
+          ac_config_files="$ac_config_files i18n/ja/Makefile"
+
+# Go
 cat >confcache <<\_ACEOF
 # This file is a shell script that caches the results of configure
 # tests run on this system so they can be shared between configure
@@ -9167,6 +9171,7 @@ do
   "gui/bin2cpp/Makefile" ) CONFIG_FILES="$CONFIG_FILES gui/bin2cpp/Makefile" ;;
   "gui/djview/Makefile" ) CONFIG_FILES="$CONFIG_FILES gui/djview/Makefile" ;;
   "gui/nsdejavu/Makefile" ) CONFIG_FILES="$CONFIG_FILES gui/nsdejavu/Makefile" ;;
+  "i18n/ja/Makefile" ) CONFIG_FILES="$CONFIG_FILES i18n/ja/Makefile" ;;
   "config.h" ) CONFIG_HEADERS="$CONFIG_HEADERS config.h:config/config.h.in" ;;
   *) { { echo "$as_me:$LINENO: error: invalid argument: $ac_config_target" >&5
 echo "$as_me: error: invalid argument: $ac_config_target" >&2;}

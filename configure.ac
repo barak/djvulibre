@@ -328,6 +328,9 @@ AC_CONFIG_FILES(gui/Makefile)
 AC_CONFIG_FILES(gui/bin2cpp/Makefile)
 AC_CONFIG_FILES(gui/djview/Makefile)
 AC_CONFIG_FILES(gui/nsdejavu/Makefile)
+# L18N overlays
+AC_CONFIG_FILES(i18n/ja/Makefile)
+# Go
 AC_OUTPUT
 
 # Final message
