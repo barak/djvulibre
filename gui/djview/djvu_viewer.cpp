@@ -63,7 +63,6 @@
 
 #include "djvu_viewer.h"
 
-#include "exc_msg.h"
 #include "debug.h"
 #include "GURL.h"
 #include "ByteStream.h"
@@ -105,17 +104,10 @@ DjVuViewerPort::notify_error(const DjVuPort * source, const GUTF8String &qmsg)
 bool
 DjVuViewerPort::notify_status(const DjVuPort * source, const GUTF8String &qmsg)
 {
-   const char * const msg=qmsg;
-   GMonitorLock lock(&disabled);
-   if (!disabled)
-   {
-      GUTF8String msg_str=msg;
-      for(u_int i=0;i<msg_str.length();i++)
-	 if (msg_str[i]=='\t') msg_str.setat(i, ' ');
-
-      viewer->messenger.showStatus(QStringFromGString(msg_str));
-   }
-   return 1;
+  GMonitorLock lock(&disabled);
+  if (!disabled)
+    viewer->messenger.showStatus(QStringFromGString(qmsg));
+  return 1;
 }
 
 //****************************************************************************
@@ -188,16 +180,17 @@ DjVuViewer::slotViewerDestroyed(void)
 void
 DjVuViewer::slotShowError(const GUTF8String &title, const GUTF8String &msg)
 {
-   if (!GException::cmp_cause(msg, ByteStream::EndOfFile))
-   {
-      static const QString mesg=tr("Unexpected end of file encountered");
-      emit sigShowStatus(mesg);
-   }else if (GException::cmp_cause(msg, DataPool::Stop))
-   {
+  if (!GException::cmp_cause(msg, ByteStream::EndOfFile))
+    {
+     static const QString mesg=tr("Unexpected end of file encountered");
+     emit sigShowStatus(mesg);
+    }
+  else if (GException::cmp_cause(msg, DataPool::Stop))
+    {
       QString qtitle = QStringFromGString(title);
       QString qmsg = QStringFromGString(DjVuMessage::LookUpUTF8(msg));
       ::showError(viewer, qtitle, qmsg);
-   }
+    }
 }
 
 bool

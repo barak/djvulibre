@@ -62,8 +62,6 @@
 #endif
 
 #include "qt_painter.h"
-#include "exc_msg.h"
-
 #ifdef UNIX
 #include "qx_imager.h"
 #else
@@ -83,8 +81,7 @@ QePainter::drawPixmap(const GRect & irect, GPixmap *pm,
      qxImager->displayPixmap((u_long) hd, gc,
                              ph_rect, pm, use_shm_extension);
 #else
-   throw ERROR_MESSAGE("QePainter::drawPixmap",
-                       "Implement QePainter for windows\n");
+   G_THROW("Implement QePainter for windows\n");
 #endif
 }
 
@@ -101,8 +98,7 @@ QePainter::drawPixmap(const GRect &irect, int pm_x0, int pm_y0,
      qxImager->displayPixmap((u_long) hd, gc,
                              ph_rect, pm_x0, pm_y0, pm, use_shm_extension);
 #else
-   throw ERROR_MESSAGE("QePainter::drawPixmap",
-                       "Implement QePainter for windows\n");
+   G_THROW("Implement QePainter for windows\n");
 #endif
 }
 
@@ -119,8 +115,7 @@ QePainter::drawBitmap(const GRect &irect, GBitmap *bm,
      qxImager->displayBitmap((u_long) hd, gc,
                              ph_rect, bm, use_shm_extension);
 #else
-   throw ERROR_MESSAGE("QePainter::drawBitmap",
-                       "Implement QePainter for windows\n");
+   G_THROW("Implement QePainter for windows\n");
 #endif
 }
 
@@ -137,8 +132,7 @@ QePainter::drawBitmap(const GRect &irect, int bm_x0, int bm_y0,
      qxImager->displayBitmap((u_long) hd, gc,
                              ph_rect, bm_x0, bm_y0, bm, use_shm_extension);
 #else
-   throw ERROR_MESSAGE("QePainter::drawBitmap",
-                       "Implement QePainter for windows\n");
+   G_THROW("Implement QePainter for windows\n");
 #endif
 }
 
@@ -178,8 +172,7 @@ QePainter::drawPatchedBitmaps(const GRect & bm_rect, GBitmap * bm,
                                       list, use_shm_extension);
     }
 #else
-   throw ERROR_MESSAGE("QePainter::drawPatchedBitmap",
-                       "Implement QePainter for windows\n");
+  G_THROW("Implement QePainter for windows\n");
 #endif
 }
 

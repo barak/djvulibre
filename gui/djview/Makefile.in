@@ -83,15 +83,6 @@ CIN_SOURCES = \
  ${top_srcdir}/gui/shared/cin_data/ppm_hand1.cin 
 
 CPP_SOURCES = \
- ${top_srcdir}/gui/indep/except/exc_base.cpp \
- ${top_srcdir}/gui/indep/except/exc_file.cpp \
- ${top_srcdir}/gui/indep/except/exc_misc.cpp \
- ${top_srcdir}/gui/indep/except/exc_msg.cpp \
- ${top_srcdir}/gui/indep/except/exc_range.cpp \
- ${top_srcdir}/gui/indep/except/exc_res.cpp \
- ${top_srcdir}/gui/indep/except/exc_sys.cpp \
- ${top_srcdir}/gui/indep/except/exceptions.cpp \
- ${top_srcdir}/gui/indep/except/throw_error.cpp \
  ${top_srcdir}/gui/indep/QX/qx_imager.cpp \
  ${top_srcdir}/gui/indep/QX/qxlib.cpp \
  ${top_srcdir}/gui/indep/QT/qt_imager.cpp \

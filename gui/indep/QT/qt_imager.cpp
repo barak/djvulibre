@@ -63,19 +63,14 @@
 
 #include "qt_imager.h"
 #include "debug.h"
-#include "exc_msg.h"
 
-QeImager	* qeImager;
+QeImager* qeImager;
 
 QeImager::QeImager(void)
 {
-   DEBUG_MSG("QeImager::QeImager(): Initializing class...\n");
-   DEBUG_MAKE_INDENT(3);
-
-   if (qeImager)
-      throw ERROR_MESSAGE("QeImager::QeImager",
-			  "Internal error: Attempt to initialize QeImager twice.");
-   qeImager=this;
+  DEBUG_MSG("QeImager::QeImager(): Initializing class...\n");
+  DEBUG_MAKE_INDENT(3);
+  qeImager=this;
 }
 
 QeImager::~QeImager(void)

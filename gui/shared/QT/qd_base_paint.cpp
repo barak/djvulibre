@@ -65,9 +65,6 @@
 
 #include "GOS.h"
 #include "debug.h"
-#include "exc_msg.h"
-#include "exc_res.h"
-#include "exc_misc.h"
 #include "qt_imager.h"
 #include "qd_painter.h"
 #include "djvu_base_res.h"
@@ -249,7 +246,8 @@ QDBase::paint(QPaintDevice * drawable,	// Where to paint
 	       grectDisp=cached_grect;
 	       bm=bm_cached;
 	       pm=pm_cached;
-	    } else
+	    }
+            else
 	    {
 	       DEBUG_MSG("rect (" << grectCheck.xmin << ", " <<
 			 grectCheck.ymin << ", " << grectCheck.width() <<
@@ -292,118 +290,133 @@ QDBase::paint(QPaintDevice * drawable,	// Where to paint
 	       // First draw everything forcing inACTIVE mode into the GBitmap/GPixmap
 	       // If a hyperling is "always active", draw it in full
 	    if (pm)
-	       for(GPosition pos=map_areas;pos;++pos)
-	       {
-		  GP<MapArea> ma=map_areas[pos];
-		  if (ma->isAlwaysActive())
-		     ma->draw(grectDisp, pm, MapArea::DRAW_ACTIVE);
-		  else ma->draw(grectDisp, pm, MapArea::DRAW_INACTIVE);
-	       }
+              {
+                for(GPosition pos=map_areas;pos;++pos)
+                  {
+                    GP<MapArea> ma=map_areas[pos];
+                    if (ma->isAlwaysActive())
+                      ma->draw(grectDisp, pm, MapArea::DRAW_ACTIVE);
+                    else ma->draw(grectDisp, pm, MapArea::DRAW_INACTIVE);
+                  }
+              }
 	    else if (bm)
-	    {
-		  // Since we have a GBitmap here and hyperlinks are going to
-		  // display themselves in color, we need to convert it to
-		  // GPixmap... At least part of it...
-	       for(GPosition pos=map_areas;pos;++pos)
-	       {
-		  GRect brect=map_areas[pos]->get_bound_rect();
-		  ma_mapper.map(brect);
-		  brect.inflate(3, 3);
-		  GRect hrect;
-		  hrect.recthull(patch_rect, brect);
-		  patch_rect=hrect;
-	       }
-
-	       GRect irect;
-	       irect.intersect(patch_rect, grectDisp);
-	       patch_rect=irect;
-	       
-	       if (!patch_rect.isempty())
-	       {
-		  GRect rect=patch_rect;
-		  rect.translate(-grectDisp.xmin, -grectDisp.ymin);
-		  rect=GRect(rect.xmin, bm->rows()-rect.ymax,
-			     rect.width(), rect.height());
-		  patch_pm=GPixmap::create(*bm, rect);
-		  for(GPosition pos=map_areas;pos;++pos)
-		  {
-		     GP<MapArea> ma=map_areas[pos];
-		     if (ma->isAlwaysActive())
-			ma->draw(patch_rect, patch_pm, MapArea::DRAW_ACTIVE);
-		     else ma->draw(patch_rect, patch_pm, MapArea::DRAW_INACTIVE);
-		  }
-	       }
-	    }
-
-	       // Now update cache of every hyperlink, that maintains it
-	       // It's up to the hyperlink to decide if it needs to update it
-	       // or not. We just give this opportunity to everybody
+              {
+                // Since we have a GBitmap here and hyperlinks are going to
+                // display themselves in color, we need to convert it to
+                // GPixmap... At least part of it...
+                for(GPosition pos=map_areas;pos;++pos)
+                  {
+                    GRect brect=map_areas[pos]->get_bound_rect();
+                    ma_mapper.map(brect);
+                    brect.inflate(3, 3);
+                    GRect hrect;
+                    hrect.recthull(patch_rect, brect);
+                    patch_rect=hrect;
+                  }
+                
+                GRect irect;
+                irect.intersect(patch_rect, grectDisp);
+                patch_rect=irect;
+                
+                if (!patch_rect.isempty())
+                  {
+                    GRect rect=patch_rect;
+                    rect.translate(-grectDisp.xmin, -grectDisp.ymin);
+                    rect=GRect(rect.xmin, bm->rows()-rect.ymax,
+                               rect.width(), rect.height());
+                    patch_pm=GPixmap::create(*bm, rect);
+                    for(GPosition pos=map_areas;pos;++pos)
+                      {
+                        GP<MapArea> ma=map_areas[pos];
+                        if (ma->isAlwaysActive())
+                          ma->draw(patch_rect, patch_pm, MapArea::DRAW_ACTIVE);
+                        else ma->draw(patch_rect, patch_pm, MapArea::DRAW_INACTIVE);
+                      }
+                  }
+              }
+            
+            // Now update cache of every hyperlink, that maintains it
+            // It's up to the hyperlink to decide if it needs to update it
+            // or not. We just give this opportunity to everybody
 	    if (!for_lens)
-	       if (pm || patch_pm)
-		  for(GPosition pos=map_areas;pos;++pos)
+              if (pm || patch_pm)
+                for(GPosition pos=map_areas;pos;++pos)
 		  {
-		     MapArea & ma=*map_areas[pos];
-		     if (pm) ma.updateCache(grectDisp, pm, &mapper);
-		     else ma.updateCache(patch_rect, patch_pm, &mapper);
+                    MapArea & ma=*map_areas[pos];
+                    if (pm) ma.updateCache(grectDisp, pm, &mapper);
+                    else ma.updateCache(patch_rect, patch_pm, &mapper);
 		  }
-
-	       // Now draw hyperlinks, which are not "always active", but
-	       // are active right now
+            
+            // Now draw hyperlinks, which are not "always active", but
+            // are active right now
 	    if (pm || patch_pm)
-	       for(GPosition pos=map_areas;pos;++pos)
-	       {
+              for(GPosition pos=map_areas;pos;++pos)
+                {
 		  GP<MapArea> ma=map_areas[pos];
 		  if (!ma->isAlwaysActive() && ma->isActive())
-		     if (pm) ma->draw(grectDisp, pm, MapArea::APPLY_ACTIVE);
-		     else ma->draw(patch_rect, patch_pm, MapArea::APPLY_ACTIVE);
-	       }
-
-	       // Dither the generated GPixmap[s]
+                    if (pm) ma->draw(grectDisp, pm, MapArea::APPLY_ACTIVE);
+                    else ma->draw(patch_rect, patch_pm, MapArea::APPLY_ACTIVE);
+                }
+            
+            // Dither the generated GPixmap[s]
 	    if (pm)
-	    {
-		  // Map rectangle into image rectangle
-	       GRect grectImg=grectDisp;
-	       mapper.map(grectImg);
-               if (qxImager)
-                 qxImager->dither(*pm, grectImg.xmin, grectImg.ymin);
-	    } else if (patch_pm)
-	    {
-	       GRect rect=patch_rect;
-	       mapper.map(rect);
-               if (qxImager)
-                 qxImager->dither(*patch_pm, rect.xmin, rect.ymin);
-	    }
-
-	       // Finally - draw the GBitmap/GPixmap into the window
-	    if (pm) p.drawPixmap(grectDisp, pm, true);
+              {
+                // Map rectangle into image rectangle
+                GRect grectImg=grectDisp;
+                mapper.map(grectImg);
+                if (qxImager)
+                  qxImager->dither(*pm, grectImg.xmin, grectImg.ymin);
+              } 
+            else if (patch_pm)
+              {
+                GRect rect=patch_rect;
+                mapper.map(rect);
+                if (qxImager)
+                  qxImager->dither(*patch_pm, rect.xmin, rect.ymin);
+              }
+            
+            // Finally - draw the GBitmap/GPixmap into the window
+	    if (pm) 
+              {
+                p.drawPixmap(grectDisp, pm, true);
+              }
 	    else if (bm)
-	       if (!patch_pm) p.drawBitmap(grectDisp, bm, true);
-	       else p.drawPatchedBitmap(grectDisp, bm,
-					patch_rect, patch_pm, true);
+              {
+                if (!patch_pm) 
+                  p.drawBitmap(grectDisp, bm, true);
+                else 
+                  p.drawPatchedBitmap(grectDisp, bm,
+                                      patch_rect, patch_pm, true);
+              }
 	    else if (djvu_logo_bmp->rows() && override_flags.logo)
-	    {
-	       GRect irect;
-	       if (irect.intersect(rectDocument, rectVisible))
+              {
+                GRect irect;
+                if (irect.intersect(rectDocument, rectVisible))
 		  p.drawTiledPixmap(G2Q(irect), back_pixmap,
-				    QPoint((irect.xmin-rectDocument.xmin) % back_pixmap.width(),
-					   (irect.ymin-rectDocument.ymin) % back_pixmap.height()));
-	       GRect bmp_rect(irect.xmax-djvu_logo_bmp->columns()-10,
-			      irect.ymax-djvu_logo_bmp->rows()-10,
-			      djvu_logo_bmp->columns(), djvu_logo_bmp->rows());
-	       if (irect.intersect(bmp_rect, grectDisp))
+				    QPoint((irect.xmin-rectDocument.xmin) 
+                                           % back_pixmap.width(),
+					   (irect.ymin-rectDocument.ymin) 
+                                           % back_pixmap.height()));
+                GRect bmp_rect(irect.xmax-djvu_logo_bmp->columns()-10,
+                               irect.ymax-djvu_logo_bmp->rows()-10,
+                               djvu_logo_bmp->columns(), djvu_logo_bmp->rows());
+                if (irect.intersect(bmp_rect, grectDisp))
 		  p.drawBitmap(irect, irect.xmin-bmp_rect.xmin,
 			       irect.ymin-bmp_rect.ymin, djvu_logo_bmp, true);
-	    } else
-	    {
-	       GRect irect;
-	       if (irect.intersect(rectDocument, rectVisible))
+              } 
+            else
+              {
+                GRect irect;
+                if (irect.intersect(rectDocument, rectVisible))
 		  p.drawTiledPixmap(G2Q(irect), back_pixmap,
-				    QPoint((irect.xmin-rectDocument.xmin) % back_pixmap.width(),
-					   (irect.ymin-rectDocument.ymin) % back_pixmap.height()));
-	    }
+				    QPoint((irect.xmin-rectDocument.xmin) 
+                                           % back_pixmap.width(),
+					   (irect.ymin-rectDocument.ymin) 
+                                           % back_pixmap.height()));
+              }
 	    
 	    if (bm || pm)	// Do not ever draw the logo
-	       djvu_logo_bmp=GBitmap::create();
+              djvu_logo_bmp = GBitmap::create();
 
 	       // And draw those hyperlinks, which are in the "OUTLINE" mode
 	    for(GPosition pos=map_areas;pos;++pos)
@@ -434,9 +447,13 @@ QDBase::paint(QPaintDevice * drawable,	// Where to paint
       } // while(...)
 
       p.setClipping(FALSE);
-   } // if (dimg)
+   }
+   else
+   {
+     rectVisible = in_rect;
+   }
 
-      // Set new clipping rectangle
+       // Set new clipping rectangle
    grectWin=in_rect;
    grectWin.intersect(grectWin, rectVisible);
    p.setClipRect(grectWin.xmin-dr_x, grectWin.ymin-dr_y,
@@ -450,8 +467,10 @@ QDBase::paint(QPaintDevice * drawable,	// Where to paint
       GRect irect;
       if (irect.intersect(crect, in_rect))
 	 p.drawTiledPixmap(G2Q(irect), back_pixmap,
-			   QPoint((irect.xmin-rectDocument.xmin) % back_pixmap.width(),
-				  (irect.ymin-rectDocument.ymin) % back_pixmap.height()));
+			   QPoint((irect.xmin-rectDocument.xmin) 
+                                  % back_pixmap.width(),
+				  (irect.ymin-rectDocument.ymin) 
+                                  % back_pixmap.height()));
    }
    if (rectDocument.xmax<rectVisible.xmax)
    {
@@ -460,8 +479,10 @@ QDBase::paint(QPaintDevice * drawable,	// Where to paint
       GRect irect;
       if (irect.intersect(crect, in_rect))
 	 p.drawTiledPixmap(G2Q(irect), back_pixmap,
-			   QPoint((irect.xmin-rectDocument.xmin) % back_pixmap.width(),
-				  (irect.ymin-rectDocument.ymin) % back_pixmap.height()));
+			   QPoint((irect.xmin-rectDocument.xmin) 
+                                  % back_pixmap.width(),
+				  (irect.ymin-rectDocument.ymin) 
+                                  % back_pixmap.height()));
    }
    if (rectDocument.ymin>rectVisible.ymin)
    {
@@ -470,8 +491,10 @@ QDBase::paint(QPaintDevice * drawable,	// Where to paint
       GRect irect;
       if (irect.intersect(crect, in_rect))
 	 p.drawTiledPixmap(G2Q(irect), back_pixmap,
-			   QPoint((irect.xmin-rectDocument.xmin) % back_pixmap.width(),
-				  (irect.ymin-rectDocument.ymin) % back_pixmap.height()));
+			   QPoint((irect.xmin-rectDocument.xmin) 
+                                  % back_pixmap.width(),
+				  (irect.ymin-rectDocument.ymin) 
+                                  % back_pixmap.height()));
    }
    if (rectDocument.ymax<rectVisible.ymax)
    {
@@ -480,8 +503,10 @@ QDBase::paint(QPaintDevice * drawable,	// Where to paint
       GRect irect;
       if (irect.intersect(crect, in_rect))
 	 p.drawTiledPixmap(G2Q(irect), back_pixmap,
-			   QPoint((irect.xmin-rectDocument.xmin) % back_pixmap.width(),
-				  (irect.ymin-rectDocument.ymin) % back_pixmap.height()));
+			   QPoint((irect.xmin-rectDocument.xmin) 
+                                  % back_pixmap.width(),
+				  (irect.ymin-rectDocument.ymin) 
+                                  % back_pixmap.height()));
    }
    if (override_flags.frame)
      {

@@ -69,10 +69,8 @@
 #include "qd_welcome.h"
 #include "GURL.h"
 #include "GOS.h"
-#include "exc_msg.h"
 #include "execdir.h"
 #include "names.h"
-#include "throw_error.h"
 #include "DjVuFileCache.h"
 #include "DjVuMessage.h"
 
@@ -93,6 +91,7 @@
 #include <qapplication.h>
 #include <qmessagebox.h>
 #include <ctype.h>
+#include <errno.h>
 
 #ifdef UNIX
 #include <X11/Xlib.h>
@@ -886,11 +885,11 @@ QDViewer::setDjVuDocument(GP<DjVuDocument> & doc, const GUTF8String &qkey_in)
    if (!new_dimg) 
      {
        if (doc->is_init_failed())
-         throw ERROR_MESSAGE("QDViewer::setDjVuDocument",
-                             ERR_MSG("QDViewer.corrupt"));
+         G_THROW(ERR_MSG("QDViewer.corrupt"));
        else
-         throw ERROR_MESSAGE("QDViewer::setDjVuDocument",
-                             ERR_MSG("QDViewer.pagekey_not_found") "\t" +qkey_in);
+         G_THROW(ERR_MSG("QDViewer.pagekey_not_found") 
+                 + GUTF8String("\t") 
+                 + qkey_in);
      }
    setDjVuImage(new_dimg, 1);
 
@@ -1080,8 +1079,7 @@ QDViewer::slotNotifyDocFlagsChanged(const GP<DjVuDocument> & source, long set_ma
 {
    if (set_mask & DjVuDocument::DOC_INIT_FAILED)
      {
-       throw ERROR_MESSAGE("QDViewer::setDjVuDocument",
-                           ERR_MSG("QDViewer.corrupt"));
+       G_THROW(ERR_MSG("QDViewer.corrupt"));
      }
 
    if (set_mask & DjVuDocument::DOC_INIT_OK)
@@ -1332,7 +1330,8 @@ QDViewer::checkWMProps(void)
 	    {
 	       time_t dtime=(time_t) atol((char *) prop);
 	       XFree(prop);
-	       DEBUG_MSG("elapsed " << (time(0)-dtime) << " seconds since last detach.\n");
+	       DEBUG_MSG("elapsed " << (time(0)-dtime) 
+                         << " seconds since last detach.\n");
 	       if (time(0)-dtime<10 && zoom>0) setZoom(zoom, 1, SRC_DEFAULT);
 	    } else DEBUG_MSG("oops. It's not there.\n");
 	 } else
@@ -1511,15 +1510,15 @@ QDViewer::slotChildError(int pipe)
 	    FD_ZERO(&except_fds); FD_SET(pipe, &except_fds);
 	    int rc=select(pipe, &read_fds, 0, &except_fds, &tv);
 	    if (rc<0 && errno==EINTR) continue;
-	    if (rc<0) ThrowError("QDViewer::slotChildError", 
-				 ERR_MSG("QDViewer.no_child_errmsg"));
+	    if (rc<0) 
+              G_THROW(ERR_MSG("QDViewer.no_child_errmsg"));
 	    if (rc>=0)
 	       if (FD_ISSET(pipe, &read_fds))
 	       {
 		  char ch;
 		  int rc=::read(pipe, &ch, 1);
-		  if (rc<0) ThrowError("QDViewer::slotChildError",
-				       ERR_MSG("QDViewer.no_child_errmsg"));
+		  if (rc<0) 
+                    G_THROW(ERR_MSG("QDViewer.no_child_errmsg"));
 		  if (rc==0) break;
 		  message+=ch;
 	       } else if (FD_ISSET(pipe, &except_fds))
@@ -1549,7 +1548,8 @@ QDViewer::slotSearchClosed(void)
 }
 
 void
-QDViewer::slotDisplaySearchResults(int page_num, const GList<DjVuTXT::Zone *> & zones_list)
+QDViewer::slotDisplaySearchResults(int page_num, 
+                                   const GList<DjVuTXT::Zone *> & zones_list)
 {
    eraseSearchResults();
 

@@ -70,7 +70,7 @@
 #include "qd_thr_yielder.h"
 #include "GContainer.h"
 #include "debug.h"
-#include "throw_error.h"
+
 #include <qsocketnotifier.h>
 #include <qtimer.h>
 #include <qobject.h>
@@ -142,9 +142,9 @@ Helper::setHooks(bool wait)
    if (!wait) timer.start(0, TRUE);
    else
    {
-	 // Now check all file descriptors:
-	 // Since QT is not using GThread::select(), it has no idea that other threads
-	 // may have selected some file descriptors for reading/writing/etc. Here we're
+	 // Now check all file descriptors: Since QT is not using
+	 // GThread::select(), it has no idea that other threads may have
+	 // selected some file descriptors for reading/writing/etc. Here we're
 	 // kind of fixing this feature with QSocketNotifiers.
       int nfds;
       unsigned long timeout;
@@ -160,7 +160,8 @@ Helper::setHooks(bool wait)
 	       if (!read_sockets.contains(i))
 	       {
 		  QSocketNotifier * sn=new QSocketNotifier(i, QSocketNotifier::Read);
-		  connect(sn, SIGNAL(activated(int)), this, SLOT(slotSocketNotifier(int)));
+		  connect(sn, SIGNAL(activated(int)), 
+                          this, SLOT(slotSocketNotifier(int)));
 		  read_sockets[i]=sn;
 	       }
 	    } else if (read_sockets.contains(i, pos))
@@ -174,7 +175,8 @@ Helper::setHooks(bool wait)
 	       if (!write_sockets.contains(i))
 	       {
 		  QSocketNotifier * sn=new QSocketNotifier(i, QSocketNotifier::Write);
-		  connect(sn, SIGNAL(activated(int)), this, SLOT(slotSocketNotifier(int)));
+		  connect(sn, SIGNAL(activated(int)), 
+                          this, SLOT(slotSocketNotifier(int)));
 		  write_sockets[i]=sn;
 	       }
 	    } else if (write_sockets.contains(i, pos))
@@ -187,8 +189,10 @@ Helper::setHooks(bool wait)
 	    {
 	       if (!except_sockets.contains(i))
 	       {
-		  QSocketNotifier * sn=new QSocketNotifier(i, QSocketNotifier::Exception);
-		  connect(sn, SIGNAL(activated(int)), this, SLOT(slotSocketNotifier(int)));
+		  QSocketNotifier * sn 
+                    = new QSocketNotifier(i, QSocketNotifier::Exception);
+		  connect(sn, SIGNAL(activated(int)), 
+                          this, SLOT(slotSocketNotifier(int)));
 		  except_sockets[i]=sn;
 	       }
 	    } else if (except_sockets.contains(i, pos))

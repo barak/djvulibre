@@ -505,14 +505,16 @@ DjVuFile::decode_func(void)
         flags.enter();
         flags=flags & ~DECODING | DECODE_STOPPED;
         flags.leave();
-        pcaster->notify_status(this, GUTF8String( ERR_MSG("DjVuFile.stopped") "\t") + GUTF8String(url));
+        pcaster->notify_status(this, GUTF8String(ERR_MSG("DjVuFile.stopped"))
+                               + GUTF8String("\t") + GUTF8String(url));
         pcaster->notify_file_flags_changed(this, DECODE_STOPPED, DECODING);
       } else
       {
         flags.enter();
         flags=flags & ~DECODING | DECODE_FAILED;
         flags.leave();
-        pcaster->notify_status(this, GUTF8String( ERR_MSG("DjVuFile.failed") "\t") + GUTF8String(url));
+        pcaster->notify_status(this, GUTF8String(ERR_MSG("DjVuFile.failed"))
+                               + GUTF8String("\t") + GUTF8String(url));
         pcaster->notify_error(this, exc.get_cause());
         pcaster->notify_file_flags_changed(this, DECODE_FAILED, DECODING);
       }
@@ -525,7 +527,8 @@ DjVuFile::decode_func(void)
   decode_data_pool->clear_stream();
   G_TRY {
     if (flags.test_and_modify(DECODING, 0, DECODE_OK | INCL_FILES_CREATED, DECODING))
-      pcaster->notify_file_flags_changed(this, DECODE_OK | INCL_FILES_CREATED, DECODING);
+      pcaster->notify_file_flags_changed(this, DECODE_OK | INCL_FILES_CREATED, 
+                                         DECODING);
   } G_CATCH_ALL {} G_ENDCATCH;
   DEBUG_MSG("decoding thread for url='" << url << "' ended\n");
 }

@@ -62,9 +62,7 @@
 #endif
 
 #include "qd_messenger.h"
-#include "exc_msg.h"
 #include "qlib.h"
-#include "throw_error.h"
 
 #include <unistd.h>
 #include <qsocketnotifier.h>
@@ -82,9 +80,10 @@ QDMessageQueue::QDMessageQueue(QObject * parent, const char * name) :
    queue_head=0;
    
    if (pipe(fd)<0)
-      ThrowError("QDMessageQueue::QDMessageQueue", "Failed to create pipe");
-   QSocketNotifier * sd=new QSocketNotifier(fd[0], QSocketNotifier::Read,
-					    this, "djvu_message_queue_socket_notifier");
+     G_THROW("Failed to create pipe");
+   QSocketNotifier *sd 
+     = new QSocketNotifier(fd[0], QSocketNotifier::Read,
+                           this, "djvu_message_queue_socket_notifier");
    sd->setEnabled(TRUE);
    connect(sd, SIGNAL(activated(int)), this, SLOT(notifierActivated(int)));
 }
@@ -236,10 +235,10 @@ QDMessenger::sendSignal(QDMessageQueue::Item * item)
       switch(item->cmd)
       {
 	 case SHOW_STATUS:
-	    DEBUG_MSG("SHOW_STATUS request read by messenger\n");
-	    emit sigShowStatus(QStringFromGString(item->msg));
-	    break;
-	 case LAYOUT:
+            DEBUG_MSG("SHOW_STATUS request read by messenger\n");
+            emit sigShowStatus(QStringFromGString(item->msg)); 
+            break;
+         case LAYOUT:
 	    DEBUG_MSG("LAYOUT request read by messenger\n");
 	    emit sigLayout();
 	    break;
@@ -252,13 +251,13 @@ QDMessenger::sendSignal(QDMessageQueue::Item * item)
 	    emit sigShowError(item->title, item->msg);
 	    break;
 	 case GET_URL:
-	 {
-	    DEBUG_MSG("GET_URL request read by messenger, url='" <<
-		      item->url << "'\n");
-	    emit sigGetURL(GURL::UTF8(item->url), item->target.length() ?
-			   item->target : GUTF8String()); 
-	    break;
-	 }
+           {
+             DEBUG_MSG("GET_URL request read by messenger, url='" <<
+                       item->url << "'\n");
+             emit sigGetURL(GURL::UTF8(item->url), item->target.length() ?
+                            item->target : GUTF8String()); 
+             break;
+           }
 	 case GENERAL_REQ:
 	    DEBUG_MSG("GENERAL_REQ request read by messenger, req='" <<
 		      item->req << "'\n");
@@ -269,8 +268,8 @@ QDMessenger::sendSignal(QDMessageQueue::Item * item)
 		      item->msg << "'\n");
 	    emit sigGeneralMsg(item->msg);
 	    break;
-	 default:
-	    throw ERROR_MESSAGE("QDMessenger::notifierActivated", "Unknown command read from the pipe.");
+         default:
+	    G_THROW("Unknown command read from the pipe.");
       }
    }
 }

@@ -67,10 +67,6 @@
 #include "GString.h"
 #include "Arrays.h"
 
-#ifndef PLUGIN
-#include "exc_sys.h"
-#endif
-
 #define OK_STRING	"OK"
 #define ERR_STRING	"ERR"
 
@@ -90,10 +86,7 @@
 #define CMD_URL_NOTIFY		13
 #define CMD_HANDSHAKE		14
 
-#ifndef PLUGIN
-DECLARE_EXCEPTION(PipeError, "PipeError", SystemError);
-#define PIPE_ERROR(func, msg) PipeError(func, msg, 0, __FILE__, __LINE__)
-#endif
+struct PipeError { static const char *Tag; };
 
 void	WriteString(int fd, const char * str);
 void	WriteInteger(int fd, int var);
@@ -101,14 +94,11 @@ void	WriteDouble(int fd, double var);
 void	WritePointer(int fd, const void * ptr);
 void	WriteArray(int fd, const TArray<char> & array);
 
-// Note: refresh_cb() works only for the plugin (-DPLUGIN)
-// Otherwise it affects nothing.
 GUTF8String 	ReadString(int fd, int refresh_pipe=-1, void (* refresh_cb)(void)=0);
 int     	ReadInteger(int fd, int refresh_pipe=-1, void (* refresh_cb)(void)=0);
 double		ReadDouble(int fd, int refresh_pipe=-1, void (* refresh_cb)(void)=0);
 void *  	ReadPointer(int fd, int refresh_pipe=-1, void (* refresh_cb)(void)=0);
 TArray<char>	ReadArray(int fd, int refresh_pipe=-1, void (* refresh_cb)(void)=0);
-void            ReadResult(int fd, const char * cmd_name, 
-                           int refresh_pipe=-1, void (* refresh_cb)(void)=0);
+void            ReadResult(int fd, const char * cmd_name, int refresh_pipe=-1);
 
 #endif

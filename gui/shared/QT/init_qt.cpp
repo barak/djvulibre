@@ -70,8 +70,6 @@
 #include <qtranslator.h>
 #include <qstyle.h>
 
-#include "exc_msg.h"
-#include "exc_res.h"
 #include "qlib.h"
 #include "qx_imager.h"
 #include "djvu_file_cache.h"

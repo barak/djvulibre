@@ -1184,8 +1184,8 @@ ByteStream::create(const int fd,char const * const mode,const bool closeme)
   GP<ByteStream> retval;
   const char *default_mode="rb";
 #if HAS_MEMMAP
-
-  if ((!mode&&(fd!=0)&&(fd!=1)&&(fd!=2)) || (mode&&(GUTF8String("rb") == mode)))
+  if (   (!mode&&(fd!=0)&&(fd!=1)&&(fd!=2)) 
+      || (mode&&(GUTF8String("rb") == mode)))
   {
     MemoryMapByteStream *rb=new MemoryMapByteStream();
     retval=rb;
@@ -1200,20 +1200,24 @@ ByteStream::create(const int fd,char const * const mode,const bool closeme)
   {
     int fd2 = fd;
     FILE *f = 0;
-    if (fd == 0 && !closeme && !mode)
+    if (fd == 0 && !closeme 
+        && (!mode || mode[0]=='r') )
       {
         f=stdin;
+        default_mode = "r";
         fd2=(-1);
       }
-    else if (fd == 1 && !closeme && (!mode || GUTF8String(mode) == "a"))
+    else if (fd == 1 && !closeme 
+             && (!mode || mode[0]=='a' || mode[0]=='w') )
       {
+        default_mode = "a";
         f=stdout;
-        default_mode="ab";
         fd2 = -1;
       }
-    else if (fd == 2 && !closeme && (!mode || GUTF8String(mode) == "a"))
+    else if (fd == 2 && !closeme
+             && (!mode || mode[0]=='a' || mode[0]=='w') )
       {
-        default_mode="a";
+        default_mode = "a";
         f=stderr;
         fd2 = -1;
       }

@@ -246,6 +246,7 @@ djvuserver_directory(GURL pathurl)
     return;
   bsdir->seek(0);
   fprintf(stdout,"\n");
+  fflush(stdout);
   GP<ByteStream> out = ByteStream::get_stdout("ab");
   out->copy(*bsdir);
 }
@@ -289,6 +290,7 @@ djvuserver_component(GURL pathurl, GUTF8String id)
   if (head) 
     return;
   fprintf(stdout,"\n");
+  fflush(stdout);
   GP<ByteStream> out = ByteStream::get_stdout("ab");
   out->writall("AT&T", 4);
   bsin->seek(frec->offset);

@@ -65,7 +65,6 @@
 #include "qd_viewer_prefs.h"
 #include "qlib.h"
 #include "debug.h"
-#include "exc_msg.h"
 
 #include <qlayout.h>
 #include <qtooltip.h>

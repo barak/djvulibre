@@ -62,10 +62,7 @@
 #endif
 
 #include "qd_decoder.h"
-
 #include "debug.h"
-#include "exc_msg.h"
-#include "throw_error.h"
 #include "qlib.h"
 
 #include <qapplication.h>

@@ -1,24 +1,6 @@
 # This is generated automatically using "make makeadd".
 # DO NOT EDIT BY HAND
 # --------------------------------------------------------
-exc_base.o : ${top_srcdir}/gui/indep/except/exc_base.cpp
-	${CXX} ${CXXFLAGS} -c ${top_srcdir}/gui/indep/except/exc_base.cpp
-exc_file.o : ${top_srcdir}/gui/indep/except/exc_file.cpp
-	${CXX} ${CXXFLAGS} -c ${top_srcdir}/gui/indep/except/exc_file.cpp
-exc_misc.o : ${top_srcdir}/gui/indep/except/exc_misc.cpp
-	${CXX} ${CXXFLAGS} -c ${top_srcdir}/gui/indep/except/exc_misc.cpp
-exc_msg.o : ${top_srcdir}/gui/indep/except/exc_msg.cpp
-	${CXX} ${CXXFLAGS} -c ${top_srcdir}/gui/indep/except/exc_msg.cpp
-exc_range.o : ${top_srcdir}/gui/indep/except/exc_range.cpp
-	${CXX} ${CXXFLAGS} -c ${top_srcdir}/gui/indep/except/exc_range.cpp
-exc_res.o : ${top_srcdir}/gui/indep/except/exc_res.cpp
-	${CXX} ${CXXFLAGS} -c ${top_srcdir}/gui/indep/except/exc_res.cpp
-exc_sys.o : ${top_srcdir}/gui/indep/except/exc_sys.cpp
-	${CXX} ${CXXFLAGS} -c ${top_srcdir}/gui/indep/except/exc_sys.cpp
-exceptions.o : ${top_srcdir}/gui/indep/except/exceptions.cpp
-	${CXX} ${CXXFLAGS} -c ${top_srcdir}/gui/indep/except/exceptions.cpp
-throw_error.o : ${top_srcdir}/gui/indep/except/throw_error.cpp
-	${CXX} ${CXXFLAGS} -c ${top_srcdir}/gui/indep/except/throw_error.cpp
 qx_imager.o : ${top_srcdir}/gui/indep/QX/qx_imager.cpp
 	${CXX} ${CXXFLAGS} -c ${top_srcdir}/gui/indep/QX/qx_imager.cpp
 qx_imager_moc.inc : ${top_srcdir}/gui/indep/QX/qx_imager.cpp
@@ -355,7 +337,6 @@ ppm_hand1.cpp : ${top_srcdir}/gui/shared/cin_data/ppm_hand1.cin
 
 SRCINCS = \
  -I${srcdir}/ \
- -I${top_srcdir}/gui/indep/except/ \
  -I${top_srcdir}/gui/indep/QT/ \
  -I${top_srcdir}/gui/indep/QX/ \
  -I${top_srcdir}/gui/indep/utils/ \
@@ -365,15 +346,6 @@ SRCINCS = \
 
 
 OBJS = \
- exc_base.o \
- exc_file.o \
- exc_misc.o \
- exc_msg.o \
- exc_range.o \
- exc_res.o \
- exc_sys.o \
- exceptions.o \
- throw_error.o \
  qx_imager.o \
  qxlib.o \
  qt_imager.o \

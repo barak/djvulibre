@@ -65,9 +65,6 @@
 
 #include "qlib.h"
 #include "debug.h"
-#include "exc_msg.h"
-#include "exc_misc.h"
-#include "exc_res.h"
 #include "int_types.h"
 #include "qt_painter.h"
 #include "GString.h"
@@ -311,8 +308,9 @@ QeFileDialog::done(int rc)
           if (fd<0)
             {
               QMessageBox::critical(this, "DjVu",
-                                    tr("Failed to open file")+" '"+fileName+"' "+
-                                    tr("for reading:\n")+strerror(errno));
+                                    tr("Failed to open file") + " '" 
+                                    + fileName + "' " 
+                                    + tr("for reading:\n") + strerror(errno));
               return;
             } 
           ::close(fd);
@@ -320,16 +318,19 @@ QeFileDialog::done(int rc)
       else
         {
           if (QMessageBox::warning(this, "DjVu",
-                                   tr("File")+" '"+fileName+"' "+tr(" already exists.\n") +
-                                   tr("Are you sure you want to overwrite it?"),
+                                   tr("File") + " '" + fileName
+                                   + "' " + tr(" already exists.\n")
+                                   + tr("Are you sure you want to overwrite it?"),
                                    "&Yes", "&No", 0, 0, 1))
             return;
           int fd=::open(fileName, O_WRONLY);
           if (fd<0)
             {
               QMessageBox::critical(this, "DjVu",
-                                    tr("Failed to open file")+" '"+fileName+"' "+
-                                    tr("for writing:\n")+strerror(errno));
+                                    tr("Failed to open file")
+                                    + " '" + fileName + "' "
+                                    + tr("for writing:\n")
+                                    + strerror(errno));
               return;
             }
           ::close(fd);
@@ -337,7 +338,9 @@ QeFileDialog::done(int rc)
     } 
   else if (!forWriting)
     {
-      QMessageBox::critical(this, "DjVu", tr("Failed to stat file")+" '"+fileName+"'.");
+      QMessageBox::critical(this, "DjVu", 
+                            tr("Failed to stat file")
+                            + " '" + fileName + "'.");
       return;
     }
 #endif
@@ -403,9 +406,9 @@ getExcMsg(const char *exc_cause)
       if ( exc_sep )
       {
 	 exc_tag_len=exc_sep-exc_cause;
-	 int i;
-	 for (i=exc_tag_len; i>=0 && (isspace(exc_cause[i]) || exc_cause[i]==':'); --i)
-	    ;
+	 int i = exc_tag_len; 
+         while (i>=0 && (isspace(exc_cause[i]) || exc_cause[i]==':'))
+           i -= 1;
 	 if ( i>0 ) exc_tag_len=i+1;
 	 exc_tag=GUTF8String(exc_cause, exc_tag_len);
       }

@@ -63,7 +63,6 @@
 
 #include "qxlib.h"
 #include "debug.h"
-#include "exc_misc.h"
 
 #include <X11/Xlib.h>
 
@@ -90,18 +89,19 @@ x11Redraw(QWidget * w, const QRect * rect)
 unsigned long 
 x11GetTopLevelWindow(void * _displ, unsigned long _start)
 {
-   DEBUG_MSG("x11GetTopLevelWindow(): traversing the tree up to reach the shell...\n");
+   DEBUG_MSG("x11GetTopLevelWindow(): "
+             "traversing the tree up to reach the shell...\n");
    DEBUG_MAKE_INDENT(3);
 
    Display * displ=(Display *) _displ;
    Window ref_window=(Window) _start;
    
    if (!displ || !ref_window)
-      throw BAD_ARGUMENTS("x11GetTopLevelWindow",
-			  "Internal error: ZERO display or window passed as input.");
+     return 0;
    
    Atom atom_wm=XInternAtom(displ, "WM_STATE", True);
-   if (!atom_wm) return 0;
+   if (!atom_wm) 
+     return 0;
 
    Window shell_win=0;
    Window cur_win=ref_window;

@@ -1114,15 +1114,18 @@ Delay_cb(XtPointer ptr, int * fd, XtInputId *xid)
         case CMD_GET_URL:
           if (map_lookup(&instance, reqp->id, (void**)&inst) >= 0)
             {
-              const char *target = (reqp->target && reqp->target[0]) ? reqp->target : 0;
+              const char *target = (reqp->target && reqp->target[0]) 
+                ? reqp->target : 0;
               NPN_GetURL(inst->np_instance, reqp->url, target);
             }
           break;
         case CMD_GET_URL_NOTIFY:
           if (map_lookup(&instance, reqp->id, (void**)&inst) >= 0)
             {
-              const char *target = (reqp->target && reqp->target[0]) ? reqp->target : 0;
-              if (NPN_GetURLNotify(inst->np_instance, reqp->url, target, 0) != NPERR_NO_ERROR)
+              const char *target = (reqp->target && reqp->target[0]) 
+                ? reqp->target : 0;
+              if (NPN_GetURLNotify(inst->np_instance, reqp->url, target, 0)
+                  != NPERR_NO_ERROR)
                 NPN_GetURL(inst->np_instance, reqp->url, target);
             }
           break;
@@ -1285,12 +1288,14 @@ CopyColormap(Display *displ, Visual *visual, Screen *screen, Colormap cmap)
     case StaticColor:
     case TrueColor:
       /* Colormap for which there is nothing to copy */
-      colormap = XCreateColormap(displ, RootWindowOfScreen(screen), visual, AllocNone);
+      colormap = XCreateColormap(displ, RootWindowOfScreen(screen), 
+                                 visual, AllocNone);
       break;
 
     case DirectColor:
       /* Use a simple ramp. QT does not like these anyway. */
-      colormap = XCreateColormap(displ, RootWindowOfScreen(screen), visual, AllocNone);
+      colormap = XCreateColormap(displ, RootWindowOfScreen(screen), 
+                                 visual, AllocNone);
       for (n=0; n<visual->map_entries; n++)
         {
           XColor cell;
@@ -1314,8 +1319,10 @@ CopyColormap(Display *displ, Visual *visual, Screen *screen, Colormap cmap)
         */
         int i,j,k;
         int again = TRUE;
-        static unsigned short r1[] = { 0x0000, 0x9999, 0xffff };
-        static unsigned short r2[] = { 0x0000, 0x3333, 0x6666, 0x9999, 0xcccc, 0xffff };
+        static unsigned short r1[] 
+          = { 0x0000, 0x9999, 0xffff };
+        static unsigned short r2[] 
+          = { 0x0000, 0x3333, 0x6666, 0x9999, 0xcccc, 0xffff };
 	/* Allocate 3x3x3 cube first. It's a good idea to allocate the
            most distinct colors first (from 3x3x3) and then proceed
            with other colors from 6x6x6. Should the colormap be nearly
@@ -1346,11 +1353,13 @@ CopyColormap(Display *displ, Visual *visual, Screen *screen, Colormap cmap)
                   again = FALSE;
               }
         /* Now copy the colormap */
-        colormap = XCreateColormap(displ, RootWindowOfScreen(screen), visual, AllocNone);
+        colormap = XCreateColormap(displ, RootWindowOfScreen(screen), 
+                                   visual, AllocNone);
         pixels = malloc(visual->map_entries * sizeof(unsigned long));
         if (!pixels) 
           goto problem;
-        XAllocColorCells(displ, colormap, False, pixels, 0, pixels, visual->map_entries);
+        XAllocColorCells(displ, colormap, False, pixels, 0, 
+                         pixels, visual->map_entries);
         colors = malloc(visual->map_entries * sizeof(XColor));
         if (!colors) 
           goto problem;
@@ -1376,10 +1385,10 @@ CopyColormap(Display *displ, Visual *visual, Screen *screen, Colormap cmap)
                 XStoreColor(displ, colormap, &cell);
               }
           }
-        /* Calling XInstallColormap is needed on SGIs to ``finish-up'' the new colormap.
-           This should be ok since it contains the same colors as Netscape's and 
-           we can expect that the currently installed colormap is Netscape's.
-           Otherwise the screen may flash. */
+        /* Calling XInstallColormap is needed on SGIs to ``finish-up'' the new
+           colormap.  This should be ok since it contains the same colors as
+           Netscape's and we can expect that the currently installed colormap
+           is Netscape's.  Otherwise the screen may flash. */
         XSync(displ, False);
         XInstallColormap(displ, colormap);
         // Cleanup
@@ -1452,8 +1461,9 @@ CloseConnection(void)
 static int
 Resize(void * id)
 {
-  /* Instead of selecting ConfigureEvent in the application I catch resizeCallback
-     here and send the appropriate request to the application */
+  /* Instead of selecting ConfigureEvent in the application I catch
+     resizeCallback here and send the appropriate request to the
+     application */
   Instance *inst;
   if (map_lookup(&instance, id, (void**)&inst) < 0)
     return 1;
@@ -1485,9 +1495,11 @@ Detach(void * id)
     {
       XtRemoveCallback(inst->widget, XtNdestroyCallback, Destroy_cb, id);
       if (inst->full_mode)
-        XtRemoveEventHandler(inst->parent, StructureNotifyMask, False, Resize_hnd, id);
+        XtRemoveEventHandler(inst->parent, StructureNotifyMask,
+                             False, Resize_hnd, id);
       else
-        XtRemoveEventHandler(inst->widget, StructureNotifyMask, False, Resize_hnd, id);
+        XtRemoveEventHandler(inst->widget, StructureNotifyMask,
+                             False, Resize_hnd, id);
       instance_detach(inst);
       if (! IsConnectionOK(TRUE))
         return -1;
@@ -1646,9 +1658,11 @@ Attach(Display * displ, Window window, void * id)
       if (widget) 
         XtRemoveCallback(widget, XtNdestroyCallback, Destroy_cb, id);
       if (inst->full_mode && parent)
-        XtRemoveEventHandler(parent, StructureNotifyMask, False, Resize_hnd, id);
+        XtRemoveEventHandler(parent, StructureNotifyMask, 
+                             False, Resize_hnd, id);
       else if (widget)
-        XtRemoveEventHandler(widget, StructureNotifyMask, False, Resize_hnd, id);
+        XtRemoveEventHandler(widget, StructureNotifyMask, 
+                             False, Resize_hnd, id);
       instance_detach(inst);
       return -1;
     }
@@ -1948,7 +1962,8 @@ NPP_SetWindow(NPP np_inst, NPWindow * win_str)
     }
   if (new_window)
     {
-      NPSetWindowCallbackStruct *cbs = (NPSetWindowCallbackStruct *) win_str->ws_info;
+      NPSetWindowCallbackStruct *cbs 
+        = (NPSetWindowCallbackStruct *) win_str->ws_info;
       Display * displ=cbs->display;
       if (!IsConnectionOK(FALSE)) 
         return NPERR_GENERIC_ERROR;
@@ -2147,7 +2162,8 @@ NPP_GetValue(void *future, NPPVariable variable, void *value)
 #ifdef DJVULIBRE_VERSION
        "This is the <a href=\"http://www.sourceforge.net/projects/djvu\">"
        "DjvuLibre-" DJVULIBRE_VERSION "</a> version of the DjVu plugin.<br>"
-       "More information can be found at <a href=\"http://www.lizardtech.com\">LizardTech, Inc.</a> "
+       "More information can be found at "
+       "<a href=\"http://www.lizardtech.com\">LizardTech, Inc.</a> "
        "and <a href=\"http://www.djvuzone.org\">DjVuZone</a>.";
 #else
        "Seems to be the DjVu-" DJVIEW_VERSION_STR " browser plug-in\n"

@@ -65,7 +65,6 @@
 #include "qd_prefs.h"
 #include "qlib.h"
 #include "debug.h"
-#include "exc_msg.h"
 #include "GRect.h"
 #include "GPixmap.h"
 #include "qt_painter.h"

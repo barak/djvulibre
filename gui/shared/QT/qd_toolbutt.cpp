@@ -61,13 +61,13 @@
 #include "config.h"
 #endif
 
+#include "GPixmap.h"
+
 #include "qd_toolbutt.h"
 #include "qt_painter.h"
 #include "qx_imager.h"
-
-#include "GPixmap.h"
 #include "debug.h"
-#include "exc_msg.h"
+
 
 #include <qpaintdevicemetrics.h>
 #include <qtooltip.h>
@@ -92,14 +92,12 @@ QDToolButton::QDToolButton(ByteStream & str, bool _shadow, int _cmd,
    set_on=set_off=set_armed=0;
    status_bar=0;
    if (!(set_off=createSet(mstr, shadow ? 1 : 0)))
-      throw ERROR_MESSAGE("QDToolButton::QDToolButton",
-			  "Failed to create pixmap for QDToolButton");
+      G_THROW("Failed to create pixmap for QDToolButton");
    if (shadow)
    {
       mstr.seek(0);
       if (!(set_armed=createSet(mstr, 2)))
-	 throw ERROR_MESSAGE("QDToolButton::QDToolButton",
-			     "Failed to create pixmap for QDToolButton");
+        G_THROW("Failed to create pixmap for QDToolButton");
       set_armed->setPixmap(set_armed->pixmap(QIconSet::Small, QIconSet::Normal),
 			   QIconSet::Small, QIconSet::Active);
    }
@@ -224,8 +222,7 @@ void
 QDToolButton::setOnPixmap(ByteStream & str)
 {
    if (!(set_on=createSet(str, shadow ? 1 : 0)))
-      throw ERROR_MESSAGE("QDToolButton::QDToolButton",
-			  "Failed to assign an 'ON' pixmap to QDToolButton");
+     G_THROW("Failed to assign an 'ON' pixmap to QDToolButton");
 }
 
 void

@@ -67,7 +67,6 @@
 #include "djvu_base_res.h"
 #include "qd_painter.h"
 #include "qlib.h"
-#include "exc_msg.h"
 #include "GOS.h"
 #include "cin_data.h"
 #include "qd_tbar_mode_piece.h"
@@ -161,7 +160,7 @@ QDBase::QDBase(QWidget * parent, const char * name) : QWidget(parent, name)
 
    pane_mode=IDC_PANE;
    
-   djvu_logo_bmp=GBitmap::create(*CINData::get("ppm_djvu_logo"));
+   djvu_logo_bmp = GBitmap::create(*CINData::get("ppm_djvu_logo"));
    
    depth=QPaintDeviceMetrics(this).depth();
 
@@ -189,12 +188,18 @@ QDBase::QDBase(QWidget * parent, const char * name) : QWidget(parent, name)
       // Creating main area and scroll bars
    hscroll=new QScrollBar(QScrollBar::Horizontal, main_widget, "hscroll");
    vscroll=new QScrollBar(QScrollBar::Vertical, main_widget, "vscroll");
-   connect(hscroll, SIGNAL(valueChanged(int)), this, SLOT(slotSliderMoved(int)));
-   connect(vscroll, SIGNAL(valueChanged(int)), this, SLOT(slotSliderMoved(int)));
-   connect(hscroll, SIGNAL(sliderPressed(void)), this, SLOT(slotSliderPressed(void)));
-   connect(vscroll, SIGNAL(sliderPressed(void)), this, SLOT(slotSliderPressed(void)));
-   connect(hscroll, SIGNAL(sliderReleased(void)), this, SLOT(slotSliderReleased(void)));
-   connect(vscroll, SIGNAL(sliderReleased(void)), this, SLOT(slotSliderReleased(void)));
+   connect(hscroll, SIGNAL(valueChanged(int)),
+           this, SLOT(slotSliderMoved(int)));
+   connect(vscroll, SIGNAL(valueChanged(int)), 
+           this, SLOT(slotSliderMoved(int)));
+   connect(hscroll, SIGNAL(sliderPressed(void)), 
+           this, SLOT(slotSliderPressed(void)));
+   connect(vscroll, SIGNAL(sliderPressed(void)), 
+           this, SLOT(slotSliderPressed(void)));
+   connect(hscroll, SIGNAL(sliderReleased(void)), 
+           this, SLOT(slotSliderReleased(void)));
+   connect(vscroll, SIGNAL(sliderReleased(void)), 
+           this, SLOT(slotSliderReleased(void)));
    
    hscroll->resize(hscroll->sizeHint());
    vscroll->resize(vscroll->sizeHint());
@@ -518,8 +523,10 @@ QDBase::layout(bool allow_redraw)
             break;
               
           DEBUG_MSG("Looks like we need another pass thru resolutions:\n");
-          DEBUG_MSG("hscroll_visible: was=" << hscroll_visible << ", now=" << hs_vis << "\n");
-          DEBUG_MSG("vscroll_visible: was=" << vscroll_visible << ", now=" << vs_vis << "\n");
+          DEBUG_MSG("hscroll_visible: was=" << hscroll_visible 
+                    << ", now=" << hs_vis << "\n");
+          DEBUG_MSG("vscroll_visible: was=" << vscroll_visible 
+                    << ", now=" << vs_vis << "\n");
           hscroll_visible=hs_vis;
           vscroll_visible=vs_vis;
         }
@@ -539,10 +546,12 @@ QDBase::layout(bool allow_redraw)
               rect.intersect(rectVisible, rectDocument);
               int cx=(rect.xmin+rect.xmax)/2-rectDocument.xmin;
               int cy=(rect.ymin+rect.ymax)/2-rectDocument.ymin;
-              rectDocument.xmin=rectDocument.xmax=(int) (rectVisible.width()/2-cx*doc_w/
-                                                         (red*rectDocument.width()));
-              rectDocument.ymin=rectDocument.ymax=(int) (rectVisible.height()/2-cy*doc_h/
-                                                         (red*rectDocument.height()));
+              rectDocument.xmin=rectDocument.xmax
+                =(int) (rectVisible.width()/2-cx*doc_w/
+                        (red*rectDocument.width()));
+              rectDocument.ymin=rectDocument.ymax
+                =(int) (rectVisible.height()/2-cy*doc_h/
+                        (red*rectDocument.height()));
             }
         }
           
@@ -1005,8 +1014,10 @@ QDBase::createCursors(void)
 		     hand2_x, hand2_y);
 
    QSize zoom_select_size(zoom_select_width, zoom_select_height);
-   cur_zoom_select=new QCursor(QBitmap(zoom_select_size, (u_char *) zoom_select_bits, TRUE),
-		     QBitmap(zoom_select_size, (u_char *) zoom_select_mask_bits, TRUE),
+   cur_zoom_select=new QCursor(QBitmap(zoom_select_size, 
+                                       (u_char *) zoom_select_bits, TRUE),
+                               QBitmap(zoom_select_size, 
+                                       (u_char *) zoom_select_mask_bits, TRUE),
 		     zoom_select_x, zoom_select_y);
 
    cur_hand_hl=new QCursor(ArrowCursor);	// TODO: get X11 cursor instead
@@ -1059,10 +1070,11 @@ QDBase::exportToPNM(void)
       if (file_url.is_local_file_url())
 	 while(true)
 	 {
-	    QString dir=QFileInfo(QStringFromGString(file_url.UTF8Filename())).dirPath();
+	    QString dir
+              =QFileInfo(QStringFromGString(file_url.UTF8Filename())).dirPath();
 	    if (dir)
-	    {
-	       save_dir=dir;
+              {
+                save_dir=dir;
 	       break;
 	    }
 	    file_url=GURL::UTF8(file_url.name(),file_url.base().base());
@@ -1129,8 +1141,8 @@ QDBase::exportToPNM(void)
 	 if (bw)
 	 {
 	    GP<GBitmap> bmp=dimg->get_bitmap(grect, doc_grect);
-	    if (!bmp) throw ERROR_MESSAGE("QDBase::exportToPNM", 
-                                          ERR_MSG("QDBase.bitmap_not_found"));
+	    if (!bmp) 
+              G_THROW(ERR_MSG("QDBase.bitmap_not_found"));
 	    for(int n=bmp->rows()-1;n>=0;n--)
 	    {
 	       const unsigned char * row=(*bmp)[n];
@@ -1187,8 +1199,8 @@ QDBase::exportToPNM(void)
 		  pix=dimg->get_fg_pixmap(grect, doc_grect, prefs.dScreenGamma);
 		  break;
 	    }
-	    if (!pix) throw ERROR_MESSAGE("QDBase::exportToPNM", 
-                                          ERR_MSG("QDBase.pixmap_not_found"));
+	    if (!pix) 
+              G_THROW(ERR_MSG("QDBase.pixmap_not_found"));
 	    if (raw)
 	    {
 	       TArray<char> buffer(3*pix->columns());

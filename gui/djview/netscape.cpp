@@ -65,9 +65,7 @@
 
 #include "netscape.h"
 #include "debug.h"
-#include "throw_error.h"
 #include "dispatch.h"
-#include "exc_msg.h"
 #include "io.h"
 
 //  #ifdef DJVU_EDITOR
@@ -81,6 +79,7 @@
 #include <sys/types.h>
 #include <sys/time.h>
 #include <arpa/inet.h>
+#include <errno.h>
 
 #include <qsocketnotifier.h>
 #include <qapplication.h>
@@ -115,7 +114,8 @@ static GThread	str_thread;
 void
 PipesAreDead(void)
 {
-   DEBUG_MSG("PipesAreDead(): Killing the rest of pipes and removing input handlers\n");
+   DEBUG_MSG("PipesAreDead(): Killing "
+             "the rest of pipes and removing input handlers\n");
    delete input_sn; input_sn=0;
    close(pipe_read); pipe_read=-1;
    close(pipe_write); pipe_write=-1;
@@ -130,24 +130,26 @@ PipesAreDead(void)
 void
 QDWatcher::slotInput(int)
 {
-   DEBUG_MSG("QDWatcher::slotInput() called: smth is in the netscape pipe\n");
+   DEBUG_MSG("QDWatcher::slotInput() called: "
+             "smth is in the netscape pipe\n");
    try
-   {
-      Dispatch();
-   } catch(PipeError & exc)
-   {
-      exc.perror();
-      PipesAreDead();
-   } catch(const GException & exc)
-   {
-      exc.perror();
-   }
+     {
+       Dispatch();
+     } 
+   catch(const GException & exc)
+     {
+       exc.perror();
+       const char *msg = exc.get_cause();
+       if (!GException::cmp_cause(msg, PipeError::Tag))
+         PipesAreDead();
+     } 
 }
 
 void
 WorkWithNetscape(void)
 {
-   DEBUG_MSG("WorkWithNetscape(): working together with netscape\n");
+   DEBUG_MSG("WorkWithNetscape(): "
+             "working together with netscape\n");
 
    WriteString(pipe_write, "Here am I");	// Plugin is waiting for this
 
@@ -184,7 +186,7 @@ WorkWithNetscape(void)
       FD_SET(pipe_read, &read_fds);
       int rc=select(pipe_read+1, &read_fds, 0, 0, exit_tv);
       if (rc<0 && errno!=EINTR)
-	 ThrowError("WorkWithNetscape", ERR_MSG("WorkWithNetscape.pipe_listen_fail"));
+	 G_THROW(ERR_MSG("WorkWithNetscape.pipe_listen_fail"));
       if (rc==0)
         {
           DEBUG_MSG("Shutdown timeout => exit\n");

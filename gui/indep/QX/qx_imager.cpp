@@ -65,8 +65,6 @@
 
 #include "qx_imager.h"
 #include "qt_painter.h"
-#include "exc_res.h"
-#include "exc_msg.h"
 #include "debug.h"
 #include "col_db.h"
 
@@ -158,7 +156,7 @@ DXImage::createPool(void)
       created_as_shared=0;
       use_as_shared=0;
       if (!(ximage->data=new char[size]))
-	 throw OUT_OF_MEMORY("DXImage::createPool", "Not enough memory to create XImage.");
+	 G_THROW("Not enough memory to create XImage.");
    }
    return ximage->data;
 }
@@ -169,7 +167,7 @@ DXImage::createPool(void)
    if (!ximage->data)
    {
       if (!(ximage->data=new char[ximage->bytes_per_line*ximage->height]))
-	 throw OUT_OF_MEMORY("DXImage::createPool", "Not enough memory to create XImage.");
+        G_THROW("Not enough memory to create XImage.");
    }
    return ximage->data;
 }
@@ -492,8 +490,7 @@ QXImager::QXImager(Display * _displ, void * _visual,
    colormap_cells=0;
    
    if (qxImager)
-      throw ERROR_MESSAGE("QXImager::QXImager",
-			  "Internal error: Attempt to initialize QXImager twice.");
+      G_THROW("Internal error: Attempt to initialize QXImager twice.");
 
    visual=_visual;	// Set the class variable (of type void *)
 			// And use local variable of correct type
@@ -528,7 +525,7 @@ QXImager::QXImager(Display * _displ, void * _visual,
 	strcat(buffer, 
 	       "\n\nPlease rerun Netscape with '-visual' flag to change the\n"
 	       "visual type or switch to a different hardware.");
-      throw ERROR_MESSAGE("QXImager::QXImager", buffer);
+      G_THROW(buffer);
    }
    if (visual->c_class==PseudoColor && depth>=15)
      {
@@ -538,7 +535,7 @@ QXImager::QXImager(Display * _displ, void * _visual,
 	 strcat(buffer, 
 		"\n\nPlease rerun Netscape with '-visual' flag to change the\n"
 		"visual type or switch to a different hardware.");
-       throw ERROR_MESSAGE("QXImager::QXImager", buffer);
+       G_THROW(buffer);
      }
    if (visual->c_class==StaticColor && depth>=15)
      {
@@ -548,7 +545,7 @@ QXImager::QXImager(Display * _displ, void * _visual,
 	 strcat(buffer, 
 		"\n\nPlease rerun Netscape with '-visual' flag to change the\n"
 		"visual type or switch to a different hardware.");
-       throw ERROR_MESSAGE("QXImager::QXImager", buffer);
+       G_THROW(buffer);
      }
    if (visual->c_class==DirectColor && depth>=15)
      {
@@ -558,7 +555,7 @@ QXImager::QXImager(Display * _displ, void * _visual,
 	 strcat(buffer, 
 		"\n\nPlease rerun Netscape with '-visual' flag to change the\n"
 		"visual type or switch to a different hardware.");
-       throw ERROR_MESSAGE("QXImager::QXImager", buffer);
+       G_THROW(buffer);
      }
    if (visual->c_class==StaticGray && depth!=8)
      {
@@ -568,7 +565,7 @@ QXImager::QXImager(Display * _displ, void * _visual,
 	 strcat(buffer, 
 		"\n\nPlease rerun Netscape with '-visual' flag to change the\n"
 		"visual type or switch to a different hardware.");
-       throw ERROR_MESSAGE("QXImager::QXImager", buffer);
+       G_THROW(buffer);
      }
    if (visual->c_class==GrayScale && depth!=8)
    {
@@ -578,7 +575,7 @@ QXImager::QXImager(Display * _displ, void * _visual,
 	strcat(buffer, 
 	       "\n\nPlease rerun Netscape with '-visual' flag to change the\n"
 	       "visual type or switch to a different hardware.");
-      throw ERROR_MESSAGE("QXImager::QXImager", buffer);
+      G_THROW(buffer);
    }
 
    is_color=!(visual->c_class==GrayScale || visual->c_class==StaticGray);
@@ -762,7 +759,7 @@ QXImager::QXImager(Display * _displ, void * _visual,
       sprintf(buffer,
 	      "Sorry, but your hardware has depth of %d, which is\n"
 	      "currently unsupported.", depth);
-      throw ERROR_MESSAGE("QXImager::QXImager", buffer);
+      G_THROW(buffer);
    }
    // Make it current
    qxImager=this;
@@ -1148,14 +1145,15 @@ QXImager::copyPixmap(DXImage * image, const GRect & im_rect,
      ximage=XShmCreateImage(displ, (Visual *) visual, depth, ZPixmap, 0, shminfo,\
 			    rect.width(), rect.height());\
      if (!shminfo || !ximage)\
-	throw OUT_OF_MEMORY("QXImager::displayPixmap", "Not enough memory to create XImage.");\
+	G_THROW("Not enough memory to create XImage.");\
      image=new DXImage(displ, ximage, shminfo);\
   } else\
   {\
      DEBUG_MSG("not using XShm extension as directed...\n");\
      ximage=XCreateImage(displ, (Visual *) visual, depth, ZPixmap, 0, 0,\
 			 rect.width(), rect.height(), 8, 0);\
-     if (!ximage) throw OUT_OF_MEMORY("QXImager::displayPixmap", "Not enough memory to create XImage.");\
+     if (!ximage) \
+        G_THROW("Not enough memory to create XImage.");\
      image=new DXImage(displ, ximage, 0);\
   }\
   \
@@ -1174,7 +1172,8 @@ QXImager::copyPixmap(DXImage * image, const GRect & im_rect,
 #define CREATE_XIMAGE \
   ximage=XCreateImage(displ, (Visual *) visual, depth, ZPixmap, 0, 0,\
 		      rect.width(), rect.height(), 8, 0);\
-  if (!ximage) throw OUT_OF_MEMORY("QXImager::displayPixmap", "Not enough memory to create XImage.");\
+  if (!ximage) \
+     G_THROW("Not enough memory to create XImage.");\
   image=new DXImage(displ, ximage);
 #endif
 

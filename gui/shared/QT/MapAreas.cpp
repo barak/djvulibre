@@ -65,12 +65,10 @@
 #include "MapAreas.h"
 #include "MapDraw.h"
 #include "debug.h"
-#include "exc_msg.h"
 #include "qlib.h"
 #include "qxlib.h"
 #include "qt_imager.h"
 #include "qx_imager.h"
-#include "exc_misc.h"
 
 #include <qapplication.h>
 #include <qpaintdevicemetrics.h>
@@ -401,7 +399,7 @@ MapArea::initBorder(void)
 	 repaintBorder();
 	 break;
       default:
-	 throw ERROR_MESSAGE("MapArea::initBorder", ERR_MSG("MapArea.unknown_border_type"));
+	 G_THROW(ERR_MSG("MapArea.unknown_border_type"));
    }
 }
 

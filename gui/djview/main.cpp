@@ -74,7 +74,6 @@
 #include "GThreads.h"
 #include "init_qt.h"
 #include "qd_viewer_shell.h"
-#include "exc_msg.h"
 #include "DjVuDocument.h"
 #include "GURL.h"
 #include "djvu_file_cache.h"
@@ -89,36 +88,35 @@ ShowUsage(void)
 {
   DjVuPrintErrorUTF8("%s\n",
 #ifdef DJVULIBRE_VERSION
-          "DJVIEW --- DjVuLibre-" DJVULIBRE_VERSION "\n"
+  ("DJVIEW --- DjVuLibre-" DJVULIBRE_VERSION "\n"
 #endif
-          "DjVu document viewer.\n\n"
-          "Usage: djview <options_list> <file_name>\n"
-          "Options:\n"
-          "     -file <file_name>       - alternative way to specify file name\n"
-          "     -page <page_num>        - number of the page to display\n"
-          "     -help                   - print this message\n"
-          "     -style=motif            - Motif look and feel\n"
-          "     -style=windows          - Win95 look and feel\n"
-          "     -geometry <geometry>    - specify X11 startup geometry\n"
-          "     -display <display>      - specify X11 display name\n"
-          "     -fn <fontname>          - specify Qt/X11 default font\n"
-          "     -bg <color>             - specify Qt/X11 default background color\n"
-          "     -fg <color>             - specify Qt/X11 default foreground color\n"
+   "DjVu document viewer.\n\n"
+   "Usage: djview <options_list> <file_name>\n"
+   "Options:\n"
+   "     -file <file_name>       - alternative way to specify file name\n"
+   "     -page <page_num>        - number of the page to display\n"
+   "     -help                   - print this message\n"
+   "     -style=motif            - Motif look and feel\n"
+   "     -style=windows          - Win95 look and feel\n"
+   "     -geometry <geometry>    - specify X11 startup geometry\n"
+   "     -display <display>      - specify X11 display name\n"
+   "     -fn <fontname>          - specify Qt/X11 default font\n"
+   "     -bg <color>             - specify Qt/X11 default background color\n"
+   "     -fg <color>             - specify Qt/X11 default foreground color\n"
 #ifndef QT1
-          "     -btn <color>            - specify Qt/X11 default button color\n"
-          "     -visual TrueColor       - forces use of a TrueColor visual (8 bit display)\n"
-          "     -ncols <count>          - limit color palette use (8 bit display)\n"
-          "     -cmap                   - install private colormap (8 bit display)\n"
+   "     -btn <color>            - specify Qt/X11 default button color\n"
+   "     -visual TrueColor       - forces use of a TrueColor visual (8 bit display)\n"
+   "     -ncols <count>          - limit color palette use (8 bit display)\n"
+   "     -cmap                   - install private colormap (8 bit display)\n"
 #endif
 #ifndef NO_DEBUG
 #ifdef RUNTIME_DEBUG_ONLY
-          "	-debug[=<level>]        - print debug information\n"
+   "	-debug[=<level>]        - print debug information\n"
 #endif
 #endif
-          "     -fix                    - fix configuration of Netscape helpers\n"
-          );
+   "     -fix                    - fix configuration of Netscape helpers\n"
+   ));
 }
-      
 
 int
 main(int argc, char ** argv)
@@ -209,14 +207,16 @@ main(int argc, char ** argv)
           else if (!strcmp(arg,"-page") && i<argc-1)
             {
               if (page_num)
-                DjVuPrintErrorUTF8("djview: duplicate page specification\n");
+                DjVuPrintErrorUTF8("djview: "
+                                   "duplicate page specification\n");
               page_num = atoi(argv[++i]);
               continue;
             }
           else if (!strncmp(arg,"-page=",6) && i<argc-1)
             {
               if (page_num)
-                DjVuPrintErrorUTF8("djview: warning: duplicate page specification\n");
+                DjVuPrintErrorUTF8("djview: warning: "
+                                   "duplicate page specification\n");
               page_num = atoi(arg+6);
               continue;
             }
@@ -235,19 +235,23 @@ main(int argc, char ** argv)
             }
           else if (arg[0] == '-')
             {
-              DjVuPrintErrorUTF8("djview: warning: unrecognized option '%s'\n", arg);
+              DjVuPrintErrorUTF8("djview: warning: "
+                                 "unrecognized option '%s'\n", arg);
               continue;
             }
           
           if (! file_name)
             file_name = GNativeString(arg);
           else
-            DjVuPrintErrorUTF8("djview: warning: duplicate filename specification\n");
+            DjVuPrintErrorUTF8("djview: warning: "
+                               "duplicate filename specification\n");
         }
       if (page_num < 0)
-        DjVuPrintErrorUTF8("djview: warning: illegal page number\n");
+        DjVuPrintErrorUTF8("djview: warning: "
+                           "illegal page number\n");
       if (page_num > 0 && !file_name)
-        DjVuPrintErrorUTF8("djview: warning: page specification without a file name\n");
+        DjVuPrintErrorUTF8("djview: warning: "
+                           "page specification without a file name\n");
       
       // We are ready to fly
       DjVuPrefs prefs;
@@ -265,7 +269,7 @@ main(int argc, char ** argv)
         {
           GURL url = GURL::Filename::UTF8(file_name);
           if (!url.is_local_file_url())
-            throw ERROR_MESSAGE("main",ERR_MSG("main.cant_display_remote"));
+            G_THROW(ERR_MSG("main.cant_display_remote"));
           if (page_num > 0)
             {
               // Get rid of page specification via '#'

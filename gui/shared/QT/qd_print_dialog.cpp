@@ -64,8 +64,6 @@
 #include "qd_print_dialog.h"
 #include "qlib.h"
 #include "debug.h"
-#include "exc_msg.h"
-#include "exc_misc.h"
 #include "djvu_base_res.h"
 #include "GOS.h"
 #include "ByteStream.h"
@@ -392,13 +390,15 @@ QDPrintDialog::slotHelp(void)
 #endif
 }
 
+struct Interrupted { int dummy; };
+
 void
 QDPrintDialog::refresh_cb(void * cl_data)
 {
    QDPrintDialog * th=(QDPrintDialog *) cl_data;
    qApp->processEvents();
    if (th->interrupt_printing)
-      throw Interrupted("QDPrintDialog::refresh_cb", "Printing interrupted.");
+      throw Interrupted();
 }
 
 void
@@ -481,8 +481,7 @@ QDPrintDialog::done(int rc)
           int what=str2id(what_menu->currentText());
           QString customPages=custompages_text->text();
           if (what==PRINT_CUSTOM && customPages.length()==0)
-	    throw ERROR_MESSAGE("QDPrintDialog::done",
-				"Empty \"Custom pages\" list specified.");
+	    G_THROW("Empty \"Custom pages\" list specified.");
           
           if (file_butt->isChecked())
             {
@@ -561,8 +560,7 @@ QDPrintDialog::done(int rc)
               // Open pipe to command
               fdesc = popen((const char*)printCommand, "w");
               if (!fdesc)
-                throw ERROR_MESSAGE("QDPrintDialog::done",
-                                    "Cannot launch specified print command");
+                G_THROW("Cannot launch specified print command");
               pstr = ByteStream::create(fdesc, "wb", false);
            }
 
@@ -736,20 +734,18 @@ QDPrintDialog::QDPrintDialog(const GP<DjVuDocument> & _doc,
    interrupt_printing=0;
 
    if (!prefs) 
-     throw ERROR_MESSAGE("QDPrintDialog::QDPrintDialog",
-                         "Zero PREFERENCES passed as input.");
+     G_THROW("Zero PREFERENCES passed as input.");
    if (!doc) 
-     throw ERROR_MESSAGE("QDPrintDialog::QDPrintDialog",
-                         "Zero document passed as input.");
+     G_THROW("Zero document passed as input.");
    if (!dimg) 
-     throw ERROR_MESSAGE("QDPrintDialog::QDPrintDialog",
-                         "Zero image passed as input.");
+     G_THROW("Zero image passed as input.");
    
    if (print_rect.isempty())
      print_rect=GRect(0, 0, dimg->get_width(), dimg->get_height());
    cur_page_num=doc->url_to_page(dimg->get_djvu_file()->get_url());
 
-   QWidget *start = startWidget();
+   QWidget *main = startWidget();
+   QWidget *start = main;
    QLabel *label;
    QButtonGroup *bg;
    QVBoxLayout *vlay, *bg_lay;
@@ -757,29 +753,9 @@ QDPrintDialog::QDPrintDialog(const GP<DjVuDocument> & _doc,
 
    // Creating the Tab widget
    setCaption(tr("DjVu Print Dialog"));
-   vlay = new QVBoxLayout(start, 10);
-   QTabWidget *tabwidget = new QTabWidget(start, "tabwidget");
-   vlay->addWidget(tabwidget);
-
-   // Creating the OK/Cancel buttons 
-   QHBoxLayout * prg_lay=new QHBoxLayout(vlay,2);
-   prog_widget=new QWidgetStack(start, "prog_widget");
-   prg_lay->addWidget(prog_widget, 1);
-   progress=new QProgressBar(prog_widget, "progress_bar");
-   progress->setIndicatorFollowsStyle(FALSE);
-   progress->setCenterIndicator(TRUE);
-   save_butt=new QCheckBox(tr("&Save settings"), prog_widget, "save_butt");
-   save_butt->setChecked(TRUE);
-   prog_widget->raiseWidget(save_butt);
-#ifndef QT1
-   QPushButton *help_butt=new QPushButton(tr("Help"), start, "help_butt");
-   prg_lay->addWidget(help_butt);
-#endif
-   QPushButton *ok_butt=new QPushButton(tr("&OK"), start, "ok_butt");
-   ok_butt->setDefault(TRUE);
-   prg_lay->addWidget(ok_butt);
-   cancel_butt=new QPushButton(tr("&Cancel"), start, "cancel_butt");
-   prg_lay->addWidget(cancel_butt);
+   QVBoxLayout *mainvlay = new QVBoxLayout(start, 10);
+   QTabWidget *tabwidget = new QTabWidget(main, "tabwidget");
+   mainvlay->addWidget(tabwidget);
 
    // Creating the MAIN tab
    start = new QWidget(tabwidget,"main");
@@ -1100,6 +1076,26 @@ QDPrintDialog::QDPrintDialog(const GP<DjVuDocument> & _doc,
                       " inner sheet to the outer sheet."));
 #endif
    
+   // Creating the OK/Cancel buttons 
+   QHBoxLayout * prg_lay=new QHBoxLayout(mainvlay,2);
+   prog_widget=new QWidgetStack(main, "prog_widget");
+   prg_lay->addWidget(prog_widget, 1);
+   progress=new QProgressBar(prog_widget, "progress_bar");
+   progress->setIndicatorFollowsStyle(FALSE);
+   progress->setCenterIndicator(TRUE);
+   save_butt=new QCheckBox(tr("&Save settings"), prog_widget, "save_butt");
+   save_butt->setChecked(TRUE);
+   prog_widget->raiseWidget(save_butt);
+#ifndef QT1
+   QPushButton *help_butt=new QPushButton(tr("Help"), main, "help_butt");
+   prg_lay->addWidget(help_butt);
+#endif
+   QPushButton *ok_butt=new QPushButton(tr("&OK"), main, "ok_butt");
+   ok_butt->setDefault(TRUE);
+   prg_lay->addWidget(ok_butt);
+   cancel_butt=new QPushButton(tr("&Cancel"), main, "cancel_butt");
+   prg_lay->addWidget(cancel_butt);
+
    // Connecting signals
    connect(ps_butt, SIGNAL(toggled(bool)), 
            this, SLOT(slotFormatChanged(void)));

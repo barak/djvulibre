@@ -62,6 +62,7 @@
 #endif
 
 #include "DjVuImage.h"
+#include "DjVuMessage.h"
 #include "DataPool.h"
 
 #include "qd_viewer_shell.h"
@@ -71,12 +72,10 @@
 #include "names.h"
 #include "execdir.h"
 #include "djvu_viewer_res.h"
-#include "throw_error.h"
 #include "DjVuDocument.h"
 #include "qd_wpaper.h"
 #include "qd_about_dialog.h"
 #include "version.h"
-#include "exc_msg.h"
 
 #include <qapplication.h>
 #include <qwidgetlist.h>
@@ -125,9 +124,9 @@ QDViewerShell::openURL(const GURL & url)
    DEBUG_MAKE_INDENT(3);
 
    if (!url.is_local_file_url())
-      throw ERROR_MESSAGE("QDViewerShell::openURL",
-			  ERR_MSG("QDViewerShell.cant_display_remote") "\t"
-			  +(GUTF8String) url);
+     G_THROW(ERR_MSG("QDViewerShell.cant_display_remote") 
+             + GUTF8String("\t")
+             +(GUTF8String) url);
 
    GUTF8String fname="-";
    GURL clean_url;
@@ -145,12 +144,14 @@ QDViewerShell::openURL(const GURL & url)
       GP<ByteStream> gstr=ByteStream::create(GURL::Filename::UTF8(fname),"rb");
       gstr->read(&ch, 1);
    } catch(...)
-   {
-      ThrowError("QDViewerShell::openURL", ERR_MSG("QDViewerShell.open_file_fail") "\t"
-		 +fname);
-   }
-
-   if (fname!="-") QeFileDialog::lastLoadDir=QFileInfo(QStringFromGString(fname)).dirPath();
+     {
+       G_THROW(ERR_MSG("QDViewerShell.open_file_fail") 
+               + GUTF8String("\t")
+               + fname );
+     }
+   
+   if (fname!="-") 
+     QeFileDialog::lastLoadDir=QFileInfo(QStringFromGString(fname)).dirPath();
 
    try
    {
@@ -338,12 +339,14 @@ QDViewerShell::slotGetURLTimeout(void)
 	    try
 	    {
 	       char ch;
-	       GP<ByteStream> str=ByteStream::create(GURL::Filename::UTF8(fname),"rb");
+	       GP<ByteStream> str
+                 = ByteStream::create(GURL::Filename::UTF8(fname),"rb");
 	       str->read(&ch, 1);
 	    } catch(...)
 	    {
 		  // Don't want to report 'file not found' errors
-	       QString mesg=tr("Failed to open file '")+QStringFromGString(fname)+"'";
+	       QString mesg=tr("Failed to open file '")
+                 + QStringFromGString(fname) + "'";
 	       slotShowStatus(mesg);
 	       DEBUG_MSG("Failed to open url=" << gu_url << "\n");
 	       return;
@@ -357,7 +360,7 @@ QDViewerShell::slotGetURLTimeout(void)
 	 }
       } else
       {
-	 throw ERROR_MESSAGE("main",ERR_MSG("main.cant_display_remote"));
+	 G_THROW(ERR_MSG("main.cant_display_remote"));
       }
    } catch(const GException & exc)
    {
@@ -411,17 +414,12 @@ QDViewerShell::slotAboutToShowMenu(void)
 void
 QDViewerShell::slotShowStatus(const QString &qstatus)
 {
-   const char *status=qstatus;
-   if (status)
-   {
-      if (!status[0]) status=" ";
-      
-      const char * ptr;
-      for(ptr=status;*ptr;ptr++) if (*ptr=='\n') break;
-   
-      GUTF8String mesg=GUTF8String(status,ptr-status);
-      status_bar->setText(QStringFromGString(mesg));
-   }
+  GUTF8String gstatus = GStringFromQString(qstatus);
+  gstatus = DjVuMessage::LookUpUTF8(gstatus);
+  for (unsigned int i=0; i<gstatus.length(); i++)
+    if (gstatus[i]=='\t' || gstatus[i]=='\n')
+      gstatus.setat(i,' ');
+  status_bar->setText(QStringFromGString(gstatus));
 }
 
 void

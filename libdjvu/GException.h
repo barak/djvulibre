@@ -137,7 +137,8 @@ public:
       interrupts the execution. The remaining arguments are usually provided
       by the predefined macros #__FILE__#, #__LINE__#, and (G++ and EGCS only)
       #__PRETTY_FUNCTION__#.  */
-  GException (const char *cause, const char *file=0, int line=0, const char *func=0, const source_type source=GINTERNAL);
+  GException (const char *cause, const char *file=0, int line=0, 
+              const char *func=0, const source_type source=GINTERNAL);
 
   /** Copy Constructor. */
   GException (const GException & exc);
