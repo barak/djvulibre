@@ -58,7 +58,7 @@ much smaller files.
 .B "-verbose"
 Display informational messages while running.
 
-.SH LIMITATIONS
+.SH REMARKS
 The color quantization might introduce severe degradation if the image
 contains photographic areas with a large number of very similar colors.
 Color quantization problems might be solved by pre-processing
@@ -67,6 +67,10 @@ the input file with a different quantization program such as
 Avoid using the error diffusion dithering algorithm.
 This algorithm generates random dithering patterns that
 might be very costly to encode.
+
+.SH BUGS
+This program should be rewritten as a pre-processor for 
+.BR csepdjvu .
 
 .SH CREDITS
 This program was initially written by L\('eon Bottou
