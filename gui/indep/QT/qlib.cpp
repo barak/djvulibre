@@ -239,7 +239,7 @@ QeApplication::setWidgetGeometry(QWidget * widget)
 //****************************************************************************
 
 
-QeDialog::QeDialog(QWidget * parent=0, const char * name=0, bool modal=FALSE, WFlags f=0)
+QeDialog::QeDialog(QWidget * parent=0, const char * name=0, bool modal=FALSE, WFlags f)
   : QDialog(parent,name,modal,f)
 {
   // This is the only reason to have class QeDialog.
@@ -411,7 +411,7 @@ QeExcMessage::switchDetails(void)
 {
   try
     {
-      if (! details->isHidden())
+      if (details->isVisible())
         {
           details_butt->setText(tr("&Details"));
           details->hide();
