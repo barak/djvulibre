@@ -57,9 +57,9 @@ rm -rf %{buildroot}
 
 # Apply i18n overlays
 for lang in ja fr de zh ; do \
-  test -d %{buildroot}%{mandir} || mkdir %{buildroot}%{mandir} ;\
-  test -d i18n/ja && %makeinstall -C i18n/ja ;\
-done ; true
+  test -d %{buildroot}%{mandir}/$lang || mkdir %{buildroot}%{mandir}/$lang ; \
+  test -r i18n/$lang/Makefile && %makeinstall -C i18n/$lang ; \
+done || true
 
 # Quick fix to stop ldconfig from complaining
 find %{buildroot}%{_libdir} -name "*.so*" -exec chmod 755 {} \;
@@ -76,24 +76,23 @@ rm -rf %{buildroot}
 
 %post 
 /sbin/ldconfig
-# Create links to nsdejavu.so in mozilla dirs
-# The name of the link is nsdjvu.so in order to make
-# sure they do not get removed when upgrading rpms.
+# HACK: Create links to nsdejavu.so in mozilla dirs
 ( for n in %{prefix}/lib/mozilla*  ; do \
   if [ -d $n ] ; then \
    test -d $n/plugins || mkdir $n/plugins ; \
-   ln -s ../../netscape/plugins/nsdejavu.so $n/plugins/nsdjvu.so ; \
+   test -h $n/plugins/nsdjvu.so && rm $n/plugins/nsdjvu.so ; \
+   ln -s ../../netscape/plugins/nsdejavu.so $n/plugins/nsdejavu.so ; \
  fi ; done ) 2>/dev/null || true
 
 
 
 %postun 
 /sbin/ldconfig
-# Remove links to nsdejavu.so in all mozilla dirs
+# HACK: Remove links to nsdejavu.so in all mozilla dirs
 ( if ! [ -r %{prefix}/lib/netscape/plugins/nsdejavu.so ] ; then \
    for n in %{prefix}/lib/mozilla* ; do \
-    if [ -h $n/plugins/nsdjvu.so ] ; then \
-     rm $n/plugins/nsdjvu.so ; \
+    if [ -h $n/plugins/nsdejavu.so ] ; then \
+     rm $n/plugins/nsdejavu.so ; \
      rmdir $n/plugins ; \
   fi ; done ; fi ) 2>/dev/null || true
 
@@ -109,13 +108,13 @@ rm -rf %{buildroot}
 %{_datadir}/djvu/osi/en
 %{_mandir}/man?/*
 %lang(ja) %{_datadir}/djvu/osi/ja_JP
-%lang(ja) %{_mandir}/ja*/man?/*
+%lang(ja) %{_mandir}/ja*
 %lang(fr) %{_datadir}/djvu/osi/fr_FR
-%lang(fr) %{_mandir}/fr*/man?/*
+%lang(fr) %{_mandir}/fr*
 %lang(de) %{_datadir}/djvu/osi/de_DE
-%lang(de) %{_mandir}/de*/man?/*
+%lang(de) %{_mandir}/de*
 %lang(zh) %{_datadir}/djvu/osi/Chinese_PRC
-%lang(zh) %{_mandir}/zh*/man?/*
+%lang(zh) %{_mandir}/zh*
 
 %changelog
 * Wed Nov  5 2003 Leon Bottou <leon@bottou.org> 3.5.12-3
