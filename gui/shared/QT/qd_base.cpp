@@ -1246,10 +1246,15 @@ void
 QDBase::updateToolBar(void)
 {
    if (mode_tbar)
-      mode_tbar->update(getMode(true), true,
-			cmd_zoom, getZoom(), pane_mode,
-			dimg && dimg->get_djvu_file()->get_text());
-   
+     {
+       bool hastxt = false;
+       G_TRY {
+         if (dimg && dimg->get_djvu_file()->get_text())
+           hastxt = true;
+       } G_CATCH_ALL { } G_ENDCATCH;
+       mode_tbar->update(getMode(true), true,
+	 		 cmd_zoom, getZoom(), pane_mode, hastxt);
+     }
    if (toolbar)
    {
       if (!dimg) toolbar->setEnabled(FALSE);
