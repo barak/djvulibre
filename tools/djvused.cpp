@@ -967,6 +967,8 @@ print_txt(const GP<DjVuTXT> &txt, const GP<ByteStream> &out)
 {
   if (txt)
     print_txt_sub(txt, txt->page_zone, out, 0);
+  else
+    out->write("(page 0 0 0 0 \"\")\n",18);
 }
 
 void
@@ -1164,6 +1166,8 @@ construct_djvutxt(ParsingByteStream &pbs)
   if (pbs.get_spaces(true) != EOF)
     verror("Syntax error in txt data: garbage after data");
   txt->normalize_text();
+  if (! txt->textUTF8)
+    return 0;
   return txt;
 }
 
