@@ -537,6 +537,7 @@ pathelem(strpool *pool, const char **pathptr)
 }
 
 static const char *stdpath = 
+"/usr/lib/mozilla/plugins:"
 "/usr/local/lib/netscape/plugins:"
 "/usr/local/netscape/plugins:"
 "/usr/lib/netscape/plugins:"
