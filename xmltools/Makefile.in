@@ -55,10 +55,9 @@ LIBS= ${JPEG_LIBS} ${THREAD_LIBS} @LIBS@
 CFLAGS = @CFLAGS@ ${FLAGS}
 CXXFLAGS = @CXXFLAGS@ ${CXXRPOFLAGS} ${FLAGS}
 
-PROGRAMS = djvutoxml djvuxmlparser xml2native \
-           xml2utf16 xml2utf8
+PROGRAMS = djvutoxml djvuxmlparser 
 
-all: ${PROGRAMS}
+all: ${PROGRAMS} djvuxml.1
 
 install: install-bin install-data install-man
 
@@ -80,9 +79,6 @@ install-man: FORCE
 	${INSTALL} -d ${DESTDIR}${mandir}/man1
 	for n in ${srcdir}/*.1 ; do \
 	  ${INSTALL} -m 0644 $$n ${DESTDIR}${mandir}/man1 || exit ; done 
-	${INSTALL} -d ${DESTDIR}${mandir}/man3
-	for n in ${srcdir}/*.3 ; do \
-	  ${INSTALL} -m 0644 $$n ${DESTDIR}${mandir}/man3 || exit ; done 
 
 depend: FORCE
 	${CXX} -MM ${CXXFLAGS} ${srcdir}/*.cpp > Makefile.dep
@@ -93,6 +89,10 @@ clean: FORCE
 
 distclean: clean 
 	-${RM} -r 2>/dev/null Makefile *.rpo ii_files
+
+djvuxml.1: ${srcdir}/djvuxml.1.in
+	sed < ${srcdir}/djvuxml.1.in > djvuxml.1 \
+	 -e 's,DATADIR,${datadir},'
 
 FORCE:
 .PHONY: FORCE
@@ -110,9 +110,6 @@ FORCE:
 # Dependencies
 djvutoxml: djvutoxml.o
 djvuxmlparser: djvuxmlparser.o
-xml2native: xml2native.o
-xml2utf16: xml2utf16.o
-xml2utf8: xml2utf8.o
 
 @SHARED_NO@${PROGRAMS}: ${LIBDJVU_A}
 
