@@ -1,17 +1,9 @@
 
-RELEASE 1
-- rpm packages for linux
-
-RELEASE 2
 - rechunking feature in c44
 - rewrite parser for annotation layer
 - djvups executable
 - ht:/dig plugin
-
-RELEASE 3
 - better encoders (cjb2, cpaldjvu, csepdjvu)
 - gs based ps-to-djvu translator
-
-LATER MAYBE
-- creating hidden text layers
+- creating hidden text layers via ocr
 - simple segmenter for color images
