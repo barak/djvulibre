@@ -1307,13 +1307,6 @@ parse_slice(const char *q, csepdjvuopts &opts)
 int 
 main(int argc, const char **argv)
 {
-#if defined(WIN32)
-  _setmode(_fileno(stdin), _O_BINARY);
-  _setmode(_fileno(stdout), _O_BINARY);
-#elif defined(__CYGWIN32__)
-  setmode(fileno(stdin), O_BINARY);
-  setmode(fileno(stdout), O_BINARY);
-#endif
   setlocale(LC_ALL,"");
   djvu_programname(argv[0]);
   GArray<GUTF8String> dargv(0,argc-1);

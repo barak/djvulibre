@@ -73,6 +73,10 @@
 #include "GOS.h"
 #include "GURL.h"
 #include "DjVuMessage.h"
+#include <fcntl.h>
+#if defined(WIN32) || defined(__CYGWIN32__)
+#include <io.h>
+#endif
 
 #ifdef UNIX
 #ifndef HAS_MEMMAP
@@ -651,7 +655,8 @@ ByteStream::Stdio::~Stdio()
 GUTF8String
 ByteStream::Stdio::init(const char mode[])
 {
-  char const *mesg=0; 
+  char const *mesg=0;
+  bool binary=false;
   if(!fp)
     must_close=false;
   for (const char *s=mode; s && *s; s++)
@@ -671,10 +676,18 @@ ByteStream::Stdio::init(const char mode[])
         can_read=can_write=true;
         break;
       case 'b':
+        binary=true;
         break;
       default:
         mesg= ERR_MSG("ByteStream.bad_mode"); //  Illegal mode in Stdio
     }
+  }
+  if(binary && fp) {
+#if defined(WIN32)
+    _setmode(_fileno(fp), _O_BINARY);
+#else
+    setmode(fileno(fp), O_BINARY);
+#endif
   }
   GUTF8String retval;
   if(!mesg)
@@ -1195,7 +1208,7 @@ ByteStream::create(const int fd,char const * const mode,const bool closeme)
     else if (fd == 1 && !closeme && (!mode || GUTF8String(mode) == "a"))
       {
         f=stdout;
-        default_mode="wb";
+        default_mode="ab";
         fd2 = -1;
       }
     else if (fd == 2 && !closeme && (!mode || GUTF8String(mode) == "a"))
@@ -1364,23 +1377,23 @@ ByteStream::Wrapper::~Wrapper() {}
 
 
 GP<ByteStream> 
-ByteStream::get_stdin(void)
+ByteStream::get_stdin(char const * const mode)
 {
-  static GP<ByteStream> gp = ByteStream::create(0,0,false);
+  static GP<ByteStream> gp = ByteStream::create(0,mode,false);
   return gp;
 }
 
 GP<ByteStream> 
-ByteStream::get_stdout(void)
+ByteStream::get_stdout(char const * const mode)
 {
-  static GP<ByteStream> gp = ByteStream::create(1,0,false);
+  static GP<ByteStream> gp = ByteStream::create(1,mode,false);
   return gp;
 }
 
 GP<ByteStream> 
-ByteStream::get_stderr(void)
+ByteStream::get_stderr(char const * const mode)
 {
-  static GP<ByteStream> gp = ByteStream::create(2,0,false);
+  static GP<ByteStream> gp = ByteStream::create(2,mode,false);
   return gp;
 }
 

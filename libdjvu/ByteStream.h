@@ -333,9 +333,9 @@ public:
     void const * const buffer, const size_t size);
   
   /** Easy access to preallocated stdin/stdout/stderr bytestreams */
-  static GP<ByteStream> get_stdin(void);
-  static GP<ByteStream> get_stdout(void);  
-  static GP<ByteStream> get_stderr(void);
+  static GP<ByteStream> get_stdin(char const * const mode=0);
+  static GP<ByteStream> get_stdout(char const * const mode=0);  
+  static GP<ByteStream> get_stderr(char const * const mode=0);
 
   /** This is the conventional name for EOF exceptions */
   static const char *EndOfFile;
