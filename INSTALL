@@ -267,9 +267,6 @@ that mozilla is installed under /usr and that the DjVu plug-in is installed in
 
 Works nicely.
 
-You might need to remove the file "$HOME/.mime.types".
-See <http://bugzilla.mozilla.org/show_bug.cgi?id=108234>
-
 
 3.5- GALEON
 -----------
