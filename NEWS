@@ -7,6 +7,7 @@ NEW IN VERSION 3.5.10
 - Fixed thumbnail generation on empty pages.
 - Improved csepdjvu option -bgwhite.
 - Improved djvu printing.
+- XML Tools are now compiled by default.
 
 NEW IN VERSION 3.5.9
 --------------------
