@@ -117,6 +117,7 @@ if test -x /usr/bin/update-menus; then /usr/bin/update-menus; fi
 %lang(de) %{_mandir}/de*
 
 %changelog
+* Sat Jul 24 2004 Leon Bottou <leon@bottou.org> 3.5.14-1
 * Thu Jun 17 2004 Leon Bottou <leon@bottou.org> 3.5.13-4
 - changed runtime generation of file list.
 * Mon May 31 2004 Leon Bottou <leon@bottou.org> 3.5.13-3
