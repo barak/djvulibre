@@ -48,6 +48,7 @@
 #include "DjVuImage.h"
 #include "GString.h"
 #include "GOS.h"
+#include "GURL.h"
 #include "DjVuMessage.h"
 
 #include <locale.h>
@@ -61,6 +62,7 @@
 
 bool cgi = false;
 bool head = false;
+bool autoindirect = true;
 GUTF8String pathtranslated;
 GUTF8String requestmethod;
 
@@ -76,8 +78,8 @@ usage(void)
           "\n"
           "Usage: djvuserve [<djvufile>[/<djvmid>]\n"
           "Outputs the specified <djvufile> with valid Content-Type,\n"
-          "Content-Length, and Expire HTTP headers.  Multipage DjVu\n"
-          "documents can be accessed as indirect document using the <djvmid>\n"
+          "Content-Length, and Expire HTTP headers.  Bundled multipage DjVu\n"
+          "documents are accessed as indirect document using the <djvmid>\n"
           "syntax. Specifying a <djvmid> of <index> generates an indirect page\n"
           "directory pointing to the other component files.\n"
           "This program is designed to be used as a CGI executable.\n"
@@ -118,10 +120,35 @@ djvuserver_file(GURL pathurl)
   if (stat((const char *)fname, &statbuf) < 0)
     G_THROW(strerror(errno));
 
+  // Automatically redirect as an indirect file
+  if (autoindirect)
+    {
+      // Is this a bundled file?
+      GP<ByteStream> in = ByteStream::create(pathurl,"rb");
+      GP<IFFByteStream> iff = IFFByteStream::create(in);
+      GUTF8String chkid;
+      iff->get_chunk(chkid);
+      if (chkid == "FORM:DJVM")
+        {
+          while (iff->get_chunk(chkid) && chkid!="DIRM")
+            iff->close_chunk();
+          if (chkid == "DIRM")
+            {
+              GP<ByteStream> dirm = iff->get_bytestream();
+              if (dirm->read8() & 0x80)
+                {
+                  // It is bundled
+                  GUTF8String id = pathurl.name();
+                  fprintf(stdout,"Location: %s/index\n\n", (const char*)id);
+                  return;
+                }
+            }
+        }
+    }
+  // Simply push the file
   headers(&statbuf);
   if (head) 
     return;
-
   GP<ByteStream> in = ByteStream::create(pathurl,"rb");
   fprintf(stdout,"\n");
   GP<ByteStream> out = ByteStream::get_stdout();
