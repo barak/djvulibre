@@ -239,7 +239,7 @@ QeApplication::setWidgetGeometry(QWidget * widget)
 //****************************************************************************
 
 
-QeDialog::QeDialog(QWidget * parent=0, const char * name=0, bool modal=FALSE, WFlags f)
+QeDialog::QeDialog(QWidget *parent, const char *name, bool modal, WFlags f)
   : QDialog(parent,name,modal,f)
 {
   // This is the only reason to have class QeDialog.
