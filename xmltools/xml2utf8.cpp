@@ -1,9 +1,8 @@
 //C-  -*- C++ -*-
 //C- -------------------------------------------------------------------
-//C- Xmltools for DjVuLibre-3.5
-//C- Copyright (c) 2002  Leon Bottou, Yann Le Cun and Bill Riemers
-//C- Copyright (c) 2001  AT&T
-//C-
+//C- Xmltools for DjVu3 and DjVuLibre-3.5
+//C- Copyright (c) 2002  Bill C. Riemers
+//C- -------------------------------------------------------------------
 //C- This software is subject to, and may be distributed under, the
 //C- GNU General Public License, Version 2. The license should have
 //C- accompanied the software or you may obtain a copy of the license
@@ -14,6 +13,14 @@
 //C- MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 //C- GNU General Public License for more details.
 //C- 
+//C- I, Bill C. Riemers, hereby grant all rights to this code,
+//C- provided usage complies with the GPL or a written exception to 
+//C- the GPL granted by any of Bill C. Riemers, Leon Bottou, 
+//C- Yann Le Cun, or the Free Source Foundation.
+//C-
+//C- As derived work,  the following LizardTech, Inc. copyright 
+//C- notice applies to this code.
+//C-  ------------------------------------------------------------------
 //C- DjVuLibre-3.5 is derived from the DjVu(r) Reference Library
 //C- distributed by Lizardtech Software.  On July 19th 2002, Lizardtech 
 //C- Software authorized us to replace the original DjVu(r) Reference 
