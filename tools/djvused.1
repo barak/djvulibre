@@ -1,0 +1,371 @@
+.\" Copyright (c) 2001 Leon Bottou, Yann Le Cun, Patrick Haffner,
+.\"                    AT&T Corp., and Lizardtech, Inc.
+.\"
+.\" This is free documentation; you can redistribute it and/or
+.\" modify it under the terms of the GNU General Public License as
+.\" published by the Free Software Foundation; either version 2 of
+.\" the License, or (at your option) any later version.
+.\"
+.\" The GNU General Public License's references to "object code"
+.\" and "executables" are to be interpreted as the output of any
+.\" document formatting or typesetting system, including
+.\" intermediate and printed output.
+.\"
+.\" This manual is distributed in the hope that it will be useful,
+.\" but WITHOUT ANY WARRANTY; without even the implied warranty of
+.\" MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+.\" GNU General Public License for more details.
+.\"
+.\" You should have received a copy of the GNU General Public
+.\" License along with this manual. Otherwise check the web site
+.\" of the Free Software Foundation at http://www.fsf.org.
+.TH DJVUSED 1 "10/11/2001" "DjVuLibre-3.5" "DjVuLibre-3.5"
+.de SS
+.SH \\0\\0\\0\\$*
+..
+.SH NAME
+djvused \- Multi-purpose DjVu document editor.
+
+.SH SYNOPSIS
+.BI "djvused [" "options" "] " "djvufile"
+
+.SH DESCRIPTION
+Program
+.B djvused 
+is a powerful command line tool for manipulating multi-page documents,
+editing annotation chunks, editing hidden text layers, pre-computing
+thumbnail images, and more.  The program first reads the DjVu document
+.I djvufile
+and executes a number of djvused commands.
+
+Djvused commands can be read from a specific file (when option
+.B -f
+is specified), read from the command line (when option
+.B -e
+is specified), or read from the standard input (the default).
+
+.SH OPTIONS
+.TP
+.BI "-v"
+Cause 
+.B djvused 
+to print a command line prompt before reading commands
+and a brief message describing how each command was executed.
+This option is very useful for debugging djvused scripts
+and also for interactively entering djvused commands on
+the standard input.
+.TP
+.BI "-f " "scriptfile"
+Cause
+.B djvused
+to read commands from file
+.IR scriptfile .
+.TP
+.BI "-e " "command"
+Cause
+.B djvused
+to execute the commands specified by the option argument
+.IR commands .
+It is advisable to surround the djvused commands by single
+quotes in order to prevent unwanted shell expansion.
+.TP
+.BI "-s"
+Cause 
+.B djvused
+to save the file 
+.I djvufile
+after executing the specified commands.
+This is similar to executing command
+.B save
+immediately before terminating the program.
+.TP
+.BI "-n"
+Cause 
+.B djvused 
+to disregard save commands.
+This is useful for debugging djvused scripts
+without overwriting files on your disk.
+
+.SH DJVUSED EXAMPLES
+There are many ways to use program
+.BR djvused .
+The following examples illustrate 
+some common uses of this program.
+
+.SS Obtaining the size of a page
+Command 
+.B size 
+outputs the width and height of the selected pages
+using a
+.SM HTML
+friendly syntax. 
+For instance, the following command prints the size 
+of page
+.I 3
+of document
+.IR myfile.djvu .
+.IP "" 3
+.BI "djvused " "myfile.djvu" " -e 'select " 3 "; size'"
+.PP
+
+.SS Extracting the hidden text
+Command
+.B print-pure-txt
+outputs the text associated with a page or a document.
+For instance, the following command outputs the text
+for the entire document.  Lines and pages are delimited
+by the usual control characters.
+.IP "" 3
+.BI "djvused " "myfile.djvu" " -e 'print-pure-txt'"
+.PP
+Command
+.B print-txt
+produces a more extensive output describing the structure
+and the location of the text components.  The syntax of this
+output is described later in this man page.  For instance, 
+the following command outputs extended text information
+for page 
+.I 3 
+of document
+.IR myfile.djvu .
+.IP "" 3
+.BI "djvused " "myfile.djvu" " -e 'select " 3 "; print-txt'"
+.PP
+
+.SS Extracting the annotations
+Annotation data can be extracted using command 
+.BR print-ant .
+The syntax of the annotation data is described later in this man page.
+For instance, the following command outputs the annotation data for
+the first page of document
+.BR myfile.djvu .
+.IP "" 3
+.BI "djvused " "myfile.djvu" " -e 'select " 1 "; print-ant'"
+.PP
+Command 
+.B print-ant
+only prints the annotations stored in the selected component file.
+Command
+.B print-merged-ant
+also retrieves annotations from all the component files 
+referenced by the current page (using 
+.SM INCL
+chunks) and prints the merged information.
+
+.SS Dumping/restoring annotations and text
+Three commands,
+.BR "output-txt" ", " "output-ant" ", and " "output-all" ","
+produce djvused scripts.
+For instance, the following command produces a djvused script,
+.IR myfile.dsed ,
+that recreates all the text and annotation data
+in document
+.IR myfile.djvu .
+.IP "" 3
+.BI "djvused " "myfile.djvu" " -e 'output-all' > " "myfile.dsed"
+.PP
+Script
+.I myfile.dsed
+is a text file that can be easily edited.
+The following command then recreates the text and annotation
+information in file
+.IR myfile.djvu .
+.IP "" 3
+.BI "djvused " "myfile.djvu" " -f " "myfile.dsed" " -s"
+
+.SS Extracting a page
+Both commands
+.B save-page
+and
+.B save-page-with
+create a DjVu file representing the selected component file 
+of a document.  The following command, for instance, 
+creates a file
+.I p05.djvu
+containing page
+.I 5
+of document
+.IR myfile.djvu .
+.IP "" 3
+.BI "djvused " "myfile.djvu" " -e 'select " "5" "; save-page " "p05.djvu" "'"
+.PP
+Each page of a document might import data from 
+another component file using the so-called inclusion (
+.SM INCL
+) chunks.  Command
+.B save-page
+then produces a file with unresolved references to imported data.  
+Such a file should then be made part of a multi-page document
+containing the required data in other component files.
+On the other hand, command 
+.B save-page-with
+copies all the imported data into the output file.
+This file is direcly viewable. Yet collecting several
+such files into a multipage document might lead
+to useless data replication.
+
+.SH DJVUSED COMMANDS
+Command lines might contain zero, one, or more djvused commands and an
+optional comment.  Multiple djvused commands must be separated by a
+semicolon character ';'.  Comments are introduced by the '#' character
+and extend until the end of the command line.
+
+.SS Selection commands
+Multi-page DjVu documents are composed of a number of component files.
+Most component files describe a specific page of a document.  Some
+component files contain information shared by several pages such as
+shared image data, shared annotations or thumbnails.  Many djvused
+commands operate on selected component files.  All component files are
+initially selected.  The following commands are useful for changing
+the selection.
+.TP
+.BI "n"
+Print the total number of pages in the document.
+.TP
+.BI "ls"
+List all component files in the document.  Each line contains an
+optional page number, a letter describing the component file type, the
+size of the component file, and the identifier of the component file.
+Component file type letters
+.BR P ", " I ", " A ", and " T 
+respectively stand for page data, shared image data, shared annotation
+data, and thumbnail data.  Page numbers are only listed for component
+files containing page data.
+.TP
+.BI "select [" "fileid" "]"
+Select the component file identified by argument
+.IR fileid .
+Argument 
+.I fileid
+must be either a page number or a component file identifier.
+The
+.B select
+command selects all component files
+when the argument
+.I fileid
+is omitted.
+.TP
+.BI "select-shared-ant"
+Select a component file containing shared annotations.  
+Only one such component file is supported by the current DjVu software. 
+This component file usually contains annotations pertaining to the 
+whole document as opposed to specific pages.  An error message 
+is displayed if there is no such component file.
+.TP
+.BI "create-shared-ant"
+Create and select a component file containing shared annotations.
+This command only selects the shared annotation component file if such
+a component file already exists.  Otherwise it creates a new shared
+annotation component file and makes sure that it is imported by all
+pages in the document.
+
+.SS Miscellaneous commands
+.TP
+.BI "help"
+Display a help message listing all commands supported by
+.BR djvused .
+.TP
+.BI "dump"
+Display the 
+.SM EA IFF 85
+structure of the document or of the selected component file.
+A similar capability is offered by program
+.BR djvudump .
+.TP
+.BI "size"
+Display the width and the height of the selected pages.  The
+dimensions of each page are displayed using a syntax suitable for
+direct insertion into the
+.SM <EMBED...></EMBED>
+tags.
+
+.SS Text and annotation commands
+.TP
+.BI "print-pure-txt"
+A similar capability is offered by program
+.BR djvutxt .
+.TP
+.BI "print-txt"
+blabla
+.TP
+.BI "remove-txt"
+blabla
+.TP
+.BI "set-txt " "djvusedtxtfile"
+blabla
+.TP
+.BI "output-txt"
+blabla
+.TP
+.BI "print-ant"
+blabla
+.TP
+.BI "print-merged-ant"
+blabla
+.TP
+.BI "remove-ant"
+blabla
+.TP
+.BI "set-ant " "djvusedantfile"
+blabla
+.TP
+.BI "output-ant"
+blabla
+.TP
+.BI "print-meta"
+blabla
+.TP
+.BI "set-meta " "djvusedmetafile"
+blabla
+.TP
+.BI "output-all"
+blabla
+
+.SS Thumbnail commands
+.TP
+.BI "remove-thumbnails"
+blabla
+.TP
+.BI "set-thumbnails " "sz"
+blabla
+
+.SS Save comands
+.TP
+.BI "save"
+blabla
+.TP
+.BI "save-bundled " "filename"
+A similar capability is offered by program
+.BR djvmcvt .
+.TP
+.BI "save-indirect " "filename"
+A similar capability is offered by program
+.BR djvmcvt .
+.TP
+.BI "save-page " "filename"
+blabla
+.TP
+.BI "save-page-with " "filename"
+blabla
+
+
+.SH DJVUSED FILE FORMATS
+
+.SS Hidden text data syntax
+
+.SS Annotation data syntax
+
+.SS Metadata syntax
+
+.SH CREDITS
+This program was initially written by L\('eon Bottou
+<leonb@users.sourceforge.net> and was improved by Yann Le Cun
+<profshadoko@users.sourceforge.net>, Florin Nicsa, Bill Riemers
+<bcr@lizardtech.com> and many others.
+
+.SH SEE ALSO
+.BR djvu (1),
+.BR djvm (1),
+.BR djvutxt (1),
+.BR djvmcvt (1),
+.BR djvudump (1)

@@ -276,10 +276,10 @@ The DjVu plugin works nicely with Netscape 6.1 or better.
 It seems that Netscape 6 only recognize plugins installed inside 
 its own plugin directory.  This can be done using a symbolic link.  
 Let us assume that Netscape 6 is installed in 
-.BR /usr/local/netscape6 .
+.IR /usr/local/netscape6 .
 The following commands should do the trick:
 .IP "" 2
-.B "cd /usr/local/netscape6/plugins"
+.BI "cd " "/usr/local/netscape6" "/plugins"
 .br
 .B "ln -s LIBDIR/netscape/plugins/NSDEJAVUSO ."
 .PP
@@ -288,9 +288,9 @@ The following commands should do the trick:
 The DjVu plugin works nicely with Mozilla 0.9.5 or better.
 You must establish a link from the Mozilla plugin directory.  
 Assuming that Mozilla is installed under 
-.BR /usr :
+.IR /usr :
 .IP "" 2
-.B "cd /usr/lib/mozilla/plugins"
+.BI "cd " "/usr" "/lib/mozilla/plugins"
 .br
 .B "ln -s LIBDIR/netscape/plugins/NSDEJAVUSO ."
 .PP
