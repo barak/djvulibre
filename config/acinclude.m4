@@ -480,8 +480,8 @@ AC_DEFUN([AC_PATH_JPEG],
   if test x$ac_jpeg = xyes ; then
      test x${JPEG_LIBS+set} != xset && JPEG_LIBS="-ljpeg"
   elif test x$ac_jpeg != xno ; then
-     test x${JPEG_LIBS+set} != xset && JPEG_LIBS="-L$ac_jpeg/lib -ljpeg"
-     test x${JPEG_CFLAGS+set} != xset && JPEG_CFLAGS="-I$ac_jpeg/include"
+     test x${JPEG_LIBS+set} != xset && JPEG_LIBS="-L$ac_jpeg -ljpeg"
+     test x${JPEG_CFLAGS+set} != xset && JPEG_CFLAGS="-I$ac_jpeg"
   fi
   # Try linking
   if test x$ac_jpeg != xno ; then
