@@ -83,7 +83,7 @@ AC_DEFUN(AC_CXX_OPTIMIZE,[
      AC_CHECK_CXX_OPT([-funroll-loops], [OPTS="$OPTS -funroll-loops"])
      case "${host_cpu}" in
         i?86)
-           opt="-mcpu=${host_cpu}"
+           opt="-mcpu=${host_cpu} -march=i386"
            AC_CHECK_CXX_OPT([$opt], [OPTS="$OPTS $opt"])
            ;;
       esac

@@ -2706,7 +2706,7 @@ echo "${ECHO_T}no" >&6
 
      case "${host_cpu}" in
         i?86)
-           opt="-mcpu=${host_cpu}"
+           opt="-mcpu=${host_cpu} -march=i386"
 
  opt="$opt"
  echo "$as_me:2712: checking if $CXX accepts $opt" >&5
