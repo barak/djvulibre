@@ -823,12 +823,11 @@ map_remove(Map *m , void *key)
 
 
 typedef struct {
-  Widget	widget;
-  Window	window;
-  Widget	shell;
-  Window        client;
-  NPP		np_instance;
-  int		full_mode;
+  Widget		widget;
+  Window		window;
+  Widget		parent;
+  NPP			np_instance;
+  int			full_mode;
 } Instance;
 
 
@@ -860,17 +859,15 @@ instance_detach(Instance *this)
 {
   this->widget = 0;
   this->window = 0;
-  this->shell  = 0;
-  this->client = 0;
+  this->parent = 0;
 }
 
 static void
-instance_attach(Instance *this, Widget widget, Window window, Widget shell)
+instance_attach(Instance *this, Widget widget, Window window, Widget parent)
 {
   this->widget = widget; 
   this->window = window; 
-  this->shell = shell;
-  this->client = 0;
+  this->parent = parent;
 }
 
 
@@ -1241,63 +1238,20 @@ Resize_hnd(Widget w, XtPointer cl_data, XEvent * event, Boolean * cont)
       Instance *inst;
       void *id = (void*)cl_data;
       if (map_lookup(&instance, id, (void**)&inst) >= 0)
-        if (Resize(id) <= 0)
-          ProgramDied();
-    }
-}
-
-const long Event_hnd_mask = ( KeyPressMask|
-                              KeyReleaseMask|
-                              SubstructureNotifyMask );
-
-static void
-Simulate_focus(Display *dpy, Window client, int yes)
-{
-  XEvent ev;
-  memset(&ev, 0, sizeof(ev));
-  ev.xfocus.display = dpy;
-  ev.xfocus.type = (yes ? FocusIn : FocusOut);
-  ev.xfocus.window = client;
-  ev.xfocus.mode = NotifyNormal;
-  ev.xfocus.detail = NotifyAncestor;
-  XSendEvent(dpy, inst->client, False, NoEventMask, &ev);
-}
-
-static void
-Event_hnd(Widget w, XtPointer cl_data, XEvent * event, Boolean * cont)
-{
-  *cont = True;
-  Instance *inst;
-  void *id = (void*)cl_data;
-  if (map_lookup(&instance, id, (void**)&inst) >= 0)
-    {
-      Widget   wid = inst->widget;
-      Display *dpy = XtDisplay(wid);
-      Window   win = XtWindow(wid);
-      XEvent    ev = *event;
-      switch(event->type)
         {
-        case KeyPress:
-        case KeyRelease:
-          ev.xkey.window = win;
-          if (inst->client)
-            XSendEvent(dpy, inst->client, False, NoEventMask, &ev );
-          break;
-        case ReparentNotify:
-          if (ev.xreparent.window == inst->client &&
-              ev.xreparent.parent != win)
-            inst->client = 0;
-          else if (ev.xreparent.parent == win)
-            if ((inst->client = ev.xreparent.window))
-              Simulate_focus(dpy, inst->client, 1);
-          break;
+          if (inst->widget && inst->full_mode)
+            XtConfigureWidget(inst->widget, 0, 0,
+                              event->xconfigure.width,
+                              event->xconfigure.height, 0);
+          if (Resize(id) <= 0)
+            ProgramDied();
         }
     }
 }
 
 
 /*******************************************************************************
- ***************************** Copying the colormap *****************************
+***************************** Copying the colormap *****************************
 *******************************************************************************/
 
 /* This is no longer needed since djview no longer uses the provided colormap.
@@ -1540,10 +1494,12 @@ Detach(void * id)
   if (inst->widget)
     {
       XtRemoveCallback(inst->widget, XtNdestroyCallback, Destroy_cb, id);
-      XtRemoveEventHandler(inst->widget, Event_hnd_mask,
-                           False, Event_hnd, id);
-      XtRemoveEventHandler(inst->widget, StructureNotifyMask,
-                           False, Resize_hnd, id);
+      if (inst->full_mode)
+        XtRemoveEventHandler(inst->parent, StructureNotifyMask,
+                             False, Resize_hnd, id);
+      else
+        XtRemoveEventHandler(inst->widget, StructureNotifyMask,
+                             False, Resize_hnd, id);
       instance_detach(inst);
       if (! IsConnectionOK(TRUE))
         return -1;
@@ -1565,6 +1521,7 @@ Attach(Display * displ, Window window, void * id)
   Visual *visual;
   Widget shell;
   Widget widget;
+  Widget parent;
   char back_color_str[128]; 
   XFontStruct * font=0;
   const char *text="DjVu plugin is being loaded. Please stand by...";
@@ -1578,10 +1535,12 @@ Attach(Display * displ, Window window, void * id)
     return 1;
 
   widget = XtWindowToWidget(displ, window);
+  parent = XtParent(widget);
   XtAddCallback(widget, XtNdestroyCallback, Destroy_cb, id);
-  XtAddEventHandler(widget, Event_hnd_mask, False, Event_hnd, id);
-  XtAddEventHandler(widget, StructureNotifyMask, False, Resize_hnd, id);
-  
+  if (inst->full_mode)
+    XtAddEventHandler(parent, StructureNotifyMask, False, Resize_hnd, id);
+  else
+    XtAddEventHandler(widget, StructureNotifyMask, False, Resize_hnd, id);
   app_context = XtWidgetToApplicationContext(widget);
   if (! input_id)
     input_id = XtAppAddInput(app_context, rev_pipe,
@@ -1603,14 +1562,12 @@ Attach(Display * displ, Window window, void * id)
                 XtNcolormap, &cmap, XtNdepth, &depth, 0);
   if (!visual) 
     visual = XDefaultVisualOfScreen(XtScreen(shell));
-#if 0
   if (inst->full_mode)
     {
       Dimension width, height;
       XtVaGetValues(parent, XtNwidth, &width, XtNheight, &height, 0);
       XtConfigureWidget(widget, 0, 0, width, height, 0);
     }
-#endif
   /* Process colormap */
   if (!colormap)
     {
@@ -1700,13 +1657,17 @@ Attach(Display * displ, Window window, void * id)
       /* Failure */
       if (widget) 
         XtRemoveCallback(widget, XtNdestroyCallback, Destroy_cb, id);
-      XtRemoveEventHandler(widget, Event_hnd_mask, False, Event_hnd, id);
-      XtRemoveEventHandler(widget, StructureNotifyMask, False, Resize_hnd, id);
+      if (inst->full_mode && parent)
+        XtRemoveEventHandler(parent, StructureNotifyMask, 
+                             False, Resize_hnd, id);
+      else if (widget)
+        XtRemoveEventHandler(widget, StructureNotifyMask, 
+                             False, Resize_hnd, id);
       instance_detach(inst);
       return -1;
     }
   /* Success */
-  instance_attach(inst, widget, window, shell);
+  instance_attach(inst, widget, window, parent);
   return 1;
 }
 
