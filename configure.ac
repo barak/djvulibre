@@ -92,15 +92,13 @@ AC_PATH_PROG(MKDIR, mkdir)
 INSTALL='${top_srcdir}/config/install-sh -c' 
 AC_SUBST(INSTALL)
 
-# Libtool
+# Libtool & Compilers
 AC_DISABLE_STATIC
 dnl AC_LIBTOOL_WIN32_DLL
 AC_PROG_LIBTOOL
-AC_SUBST(LIBTOOL_DEPS)
-
-# Compilers
 AC_PROG_CC
 AC_PROG_CXX
+AC_SUBST(LIBTOOL_DEPS)
 
 # C++
 AC_LANG(C++)
