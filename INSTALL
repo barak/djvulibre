@@ -158,6 +158,11 @@ Of course you must have the appropriate permissions to
 perform the installation.  Chances are that you need to
 be root to install something into /usr/local.
 
+If you are using KDE or GNOME, you can additionally
+type the following command to install icons and menu entries:
+
+        $ make install-desktop-files
+
 
 
 
@@ -275,15 +280,14 @@ is installed in /usr/local/lib/netscape/plugins.
 Works nicely.
 
 
-
 3.5- GALEON
 -----------
 
 Install the plugin for mozilla and it will work for galeon.
 
 
-3.6- MOZILLA FIREBIRD
----------------------
+3.6- MOZILLA FIREBIRD/FIREFOX
+-----------------------------
 
 You must establish a link from the mozilla plugin directory.  Let us assume
 that mozilla is installed under /usr/lib/mozilla-firebird and 

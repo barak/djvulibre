@@ -46,5 +46,8 @@ distclean: FORCE
 	-${RM} config.h config.log config.status
 	-${RM} Makefile libtool
 
+install-desktop-files: FORCE
+	( cd gui/desktop && ${MAKE} install )
+
 FORCE:
 .PHONY: FORCE

@@ -8,6 +8,8 @@ NEW IN VERSION 3.5.13
 - Japanese man pages.
 - Fixes for MacOS.
 - Compilation of XMLTools enabled by default.
+- KDE and GNOME integration (make install-desktop-files)
+- TODO: have cjb2 handle tiff files.
 
 NEW IN VERSION 3.5.12
 ---------------------
