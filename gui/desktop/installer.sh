@@ -47,14 +47,12 @@ menus=applnk
 dryrun=no
 
 # Autodetect
-
-desktop_file_install=`which desktop-file-install 2>/dev/null`
-if [ -x "$desktop_file_install" ] ; then
-    menus=redhat
-elif [ -n "${XDG_CONFIG_DIRS}" ] ; then
+if [ -n "${XDG_CONFIG_DIRS}" ] ; then
     menus=xdg
 elif [ -r /etc/xdg/menus/applications.menu ] ; then
     menus=xdg
+elif [ -r /etc/X11/desktop-menus/applications.menu ] ; then
+    menus=xdg-old # redhat8 and redhat9 style. 
 fi
 
 kdeconfig=`which kde-config 2>/dev/null`
@@ -154,21 +152,6 @@ install()
     fi
 }
 
-# Fixup
-
-case "$menus" in
-    redhat) 
-	test -x $desktop_file_install || menus=xdg ;;
-    applnk) 
-	;;
-    xdg)    
-	;;
-    *)
-	echo 1>&2 "$0: incorrect menus (one of applnk,redhat,xdg)"
-	exit 10
-	;;
-esac
-
 # Go
 
 if [ "$icons" != no ] ; then
@@ -202,19 +185,13 @@ if [ "$mimelnk" != no ] ; then
 fi
 
 case "$menus" in
-    redhat)
-	if [ "$applications" != no ] ; then
- 	  makedir $DESTDIR$applications
-	  run $desktop_file_install --vendor= --dir=$DESTDIR$applications djview.desktop
-        fi
-	;;
-    xdg)
+    xdg*)
 	if [ "$applications" != no ] ; then
 	  makedir $DESTDIR$applications
 	  install djview.desktop $DESTDIR$applications/djview.desktop
 	fi
 	;;
-    applnk)
+    *)
 	if [ "$applnk" != no ] ; then
 	  makedir $DESTDIR$applnk/Graphics
 	  install djview.desktop $DESTDIR$applnk/Graphics/djview.desktop
