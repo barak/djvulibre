@@ -93,3 +93,9 @@ void
 DjVuMessageLite::perror( const GUTF8String & )
 {
 }
+
+GUTF8String 
+DjVuMessageLite::LookUp( const GUTF8String & MessageList ) const
+{ 
+  return MessageList; 
+}
