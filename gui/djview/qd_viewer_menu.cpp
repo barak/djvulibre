@@ -334,12 +334,12 @@ QDViewer::processCommand(int cmd)
 	    break;
 
 	 case IDC_ABOUT_DEJAVU:
-	       gotoStdPage("index.html");
-	    break;
-
-	 case IDC_HELP_DEJAVU:
-	       gotoStdPage("help.html");
-	    break;
+            slotAbout();
+            break;
+           
+         case IDC_HELP_DEJAVU:
+            slotHelp();
+            break;
 
 	 case IDC_SEARCH:
 	    search();
