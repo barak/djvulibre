@@ -202,11 +202,12 @@ case "$menus" in
     # Debian menu system (tentative)
     debian)
         if [ -d /usr/lib/menu ] ; then
-            cat > $DESTDIR/usr/lib/menu/djview <<EOF
-?package(djview):needs=X11 section="Apps/Graphics" \
-    title="DjView" command="$bindir/djview" \
+            cat > djview.menu <<EOF
+?package(djview):needs=X11 section="Apps/Graphics" \\
+    title="DjView" command="$bindir/djview" \\
     icon="$pixmaps/djvu.xpm"
 EOF
+            run install djview.menu $DESTDIR/usr/lib/menu/djview
         fi
         ;;
     # KDE menu system
