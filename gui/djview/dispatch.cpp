@@ -407,8 +407,8 @@ AttachWindow(void)
            GUTF8String displ_name=ReadString(pipe_read);
            GUTF8String back_color=ReadString(pipe_read);
            Window window=(Window) ReadInteger(pipe_read);
-           // Colormap colormap=(Colormap) ReadInteger(pipe_read);
-           // int visual_id=ReadInteger(pipe_read);
+           ReadInteger(pipe_read); // colormap (no longer used)
+           ReadInteger(pipe_read); // visual_id (no longer used)
            int width=ReadInteger(pipe_read);
            int height=ReadInteger(pipe_read);
            
@@ -921,7 +921,7 @@ Dispatch(void)
 {
    DEBUG_MSG("Dispatch(): Reading request and data from stdin\n");
    DEBUG_MAKE_INDENT(3);
-   
+
    try
    {
 	 // Stop the timer since we have some activity in the pipe.
