@@ -1,0 +1,4 @@
+
+image/x-djvu:
+        open=djview %f
+        icon_filename=djvu.png

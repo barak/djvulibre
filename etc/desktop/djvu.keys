@@ -1,4 +1,0 @@
-
-image/x-djvu:
-        open=djview %f
-        icon_filename=/usr/share/icons/hicolor/48x48/mimetypes/djvu.png
