@@ -137,6 +137,39 @@ AC_SUBST(GUI_NO)
 # Extra
 # ----------------------------------------
 
+# Should libdjvu be a shared library ?
+ac_shared_libdjvu=no
+if test x$ac_debug = xno ; then
+  case "${host_os}" in
+    *linux*) ac_shared_libdjvu=yes ;;
+  esac
+fi
+AC_ARG_ENABLE([shared],
+  AC_HELP_STRING([--enable-shared],
+                 [Enable shared libdjvu (default: linux only)]),
+  [ac_shared_libdjvu=$enableval] )
+if test x$ac_shared_libdjvu != xno ; then
+  SHARED_YES=''
+  SHARED_NO='#'
+else
+  SHARED_YES='#'
+  SHARED_NO=''
+fi
+AC_SUBST(SHARED_YES)
+AC_SUBST(SHARED_NO)
+
+# Work around broken compilers with the famous LPR0 bug
+if test x$ac_shared_libdjvu != xno && test x$GXX = xyes; then
+    AC_MSG_CHECKING([if $CXX has the LPR0 bug])
+    echo 'extern "C" { inline int sqr(int x) throw() { return x * x ; } } int main() {} ' > conftest.cc
+    if ${CXX} -fPIC ${OPTS} conftest.cc -o conftest >/dev/null 2>/dev/null ; then
+        AC_MSG_RESULT([no])
+    else
+        AC_MSG_RESULT([yes])
+        OPTS=`echo $OPTS | sed -e 's/-mcpu=i686/-mpentium/'`
+    fi
+fi
+
 # What compiler are we using ?
 if test x$GXX != xyes ; then
   AC_MSG_WARN([g++ is the recommended compiler: expect trouble.])
@@ -172,7 +205,7 @@ case ${host_os} in
   hpux*) NSDEJAVU="nsdejavu.sl" ;; 
 esac
 if test x${GXX} != xyes ; then
-    AC_MSG_WARN([Check that gui/nsdejavu/Makefile works with this compiler.])
+    AC_MSG_WARN([Please verify that gui/nsdejavu/Makefile works with this compiler.])
 fi
 AC_SUBST(NSDEJAVU)
 AC_SUBST(NSDEJAVU_FLAGS)
@@ -180,38 +213,6 @@ AC_SUBST(NSDEJAVU_LIBS)
 AC_SUBST(NSDEJAVU_LINK)
 
 
-# Should libdjvu be a shared library ?
-ac_shared_libdjvu=no
-if test x$ac_debug = xno ; then
-  case "${host_os}" in
-    *linux*) ac_shared_libdjvu=yes ;;
-  esac
-fi
-AC_ARG_ENABLE([shared],
-  AC_HELP_STRING([--enable-shared],
-                 [Enable shared libdjvu (default: linux only)]),
-  [ac_shared_libdjvu=$enableval] )
-if test x$ac_shared_libdjvu != xno ; then
-  SHARED_YES=''
-  SHARED_NO='#'
-else
-  SHARED_YES='#'
-  SHARED_NO=''
-fi
-AC_SUBST(SHARED_YES)
-AC_SUBST(SHARED_NO)
-
-# Work around broken compilers with the famous LPR0 bug
-if test x$ac_shared_libdjvu != xno && test x$GXX = xyes; then
-    AC_MSG_CHECKING([if $CXX has the LPR0 bug])
-    echo 'extern "C" { inline int sqr(int x) throw() { return x * x ; } } int main() {} ' > conftest.cc
-    if ${CXX} -fPIC ${OPTS} conftest.cc -o conftest >/dev/null 2>/dev/null ; then
-        AC_MSG_RESULT([no])
-    else
-        AC_MSG_RESULT([yes])
-        OPTS=`echo $OPTS | sed -e 's/-mcpu=i686/-mpentium/'`
-    fi
-fi
 
 
 # ----------------------------------------

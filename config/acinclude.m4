@@ -564,7 +564,10 @@ AC_DEFUN([AC_PATH_QT],
     test x{$QT_LIBS+set} != set && QT_LIBS="-L$QTDIR/lib -lqt"
     AC_PATH_PROG(MOC, moc, [unknown], "$QTDIR/bin:$PATH")
     AC_PATH_PROG(UIC, uic, [unknown], "$QTDIR/bin:$PATH")
-    test -x "$MOC" || QTDIR=no
+    if ! test -x "$MOC" ; then
+        AC_MSG_WARN([Cannot run the Qt Meta-Object compiler.])
+        QTDIR=no
+    fi
   fi
   # Execute
   if test x$QTDIR != xno ; then
@@ -598,7 +601,7 @@ QTextStream ts(&qf); ts << QT_VERSION; return 0;
   fi
   # Execute
   if test x$QTDIR = xno ; then
-    QT_CFLAGS= ; QT_LIBS= ; QTDIR=
+    QT_CFLAGS= ; QT_LIBS= ; QTDIR= ; MOC=moc ;
     ifelse([$2],,:,[$2])        
   else
     ifelse([$1],,:,[$1])        

@@ -105,15 +105,12 @@ configuration script.  A complete list can be obtained by typing
   You can help the search process by defining environment
   variables PTHREAD_CFLAGS and PTHREAD_LIBS.
 
-Always check the output of the configuration script for warnings and errors.  
-You should see the following lines after a successful execution:
+IMPORTANT: 
 
-        Configuration is done.
-        Compile with command:
-            $ make depend
-            $ make
-        Then install the binaries in /usr/local with command:
-            # make install
+Always check the output of the configuration script for warnings and errors.
+In particular, the configuration script might disable the compilation of
+djview if it cannot locate the required libraries and utilities.  The warning
+messages are the only way to know.
 
 
 
