@@ -170,18 +170,21 @@ static int    flag_subsample = -1;
 static int    flag_segment = -1;
 static int    flag_verbose = 0;
 static int    flag_mode = 0;
-static bool use_rle=false;
+static bool   use_rle=false;
 
-static GRect &fullrect() {
-  static GRect xfullrect;
-  return xfullrect;
+struct DDJVUGlobal 
+{
+  // Globals that need static initialization
+  // are grouped here to work around broken compilers.
+  GRect fullrect;
+  GRect segmentrect;
+};
+
+static DDJVUGlobal& g(void)
+{
+  DDJVUGlobal g;
+  return g;
 }
-
-static GRect &segmentrect() {
-  static GRect xsegmentrect;
-  return xsegmentrect;
-}
-
 
 
 static void
@@ -243,10 +246,10 @@ convert(const GURL &from, const GURL &to, int page_num)
       int h = (int)(dimg->get_height() * flag_scale / info->dpi);
       if (w<1) w=1;
       if (h<1) h=1;
-      fullrect() = GRect(0,0, w, h);
+      g().fullrect = GRect(0,0, w, h);
     }
   if (flag_segment < 0)
-    segmentrect() = fullrect();
+    g().segmentrect = g().fullrect;
 
   // Render
   GP<GPixmap> pm;
@@ -255,18 +258,18 @@ convert(const GURL &from, const GURL &to, int page_num)
   switch(flag_mode)
     {
     case 's':
-      bm = dimg->get_bitmap(segmentrect(), fullrect());
+      bm = dimg->get_bitmap(g().segmentrect, g().fullrect);
       break;
     case 'f':
-      pm = dimg->get_fg_pixmap(segmentrect(), fullrect());
+      pm = dimg->get_fg_pixmap(g().segmentrect, g().fullrect);
       break;
     case 'b':
-      pm = dimg->get_bg_pixmap(segmentrect(), fullrect());
+      pm = dimg->get_bg_pixmap(g().segmentrect, g().fullrect);
       break;
     default:
-      pm = dimg->get_pixmap(segmentrect(), fullrect());
+      pm = dimg->get_pixmap(g().segmentrect, g().fullrect);
       if (! pm)
-        bm = dimg->get_bitmap(segmentrect(), fullrect());
+        bm = dimg->get_bitmap(g().segmentrect, g().fullrect);
       break;
     }
   stop = GOS::ticks();
@@ -435,9 +438,9 @@ main(int argc, char **argv)
               if (flag_subsample>=0 || flag_scale>=0 || flag_size>=0)
                 G_THROW( ERR_MSG("ddjvu.dupl_size"));
               argc -=1; dargv.shift(-1); s = dargv[1];
-              fullrect()=geometry(s);
+              g().fullrect = geometry(s);
               flag_size = 1;
-              if (fullrect().xmin || fullrect().ymin)
+              if (g().fullrect.xmin || g().fullrect.ymin)
                 G_THROW( ERR_MSG("ddjvu.bad_size"));
             }
           else if (s == "-segment")
@@ -447,7 +450,7 @@ main(int argc, char **argv)
               if (flag_segment>=0)
                 G_THROW( ERR_MSG("ddjvu.dupl_seg") );
               argc -=1; dargv.shift(-1); s = dargv[1];
-              segmentrect()=geometry(s);
+              g().segmentrect = geometry(s);
               flag_segment = 1;
             }
           else if (s == "-rle")

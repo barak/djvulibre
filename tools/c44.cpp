@@ -232,20 +232,6 @@
 
 // command line data
 
-static GURL &pnmurl() {
-  static GURL xpnmurl;
-  return xpnmurl;
-}
-static GURL &iw4url() {
-  static GURL xiw4url;
-  return xiw4url;
-}
-
-static GURL &mskurl() {
-  static GURL xmskurl;
-  return xmskurl; 
-}
-
 int flag_mask = 0;
 int flag_bpp = 0;
 int flag_size = 0;
@@ -268,9 +254,21 @@ float argv_bpp[MAXCHUNKS];
 int   argv_size[MAXCHUNKS];
 int   argv_slice[MAXCHUNKS];
 float argv_decibel[MAXCHUNKS];
-static IWEncoderParms* parms() {
-  static IWEncoderParms xparms[MAXCHUNKS];
-  return xparms;
+
+struct C44Global 
+{
+  // Globals that need static initialization
+  // are grouped here to work around broken compilers.
+  GURL pnmurl;
+  GURL iw4url;
+  GURL mskurl;
+  IWEncoderParms parms[MAXCHUNKS];
+}; 
+
+static C44Global& g(void)
+{ 
+  static C44Global g; 
+  return g;
 }
 
 
@@ -479,9 +477,9 @@ resolve_quality(int npix)
   // Fill parm structure
   for(int i=0; i<nchunk; i++)
     {
-      parms()[i].bytes = argv_size[i];
-      parms()[i].slices = argv_slice[i];
-      parms()[i].decibels = argv_decibel[i];
+      g().parms[i].bytes = argv_size[i];
+      g().parms[i].slices = argv_slice[i];
+      g().parms[i].decibels = argv_decibel[i];
     }
   // Return number of chunks
   return nchunk;
@@ -541,9 +539,9 @@ parse(GArray<GUTF8String> &argv)
             {
               if (++i >= argc)
                 G_THROW( ERR_MSG("c44.no_mask_arg") );
-              if (! mskurl().is_empty())
+              if (! g().mskurl.is_empty())
                 G_THROW( ERR_MSG("c44.multiple_mask") );
-              mskurl() = GURL::Filename::UTF8(argv[i]);
+              g().mskurl = GURL::Filename::UTF8(argv[i]);
             }
           else if (argv[i] == "-dbfrac")
             {
@@ -620,24 +618,24 @@ parse(GArray<GUTF8String> &argv)
           else
             usage();
         }
-      else if (pnmurl().is_empty())
-        pnmurl() = GURL::Filename::UTF8(argv[i]);
-      else if (iw4url().is_empty())
-        iw4url() = GURL::Filename::UTF8(argv[i]);
+      else if (g().pnmurl.is_empty())
+        g().pnmurl = GURL::Filename::UTF8(argv[i]);
+      else if (g().iw4url.is_empty())
+        g().iw4url = GURL::Filename::UTF8(argv[i]);
       else
         usage();
     }
-  if (pnmurl().is_empty())
+  if (g().pnmurl.is_empty())
     usage();
-  if (iw4url().is_empty())
+  if (g().iw4url.is_empty())
     {
-      GURL codebase=pnmurl().base();
-      GUTF8String base = pnmurl().fname();
+      GURL codebase=g().pnmurl.base();
+      GUTF8String base = g().pnmurl.fname();
       int dot = base.rsearch('.');
       if (dot >= 1)
         base = base.substr(0,dot);
       const char *ext=".djvu";
-      iw4url() = GURL::UTF8(base+ext,codebase);
+      g().iw4url = GURL::UTF8(base+ext,codebase);
     }
 }
 
@@ -647,9 +645,9 @@ GP<GBitmap>
 getmask(int w, int h)
 {
   GP<GBitmap> msk8;
-  if (! mskurl().is_empty())
+  if (! g().mskurl.is_empty())
     {
-      GP<ByteStream> mbs=ByteStream::create(mskurl(),"rb");
+      GP<ByteStream> mbs=ByteStream::create(g().mskurl,"rb");
       msk8 = GBitmap::create(*mbs);
       if (msk8->columns() != (unsigned int)w || 
           msk8->rows()    != (unsigned int)h  )
@@ -701,7 +699,7 @@ main(int argc, char **argv)
       // Parse arguments
       parse(dargv);
       // Check input file
-      GP<ByteStream> gibs=ByteStream::create(pnmurl(),"rb");
+      GP<ByteStream> gibs=ByteStream::create(g().pnmurl,"rb");
       ByteStream &ibs=*gibs;
       char prefix[16];
       if (ibs.readall((void*)prefix, sizeof(prefix)) != sizeof(prefix))
@@ -756,7 +754,7 @@ main(int argc, char **argv)
           else
             G_THROW( ERR_MSG("c44.unrecognized") );
           // Check that no mask has been specified.
-          if (! mskurl().is_empty())
+          if (! g().mskurl.is_empty())
             G_THROW( ERR_MSG("c44.failed_mask") );
         }
       else  // just for kicks, try jpeg.
@@ -774,16 +772,16 @@ main(int argc, char **argv)
       // Perform compression PM44 or BM44 as required
       if (iw)
         {
-          iw4url().deletefile();
+          g().iw4url.deletefile();
           GP<IFFByteStream> iff =
-	    IFFByteStream::create(ByteStream::create(iw4url(),"wb"));
+	    IFFByteStream::create(ByteStream::create(g().iw4url,"wb"));
           if (flag_crcbdelay >= 0)
             iw->parm_crcbdelay(flag_crcbdelay);
           if (flag_dbfrac > 0)
             iw->parm_dbfrac((float)flag_dbfrac);
           int nchunk = resolve_quality(w*h);
           // Create djvu file
-          create_photo_djvu_file(*iw, w, h, *iff, nchunk, parms());
+          create_photo_djvu_file(*iw, w, h, *iff, nchunk, g().parms);
         }
     }
   G_CATCH(ex)

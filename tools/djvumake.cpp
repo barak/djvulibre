@@ -160,17 +160,19 @@ int flag_contains_stencil = 0;
 int flag_contains_bg44    = 0;
 int flag_contains_incl    = 0;
 
-static GP<ByteStream> &jb2stencil() {
- static GP<ByteStream> xjb2stencil;
- return xjb2stencil;
-}
-static GP<ByteStream> &mmrstencil() {
- static GP<ByteStream> xmmrstencil;
- return xmmrstencil;
-}
-static GP<JB2Image> &stencil() {
- static GP<JB2Image> xstencil;
- return xstencil;
+struct DJVUMAKEGlobal 
+{
+  // Globals that need static initialization
+  // are grouped here to work around broken compilers.
+  GP<ByteStream> jb2stencil;
+  GP<ByteStream> mmrstencil;
+  GP<JB2Image> stencil;
+};
+
+static DJVUMAKEGlobal& g(void)
+{
+  static DJVUMAKEGlobal g;
+  return g;
 }
 
 int w = -1;
@@ -223,11 +225,11 @@ usage()
 void
 analyze_mmr_chunk(const GURL &url)
 {
-  if (!mmrstencil() || !mmrstencil()->size())
+  if (!g().mmrstencil || !g().mmrstencil->size())
     {
       GP<ByteStream> gbs=ByteStream::create(url,"rb");
       ByteStream &bs=*gbs;
-      mmrstencil() = ByteStream::create();
+      g().mmrstencil = ByteStream::create();
       // Check if file is an IFF file
       char magic[4];
       memset(magic,0,sizeof(magic));
@@ -238,7 +240,7 @@ analyze_mmr_chunk(const GURL &url)
         {
           // Must be a raw file
           bs.seek(0);
-          mmrstencil()->copy(bs);
+          g().mmrstencil->copy(bs);
         }
       else
         {
@@ -250,16 +252,16 @@ analyze_mmr_chunk(const GURL &url)
           if (iff.get_chunk(chkid)==0 || chkid!="FORM:DJVU")
             G_THROW("Expecting a DjVu file!");
           for(; iff.get_chunk(chkid); iff.close_chunk())
-            if (chkid=="Smmr") { mmrstencil()->copy(bs); break; }
+            if (chkid=="Smmr") { g().mmrstencil->copy(bs); break; }
         }
       // Check result
-      mmrstencil()->seek(0);
-      if (!mmrstencil()->size())
+      g().mmrstencil->seek(0);
+      if (!g().mmrstencil->size())
         G_THROW("Could not find MMR data");
       // Decode
-      stencil() = MMRDecoder::decode(mmrstencil());
-      int jw = stencil()->get_width();
-      int jh = stencil()->get_height();
+      g().stencil = MMRDecoder::decode(g().mmrstencil);
+      int jw = g().stencil->get_width();
+      int jh = g().stencil->get_height();
       if (w < 0) w = jw;
       if (h < 0) h = jh;
       if (jw!=w || jh!=h)
@@ -273,11 +275,11 @@ analyze_mmr_chunk(const GURL &url)
 void 
 analyze_jb2_chunk(const GURL &url)
 {
-  if (!jb2stencil() || !jb2stencil()->size())
+  if (!g().jb2stencil || !g().jb2stencil->size())
     {
       GP<ByteStream> gbs=ByteStream::create(url,"rb");
       ByteStream &bs=*gbs;
-      jb2stencil() = ByteStream::create();
+      g().jb2stencil = ByteStream::create();
       // Check if file is an IFF file
       char magic[4];
       memset(magic,0,sizeof(magic));
@@ -288,7 +290,7 @@ analyze_jb2_chunk(const GURL &url)
         {
           // Must be a raw file
           bs.seek(0);
-          jb2stencil()->copy(bs);
+          g().jb2stencil->copy(bs);
         }
       else
         {
@@ -300,17 +302,17 @@ analyze_jb2_chunk(const GURL &url)
           if (iff.get_chunk(chkid)==0 || chkid!="FORM:DJVU")
             G_THROW("Expecting a DjVu file!");
           for(; iff.get_chunk(chkid); iff.close_chunk())
-            if (chkid=="Sjbz") { jb2stencil()->copy(bs); break; }
+            if (chkid=="Sjbz") { g().jb2stencil->copy(bs); break; }
         }
       // Check result
-      jb2stencil()->seek(0);
-      if (!jb2stencil()->size())
+      g().jb2stencil->seek(0);
+      if (!g().jb2stencil->size())
         G_THROW("Could not find JB2 data");
       // Decode
-      stencil()=JB2Image::create();
-      stencil()->decode(jb2stencil());
-      int jw = stencil()->get_width();
-      int jh = stencil()->get_height();
+      g().stencil=JB2Image::create();
+      g().stencil->decode(g().jb2stencil);
+      int jw = g().stencil->get_width();
+      int jh = g().stencil->get_height();
       if (w < 0) w = jw;
       if (h < 0) h = jh;
       if (jw!=w || jh!=h)
@@ -397,9 +399,9 @@ void
 create_mmr_chunk(IFFByteStream &iff, char *chkid, const GURL &url)
 {
   analyze_mmr_chunk(url);
-  mmrstencil()->seek(0);
+  g().mmrstencil->seek(0);
   iff.put_chunk(chkid);
-  iff.copy(*mmrstencil());
+  iff.copy(*g().mmrstencil);
   iff.close_chunk();
 }
 
@@ -410,9 +412,9 @@ void
 create_jb2_chunk(IFFByteStream &iff, const char * const chkid, const GURL &url)
 {
   analyze_jb2_chunk(url);
-  jb2stencil()->seek(0);
+  g().jb2stencil->seek(0);
   iff.put_chunk(chkid);
-  iff.copy(*jb2stencil());
+  iff.copy(*g().jb2stencil);
   iff.close_chunk();
 }
 
@@ -602,22 +604,22 @@ void
 create_masksub_chunks(IFFByteStream &iff, const GURL &url)
 {
   // Check and load pixmap file
-  if (!stencil())
+  if (!g().stencil)
     G_THROW("The use of a raw ppm image requires a stencil");
   GP<ByteStream> gibs=ByteStream::create(url, "rb");
   ByteStream &ibs=*gibs;
   GP<GPixmap> graw_pm=GPixmap::create(ibs);
   GPixmap &raw_pm=*graw_pm;
-  if ((int) stencil()->get_width() != (int) raw_pm.columns())
+  if ((int) g().stencil->get_width() != (int) raw_pm.columns())
     G_THROW("Stencil and raw image have different widths!");
-  if ((int) stencil()->get_height() != (int) raw_pm.rows())
+  if ((int) g().stencil->get_height() != (int) raw_pm.rows())
     G_THROW("Stencil and raw image have different heights!");
   // Encode foreground
   {
     GP<GPixmap> gfg_img=GPixmap::create();
     GPixmap &fg_img=*gfg_img;
     GP<GBitmap> fg_mask=GBitmap::create();
-    processForeground(&raw_pm, stencil(), fg_img, *fg_mask);
+    processForeground(&raw_pm, g().stencil, fg_img, *fg_mask);
     GP<IW44Image> fg_pm = IW44Image::create_encode(fg_img, fg_mask, IW44Image::CRCBfull);
     IWEncoderParms parms[8];
     iff.put_chunk("FG44");
@@ -630,7 +632,7 @@ create_masksub_chunks(IFFByteStream &iff, const GURL &url)
     GP<GPixmap> gbg_img=GPixmap::create();
     GPixmap &bg_img=*gbg_img;
     GP<GBitmap> bg_mask=GBitmap::create();
-    processBackground(&raw_pm, stencil(), bg_img, *bg_mask);
+    processBackground(&raw_pm, g().stencil, bg_img, *bg_mask);
     GP<IW44Image> bg_pm = IW44Image::create_encode(bg_img, bg_mask, IW44Image::CRCBnormal);
     IWEncoderParms parms[4];
     parms[0].bytes = 10000;

@@ -86,22 +86,24 @@
 
 static bool cgi = false;
 static bool head = false;
-static GUTF8String &pathinfo() {
-  static GUTF8String xpathinfo;
-  return xpathinfo;
+
+
+struct DJVUSERVEGlobal 
+{
+  // Globals that need static initialization
+  // are grouped here to work around broken compilers.
+  GUTF8String pathinfo;
+  GUTF8String pathtranslated;
+  GUTF8String requestmethod;
+  GUTF8String querystring;
+};
+
+static DJVUSERVEGlobal& g(void)
+{
+  static DJVUSERVEGlobal g;
+  return g;
 }
-static GUTF8String &pathtranslated() {
-  static GUTF8String xpathtranslated;
-  return xpathtranslated;
-}
-static GUTF8String &requestmethod() {
-  static GUTF8String xrequestmethod;
-  return xrequestmethod;
-}
-static GUTF8String &querystring() {
-  static GUTF8String xquerystring;
-  return xquerystring;
-}
+
 
 static void
 usage(void)
@@ -190,8 +192,8 @@ djvuserver_file(GURL pathurl)
       // It is bundled
       GUTF8String id = pathurl.name();
       fprintf(stdout,"Location: %s/index", (const char*)id);
-      if (querystring().length())
-        fprintf(stdout,"?%s", (const char*)querystring());
+      if (g().querystring.length())
+        fprintf(stdout,"?%s", (const char*)g().querystring);
       fprintf(stdout,"\n\n");
       return;
     }
@@ -325,30 +327,30 @@ main(int argc, char ** argv)
       if (argc == 1)
         {
           cgi = true;
-          pathinfo() = GNativeString(getenv("PATH_INFO"));
-          pathtranslated() = GNativeString(getenv("PATH_TRANSLATED"));
-          if (! pathinfo())
+          g().pathinfo = GNativeString(getenv("PATH_INFO"));
+          g().pathtranslated = GNativeString(getenv("PATH_TRANSLATED"));
+          if (! g().pathinfo)
             usage();
-          if (! pathtranslated())
+          if (! g().pathtranslated)
             G_THROW("No path information");
-          requestmethod() = GNativeString(getenv("REQUEST_METHOD"));
-          querystring() = GUTF8String(getenv("QUERY_STRING"));
+          g().requestmethod = GNativeString(getenv("REQUEST_METHOD"));
+          g().querystring = GUTF8String(getenv("QUERY_STRING"));
         }
       else if (argc == 2)
         {
           cgi = false;
-          pathtranslated() = GNativeString(argv[1]);
-          requestmethod() = "GET";
+          g().pathtranslated = GNativeString(argv[1]);
+          g().requestmethod = "GET";
         }
-      if (! pathtranslated())
+      if (! g().pathtranslated)
         usage();
       head = false;
-      if (requestmethod() == "HEAD")
+      if (g().requestmethod == "HEAD")
         head = true;
-      else if (requestmethod() != "GET")
+      else if (g().requestmethod != "GET")
         G_THROW("Only serve HEAD and GET requests");
       // Do it.
-      GURL pathurl = GURL::Filename::UTF8(pathtranslated());
+      GURL pathurl = GURL::Filename::UTF8(g().pathtranslated);
       if (pathurl.is_file())
         {
           djvuserver_file(pathurl);
@@ -379,7 +381,7 @@ main(int argc, char ** argv)
                   "<HR><ADDRESS>djvuserve/DjVuLibre-" DJVULIBRE_VERSION "</ADDRESS>\n"
                   "</BODY></HTML>\n",
                   (const char *) cause,
-                  (const char *) pathinfo() );
+                  (const char *) g().pathinfo );
         }
       else
         {
