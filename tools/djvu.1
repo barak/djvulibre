@@ -31,7 +31,8 @@ literature is still trapped on paper in the basements of the world's
 traditional libraries. Many libraries and content owners are in the process of
 digitizing their collections.  While many such efforts involve the painstaking
 process of converting paper documents to computer-friendly form, such as
-SGML-based formats, the high cost of such conversions limits their
+.SM SGML
+based formats, the high cost of such conversions limits their
 extent. Scanning documents, and distributing the resulting images
 electronically is not only considerably cheaper, but also more faithful to the
 original document because it preserves its visual aspect.
@@ -48,15 +49,22 @@ The second reason is that long-established image compression standards and
 file formats have proved inadequate for distributing scanned documents at high
 resolution, particularly color documents.  Not only are the file sizes and
 download times impractical, the decoding and rendering times are also
-prohibitive.  A typical magazine page scanned in color at 100 DPI in JPEG
-would typically occupy 100 KB to 200 KB, but the text would be hardly
-readable: insufficient for screen viewing and totally unacceptable for
-printing. The same page at 300 DPI would have sufficient quality for viewing
-and printing, but the file size would be 300 KB to 1000 KB at best, which is
-impractical for remote access. Another major problem is that a fully decoded
-300 DPI color images of a letter-size page occupies 24 MB of RAM (2500x3200
-pixels), which is more than what a typical PC can handle without heavy disk
-swapping.
+prohibitive.  A typical magazine page scanned in color at 100 dpi in 
+.SM JPEG
+would typically occupy 100
+.SM KB 
+to 200 
+.SM KB
+, but the text would be hardly readable: insufficient for screen viewing and
+totally unacceptable for printing. The same page at 300 dpi would have
+sufficient quality for viewing and printing, but the file size would be 300
+.SM KB
+to 1000 
+.SM KB 
+at best, which is impractical for remote access. Another major problem is that
+a fully decoded 300 dpi color images of a letter-size page occupies 24
+.SM MB
+of memory and easily causes disk swapping.
 .PP
 The third reason is that digital documents are more than just a collection of
 individual page images. Pages in a scanned documents have a natural serial
@@ -85,17 +93,28 @@ above requirements.
 
 The DjVu image compression is based on three technologies:
 .SS DjVuPhoto
-DjVuPhoto, also known as IW44, is a wavelet-based continuous-tone image
+DjVuPhoto, also known as 
+.SM IW44
+, is a wavelet-based continuous-tone image
 compression technique with progressive decoding/rendering.  It is best used
 for encoding photographic images in colors or in shades of gray.  Images are
-typically half the size as JPEG for the same distortion.
+typically half the size as 
+.SM JPEG 
+for the same distortion.
 .SS DjVuBitonal
-DjVuBitonal, also known as JB2, is a bitonal image compression that takes
+DjVuBitonal, also known as 
+.SM JB2
+, is a bitonal image compression that takes
 advantage of repetitions of nearly identical shapes on the page (such as
 characters) to efficiently compress text images.  It is best used to compress
 black and white images representing text and simple drawings.  A typical
-300 dpi page in DjVuBitonal occupies 5 to 25KB (3 to 8 times better than
-TIFF-G4 or PDF).
+300 dpi page in DjVuBitonal occupies 5 to 25 
+.SM KB
+(3 to 8 times better than
+.SM TIFF-G4 
+or 
+.SM PDF
+).
 .SS DjVuDocument
 DjVuDocument is a compression technique specifically designed for color
 digital documents images containing both pictures and text, such as a page of
@@ -117,7 +136,9 @@ information (e.g. the page directory, data shared by several pages,
 thumbnails, etc.).  Using a single file format is very convenient for storing
 documents or for sending email attachments.
 .PP
-When you type the URL of a multi-page document, the DjVu browser plugin starts
+When you type the 
+.SM URL 
+of a multi-page document, the DjVu browser plugin starts
 downloading the whole file, but displays the first page as soon as it is
 available.  You can immediately navigate to other pages using the DjVu
 toolbar.  Suppose however that the document is stored on a remote web server.
@@ -129,16 +150,20 @@ document on the first page and jump to page 100.  But page 100 cannot be
 displayed until data for pages 1 to 99 has been received.  You may have to
 wait for the transmission of unnecessary page data.  This second problem (the
 unnecessary wait) can be solved using the ``byte serving'' options of the
-HTTP/1.1 protocol.  This option has to be supported by the web server, the
+.SM HTTP/1.1 
+protocol.  This option has to be supported by the web server, the
 proxies, the caches and the browser.  Byte serving however does not solve the
 first problem (the waste of bandwidth).
 .SS Indirect multi-page documents
 Indirect multi-page DjVu documents solve both problems.  An indirect
 multi-page DjVu document is composed of several files.  The main file is named
-the index file.  You can browse a document using the URL of the index file,
-just like you do with a bundled multi-page document.  The index file however
-is very small.  It simply contains the document directory and the URLs of
-secondary files containing the page data.  When you browse an indirect
+the index file.  You can browse a document using the 
+.SM URL 
+of the index file, just like you do with a bundled multi-page document.  The
+index file however is very small.  It simply contains the document directory
+and the
+.SM URLs 
+of secondary files containing the page data.  When you browse an indirect
 multi-page document, the browser only accesses data for the pages you are
 viewing.  This can be done at a reasonable speed because the browser maintains
 a cache of pages and sometimes pre-fetches a few pages ahead of the current
@@ -176,10 +201,12 @@ DjVu technology in the first place.  We promote the DjVu technology
 by providing an independent source of information about DjVu.
 .PP
 Understanding how little room there is for a proprietary document format,
-Lizardtech released the DjVu Reference Library under the GNU Public License in
-December 2000.  This library entirely defines the compression format and the
-elementary codecs.  Six month later, Lizardtech released an updated DjVu
-Reference Library as well as the source code of the Unix viewer.
+Lizardtech released the DjVu Reference Library under the 
+.SM GNU
+Public License in December 2000.  This library entirely defines the
+compression format and the elementary codecs.  Six month later, Lizardtech
+released an updated DjVu Reference Library as well as the source code of the
+Unix viewer.
 .PP
 These two releases form the basis of our initial DjVuLibre software.  We
 modified the build system to comply with the expectations of the open source
@@ -216,8 +243,10 @@ a file containing pre-segmented foreground and background images and produces
 a DjVuDocument image.
 .TP
 .BR ddjvu (1)
-A command line decoder for DjVu images.  This program produces a PNM image
-representing any segment of any page of a DjVu document at any resolution.
+A command line decoder for DjVu images.  This program produces a 
+.SM PNM 
+image representing any segment of any page of a DjVu document at any
+resolution.
 .TP
 .BR djview (1)
 A stand-alone viewer for DjVu images.  This sophisticated viewer displays DjVu
