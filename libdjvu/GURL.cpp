@@ -297,7 +297,8 @@ GURL::beautify_path(GUTF8String xurl)
   if(!xurl.cmp(filespec,sizeof(filespec)-1))
   {
 	int offset=1;
-	if(start&&(start[0] == '/')&& !xurl.cmp("file:////",sizeof("file:////")-1))
+	if(start&&(start[0] == '/')&& 
+           !xurl.cmp("file:////",sizeof("file:////")-1))
 	{
 	  collapse(start, 1);
 	  offset=0;
@@ -309,7 +310,7 @@ GURL::beautify_path(GUTF8String xurl)
 	    if((ptr[1] == ':')&&(ptr[2]=='/'))
 		{
 		  char *buffer2;
-          GPBuffer<char> gbuffer2(buffer2,strlen(ptr)+1);
+                  GPBuffer<char> gbuffer2(buffer2,strlen(ptr)+1);
 		  strcpy(buffer2,ptr);
 		  gbuffer.resize(strlen(ptr)+sizeof(localhost));
 		  strcpy(buffer,localhost);
