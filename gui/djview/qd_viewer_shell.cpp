@@ -458,8 +458,6 @@ QDViewerShell::QDViewerShell(QWidget * parent, const char * name)
 #ifdef QT2
    menu->setSeparator(QMenuBar::InWindowsStyle);
 #endif
-   connect(menu, SIGNAL(activated(int)), this, SLOT(slotMenuCB(int)));
-   
    QPopupMenu * file_pane=new QPopupMenu(this);
    file_pane->insertItem(tr("&Open"), IDC_OPEN);
    file_pane->insertItem(tr("&New Window"), IDC_NEW_WINDOW);
@@ -477,6 +475,7 @@ QDViewerShell::QDViewerShell(QWidget * parent, const char * name)
    file_pane->insertItem(tr("&Close"), IDC_CLOSE);
    file_pane->insertItem(tr("E&xit"), IDC_EXIT);
    connect(file_pane, SIGNAL(aboutToShow(void)), this, SLOT(slotAboutToShowMenu(void)));
+   connect(file_pane, SIGNAL(activated(int)), this, SLOT(slotMenuCB(int)));
    menu->insertItem(tr("&File"), file_pane, IDC_FILE);
 
    QPopupMenu * mode_pane=new QPopupMenu(this);
@@ -490,6 +489,7 @@ QDViewerShell::QDViewerShell(QWidget * parent, const char * name)
    mode_pane->insertItem(tr("Full &Screen"), IDC_FULL_SCREEN);
 #endif
    connect(mode_pane, SIGNAL(aboutToShow(void)), this, SLOT(slotAboutToShowMenu(void)));
+   connect(mode_pane, SIGNAL(activated(int)), this, SLOT(slotMenuCB(int)));
    menu->insertItem(tr("&Display"), mode_pane, IDC_MODE);
 
    QPopupMenu * zoom_pane=new QPopupMenu(this);
@@ -510,6 +510,7 @@ QDViewerShell::QDViewerShell(QWidget * parent, const char * name)
    zoom_pane->insertItem(tr("Zoom &In"), IDC_ZOOM_ZOOMIN);
    zoom_pane->insertItem(tr("Zoom &Out"), IDC_ZOOM_ZOOMOUT);
    connect(zoom_pane, SIGNAL(aboutToShow(void)), this, SLOT(slotAboutToShowMenu(void)));
+   connect(zoom_pane, SIGNAL(activated(int)), this, SLOT(slotMenuCB(int)));
    menu->insertItem(tr("&Zoom"), zoom_pane, IDC_ZOOM);
 
    QPopupMenu * nav_pane=new QPopupMenu(this);
@@ -521,6 +522,7 @@ QDViewerShell::QDViewerShell(QWidget * parent, const char * name)
    nav_pane->insertItem(tr("&Last Page"), IDC_NAV_LAST_PAGE);
    nav_pane->insertItem(tr("&Goto Page..."), IDC_NAV_GOTO_PAGE);
    connect(nav_pane, SIGNAL(aboutToShow(void)), this, SLOT(slotAboutToShowMenu(void)));
+   connect(nav_pane, SIGNAL(activated(int)), this, SLOT(slotMenuCB(int)));
    menu->insertItem(tr("&Navigate"), nav_pane, IDC_NAVIGATE);
 
    QPopupMenu * info_pane=new QPopupMenu(this);
@@ -528,6 +530,7 @@ QDViewerShell::QDViewerShell(QWidget * parent, const char * name)
    info_pane->insertItem(tr("&Document Information"), IDC_ABOUT_DOC);
    info_pane->insertItem(tr("Show &Thumbnails"), IDC_THUMB_SHOW);
    connect(info_pane, SIGNAL(aboutToShow(void)), this, SLOT(slotAboutToShowMenu(void)));
+   connect(info_pane, SIGNAL(activated(int)), this, SLOT(slotMenuCB(int)));
    menu->insertItem(tr("&Info"), info_pane, IDC_INFO);
 
    menu->insertSeparator();
@@ -537,6 +540,7 @@ QDViewerShell::QDViewerShell(QWidget * parent, const char * name)
    if (! helpurl.is_empty() )
      help_pane->insertItem("&Help", IDC_HELP_DEJAVU);
    connect(help_pane, SIGNAL(aboutToShow(void)), this, SLOT(slotAboutToShowMenu(void)));
+   connect(help_pane, SIGNAL(activated(int)), this, SLOT(slotMenuCB(int)));
    menu->insertItem(tr("&Help"), help_pane);
 
    QWidget * central=new QWidget(this);
@@ -597,7 +601,6 @@ QDViewerShell::QDViewerShell(QWidget * parent, const char * name)
 
    status_bar->setText(tr(START_STATUS));
    slotAboutToShowMenu();
-
 }
 
 QDViewerShell::~QDViewerShell(void)
