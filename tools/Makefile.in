@@ -62,9 +62,6 @@ PROGRAMS = bzz c44 cjb2 cpaldjvu csepdjvu \
 
 all: ${PROGRAMS}
 
-${PROGRAMS}:
-	${CXX} -o $@ ${CXXFLAGS} $< ${LIBDJVU} ${LIBS}
-
 install: install-bin install-man
 
 install-bin: ${PROGRAMS} FORCE
@@ -96,6 +93,8 @@ FORCE:
 .cpp.o:
 	${CXX} ${CXXFLAGS} -c $<
 
+.o:
+	${CXX} -o $@ ${CXXFLAGS} $< ${LIBDJVU} ${LIBS}
 
 # Dependencies
 

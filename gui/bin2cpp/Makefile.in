@@ -58,9 +58,6 @@ PROGRAMS = bin2cpp
 
 all: ${PROGRAMS}
 
-${PROGRAMS}:
-	${CXX} -o $@ ${CXXFLAGS} $< ${LIBDJVU} ${LIBS}
-
 install:
 
 depend: FORCE
@@ -81,6 +78,9 @@ FORCE:
 
 .cpp.o:
 	${CXX} ${CXXFLAGS} -c $<
+
+.o:
+	${CXX} -o $@ ${CXXFLAGS} $< ${LIBDJVU} ${LIBS}
 
 
 # Dependencies
