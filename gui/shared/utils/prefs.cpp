@@ -162,10 +162,19 @@ DjVuPrefs::load(void)
 	  	  "PrintToFile:		0\n"
 		  "PrintPS:		1\n"
 	  	  "PrintLevel:		2\n"
+	  	  "PrintZoom:		100\n"
 	  	  "PrintFitPage:	1\n"
 	  	  "PrintAllPages:	0\n"
 		  "PrintCommand:	lp\n"
 		  "PrintFile:		image.ps\n"
+                  "PrintFrame:          0\n"
+                  "PrintCropMarks:      0\n"
+	  	  "BookMode:		0\n"
+	  	  "BookSign:		3\n"
+	  	  "BookTwo:		1\n"
+	  	  "BookAlign:		0\n"
+	  	  "BookFold:		36\n"
+	  	  "BookThick:		24\n"
 		  "HLinksPopup:		1\n"
 		  "HLinksBorder:	0\n"
 		  "HLinksButt:		%s\n"
@@ -227,10 +236,20 @@ DjVuPrefs::load(void)
   printPS=getInt("PrintPS");
   printLevel=getInt("PrintLevel");
   if (printLevel<1 || printLevel>3) printLevel=2;
+  printZoom=getInt("PrintZoom");
+  if (printZoom<25) printZoom=100;
   printFitPage=getInt("PrintFitPage");
   printAllPages=getInt("PrintAllPages");
   printCommand=getString("PrintCommand");
   printFile=getString("PrintFile");
+  printFrame=getInt("PrintFrame");
+  printCropMarks=getInt("PrintCropMarks");
+  bookMode=getInt("BookMode");
+  bookSign=getInt("BookSign");
+  bookTwo=getInt("BookTwo");
+  bookAlign=getInt("BookAlign");
+  bookFold=getInt("BookFold");
+  bookThick=getInt("BookThick");
   hlinksPopup=getInt("HLinksPopup");
   hlinksBorder=getInt("HLinksBorder");
   GUTF8String hlb_tmp=getString("HLinksButt");
@@ -276,10 +295,19 @@ DjVuPrefs::save()
   setInt("PrintToFile", printToFile);
   setInt("PrintPS", printPS);
   setInt("PrintLevel", printLevel);
+  setInt("PrintZoom", printZoom);
   setInt("PrintFitPage", printFitPage);
   setInt("PrintAllPages", printAllPages);
   setString("PrintCommand", printCommand);
   setString("PrintFile", printFile);
+  setInt("PrintFrame", printFrame);
+  setInt("PrintCropMarks", printCropMarks);
+  setInt("BookMode",bookMode);
+  setInt("BookSign",bookSign);
+  setInt("BookTwo",bookTwo);
+  setInt("BookAlign",bookAlign);
+  setInt("BookFold",bookFold);
+  setInt("BookThick",bookThick);
   setInt("HLinksPopup", hlinksPopup);
   setInt("HLinksBorder", hlinksBorder);
   setString("HLinksButt", hlb_names[hlb_num]);

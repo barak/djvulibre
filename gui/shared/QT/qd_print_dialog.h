@@ -81,83 +81,90 @@
 
 class QDPrintDialog : public QeDialog
 {
-   Q_OBJECT
+  Q_OBJECT
 public:
-   enum What { PRINT_PAGE, PRINT_DOC, PRINT_CUSTOM, PRINT_WIN };
+  enum What { PRINT_PAGE, PRINT_DOC, PRINT_CUSTOM, PRINT_WIN };
 private:
-   class QRadioButton	*ps_butt, *eps_butt;
-   class QRadioButton	*autoorient_butt,*portrait_butt,*landscape_butt;
-   class QRadioButton	*color_butt, *grey_butt;
-   class QRadioButton	*level1_butt, *level2_butt, *level3_butt;
-   class QComboBox	*what_menu;
-   class QSpinBox	*copies_spin;
-   class QLabel	        *custompages_label;
-   class QLineEdit	*custompages_text;
-   class QCheckBox	*save_butt;
-   class QButtonGroup	*format_bg, *orient_bg, *color_bg;
-   class QButtonGroup	*scale_bg, *what_bg;
-   class QComboBox	*zoom_menu;
-   class QSpinBox	*zoom_spin;
+  class QRadioButton	*ps_butt, *eps_butt;
+  class QRadioButton	*autoorient_butt,*portrait_butt,*landscape_butt;
+  class QRadioButton	*color_butt, *grey_butt;
+  class QRadioButton	*level1_butt, *level2_butt, *level3_butt;
+  class QComboBox	*what_menu;
+  class QSpinBox	*copies_spin;
+  class QLabel          *custompages_label;
+  class QLineEdit	*custompages_text;
+  class QCheckBox	*save_butt;
+  class QButtonGroup	*format_bg, *orient_bg, *color_bg;
+  class QButtonGroup	*scale_bg, *what_bg;
+  class QComboBox	*zoom_menu;
+  class QSpinBox	*zoom_spin;
+  class QWidgetStack	*dst_widget;
+  class QWidget		*printer_widget, *file_widget;
+  class QRadioButton	*printer_butt, *file_butt;
+  class QLineEdit	*printer_text, *file_text;
+  class QWidgetStack	*prog_widget;
+  class QProgressBar	*progress;
+  class QPushButton	*cancel_butt;
+  class QCheckBox    	*rectmark_chk, *cropmark_chk;
+  class QCheckBox	*bk_mode_butt, *bk_two_butt;
+  class QSpinBox 	*bk_sign_spin, *bk_fold_spin;
+  class QSpinBox        *bk_thick_spin, *bk_align_spin;
+  class QLabel 		*bk_sign_lbl, *bk_fold_lbl;
+  class QLabel		*bk_thick_lbl, *bk_align_lbl;
 
-   QWidgetStack		*dst_widget;
-   QWidget		*printer_widget, *file_widget;
-   class QRadioButton	*printer_butt, *file_butt;
-   class QLineEdit	*printer_text, *file_text;
-
-   QWidgetStack		*prog_widget;
-   class QProgressBar	*progress;
-   class QPushButton	*cancel_butt;
-
-   GP<DjVuDocument>	doc;
-   GP<DjVuImage>	dimg;
-
-   int			cur_page_num;
-   bool			printing, interrupt_printing;
-   double               progress_low, progress_high;
-   DjVuPrefs		*prefs;
-   int			displ_mode;
-   int			cur_zoom;
-
-   GRect		print_rect;
-
-   static const QString	id2str(int id);
-   static int		str2id(const QString &);
-   
-   static void		refresh_cb(void *cl_data);
-   static void		progress_cb(double done, void *cl_data);
-   static void		info_cb(int page_num, int page_cnt, int tot_pages,
+  GP<DjVuDocument>	doc;
+  GP<DjVuImage>	dimg;
+  
+  int			cur_page_num;
+  bool			printing, interrupt_printing;
+  double      		progress_low, progress_high;
+  DjVuPrefs		*prefs;
+  int			displ_mode;
+  int			cur_zoom;
+  
+  GRect			print_rect;
+  
+  static const QString	id2str(int id);
+  static int		str2id(const QString &);
+  
+  static void		refresh_cb(void *cl_data);
+  static void		progress_cb(double done, void *cl_data);
+  static void		info_cb(int page_num, int page_cnt, int tot_pages,
 				DjVuToPS::Stage stage,void *cl_data);
-
-   void			adjustWhat(void);
-   void			setSensitivity(void);
-   void                 setAlmostDisabled(bool disabled);
-private slots:
-   void		slotBrowse(void);
-   void		slotFormatChanged(void);
-   void		slotDstChanged(void);
-   void		slotWhatChanged(const QString & text);
-   void		slotZoomChanged(const QString & text);
-protected slots:
-   virtual void	done(int);
-signals:
-   void		sigDone(void);
+  
+  void			adjustWhat(void);
+  void			setSensitivity(void);
+  void               	setAlmostDisabled(bool disabled);
+ private slots:
+  void			slotBrowse(void);
+  void			slotFormatChanged(void);
+  void			slotDstChanged(void);
+  void			slotWhatChanged(const QString & text);
+  void			slotZoomChanged(const QString & text);
+  void			slotBookChanged(void);
+ protected slots:
+  virtual void		done(int);
+ signals:
+  void			sigDone(void);
 public:
-   void		setPSFormat(bool ps);
-   void		setPortrait(bool portrait, bool autoorient);
-   void		setColorMode(bool color);
-   void		setPSLevel(int level);
-   void		setZoom(int zoom);	// Negative number means "reduce to fit"
-   void		setCurZoom(int zoom);	// number 5..999
-   void		setPrint(What what);
-   void		setFileName(const QString &name);
-   void		setCommand(const QString &cmd);
-   void		printToFile(int file);
-   
-   QDPrintDialog(const GP<DjVuDocument> & doc, const GP<DjVuImage> & cur_dimg,
-		 DjVuPrefs *prefs, int displ_mode, int cur_zoom,
-		 const GRect & prn_rect, QWidget *parent=0,
-		 const char *name=0, bool modal=FALSE);
-   ~QDPrintDialog(void) {}
+  void			setPSFormat(bool ps);
+  void			setPortrait(bool portrait, bool autoorient);
+  void			setColorMode(bool color);
+  void			setPSLevel(int level);
+  void			setZoom(int zoom);	// Negative number means "reduce to fit"
+  void			setCurZoom(int zoom);	// number 5..999
+  void			setPrint(What what);
+  void			setFileName(const QString &name);
+  void			setCommand(const QString &cmd);
+  void			setBookMode(bool mode, int sign=3);
+  void                  setBookTwo(bool two, int align=0, int fold=36, int thick=24);
+  void			printToFile(int file);
+  
+  QDPrintDialog(const GP<DjVuDocument> & doc, const GP<DjVuImage> & cur_dimg,
+                DjVuPrefs *prefs, int displ_mode, int cur_zoom,
+                const GRect & prn_rect, QWidget *parent=0,
+                const char *name=0, bool modal=FALSE);
+  ~QDPrintDialog(void) {}
 };
 
 #endif

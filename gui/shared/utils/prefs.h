@@ -100,10 +100,19 @@ public:
    bool		printToFile;
    bool		printPS;
    int		printLevel;
+   int          printZoom;
    bool		printFitPage;
    bool		printAllPages;
    GUTF8String	printCommand;
    GUTF8String	printFile;
+   bool         printFrame;
+   bool         printCropMarks;
+   bool         bookMode;
+   int          bookSign;
+   bool         bookTwo;
+   int          bookAlign;
+   int          bookFold;
+   int          bookThick;
    bool		hlinksPopup;
    bool		hlinksBorder;
    HLButtType	hlb_num;
@@ -114,13 +123,10 @@ public:
    bool		toolBarAlwaysVisible;
    bool		fastZoom;
    bool		optimizeLCD;
-   
    int		magnifierSize;
    int		magnifierScale;
    MagButtType	magnifierHotKey;
-
    bool		fastThumb;
-
    bool		mimeDontAsk;
    bool		mimeDontCheck;
   

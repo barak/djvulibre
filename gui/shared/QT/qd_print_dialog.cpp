@@ -177,58 +177,68 @@ QDPrintDialog::setPSLevel(int level)
 void
 QDPrintDialog::setZoom(int zoom)
 {
-   QString setting;
-   if (zoom<0)
-   {
-      setting= tr(fit_page_str);
-   }
-   else if (zoom==100)
-   {
-      setting= tr(one_to_one_str);
-   }
-   else if (zoom==cur_zoom)
-   {
-      setting = tr(current_zoom_str);
-   }
-   else
-   {
-      setting = tr(custom_zoom_str);
-   }
-   setComboBoxCurrentItem(zoom_menu, setting);
+  QString setting;
+  if (zoom<0)
+    setting= tr(fit_page_str);
+  else if (zoom==100)
+    setting= tr(one_to_one_str);
+  else if (zoom==cur_zoom)
+    setting = tr(current_zoom_str);
+  else
+    setting = tr(custom_zoom_str);
+  setComboBoxCurrentItem(zoom_menu, setting);
 }
 
 void
 QDPrintDialog::setCurZoom(int zoom)
 {
-   cur_zoom=zoom;
-   if (zoom_menu->currentText()==tr(current_zoom_str))
-      zoom_spin->setValue(cur_zoom);
+  cur_zoom=zoom;
+  if (zoom_menu->currentText()==tr(current_zoom_str))
+    zoom_spin->setValue(cur_zoom);
 }
 
 void
 QDPrintDialog::setPrint(What what)
 {
-   const QString str=id2str(what);
-   setComboBoxCurrentItem(what_menu, str);
+  const QString str=id2str(what);
+  setComboBoxCurrentItem(what_menu, str);
 }
 
 void
 QDPrintDialog::setFileName(const QString &qname)
 {
-   file_text->setText(qname);
+  file_text->setText(qname);
 }
 
 void
 QDPrintDialog::setCommand(const QString &qcmd)
 {
-   printer_text->setText(qcmd);
+  printer_text->setText(qcmd);
+}
+
+void
+QDPrintDialog::setBookMode(bool mode, int sign)
+{
+  bk_mode_butt->setChecked(mode);
+  bk_sign_spin->setValue(sign);
+}
+
+void
+QDPrintDialog::setBookTwo(bool two, int align, int fold, int thick)
+{
+  bk_two_butt->setChecked(two);
+  bk_align_spin->setValue(align);
+  bk_fold_spin->setValue(fold);
+  bk_thick_spin->setValue(thick);
 }
 
 void
 QDPrintDialog::printToFile(int file)
 {
-   if (file) file_butt->setChecked(TRUE);
-   else printer_butt->setChecked(TRUE);
+  if (file) 
+    file_butt->setChecked(TRUE);
+  else 
+    printer_butt->setChecked(TRUE);
 }
 
 void
@@ -302,12 +312,15 @@ QDPrintDialog::slotFormatChanged(void)
    
    if (!ps_mode && landscape_butt->isChecked()) 
      autoorient_butt->setChecked(TRUE);
+   if (!ps_mode && bk_mode_butt->isChecked())
+     bk_mode_butt->setChecked(FALSE);
    portrait_butt->setEnabled(ps_mode);
    landscape_butt->setEnabled(ps_mode);
    autoorient_butt->setEnabled(ps_mode);
    zoom_menu->setEnabled(ps_mode);
    QString qtext = zoom_menu->currentText();
    zoom_spin->setEnabled(ps_mode && qtext==tr(custom_zoom_str));
+   bk_mode_butt->setEnabled(ps_mode);
    adjustWhat();
 }
 
@@ -330,6 +343,24 @@ QDPrintDialog::slotZoomChanged(const QString & qtext)
     zoom_spin->setValue(100);
   else if (qtext==tr(current_zoom_str))
     zoom_spin->setValue(cur_zoom);
+}
+
+void
+QDPrintDialog::slotBookChanged(void)
+{
+  bool bmode = bk_mode_butt->isChecked();
+  bool tmode = bk_two_butt->isChecked();
+  if (! ps_butt->isChecked())
+    bmode = tmode = false;
+  bk_sign_spin->setEnabled(bmode);
+  bk_sign_lbl->setEnabled(bmode);
+  bk_two_butt->setEnabled(bmode);
+  bk_align_spin->setEnabled(bmode && tmode);
+  bk_thick_spin->setEnabled(bmode && tmode);
+  bk_fold_spin->setEnabled(bmode && tmode);
+  bk_align_lbl->setEnabled(bmode && tmode);
+  bk_thick_lbl->setEnabled(bmode && tmode);
+  bk_fold_lbl->setEnabled(bmode && tmode);
 }
 
 void
@@ -407,35 +438,35 @@ QDPrintDialog::setAlmostDisabled(bool disabled)
 void
 QDPrintDialog::done(int rc)
 {
-   DEBUG_MSG("QDPrintDialog::done() called\n");
-   DEBUG_MAKE_INDENT(3);
-   
-   if (rc==Accepted)
-   {
+  DEBUG_MSG("QDPrintDialog::done() called\n");
+  DEBUG_MAKE_INDENT(3);
+  
+  if (rc==Accepted)
+    {
       DEBUG_MSG("OK pressed...\n");
       FILE *fdesc = 0;
       QString fname;
       
       try
-      {
-	 int what=str2id(what_menu->currentText());
-	 QString customPages=custompages_text->text();
-	 if (what==PRINT_CUSTOM && customPages.length()==0)
+        {
+          int what=str2id(what_menu->currentText());
+          QString customPages=custompages_text->text();
+          if (what==PRINT_CUSTOM && customPages.length()==0)
 	    throw ERROR_MESSAGE("QDPrintDialog::done",
 				"Empty \"Custom pages\" list specified.");
-	 
-	 if (file_butt->isChecked())
-	 {
-	    QString fname=file_text->text();
-	    struct stat st;
-	    if (stat(fname, &st)>=0)
-	       if (QMessageBox::warning(this, "DjVu",
-					tr("File '")+fname+tr("' already exists.\n")+
-					tr("Are you sure you want to overwrite it?"),
-					tr("&Yes"), tr("&No"), 0, 0, 1))
+          
+          if (file_butt->isChecked())
+            {
+              QString fname=file_text->text();
+              struct stat st;
+              if (stat(fname, &st)>=0)
+                if (QMessageBox::warning(this, "DjVu",
+                                         tr("File '") + fname + tr("' already exists.\n") +
+                                         tr("Are you sure you want to overwrite it?"),
+                                         tr("&Yes"), tr("&No"), 0, 0, 1))
 		  return;
-	 }
-      
+            }
+          
 	 printing=1;
 	 interrupt_printing=0;
 	 setAlmostDisabled(TRUE);
@@ -446,13 +477,21 @@ QDPrintDialog::done(int rc)
 	 bool printPortrait=portrait_butt->isChecked();
          bool printAutoOrient=autoorient_butt->isChecked();
 	 bool printPS=ps_butt->isChecked();
+         bool bookMode=bk_mode_butt->isChecked();
+         int  bookSign=bk_sign_spin->value();
+         bool bookTwo=bk_two_butt->isChecked();
+         int  bookAlign=bk_align_spin->value();
+         int  bookFold=bk_fold_spin->value();
+         int  bookThick=bk_thick_spin->value();
+         bool printFrame=rectmark_chk->isChecked();
+         bool printCropMarks=cropmark_chk->isChecked();
 
-	 int printLevel=2;
+	 int  printLevel=2;
          if (level3_butt->isChecked())
            printLevel = 3;
          else if (level1_butt->isChecked())
            printLevel = 1;
-
+         
          int zoom = zoom_spin->value();
          if (! strcmp(zoom_menu->currentText(), tr(fit_page_str)))
            zoom = DjVuToPS::Options::FIT_PAGE;
@@ -460,7 +499,7 @@ QDPrintDialog::done(int rc)
            zoom = 100;
          else if (! strcmp(zoom_menu->currentText(), tr(current_zoom_str)))
            zoom = cur_zoom;
-
+         
 	 GP<ByteStream> pstr;
          if (printToFile)
            {
@@ -522,7 +561,7 @@ QDPrintDialog::done(int rc)
 	 opt.set_color(printColor);
 	 opt.set_zoom((DjVuToPS::Options::Zoom) zoom);
 	 opt.set_copies(copies_spin->value());
-	 opt.set_frame(what==PRINT_WIN);
+	 opt.set_frame(printFrame);
 	 print->set_refresh_cb(refresh_cb, this);
 	 print->set_dec_progress_cb(progress_cb, this);
 	 print->set_prn_progress_cb(progress_cb, this);
@@ -547,16 +586,44 @@ QDPrintDialog::done(int rc)
            {
              DEBUG_MSG("updating preferences\n");
              DjVuPrefs disk_prefs;
-             disk_prefs.printLevel=prefs->printLevel=printLevel;
-             disk_prefs.printPS=prefs->printPS=printPS;
-             disk_prefs.printToFile=prefs->printToFile=printToFile;
-             disk_prefs.printColor=prefs->printColor=printColor;
-             disk_prefs.printAutoOrient=prefs->printAutoOrient=printAutoOrient;
-             disk_prefs.printPortrait=prefs->printPortrait=printPortrait;
-             disk_prefs.printFile=prefs->printFile=GStringFromQString(printFile);
-             disk_prefs.printCommand=prefs->printCommand=GStringFromQString(printCommand);
-             disk_prefs.printFitPage= (zoom==DjVuToPS::Options::FIT_PAGE);
-             disk_prefs.printAllPages=prefs->printAllPages= (what==PRINT_DOC || what==PRINT_CUSTOM);
+             disk_prefs.printLevel = prefs->printLevel
+               = printLevel;
+             disk_prefs.printPS = prefs->printPS
+               = printPS;
+             disk_prefs.printToFile = prefs->printToFile
+               = printToFile;
+             disk_prefs.printColor = prefs->printColor
+               = printColor;
+             disk_prefs.printAutoOrient = prefs->printAutoOrient
+               = printAutoOrient;
+             disk_prefs.printPortrait = prefs->printPortrait
+               = printPortrait;
+             disk_prefs.printFile = prefs->printFile
+               = GStringFromQString(printFile);
+             disk_prefs.printCommand = prefs->printCommand 
+               = GStringFromQString(printCommand);
+             disk_prefs.printFitPage = prefs->printFitPage 
+               = (zoom==DjVuToPS::Options::FIT_PAGE);
+             disk_prefs.printZoom = prefs->printZoom 
+               = ((disk_prefs.printFitPage) ? 100 : zoom);
+             disk_prefs.printAllPages = prefs->printAllPages 
+               = (what==PRINT_DOC || what==PRINT_CUSTOM);
+             disk_prefs.bookMode = prefs->bookMode 
+               = bookMode;
+             disk_prefs.bookSign = prefs->bookSign
+               = bookSign;
+             disk_prefs.bookTwo = prefs->bookTwo
+               = bookTwo;
+             disk_prefs.bookAlign = prefs->bookAlign
+               = bookAlign;
+             disk_prefs.bookFold = prefs->bookFold
+               = bookFold;
+             disk_prefs.bookThick = prefs->bookThick
+               = bookThick;
+             disk_prefs.printFrame = prefs->printFrame
+               = printFrame;
+             disk_prefs.printCropMarks = prefs->printCropMarks
+               = printCropMarks;
              disk_prefs.save();
            }
          setAlmostDisabled(FALSE);
@@ -603,6 +670,7 @@ QDPrintDialog::setSensitivity(void)
   slotFormatChanged();
   slotWhatChanged(what_menu->currentText());
   slotDstChanged();
+  slotBookChanged();
   adjustWhat();
 }
 
@@ -637,6 +705,7 @@ QDPrintDialog::QDPrintDialog(const GP<DjVuDocument> & _doc,
    QButtonGroup *bg;
    QVBoxLayout *vlay, *bg_lay;
    QHBoxLayout *hlay, *bg_hlay;
+   QGridLayout *glay;
    
    setCaption(tr("DjVu Print Dialog"));
 
@@ -801,7 +870,8 @@ QDPrintDialog::QDPrintDialog(const GP<DjVuDocument> & _doc,
    // Creating the POSITION tab
    start = new QWidget(tabwidget,"position");
    tabwidget->addTab(start,tr("Position"));
-   hlay = new QHBoxLayout(start, 10);
+   vlay = new QVBoxLayout(start, 10);
+   hlay = new QHBoxLayout(vlay, 10);
 
    // *** Creating 'Scaling' frame
    bg = scale_bg = new QButtonGroup(tr("Scaling"), start);
@@ -834,23 +904,71 @@ QDPrintDialog::QDPrintDialog(const GP<DjVuDocument> & _doc,
    landscape_butt=new QRadioButton(tr("&Landscape"), bg, "landscape_butt");
    bg_lay->addWidget(landscape_butt);
 
-   // Creating the BOOK tab
-   start = new QWidget(tabwidget,"book");
-   tabwidget->addTab(start,tr("Book"));
-   vlay = new QVBoxLayout(start, 10);
-   bg = new QButtonGroup(tr("Book printing options"),start);
+   // *** Creating 'Marks' frame
+   bg = new QButtonGroup(tr("Marks"),start);
    vlay->addWidget(bg);
    bg_lay=new QVBoxLayout(bg, 10);
    bg_lay->addSpacing(bg->fontMetrics().height());
    bg_lay->addStrut(bg->fontMetrics().width(bg->title()));
+   rectmark_chk = new QCheckBox(tr("Print image &frame"),bg);
+   bg_lay->addWidget(rectmark_chk);
+   cropmark_chk = new QCheckBox(tr("Print &crop marks"),bg);
+   bg_lay->addWidget(cropmark_chk);
 
-   QCheckBox *book_butt = new QCheckBox(tr("Enable book printing mode"), bg, "book_butt");
-   book_butt->setEnabled(false);
-   bg_lay->addWidget(book_butt);
-   label = new QLabel(tr("This is not yet implemented"), bg);
-   bg_lay->addWidget(label);
+   // Creating the BOOK tab
+   start = new QWidget(tabwidget,"book");
+   tabwidget->addTab(start,tr("Book"));
+   vlay = new QVBoxLayout(start, 10);
+   bg = new QButtonGroup(tr("Booklet printing options"),start);
+   vlay->addWidget(bg);
+   bg_lay=new QVBoxLayout(bg, 10);
+   bg_lay->addSpacing(bg->fontMetrics().height());
+   bg_lay->addStrut(bg->fontMetrics().width(bg->title()));
+   glay=new QGridLayout(bg_lay, 6, 2);
+   
+   bk_mode_butt = new QCheckBox(tr("Reorder pages for printing a book"), bg);
+   glay->addMultiCellWidget(bk_mode_butt,0,0,0,1);
+   label = bk_sign_lbl = new QLabel(tr(" Maximal signature size"),bg);
+   glay->addWidget(label,1,0);
+   bk_sign_spin = new QSpinBox(bg);
+   bk_sign_spin->setMinValue(3);
+   bk_sign_spin->setSuffix(tr(" pages"));
+   bk_sign_spin->setSpecialValueText(tr("unlimited"));
+   glay->addWidget(bk_sign_spin,1,1);
+   bk_two_butt = new QCheckBox(tr("Print two pages per sheet"),bg);
+   glay->addMultiCellWidget(bk_two_butt,2,2,0,1);
+   label = bk_align_lbl = new QLabel(tr(" Adjust recto/verso alignment"),bg);
+   glay->addWidget(label,3,0);
+   bk_align_spin = new QSpinBox(-20,20,1,bg);
+   bk_align_spin->setSuffix(tr(" points"));
+   glay->addWidget(bk_align_spin,3,1);
+   label = bk_fold_lbl = new QLabel(tr(" Extra folding space"),bg);
+   glay->addWidget(label,4,0);
+   bk_fold_spin = new QSpinBox(0,144,1,bg);
+   bk_fold_spin->setSuffix(tr(" points"));
+   glay->addWidget(bk_fold_spin,4,1);
+   label = bk_thick_lbl = new QLabel(tr(" Paper thickness"),bg);
+   glay->addWidget(label,5,0);
+   bk_thick_spin = new QSpinBox(0,1000,1,bg);
+   bk_thick_spin->setSuffix(tr(" centipoints"));
+   glay->addWidget(bk_thick_spin,5,1);
+   QToolTip::add(bk_sign_spin,
+                 tr("The signature size is the number of sides\n"
+                    "which will be folded and bound together."));
+   QToolTip::add(bk_align_spin,
+                 tr("Corrects recto/verso alignment on\n"
+                    "certain printers."));
+   QToolTip::add(bk_fold_spin,
+                 tr("Controls how much space separates the\n"
+                    "contents of two pages on the same sheet."));
+   QToolTip::add(bk_thick_spin,
+                 tr("Controls how much extra space is needed\n"
+                    "to fold outer sheets in a signature."));
+   // Not yet implemented
+   //rectmark_chk->setEnabled(false);
+   //cropmark_chk->setEnabled(false);
 
-      // Connecting signals
+   // Connecting signals
    connect(ps_butt, SIGNAL(toggled(bool)), 
            this, SLOT(slotFormatChanged(void)));
    connect(eps_butt, SIGNAL(toggled(bool)), 
@@ -865,10 +983,16 @@ QDPrintDialog::QDPrintDialog(const GP<DjVuDocument> & _doc,
 	   this, SLOT(slotWhatChanged(const QString &)));
    connect(zoom_menu, SIGNAL(activated(const QString &)),
 	   this, SLOT(slotZoomChanged(const QString &)));
-   connect(ok_butt, SIGNAL(clicked(void)), this, SLOT(accept(void)));
-   connect(cancel_butt, SIGNAL(clicked(void)), this, SLOT(reject(void)));
+   connect(bk_mode_butt, SIGNAL(toggled(bool)), 
+           this, SLOT(slotBookChanged(void)));
+   connect(bk_two_butt, SIGNAL(toggled(bool)), 
+           this, SLOT(slotBookChanged(void)));
+   connect(ok_butt, SIGNAL(clicked(void)), 
+           this, SLOT(accept(void)));
+   connect(cancel_butt, SIGNAL(clicked(void)), 
+           this, SLOT(reject(void)));
    
-      // Setting buttons states
+   // Setting buttons states
    if (!prefs->printToFile) 
      prefs->printPS=1;
    if (!prefs->printPS) 
@@ -879,18 +1003,20 @@ QDPrintDialog::QDPrintDialog(const GP<DjVuDocument> & _doc,
    setPSLevel(prefs->printLevel);
    setFileName(QStringFromGString(prefs->printFile));
    setCommand(QStringFromGString(prefs->printCommand));
+   setBookMode(prefs->bookMode, prefs->bookSign);
+   setBookTwo(prefs->bookTwo, prefs->bookAlign, prefs->bookFold, prefs->bookThick);
    printToFile(prefs->printToFile);
    if (prefs->printFitPage) 
      setZoom(-1);
    else 
-     setZoom(100);
+     setZoom(prefs->printZoom);
    setPrint(prefs->printAllPages ? PRINT_DOC : PRINT_PAGE);
-   
-   if (displ_mode==IDC_DISPLAY_BLACKWHITE)
+   if (displ_mode == IDC_DISPLAY_BLACKWHITE)
      {
        color_butt->setEnabled(false);
        grey_butt->setEnabled(false);
      }
-   
+   rectmark_chk->setChecked(prefs->printFrame);
+   cropmark_chk->setChecked(prefs->printCropMarks);
    setSensitivity();
 }
