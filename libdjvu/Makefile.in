@@ -95,8 +95,7 @@ install-data: FORCE
 
 install-lib: ${LIBDJVU_LA} FORCE
 	${INSTALL} -d ${DESTDIR}${libdir}
-	${LIBTOOL} --mode=install \
-	   ${INSTALL} -m 644 ${LIBDJVU_LA} ${DESTDIR}${libdir}
+	${LIBTOOL} --mode=install cp ${LIBDJVU_LA} ${DESTDIR}${libdir}
 
 install-include: FORCE
 	${INSTALL} -d ${DESTDIR}${includedir}/libdjvu

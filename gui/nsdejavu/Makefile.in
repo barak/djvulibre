@@ -79,7 +79,7 @@ install-bin: nsdejavu.la FORCE
 	${INSTALL} -d ${DESTDIR}${plugindir}	
 	eval "nsdejavu=`cat nsdejavu.x`" && \
 	  eval `grep '^dlname=' nsdejavu.la` && \
-	  ${INSTALL} -m 0644 .libs/$$dlname ${DESTDIR}${plugindir}/$$nsdejavu
+	    cp .libs/$$dlname ${DESTDIR}${plugindir}/$$nsdejavu
 
 install-man: nsdejavu.1 FORCE
 	${INSTALL} -d ${DESTDIR}${mandir}/man1
