@@ -67,6 +67,7 @@
 #include <stdarg.h>
 #include <string.h>
 #include <locale.h>
+#include <fcntl.h>
 #include <errno.h>
 
 #include "libdjvu/ddjvuapi.h"

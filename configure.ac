@@ -94,7 +94,12 @@ AC_SUBST(INSTALL)
 
 # Libtool & Compilers
 AC_DISABLE_STATIC
-dnl AC_LIBTOOL_WIN32_DLL
+case "$host" in
+*-cygwin* | *-mingw*)
+   enable_shared=no
+   enable_static=yes
+   ;;
+esac
 AC_PROG_LIBTOOL
 AC_PROG_CC
 AC_PROG_CXX
