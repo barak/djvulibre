@@ -88,7 +88,6 @@ namespace DJVU {
 #endif
 #endif
 
-
 /** DjVuImage to PostScript converter.
     Use this class to print \Ref{DjVuImage}s and \Ref{DjVuDocument}s.
     The behavior is customizable. See \Ref{DjVuToPS::Options} for the

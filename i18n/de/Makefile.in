@@ -27,9 +27,9 @@ datadir = @datadir@
 libdir = @libdir@
 mandir = @mandir@
 
-LANG=dummy
-man= ${DESTDIR}${mandir}/${LANG}/man1
-qm= ${DESTDIR}${datadir}/djvu/osi/${LANG}
+LANGUAGE=dummy
+man= ${DESTDIR}${mandir}/${LANGUAGE}/man1
+qm= ${DESTDIR}${datadir}/djvu/osi/${LANGUAGE}
 
 QMFILES = qt.qm djview.qm
 
@@ -52,7 +52,7 @@ install: install-man
 
 # Install localized qm files.
 install-qm: ${QMFILES} FORCE
-	test ${LANG} != dummy
+	test ${LANGUAGE} != dummy
 	-${INSTALL} -d ${qm}
 	-for n in ${QMFILES} ; do \
 	  if test -r $$n ; then \
@@ -64,7 +64,7 @@ install-qm: ${QMFILES} FORCE
 
 # Install localized man pages
 install-man:  FORCE ${NSDEJAVU1}
-	test ${LANG} != dummy
+	test ${LANGUAGE} != dummy
 	-${INSTALL} -d ${man}
 	-for n in ${MANFILES} ; do \
 	   if test -r $$n ; then \
@@ -80,6 +80,8 @@ nsdejavu.1: ${srcdir}/nsdejavu.1.in
 	  -e 's,LIBDIR,${libdir},' -e 's,NSDEJAVUSO,${NSDEJAVU},'
 
 # Boilerplate
+depend:
+
 clean: FORCE
 	-test ${LRELEASE} = ":" || ${RM} *.qm
 

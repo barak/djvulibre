@@ -96,6 +96,14 @@
 #include <errno.h>
 #include <signal.h>
 
+/** Avoid name clashes on solaris! */
+#ifdef PS
+# undef PS
+#endif
+#ifdef EPS
+# undef EPS
+#endif
+
 static const QString print_page_str
   = QT_TRANSLATE_NOOP("QDPrintDialog","of the current page");
 static const QString print_custom_str

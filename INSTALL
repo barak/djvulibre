@@ -334,16 +334,38 @@ The configure command line was:
         --with-jpeg=/home/leonb/djvulibre-3.5/BUILDI/libjpeg
 
 
-4.3- SUN SPARC SOLARIS 5.6
+
+4.3- SUN SPARC SOLARIS 5
 --------------------------
 
-Successful compilation using qt-2.3.0.  
+SOLARIS-5.6:
+
+Successful compilation using qt-2.3.0
 Compilation was made with gcc-3.0.2 with option -fpermissive.
 The configure command line was:
   $ ./configure --enable-rpo \
         --with-qt=/home/leonb/djvulibre-3.5/BUILDS/qt-2.3.0 \
         --with-jpeg=/home/leonb/djvulibre-3.5/BUILDS/libjpeg \
         CXX='g++ -fpermissive'
+
+SOLARIS-5.9:
+
+Successful compilation using qt-3.2 and gcc-3.3.
+  1) Installed gcc 3.3
+  2) Installed and built Qt
+  3) export QTDIR=/usr/local/qt
+  4) export QT_CFLAGS=-I/usr/local/qt/include
+  5) export QT_LIBS='-L/usr/local/qt/lib -lqt -ldl'
+  6) export PATH=$PATH:/usr/ccs/bin
+  7) export PATH=/usr/local/bin:/opt/sfw/bin:$PATH
+  8) export LD_LIBRARY_PATH=/opt/sfw/qt/lib:$LD_LIBRARY_PATH
+     export LD_LIBRARY_PATH=/usr/local/lib:/opt/sfw/lib:$LD_LIBRARY_PATH
+  9) cd DjVu/djvulibre-3.5
+ 11) ./configure --with-qt=/usr/local/qt --prefix=/usr/local \
+           CXX='g++ -fpermissive  -DNO_MMX -static-libgcc '
+ 12) make
+ 13) make install
+
 
 
 4.4- FREEBSD-4.4
