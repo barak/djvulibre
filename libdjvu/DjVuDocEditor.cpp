@@ -563,7 +563,9 @@ DjVuDocEditor::insert_file(const GURL &file_url, bool is_page,
        // Create DataPool and see if the file exists
   if(file_pool && !file_url.is_empty() && DjVuDocument::djvu_import_codec)
   {
-      (*DjVuDocument::djvu_import_codec)(file_pool,file_url,needs_compression_flag,can_compress_flag);
+      (*DjVuDocument::djvu_import_codec)(file_pool,file_url,
+                                         needs_compression_flag,
+                                         can_compress_flag);
   }
 
          // Oh. It does exist... Check that it has IFF structure
@@ -618,8 +620,12 @@ DjVuDocEditor::insert_file(const GP<DataPool> &file_pool,
           GPList<DjVmDir::File> list(dir->get_files_list());
           for(GPosition pos=list;pos;++pos)
           {
-            DEBUG_MSG("include " << list[pos]->is_include() << " size=" << list[pos]->size << " length=" << file_pool->get_length() << "\n");
-            if(list[pos]->is_include() && (!list[pos]->size || (list[pos]->size == file_pool->get_length())))
+            DEBUG_MSG("include " << list[pos]->is_include() 
+                      << " size=" << list[pos]->size << " length=" 
+                      << file_pool->get_length() << "\n");
+            if(list[pos]->is_include() 
+               && (!list[pos]->size 
+                   || (list[pos]->size == file_pool->get_length())))
             {
               id=list[pos]->get_load_name();
               GP<DjVuFile> file(get_djvu_file(id,false));
@@ -811,7 +817,9 @@ DjVuDocEditor::insert_group(const GList<GURL> & file_urls, int page_num,
         if(xdata_pool && furl.is_valid()
            && furl.is_local_file_url() && DjVuDocument::djvu_import_codec)
         {
-          (*DjVuDocument::djvu_import_codec)(xdata_pool,furl,needs_compression_flag,can_compress_flag);
+          (*DjVuDocument::djvu_import_codec)(xdata_pool,furl,
+                                             needs_compression_flag,
+                                             can_compress_flag);
         }
         GUTF8String chkid;
         IFFByteStream::create(xdata_pool->get_stream())->get_chunk(chkid);
@@ -820,19 +828,20 @@ DjVuDocEditor::insert_group(const GList<GURL> & file_urls, int page_num,
           GMap<GUTF8String,void *> map;
           map_ids(map);
           DEBUG_MSG("Read DjVuDocument furl='" << furl << "'\n");
-          GP<DjVuDocument> doc(DjVuDocument::create_noinit());
-          get_portcaster()->add_route(doc,this);
-          doc->set_verbose_eof(verbose_eof);
-          doc->set_recover_errors(recover_errors);
-//          doc->init(furl,this);
-          doc->init(furl);
-          doc->wait_for_complete_init();
           GP<ByteStream> gbs(ByteStream::create());
-          DEBUG_MSG("Saving DjVuDocument url='" << furl << "' with unique names\n");
-          doc->write(gbs,map);
-          gbs->seek(0L);
-          DEBUG_MSG("Loading unique names\n");
-          doc=DjVuDocument::create(gbs);
+          {
+            GP<DjVuDocument> doc(DjVuDocument::create_noinit());
+            get_portcaster()->add_route(doc,this);
+            doc->set_verbose_eof(verbose_eof);
+            doc->set_recover_errors(recover_errors);
+            doc->init(furl /* ,this */ );
+            doc->wait_for_complete_init();
+            DEBUG_MSG("Saving DjVuDocument url='" << furl << "' with unique names\n");
+            doc->write(gbs,map);
+            gbs->seek(0L);
+            DEBUG_MSG("Loading unique names\n");
+          }
+          GP<DjVuDocument> doc(DjVuDocument::create(gbs));
           get_portcaster()->add_route(doc,this);
           doc->set_verbose_eof(verbose_eof);
           doc->set_recover_errors(recover_errors);
@@ -843,43 +852,10 @@ DjVuDocEditor::insert_group(const GList<GURL> & file_urls, int page_num,
           for(int page_num=0;page_num<pages_num;page_num++)
           {
             const GURL url(doc->page_to_url(page_num));
-            insert_file(url, true, file_pos, name2id,doc);
+            insert_file(url, true, file_pos, name2id, doc);
           }
-#if 0
-              // Hey, it really IS a multipage document.
-              // Open it, expand to a tmp directory and add pages
-              // one after another
-          const GP<DjVuDocument> doc(DjVuDocument::create_wait(furl));
-#ifndef UNDER_CE
-	  GURL::Filename::Native dirurl(tmpnam(0));
-#else
-          GURL::Filename::UTF8 dirurl("tempFileForDjVu");
-#endif
-          if (dirurl.mkdir()<0)
-            G_THROW( ERR_MSG("DjVuDocEditor.dir_fail") "\t"+dirurl.get_string());//MBCS cvt
-          G_TRY 
-          {
-            doc->expand(dirurl, furl.fname());
-            int pages_num=doc->get_pages_num();
-            for(int page_num=0;page_num<pages_num;page_num++)
-            {
-               const GUTF8String name(doc->page_to_url(page_num).fname());
-               const GURL::UTF8 url(name,dirurl);
-               insert_file(url, true, file_pos, name2id, this);
-            }
-            dirurl.cleardir();
-            dirurl.deletefile();
-          } G_CATCH_ALL
-          {
-            if (!dirurl.is_empty())
-            {
-               dirurl.cleardir();
-               dirurl.deletefile();
-            }
-            G_RETHROW;
-          } G_ENDCATCH;
-#endif
-        } else
+        }
+        else
         {
           insert_file(furl, true, file_pos, name2id, this);
         }
