@@ -47,7 +47,9 @@
 #include "UnicodeByteStream.h"
 //#include <stdio.h>
 #include <ctype.h>
+#ifdef HAS_WCTYPE_H
 #include <wctype.h>
+#endif
 
 lt_XMLContents::lt_XMLContents(void) {}
 
