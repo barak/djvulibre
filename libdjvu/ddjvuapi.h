@@ -73,6 +73,7 @@ extern "C" {
 # define FALSE (0)
 #endif
 
+
 /* -------------------------------------------------- */
 /* DDJVU API                                          */
 /* -------------------------------------------------- */
@@ -87,6 +88,8 @@ extern "C" {
    involving multiple threads. The DDJVU API hides this
    complexity with a familiar event model.
 */
+
+#define DDJVUAPI_VERSION 14
 
 typedef struct ddjvu_context_s  ddjvu_context_t;
 typedef union  ddjvu_message_s  ddjvu_message_t;
@@ -119,7 +122,6 @@ typedef struct ddjvu_format_s   ddjvu_format_t;
    - Please browse the file format specifications 
      <"doc/djvu3changes.txt"> and <"doc/djvu2spec.djvu">.
 */
-
 
   
 
@@ -905,7 +907,7 @@ ddjvu_format_create(ddjvu_format_style_t style,
                     int nargs, unsigned int *args);
 
 
-/* ddjvu_format_set_top_to_bottom ---
+/* ddjvu_format_set_row_order ---
    Sets a flag indicating whether the rows in the pixel buffer
    are stored starting from the top or the bottom of the image.
    Default ordering starts from the bottom of the image.
@@ -913,6 +915,17 @@ ddjvu_format_create(ddjvu_format_style_t style,
 
 DDJVUAPI void
 ddjvu_format_set_row_order(ddjvu_format_t *format, int top_to_bottom);
+
+
+/* ddjvu_format_set_y_direction ---
+   Sets a flag indicating whether the y coordinates in the drawing 
+   area are oriented from bottom to top, or from top to botttom.  
+   The default is bottom to top, similar to PostScript.
+   This is the opposite of the X11 convention. */
+
+DDJVUAPI void
+ddjvu_format_set_y_direction(ddjvu_format_t *format, int top_to_bottom);
+
 
 
 /* ddjvu_format_set_ditherbits ---

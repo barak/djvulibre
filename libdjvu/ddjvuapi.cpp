@@ -1348,7 +1348,8 @@ struct DJVUNS ddjvu_format_s
   uint32_t palette[6*6*6];
   double gamma;
   char ditherbits;
-  bool toptobottom;
+  bool rtoptobottom;
+  bool ytoptobottom;
 };
 
 static ddjvu_format_t *
@@ -1365,7 +1366,8 @@ ddjvu_format_create(ddjvu_format_style_t style,
   ddjvu_format_t *fmt = new ddjvu_format_s;
   memset(fmt, 0, sizeof(ddjvu_format_t));
   fmt->style = style;  
-  fmt->toptobottom = false;
+  fmt->rtoptobottom = false;
+  fmt->ytoptobottom = false;
   fmt->gamma = 2.2;
   // Ditherbits
   fmt->ditherbits = 32;
@@ -1429,7 +1431,13 @@ ddjvu_format_create(ddjvu_format_style_t style,
 void
 ddjvu_format_set_row_order(ddjvu_format_t *format, int top_to_bottom)
 {
-  format->toptobottom = !! top_to_bottom;
+  format->rtoptobottom = !! top_to_bottom;
+}
+
+void
+ddjvu_format_set_y_direction(ddjvu_format_t *format, int top_to_bottom)
+{
+  format->ytoptobottom = !! top_to_bottom;
 }
 
 void
@@ -1538,7 +1546,7 @@ fmt_convert(GPixmap *pm, const ddjvu_format_t *fmt, char *buffer, int rowsize)
   int w = pm->columns();
   int h = pm->rows();
   // Loop on rows
-  if (fmt->toptobottom)
+  if (fmt->rtoptobottom)
     {
       for(int r=h-1; r>=0; r--, buffer+=rowsize)
         fmt_convert_row((*pm)[r], w, fmt, buffer);
@@ -1642,7 +1650,7 @@ fmt_convert(GBitmap *bm, const ddjvu_format_t *fmt, char *buffer, int rowsize)
   for (i=m; i<256; i++)
     g[i] = 0;
   // Loop on rows
-  if (fmt->toptobottom)
+  if (fmt->rtoptobottom)
     {
       for(int r=h-1; r>=0; r--, buffer+=rowsize)
         fmt_convert_row((*bm)[r], g, w, fmt, buffer);
@@ -1668,15 +1676,6 @@ fmt_dither(GPixmap *pm, const ddjvu_format_t *fmt, int x, int y)
 
 // ----------------------------------------
 
-static void
-rect2rect(const ddjvu_rect_t *r, GRect &g)
-{
-  g.xmin = r->x;
-  g.xmax = g.xmin + r->w;
-  g.ymin = r->y;
-  g.ymax = g.ymin + r->h;
-}
-
 int
 ddjvu_page_render(ddjvu_page_t *page,
                   const ddjvu_render_mode_t mode,
@@ -1692,8 +1691,29 @@ ddjvu_page_render(ddjvu_page_t *page,
       GP<GBitmap> bm;
       GRect prect;
       GRect rrect;
-      rect2rect(pagerect, prect);
-      rect2rect(renderrect, rrect);
+      if (pixelformat && pixelformat->ytoptobottom)
+        {
+          prect.xmin = pagerect->x;
+          prect.xmax = prect.xmin + pagerect->w;
+          prect.ymin = renderrect->y + renderrect->h;
+          prect.ymax = prect.ymin + pagerect->h;
+          rrect.xmin = renderrect->x;
+          rrect.xmax = rrect.xmin + renderrect->w;
+          rrect.ymin = pagerect->y + pagerect->h;
+          rrect.ymax = rrect.ymin + renderrect->h;
+        }
+      else
+        {
+          prect.xmin = pagerect->x;
+          prect.xmax = prect.xmin + pagerect->w;
+          prect.ymin = pagerect->y;
+          prect.ymax = prect.ymin + pagerect->h;
+          rrect.xmin = renderrect->x;
+          rrect.xmax = rrect.xmin + renderrect->w;
+          rrect.ymin = renderrect->y;
+          rrect.ymax = rrect.ymin + renderrect->h;
+        }
+
       DjVuImage *img = page->img;
       if (img) 
         {
