@@ -42,9 +42,9 @@ MANFILES_STD = bzz.1 c44.1 cjb2.1 cpaldjvu.1 csepdjvu.1 \
 MANFILES= ${MANFILES_STD} ${MANFILES_GUI}
 
 # (uncomment after translating nsdejavu.1.in)
-NSDEJAVU1= nsdejavu.1
+NSDEJAVU1= # nsdejavu.1
 
-all: 
+all:
 @GUI_YES@all: ${QMFILES} ${NSDEJAVU1}
 
 @GUI_YES@install: install-qm
@@ -63,7 +63,7 @@ install-qm: ${QMFILES} FORCE
 	done
 
 # Install localized man pages
-install-man: FORCE ${NSDEJAVU1}
+install-man:  FORCE ${NSDEJAVU1}
 	test ${LANG} != dummy
 	-${INSTALL} -d ${man}
 	-for n in ${MANFILES} ; do \
@@ -76,7 +76,6 @@ install-man: FORCE ${NSDEJAVU1}
 
 # Generate nsdejavu page.
 nsdejavu.1: ${srcdir}/nsdejavu.1.in
-	LC_CTYPE=ja_JP.eucjp \
 	  sed < ${srcdir}/nsdejavu.1.in > nsdejavu.1 \
 	  -e 's,LIBDIR,${libdir},' -e 's,NSDEJAVUSO,${NSDEJAVU},'
 

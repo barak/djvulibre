@@ -38,11 +38,7 @@ RANLIB = @RANLIB@
 BIN2CPP = ${top_builddir}/gui/bin2cpp/bin2cpp
 
 MOC = @MOC@
-
 LUPDATE = @LUPDATE@
-LRELEASE = @LRELEASE@
-LANGUAGES = fr_FR ja_JP de_DE
-LANGFILES= djview qt
 
 DEFS = @DEFS@
 OPTS = @OPTS@
@@ -63,7 +59,7 @@ LIBDJVU_SO = ${top_builddir}/libdjvu/libdjvulibre-${PACKAGE_VERSION}.so
 
 PROGRAM = djview
 
-all: ${PROGRAM} lrelease
+all: ${PROGRAM}
 
 CIN_SOURCES = \
  ${top_srcdir}/gui/shared/cin_data/ppm_djvu_logo.cin \
@@ -217,35 +213,14 @@ clean: FORCE
 distclean: clean 
 	-${RM} -r 2>/dev/null Makefile Makefile.i18n *.rpo ii_files
 
-# I18N
-
 lupdate: FORCE
-	for l in ${LANGUAGES} ; do \
-	  test -d ${srcdir}/i18n/$$l || ${MKDIR} ${srcdir}/i18n/$$l ;\
-	  ( echo "TRANSLATIONS=${srcdir}/i18n/$$l/djview.ts" ;\
-	    echo "SOURCES=${CPP_SOURCES}" ) > tmp.pro ;\
-	  ${LUPDATE} tmp.pro ; \
-	done
-
-lrelease: FORCE
-	@(echo -n "all: " ;\
-          for l in ${LANGUAGES} ; do \
-	    for p in ${LANGFILES} ; do \
-              echo -n " i18n/$$l/$$p.qm" ;\
-	  done ; done ;\
-	  echo "" ;\
-	  for l in ${LANGUAGES} ; do \
-	    for p in ${LANGFILES} ; do \
-	      echo  "i18n/$$l/$$p.ts: ${srcdir}/i18n/$$l/$$p.ts" ;\
-	      echo  "	cp ${srcdir}/\$$@ \$$@" ;\
-	      echo  "i18n/$$l/$$p.qm: i18n/$$l/$$p.ts";\
-	      echo  "	echo TRANSLATIONS=i18n/$$l/$$p.ts > tmp.pro";\
-	      echo  "	${LRELEASE} tmp.pro";\
-          done ; done ) > Makefile.i18n
-	-@test -d i18n || ${MKDIR} i18n
-	-@for l in ${LANGUAGES} ; do \
-	    test -d i18n/$$l || ${MKDIR} i18n/$$l; done
-	${MAKE} -f Makefile.i18n
+	for l in ${top_srcdir}/i18n/* ; do \
+	  if test -d $$l ; then \
+	    ( echo "TRANSLATIONS=$$l/djview.ts" ;\
+	      echo "SOURCES=${CPP_SOURCES}" ) > tmp.pro ;\
+	    ${LUPDATE} tmp.pro ; \
+	  fi ; true ; \
+	done 
 
 # Boilerplate
 

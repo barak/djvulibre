@@ -1,13 +1,6 @@
 These subdirectories install additional files for localized versions 
-of djvulibre.  More localization files can be found in djvu/share/osi 
-and gui/djview/i18n. Eventually we will move them here.
-
+of djvulibre.  More localization files can be found in djvu/share/osi.
 More information can be found in the Makefiles.
-
-Currently these Makefiles are not called by the main Makefile.  
-The rpm spec file calls them explicitely at install time.
-Eventually this will become part of the main Makefile.
-
 
 CREDITS:
 

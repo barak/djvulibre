@@ -20,21 +20,21 @@
 <LANGUAGE locale="downcase^american-english" src="en" />
 <LANGUAGE locale="downcase^american english" src="en" />
 <!-- French (France) -->
-<LANGUAGE locale="downcase^fr" src="fr_FR" />
-<LANGUAGE locale="downcase^fra" src="fr_FR" />
-<LANGUAGE locale="downcase^fre" src="fr_FR" />
-<LANGUAGE locale="downcase^french" src="fr_FR" />
+<LANGUAGE locale="downcase^fr" src="fr" />
+<LANGUAGE locale="downcase^fra" src="fr" />
+<LANGUAGE locale="downcase^fre" src="fr" />
+<LANGUAGE locale="downcase^french" src="fr" />
 <!-- German (Germany) -->
-<LANGUAGE locale="downcase^german" src="de_DE" />
-<LANGUAGE locale="downcase^de" src="de_DE" />
-<LANGUAGE locale="downcase^deu" src="de_DE" />
+<LANGUAGE locale="downcase^german" src="de" />
+<LANGUAGE locale="downcase^de" src="de" />
+<LANGUAGE locale="downcase^deu" src="de" />
 <!-- Japanese -->
-<LANGUAGE locale="downcase^japanese" src="ja_JP" />
-<LANGUAGE locale="downcase^jpn" src="ja_JP" />
-<LANGUAGE locale="downcase^ja" src="ja_JP" />
+<LANGUAGE locale="downcase^japanese" src="ja" />
+<LANGUAGE locale="downcase^jpn" src="ja" />
+<LANGUAGE locale="downcase^ja" src="ja" />
 <!-- Chinese -->
-<LANGUAGE locale="downcase^zh" src="Chinese_PRC" />
-<LANGUAGE locale="downcase^chinese" src="Chinese_PRC" />
+<LANGUAGE locale="downcase^zh" src="zh" />
+<LANGUAGE locale="downcase^chinese" src="zh" />
 </BODY>
 </DjVuLanguages>
 

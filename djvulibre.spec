@@ -55,12 +55,6 @@ make
 rm -rf %{buildroot}
 %makeinstall
 
-# Apply i18n overlays
-for lang in ja fr de zh ; do \
-  test -d %{buildroot}%{mandir}/$lang || mkdir %{buildroot}%{mandir}/$lang ; \
-  test -r i18n/$lang/Makefile && %makeinstall -C i18n/$lang ; \
-done || true
-
 # Quick fix to stop ldconfig from complaining
 find %{buildroot}%{_libdir} -name "*.so*" -exec chmod 755 {} \;
 
@@ -68,10 +62,8 @@ find %{buildroot}%{_libdir} -name "*.so*" -exec chmod 755 {} \;
 rm -rf doc/CVS 2>/dev/null || :
 
 
-
 %clean
 rm -rf %{buildroot}
-
 
 
 %post 
@@ -85,7 +77,6 @@ rm -rf %{buildroot}
  fi ; done ) 2>/dev/null || true
 
 
-
 %postun 
 /sbin/ldconfig
 # HACK: Remove links to nsdejavu.so in all mozilla dirs
@@ -97,7 +88,6 @@ rm -rf %{buildroot}
   fi ; done ; fi ) 2>/dev/null || true
 
 
-
 %files
 %defattr(-, root, root)
 %doc README COPYRIGHT COPYING INSTALL NEWS TODO doc
@@ -107,18 +97,18 @@ rm -rf %{buildroot}
 %{_datadir}/djvu/languages.xml
 %{_datadir}/djvu/osi/en
 %{_mandir}/man?/*
-%lang(ja) %{_datadir}/djvu/osi/ja_JP
+%lang(ja) %{_datadir}/djvu/osi/ja*
 %lang(ja) %{_mandir}/ja*
-%lang(fr) %{_datadir}/djvu/osi/fr_FR
+%lang(fr) %{_datadir}/djvu/osi/fr*
 %lang(fr) %{_mandir}/fr*
-%lang(de) %{_datadir}/djvu/osi/de_DE
+%lang(de) %{_datadir}/djvu/osi/de*
 %lang(de) %{_mandir}/de*
-%lang(zh) %{_datadir}/djvu/osi/Chinese_PRC
+%lang(zh) %{_datadir}/djvu/osi/zh*
 %lang(zh) %{_mandir}/zh*
 
 %changelog
 * Wed Nov  5 2003 Leon Bottou <leon@bottou.org> 3.5.12-3
-- begin support for i18n files.
+- support for i18n
 - rename symlink in mozilla plugin dirs.
 * Mon Jul  7 2003 Leon Bottou <leon@bottou.org> 3.5.12-1
 * Thu Apr 24 2003 Leon Bottou <leon@bottou.org> 3.5.11-1

@@ -186,6 +186,40 @@ AC_SUBST(GUI_YES)
 AC_SUBST(GUI_NO)   
 
 
+# Check compilation of i18n files.
+AC_ARG_ENABLE(i18n,
+   AC_HELP_STRING([--enable-i18n],
+                  [enable compilation of locales (default:all).]),
+   [ac_enable_i18n=$enableval], 
+   [ac_enable_i18n=all] ) 
+if test "$ac_enable_i18n" != xno ; then
+   I18N_YES=''
+   I18N_NO='#'
+   LINGUAS=
+   if test "$ac_enable_i18n" = all ; then
+     for n in $srcdir/i18n/* ; do
+         if test -r $n/Makefile.in ; then 
+             LINGUAS="$LINGUAS `basename $n`"
+         fi
+     done
+   else
+     for n in $ac_enable_i18n ; do
+         if test -r $srcdir/i18n/$n/Makefile.in ; then
+             LINGUAS="$LINGUAS $n"
+         fi
+     done
+   fi
+else
+   I18N_YES='#'
+   I18N_NO=''
+fi
+AC_SUBST(LINGUAS)
+AC_SUBST(I18N_YES)
+AC_SUBST(I18N_NO)   
+
+
+
+
 # ----------------------------------------
 # Extra
 # ----------------------------------------
@@ -214,9 +248,10 @@ AC_SUBST(SHARED_NO)
 # Work around broken compilers with the famous LPR0 bug
 if test x$ac_shared_libdjvu != xno && test x$GXX = xyes; then
     AC_MSG_CHECKING([if $CXX has the LPR0 bug])
-    echo 'extern "C" { inline int sqr(int x)throw(){return x*x;}}int main(){}' \
+    echo 'extern "C"{inline int sqr(int x)throw(){return x*x;}}int main(){}' \
         > conftest.cc
-    if ${CXX} -fPIC ${OPTS} conftest.cc -o conftest >/dev/null 2>/dev/null ; then
+    if ${CXX} -fPIC ${OPTS} conftest.cc -o conftest \
+        > /dev/null 2> /dev/null ; then
         AC_MSG_RESULT([no])
     else
         AC_MSG_RESULT([yes])
@@ -232,7 +267,7 @@ if test x$GXX != xyes ; then
   fi
 else
   cxxver="`$CXX --version | sed -e 's/^gcc-//' -e 's/^egcs-//'`"
-  # The line above does not work with gcc greater than 3...
+  # BUG: The line above does not work with gcc greater than 3...
   action=none
   case "$cxxver" in
 changequote(<<, >>)dnl          
@@ -341,8 +376,10 @@ AC_CONFIG_FILES(gui/Makefile)
 AC_CONFIG_FILES(gui/bin2cpp/Makefile)
 AC_CONFIG_FILES(gui/djview/Makefile)
 AC_CONFIG_FILES(gui/nsdejavu/Makefile)
-# L18N overlays
+AC_CONFIG_FILES(i18n/Makefile)
 AC_CONFIG_FILES(i18n/ja/Makefile)
+AC_CONFIG_FILES(i18n/de/Makefile)
+AC_CONFIG_FILES(i18n/fr/Makefile)
 # Go
 AC_OUTPUT
 
