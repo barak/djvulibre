@@ -90,6 +90,7 @@ extern "C" {
 
 typedef struct ddjvu_context_s  ddjvu_context_t;
 typedef union  ddjvu_message_s  ddjvu_message_t;
+typedef struct ddjvu_job_s  ddjvu_job_t;
 typedef struct ddjvu_document_s ddjvu_document_t;
 typedef struct ddjvu_page_s     ddjvu_page_t;
 typedef struct ddjvu_format_s   ddjvu_format_t;
@@ -111,10 +112,7 @@ typedef struct ddjvu_format_s   ddjvu_format_t;
 */
 
 
-
-
-
-   
+  
 
 /* -------------------------------------------------- */
 /* DDJVU_CONTEXT_T                                    */
@@ -148,7 +146,6 @@ ddjvu_context_release(ddjvu_context_t *context);
 
 /* ------- CACHE ------- */
 
-
 /* ddjvu_cache_set_size ---
    Sets the maximum size of the cache of decoded page data.
    The argument is expressed in bytes. */
@@ -172,13 +169,13 @@ DDJVUAPI void
 ddjvu_cache_clear(ddjvu_context_t *context);
 
 
-/* ------- MESSAGES ------- */
 
+/* ------- MESSAGE QUEUE ------- */
 
 /* ddjvu_message_peek ---
    Returns a pointer to the next DDJVU message.
    This function returns 0 if no message is available.
-   It never removes a message from the queue. */
+   It does not remove the message from the queue. */
 
 DDJVUAPI ddjvu_message_t *
 ddjvu_message_peek(ddjvu_context_t *context);
@@ -187,17 +184,17 @@ ddjvu_message_peek(ddjvu_context_t *context);
 /* ddjvu_message_wait ---
    Returns a pointer to the next DDJVU message.
    This function waits until a message is available.
-   It never removes a message from the queue. */
+   It does not remove the message from the queue. */
 
 DDJVUAPI ddjvu_message_t *
 ddjvu_message_wait(ddjvu_context_t *context);
 
 
 /* ddjvu_message_pop ---
-   Removes the nest message from the queue.
+   Removes one message from the queue.
    This function must be called after processing the message.
    Pointers returned by previous calls to <ddjvu_message_peek> 
-   or <ddjvu_message_wait> might no longer be valid after 
+   or <ddjvu_message_wait> are no longer valid after 
    calling <ddjvu_message_pop>. */
 
 DDJVUAPI void
@@ -206,11 +203,11 @@ ddjvu_message_pop(ddjvu_context_t *context);
 
 /* ddjvu_message_set_callback ---
    Defines a callback function invoked whenever
-   a new message is posted to the DDJVU message queue,
+   a new message is posted to the ddjvuapi message queue,
    and returns a pointer to the previous callback function.
    This callback function can be called at any time
    while other code is executing. It should simply signal
-   the main application event loop that new DDJVU messages
+   the main application event loop that new ddjvuapi messages
    are available.  Under WIN32, this is usually achieved
    by posting a user window message.  Under UNIX, this is
    usually achieved using a pipe: the callback writes 
@@ -227,7 +224,76 @@ ddjvu_message_set_callback(ddjvu_context_t *context,
                            void *closure);
 
 
-/* ------- MESSAGES ------- */
+
+/* -------------------------------------------------- */
+/* DDJVU_JOB_T                                        */
+/* -------------------------------------------------- */
+
+
+/* Many essential ddjvuapi functions initiate asynchronous operations. 
+   These "jobs" run in seperate threads and report their
+   progress by posting messages into the ddjvu context event queue. 
+   Jobs are sometimes represented by a ddjvu_job_t object. */
+
+/* ddjvu_job_status ---
+   Returns the status of the specified job. */
+
+typedef enum {
+  DDJVU_JOB_NOTSTARTED, /* operation was not even started */
+  DDJVU_JOB_STARTED,    /* operation is in progress */
+  DDJVU_JOB_OK,         /* operation terminated successfully */
+  DDJVU_JOB_FAILED,     /* operation failed because of an error */
+  DDJVU_JOB_STOPPED     /* operation was interrupted by user */
+} ddjvu_status_t;
+
+DDJVUAPI ddjvu_status_t
+ddjvu_job_status(ddjvu_job_t *job);
+
+#define ddjvu_job_done(job) \
+    (ddjvu_job_status(job) >= DDJVU_JOB_OK)
+#define ddjvu_job_error(job) \
+    (ddjvu_job_status(job) >= DDJVU_JOB_FAILED)
+
+
+/* ddjvu_job_stop ---
+   Attempts to cancel the specified job.
+   This is a best effort function. 
+   There no guarantee that the job will 
+   actually stop.
+ */
+
+DDJVUAPI void
+ddjvu_job_stop(ddjvu_job_t *job);
+
+
+/* ddjvu_job_set_user_data ---
+   ddjvu_job_get_user_data ---
+   Each job can store an arbitray pointer
+   that callers can use for any purpose. These two functions
+   provide for accessing or setting this pointer. */
+
+DDJVUAPI void
+ddjvu_job_set_user_data(ddjvu_job_t *job, void *userdata);
+
+DDJVUAPI void *
+ddjvu_job_get_user_data(ddjvu_job_t *job);
+
+
+/* ddjvu_job_release ---
+   Releases a reference to a job object.
+   This will not cause the job to stop executing.
+   The calling program should no longer reference this object.
+   The object itself will be destroyed as soon as no other object
+   or thread needs it. */
+
+DDJVUAPI void
+ddjvu_job_release(ddjvu_job_t *job);
+
+
+
+/* -------------------------------------------------- */
+/* DDJVU_MESSAGE_T                                    */
+/* -------------------------------------------------- */
 
 
 /* ddjvu_message_t ---
@@ -253,7 +319,7 @@ typedef enum {
   DDJVU_REDISPLAY,
   DDJVU_CHUNK,
   DDJVU_THUMBNAIL,
-  DDJVU_JOBINFO,
+  DDJVU_PROGRESS,
 } ddjvu_message_tag_t;
 
 
@@ -270,6 +336,7 @@ typedef struct ddjvu_message_any_s {
   ddjvu_context_t      *context;
   ddjvu_document_t     *document;
   ddjvu_page_t         *page;
+  ddjvu_job_t          *job;
 } ddjvu_message_any_t; 
 
 
@@ -312,7 +379,7 @@ struct ddjvu_message_info_s {   /* ddjvu_message_t::m_info */
 /* ddjvu_document_create ---
    Creates a decoder for a DjVu document and starts
    decoding.  This function returns immediately.  The
-   decoder will later generate messages to request the raw
+   decoding job then generates messages to request the raw
    data and to indicate the state of the decoding process.
 
    Argument <url> specifies an optional URL for the document.  
@@ -326,10 +393,10 @@ struct ddjvu_message_info_s {   /* ddjvu_message_t::m_info */
    argument <url> is not the null pointer.
 
    It is important to understand that the URL is not used to
-   access the data.  The document will generate <m_newstream>
-   messages to indicate which data it needs when it needs it.  
-   The caller must then provide the raw data using
-   <ddjvu_stream_write> and <ddjvu_stream_close>.
+   access the data.  The document generates <m_newstream>
+   messages to indicate which data is needed.  The caller must 
+   then provide the raw data using <ddjvu_stream_write> 
+   and <ddjvu_stream_close>.
 
    Localized characters in argument <url> should be in 
    urlencoded utf-8 (like "%2A"). What is happening for non 
@@ -351,17 +418,23 @@ ddjvu_document_create_by_filename(ddjvu_context_t *context,
                                   int cache);
 
 
+/* ddjvu_document_job ---
+   Access the job object in charge of decoding the document header. 
+   In fact <ddjvu_document_t> is a subclass of <ddjvu_job_t>
+   and this function is a type cast. */
+
+DDJVUAPI ddjvu_job_t *
+ddjvu_document_job(ddjvu_document_t *document);
+
+
 /* ddjvu_document_release ---
    Release a reference to a <ddjvu_document_t> object.
    The calling program should no longer reference this object.  
    The object itself will be destroyed as soon as no other object
    or thread needs it. */
  
-DDJVUAPI void
-ddjvu_document_release(ddjvu_document_t *document);
-
-
-/* ------- USERDATA ------- */
+#define ddjvu_document_release(document) \
+   ddjvu_job_release(ddjvu_document_job(document))
 
 
 /* ddjvu_document_set_user_data ---
@@ -370,12 +443,21 @@ ddjvu_document_release(ddjvu_document_t *document);
    that callers can use for any purpose. These two functions
    provide for accessing or setting this pointer. */
 
-DDJVUAPI void
-ddjvu_document_set_user_data(ddjvu_document_t *document,
-                             void *userdata);
+#define ddjvu_document_set_user_data(document,userdata) \
+   ddjvu_job_set_user_data(ddjvu_document_job(document),userdata)
+#define ddjvu_document_get_user_data(document) \
+   ddjvu_job_get_user_data(ddjvu_document_job(document))
 
-DDJVUAPI void *
-ddjvu_document_get_user_data(ddjvu_document_t *document);
+/* ddjvu_document_decoding_status ---
+   ddjvu_document_decoding_done, ddjvu_document_decoding_error ---
+   This function returns the status of the document header decoding job */
+   
+#define ddjvu_document_decoding_status(document) \
+   ddjvu_job_status(ddjvu_document_job(document))
+#define ddjvu_document_decoding_done(page) \
+    (ddjvu_document_decoding_status(page) >= DDJVU_JOB_OK)
+#define ddjvu_document_decoding_error(page) \
+    (ddjvu_document_decoding_status(page) >= DDJVU_JOB_FAILED)
 
 
 /* ------- STREAMS ------- */
@@ -459,27 +541,6 @@ struct ddjvu_message_docinfo_s {
   ddjvu_message_any_t  any;
 };
 
-/* ddjvu_document_decoding_status ---
-   This function returns the status of the document header
-   decoding process. */
-   
-typedef enum {
-  DDJVU_OPERATION_NOTSTARTED, /* operation was not even started */
-  DDJVU_OPERATION_STARTED,    /* operation is in progress */
-  DDJVU_OPERATION_OK,         /* operation terminated successfully */
-  DDJVU_OPERATION_FAILED,     /* operation failed because of an error */
-  DDJVU_OPERATION_STOPPED     /* operation was interrupted by user */
-} ddjvu_status_t;
-
-DDJVUAPI ddjvu_status_t
-ddjvu_document_decoding_status(ddjvu_document_t *doc);
-
-#define ddjvu_document_decoding_done(page) \
-    (ddjvu_document_decoding_status(page) >= DDJVU_OPERATION_OK)
-
-#define ddjvu_document_decoding_error(page) \
-    (ddjvu_document_decoding_status(page) >= DDJVU_OPERATION_FAILED)
-
 
 /* ddjvu_document_get_type ---
    Returns the type of a DjVu document.
@@ -506,6 +567,8 @@ ddjvu_document_get_type(ddjvu_document_t *document);
    
 DDJVUAPI int
 ddjvu_document_get_pagenum(ddjvu_document_t *document);
+
+
 
 
 /* -------------------------------------------------- */
@@ -538,17 +601,23 @@ ddjvu_page_create_by_pageid(ddjvu_document_t *document,
                             const char *pageid);
 
 
+/* ddjvu_page_job ---
+   Access the job object in charge of decoding the document header. 
+   In fact <ddjvu_page_t> is a subclass of <ddjvu_job_t>
+   and this function is a type cast. */
+
+DDJVUAPI ddjvu_job_t *
+ddjvu_page_job(ddjvu_page_t *page);
+
+
 /* ddjvu_page_release ---
    Release a reference to a <ddjvu_page_t> object.
    The calling program should no longer reference this object.
    The object itself will be destroyed as soon as no other object
    or thread needs it. */
 
-DDJVUAPI void
-ddjvu_page_release(ddjvu_page_t *page);
-
-
-/* ------- USERDATA ------- */
+#define ddjvu_page_release(page) \
+  ddjvu_job_release(ddjvu_page_job(page))
 
 
 /* ddjvu_page_set_user_data ---
@@ -557,12 +626,23 @@ ddjvu_page_release(ddjvu_page_t *page);
    that callers can use for any purpose. These two functions
    provide for accessing or setting this pointer. */
 
-DDJVUAPI void
-ddjvu_page_set_user_data(ddjvu_page_t *page,
-                         void *userdata);
+#define ddjvu_page_set_user_data(page,userdata) \
+   ddjvu_job_set_user_data(ddjvu_page_job(page),userdata)
+#define ddjvu_page_get_user_data(page) \
+   ddjvu_job_get_user_data(ddjvu_page_job(page))
 
-DDJVUAPI void *
-ddjvu_page_get_user_data(ddjvu_page_t *page);
+/* ddjvu_page_decoding_status ---
+   ddjvu_page_decoding_done ---
+   ddjvu_page_decoding_error ---
+   These calls return the status of the page decoding job. */
+   
+#define ddjvu_page_decoding_status(page) \
+   ddjvu_job_status(ddjvu_page_job(page))
+#define ddjvu_page_decoding_done(page) \
+    (ddjvu_page_decoding_status(page) >= DDJVU_JOB_OK)
+#define ddjvu_page_decoding_error(page) \
+    (ddjvu_page_decoding_status(page) >= DDJVU_JOB_FAILED)
+
 
 /* ------- MESSAGES ------- */
 
@@ -610,20 +690,6 @@ struct ddjvu_message_chunk_s {     /* ddjvu_message_t::m_chunk */
 
 
 /* ------- QUERIES ------- */
-
-/* ddjvu_page_decoding_status ---
-   This function returns the status of the page 
-   decoding process. */
-
-DDJVUAPI ddjvu_status_t
-ddjvu_page_decoding_status(ddjvu_page_t *page);
-
-#define ddjvu_page_decoding_done(page) \
-    (ddjvu_page_decoding_status(page) >= DDJVU_OPERATION_OK)
-
-#define ddjvu_page_decoding_error(page) \
-    (ddjvu_page_decoding_status(page) >= DDJVU_OPERATION_FAILED)
-
 
 /* ddjvu_page_get_width ---
    Returns the page width in pixels. Calling this function 
@@ -790,6 +856,8 @@ ddjvu_page_render(ddjvu_page_t *page,
                   char *imagebuffer );
 
 
+
+
 /* -------------------------------------------------- */
 /* DJVU_FORMAT_T                                      */
 /* -------------------------------------------------- */
@@ -818,7 +886,7 @@ typedef enum {
    - When style is <RGBMASK*>, argument <nargs> must be <3>
      and array <args> contains three contiguous bit masks for 
      the red, green, and blue components of each pixel.
-   - When style is <PALETTE*>, argument <nargs> must ve <216>
+   - When style is <PALETTE*>, argument <nargs> must be <216>
      and array <args> contains the 6*6*6 entries of a web
      color cube.
    - Otherwise <nargs> must be <0>. */
@@ -827,14 +895,16 @@ DDJVUAPI ddjvu_format_t *
 ddjvu_format_create(ddjvu_format_style_t style, 
                     int nargs, unsigned int *args);
 
+
 /* ddjvu_format_set_top_to_bottom ---
    Sets a flag indicating whether the rows in the pixel buffer
    are stored starting from the top or the bottom of the image.
-   Default ordering start from the bottom of the image.
-   This is the opposite of X11 for instance. */
+   Default ordering starts from the bottom of the image.
+   This is the opposite of the X11 convention. */
 
 DDJVUAPI void
 ddjvu_format_set_row_order(ddjvu_format_t *format, int top_to_bottom);
+
 
 /* ddjvu_format_set_ditherbits ---
    Specifies the final depth of the image on the screen.
@@ -843,6 +913,7 @@ ddjvu_format_set_row_order(ddjvu_format_t *format, int top_to_bottom);
 
 DDJVUAPI void
 ddjvu_format_set_ditherbits(ddjvu_format_t *format, int bits);
+
 
 /* ddjvu_format_set_gamma ---
    Sets the gamma of the display for which the pixels are
@@ -856,12 +927,11 @@ ddjvu_format_set_gamma(ddjvu_format_t *format, double gamma);
 
 /* ddjvu_format_release ---
    Release a reference to a <ddjvu_format_t> object.
-   The calling program should no longer reference this object.  
-   The object itself will be destroyed as soon as no other object
-   or thread needs it. */
+   The calling program should no longer reference this object. */
 
 DDJVUAPI void
 ddjvu_format_release(ddjvu_format_t *format);
+
 
 
 
@@ -869,20 +939,19 @@ ddjvu_format_release(ddjvu_format_t *format);
 /* THUMBNAILS                                         */
 /* -------------------------------------------------- */
 
+
 /* ddjvu_thumbnail_status ---
    Determine whether a thumbnail is available for page <pagenum>.
    Calling this function with non zero argument <start> initiates
-   a thumbnail calculation when no thumbnail is available.
-   The completion of the calculation is signalled by 
-   a subsequent <m_thumbnail> message. */
+   a thumbnail calculation job. The completion of the job
+   is signalled by a subsequent <m_thumbnail> message. */
 
 DDJVUAPI ddjvu_status_t
 ddjvu_thumbnail_status(ddjvu_document_t *document, int pagenum, int start);
 
 
 /* ddjvu_message_t::m_thumbnail ---
-   This message is sent when additional thumbnails 
-   are available. */
+   This message is sent when additional thumbnails are available. */
 
 struct ddjvu_message_thumbnail_s { /* ddjvu_message_t::m_thumbnail */
   ddjvu_message_any_t  any;
@@ -909,29 +978,53 @@ ddjvu_thumbnail_render(ddjvu_document_t *document, int pagenum,
                        char *imagebuffer);
 
 
-/* -------------------------------------------------- */
-/* PRINTING                                           */
-/* -------------------------------------------------- */
-
-/* To be defined ... */
 
 /* -------------------------------------------------- */
-/* SAVING                                             */
+/* SAVE AND PRINT JOBS                                */
 /* -------------------------------------------------- */
 
-/* To be defined ... */
+#ifndef DDJVU_WITHOUT_STDIO
+# include <stdlib.h>
+# include <stdio.h>
+#else 
+# define FILE void
+#endif
+
+/* Not yet implemented */
+
+struct ddjvu_message_progress_s {
+  ddjvu_message_any_t any;
+  ddjvu_status_t status;
+  int percent;
+};
+
+
+/* Options like ddjvu ? */
+DDJVUAPI ddjvu_job_t *
+ddjvu_document_export(ddjvu_document_t *document, FILE *output,
+                      int optc, const char * const * optv);
+
+
+/* Options like djvups ? */
+DDJVUAPI ddjvu_job_t *
+ddjvu_document_print(ddjvu_document_t *document, FILE *output,
+                     int optc, const char * const * optv);
+
+
+/* Options to be defined */
+DDJVUAPI ddjvu_job_t *
+ddjvu_document_save(ddjvu_document_t *document, FILE *output, 
+                    int optc, const char * const * optv);
+
+
 
 /* -------------------------------------------------- */
-/* ANNOTATIONS                                        */
+/* ANNOTATIONS AND HIDDEN_TEXT                        */
 /* -------------------------------------------------- */
 
-/* To be defined ... */
+/* Not yet defined */
+/* Not yet implemented */
 
-/* -------------------------------------------------- */
-/* HIDDEN TEXT                                        */
-/* -------------------------------------------------- */
-
-/* To be defined ... */
 
 /* -------------------------------------------------- */
 /* DJVU_MESSAGE_T                                     */

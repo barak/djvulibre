@@ -67,12 +67,13 @@
 
 #ifdef HAVE_NAMESPACES
 namespace DJVU {
+  struct ddjvu_message_p;
+  struct ddjvu_thumbnail_p;
   struct ddjvu_context_s;
+  struct ddjvu_job_s;
   struct ddjvu_document_s;
   struct ddjvu_page_s;
   struct ddjvu_format_s;
-  struct ddjvu_message_p;
-  struct ddjvu_thumbnail_p;
 }
 using namespace DJVU;
 # define DJVUNS DJVU::
@@ -120,6 +121,15 @@ struct DJVUNS ddjvu_message_p : public GPEnabled
   ddjvu_message_p() { memset(&p, 0, sizeof(p)); }
 };
 
+struct DJVUNS ddjvu_thumbnail_p : public GPEnabled
+{
+  ddjvu_document_t *document;
+  int pagenum;
+  GTArray<char> data;
+  GP<DataPool> pool;
+  static void callback(void *);
+}; 
+
 
 // ----------------------------------------
 
@@ -134,19 +144,35 @@ struct DJVUNS ddjvu_context_s : public GPEnabled
   void *callbackarg;
 };
 
-struct DJVUNS ddjvu_document_s : public DjVuPort
+struct DJVUNS ddjvu_job_s : public DjVuPort
 {
-  GP<ddjvu_context_s> myctx;
-  GP<DjVuDocument> doc;
   GMonitor monitor;
+  void *userdata;
+  GP<ddjvu_context_s> myctx;
+  GP<ddjvu_document_s> mydoc;
+  // virtual port functions:
+  virtual bool inherits(const GUTF8String&);
+  virtual bool notify_error(const DjVuPort*, const GUTF8String&);  
+  virtual bool notify_status(const DjVuPort*, const GUTF8String&);
+  // default implementation of virtual job functions:
+  virtual ddjvu_status_t status() {return DDJVU_JOB_NOTSTARTED;}
+  virtual void release() {}
+  virtual void stop() {}
+};
+
+struct DJVUNS ddjvu_document_s : public ddjvu_job_s
+{
+  GP<DjVuDocument> doc;
   GPMap<int,DataPool> streams;
   GPMap<int,ddjvu_thumbnail_p> thumbnails;
   int streamid;
-  void *userdata;
   bool fileflag;
   bool urlflag;
   bool docinfoflag;
-  // virtual port functions
+  // virtual job functions:
+  virtual ddjvu_status_t status();
+  virtual void release();
+  // virtual port functions:
   virtual bool inherits(const GUTF8String&);
   virtual bool notify_error(const DjVuPort*, const GUTF8String&);  
   virtual bool notify_status(const DjVuPort*, const GUTF8String&);
@@ -154,13 +180,15 @@ struct DJVUNS ddjvu_document_s : public DjVuPort
   virtual GP<DataPool> request_data(const DjVuPort*, const GURL&);
 };
 
-struct DJVUNS ddjvu_page_s : public DjVuPort
+struct DJVUNS ddjvu_page_s : public ddjvu_job_s
 {
-  GP<ddjvu_document_s> mydoc;
   GP<DjVuImage> img;
-  void *userdata;
+  ddjvu_job_t *job;
   bool pageinfoflag;
-  // virtual port functions
+  // virtual job functions:
+  virtual ddjvu_status_t status();
+  virtual void release();
+  // virtual port functions:
   virtual bool inherits(const GUTF8String&);
   virtual bool notify_error(const DjVuPort*, const GUTF8String&);  
   virtual bool notify_status(const DjVuPort*, const GUTF8String&);
@@ -226,35 +254,50 @@ xstr(const GUTF8String &u)
 // Fill a message head
 static ddjvu_message_any_t 
 xhead(ddjvu_message_tag_t tag,
-      ddjvu_context_t *ctx)
+      ddjvu_context_t *context)
 {
   ddjvu_message_any_t any;
   any.tag = tag;
-  any.page = 0;
+  any.context = context;
   any.document = 0;
-  any.context = ctx;
-  return any;
-}
-static ddjvu_message_any_t 
-xhead(ddjvu_message_tag_t tag,
-      ddjvu_document_t *doc)
-{
-  ddjvu_message_any_t any;
-  any.tag = tag;
   any.page = 0;
-  any.document = doc;
-  any.context = any.document->myctx;
+  any.job = 0;
   return any;
 }
 static ddjvu_message_any_t 
 xhead(ddjvu_message_tag_t tag,
-      ddjvu_page_t *pag)
+      ddjvu_job_t *job)
 {
   ddjvu_message_any_t any;
   any.tag = tag;
-  any.page = pag;
-  any.document = any.page->mydoc;
-  any.context = any.document->myctx;
+  any.context = job->myctx;
+  any.document = job->mydoc;
+  any.page = 0;
+  any.job = job;
+  return any;
+}
+static ddjvu_message_any_t 
+xhead(ddjvu_message_tag_t tag,
+      ddjvu_document_t *document)
+{
+  ddjvu_message_any_t any;
+  any.tag = tag;
+  any.context = document->myctx;
+  any.document = document;
+  any.page = 0;
+  any.job = document;
+  return any;
+}
+static ddjvu_message_any_t 
+xhead(ddjvu_message_tag_t tag,
+      ddjvu_page_t *page)
+{
+  ddjvu_message_any_t any;
+  any.tag = tag;
+  any.context = page->myctx;
+  any.document = page->mydoc;
+  any.page = page;
+  any.job = page->job;
   return any;
 }
 
@@ -321,7 +364,7 @@ msg_push(const ddjvu_message_any_t &head,
     ctx->monitor.broadcast();
   }
   if (ctx->callbackfun) 
-    (ctx->callbackfun)(ctx, ctx->callbackarg);
+    (*ctx->callbackfun)(ctx, ctx->callbackarg);
 }
 
 static void
@@ -473,14 +516,105 @@ ddjvu_cache_clear(ddjvu_context_t *ctx)
 // ----------------------------------------
 
 
+bool
+ddjvu_job_s::inherits(const GUTF8String &classname)
+{
+  return (classname == "ddjvu_job_s") 
+    || DjVuPort::inherits(classname);
+}
+
+bool 
+ddjvu_job_s::notify_error(const DjVuPort *, const GUTF8String &m)
+{
+  msg_push(xhead(DDJVU_ERROR, this), msg_prep_error(m));
+  return true;
+}
+
+bool 
+ddjvu_job_s::notify_status(const DjVuPort *p, const GUTF8String &m)
+{
+  msg_push(xhead(DDJVU_INFO, this), msg_prep_info(m));
+  return true;
+}
+
+
+void
+ddjvu_job_release(ddjvu_job_t *job)
+{
+  G_TRY
+    {
+      if (!job)
+        return;
+      job->release();
+      job->userdata = 0;
+      unref(job);
+    }
+  G_CATCH(ex)
+    {
+    }
+  G_ENDCATCH;
+}
+
+ddjvu_status_t
+ddjvu_job_status(ddjvu_job_t *job)
+{
+  G_TRY
+    {
+      if (! job)
+        return DDJVU_JOB_NOTSTARTED;
+      return job->status();
+    }
+  G_CATCH(ex)
+    {
+      ERROR(job, ex);
+    }
+  G_ENDCATCH;
+  return DDJVU_JOB_FAILED;
+}
+
+void
+ddjvu_job_stop(ddjvu_job_t *job)
+{
+  G_TRY
+    {
+      if (job)
+        job->stop();
+    }
+  G_CATCH(ex)
+    {
+      ERROR(job, ex);
+    }
+  G_ENDCATCH;
+}
+
+void
+ddjvu_job_set_user_data(ddjvu_job_t *job, void *userdata)
+{
+  if (job)
+    job->userdata = userdata;
+}
+
+void *
+ddjvu_job_get_user_data(ddjvu_job_t *job)
+{
+  if (job)
+    return job->userdata;
+  return 0;
+}
+
+
+// ----------------------------------------
+
+
 ddjvu_message_t *
 ddjvu_message_peek(ddjvu_context_t *ctx)
 {
   G_TRY
     {
       GMonitorLock(&ctx->monitor);
-      if (ctx->mlist.size())
-        return &ctx->mlist[ctx->mlist]->p;
+      GPosition p = ctx->mlist;
+      if (p) 
+        return &ctx->mlist[p]->p;
     }
   G_CATCH(ex)
     {
@@ -497,7 +631,9 @@ ddjvu_message_wait(ddjvu_context_t *ctx)
       GMonitorLock(&ctx->monitor);
       while (! ctx->mlist.size())
         ctx->monitor.wait();
-      return &ctx->mlist[ctx->mlist]->p;
+      GPosition p = ctx->mlist;
+      if (p) 
+        return &ctx->mlist[p]->p;
     }
   G_CATCH(ex)
     {
@@ -535,27 +671,56 @@ ddjvu_message_set_callback(ddjvu_context_t *ctx,
 
 // ----------------------------------------
 
+void
+ddjvu_document_s::release()
+{
+  GPosition p;
+  GMonitorLock lock(&monitor);
+  doc = 0;
+  for (p=thumbnails; p; ++p)
+    {
+      ddjvu_thumbnail_p *thumb = thumbnails[p];
+      if (thumb->pool)
+        thumb->pool->del_trigger(ddjvu_thumbnail_p::callback, (void*)thumb);
+    }
+  for (p = streams; p; ++p)
+    streams[p]->stop();
+}
+
+ddjvu_status_t
+ddjvu_document_s::status()
+{
+  if (!doc)
+    return DDJVU_JOB_NOTSTARTED;
+  long flags = doc->get_doc_flags();
+  if (flags & DjVuDocument::DOC_INIT_OK)
+    return DDJVU_JOB_OK;
+  else if (flags & DjVuDocument::DOC_INIT_FAILED)
+    return DDJVU_JOB_FAILED;
+  return DDJVU_JOB_STARTED;
+}
 
 bool
 ddjvu_document_s::inherits(const GUTF8String &classname)
 {
-  return (classname == "ddjvu_document_s");
+  return (classname == "ddjvu_document_s")
+    || ddjvu_job_s::inherits(classname);
 }
 
 bool 
 ddjvu_document_s::notify_error(const DjVuPort *, const GUTF8String &m)
 {
-  if (!doc) return 0;
+  if (!doc) return false;
   msg_push(xhead(DDJVU_ERROR, this), msg_prep_error(m));
-  return 1;
+  return true;
 }
  
 bool 
 ddjvu_document_s::notify_status(const DjVuPort *p, const GUTF8String &m)
 {
-  if (!doc) return 0;
+  if (!doc) return false;
   msg_push(xhead(DDJVU_INFO, this), msg_prep_info(m));
-  return 1;
+  return true;
 }
 
 void 
@@ -630,6 +795,8 @@ ddjvu_document_create(ddjvu_context_t *ctx,
       d->fileflag = false;
       d->docinfoflag = false;
       d->myctx = ctx;
+      d->mydoc = 0;
+      d->userdata = 0;
       d->doc = DjVuDocument::create_noinit();
       if (url)
         {
@@ -675,6 +842,8 @@ ddjvu_document_create_by_filename(ddjvu_context_t *ctx,
       d->urlflag = false;
       d->docinfoflag = false;
       d->myctx = ctx;
+      d->mydoc = 0;
+      d->userdata = 0;
       d->doc = DjVuDocument::create_noinit();
       d->doc->start_init(gurl, d, xcache);
     }
@@ -689,42 +858,10 @@ ddjvu_document_create_by_filename(ddjvu_context_t *ctx,
   return d;
 }
 
-void
-ddjvu_document_release(ddjvu_document_t *document)
+ddjvu_job_t *
+ddjvu_document_job(ddjvu_document_t *document)
 {
-  G_TRY
-    {
-      if (document)
-        {
-          document->userdata = 0;
-          document->doc = 0;
-          unref(document);
-        }
-    }
-  G_CATCH(ex)
-    {
-    }
-  G_ENDCATCH;
-}
-
-
-// ----------------------------------------
-
-
-void
-ddjvu_document_set_user_data(ddjvu_document_t *doc,
-                             void *userdata)
-{
-  if (doc)
-    doc->userdata = userdata;
-}
-
-void *
-ddjvu_document_get_user_data(ddjvu_document_t *doc)
-{
-  if (doc)
-    return doc->userdata;
-  return 0;
+  return document;
 }
 
 
@@ -786,31 +923,6 @@ ddjvu_stream_close(ddjvu_document_t *doc,
 // ----------------------------------------
 
 
-ddjvu_status_t
-ddjvu_document_decoding_status(ddjvu_document_t *document)
-{
-  G_TRY
-    {
-      DjVuDocument *doc = document->doc;
-      if (doc)
-        {
-          long flags = doc->get_doc_flags();
-          if (flags & DjVuDocument::DOC_INIT_OK)
-            return DDJVU_OPERATION_OK;
-          else if (flags & DjVuDocument::DOC_INIT_FAILED)
-            return DDJVU_OPERATION_FAILED;
-          else
-            return DDJVU_OPERATION_STARTED;
-        }
-    }
-  G_CATCH(ex)
-    {
-      ERROR(document,ex);
-    }
-  G_ENDCATCH;
-  return DDJVU_OPERATION_NOTSTARTED;
-}
-
 ddjvu_document_type_t
 ddjvu_document_get_type(ddjvu_document_t *document)
 {
@@ -865,9 +977,9 @@ ddjvu_document_get_pagenum(ddjvu_document_t *document)
 // ----------------------------------------
 
 
-ddjvu_page_t *
-ddjvu_page_create_by_pageno(ddjvu_document_t *document,
-                            int pageno)
+static ddjvu_page_t *
+ddjvu_page_create(ddjvu_document_t *document, ddjvu_job_t *job,
+                  const char *pageid, int pageno)
 {
   ddjvu_page_t *p = 0;
   G_TRY
@@ -876,10 +988,18 @@ ddjvu_page_create_by_pageno(ddjvu_document_t *document,
       if (! doc) return 0;
       p = new ddjvu_page_s;
       ref(p);
+      p->myctx = document->myctx;
       p->mydoc = document;
-      p->img = doc->get_page(pageno, false, p);
       p->userdata = 0;
       p->pageinfoflag = false;
+      if (job)
+        p->job = job;
+      else
+        p->job = job = p;
+      if (pageid)
+        p->img = doc->get_page(GNativeString(pageid), false, job);
+      else
+        p->img = doc->get_page(pageno, false, job);
     }
   G_CATCH(ex)
     {
@@ -893,74 +1013,73 @@ ddjvu_page_create_by_pageno(ddjvu_document_t *document,
 }
 
 ddjvu_page_t *
-ddjvu_page_create_by_pageid(ddjvu_document_t *document,
-                            const char *pageid)
+ddjvu_page_create_by_pageno(ddjvu_document_t *document, int pageno)
 {
-  ddjvu_page_t *p = 0;
-  G_TRY
-    {
-      DjVuDocument *doc = document->doc;
-      if (! doc) return 0;
-      p = new ddjvu_page_s;
-      ref(p);
-      p->mydoc = document;
-      p->img = doc->get_page(GNativeString(pageid), false, p);
-      p->userdata = 0;
-      p->pageinfoflag = false;
-    }
-  G_CATCH(ex)
-    {
-      if (p)
-        unref(p);
-      p = 0;
-      ERROR(document, ex);
-    }
-  G_ENDCATCH;
-  return p;
+  return ddjvu_page_create(document, 0, 0, pageno);
 }
 
-void
-ddjvu_page_release(ddjvu_page_t *page)
+ddjvu_page_t *
+ddjvu_page_create_by_pageid(ddjvu_document_t *document, const char *pageid)
 {
-  G_TRY
-    {
-      if (page)
-        {
-          page->userdata = 0;
-          page->img = 0;
-          unref(page);
-        }
-    }
-  G_CATCH(ex)
-    {
-    }
-  G_ENDCATCH;
+  return ddjvu_page_create(document, 0, pageid, 0);
+}
+
+ddjvu_job_t *
+ddjvu_page_job(ddjvu_page_t *page)
+{
+  return page;
 }
 
 
 // ----------------------------------------
 
 
+void
+ddjvu_page_s::release()
+{
+  img = 0;
+}
+
+ddjvu_status_t
+ddjvu_page_s::status()
+{
+  if (! img)
+    return DDJVU_JOB_NOTSTARTED;        
+  DjVuFile *file = img->get_djvu_file();
+  if (! file)
+    return DDJVU_JOB_NOTSTARTED;
+  else if (file->is_decode_stopped())
+    return DDJVU_JOB_STOPPED;
+  else if (file->is_decode_failed())
+    return DDJVU_JOB_FAILED;
+  else if (file->is_decode_ok())
+    return DDJVU_JOB_OK;
+  else if (file->is_decoding())
+    return DDJVU_JOB_STARTED;
+  return DDJVU_JOB_NOTSTARTED;
+}
+
 bool
 ddjvu_page_s::inherits(const GUTF8String &classname)
 {
-  return (classname == "ddjvu_page_s");
+  return (classname == "ddjvu_page_s")
+    || ddjvu_job_s::inherits(classname);
 }
 
 bool 
 ddjvu_page_s::notify_error(const DjVuPort *, const GUTF8String &m)
 {
-  if (!img) return 0;
+  if (!img) return false;
   msg_push(xhead(DDJVU_ERROR, this), msg_prep_error(m));
-  return 1;
+  return true;
 }
  
 bool 
 ddjvu_page_s::notify_status(const DjVuPort *p, const GUTF8String &m)
 {
-  if (!img) return 0;
+  if (!img) return false;
   msg_push(xhead(DDJVU_INFO, this), msg_prep_info(m));
-  return 1;
+  return true;
 }
 
 void 
@@ -1010,53 +1129,6 @@ ddjvu_page_s::notify_chunk_done(const DjVuPort*, const GUTF8String &name)
 
 // ----------------------------------------
 
-
-void
-ddjvu_page_set_user_data(ddjvu_page_t *pag,
-                         void *userdata)
-{
-  if (pag)
-    pag->userdata = userdata;
-}
-
-void *
-ddjvu_page_get_user_data(ddjvu_page_t *pag)
-{
-  if (pag)
-    return pag->userdata;
-  return 0;
-}
-
-
-// ----------------------------------------
-
-
-ddjvu_status_t
-ddjvu_page_decoding_status(ddjvu_page_t *page)
-{
-  G_TRY
-    {
-      if (! page->img)
-        return DDJVU_OPERATION_NOTSTARTED;        
-      DjVuFile *file = page->img->get_djvu_file();
-      if (! file)
-        return DDJVU_OPERATION_NOTSTARTED;
-      else if (file->is_decode_stopped())
-        return DDJVU_OPERATION_STOPPED;
-      else if (file->is_decode_failed())
-        return DDJVU_OPERATION_FAILED;
-      else if (file->is_decode_ok())
-        return DDJVU_OPERATION_OK;
-      else if (file->is_decoding())
-        return DDJVU_OPERATION_STARTED;
-    }
-  G_CATCH(ex)
-    {
-      ERROR(page, ex);
-    }
-  G_ENDCATCH;
-  return DDJVU_OPERATION_NOTSTARTED;
-}
 
 int
 ddjvu_page_get_width(ddjvu_page_t *page)
@@ -1232,7 +1304,15 @@ ddjvu_page_set_rotation(ddjvu_page_t *page,
         case DDJVU_ROTATE_180:
         case DDJVU_ROTATE_270:
           if (page->img)
-            page->img->set_rotate((int)rot);
+            {
+              int old = page->img->get_rotate();
+              if (old != (int)rot)
+                {
+                  page->img->set_rotate((int)rot);
+                  msg_push(xhead(DDJVU_RELAYOUT, page));
+                  msg_push(xhead(DDJVU_REDISPLAY, page));
+                }
+            }
           break;
         default:
           G_THROW("Illegal ddjvu rotation code");
@@ -1658,16 +1738,8 @@ ddjvu_page_render(ddjvu_page_t *page,
 // ----------------------------------------
 
 
-struct DJVUNS ddjvu_thumbnail_p : public GPEnabled
-{
-  int pagenum;
-  ddjvu_document_t *document;
-  GTArray<char> data;
-  GP<DataPool> pool;
-}; 
-
-static void
-thumbnail_cb(void *cldata)
+void
+ddjvu_thumbnail_p::callback(void *cldata)
 {
   ddjvu_thumbnail_p *thumb = (ddjvu_thumbnail_p*)cldata;
   if (thumb->document)
@@ -1678,8 +1750,17 @@ thumbnail_cb(void *cldata)
           GP<DataPool> pool = thumb->pool;
           int size = pool->get_size();
           thumb->pool = 0;
-          thumb->data.resize(0,size-1);
-          pool->get_data( (void*)(char*)thumb->data, 0, size);
+          G_TRY
+            {
+              thumb->data.resize(0,size-1);
+              pool->get_data( (void*)(char*)thumb->data, 0, size);
+            }
+          G_CATCH(ex)
+            {
+              thumb->data.empty();
+              G_RETHROW;
+            }
+          G_ENDCATCH;
           if (thumb->document->doc)
             {
               GP<ddjvu_message_p> p = new ddjvu_message_p;
@@ -1713,22 +1794,23 @@ ddjvu_thumbnail_status(ddjvu_document_t *document, int pagenum, int start)
               thumb->pagenum = pagenum;
               thumb->pool = pool;
               document->thumbnails[pagenum] = thumb;
-              pool->add_trigger(-1, thumbnail_cb, (void*)(ddjvu_thumbnail_p*)thumb);
+              pool->add_trigger(-1, ddjvu_thumbnail_p::callback, 
+                                (void*)(ddjvu_thumbnail_p*)thumb);
             }
         }
       if (! thumb)
-        return DDJVU_OPERATION_NOTSTARTED;        
+        return DDJVU_JOB_NOTSTARTED;        
       else if (thumb->pool)
-        return DDJVU_OPERATION_STARTED;
+        return DDJVU_JOB_STARTED;
       else if (thumb->data.size() > 0)
-        return DDJVU_OPERATION_OK;
+        return DDJVU_JOB_OK;
     }
   G_CATCH(ex)
     {
       ERROR(document, ex);
     }
   G_ENDCATCH;
-  return DDJVU_OPERATION_FAILED;
+  return DDJVU_JOB_FAILED;
 }
  
 int
@@ -1742,7 +1824,7 @@ ddjvu_thumbnail_render(ddjvu_document_t *document, int pagenum,
     {
       GP<ddjvu_thumbnail_p> thumb;
       ddjvu_status_t status = ddjvu_thumbnail_status(document,pagenum,FALSE);
-      if (status == DDJVU_OPERATION_OK)
+      if (status == DDJVU_JOB_OK)
         {
           GMonitorLock(&document->monitor);
           thumb = document->thumbnails[pagenum];
@@ -1754,7 +1836,7 @@ ddjvu_thumbnail_render(ddjvu_document_t *document, int pagenum,
       /* Decode wavelet data */
       int size = thumb->data.size();
       char *data = (char*)thumb->data;
-      GP<IW44Image> iw = IW44Image::create_decode(IW44Image::COLOR);
+      GP<IW44Image> iw = IW44Image::create_decode();
       iw->decode_chunk(ByteStream::create_static((void*)data, size));
       int w = iw->get_width();
       int h = iw->get_height();
@@ -1806,3 +1888,19 @@ ddjvu_get_DjVuDocument(ddjvu_document_t *document)
 }
 
 
+// ----------------------------------------
+
+
+// ----------------------------------------
+
+
+// ----------------------------------------
+
+
+// ----------------------------------------
+
+
+// ----------------------------------------
+
+
+// ----------------------------------------
