@@ -1,12 +1,19 @@
 
-By order of importance:
-
-- README file
+RELEASE 1
 - man page for djvused
 - change QDViewer::gotoStdPage
+- rpm packages for linux
+
+RELEASE 2
+- rechunking feature in c44
+- support for non-ascii strings in annotation layer
 - djvups executable
-- rpm packages for linux (rh6, rh7)
 - ht:/dig plugin
 
+RELEASE 3
+- upgraded cpaldjvu
+- simple ps-to-djvu translator
 
-
+LATER MAYBE
+- creating hidden text layers
+- simple segmenter for color images
