@@ -14,10 +14,10 @@ BuildRoot: %{_tmppath}/%{name}-root
 URL: http://djvu.sourceforge.net
 
 Source0: ghostscript-%{version}.tar.bz2
-Source1: ghostscript-fonts-std-8.11.tar.gz
+Source1: ghostscript-fonts-std-8.11.tar.bz2
 Source2: gsdjvu-1.0.tar.gz
-Source3: jpegsrc.v6b.tar.gz
-Source4: libpng-1.2.5.tar.bz2
+Source3: jpegsrc.v6b.tar.bz2
+Source4: libpng-1.2.6.tar.bz2
 Source5: zlib-1.1.4.tar.bz2
 
 %description 
