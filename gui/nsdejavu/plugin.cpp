@@ -120,41 +120,72 @@ void plugin_init(shl_t handle, int loading)
 class Instance
 {
 public:
-   Widget		widget;
-   Window		window;
-   Widget		parent;
-   NPP			np_instance;
-   int			full_mode;
-   
-   Instance(void) : widget(0), window(0), parent(0),
-      np_instance(0), full_mode(1) {}
-   Instance(NPP _np_instance, int _full_mode) : widget(0), window(0),
-      parent(0), np_instance(_np_instance), full_mode(_full_mode) {}
-   
-   void Detach(void)
-   {
-      widget=0; window=0; parent=0;
-   }
-   void Attach(Widget _widget, Window _window, Widget _parent)
-   {
-      widget=_widget; window=_window; parent=_parent;
-   }
-   ~Instance(void)
-   {
-      widget=0; window=0; parent=0; np_instance=0;
-   }
+  Widget		widget;
+  Window		window;
+  Widget		parent;
+  NPP			np_instance;
+  int			full_mode;
+  
+  Instance(void);
+  Instance(NPP _np_instance, int _full_mode);
+  void Detach(void);
+  void Attach(Widget _widget, Window _window, Widget _parent);
+  ~Instance(void);
 };
+
+
+Instance::Instance(void) 
+  : widget(0), window(0), parent(0), np_instance(0), full_mode(1) 
+{
+}
+
+Instance::Instance(NPP _np_instance, int _full_mode) 
+  : widget(0), window(0),
+    parent(0), np_instance(_np_instance), full_mode(_full_mode) 
+{
+}
+
+void 
+Instance::Detach(void)
+{
+  widget=0; window=0; parent=0;
+}
+
+void 
+Instance::Attach(Widget _widget, Window _window, Widget _parent)
+{
+  widget=_widget; window=_window; parent=_parent;
+}
+
+Instance::~Instance(void)
+{
+  widget=0; window=0; parent=0; np_instance=0;
+}
+
+
+// ------------------------------------------------------------
+
 
 class DelayedRequest
 {
 public:
-   int		req_num;
-   void		* id;
-   GUTF8String status, url, target;
-
-   DelayedRequest(void) : req_num(-1) {}
-   DelayedRequest(int _req_num) : req_num(_req_num) {}
+  int req_num;
+  void *id;
+  GUTF8String status, url, target;
+  DelayedRequest(void);
+  DelayedRequest(int _req_num);
 };
+
+
+DelayedRequest::DelayedRequest(void) 
+  : req_num(-1) 
+{
+}
+
+DelayedRequest::DelayedRequest(int _req_num) 
+  : req_num(_req_num) 
+{
+}
 
 
 
