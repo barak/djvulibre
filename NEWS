@@ -1,3 +1,8 @@
+NEW IN VERSION 3.5.14
+---------------------
+- Cjb2 lossy mode vastly improved (thanks to Ilya Mezhirov)
+- Revamped install for desktop information files
+
 NEW IN VERSION 3.5.13
 ---------------------
 - Navigation history in djview.
