@@ -2666,7 +2666,12 @@ GUTF8String::GUTF8String(const char dat)
 { init(GStringRep::UTF8::create(&dat,0,1)); }
 
 GUTF8String::GUTF8String(const GUTF8String &fmt, va_list &args)
-{ init(fmt.ptr?fmt->vformat(args):fmt); }
+{ 
+  if (fmt.ptr)
+    init(fmt->vformat(args));
+  else 
+    init(fmt); 
+}
 
 GUTF8String::GUTF8String(const char *str)
 { init(GStringRep::UTF8::create(str)); }
@@ -2711,8 +2716,10 @@ GUTF8String GBaseString::operator+(const GUTF8String &s2) const
 GUTF8String
 GNativeString::operator+(const GUTF8String &s2) const
 {
-  return GStringRep::UTF8::create(
-    ptr?(*this)->toUTF8(true):(*this),s2);
+  if (ptr)
+    return GStringRep::UTF8::create((*this)->toUTF8(true),s2);
+  else
+    return GStringRep::UTF8::create((*this),s2);
 }
 #endif
 

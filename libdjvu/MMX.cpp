@@ -161,7 +161,7 @@ MMXControl::enable_mmx()
 		    "1:\tpopl %%ebx\n\t"
                     "movl %%edx, %0"
                     : "=m" (cpuflags) :
-                    : "eax","ebx","ecx","edx");
+                    : "eax","ecx","edx");
 #endif
 #if defined(MMX) && defined(_MSC_VER) && defined(_M_IX86)
   // Detection of MMX for MSVC

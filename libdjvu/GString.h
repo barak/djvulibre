@@ -1539,26 +1539,38 @@ GNativeString::toEscaped( const bool tosevenbit ) const
 inline
 GNativeString::GNativeString(const GUTF8String &str)
 {
-  init(str.length()?(str->toNative(GStringRep::NOT_ESCAPED)):(GP<GStringRep>)str);
+  if (str.length())
+    init(str->toNative(GStringRep::NOT_ESCAPED));
+  else
+    init((GP<GStringRep>)str);
 }
 
 inline
 GNativeString::GNativeString(const GP<GStringRep> &str)
 {
-  init(str?(str->toNative(GStringRep::NOT_ESCAPED)):str);
+  if (str)
+    init(str->toNative(GStringRep::NOT_ESCAPED));
+  else
+    init(str);
 }
 
 inline
 GNativeString::GNativeString(const GBaseString &str)
 {
-  init(str.length()?(str->toNative(GStringRep::NOT_ESCAPED)):(GP<GStringRep>)str);
+  if (str.length())
+    init(str->toNative(GStringRep::NOT_ESCAPED));
+  else
+    init((GP<GStringRep>)str);
 }
 
 
 inline
 GNativeString::GNativeString(const GNativeString &fmt, va_list &args)
 {
-  init(fmt.ptr?fmt->vformat(args):fmt);
+  if (fmt.ptr)
+    init(fmt->vformat(args));
+  else
+    init(fmt);
 }
 
 inline GNativeString
