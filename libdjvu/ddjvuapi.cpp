@@ -185,6 +185,7 @@ struct DJVUNS ddjvu_page_s : public ddjvu_job_s
   GP<DjVuImage> img;
   ddjvu_job_t *job;
   bool pageinfoflag;
+  bool relayoutflag;
   // virtual job functions:
   virtual ddjvu_status_t status();
   virtual void release();
@@ -993,6 +994,7 @@ ddjvu_page_create(ddjvu_document_t *document, ddjvu_job_t *job,
       p->mydoc = document;
       p->userdata = 0;
       p->pageinfoflag = false;
+      p->relayoutflag = false;
       if (job)
         p->job = job;
       else
@@ -1102,18 +1104,26 @@ ddjvu_page_s::notify_file_flags_changed(const DjVuFile*, long, long)
 void 
 ddjvu_page_s::notify_relayout(const DjVuImage *dimg)
 {
-  if (! img) return;
-  if (! pageinfoflag) msg_push(xhead(DDJVU_PAGEINFO, this));
+  if (! img) 
+    return;
+  if (! pageinfoflag) 
+    msg_push(xhead(DDJVU_PAGEINFO, this));
   pageinfoflag = true;
   msg_push(xhead(DDJVU_RELAYOUT, this));
+  relayoutflag = true;
 }
 
 void 
 ddjvu_page_s::notify_redisplay(const DjVuImage *dimg)
 {
-  if (! img) return;
-  if (! pageinfoflag) msg_push(xhead(DDJVU_PAGEINFO, this));
+  if (! img) 
+    return;
+  if (! pageinfoflag) 
+    msg_push(xhead(DDJVU_PAGEINFO, this));
   pageinfoflag = true;
+  if (! relayoutflag)
+    msg_push(xhead(DDJVU_RELAYOUT, this));
+  relayoutflag = true;
   msg_push(xhead(DDJVU_REDISPLAY, this));
 }
 
