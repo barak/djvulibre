@@ -1447,7 +1447,7 @@ GURL::NativeFilename(void) const
 static int
 urlstat(const GURL &url,struct stat &buf)
 {
-  return stat(url.NativeFilename(),&buf);
+  return ::stat(url.NativeFilename(),&buf);
 }
 #endif
 
