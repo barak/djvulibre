@@ -2005,46 +2005,52 @@ DjVuToPS::print(ByteStream &str, const GP<DjVuDocument> &doc,
   for(int start=0;start < (int)page_range.length();)
   {
     int end=page_range.search(',',start);
-	if(end < 0)
-	  end=page_range.length();
+    if (end < 0)
+      end = page_range.length();
     if (end>start)
     {
-      int dash=page_range.search('-',start);
-	  if(dash < 0)
-        dash=end;
+      int dash = page_range.search('-', start);
+      if (dash < 0)
+        dash = end;
       int pos;
       int start_page = page_range.toLong(start,pos,10);
       if (pos<dash || start_page<=0)
         G_THROW((ERR_MSG("DjVuToPS.bad_page") "\t")+page_range.substr(start, dash-start));
+      if (start_page > 9999999)
+        G_THROW((ERR_MSG("DjVuToPS.big_page") "\t")+page_range.substr(start, dash-start));
       if (start_page > doc_pages)
-        G_THROW((ERR_MSG("DjVuToPS.big_page") "\t")+page_range.substr(start_page,-1));
+        start_page = doc_pages;
       if (dash<end)
-      {
+        {
         if (dash == end-1)
           G_THROW((ERR_MSG("DjVuToPS.no_to") "\t")+page_range.substr(start, end-start));
         for(pos=dash+1; pos<end; pos++)
-		{
-          if (page_range[pos] == '-')
-            G_THROW((ERR_MSG("DjVuToPS.bad_range") "\t")+page_range.substr(start, end-start));
-		}
+          {
+            if (page_range[pos] == '-')
+              G_THROW((ERR_MSG("DjVuToPS.bad_range") "\t")+page_range.substr(start, end-start));
+          }
         int end_page = page_range.toLong(dash+1,pos, 10);
         if (pos<end || end_page<=0)
           G_THROW((ERR_MSG("DjVuToPS.bad_page") "\t")+page_range.substr(dash+1, end-dash-1));
+        if (start_page > 9999999)
+          G_THROW((ERR_MSG("DjVuToPS.big_page") "\t")+page_range.substr(dash+1, end-dash-1));
         if (end_page > doc_pages)
-          G_THROW((ERR_MSG("DjVuToPS.big_page") "\t")+page_range.substr(end_page,-1));
+          end_page = doc_pages;
         if (start_page < end_page)
-		{
-          for(int page_num=start_page; page_num<=end_page; page_num++)
-            pages_todo.append(page_num-1);
-		}else
-		{
-          for(int page_num=start_page; page_num>=end_page; page_num--)
-            pages_todo.append(page_num-1);
-		}
-      } else
-	  {
-        pages_todo.append(start_page-1);
-	  }
+          {
+            for(int page_num=start_page; page_num<=end_page; page_num++)
+              pages_todo.append(page_num-1);
+          }
+        else
+          {
+            for(int page_num=start_page; page_num>=end_page; page_num--)
+              pages_todo.append(page_num-1);
+          }
+        } 
+      else
+        {
+          pages_todo.append(start_page-1);
+        }
     }
     start=end+1;
   }
