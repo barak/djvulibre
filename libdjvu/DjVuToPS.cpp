@@ -397,6 +397,7 @@ store_doc_setup(ByteStream &str)
                   "<< /NumCopies %d >> setpagedevice\n"
                   "%%%%EndFeature\n"
                   "} stopped cleartomark\n"
+                  "[{\n"
                   "%%%%BeginFeature: Collate\n"
                   "<< /Collate true >> setpagedevice\n"
                   "%%%%EndFeature\n"
@@ -456,6 +457,17 @@ store_doc_setup(ByteStream &str)
             "/c {setcolor rmoveto glyphshow} bind def\n"
             "/s {rmoveto glyphshow} bind def\n"
             "/S {rmoveto gsave show grestore} bind def\n" 
+            "%% -- emulations\n"
+            "systemdict /rectstroke known not {\n"
+            "  /rectstroke  %% stack : x y width height \n"
+            "  { newpath 4 2 roll moveto 1 index 0 rlineto\n"
+            "    0 exch rlineto neg 0 rlineto closepath stroke\n"
+            "  } bind def } if\n"
+            "systemdict /rectclip known not {\n"
+            "  /rectclip  %% stack : x y width height \n"
+            "  { newpath 4 2 roll moveto 1 index 0 rlineto\n"
+            "    0 exch rlineto neg 0 rlineto closepath clip\n"
+            "  } bind def } if\n"
             "%% -- color space\n" );
       if (options.get_sRGB())
         write(str,
@@ -480,13 +492,6 @@ store_doc_setup(ByteStream &str)
   else 
     {
       // level<2
-      write(str, 
-            "%% -- rectstroke emulation\n"
-            "systemdict /rectstroke known not {\n"
-            "  /rectstroke  %% stack : x y width height \n"
-            "  { newpath 4 2 roll moveto 1 index 0 rlineto\n"
-            "    0 exch rlineto neg 0 rlineto closepath stroke\n"
-            "  } bind def } if\n" );
       if (options.get_format() == Options::PS)
         if (options.get_copies() > 1)
           write(str,"/#copies %d def\n", options.get_copies());
@@ -655,7 +660,7 @@ store_page_setup(ByteStream &str,
   if (options.get_format() == Options::EPS)
     write(str, 
           "/page-origstate save def\n"
-          "%% Coordinate system positioning\n"
+          "%% -- coordinate system\n"
           "/image-dpi %d def\n"
           "/image-x 0 def\n"
           "/image-y 0 def\n"
@@ -670,7 +675,7 @@ store_page_setup(ByteStream &str,
           "/a23 0 def\n"
           "[a11 a21 a12 a22 a13 a23] concat\n"
           "gsave 0 0 image-width image-height rectclip\n"
-          "%% -- begin print\n",
+          "%% -- begin printing\n",
           dpi, grect.width(), grect.height() );
   else
     {
@@ -690,6 +695,7 @@ store_page_setup(ByteStream &str,
         margin = 6;
       write(str, 
             "/page-origstate save def\n"
+            "%% -- coordinate system\n"
             "/auto-orient %s def\n"
             "/portrait %s def\n"
             "/fit-page %s def\n"
@@ -772,8 +778,7 @@ store_page_setup(ByteStream &str,
             "  /a23 start-y image-x coeff mul add def \n"
             "} ifelse\n"
             "[a11 a21 a12 a22 a13 a23] concat\n"
-            "gsave systemdict /rectclip known {\n"
-            "  0 0 image-width image-height rectclip } if\n"
+            "gsave 0 0 image-width image-height rectclip\n"
             "%% -- begin print\n");
     }
 }
@@ -940,14 +945,14 @@ print_fg_2layer(ByteStream &str,
                   write(str,"/%d %d %d %f %f %f c\n",
                         blit->shapeno, 
                         blit->left-currentx, blit->bottom-currenty,
-                        ramp[p.r]/255., ramp[p.g]/255., ramp[p.b]/255.);
+                        ramp[p.r]/255.0, ramp[p.g]/255.0, ramp[p.b]/255.0);
                 } 
               else
                 {
                   write(str,"/%d %d %d %f c\n",
                         blit->shapeno, 
                         blit->left-currentx, blit->bottom-currenty,
-                        ramp[GRAY(p.r, p.g, p.b)]/255.);
+                        ramp[GRAY(p.r, p.g, p.b)]/255.0);
                 }
             }
           else
@@ -2172,10 +2177,10 @@ parse_range(GP<DjVuDocument> doc,
         G_THROW(ERR_MSG("DjVuToPS.bad_range") 
                 + GUTF8String("\t") + page_range );
       spec = 0;
-      if (end_page < 1)
-        end_page = 1;
-      if (start_page < 1)
-        start_page = 1;
+      if (end_page < 0)
+        end_page = 0;
+      if (start_page < 0)
+        start_page = 0;
       if (end_page > doc_pages)
         end_page = doc_pages;
       if (start_page > doc_pages)
@@ -2424,7 +2429,7 @@ process_double_page(ByteStream &str,
         " px ph 2 div w add m1 add translate 270 rotate\n"
         " 0 0 w pw rectclip end\n");
   if (inf->page1 >= 0)
-    process_single_page(str, doc, inf->page1, cnt++, todo, +1);
+    process_single_page(str, doc, inf->page1, cnt*2, todo*2, +1);
   write(str,
         "grestore\n"
         "%% -- second page\n"
@@ -2432,7 +2437,7 @@ process_double_page(ByteStream &str,
         " px ph 2 div m2 add translate 270 rotate\n"
         " 0 0 w pw rectclip end\n");
   if (inf->page2 >= 0)
-    process_single_page(str, doc, inf->page2, cnt++, todo, -1);
+    process_single_page(str, doc, inf->page2, cnt*2+1, todo*2, -1);
   write(str,
         "grestore\n"
         "showpage\n");

@@ -107,12 +107,11 @@ public:
    GUTF8String	printFile;
    bool         printFrame;
    bool         printCropMarks;
-   bool         bookMode;
-   int          bookSign;
-   bool         bookTwo;
-   int          bookAlign;
-   int          bookFold;
-   int          bookThick;
+   int          bookletMode;
+   int          bookletMax;
+   int          bookletAlign;
+   int          bookletFold;
+   int          bookletXFold;
    bool		hlinksPopup;
    bool		hlinksBorder;
    HLButtType	hlb_num;

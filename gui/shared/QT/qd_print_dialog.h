@@ -106,14 +106,14 @@ private:
   class QProgressBar	*progress;
   class QPushButton	*cancel_butt;
   class QCheckBox    	*rectmark_chk, *cropmark_chk;
-  class QCheckBox	*bk_mode_butt, *bk_two_butt;
-  class QSpinBox 	*bk_sign_spin, *bk_fold_spin;
-  class QSpinBox        *bk_thick_spin, *bk_align_spin;
-  class QLabel 		*bk_sign_lbl, *bk_fold_lbl;
-  class QLabel		*bk_thick_lbl, *bk_align_lbl;
+  class QCheckBox	*bk_mode_butt;
+  class QComboBox       *bk_mode_menu;
+  class QSpinBox 	*bk_max_spin;
+  class QWidget         *bk_normal, *bk_advanced;
+  class QSpinBox        *bk_align_spin,*bk_fold_spin,*bk_xfold_spin;
 
   GP<DjVuDocument>	doc;
-  GP<DjVuImage>	dimg;
+  GP<DjVuImage>	        dimg;
   
   int			cur_page_num;
   bool			printing, interrupt_printing;
@@ -142,6 +142,7 @@ private:
   void			slotWhatChanged(const QString & text);
   void			slotZoomChanged(const QString & text);
   void			slotBookChanged(void);
+  void                  slotHelp(void);
  protected slots:
   virtual void		done(int);
  signals:
@@ -151,13 +152,13 @@ public:
   void			setPortrait(bool portrait, bool autoorient);
   void			setColorMode(bool color);
   void			setPSLevel(int level);
-  void			setZoom(int zoom);	// Negative number means "reduce to fit"
-  void			setCurZoom(int zoom);	// number 5..999
+  void			setZoom(int zoom);
+  void			setCurZoom(int zoom);
   void			setPrint(What what);
   void			setFileName(const QString &name);
   void			setCommand(const QString &cmd);
-  void			setBookMode(bool mode, int sign=3);
-  void                  setBookTwo(bool two, int align=0, int fold=36, int thick=24);
+  void			setBookletMode(int mode, int sign=0);
+  void                  setBookletParm(int align=0, int fold=18, int xfold=200);
   void			printToFile(int file);
   
   QDPrintDialog(const GP<DjVuDocument> & doc, const GP<DjVuImage> & cur_dimg,

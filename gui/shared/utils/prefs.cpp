@@ -140,13 +140,18 @@ DjVuPrefs::load(void)
 {
   DEBUG_MSG("DjVuPrefs::load(): loading preferences\n");
   DEBUG_MAKE_INDENT(3);
-
   int i;
   static bool xrm_initialized=false;
-  if (!xrm_initialized) { XrmInitialize(); xrm_initialized=true; }
-  
-  if (database) XrmDestroyDatabase((XrmDatabase) database); database=0;
-  
+  if (!xrm_initialized) 
+    { 
+      XrmInitialize(); 
+      xrm_initialized=true; 
+    }
+  if (database) 
+    {
+      XrmDestroyDatabase((XrmDatabase) database); 
+      database=0;
+    }
   DEBUG_MSG("creating default database from string\n");
   char buffer[4096];
   sprintf(buffer, "Zoom:		%d\n"
@@ -169,12 +174,11 @@ DjVuPrefs::load(void)
 		  "PrintFile:		image.ps\n"
                   "PrintFrame:          0\n"
                   "PrintCropMarks:      0\n"
-	  	  "BookMode:		0\n"
-	  	  "BookSign:		3\n"
-	  	  "BookTwo:		1\n"
-	  	  "BookAlign:		0\n"
-	  	  "BookFold:		36\n"
-	  	  "BookThick:		24\n"
+                  "BookletMode:         0\n"
+                  "BookletMax:          0\n"
+                  "BookletAlign:        0\n"
+                  "BookletFold:         18\n"
+                  "BookletXFold:        200\n"
 		  "HLinksPopup:		1\n"
 		  "HLinksBorder:	0\n"
 		  "HLinksButt:		%s\n"
@@ -189,9 +193,10 @@ DjVuPrefs::load(void)
 	  	  "MimeDontAsk:		0\n"
 		  "MimeDontCheck:	0\n",
 	  IDC_ZOOM_WIDTH-IDC_ZOOM_MIN,
-	  mag_names[MAG_CTRL], hlb_names[HLB_SHIFT]);
+	  mag_names[MAG_CTRL], 
+          hlb_names[HLB_SHIFT]);
+
   database=XrmGetStringDatabase(buffer);
-  
   char * home=getenv("HOME"); if (!home) home="";
   GUTF8String db_name=GUTF8String(home)+"/"+DATABASE_FILE_NAME;
   DEBUG_MSG("merging database '" << db_name << "'\n");
@@ -207,7 +212,6 @@ DjVuPrefs::load(void)
 	 i==legal_mag_size_num)
 	break;
   magnifierSize=legal_mag_size[i];
-  
   magnifierScale=getInt("MagnifierScale");
   for(i=0;i<legal_mag_scale_num;i++)
      if (magnifierScale<=legal_mag_scale[i] ||
@@ -217,12 +221,10 @@ DjVuPrefs::load(void)
   strTemp=getString("MagnifierHotKey");
   magnifierHotKey=(MagButtType) 0;
   for(int i=0;i<MAG_ITEMS;i++)
-    if (strTemp==mag_names[i])
-      {
-	magnifierHotKey=(MagButtType) i;
-        break;
-      }
-
+    if (strTemp==mag_names[i]) {
+      magnifierHotKey=(MagButtType) i;
+      break;
+    }
   strTemp=getString("ScreenGamma");
   dScreenGamma=atof((const char*)strTemp);
   if (dScreenGamma<0.1 || dScreenGamma>18) dScreenGamma=2.2;
@@ -244,18 +246,20 @@ DjVuPrefs::load(void)
   printFile=getString("PrintFile");
   printFrame=getInt("PrintFrame");
   printCropMarks=getInt("PrintCropMarks");
-  bookMode=getInt("BookMode");
-  bookSign=getInt("BookSign");
-  bookTwo=getInt("BookTwo");
-  bookAlign=getInt("BookAlign");
-  bookFold=getInt("BookFold");
-  bookThick=getInt("BookThick");
+  bookletMode=getInt("BookletMode");
+  bookletMax=getInt("BookletMax");
+  bookletAlign=getInt("BookletAlign");
+  bookletFold=getInt("BookletFold");
+  bookletXFold=getInt("BookletXFold");
   hlinksPopup=getInt("HLinksPopup");
   hlinksBorder=getInt("HLinksBorder");
   GUTF8String hlb_tmp=getString("HLinksButt");
   hlb_num=(HLButtType) 0;
   for(int i=0;i<HLB_ITEMS;i++)
-     if (hlb_tmp==hlb_names[i]) { hlb_num=(HLButtType) i; break; }
+    if (hlb_tmp==hlb_names[i]) { 
+      hlb_num=(HLButtType) i; 
+      break; 
+    }
   pcacheSize=getInt("PCacheSize");
   mcacheSize=getInt("MCacheSize");
   toolBarOn=getInt("ToolBarOn");
@@ -266,7 +270,6 @@ DjVuPrefs::load(void)
   fastThumb=getInt("FastThumb");
   mimeDontAsk=getInt("MimeDontAsk");
   mimeDontCheck=getInt("MimeDontCheck");
-
   strTemp=getString("Beginner");
   if (strTemp==__DATE__ " " __TIME__)
     bBeginner=0;
@@ -302,12 +305,11 @@ DjVuPrefs::save()
   setString("PrintFile", printFile);
   setInt("PrintFrame", printFrame);
   setInt("PrintCropMarks", printCropMarks);
-  setInt("BookMode",bookMode);
-  setInt("BookSign",bookSign);
-  setInt("BookTwo",bookTwo);
-  setInt("BookAlign",bookAlign);
-  setInt("BookFold",bookFold);
-  setInt("BookThick",bookThick);
+  setInt("BookletMode", bookletMode);
+  setInt("BookletMax", bookletMax);
+  setInt("BookletAlign", bookletAlign);
+  setInt("BookletFold", bookletFold);
+  setInt("BookletXFold", bookletXFold);
   setInt("HLinksPopup", hlinksPopup);
   setInt("HLinksBorder", hlinksBorder);
   setString("HLinksButt", hlb_names[hlb_num]);
