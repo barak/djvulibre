@@ -1,3 +1,12 @@
+NEW IN VERSION 3.5.X
+--------------------
+- Added support for mouse wheel
+- Added support for LT toolbar control args
+- Incremented djvuversion to 23 (why did they do this?)
+- Modified key bindings (space does continuous reading)
+- Fixed thumbnail generation on empty pages.
+
+
 NEW IN VERSION 3.5.9
 --------------------
 - Fix for gcc-3.2.
