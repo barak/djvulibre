@@ -15,6 +15,7 @@ BuildRoot: %{_tmppath}/%{name}-root
 URL: http://djvu.sourceforge.net
 
 # BuildRequires: qt-devel
+# BuildRequires: qt-designer
 # BuildRequires: libjpeg-devel
 # BuildRequires: libtiff-devel
 # BuildRequires: glibc-devel
