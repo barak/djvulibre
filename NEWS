@@ -7,7 +7,7 @@ NEW IN VERSION 3.5.13
 - French and Japanese localization.
 - Japanese man pages.
 - Fixes for MacOS.
-- TODO: Bookmarks.
+- Compilation of XMLTools enabled by default.
 
 NEW IN VERSION 3.5.12
 ---------------------
