@@ -143,12 +143,6 @@ DjVuDebug::set_debug_level(int lvl)
 }
 
 void
-DjVuDebug::set_debug_url(const GURL &url)
-{
-  // Why make everything more complicated than necessary ?
-}
-
-void
 DjVuDebug::set_debug_file(FILE * file)
 {
   GCriticalSectionLock glock(&debug_lock);

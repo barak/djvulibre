@@ -171,7 +171,6 @@ public:
   ~DjVuDebug();
   // access
   static void   set_debug_level(int lvl);
-  static void   set_debug_url(const GURL &url);
   static void	set_debug_file(FILE * file);
   void          modify_indent(int rindent);
   static DjVuDebug& lock(int lvl, int noindent);
