@@ -45,9 +45,8 @@
 
 #include "XMLTags.h"
 #include "UnicodeByteStream.h"
-//#include <stdio.h>
 #include <ctype.h>
-#ifdef HAS_WCTYPE_H
+#if HAS_WCTYPE
 #include <wctype.h>
 #endif
 
