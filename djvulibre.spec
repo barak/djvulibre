@@ -40,10 +40,10 @@ DjVulibre-3.5 contains:
 - An up-to-date version of the C++ DjVu Reference Library.
 
 %changelog
-* Wed Dec  5 2001 Leon Bottou <leonb@users.sourceforge.net>
-- created spec file for rh7.x
 * Fri Dec  7 2001 Leon Bottou <leonb@users.sourceforge.net>
 - bumped to version 3.5.2
+* Wed Dec  5 2001 Leon Bottou <leonb@users.sourceforge.net>
+- created spec file for rh7.x
 
 %prep
 %setup
