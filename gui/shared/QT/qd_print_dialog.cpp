@@ -1,7 +1,7 @@
 //C-  -*- C++ -*-
 //C- -------------------------------------------------------------------
 //C- DjVuLibre-3.5
-//C- Copyright (c) 2002  Leon Bottou and Yann Le Cun.
+//C- Copyright (c) 2002-2003  Leon Bottou and Yann Le Cun.
 //C- Copyright (c) 2001  AT&T
 //C-
 //C- This software is subject to, and may be distributed under, the
@@ -256,12 +256,6 @@ QDPrintDialog::slotBrowse(void)
 }
 
 void
-QDPrintDialog::slotWhatChanged(const QString & qtext)
-{
-  custompages_text->setEnabled(qtext==tr(print_custom_str));
-}
-
-void
 QDPrintDialog::adjustWhat(void)
 {
    bool force_one_copy=false;
@@ -293,13 +287,27 @@ QDPrintDialog::adjustWhat(void)
 }
 
 void
+QDPrintDialog::slotWhatChanged(const QString & qtext)
+{
+  custompages_text->setEnabled(qtext==tr(print_custom_str));
+}
+
+void
+QDPrintDialog::slotDstChanged(void)
+{
+   int printer=printer_butt->isChecked();
+   dst_widget->raiseWidget(printer ? printer_widget : file_widget);
+   eps_butt->setEnabled(!printer);
+   ps_butt->setEnabled(!printer);
+   if (printer) ps_butt->setChecked(TRUE);
+}
+
+void
 QDPrintDialog::slotFormatChanged(void)
 {
    char buffer[MAXPATHLEN+1];
    strcpy(buffer, file_text->text());
-
    int ps_mode=ps_butt->isChecked();
-
    char * ptr=buffer, * dot;
    for(ptr=dot=buffer;*ptr;ptr++)
       if (*ptr=='.') dot=ptr;
@@ -319,20 +327,11 @@ QDPrintDialog::slotFormatChanged(void)
    landscape_butt->setEnabled(ps_mode);
    autoorient_butt->setEnabled(ps_mode);
    zoom_menu->setEnabled(ps_mode);
+   cropmark_chk->setEnabled(ps_mode);
    QString qtext = zoom_menu->currentText();
    zoom_spin->setEnabled(ps_mode && qtext==tr(custom_zoom_str));
    bk_mode_butt->setEnabled(ps_mode);
    adjustWhat();
-}
-
-void
-QDPrintDialog::slotDstChanged(void)
-{
-   int printer=printer_butt->isChecked();
-   dst_widget->raiseWidget(printer ? printer_widget : file_widget);
-   eps_butt->setEnabled(!printer);
-   ps_butt->setEnabled(!printer);
-   if (printer) ps_butt->setChecked(TRUE);
 }
 
 void

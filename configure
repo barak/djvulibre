@@ -881,7 +881,7 @@ Optional Features:
   --enable-debug          Compile with debugging options (default: no)
   --enable-rpo            Enable compilation with option -frepo
   --enable-threads        select threading model (default is auto)
-  --enable-xmltools       enable compilation of the xml tools (default).
+  --enable-xmltools       enable compilation of the djvu xml tools.
   --enable-djview         enable compilation of djview (default).
   --enable-shared         Enable shared libdjvu (default: linux only)
 
@@ -3074,7 +3074,7 @@ fi;
        *) CFLAGS="$CFLAGS $opt" ;;
      esac
    done
-   if test $ac_debug = no ; then
+   if test x$ac_debug = xno ; then
      OPTS=-DNO_DEBUG
 
  opt="-Wall"
@@ -3165,6 +3165,24 @@ echo "${ECHO_T}no" >&6
 
            ;;
       esac
+   else
+
+ opt="-Wall"
+ echo "$as_me:$LINENO: checking if $CXX accepts $opt" >&5
+echo $ECHO_N "checking if $CXX accepts $opt... $ECHO_C" >&6
+ echo 'void f(){}' > conftest.cc
+ if test -z "`${CXX} ${CXXFLAGS} ${OPTS} $opt -c conftest.cc 2>&1`"; then
+    echo "$as_me:$LINENO: result: yes" >&5
+echo "${ECHO_T}yes" >&6
+    rm conftest.*
+    OPTS="$OPTS -Wall"
+ else
+    echo "$as_me:$LINENO: result: no" >&5
+echo "${ECHO_T}no" >&6
+    rm conftest.*
+
+ fi
+
    fi
    case x"$ac_debug" in
      x0-9)  OPTS="$OPTS -DDEBUGLVL=$ac_debug" ;;
@@ -3188,7 +3206,6 @@ fi;
       RPO_NO='#'
     fi
   fi
-
 
 
 
@@ -7837,7 +7854,8 @@ fi
 if test x$ac_shared_libdjvu != xno && test x$GXX = xyes; then
     echo "$as_me:$LINENO: checking if $CXX has the LPR0 bug" >&5
 echo $ECHO_N "checking if $CXX has the LPR0 bug... $ECHO_C" >&6
-    echo 'extern "C" { inline int sqr(int x) throw() { return x * x ; } } int main() {} ' > conftest.cc
+    echo 'extern "C" { inline int sqr(int x)throw(){return x*x;}}int main(){}' \
+        > conftest.cc
     if ${CXX} -fPIC ${OPTS} conftest.cc -o conftest >/dev/null 2>/dev/null ; then
         echo "$as_me:$LINENO: result: no" >&5
 echo "${ECHO_T}no" >&6
@@ -7872,8 +7890,8 @@ else
   esac
   case $action in
     error)
-        { { echo "$as_me:$LINENO: error: Your c++ compiler ($cxxver) is outdated. Read the INSTALL file." >&5
-echo "$as_me: error: Your c++ compiler ($cxxver) is outdated. Read the INSTALL file." >&2;}
+        { { echo "$as_me:$LINENO: error: Your c++ compiler ($cxxver) is outdated." >&5
+echo "$as_me: error: Your c++ compiler ($cxxver) is outdated." >&2;}
    { (exit 1); exit 1; }; }
         ;;
     warn2)

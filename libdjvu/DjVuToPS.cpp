@@ -1,7 +1,7 @@
 //C-  -*- C++ -*-
 //C- -------------------------------------------------------------------
 //C- DjVuLibre-3.5
-//C- Copyright (c) 2002  Leon Bottou and Yann Le Cun.
+//C- Copyright (c) 2002-2003  Leon Bottou and Yann Le Cun.
 //C- Copyright (c) 2001  AT&T
 //C-
 //C- This software is subject to, and may be distributed under, the
@@ -91,10 +91,23 @@ static const size_t ps_string_size=15000;
 
 DjVuToPS::Options::
 Options(void)
-: format(PS), level(2), orientation(AUTO), mode(COLOR), zoom(0),
-  color(true), calibrate(true), text(false),
-  gamma((double)2.2), copies(1), frame(false),
-  cropmarks(false)
+: format(PS), 
+  level(2), 
+  orientation(AUTO), 
+  mode(COLOR), 
+  zoom(0),
+  color(true), 
+  calibrate(true), 
+  text(false),
+  gamma((double)2.2), 
+  copies(1), 
+  frame(false),
+  cropmarks(false),
+  bookletmode(OFF),
+  bookletmax(0),
+  bookletalign(0),
+  bookletfold(18),
+  bookletxfold(200)
 {}
 
 void
@@ -198,6 +211,41 @@ set_text(bool xtext)
   text=xtext;
 }
 
+void 
+DjVuToPS::Options::
+set_bookletmode(BookletMode m)
+{
+  bookletmode = m;
+}
+
+void 
+DjVuToPS::Options::
+set_bookletmax(int m)
+{
+  bookletmax = 0;
+  if (m > 0)
+    bookletmax = (m+3)/4;
+  bookletmax *= 4;
+}
+
+void 
+DjVuToPS::Options::
+set_bookletalign(int m)
+{
+  bookletalign = m;
+}
+
+void 
+DjVuToPS::Options::
+set_bookletfold(int fold, int xfold)
+{
+  if (fold >= 0)
+    bookletfold = fold;
+  if (xfold >= 0)
+    bookletxfold = xfold;
+}
+
+
 // ***************************************************************************
 // ******************************* DjVuToPS **********************************
 // ***************************************************************************
@@ -298,20 +346,29 @@ store_doc_prolog(ByteStream &str, int pages, int dpi, GRect *grect)
     write(str, "%%%%Extensions: CMYK\n");
   // Pages
   write(str, "%%%%Pages: %d\n",pages );
-  ///////// TODO: write(str, "%%%%PageOrder: Special\n");
-  // Requirements
-  write(str, "%%%%Requirements:");
-  if (options.get_color())
-    write(str, " color");
-  if (options.get_copies()>1)
-    write(str, " numcopies(%d)", options.get_copies());
-  ///////// TODO: duplex fold(saddle)
-  write(str, "\n");
+  write(str, "%%%%PageOrder: Ascend\n");
   // Orientation
   if (options.get_orientation() != Options::AUTO)
     write(str, "%%%%Orientation: %s\n", 
           options.get_orientation()==Options::PORTRAIT ?
           "Portrait" : "Landscape" );
+  // Requirements
+  if (options.get_format() == Options::PS)
+    {
+      write(str, "%%%%Requirements:");
+      if (options.get_color())
+        write(str, " color");
+      if (options.get_copies()>1)
+        write(str, " numcopies(%d)", options.get_copies());
+      if (options.get_level()>=2)
+        {
+          if (options.get_copies()>1)
+            write(str, " collate");
+          if (options.get_bookletmode() == Options::RECTOVERSO)
+            write(str, " duplex(tumble)");
+        }
+      write(str, "\n");
+    }
   // End
   write(str,
         "%%%%EndComments\n"
@@ -329,48 +386,63 @@ store_doc_setup(ByteStream &str)
   write(str, 
         "%%%%BeginSetup\n"
         "/doc-origstate save def\n");
-  if (options.get_copies()>1 && options.get_format()==Options::PS)
-    {
-      write(str,"/#copies %d def\n", options.get_copies());
-      if (options.get_level()>=2)
-        write(str, "<< /NumCopies #copies >> setpagedevice\n");
-    }
   if (options.get_level()>=2)
     {
-      if (options.get_color())
+      if (options.get_format() == Options::PS)
         {
-          write(str, 
-                "%% -- procs for reading color image\n"
-                "/readR () def\n"
-                "/readG () def\n"
-                "/readB () def\n"
-                "/ReadData {\n"
-                "   currentfile /ASCII85Decode filter dup\n"
-                "   /RunLengthDecode filter\n"
-                "   bufferR readstring pop /readR exch def\n"
-                "   dup status { flushfile } { pop } ifelse\n"
-                "   currentfile /ASCII85Decode filter dup\n"
-                "   /RunLengthDecode filter\n"
-                "   bufferG readstring pop /readG exch def\n"
-                "   dup status { flushfile } { pop } ifelse\n"
-                "   currentfile /ASCII85Decode filter dup\n"
-                "   /RunLengthDecode filter\n"
-                "   bufferB readstring pop /readB exch def\n"
-                "   dup status { flushfile } { pop } ifelse\n"
-                "} bind def\n"
-                "/ReadR {\n"
-                "   readR length 0 eq { ReadData } if\n"
-                "   readR /readR () def\n"
-                "} bind def\n"
-                "/ReadG {\n"
-                "   readG length 0 eq { ReadData } if\n"
-                "   readG /readG () def\n"
-                "} bind def\n"
-                "/ReadB {\n"
-                "   readB length 0 eq { ReadData } if\n"
-                "   readB /readB () def\n"
-                "} bind def\n");
+          if (options.get_copies()>1)
+            write(str, 
+                  "[{\n"
+                  "%%%%BeginFeature: NumCopies %d\n"
+                  "<< /NumCopies %d >> setpagedevice\n"
+                  "%%%%EndFeature\n"
+                  "} stopped cleartomark\n"
+                  "%%%%BeginFeature: Collate\n"
+                  "<< /Collate true >> setpagedevice\n"
+                  "%%%%EndFeature\n"
+                  "} stopped cleartomark\n",
+                  options.get_copies(),
+                  options.get_copies() );
+          if (options.get_bookletmode()==Options::RECTOVERSO)
+            write(str, 
+                  "[{\n"
+                  "%%%%BeginFeature: Duplex DuplexTumble\n"
+                  "<< /Duplex true /Tumble true >> setpagedevice\n"
+                  "%%%%EndFeature\n"
+                  "} stopped cleartomark\n");
         }
+      if (options.get_color())
+        write(str, 
+              "%% -- procs for reading color image\n"
+              "/readR () def\n"
+              "/readG () def\n"
+              "/readB () def\n"
+              "/ReadData {\n"
+              "   currentfile /ASCII85Decode filter dup\n"
+              "   /RunLengthDecode filter\n"
+              "   bufferR readstring pop /readR exch def\n"
+              "   dup status { flushfile } { pop } ifelse\n"
+              "   currentfile /ASCII85Decode filter dup\n"
+              "   /RunLengthDecode filter\n"
+              "   bufferG readstring pop /readG exch def\n"
+              "   dup status { flushfile } { pop } ifelse\n"
+              "   currentfile /ASCII85Decode filter dup\n"
+              "   /RunLengthDecode filter\n"
+              "   bufferB readstring pop /readB exch def\n"
+              "   dup status { flushfile } { pop } ifelse\n"
+              "} bind def\n"
+              "/ReadR {\n"
+              "   readR length 0 eq { ReadData } if\n"
+              "   readR /readR () def\n"
+              "} bind def\n"
+              "/ReadG {\n"
+              "   readG length 0 eq { ReadData } if\n"
+              "   readG /readG () def\n"
+              "} bind def\n"
+              "/ReadB {\n"
+              "   readB length 0 eq { ReadData } if\n"
+              "   readB /readB () def\n"
+              "} bind def\n");
       write(str,
             "%% -- procs for foreground layer\n"
             "/g {gsave 0 0 0 0 5 index 5 index setcachedevice\n"
@@ -386,30 +458,24 @@ store_doc_setup(ByteStream &str)
             "/S {rmoveto gsave show grestore} bind def\n" 
             "%% -- color space\n" );
       if (options.get_sRGB())
-        {
-          write(str,
-                "/DjVuColorSpace [ %s\n"
-                "<< /DecodeLMN [ { dup 0.03928 le {\n"
-                "       12.92321 div\n"
-                "     } {\n"
-                "       0.055 add 1.055 div 2.4 exp\n"
-                "     } ifelse } bind dup dup ]\n"
-                "   /MatrixLMN [\n"
-                "      0.412457 0.212673 0.019334\n"
-                "      0.357576 0.715152 0.119192\n"
-                "      0.180437 0.072175 0.950301 ]\n"
-                "   /WhitePoint [ 0.9505 1 1.0890 ] %% D65 \n"
-                "   /BlackPoint[0 0 0] >> ] def\n",
-                (options.get_color()) ? "/CIEBasedABC" : "/CIEBasedA" );
-        }
+        write(str,
+              "/DjVuColorSpace [ %s\n"
+              "<< /DecodeLMN [ { dup 0.03928 le {\n"
+              "       12.92321 div\n"
+              "     } {\n"
+              "       0.055 add 1.055 div 2.4 exp\n"
+              "     } ifelse } bind dup dup ]\n"
+              "   /MatrixLMN [\n"
+              "      0.412457 0.212673 0.019334\n"
+              "      0.357576 0.715152 0.119192\n"
+              "      0.180437 0.072175 0.950301 ]\n"
+              "   /WhitePoint [ 0.9505 1 1.0890 ] %% D65 \n"
+              "   /BlackPoint[0 0 0] >> ] def\n",
+              (options.get_color()) ? "/CIEBasedABC" : "/CIEBasedA" );
       else if (options.get_color())
-        {
-          write(str,"/DjVuColorSpace /DeviceRGB def\n");
-        }
+        write(str,"/DjVuColorSpace /DeviceRGB def\n");
       else
-        {
-          write(str,"/DjVuColorSpace /DeviceGray def\n");
-        }
+        write(str,"/DjVuColorSpace /DeviceGray def\n");
     } 
   else 
     {
@@ -421,39 +487,40 @@ store_doc_setup(ByteStream &str)
             "  { newpath 4 2 roll moveto 1 index 0 rlineto\n"
             "    0 exch rlineto neg 0 rlineto closepath stroke\n"
             "  } bind def } if\n" );
+      if (options.get_format() == Options::PS)
+        if (options.get_copies() > 1)
+          write(str,"/#copies %d def\n", options.get_copies());
       if (options.get_color())
-        {
-          write(str, 
-                "%% -- buffers for reading image\n"
-                "/buffer8 () def\n"
-                "/buffer24 () def\n"
-                "%% -- colorimage emulation\n"
-                "systemdict /colorimage known {\n"
-                "   /ColorProc {\n"
-                "      currentfile buffer24 readhexstring pop\n"
-                "   } bind def\n"
-                "   /ColorImage {\n"
-                "      colorimage\n"
-                "   } bind def\n"
-                "} {\n"
-                "   /ColorProc {\n"
-                "      currentfile buffer24 readhexstring pop\n"
-                "      /data exch def /datalen data length def\n"
-                "      /cnt 0 def\n"
-                "      0 1 datalen 3 idiv 1 sub {\n"
-                "         buffer8 exch\n"
-                "                data cnt get 20 mul /cnt cnt 1 add def\n"
-                "                data cnt get 32 mul /cnt cnt 1 add def\n"
-                "                data cnt get 12 mul /cnt cnt 1 add def\n"
-                "                add add 64 idiv put\n"
-                "      } for\n"
-                "      buffer8 0 datalen 3 idiv getinterval\n"
-                "   } bind def\n"
-                "   /ColorImage {\n"
-                "      pop pop image\n"
-                "   } bind def\n"
-                "} ifelse\n");
-        } // color
+        write(str, 
+              "%% -- buffers for reading image\n"
+              "/buffer8 () def\n"
+              "/buffer24 () def\n"
+              "%% -- colorimage emulation\n"
+              "systemdict /colorimage known {\n"
+              "   /ColorProc {\n"
+              "      currentfile buffer24 readhexstring pop\n"
+              "   } bind def\n"
+              "   /ColorImage {\n"
+              "      colorimage\n"
+              "   } bind def\n"
+              "} {\n"
+              "   /ColorProc {\n"
+              "      currentfile buffer24 readhexstring pop\n"
+              "      /data exch def /datalen data length def\n"
+              "      /cnt 0 def\n"
+              "      0 1 datalen 3 idiv 1 sub {\n"
+              "         buffer8 exch\n"
+              "                data cnt get 20 mul /cnt cnt 1 add def\n"
+              "                data cnt get 32 mul /cnt cnt 1 add def\n"
+              "                data cnt get 12 mul /cnt cnt 1 add def\n"
+              "                add add 64 idiv put\n"
+              "      } for\n"
+              "      buffer8 0 datalen 3 idiv getinterval\n"
+              "   } bind def\n"
+              "   /ColorImage {\n"
+              "      pop pop image\n"
+              "   } bind def\n"
+              "} ifelse\n");
     } // level<2
   write(str, "%%%%EndSetup\n\n");
 }
@@ -628,9 +695,8 @@ store_page_setup(ByteStream &str,
             "/fit-page %s def\n"
             "/zoom %d def\n"
             "/image-dpi %d def\n"
-            "clippath pathbbox\n"
-            "2 index sub exch\n"
-            "3 index sub\n"
+            "clippath pathbbox newpath\n"
+            "2 index sub exch 3 index sub\n"
             "/page-width exch def\n"
             "/page-height exch def\n"
             "/page-y exch def\n"
@@ -653,12 +719,12 @@ store_page_setup(ByteStream &str,
             "  mul 0 ge /portrait exch def\n" 
             "} if\n"
             "fit-page {\n"
-            "  /page-width page-width margin\n"
-            "     2 halign dup mul sub mul sub def\n"
-            "  /page-height page-height margin\n"
-            "     2 valign dup mul sub mul sub def\n"
-            "  /page-x page-x 1 halign add margin mul add def\n"
-            "  /page-y page-y 1 valign add margin mul add def\n"
+            "  /page-width page-width margin sub\n"
+            "     halign 0 eq { margin sub } if def\n"
+            "  /page-height page-height margin sub\n"
+            "     valign 0 eq { margin sub } if def\n"
+            "  /page-x page-x halign 0 ge { margin add } if def\n"
+            "  /page-y page-y valign 0 ge { margin add } if def\n"
             "} if\n"
             "portrait {\n"
             "  fit-page {\n"
@@ -719,24 +785,21 @@ store_page_trailer(ByteStream &str)
   write(str, 
         "%% -- end print\n" 
         "grestore\n");
-  if (options.get_format() != Options::EPS)
-    {
-      if (options.get_frame())
-        write(str, 
-              "%% Drawing frame\n"
-              "gsave 0.7 setgray\n"
-              "1 coeff div setlinewidth\n"
-              "0 0 image-width image-height rectstroke\n"
-              "grestore\n");
-      if (options.get_cropmarks())
-        write(str,
-              "%% Drawing crop marks\n"
-              "/cm { gsave translate rotate 1 coeff div dup scale\n"
-              "      0.5 setlinewidth -36 0 moveto 0 0 lineto\n"
-              "      0 -36 lineto stroke grestore } bind def\n"
-              "0 0 0 cm 180 image-width image-height cm\n"
-              "90 image-width 0 cm 270 0 image-height cm\n");
-    }
+  if (options.get_frame())
+    write(str, 
+          "%% Drawing frame\n"
+          "gsave 0.7 setgray 0.5 coeff div setlinewidth 0 0\n"
+          "image-width image-height rectstroke\n"
+          "grestore\n");
+  if (options.get_cropmarks() &&
+      options.get_format() != Options::EPS )
+    write(str,
+          "%% Drawing crop marks\n"
+          "/cm { gsave translate rotate 1 coeff div dup scale\n"
+          "      0 setgray 0.5 setlinewidth -36 0 moveto 0 0 lineto\n"
+          "      0 -36 lineto stroke grestore } bind def\n"
+          "0 0 0 cm 180 image-width image-height cm\n"
+          "90 image-width 0 cm 270 0 image-height cm\n");
   write(str,
         "page-origstate restore\n");
 }
@@ -2054,6 +2117,7 @@ parse_range(GP<DjVuDocument> doc,
   if (!page_range.length())
     page_range.format("1-%d", doc_pages);
   DEBUG_MSG("page_range='" << (const char *)page_range << "'\n");
+  int spec = 0;
   int both = 1;
   int start_page = 1;
   int end_page = doc_pages;
@@ -2061,13 +2125,18 @@ parse_range(GP<DjVuDocument> doc,
   char *p = (char*)q;
   while (*p)
     {
-      q = p;
+      while (*p==' ')
+        p += 1;
+      if (! *p)
+        break;
       if (*p>='0' && *p<='9') 
         {
           end_page = strtol(p, &p, 10);
+          spec = 1;
         } 
       else if (*p=='$') 
         {
+          spec = 1;
           end_page = doc_pages;
           p += 1;
         } 
@@ -2079,6 +2148,8 @@ parse_range(GP<DjVuDocument> doc,
         {
           end_page = doc_pages;
         }
+      while (*p==' ')
+        p += 1;
       if (both)
         {
           start_page = end_page;
@@ -2090,11 +2161,17 @@ parse_range(GP<DjVuDocument> doc,
             }
         }
       both = 1;
+      while (*p==' ')
+        p += 1;
       if (*p && *p != ',')
         G_THROW(ERR_MSG("DjVuToPS.bad_range") 
                 + GUTF8String("\t") + GUTF8String(p) );
       if (*p == ',')
         p += 1;
+      if (! spec)
+        G_THROW(ERR_MSG("DjVuToPS.bad_range") 
+                + GUTF8String("\t") + page_range );
+      spec = 0;
       if (end_page < 1)
         end_page = 1;
       if (start_page < 1)
@@ -2275,9 +2352,8 @@ void
 DjVuToPS::
 process_single_page(ByteStream &str, 
                     GP<DjVuDocument> doc,
-                    int page_num, 
-                    int cnt, 
-                    int todo )
+                    int page_num, int cnt, int todo,
+                    int magic)
 {
   GP<DjVuTXT> txt;
   GP<DjVuImage> dimg;
@@ -2286,27 +2362,111 @@ process_single_page(ByteStream &str,
     txt = get_text(dimg->get_djvu_file());
   if (info_cb)
     info_cb(page_num, cnt, todo, PRINTING, info_cl_data);
-  write(str, "%%%%Page: %d %d\n", page_num+1, cnt+1);
+  if (!magic)
+    write(str, "%%%%Page: %d %d\n", page_num+1, cnt+1);
   if (dimg)
     {
       int dpi = dimg->get_dpi();
       dpi = ((dpi <= 0) ? 300 : dpi);
       GRect img_rect(0, 0, dimg->get_width(), dimg->get_height());
-      store_page_setup(str, dpi, img_rect);
+      store_page_setup(str, dpi, img_rect, magic);
       print_image(str, dimg, img_rect,txt);
       store_page_trailer(str);
     }
-  write(str,"showpage\n");
+  if (!magic)
+    write(str,"showpage\n");
 }
+
+
+struct pdata {
+  int page1, page2;
+  int smax, spos;
+  int offset;
+};
 
 void 
 DjVuToPS::
-process_double_page(ByteStream &str, GP<DjVuDocument> doc,
-                    int page1, int page2, int margin,
-                    int cnt, int todo)
+process_double_page(ByteStream &str, 
+                    GP<DjVuDocument> doc,
+                    void *v, int cnt, int todo)
 {
+  const pdata *inf = (const pdata*)v;
+  int off = abs(inf->offset);
+  write(str,
+        "%%%%Page: (%d,%d) %d\n"
+        "/fold-dict 8 dict dup 3 1 roll def begin\n"
+        " clippath pathbbox newpath\n"
+        " 2 index sub exch 3 index sub\n"
+        " /pw exch def\n"
+        " /ph exch def\n"
+        " /py exch def\n"
+        " /px exch def\n"
+        " /w ph %d sub 2 div def\n"
+        " /m1 %d def\n"
+        " /m2 %d def\n"
+        "end\n",
+        inf->page1 + 1, inf->page2 + 1, cnt,
+        2 * (off + options.get_bookletfold(inf->smax-1)),
+        inf->offset + options.get_bookletfold(inf->spos),
+        inf->offset - options.get_bookletfold(inf->spos));
+  if (options.get_cropmarks())
+    write(str,
+          "%% -- folding marks\n"
+          "fold-dict begin\n"
+          " 0 setgray 0.5 setlinewidth\n"
+          " ph m1 m2 add add 2 div dup\n"
+          " px exch moveto 36 0 rlineto stroke\n"
+          " px pw add exch moveto -36 0 rlineto stroke\n"
+          "end\n");
+  write(str,
+        "%% -- first page\n"
+        "gsave fold-dict begin\n"
+        " px ph 2 div w add m1 add translate 270 rotate\n"
+        " 0 0 w pw rectclip end\n");
+  if (inf->page1 >= 0)
+    process_single_page(str, doc, inf->page1, cnt++, todo, +1);
+  write(str,
+        "grestore\n"
+        "%% -- second page\n"
+        "gsave fold-dict begin\n"
+        " px ph 2 div m2 add translate 270 rotate\n"
+        " 0 0 w pw rectclip end\n");
+  if (inf->page2 >= 0)
+    process_single_page(str, doc, inf->page2, cnt++, todo, -1);
+  write(str,
+        "grestore\n"
+        "showpage\n");
 }
 
+static void
+booklet_order(GList<int>& pages, int smax)
+{
+  // -- make a multiple of four
+  while (pages.size() & 0x3)
+    pages.append(-1);
+  // -- copy to array
+  int i = 0;
+  int n = pages.size();
+  GTArray<int> p(0,n-1);
+  for (GPosition pos=pages; pos; ++pos)
+    p[i++] = pages[pos];
+  // -- rebuild
+  pages.empty();
+  for (i=0; i<n; i+=smax)
+    {
+      int lo = i;
+      int hi = i+smax-1;
+      if (hi >= n)
+        hi = n-1;
+      while (lo < hi)
+        {
+          pages.append(p[hi--]);
+          pages.append(p[lo++]);
+          pages.append(p[lo++]);
+          pages.append(p[hi--]);
+        }
+    }
+}
 
 
 // ***********************************************************************
@@ -2326,30 +2486,70 @@ print(ByteStream &str,
   // Get page range
   GList<int> pages_todo;
   parse_range(doc, page_range, pages_todo);
-  // Prolog
   int todo = pages_todo.size();
   if (options.get_format()==Options::EPS)
     {
+      /* Encapsulated Postscript mode */
       if (todo != 1)
         G_THROW(ERR_MSG("DjVuToPS.only_one_page"));
-      GP<DjVuImage> dimg = decode_page(doc, 1, 0, todo);
+      GPosition pos = pages_todo;
+      int page_num = pages_todo[pos];
+      GP<DjVuImage> dimg = decode_page(doc,page_num,0,todo);
       if (! dimg)
         G_THROW(ERR_MSG("DjVuToPS.no_image") + GUTF8String("\t1"));
       GRect bbox(0, 0, dimg->get_width(), dimg->get_height());
       store_doc_prolog(str, 1, dimg->get_dpi(), &bbox);
       store_doc_setup(str);
+      process_single_page(str, doc, page_num, 0, todo, 0);
+    }
+  else if (options.get_bookletmode()==Options::OFF)
+    {
+      /* Normal mode */
+      int cnt = 0;
+      store_doc_prolog(str, todo, 0, 0);
+      store_doc_setup(str);
+      for(GPosition pos = pages_todo; pos; ++pos)
+        process_single_page(str,doc,pages_todo[pos],cnt++,todo,0);
+      store_doc_trailer(str);
     }
   else
     {
-      store_doc_prolog(str, todo, 0, 0);
+      /* Booklet mode */
+      int sheets_left = (todo+3)/4;
+      int sides_todo = sheets_left;
+      if (options.get_bookletmode() == Options::RECTOVERSO)
+        sides_todo *= 2;
+      int sheets_max = (options.get_bookletmax()+3)/4;
+      if (! sheets_max)
+        sheets_max = sheets_left;
+      // -- reorder pages
+      booklet_order(pages_todo, sheets_max*4);
+      // -- print
+      int sides = 0;
+      int sheetpos = sheets_max;
+      store_doc_prolog(str, sides_todo, 0, 0);
       store_doc_setup(str);
+      for (GPosition p=pages_todo; p; ++p)
+        {
+          struct pdata inf;
+          inf.page1 = pages_todo[p]; 
+          inf.page2 = pages_todo[++p]; 
+          inf.smax = sheets_max;
+          inf.spos = --sheetpos;
+          inf.offset = options.get_bookletalign();
+          if (options.get_bookletmode() != Options::VERSO)
+            process_double_page(str,doc,(void*)&inf,sides++,sides_todo);
+          inf.page1 = pages_todo[++p]; 
+          inf.page2 = pages_todo[++p]; 
+          inf.offset = -inf.offset;
+          if (options.get_bookletmode() != Options::RECTO)
+            process_double_page(str,doc,(void*)&inf,sides++,sides_todo);
+          sheets_left -= 1;
+          if (sheetpos <= 0)
+            sheetpos = ((sheets_max<sheets_left) ? sheets_max : sheets_left);
+        }
+      store_doc_trailer(str);
     }
-  // Pages
-  int cnt = 0;
-  for(GPosition pos = pages_todo; pos; ++pos)
-    process_single_page(str, doc, pages_todo[pos], cnt++, todo);
-  // Trailer
-  store_doc_trailer(str);
 }
 
 

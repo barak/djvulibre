@@ -96,7 +96,7 @@ AC_DEFUN(AC_CXX_OPTIMIZE,[
        *) CFLAGS="$CFLAGS $opt" ;;
      esac
    done
-   if test $ac_debug = no ; then
+   if test x$ac_debug = xno ; then
      OPTS=-DNO_DEBUG
      AC_CHECK_CXX_OPT([-Wall],[OPTS="$OPTS -Wall"])
      AC_CHECK_CXX_OPT([-O3],[OPTS="$OPTS -O3"],
@@ -108,6 +108,8 @@ AC_DEFUN(AC_CXX_OPTIMIZE,[
            AC_CHECK_CXX_OPT([$opt], [OPTS="$OPTS $opt"])
            ;;
       esac
+   else
+     AC_CHECK_CXX_OPT([-Wall],[OPTS="$OPTS -Wall"])
    fi
    case x"$ac_debug" in
      x[0-9])  OPTS="$OPTS -DDEBUGLVL=$ac_debug" ;;

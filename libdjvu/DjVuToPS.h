@@ -1,7 +1,7 @@
 //C-  -*- C++ -*-
 //C- -------------------------------------------------------------------
 //C- DjVuLibre-3.5
-//C- Copyright (c) 2002  Leon Bottou and Yann Le Cun.
+//C- Copyright (c) 2002-2003  Leon Bottou and Yann Le Cun.
 //C- Copyright (c) 2001  AT&T
 //C-
 //C- This software is subject to, and may be distributed under, the
@@ -136,6 +136,8 @@ public:
     enum Format { PS, EPS };
     /** Specifies the orientation of the output image */
     enum Orientation { PORTRAIT, LANDSCAPE, AUTO };
+    /** Specifies the booklet mode */
+    enum BookletMode { OFF, RECTO, VERSO, RECTOVERSO };
   private:
     Format format;
     int level;
@@ -149,6 +151,11 @@ public:
     int copies;
     bool frame;
     bool cropmarks;
+    BookletMode bookletmode;
+    int bookletmax;
+    int bookletalign;
+    int bookletfold;
+    int bookletxfold;
   public:
     /** Sets output image format to #PS# or #EPS# */
     void set_format(Format format);
@@ -174,6 +181,17 @@ public:
     void set_cropmarks(bool on);
     /** Specifies if a shadow text should be printed. */
     void set_text(bool on);
+    /** Specifies the bookletmode */
+    void set_bookletmode(BookletMode m);
+    /** Specifies the maximal number of pages in a booklet */
+    void set_bookletmax(int m);
+    /** Specifies an offset (points) between 
+        booklet recto(s) and verso(s). */
+    void set_bookletalign(int m);
+    /** Specifies the margin (points) required to fold 
+        the booklet (#fold# in points) and the margin 
+        increase required for each sheet (#xfold# in millipoints). */
+    void set_bookletfold(int fold, int xfold=0);
 
     /** Returns output image format (#PS# or #EPS#) */
     Format get_format(void) const {
@@ -213,6 +231,18 @@ public:
     /** Returns #TRUE# if there will be a shadow text printed */
     bool get_text(void) const {
       return text; }
+    /** Returns the booklet mode */
+    BookletMode get_bookletmode(void) const {
+      return bookletmode; }
+    /** Returns the booklet max size */
+    int get_bookletmax(void) {
+      return bookletmax; }
+    /** Returns the booklet recto/verso offset */
+    int get_bookletalign(void) {
+      return bookletalign; }
+    /** Returns the folding margin for sheet number #n#. */
+    int get_bookletfold(int n=0) {
+      return bookletfold + (n*bookletxfold+500)/1000; }
     /* Constructor */
     Options(void);
   };
@@ -248,8 +278,8 @@ protected:
   void print_image(ByteStream&,GP<DjVuImage>,const GRect&,GP<DjVuTXT>);
   void parse_range(GP<DjVuDocument>,GUTF8String,GList<int>&);
   GP<DjVuImage> decode_page(GP<DjVuDocument>,int,int,int);
-  void process_single_page(ByteStream&,GP<DjVuDocument>,int,int,int);
-  void process_double_page(ByteStream&,GP<DjVuDocument>,int,int,int,int,int);
+  void process_single_page(ByteStream&,GP<DjVuDocument>,int,int,int,int);
+  void process_double_page(ByteStream&,GP<DjVuDocument>,void*,int,int);
   
 public:
   /** Options affecting the print result. Please refer to

@@ -1,5 +1,5 @@
-.\" Copyright (c) 2001 Leon Bottou, Yann Le Cun, Patrick Haffner,
-.\"                    AT&T Corp., and Lizardtech, Inc.
+.\" Copyright (c) 2003 Leon Bottou, Yann Le Cun, Patrick Haffner,
+.\" Copyright (c) 2001 AT&T Corp., and Lizardtech, Inc.
 .\"
 .\" This is free documentation; you can redistribute it and/or
 .\" modify it under the terms of the GNU General Public License as
@@ -19,7 +19,7 @@
 .\" You should have received a copy of the GNU General Public
 .\" License along with this manual. Otherwise check the web site
 .\" of the Free Software Foundation at http://www.fsf.org.
-.TH DJVUPS 1 "01/18/2001" "DjVuLibre-3.5" "DjVuLibre-3.5"
+.TH DJVUPS 1 "01/18/2003" "DjVuLibre-3.5" "DjVuLibre-3.5"
 .SH NAME
 djvups \- Convert DjVu documents to PostScript.
 
@@ -62,7 +62,18 @@ This is the default.
 Produce an Encapsulated PostScript file.
 Encapsulated PostScript files are suitable for
 embedding images into other documents.
-They can only contain a single image.
+Encapsulated PostScript file can only contain 
+a single page. Setting this option
+overrides the options
+.BR -copies ,
+.BR -orientatin ,
+.BR -zoom ,
+.BR -cropmarks ,
+and
+.BR -booklet .
+.TP
+.BI -copies= n
+Specify the number of copies to print.
 .TP
 .BI -orientation= orient
 Specify whether pages should be printed using
@@ -188,9 +199,56 @@ It gets meaningful for printers because several models
 interpret device dependent RGB colors by emulating the color
 response of a cathodic tube.  
 .TP
-.BI -copies= n
-Specify the number of copies to print.
-
+.BI -booklet= opt
+Turns the booklet printing mode on.
+The booklet mode prints two pages on each side
+in a way suitable for making a booklet by folding
+the sheets. Option
+.I opt
+can take values
+.B no
+for disabling the booklet mode,
+.B yes
+for enabling the recto/verso booklet mode, and
+.B recto
+or
+.B verso
+to print only one side of each sheet.
+.TP
+.BI -bookletmax= max
+Specifies the maximal number of pages per booklet.
+A single printout might then be composed of several 
+booklets. Argument
+.I max
+is rounded up to the next multiple of 4. 
+Specifiying 
+.B 0
+sets no maximal number of pages
+and ensures that the printout will produce
+a single booklet.  This is the default.
+.TP
+.BI -bookletalign= align
+Specifies a positive or negative offset 
+applied  to the verso of each sheet.  
+Argument 
+.I align
+is expressed in points 
+(one point is 1/72th of an inch, or 0.352 millimeter)
+This is useful with certain printers to ensure that 
+both recto and verso are properly aligned.  The default
+value is of course
+.BR 0 .
+.TP
+.BI -bookletfold= base[+incr]
+Specifies the extra margin left  between both pages
+on a single sheet.  The base value
+.I base
+is expressed in points (one point is 1/72th of an inch, 
+or 0.352 millimeter). This margin is incremented for 
+each outer sheet by value
+.I incr
+expressed in millipoints. The default value is 
+.BR 18+200 .
 
 .SH CREDITS
 This program was written by L\('eon Bottou <leonb@users.sourceforge.net>,

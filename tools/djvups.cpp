@@ -1,7 +1,7 @@
 //C-  -*- C++ -*-
 //C- -------------------------------------------------------------------
 //C- DjVuLibre-3.5
-//C- Copyright (c) 2002  Leon Bottou and Yann Le Cun.
+//C- Copyright (c) 2002-2003  Leon Bottou and Yann Le Cun.
 //C- Copyright (c) 2001  AT&T
 //C-
 //C- This software is subject to, and may be distributed under, the
@@ -105,6 +105,10 @@ usage(void)
           "  -frame=<yes|no>                     (default: no)\n"
           "  -cropmarks=<yes|no>                 (default: no)\n"
           "  -text=<yes|no>                      (default: no)\n"
+          "  -booklet=<no|recto|verso|yes>       (default: no)\n"
+          "  -bookletmax=<n>                     (default: 0)\n"
+          "  -bookletalign=<n>                   (default: 0)\n"
+          "  -bookletfold=<n>[+<m>]              (default: 36+240)\n"
           "\n");
   exit(1);
 }
@@ -289,9 +293,46 @@ main(int argc, char **argv)
               else
                 complain(dargv[1],"Invalid argument. Use \"yes\" or \"no\".");
             }
-          else if (s == "help")
+          else if (s == "booklet")
             {
-              usage();
+              if (arg == "no")
+                options.set_bookletmode(DjVuToPS::Options::OFF);
+              else if (arg == "recto")
+                options.set_bookletmode(DjVuToPS::Options::RECTO);
+              else if (arg == "verso")
+                options.set_bookletmode(DjVuToPS::Options::VERSO);
+              else if (arg == "rectoverso" || arg=="yes" || arg=="")
+                options.set_bookletmode(DjVuToPS::Options::RECTOVERSO);
+              else 
+                complain(dargv[1],"Invalid argument."
+                         "Use \"no\", \"yes\", \"recto\", or \"verso\".");
+            }
+          else if (s == "bookletmax")
+            {
+              int endpos;
+              int n = arg.toLong(0, endpos);
+              if (endpos != (int)arg.length() || n < 0 || n > 999999)
+                complain(dargv[1],"Invalid argument.");
+              options.set_bookletmax(n);
+            }
+          else if (s == "bookletalign")
+            {
+              int endpos;
+              int n = arg.toLong(0, endpos);
+              if (endpos != (int)arg.length() || n < -720 || n > +720)
+                complain(dargv[1],"Invalid argument.");
+              options.set_bookletalign(n);
+            }
+          else if (s == "bookletfold")
+            {
+              int endpos;
+              int m = 250;
+              int n = arg.toLong(0, endpos);
+              if (endpos <= (int)arg.length() && arg[endpos]=='+')
+                m = arg.toLong(endpos+1, endpos);
+              if (endpos != (int)arg.length() || m<0 || m>720 || n<0 || n>9999 )
+                complain(dargv[1],"Invalid argument.");
+              options.set_bookletfold(n,m);
             }
           else
             {

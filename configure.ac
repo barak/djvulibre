@@ -73,9 +73,6 @@ dnl
 dnl This release does not use libtool because
 dnl - libtool documentation suggest that it is 
 dnl   not ready for general use with C++.
-dnl - libdjvu has not been sufficiently tested 
-dnl   with compilers other than g++ >= 2.95
-
 
 # ----------------------------------------
 # Libraries
@@ -142,7 +139,7 @@ AC_PATH_QT(,
 # Check compilation of xmltools
 AC_ARG_ENABLE(xmltools,
    AC_HELP_STRING([--enable-xmltools],
-                  [enable compilation of the xml tools (default).]),
+                  [enable compilation of the djvu xml tools.]),
    [ac_enable_xmltools=$enableval], 
    [ac_enable_xmltools=no] ) 
 if test x$ac_enable_xmltools != xno ; then
@@ -213,7 +210,8 @@ AC_SUBST(SHARED_NO)
 # Work around broken compilers with the famous LPR0 bug
 if test x$ac_shared_libdjvu != xno && test x$GXX = xyes; then
     AC_MSG_CHECKING([if $CXX has the LPR0 bug])
-    echo 'extern "C" { inline int sqr(int x) throw() { return x * x ; } } int main() {} ' > conftest.cc
+    echo 'extern "C" { inline int sqr(int x)throw(){return x*x;}}int main(){}' \
+        > conftest.cc
     if ${CXX} -fPIC ${OPTS} conftest.cc -o conftest >/dev/null 2>/dev/null ; then
         AC_MSG_RESULT([no])
     else
@@ -245,7 +243,7 @@ changequote([, ])dnl
   esac
   case $action in
     error)
-        AC_MSG_ERROR([Your c++ compiler ($cxxver) is outdated. Read the INSTALL file.])
+        AC_MSG_ERROR([Your c++ compiler ($cxxver) is outdated.])
         ;;
     warn2)
         AC_MSG_WARN([Your c++ compiler ($cxxver) has known problems.
@@ -260,10 +258,10 @@ changequote([, ])dnl
 -------------------------------------------])
         ;;
     redhat)
-        # Check for the infamous early 2.96 compiler
+        # Check for infamous early 2.96 compiler
         for n in `g++ -v 2>&1 | grep version` ; do rhversion=$n ; done 
         case "$rhversion" in
-changequote(<<, >>)dnl                                                                              
+changequote(<<, >>)dnl
           2.96-1[0-9][0-9]*) ;;
           2.96-8[5-9]*) ;;
           2.96-9*) ;;

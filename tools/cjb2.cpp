@@ -685,14 +685,18 @@ struct MatchData
 
 
 // -- Creates shape hierarchy and substitutions
+// @param substitute_threshold: 
+//  max percent of different pixels in order to substitute
+// @param refine_threshold:
+//  max percent of different pixels in order to cross-code
 void
 tune_jb2image(JB2Image *jimg, 
-              int substitute_threshold=0,  // max percent of different pixels in order to substitute
-              int refine_threshold=21      // max percent of different pixels in order to cross-code
-              )
+              int substitute_threshold=0,  
+              int refine_threshold=21  )
 {
   // ISSUE: PATTERN MATCHING
-  // Better criteria for substitution lead to faster code and improved compression ratios.
+  // Better criteria for substitution lead to faster code 
+  // and improved compression ratios.
   // Beware of character substitution errors!
   
   // Pattern matching data
@@ -741,8 +745,10 @@ tune_jb2image(JB2Image *jimg,
           if (abs (cross_rows - rows) > 2) continue;
           if (abs (cross_columns - columns) > 2) continue;
           // Compute alignment (these are always +1, 0 or -1)
-          int cross_column_adjust = (cross_columns  - cross_columns/2) - (columns - columns/2);
-          int cross_row_adjust = (cross_rows  - cross_rows/2) - (rows - rows/2);
+          int cross_column_adjust 
+            = (cross_columns  - cross_columns/2) - (columns - columns/2);
+          int cross_row_adjust 
+            = (cross_rows  - cross_rows/2) - (rows - rows/2);
           // Ensure adequate borders
           cross_bitmap.minborder (2-cross_column_adjust);
           cross_bitmap.minborder (2+columns-cross_columns+cross_column_adjust);
@@ -753,7 +759,8 @@ tune_jb2image(JB2Image *jimg,
           for (row = -1; row <= rows; row++) 
             {
               p_row = bitmap[row];
-              p_cross_row  = cross_bitmap[row+cross_row_adjust] + cross_column_adjust;
+              p_cross_row  
+                = cross_bitmap[row+cross_row_adjust] + cross_column_adjust;
               for (column = -1; column <= columns; column++) 
                 if (p_row [column] != p_cross_row [column])
                   score ++;
@@ -775,9 +782,9 @@ tune_jb2image(JB2Image *jimg,
             lib[current].bits = 0;
         }
       // ISSUE: CROSS-IMPROVING
-      // When we decide not to do a substitution, we can slightly modify
-      // the current shape in order to make it closer to the matching
-      // shape, therefore improving the file size.  In fact there is a continuity
+      // When we decide not to do a substitution, we can slightly modify the
+      // current shape in order to make it closer to the matching shape,
+      // therefore improving the file size.  In fact there is a continuity
       // between pure cross-coding and pure substitution...
     }
   
@@ -793,8 +800,10 @@ tune_jb2image(JB2Image *jimg,
           int rows = jshp.bits->rows();
           int cross_columns = lib[jshp.parent].bits->columns();
           int cross_rows = lib[jshp.parent].bits->rows();
-          int cross_column_adjust = (cross_columns  - cross_columns/2) - (columns - columns/2);
-          int cross_row_adjust = (cross_rows  - cross_rows/2) - (rows - rows/2);
+          int cross_column_adjust 
+            = (cross_columns  - cross_columns/2) - (columns - columns/2);
+          int cross_row_adjust 
+            = (cross_rows  - cross_rows/2) - (rows - rows/2);
           // Adjust blit record
           jblt->shapeno = jshp.parent;
           jblt->bottom -= cross_row_adjust;
@@ -831,24 +840,26 @@ cjb2(const GURL &urlin, const GURL &urlout, const cjb2opts &opts)
 {
   GP<ByteStream> ibs=ByteStream::create(urlin, "rb");
   GP<GBitmap> ginput=GBitmap::create(*ibs);
-  GBitmap &input=*ginput;
+  if (ginput->get_grays() != 2)
+    G_THROW("Expecting a bitonal PBM file");
 
   // Read input image
-  CCImage rimg(input.columns(), input.rows(), opts.dpi);  // construct CCImage
-  rimg.add_bitmap_runs(input);       // fill CCImage
-  input.init(0,0);                   // save memory
+  GBitmap &input=*ginput;
+  CCImage rimg(input.columns(), input.rows(), opts.dpi);
+  rimg.add_bitmap_runs(input);   // fill CCImage
+  input.init(0,0);               // save memory
   if (opts.verbose)
     DjVuFormatErrorUTF8( "%s\t%d", ERR_MSG("cjb2.runs"), rimg.runs.size() );
   
   // Component analysis
-  rimg.make_ccids_by_analysis();             // obtain ccids
-  rimg.make_ccs_from_ccids();                // compute cc descriptors
+  rimg.make_ccids_by_analysis(); // obtain ccids
+  rimg.make_ccs_from_ccids();    // compute cc descriptors
   if (opts.verbose)
     DjVuFormatErrorUTF8( "%s\t%d", ERR_MSG("cjb2.ccs_before"), rimg.ccs.size());
   if (opts.clean) 
-    rimg.erase_tiny_ccs();                   // clean
-  rimg.merge_and_split_ccs();                // reorganize weird ccs
-  rimg.sort_in_reading_order();              // sort cc descriptors
+    rimg.erase_tiny_ccs();       // clean
+  rimg.merge_and_split_ccs();    // reorganize weird ccs
+  rimg.sort_in_reading_order();  // sort cc descriptors
   if (opts.verbose)
     DjVuFormatErrorUTF8( "%s\t%d", ERR_MSG("cjb2.ccs_after"), rimg.ccs.size());
   
