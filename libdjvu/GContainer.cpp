@@ -327,11 +327,11 @@ void
 GPosition::throw_invalid(void *c) const
 {
   if (c != cont)
-    G_THROW( ERR_MSG("GContainer.bad_pos") );
+    G_THROW( ERR_MSG("GContainer.bad_pos_cont") );
   else if (! ptr)
     G_THROW( ERR_MSG("GContainer.bad_pos_null") );
   else 
-    G_THROW( ERR_MSG("GContainer.bad_pos_cont") );
+    G_THROW( ERR_MSG("GContainer.bad_pos") );
 }
 
 
