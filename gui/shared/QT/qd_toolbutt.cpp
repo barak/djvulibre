@@ -141,7 +141,8 @@ QDToolButton::createSet(ByteStream & str, int shadow_width)
    QBitmap qbmp1(width, height);
    qbmp1.convertFromImage(qimg, MonoOnly);
 
-   qxImager->dither(gpix);
+   if (qxImager)
+     qxImager->dither(gpix);
 
       // Create Normal pixmap
    QPixmap qpix1(width, height);

@@ -97,12 +97,14 @@ QDBase::redraw(const GRect * grect)
 void
 QDBase::setBackgroundColor(u_int32 color, int do_redraw)
 {
-   back_color=color;
-   back_pixmap=qeImager->getColorPixmap(64, 64, color);
-
-   pane->setBackgroundPixmap(back_pixmap);
-
-   if (do_redraw) redraw();
+   if (qeImager)
+     {
+       back_color=color;
+       back_pixmap=qeImager->getColorPixmap(64, 64, color);
+       pane->setBackgroundPixmap(back_pixmap);
+     }
+   if (do_redraw) 
+     redraw();
 }   
 
 void
@@ -345,12 +347,14 @@ QDBase::paint(QPaintDevice * drawable,	// Where to paint
 		  // Map rectangle into image rectangle
 	       GRect grectImg=grectDisp;
 	       mapper.map(grectImg);
-	       qxImager->dither(*pm, grectImg.xmin, grectImg.ymin);
+               if (qxImager)
+                 qxImager->dither(*pm, grectImg.xmin, grectImg.ymin);
 	    } else if (patch_pm)
 	    {
 	       GRect rect=patch_rect;
 	       mapper.map(rect);
-	       qxImager->dither(*patch_pm, rect.xmin, rect.ymin);
+               if (qxImager)
+                 qxImager->dither(*patch_pm, rect.xmin, rect.ymin);
 	    }
 
 	       // Finally - draw the GBitmap/GPixmap into the window
@@ -463,12 +467,13 @@ QDBase::paint(QPaintDevice * drawable,	// Where to paint
 				  (irect.ymin-rectDocument.ymin) % back_pixmap.height()));
    }
    if (override_flags.frame)
-   {
-      p.setPen(qeImager->getGrayColor(0.7));
-      p.drawRect(rectDocument.xmin, rectDocument.ymin,
-		 rectDocument.width(), rectDocument.height());
-      p.end();
-   }
+     {
+       if (qeImager)
+         p.setPen(qeImager->getGrayColor(0.7));
+       p.drawRect(rectDocument.xmin, rectDocument.ymin,
+                  rectDocument.width(), rectDocument.height());
+       p.end();
+     }
      
    DEBUG_MSG("QDBase::paint(): DONE\n");
 }

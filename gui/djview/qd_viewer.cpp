@@ -1287,7 +1287,8 @@ QDViewer::slotShowPrefs(void)
 	 bm_cache.setMaxSize(prefs.mcacheSize*1024*1024);
 	 pm_cache.setMaxSize(prefs.mcacheSize*1024*1024);
 
-	 qxImager->setOptimizeLCD(prefs.optimizeLCD);
+	 if (qxImager)
+           qxImager->setOptimizeLCD(prefs.optimizeLCD);
 	 setBackgroundColor(getBackgroundColor(), false);
 	 
 	 if (prefs.toolBarOn) enableToolBar(true);

@@ -58,3 +58,8 @@ QeImager::QeImager(void)
 			  "Internal error: Attempt to initialize QeImager twice.");
    qeImager=this;
 }
+
+QeImager::~QeImager(void)
+{
+  qeImager = 0;
+}

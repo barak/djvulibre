@@ -229,9 +229,9 @@ QDThumbItem::paint(QPainter * p)
 	 int width=qpix.width();
 	 int height=qpix.height();
 	 QPixmap qpix1(qpix);
-	 {
+	 if (qxImager) {
 	    QPainter p1(&qpix1);
-	    p1.setPen(qxImager->getGrayColor(0.8));
+            p1.setPen(qxImager->getGrayColor(0.8));
 	    for(int x=-height;x<width;x+=2)
 	       p1.drawLine(x, 0, x+height, height);
 	    for(int x=0;x<width+height;x+=2)
@@ -302,7 +302,8 @@ QDThumbnails::getImage(int page_num, int width, int height)
 			 GRect(0, 0, width, height), *pm_scaled);
 
 	       // Dither the scaled pixmap
-	    qxImager->dither(*pm_scaled);
+	    if (qxImager)
+              qxImager->dither(*pm_scaled);
 
 	       // Draw it into a QPixmap
 	    pixmap=QPixmap(pm_scaled->columns(), pm_scaled->rows(), x11Depth());

@@ -327,6 +327,10 @@ InitializeQT(int &argc, char ** argv)
 void 
 CleanupQT(void)
 {
+  if (qeImager)
+    delete qeImager;
+  qeImager = 0;
+  qxImager = 0;
   if (qeApp)
     delete qeApp;
   qeApp = 0;

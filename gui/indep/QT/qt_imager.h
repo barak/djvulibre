@@ -79,7 +79,7 @@ public:
 				       u_int32 color)=0;
 
    QeImager(void);
-   virtual ~QeImager(void) {};
+   virtual ~QeImager(void);
 };
 
 extern QeImager	* qeImager;

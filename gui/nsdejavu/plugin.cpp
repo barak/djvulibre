@@ -609,6 +609,10 @@ Resize_hnd(Widget w, XtPointer cl_data, XEvent * event, Boolean * cont)
 ***************************** Copying the colormap *****************************
 *******************************************************************************/
 
+/* This is no longer needed since djview no longer uses the provided colormap.
+   This is kept to allow interoperability between nsdejavu.so and previous
+   version of djview. LYB. */
+
 
 static void
 CopyColormap(Display *displ, Visual *visual, Screen *screen, Colormap cmap)

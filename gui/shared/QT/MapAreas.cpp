@@ -634,8 +634,10 @@ MapArea::updateCache(const GRect & pm_rect, const GP<GPixmap> & pm,
 	       // Dither pix_off and pix_on
 	    GRect drect=irect;
 	    sdoc_mapper->map(drect);
-	    qxImager->dither(*ipix_on, drect.xmin, drect.ymin);
-	    qxImager->dither(*ipix_off, drect.xmin, drect.ymin);
+	    if (qxImager)
+              qxImager->dither(*ipix_on, drect.xmin, drect.ymin);
+	    if (qxImager)
+              qxImager->dither(*ipix_off, drect.xmin, drect.ymin);
 
 	       // Now copy the GPixmaps into QPixmaps to be used for caching
 	    QDPainter p_off(&off_pix);

@@ -144,7 +144,8 @@ QDGammaDispl::paintEvent(QPaintEvent *)
       pm->color_correct(gamma);
 
       DEBUG_MSG("seeing if dithering is necessary\n");
-      qxImager->dither(*pm);
+      if (qxImager)
+        qxImager->dither(*pm);
 
       QePainter p(this);
       p.drawPixmap(grect, pm);

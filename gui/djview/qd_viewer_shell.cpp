@@ -405,27 +405,33 @@ QDViewerShell::slotGetURL(const GURL & url, const GUTF8String &target)
 void
 QDViewerShell::slotAboutToShowMenu(void)
 {
-      // The viewer does most of the job
-   QDViewer * viewer;
-   if (!djvu || !(viewer=djvu->getQDViewer()))
+  // The viewer does most of the job
+  QDViewer * viewer;
+  if (!djvu || !(viewer=djvu->getQDViewer()))
      setItemsEnabled(menu, FALSE);
-   else 
-     viewer->setupMenu(menu);
-      // Check presence of other windows
-   QWidgetList  *list = QApplication::topLevelWidgets();
-   int instances = list->count();
-   delete list;
-      // Enable the top-level things, Open and Exit and some more
-   for(u_int i=0;i<menu->count();i++)
-      menu->setItemEnabled(menu->idAt(i), TRUE);
-   menu->setItemEnabled(IDC_OPEN, TRUE);
-   menu->setItemEnabled(IDC_NEW_WINDOW, TRUE);
-   menu->setItemEnabled(IDC_CLOSE, (instances>1) ? TRUE : FALSE);
-   menu->setItemEnabled(IDC_EXIT, TRUE);
-   menu->setItemEnabled(IDC_ABOUT_DEJAVU, TRUE);
-   menu->setItemEnabled(IDC_HELP_DEJAVU, TRUE);
-      // Set full screen mode
-   menu->setItemChecked(IDC_FULL_SCREEN, isFullScreen());
+  else 
+    viewer->setupMenu(menu);
+  // Check presence of other windows
+  int instances = 0;
+  QWidgetList  *list = QApplication::topLevelWidgets();
+  for (QWidget *widget = list->first(); widget; widget=list->next())
+    if (widget->isVisible() && !widget->isDesktop() && !widget->isPopup())
+#ifndef QT1
+      if (!widget->isPopup() && !widget->testWFlags(WStyle_Dialog))
+#endif
+        instances++;
+  delete list;
+  // Enable the top-level things, Open and Exit and some more
+  for(u_int i=0;i<menu->count();i++)
+    menu->setItemEnabled(menu->idAt(i), TRUE);
+  menu->setItemEnabled(IDC_OPEN, TRUE);
+  menu->setItemEnabled(IDC_NEW_WINDOW, TRUE);
+  menu->setItemEnabled(IDC_CLOSE, (instances!=1) ? TRUE : FALSE);
+  menu->setItemEnabled(IDC_EXIT, TRUE);
+  menu->setItemEnabled(IDC_ABOUT_DEJAVU, TRUE);
+  menu->setItemEnabled(IDC_HELP_DEJAVU, TRUE);
+  // Set full screen mode
+  menu->setItemChecked(IDC_FULL_SCREEN, isFullScreen());
 }
 
 void
