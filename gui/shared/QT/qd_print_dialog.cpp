@@ -735,12 +735,15 @@ QDPrintDialog::QDPrintDialog(const GP<DjVuDocument> & _doc,
    printing=0;
    interrupt_printing=0;
 
-   if (!prefs) throw ERROR_MESSAGE("QDPrintDialog::QDPrintDialog",
-				   "Zero PREFERENCES passed as input.");
-   if (!doc) throw ERROR_MESSAGE("QDPrintDialog::QDPrintDialog",
-				 "Zero document passed as input.");
-   if (!dimg) throw ERROR_MESSAGE("QDPrintDialog::QDPrintDialog",
-				  "Zero image passed as input.");
+   if (!prefs) 
+     throw ERROR_MESSAGE("QDPrintDialog::QDPrintDialog",
+                         "Zero PREFERENCES passed as input.");
+   if (!doc) 
+     throw ERROR_MESSAGE("QDPrintDialog::QDPrintDialog",
+                         "Zero document passed as input.");
+   if (!dimg) 
+     throw ERROR_MESSAGE("QDPrintDialog::QDPrintDialog",
+                         "Zero image passed as input.");
    
    if (print_rect.isempty())
      print_rect=GRect(0, 0, dimg->get_width(), dimg->get_height());
@@ -812,10 +815,12 @@ QDPrintDialog::QDPrintDialog(const GP<DjVuDocument> & _doc,
                  tr("Something like '1,2,10-12'."));
 #ifndef QT1
    QWhatsThis::add(bg,
-                   tr("<b>Page specification:</b>"
-                      "<br>Enter page ranges separated by commas."
-                      " Page <i>0</i> represents a blank page."
-                      " Page <i>$</i> represents the last page."
+                   tr("<b>Selecting pages to print:</b>"
+                      "<br>The page specification box is enabled when"
+                      " the <i>custom pages</i> mode is selected. "
+                      " Enter page ranges separated by commas."
+                      " Page \"0\" represents a blank page."
+                      " Page \"$\" represents the last page."
                       "<br>- Simple example: <i>1,2,10-12</i>."
                       "<br>- Printing multiple pages: <i>1,1,2,2</i>"
                       "<br>- Inserting a blank page: <i>1-10,0,11-$</i>"
@@ -906,7 +911,7 @@ QDPrintDialog::QDPrintDialog(const GP<DjVuDocument> & _doc,
                       "<br>Encapsulated PostScript files are"
                       " nicely imported by other applications."
                       " On the other hand they can only contain"
-                      " a single page with predefined zoom."));
+                      " a single page with predefined scaling."));
 #endif
 
    // *** Creating 'PostScript level' frame
@@ -955,9 +960,9 @@ QDPrintDialog::QDPrintDialog(const GP<DjVuDocument> & _doc,
 #ifndef QT1
    QWhatsThis::add(bg,
                    tr("<b>Scaling:</b>"
-                      "<br>Option 'scale to fit' accomodates"
+                      "<br>Option <i>scale to fit</i> accomodates"
                       " whetever paper size your printer uses."
-                      " Option 'one to one' attempts to reproduce"
+                      " Option <i>one to one</i> attempts to reproduce"
                       " the initial document size."));
 #endif
    
@@ -976,7 +981,7 @@ QDPrintDialog::QDPrintDialog(const GP<DjVuDocument> & _doc,
 #ifndef QT1
    QWhatsThis::add(bg,
                    tr("<b>Orientation:</b>"
-                      "<br>Automatic orientation selects portrait"
+                      "<br>Automatic orientation chooses portrait"
                       " or landscape on a page per page basis."));
 #endif
 
@@ -993,8 +998,8 @@ QDPrintDialog::QDPrintDialog(const GP<DjVuDocument> & _doc,
 #ifndef QT1
    QWhatsThis::add(bg,
                    tr("<b>Marks:</b>"
-                      "<br>Printing an image frame is useful to"
-                      " delimit the page area. Crop marks are useful"
+                      "<br>The image frame is useful to"
+                      " delimit the page area. The crop marks are useful"
                       " to cut the paper to the correct size."));
 #endif
 
@@ -1036,10 +1041,10 @@ QDPrintDialog::QDPrintDialog(const GP<DjVuDocument> & _doc,
 #ifndef QT1
    QWhatsThis::add(bg,
                    tr("<b>Producing booklets:</b>"
-                      "<br>These options are useful to print the selected"
+                      "<br>The booklet mode prints the selected"
                       " pages as sheets suitable for folding one or several"
                       " booklets. Several booklets might be produced when"
-                      " a maximum number of sheets per booklet."
+                      " a maximum number of sheets per booklet is specified."
                       " You can use a duplex printer or print"
                       " rectos and versos separately."));
 #endif
@@ -1075,12 +1080,12 @@ QDPrintDialog::QDPrintDialog(const GP<DjVuDocument> & _doc,
 #ifndef QT1
    QWhatsThis::add(bg,
                    tr("<b>Advanced booklet options:</b>"
-                      "<br>- Shifting rectos and versos is useful"
+                      "<br>Shifting rectos and versos is useful"
                       " with poorly aligned duplex printers."
-                      "<br>- The center margins determine how much"
+                      " The center margins determine how much"
                       " space is left between the pages to fold the"
-                      " sheets. This space slowly increases from inner"
-                      " sheets to outer sheets."));
+                      " sheets. This space slowly increases from the"
+                      " inner sheet to the outer sheet."));
 #endif
    
    // Connecting signals

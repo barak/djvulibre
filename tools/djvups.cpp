@@ -108,7 +108,7 @@ usage(void)
           "  -booklet=<no|recto|verso|yes>       (default: no)\n"
           "  -bookletmax=<n>                     (default: 0)\n"
           "  -bookletalign=<n>                   (default: 0)\n"
-          "  -bookletfold=<n>[+<m>]              (default: 36+240)\n"
+          "  -bookletfold=<n>[+<m>]              (default: 18+200)\n"
           "\n");
   exit(1);
 }
