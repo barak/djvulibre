@@ -103,6 +103,9 @@
 /* Define if pthreads are available */
 #undef HAVE_PTHREAD
 
+/* Define to 1 if you have the `putc_unlocked' function. */
+#undef HAVE_PUTC_UNLOCKED
+
 /* Define to Qt version if available */
 #undef HAVE_QT
 
