@@ -81,7 +81,9 @@
 #include <qtooltip.h>
 #include <qpaintdevicemetrics.h>
 #include <qspinbox.h>
-
+#ifndef QT1
+#include <qwhatsthis.h>
+#endif
 
 //***************************************************************************
 //***************************** QDGammaDispl ********************************
@@ -285,9 +287,21 @@ QDGammaPrefs::QDGammaPrefs(DjVuPrefs * prefs, QWidget * parent, const char * nam
       // Connecting signals and slots
    connect(displ_slider, SIGNAL(valueChanged(int)), preview, SLOT(setGamma(int)));
    connect(match_butt, SIGNAL(toggled(bool)), this, SLOT(matchToggled(bool)));
-   QToolTip::add(preview, 
-                 tr("Adjust slider on the left until all\n"
-                    "areas of the square look approximately\nthe same"));
+    
+      // Help
+#ifndef QT1
+   QWhatsThis::add(this,
+                   tr("<b>Screen gamma correction:</b>"
+                      "<br>The best color rendition is achieved"
+                      " by adjusting the gamma correction slider"
+                      " and choose the position that makes the"
+                      " gray square as uniformly gray as possible."
+                      "<p><b>Printer color correction:</b>"
+                      "<br>The <i>automatic color matching</i> option"
+                      " works best with PostScript printers"
+                      " and ICC profiled printers."
+                      " The slider might be useful in other cases."));
+#endif
 }
 
 //***************************************************************************
@@ -409,17 +423,17 @@ QDLensPrefs::QDLensPrefs(DjVuPrefs * prefs, QWidget * parent, const char * name)
       cur_hkey=mid_hkey;
    setComboBoxCurrentItem(hkey_menu, cur_hkey);
    glay->addWidget(hkey_menu,3,1);
-   
-   QString tip=tr("To use the magnifying glass\n"
-		  "press the CTRL key and point to the\n"
-		  "document area you want to magnify.");
-   QToolTip::add(size_label, tip);
-   QToolTip::add(mag_label, tip);
-   QToolTip::add(size_menu, tip);
-   QToolTip::add(scale_menu, tip);
-
    connect(hkey_menu, SIGNAL(activated(const QString &)),
 	   this, SLOT(slotHotKeyChanged(const QString &)));
+
+      // Help
+#ifndef QT1
+   QWhatsThis::add(this,
+                   tr("<b>Magnification lens:</b>"
+                      "<br>The <i>magnification lens</i>"
+                      " appears under the mouse pointer when you press"
+                      " the selected key."));
+#endif
 }
 
 //***************************************************************************
@@ -454,7 +468,8 @@ QDOptimPrefs::QDOptimPrefs(DjVuPrefs * prefs, QWidget * parent, const char * nam
    vlay->addSpacing(fontMetrics().height());
    vlay->addStretch(1);
 
-   fastzoom_butt=new QCheckBox(tr("Favor fast magnifications for \"Fit\" resolutions."),
+   fastzoom_butt=new QCheckBox(tr("Favor fast magnifications "
+                                  "for \"Fit\" resolutions."),
 				this, "fastzoom_butt");
    fastzoom_butt->setChecked(prefs->fastZoom);
    vlay->addWidget(fastzoom_butt);
@@ -464,12 +479,31 @@ QDOptimPrefs::QDOptimPrefs(DjVuPrefs * prefs, QWidget * parent, const char * nam
    fastthumb_butt->setChecked(prefs->fastThumb);
    vlay->addWidget(fastthumb_butt);
 
-   lcd_butt=new QCheckBox(tr("Optimize images for 24-bit LCD displays."),
+   lcd_butt=new QCheckBox(tr("Optimize images for LCD displays."),
 			   this, "lcd_butt");
    lcd_butt->setChecked(prefs->optimizeLCD);
    vlay->addWidget(lcd_butt);
 
    vlay->addStretch(2);
+
+      // Help
+#ifndef QT1
+   QWhatsThis::add(this,
+                   tr("<b>Optimizations:</b>"
+                      "<ul>"
+                      "<li>The <i>fast magnification</i> option"
+                      " selects integer magnifications that require"
+                      " less computing resources.</li>"
+                      "<li>The <i>fast thumbnails</i> option"
+                      " never compute thumbnails unless the page data"
+                      " is already cached. This cuts network traffic that"
+                      " might be otherwise unnecessary.</li>"
+                      "<li>The <i>LCD display</i> option might improve"
+                      " the image quality on certain LCD displays.</li>"
+                      "</ul>"));
+#endif
+
+
 }
 
 //***************************************************************************
@@ -570,21 +604,26 @@ QDCachePrefs::QDCachePrefs(DjVuPrefs * prefs, bool pcache_on,
       pcache_menu=0;
       pcache_butt=0;
    }
-   
-
-   QString mcache_tip=tr("Off screen cache is used to cache the\n"
-			 "image margins to make the scrolling smoother.");
-   QString pcache_tip=tr("Decoded pages cache is used to store\n"
-			 "pages that you have already seen in memory\n"
-			 "for fast access in future.");
-   QToolTip::add(mcache_label, mcache_tip);
-   QToolTip::add(mcache_menu, mcache_tip);
-   if (pcache_label)
-      QToolTip::add(pcache_label, pcache_tip);
-   if (pcache_menu)
-      QToolTip::add(pcache_menu, pcache_tip);
    if (pcache_butt)
-      connect(pcache_butt, SIGNAL(clicked(void)), this, SLOT(slotClearCache(void)));
+     {
+       connect(pcache_butt, SIGNAL(clicked(void)), this, SLOT(slotClearCache(void)));
+#ifndef QT1
+       QWhatsThis::add(this,
+                   tr("<b>Caches:</b>"
+                      "<br>There are several caches in <i>djview</i>."
+                      "<ul>"
+                      "<li>The <i>off screen cache</i> stores image data"
+                      " located outside the visible area."
+                      " This cache makes panning smoother.</li>"
+                      "<li>The <i>decoded page cache</i> contains partially"
+                      " decoded pages. It provides faster response times"
+                      " when navigating a multipage document or when returning"
+                      " to a previously viewed page. Clearing this cache"
+                      " might be useful to reflect a change in the page"
+                      " data without restarting the DjVu viewer.</li>"
+                      "</ul>"));
+#endif
+     }
 }
 
 //***************************************************************************
@@ -621,16 +660,17 @@ QDTbarPrefs::slotTBToggled(bool)
 QDTbarPrefs::QDTbarPrefs(DjVuPrefs * prefs, QWidget * parent, const char * name) 
   : QWidget(parent, name)
 {
-   DEBUG_MSG("QDTbarPrefs::QDTbarOptimPrefs(): Creating 'Toolbar Preferences' box...\n");
+   DEBUG_MSG("QDTbarPrefs::QDTbarOptimPrefs(): "
+             "Creating 'Toolbar Preferences' box...\n");
    DEBUG_MAKE_INDENT(3);
 
    QVBoxLayout * vlay=new QVBoxLayout(this, 10, 5, "tbar_vlay");
    vlay->addSpacing(fontMetrics().height());
    vlay->addStretch(1);
-   on_butt=new QCheckBox(tr("Toolbar enabled"), this, "on_butt");
+   on_butt=new QCheckBox(tr("Enable toolbar"), this, "on_butt");
    on_butt->setChecked(prefs->toolBarOn);
    vlay->addWidget(on_butt);
-   vis_butt=new QCheckBox(tr("Always visible"), this, "vis_butt");
+   vis_butt=new QCheckBox(tr("Toolbar is always visible"), this, "vis_butt");
    vis_butt->setChecked(prefs->toolBarAlwaysVisible);
    vis_butt->setEnabled(prefs->toolBarOn);
    vlay->addWidget(vis_butt);
@@ -648,4 +688,17 @@ QDTbarPrefs::QDTbarPrefs(DjVuPrefs * prefs, QWidget * parent, const char * name)
 
    connect(on_butt, SIGNAL(toggled(bool)), this, SLOT(slotTBToggled(bool)));
    connect(vis_butt, SIGNAL(toggled(bool)), this, SLOT(slotTBToggled(bool)));
+
+#ifndef QT1
+   QWhatsThis::add(this,
+                   tr("<b>Toolbar:</b>"
+                      "<br>Checking the <i>enable toolbar</i> box"
+                      " adds a toolbar at the bottom of each DjVu"
+                      " image. Checking the <i>always visible</i> box"
+                      " makes the toolbar visible at all times."
+                      " Otherwise the toolbar appears when the mouse"
+                      " pointer comes close to the bottom of the image"
+                      " and remains visible until the specified delay"
+                      " expires."));
+#endif
 }

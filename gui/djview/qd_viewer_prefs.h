@@ -104,20 +104,15 @@ private:
    QDHlinkPrefs		* hlink_prefs;
    QDCachePrefs		* cache_prefs;
    QDTbarPrefs		* tbar_prefs;
-   
    class QCheckBox	* global_butt;
-   bool			cache_disabled;
-
+   bool	          	  cache_disabled;
    DjVuPrefs		* prefs;
-private slots:
-   void		slotGlobalToggled(bool);
 protected slots:
-   virtual void	done(int);
+   void slotGlobalToggled(bool);
+   void slotHelp(void);
+   virtual void done(int);
 public:
-      // Used to disable cache just for this instance.
-      // Remember, that the cache can be disabled globally.
-   void		disableCache(void);
-   
+   void	disableCache(void);
    QDViewerPrefs(DjVuPrefs * prefs, QWidget * parent=0,
 		 const char * name=0, bool modal=FALSE);
    ~QDViewerPrefs(void) {};

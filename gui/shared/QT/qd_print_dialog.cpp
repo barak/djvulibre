@@ -811,20 +811,20 @@ QDPrintDialog::QDPrintDialog(const GP<DjVuDocument> & _doc,
    custompages_text->setEnabled(FALSE);
    bg_hlay->addWidget(custompages_text, 1);
    custompages_label->setBuddy(custompages_text);
-   QToolTip::add(custompages_text,
-                 tr("Something like '1,2,10-12'."));
 #ifndef QT1
    QWhatsThis::add(bg,
-                   tr("<b>Selecting pages to print:</b>"
+                   tr("<b>Printing selected pages:</b>"
                       "<br>The page specification box is enabled when"
                       " the <i>custom pages</i> mode is selected. "
                       " Enter page ranges separated by commas."
-                      " Page \"0\" represents a blank page."
-                      " Page \"$\" represents the last page."
-                      "<br>- Simple example: <i>1,2,10-12</i>."
-                      "<br>- Printing multiple pages: <i>1,1,2,2</i>"
-                      "<br>- Inserting a blank page: <i>1-10,0,11-$</i>"
-                      "<br>- Printing in reverse: <i>$-1</i>") );
+                      " Blank pages can be specified as page <b>0</b>."
+                      " The last page can be referred to as page <b>$</b>."
+                      "<ul>"
+                      "<li>Simple case: <b>1,2,10-12</b>.</li>"
+                      "<li>Printing multiple pages: <b>1,1,2,2</b>.</li>"
+                      "<li>Inserting a blank page: <b>1-10,0,11-$</b>.</li>"
+                      "<li>Printing in reverse: <b>$-1</b>.</li>"
+                      "</ul>") );
 #endif
 
    // *** Creating 'Color model' frame
@@ -884,8 +884,15 @@ QDPrintDialog::QDPrintDialog(const GP<DjVuDocument> & _doc,
 #ifndef QT1
    QWhatsThis::add(gb,
                    tr("<b>Print Destination:</b>"
-                      "<br>Enter the file name when printing to a file."
-                      " Enter the print command to select a printer." ));
+                      "<ul>"
+                      "<li>Enter the file name when printing to a file.</li>"
+                      "<li>Enter a print command to select a printer."
+                      " Command line options are of course allowed."
+                      " Command print commands include:"
+                      "<br><b>lp -d</b><i>printername</i>,"
+                      "<br><b>lpr -P</b><i>printername</i>,"
+                      "<br><b>kprinter --stdin</b>."
+                      "</ul>"));
 #endif
 
    // Creating the POSTSCRIPT tab
@@ -908,10 +915,15 @@ QDPrintDialog::QDPrintDialog(const GP<DjVuDocument> & _doc,
 #ifndef QT1
    QWhatsThis::add(bg,
                    tr("<b>PostScript file format:</b>"
-                      "<br>Encapsulated PostScript files are"
+                      "These options are enabled when printing"
+                      " to a file.<ul>"
+                      "<li><i>Postscript files</i> provide"
+                      " more configuration options.</li>"  
+                      "<li><i>Encapsulated PostScript files</i> are"
                       " nicely imported by other applications."
                       " On the other hand they can only contain"
-                      " a single page with predefined scaling."));
+                      " a single page with predefined scaling.</li>"
+                      "</ul>"));
 #endif
 
    // *** Creating 'PostScript level' frame
@@ -1045,7 +1057,7 @@ QDPrintDialog::QDPrintDialog(const GP<DjVuDocument> & _doc,
                       " pages as sheets suitable for folding one or several"
                       " booklets. Several booklets might be produced when"
                       " a maximum number of sheets per booklet is specified."
-                      " You can use a duplex printer or print"
+                      " You can either use a duplex printer or print"
                       " rectos and versos separately."));
 #endif
 
