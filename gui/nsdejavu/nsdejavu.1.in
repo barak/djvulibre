@@ -94,40 +94,40 @@ after the word
 Unrecognized keywords are silently ignored.
 The following keywords are recognized:
 .TP
-.BI passive= yes/no
+.BI passive
 Cause the image to be displayed in a manner similar to an ordinary web image.
 The default zoom factor is changed to "Fit Page".
 The toolbar, the pop-up menu, the scroll bar, and the 
 keyboard shortcuts are disabled.
 The default is no.
 .TP
-.BI toolbar= yes/no
-Enable or disable the toolbar.
-The default is defined by the preferences dialog.
-.TP
-.BI scrollbars= yes/no
+.BI scrollbars=(yes|no)
 Enable or disable the presence of scroll bars when the full 
 image size exceeds the plugin window size.  The default is yes.
 .TP
-.BI menu= yes/no
+.BI menu=(yes|no)
 Enable or disable the pop-up menu.
 The pop-up menu is enabled by default.
 .TP
-.BI keyboard= yes/no
+.BI keyboard=(yes|no)
 Enable or disable the DjVu plugin keyboard shortcuts.
 The default is yes (enabled).
 .TP
-.BI frame= yes/no
+.BI frame=(yes|no)
 Enable or disable the display of a thin gray frame around the DjVu image.
 Keyboard shortcuts are enabled by default.
 .TP
-.BI links= yes/no
+.BI links=(yes|no)
 Enable or disable hyper-links in the DjVu image.
 Hyper-links are enabled by default.
 .TP
-.BI logo= yes/no
+.BI logo=(yes|no)
 Enable or disable the display of the DjVu log while the plug-in
 is downloading data.  This is enabled by default.
+.TP
+.BI page= pagenum
+Specify the initial page to be displayed.
+Page numbers are numbered from 1.
 .TP
 .BI zoom= zoomfactor
 Specify the initial zoom factor.
@@ -175,9 +175,76 @@ back	Display the background only.
 .TE
 .PP
 .TP
-.BI page= pagenum
-Specify the initial page to be displayed.
-Page numbers are numbered from 1.
+.BI toolbar= keyword {(,|+|-) keyword }
+Controls the appearance and the contents of the toolbar.
+The argument of option
+.B toolbar
+is composed of a number of keywords separated 
+by characters comma, plus or minus.
+The appearance of the toolbar is controlled by keywords 
+placed before the first occurrence of a character plus
+or minus. The following keywords are recognized in 
+this context:
+.br
+.TS
+center,box;
+lfB l
+lfB l
+lfB l
+lfB l
+lfB l
+.
+no	Disables the toolbar.
+always	Disables the toolbar "autohide" mode.
+auto	Enables  the toolbar "autohide" mode.
+top	Places the toolbar along the top edge (not implemented).
+bottom	Places the toolbar along the bottom edge.
+.TE
+.IP ""
+The contents of the toolbar is controlled by keywords
+placed after the first occurence of a
+character plus or minus.
+Each keyword adds (after a plus) or remove (after a minus)
+a particular toolbar button or group of buttons.
+The initial content of the toolbar is determined
+by the first occurence of a character plus or minus.
+When this is a plus
+the toolbar is initially empty.
+When this is a minus
+the toolbar is initially full.
+The following keywords are recognized:
+.br
+.TS
+center,box;
+lfB l
+lfB l
+lfB l
+lfB l
+lfB l
+lfB l
+lfB l
+lfB l
+lfB l
+lfB l
+lfB l
+lfB l
+lfB l
+.
+fore,back,color,bw	for the display mode selection tool.
+rescombo	for the zoom selection tool.
+zoom	for the zoom buttons.
+pan	for the panning mode button.
+zoomsel	for the zooming mode button.
+textsel	for the text selection mode button.
+rotate	for the image rotation buttons.
+search	for the text search button.
+save	for the save button.
+print	for the print button.
+pagecombo	for the page selection tool.
+firstlast	for the first- and last-page buttons.
+prevnext	for the previous- and next-page buttons.
+.TE
+.PP
 .TP
 .BI highlight= x , y , w , h [, color ]
 Display a highlighted rectangle at the specified coordinates and with the
@@ -193,7 +260,15 @@ Omitting the color argument means to use
 .SM XOR
 highlighting.  Multiple highlighted zone can be specified.
 .TP
-.BI cache= yes/no
+.BI rotate=(0|90|180|270)
+Rotate the djvu image by the specified angle expressed
+in degrees counter-clockwise.
+.TP
+.BI print=(yes|no)
+Enable or disable printing the djvu image.
+Printing is enabled by default.
+.TP
+.BI cache=(yes|no)
 Enable or disable the caching of fully decoded pages of the document. 
 Caching is on by default.  Caching of documents whose 
 .SM URL
