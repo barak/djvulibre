@@ -98,6 +98,7 @@ ShowUsage(void)
    "     -help                   - print this message\n"
    "     -style=motif            - Motif look and feel\n"
    "     -style=windows          - Win95 look and feel\n"
+   "     -fullscreen, -fs        - run in full screen mode\n"
    "     -geometry <geometry>    - specify X11 startup geometry\n"
    "     -display <display>      - specify X11 display name\n"
    "     -fn <fontname>          - specify Qt/X11 default font\n"
@@ -111,7 +112,7 @@ ShowUsage(void)
 #endif
 #ifndef NO_DEBUG
 #ifdef RUNTIME_DEBUG_ONLY
-   "	-debug[=<level>]        - print debug information\n"
+   "     -debug[=<level>]        - print debug information\n"
 #endif
 #endif
    "     -fix                    - fix configuration of Netscape helpers\n"
@@ -194,11 +195,15 @@ main(int argc, char ** argv)
   G_TRY
     {
       // Scans remaining arguments
+      bool full_screen = false;
       int page_num = 0;
       GUTF8String file_name;
       for (i=1; i<argc; i++)
         {
           const char *arg = argv[i];
+
+          if (arg[0]=='-' && arg[1]=='-')
+            arg = arg + 1;
           
           if (!strncmp(arg,"-file=",6))
             arg = arg + 6;
@@ -218,6 +223,12 @@ main(int argc, char ** argv)
                 DjVuPrintErrorUTF8("djview: warning: "
                                    "duplicate page specification\n");
               page_num = atoi(arg+6);
+              continue;
+            }
+          else if (!strcmp(arg,"-fullscreen") ||
+                   !strcmp(arg,"-fs") )
+            {
+              full_screen = true;
               continue;
             }
           else if (!strcmp(arg,"-name") && i<argc-1)
@@ -264,7 +275,7 @@ main(int argc, char ** argv)
       QDViewerShell * shell=new QDViewerShell(0, "main_window");
       qeApp->setWidgetGeometry(shell);
       shell->show();
-      
+
       if (file_name.length())
         {
           GURL url = GURL::Filename::UTF8(file_name);
@@ -281,6 +292,9 @@ main(int argc, char ** argv)
           shell->openURL(url);
         }
     
+      if (full_screen && !shell->isFullScreen())
+        shell->slotToggleFullScreen();
+
       qApp->connect( qApp, SIGNAL(lastWindowClosed()), qApp, SLOT(quit()) );
       rc = qApp->exec();
     }
