@@ -1,0 +1,45 @@
+
+
+1- DJVU.
+========
+
+
+DjVu is an emerging technology for compressing high resolution color document
+images and distributing over the web.  This technology was created by Leon
+Bottou, Yann Le Cun, Patrick Haffner and Paul G. Howard at AT&T Labs Research.
+
+Information and examples can be seen at <http://www.djvuzone.org>.  
+Open source software is available at <http://sourceforge.net/projects/djvu>.
+Commercial products are offered by Lizardtech at <http://www.lizardtech.com>.
+
+
+
+
+
+2- DJVULIBRE.
+=============
+
+
+
+
+        ddjvu                            - The DjVu decoder
+        cjb2, c44, cpaldjvu, csepdjvu    - A few DjVu encoders
+        djvudump, djvutxt, djvused       -
+
+
+
+
+
+
+3- INTELLECTUAL PROPERTY.
+=========================
+
+
+
+Explain what the copyright notice means.
+Explain how djvulibre relates to this...
+
+- L.
+
+
+

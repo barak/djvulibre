@@ -363,7 +363,7 @@ private:
 class IWBitmap : public IW44Image
 {
 public:
-  friend IW44Image;
+  friend class IW44Image;
   class Encode;
 protected:
   /*x Null constructor.  Constructs an empty IWBitmap object. This object does
@@ -441,7 +441,7 @@ private:
 class IWPixmap : public IW44Image
 {
 public:
-  friend IW44Image;
+  friend class IW44Image;
 protected:
   class Encode;
   /*x Null constructor.  Constructs an empty IWPixmap object. This object does

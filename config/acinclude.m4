@@ -579,9 +579,9 @@ AC_DEFUN([AC_PATH_QT],
 #include <qfile.h>
 #include <qtextstream.h>
 #include <qglobal.h>
-void main() { 
-QFile qf("confout"); if (!qf.open(IO_WriteOnly)) exit(1);
-QTextStream ts(&qf); ts << QT_VERSION; exit(0);
+int main() { 
+QFile qf("confout"); if (!qf.open(IO_WriteOnly)) return 1;
+QTextStream ts(&qf); ts << QT_VERSION; return 0;
 }],[okay=yes],[okay=no; QTDIR=no]) 
     CXXFLAGS="$save_CXXFLAGS"
     LIBS="$save_LIBS"

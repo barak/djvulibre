@@ -108,15 +108,14 @@ public:
   enum EscapeMode { UNKNOWN_ESCAPED=0,  IS_ESCAPED=1, NOT_ESCAPED=2 };
 
   class UTF8;
-  friend UTF8;
+  friend class UTF8;
   class Unicode;
-  friend Unicode;
+  friend class Unicode;
 
   class ChangeLocale;
 #if HAS_WCHAR
   class Native;
-
-  friend Native;
+  friend class Native;
 #endif // HAS_WCHAR
   friend class GBaseString;
   friend class GUTF8String;
@@ -428,8 +427,8 @@ public:
     IS_ESCAPED=GStringRep::IS_ESCAPED,
     NOT_ESCAPED=GStringRep::NOT_ESCAPED };
 
-  friend GUTF8String;
-  friend GNativeString;
+  friend class GUTF8String;
+  friend class GNativeString;
 protected:
   // Sets the gstr pointer;
   void init(void);
@@ -638,7 +637,7 @@ public:
       the range. */
   friend unsigned int hash(const GBaseString &ref);
   // -- HELPERS
-  friend GStringRep;
+  friend class GStringRep;
 
   /// Returns next non space position.
   int nextNonSpace( const int from=0, const int len=(-1) ) const;
@@ -1610,3 +1609,4 @@ operator<=(const char    s1, const GBaseString &s2)
 // ------------------- The end
 
 #endif
+

@@ -227,7 +227,7 @@ class ByteStream::Static : public ByteStream
 public:
   class Allocate;
   class Duplicate;
-  friend Duplicate;
+  friend class Duplicate;
 
   /** Creates a Static object for allocating the memory area of
       length #sz# starting at address #buffer#. */
@@ -256,7 +256,7 @@ ByteStream::Static::~Static() {}
 class ByteStream::Static::Allocate : public ByteStream::Static
 {
 public:
-  friend ByteStream;
+  friend class ByteStream;
 protected:
   char *buf;
   GPBuffer<char> gbuf;
@@ -313,7 +313,7 @@ public:
 private:
   GUTF8String init(const int fd, const bool closeme);
   GUTF8String init(FILE *const f,const bool closeme);
-  friend ByteStream;
+  friend class ByteStream;
 };
 #endif
 

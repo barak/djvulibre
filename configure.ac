@@ -144,7 +144,7 @@ else
   case "`$CXX --version`" in
     *2.95.*) ;;
     *2.96*) ;;
-    *3.*) AC_MSG_WARN([no serious tests have been made with g++ 3.x.]) ;;
+    *3.*) ;;
     *2.91.*) AC_MSG_WARN([strongly suggesting g++ 2.95.3 or better]) ;;
     *) AC_MSG_ERROR([use a better compiler such as g++ 2.95.3 or better]) ;;
   esac
@@ -155,7 +155,7 @@ if test x${qt_version+set} = xset ; then
   if test "$qt_version" -lt 220 ; then
      AC_MSG_WARN([We suggest using QT-2.2.0 or better.])
   elif test "$qt_version" -ge 300 ; then
-     AC_MSG_ERROR([We do not yet support QT-3.])
+     AC_MSG_WARN([We do not yet support QT-3.x.])
   fi
 fi
 

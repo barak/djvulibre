@@ -151,7 +151,6 @@ class IFFByteStream : protected ByteStream::Wrapper
 protected: 
   IFFByteStream(const GP<ByteStream> &bs, const int pos);
 public:
-  friend GP<IFFByteStream>;
   /** Constructs an IFFByteStream object attached to ByteStream #bs#.
       Any ByteStream can be used when reading an IFF file.  Writing
       an IFF file however requires a seekable ByteStream. */

@@ -477,7 +477,8 @@ public:
 
       /** Assignment operator. Will also wake up threads waiting for the
 	  flags to change. */
-   GSafeFlags & operator=(const GSafeFlags & f);
+   GSafeFlags & operator=(long flags);
+
       /** Returns the value of the flags */
    operator long(void) const;
       /** Modifies the flags by ORing them with the provided mask. A broadcast
@@ -513,7 +514,10 @@ public:
 };
 
 inline
-GSafeFlags::GSafeFlags(long xflags) : flags(xflags) {}
+GSafeFlags::GSafeFlags(long xflags) 
+  : flags(xflags) 
+{
+}
 
 inline void
 GSafeFlags::wait_for_flags(long set_mask, long clr_mask) const

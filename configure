@@ -5800,9 +5800,9 @@ else
 #include <qfile.h>
 #include <qtextstream.h>
 #include <qglobal.h>
-void main() {
-QFile qf("confout"); if (!qf.open(IO_WriteOnly)) exit(1);
-QTextStream ts(&qf); ts << QT_VERSION; exit(0);
+int main() {
+QFile qf("confout"); if (!qf.open(IO_WriteOnly)) return 1;
+QTextStream ts(&qf); ts << QT_VERSION; return 0;
 }
 _ACEOF
 rm -f conftest$ac_exeext
@@ -5900,11 +5900,10 @@ else
   case "`$CXX --version`" in
     *2.95.*) ;;
     *2.96*) ;;
-    *3.*) { echo "$as_me:5903: WARNING: no serious tests have been made with g++ 3.x." >&5
-echo "$as_me: WARNING: no serious tests have been made with g++ 3.x." >&2;} ;;
-    *2.91.*) { echo "$as_me:5905: WARNING: strongly suggesting g++ 2.95.3 or better" >&5
+    *3.*) ;;
+    *2.91.*) { echo "$as_me:5904: WARNING: strongly suggesting g++ 2.95.3 or better" >&5
 echo "$as_me: WARNING: strongly suggesting g++ 2.95.3 or better" >&2;} ;;
-    *) { { echo "$as_me:5907: error: use a better compiler such as g++ 2.95.3 or better" >&5
+    *) { { echo "$as_me:5906: error: use a better compiler such as g++ 2.95.3 or better" >&5
 echo "$as_me: error: use a better compiler such as g++ 2.95.3 or better" >&2;}
    { (exit 1); exit 1; }; } ;;
   esac
@@ -5913,12 +5912,11 @@ fi
 # What version of QT are we using
 if test x${qt_version+set} = xset ; then
   if test "$qt_version" -lt 220 ; then
-     { echo "$as_me:5916: WARNING: We suggest using QT-2.2.0 or better." >&5
+     { echo "$as_me:5915: WARNING: We suggest using QT-2.2.0 or better." >&5
 echo "$as_me: WARNING: We suggest using QT-2.2.0 or better." >&2;}
   elif test "$qt_version" -ge 300 ; then
-     { { echo "$as_me:5919: error: We do not yet support QT-3." >&5
-echo "$as_me: error: We do not yet support QT-3." >&2;}
-   { (exit 1); exit 1; }; }
+     { echo "$as_me:5918: WARNING: We do not yet support QT-3.x." >&5
+echo "$as_me: WARNING: We do not yet support QT-3.x." >&2;}
   fi
 fi
 
@@ -5962,14 +5960,14 @@ fi
 
 # Work around broken compilers with the famous LPR0 bug
 if test x$ac_shared_libdjvu != xno && test x$GXX = xyes; then
-    echo "$as_me:5965: checking if $CXX has the LPR0 bug" >&5
+    echo "$as_me:5963: checking if $CXX has the LPR0 bug" >&5
 echo $ECHO_N "checking if $CXX has the LPR0 bug... $ECHO_C" >&6
     echo 'extern "C" { inline int sqr(int x) throw() { return x * x ; } } int main() {} ' > conftest.cc
     if ${CXX} -fPIC ${OPTS} conftest.cc -o conftest >/dev/null 2>/dev/null ; then
-        echo "$as_me:5969: result: no" >&5
+        echo "$as_me:5967: result: no" >&5
 echo "${ECHO_T}no" >&6
     else
-        echo "$as_me:5972: result: yes" >&5
+        echo "$as_me:5970: result: yes" >&5
 echo "${ECHO_T}yes" >&6
         OPTS=`echo $OPTS | sed -e 's/-mcpu=i686/-mpentium/'`
     fi
@@ -6118,7 +6116,7 @@ DEFS=-DHAVE_CONFIG_H
 : ${CONFIG_STATUS=./config.status}
 ac_clean_files_save=$ac_clean_files
 ac_clean_files="$ac_clean_files $CONFIG_STATUS"
-{ echo "$as_me:6121: creating $CONFIG_STATUS" >&5
+{ echo "$as_me:6119: creating $CONFIG_STATUS" >&5
 echo "$as_me: creating $CONFIG_STATUS" >&6;}
 cat >$CONFIG_STATUS <<_ACEOF
 #! $SHELL
@@ -6290,7 +6288,7 @@ cat >>$CONFIG_STATUS <<\EOF
     echo "$ac_cs_version"; exit 0 ;;
   --he | --h)
     # Conflict between --help and --header
-    { { echo "$as_me:6293: error: ambiguous option: $1
+    { { echo "$as_me:6291: error: ambiguous option: $1
 Try \`$0 --help' for more information." >&5
 echo "$as_me: error: ambiguous option: $1
 Try \`$0 --help' for more information." >&2;}
@@ -6309,7 +6307,7 @@ Try \`$0 --help' for more information." >&2;}
     ac_need_defaults=false;;
 
   # This is an error.
-  -*) { { echo "$as_me:6312: error: unrecognized option: $1
+  -*) { { echo "$as_me:6310: error: unrecognized option: $1
 Try \`$0 --help' for more information." >&5
 echo "$as_me: error: unrecognized option: $1
 Try \`$0 --help' for more information." >&2;}
@@ -6352,7 +6350,7 @@ do
   "gui/djview/Makefile" ) CONFIG_FILES="$CONFIG_FILES gui/djview/Makefile" ;;
   "gui/nsdejavu/Makefile" ) CONFIG_FILES="$CONFIG_FILES gui/nsdejavu/Makefile" ;;
   "config.h" ) CONFIG_HEADERS="$CONFIG_HEADERS config.h:config/config.h.in" ;;
-  *) { { echo "$as_me:6355: error: invalid argument: $ac_config_target" >&5
+  *) { { echo "$as_me:6353: error: invalid argument: $ac_config_target" >&5
 echo "$as_me: error: invalid argument: $ac_config_target" >&2;}
    { (exit 1); exit 1; }; };;
   esac
@@ -6594,7 +6592,7 @@ done; }
   esac
 
   if test x"$ac_file" != x-; then
-    { echo "$as_me:6597: creating $ac_file" >&5
+    { echo "$as_me:6595: creating $ac_file" >&5
 echo "$as_me: creating $ac_file" >&6;}
     rm -f "$ac_file"
   fi
@@ -6612,7 +6610,7 @@ echo "$as_me: creating $ac_file" >&6;}
       -) echo $tmp/stdin ;;
       [\\/$]*)
          # Absolute (can't be DOS-style, as IFS=:)
-         test -f "$f" || { { echo "$as_me:6615: error: cannot find input file: $f" >&5
+         test -f "$f" || { { echo "$as_me:6613: error: cannot find input file: $f" >&5
 echo "$as_me: error: cannot find input file: $f" >&2;}
    { (exit 1); exit 1; }; }
          echo $f;;
@@ -6625,7 +6623,7 @@ echo "$as_me: error: cannot find input file: $f" >&2;}
            echo $srcdir/$f
          else
            # /dev/null tree
-           { { echo "$as_me:6628: error: cannot find input file: $f" >&5
+           { { echo "$as_me:6626: error: cannot find input file: $f" >&5
 echo "$as_me: error: cannot find input file: $f" >&2;}
    { (exit 1); exit 1; }; }
          fi;;
@@ -6685,7 +6683,7 @@ for ac_file in : $CONFIG_HEADERS; do test "x$ac_file" = x: && continue
   * )   ac_file_in=$ac_file.in ;;
   esac
 
-  test x"$ac_file" != x- && { echo "$as_me:6688: creating $ac_file" >&5
+  test x"$ac_file" != x- && { echo "$as_me:6686: creating $ac_file" >&5
 echo "$as_me: creating $ac_file" >&6;}
 
   # First look for the input files in the build tree, otherwise in the
@@ -6696,7 +6694,7 @@ echo "$as_me: creating $ac_file" >&6;}
       -) echo $tmp/stdin ;;
       [\\/$]*)
          # Absolute (can't be DOS-style, as IFS=:)
-         test -f "$f" || { { echo "$as_me:6699: error: cannot find input file: $f" >&5
+         test -f "$f" || { { echo "$as_me:6697: error: cannot find input file: $f" >&5
 echo "$as_me: error: cannot find input file: $f" >&2;}
    { (exit 1); exit 1; }; }
          echo $f;;
@@ -6709,7 +6707,7 @@ echo "$as_me: error: cannot find input file: $f" >&2;}
            echo $srcdir/$f
          else
            # /dev/null tree
-           { { echo "$as_me:6712: error: cannot find input file: $f" >&5
+           { { echo "$as_me:6710: error: cannot find input file: $f" >&5
 echo "$as_me: error: cannot find input file: $f" >&2;}
    { (exit 1); exit 1; }; }
          fi;;
@@ -6826,7 +6824,7 @@ cat >>$CONFIG_STATUS <<\EOF
   rm -f $tmp/in
   if test x"$ac_file" != x-; then
     if cmp -s $ac_file $tmp/config.h 2>/dev/null; then
-      { echo "$as_me:6829: $ac_file is unchanged" >&5
+      { echo "$as_me:6827: $ac_file is unchanged" >&5
 echo "$as_me: $ac_file is unchanged" >&6;}
     else
       ac_dir=`$as_expr X"$ac_file" : 'X\(.*[^/]\)//*[^/][^/]*/*$' \| \

@@ -1761,12 +1761,12 @@ GMonitor::wait(unsigned long timeout)
 
 
 GSafeFlags &
-GSafeFlags::operator=(const GSafeFlags & f)
+GSafeFlags::operator=(long xflags)
 {
    enter();
-   if (flags!=f.flags)
+   if (flags!=xflags)
    {
-      flags=f.flags;
+      flags=xflags;
       broadcast();
    }
    leave();
