@@ -616,9 +616,18 @@ QDViewer::eventFilter(QObject *obj, QEvent *e)
 		     }
 		     break;
 
-		  case Key_PageUp:
-			// We ask for INFO chunk to prevent too fast
-			// page switching.
+		  case Key_Backspace:
+		     if (doc_page>0 && dimg && dimg->get_info())
+		     {
+                       bool fs = false;
+                       emit sigQueryFullScreen(fs);
+                       if (fs) 
+                         {
+                           gotoPage(doc_page-1);
+                           return TRUE;
+                         }
+		     }
+                  case Key_PageUp:
 		     if (rectDocument.ymin>=rectVisible.ymin && doc_page>0 &&
 			 dimg && dimg->get_info())
 		     {
@@ -627,27 +636,22 @@ QDViewer::eventFilter(QObject *obj, QEvent *e)
 		     }
 		     break;
 
-		  case Key_Backspace:
-		     if (doc_page>0 && dimg && dimg->get_info())
+		  case Key_Space:
+		     if (doc_page<doc_pages-1 && dimg )
 		     {
-			gotoPage(doc_page-1);
-			return TRUE;
+                       bool fs = false;
+                       emit sigQueryFullScreen(fs);
+                       if (fs && dimg->get_info())
+                         {
+                           gotoPage(doc_page+1);
+                           return TRUE;
+                         }
 		     }
-		     break;
-
 		  case Key_PageDown:
 		  case Key_Return:
 		  case Key_Enter:
 		     if (rectDocument.ymax<=rectVisible.ymax &&
 			 doc_page<doc_pages-1 && dimg && dimg->get_info())
-		     {
-			gotoPage(doc_page+1);
-			return TRUE;
-		     }
-		     break;
-
-		  case Key_Space:
-		     if (doc_page<doc_pages-1 && dimg && dimg->get_info())
 		     {
 			gotoPage(doc_page+1);
 			return TRUE;
