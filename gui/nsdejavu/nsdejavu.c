@@ -2123,9 +2123,9 @@ NPP_GetValue(void *future, NPPVariable variable, void *value)
      case NPPVpluginDescriptionString:
      *((char **)value) =
        "This is the <a href=\"http://www.sourceforge.net/projects/djvu\">"
-       "djvulibre-" DJVIEW_VERSION_STR "</a> version of the DjVu plugin.<br>\n"
+       "djvulibre-" DJVIEW_VERSION_STR "</a> version of the DjVu plugin.<br>"
        "More information can be found at <a href=\"http://www.lizardtech.com\">LizardTech, Inc.</a> "
-       "and <a href=\"http://www.djvuzone.org\">DjVuZone</a>.\n";
+       "and <a href=\"http://www.djvuzone.org\">DjVuZone</a>.";
      break;
      default:
        err = NPERR_GENERIC_ERROR;
