@@ -94,8 +94,8 @@ for arg ; do
 	  icons=`echo "$arg" | sed -e 's/^[^=]*=//'` ;;
       --pixmaps=*)
 	  pixmaps=`echo "$arg" | sed -e 's/^[^=]*=//'` ;;
-      --mime=*)
-	  mime=`echo "$arg" | sed -e 's/^[^=]*=//'` ;;
+      --mime_info=*)
+	  mime_info=`echo "$arg" | sed -e 's/^[^=]*=//'` ;;
       --application=*)
 	  application=`echo "$arg" | sed -e 's/^[^=]*=//'` ;;
       --applnk=*)
