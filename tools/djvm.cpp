@@ -118,7 +118,6 @@
 #include <locale.h>
 #include <stdlib.h>
 #include <stdio.h>
-#include <iostream.h>
 #include <stdlib.h>
 
 static const char * progname;
@@ -126,39 +125,39 @@ static const char * progname;
 static void
 usage(void)
 {
-   cerr << "\
-DJVM -- DjVu multipage document manipulation utility\n\
-   Copyright © 1999-2000 LizardTech, Inc. All Rights Reserved.\n\
-\n\
-Usage:\n\
-   To compose a multipage document:\n\
-      " << progname << " -c[reate] <doc.djvu> <page_1.djvu> ... <page_n.djvu>\n\
-      where <doc.djvu> is the name of the BUNDLED document to be\n\
-      created, <page_n.djvu> are the names of the page files to\n\
-      be packed together.\n\
-\n\
-   To insert a new page into an existing document:\n\
-      " << progname << " -i[nsert] <doc.djvu> <page.djvu> [<page_num>]\n\
-      where <doc.djvu> is the name of the BUNDLED DjVu document to be\n\
-      modified, <page.djvu> is the name of the single-page DjVu document\n\
-      file to be inserted as page <page_num> (page numbers start from 1).\n\
-      Negative or omitted <page_num> means to append the page.\n\
-      <page.djvu> can be another multipage DjVu document, in which case\n\
-      all pages of that document will be inserted into <doc.djvu>\n\
-      starting starting at page <page_num>\n\
-\n\
-   To delete a page from an existing document:\n\
-      " << progname << " -d[elete] <doc.djvu> <page_num>\n\
-      where <doc.djvu> is the name of the docyment to be modified\n\
-      and <page_num> is the number of the page to be deleted\n\
-\n\
-   To list document contents:\n\
-      " << progname << " -l[ist] <doc.djvu>\n\
-\n\
-   Pages being inserted may reference other files by means of INCL chunks.\n\
-   Moreover, files shared between pages will be stored into the document\n\
-   only once.\n\
-\n";
+   DjVuPrintErrorUTF8(
+           "DJVM -- DjVu multipage document manipulation utility\n"
+           "   Copyright (c) 1999-2000 LizardTech, Inc. All Rights Reserved.\n"
+           "\n"
+           "Usage:\n"
+           "   To compose a multipage document:\n"
+           "      %s -c[reate] <doc.djvu> <page_1.djvu> ... <page_n.djvu>\n"
+           "      where <doc.djvu> is the name of the BUNDLED document to be\n"
+           "      created, <page_n.djvu> are the names of the page files to\n"
+           "      be packed together.\n"
+           "\n"
+           "   To insert a new page into an existing document:\n"
+           "      %s -i[nsert] <doc.djvu> <page.djvu> [<page_num>]\n"
+           "      where <doc.djvu> is the name of the BUNDLED DjVu document to be\n"
+           "      modified, <page.djvu> is the name of the single-page DjVu document\n"
+           "      file to be inserted as page <page_num> (page numbers start from 1).\n"
+           "      Negative or omitted <page_num> means to append the page.\n"
+           "      <page.djvu> can be another multipage DjVu document, in which case\n"
+           "      all pages of that document will be inserted into <doc.djvu>\n"
+           "      starting starting at page <page_num>\n"
+           "\n"
+           "   To delete a page from an existing document:\n"
+           "      %s -d[elete] <doc.djvu> <page_num>\n"
+           "      where <doc.djvu> is the name of the docyment to be modified\n"
+           "      and <page_num> is the number of the page to be deleted\n"
+           "\n"
+           "   To list document contents:\n"
+           "      %s -l[ist] <doc.djvu>\n"
+           "\n"
+           "Pages being inserted may reference other files by means of INCL chunks.\n"
+           "Moreover, files shared between pages will be stored into the document\n"
+           "only once.\n"
+           "\n", progname, progname, progname, progname );
 }
 
 static void

@@ -284,7 +284,26 @@ The DjVu plugin then works okay.
 
 
 
-4- MAKING A RPM
-===============
+4- PORTABILITY NOTES
+====================
+
+
+4.1- GNU/LINUX
+--------------
+Simply typing "configure ; make" should work on most recent distributions.
+
+
+4.2- SGI IRIX 6.5
+-----------------
+
+Download gcc-3.0.2 and apply the thread patch
+<http://gcc.gnu.org/ml/gcc-patches/2001-08/msg00072.html>.
+
+
+
+
+
+
+
 
 To be detailed.

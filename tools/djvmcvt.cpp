@@ -131,26 +131,26 @@ static const char * progname;
 
 static void Usage(void)
 {
-   DjVuPrintErrorUTF8("\
-DJVMCVT -- DjVu multipage document conversion utility\n\
-   Copyright © 1999-2000 LizardTech, Inc. All Rights Reserved.\n\
-\n\
-Usage:\n\
-\n\
-   To convert any DjVu multipage document into the new BUNDLED format:\n\
-	%s -b[undled] <doc_in.djvu> <doc_out.djvu>\n\
-	where <doc_out.djvu> is the name of the output file.\n\
-\n\
-   To convert any DjVu multipage document into the new INDIRECT format:\n\
-	%s -i[ndirect] <doc_in.djvu> <dir_out> <idx_fname.djvu>\n\
-	where <dir_out> is the name of the output directory, and\n\
-	<idx_fname.djvu> is the name of the top-level document index file.\n\
-\n\
-   The <doc_in.djvu> specifies the document to be converted.\n\
-   For OLD_BUNDLED and BUNDLED formats, this is the name of the document file.\n\
-   For INDIRECT format, this is the name of the top-level index file.\n\
-   For OLD_INDEXED format, this is the name of any page file.\n\
-\n", progname, progname);
+   DjVuPrintErrorUTF8(
+     "DJVMCVT -- DjVu multipage document conversion utility\n"
+     "   Copyright (c) 1999-2000 LizardTech, Inc. All Rights Reserved.\n"
+     "\n"
+     "Usage:\n"
+     "\n"
+     "  To convert any DjVu multipage document into the new BUNDLED format:\n"
+     "	  %s -b[undled] <doc_in.djvu> <doc_out.djvu>\n"
+     "	  where <doc_out.djvu> is the name of the output file.\n"
+     "\n"
+     "  To convert any DjVu multipage document into the new INDIRECT format:\n"
+     "	  %s -i[ndirect] <doc_in.djvu> <dir_out> <idx_fname.djvu>\n"
+     "	  where <dir_out> is the name of the output directory, and\n"
+     "	  <idx_fname.djvu> is the name of the top-level document index file.\n"
+     "\n"
+     "The <doc_in.djvu> specifies the document to be converted.\n"
+     "For OLD_BUNDLED and BUNDLED formats, this is the name of the document file.\n"
+     "For INDIRECT format, this is the name of the top-level index file.\n"
+     "For OLD_INDEXED format, this is the name of any page file.\n"
+     "\n", progname, progname);
 }
 
 static void
