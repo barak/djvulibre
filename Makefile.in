@@ -53,7 +53,8 @@ distclean: FORCE
 	-${RM} Makefile libtool
 
 install-desktop-files: FORCE
-	make -C gui/desktop install
+	@echo "*** No need to do 'make install-desktop-files'."
+	@echo "*** Use 'configure --enable-desktopfiles' instead"
 
 FORCE:
 .PHONY: FORCE
