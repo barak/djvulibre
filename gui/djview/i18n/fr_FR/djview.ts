@@ -874,7 +874,7 @@ l&apos;ajustement des couleurs.</translation>
     </message>
     <message>
         <source>&lt;b&gt;PostScript file format:&lt;/b&gt;These options are enabled when printing to a file.&lt;ul&gt;&lt;li&gt;&lt;i&gt;Postscript files&lt;/i&gt; provide more configuration options.&lt;/li&gt;&lt;li&gt;&lt;i&gt;Encapsulated PostScript files&lt;/i&gt; are nicely imported by other applications. On the other hand they can only contain a single page with predefined scaling.&lt;/li&gt;&lt;/ul&gt;</source>
-        <translation>&lt;b&gt;Format de fichier PostScript:&lt;/b&gt;Ces options sont actives lors d&apos;une impression vers un fichier.&lt;ul&gt;&lt;li&gt;Les fichiers &lt;i&gt;Postscript&lt;/i&gt; offrent plus d&apos;options d&apos;impression.&lt;/li&gt;&lt;li&gt;Les fichiers &lt;i&gt;PostScript Encapsulaté&lt;/i&gt; sont aisément importés par d&apos;autres applications. En revanche, ils ne peuvent contenir qu&apos;une page avec un agrandissement fixe.&lt;/li&gt;&lt;/ul&gt;</translation>
+        <translation>&lt;b&gt;Format de fichier PostScript:&lt;/b&gt;Ces options sont actives lors d&apos;une impression vers un fichier.&lt;ul&gt;&lt;li&gt;Les fichiers &lt;i&gt;Postscript&lt;/i&gt; offrent plus d&apos;options d&apos;impression.&lt;/li&gt;&lt;li&gt;Les fichiers &lt;i&gt;PostScript Encapsulé&lt;/i&gt; sont aisément importés par d&apos;autres applications. En revanche, ils ne peuvent contenir qu&apos;une page avec un agrandissement fixe.&lt;/li&gt;&lt;/ul&gt;</translation>
     </message>
     <message>
         <source>PostScript language level</source>
