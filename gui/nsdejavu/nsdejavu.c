@@ -2099,7 +2099,7 @@ NPP_GetMIMEDescription(void)
     "image/vnd.djvu::DjVu File;"
     "application/vnd.djvu::DjVu File;" 
     "image/x-dejavu::DjVu File (obsolete mime type);"
-    "image/x-iw44:iw44,iw4:DjVu File (obsolete mime type);"
+    "image/x-iw44:iw44,iw4:DjVu File (obsolete mime type);" ;
 }
 
 jref
