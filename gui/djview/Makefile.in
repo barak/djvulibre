@@ -42,7 +42,7 @@ MOC = @MOC@
 LUPDATE = @LUPDATE@
 LRELEASE = @LRELEASE@
 LANGUAGES = fr_FR ja_JP
-LANGFILES = qt djview
+LANGFILES= djview qt
 
 DEFS = @DEFS@
 OPTS = @OPTS@
@@ -208,9 +208,11 @@ depend: ${MOCINCS} FORCE
 
 clean: FORCE
 	-${RM} 2>/dev/null ${PROGRAM}
-	-${RM} 2>/dev/null *.o *.a *.so *.stamp *_moc.cpp *_moc.inc
-	-for n in ${CIN_SOURCES} ; do rm 2>/dev/null `basename $$n .cin`.cpp ; done
-	-for n in ${LANGUAGES} ; do rm 2>/dev/null i18n/$$n/*.qm ; done
+	-${RM} 2>/dev/null *.o *.a *.so *.stamp *_moc.cpp *_moc.inc *.pro
+	-for n in ${CIN_SOURCES} ; do \
+	  rm 2>/dev/null `basename $$n .cin`.cpp ; done
+	-for n in ${LANGUAGES} ; do \
+	  rm 2>/dev/null i18n/$$n/*.qm ; done
 
 distclean: clean 
 	-${RM} -r 2>/dev/null Makefile Makefile.i18n *.rpo ii_files
@@ -220,11 +222,13 @@ distclean: clean
 lupdate: FORCE
 	for l in ${LANGUAGES} ; do \
 	  test -d ${srcdir}/i18n/$$l || ${MKDIR} ${srcdir}/i18n/$$l ;\
-	  ${LUPDATE} ${CPP_SOURCES} -ts ${srcdir}/i18n/$$l/djview.ts ; \
+	  ( echo "TRANSLATIONS=${srcdir}/i18n/$$l/djview.ts" ;\
+	    echo "SOURCES=${CPP_SOURCES}" ) > tmp.pro ;\
+	  ${LUPDATE} tmp.pro ; \
 	done
 
 lrelease: FORCE
-	@( echo -n "all: " ;\
+	@(echo -n "all: " ;\
           for l in ${LANGUAGES} ; do \
 	    for p in ${LANGFILES} ; do \
               echo -n " i18n/$$l/$$p.qm" ;\
@@ -235,10 +239,12 @@ lrelease: FORCE
 	      echo  "i18n/$$l/$$p.ts: ${srcdir}/i18n/$$l/$$p.ts" ;\
 	      echo  "	cp ${srcdir}/\$$@ \$$@" ;\
 	      echo  "i18n/$$l/$$p.qm: i18n/$$l/$$p.ts";\
-	      echo  "	${LRELEASE} i18n/$$l/$$p.ts";\
+	      echo  "	echo TRANSLATIONS=i18n/$$l/$$p.ts > tmp.pro";\
+	      echo  "	${LRELEASE} tmp.pro";\
           done ; done ) > Makefile.i18n
 	-@test -d i18n || ${MKDIR} i18n
-	-@for l in ${LANGUAGES} ; do test -d i18n/$$l || ${MKDIR} i18n/$$l; done
+	-@for l in ${LANGUAGES} ; do \
+	    test -d i18n/$$l || ${MKDIR} i18n/$$l; done
 	${MAKE} -f Makefile.i18n
 
 # Boilerplate
