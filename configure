@@ -6443,7 +6443,7 @@ echo "$as_me: WARNING: Your c++ compiler ($cxxver) has known problems.
         for n in `g++ -v 2>&1 | grep version` ; do rhversion=$n ; done
         case "$rhversion" in
           2.96-8[5-9]*) ;;
-          2.97-9*) ;;
+          2.96-9*) ;;
           *)
              { echo "$as_me:6448: WARNING: Your c++ compiler ($cxxver) has known problems.
 -------------------------------------------------------
