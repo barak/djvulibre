@@ -147,6 +147,12 @@ tab button should display a list of recognized plugins.
 Check that 
 .B "NSDEJAVUSO" 
 appears there.  
+.PP
+.SS Opera
+.PP
+The DjVu plugin works with Opera-6 or better.
+As explained in the Opera software support pages,
+you must have the OpenMotif libraries installed.
 
 .SH CREDITS
 This program was written by Andrei Erofeev <andrew_erofeev@yahoo.com>
