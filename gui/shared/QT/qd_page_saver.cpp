@@ -276,12 +276,13 @@ class QDFilesListDialog : public QeDialog
    Q_OBJECT
 private:
 public:
-   QDFilesListDialog(const GP<DjVmDoc> & doc, const QString & dir,
+   QDFilesListDialog(const GP<DjVmDoc> & doc, const QString & dname,
 		     QWidget * parent=0, const char * name=0);
    ~QDFilesListDialog(void) {}
 };
 
-QDFilesListDialog::QDFilesListDialog(const GP<DjVmDoc> & doc, const QString & dir,
+QDFilesListDialog::QDFilesListDialog(const GP<DjVmDoc> & doc, 
+                                     const QString & dname,
 				     QWidget * parent, const char * name) :
       QeDialog(parent, name, TRUE)
 {
@@ -291,13 +292,13 @@ QDFilesListDialog::QDFilesListDialog(const GP<DjVmDoc> & doc, const QString & di
 
    QVBoxLayout * vlay=new QVBoxLayout(start, 10, 5, "vlay");
 
-   QString msg=tr("The following files will be created in directory \"")+
-	       dir+"\":\n\n";
-   GP<DjVmDir> dir=doc->get_djvm_dir();
-   GPList<DjVmDir::File> files_list=dir->get_files_list();
+   QString msg=tr("The following files will be created in directory \"")
+     + dname + "\":\n\n";
+   GP<DjVmDir> dir = doc->get_djvm_dir();
+   GPList<DjVmDir::File> files_list = dir->get_files_list();
    for(GPosition pos=files_list;pos;++pos)
       msg+="\""+QStringFromGString(files_list[pos]->get_save_name())+"\", ";
-   //msg.setat(msg.length()-2, 0);
+
    msg[msg.length()-1]=0;
    msg+=tr(".\n\nAre you sure you want to proceed?\n");
    

@@ -129,7 +129,7 @@ QDPort::~QDPort(void)
 }
 
 QDPort::QDPort(bool _watch_errors, bool _watch_status,
-	       QObject * parent=0, const char * name=0) :
+	       QObject * parent, const char * name) :
       QObject(parent, name),
       watch_errors(_watch_errors), watch_status(_watch_status)
 {

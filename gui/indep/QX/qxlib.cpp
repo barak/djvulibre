@@ -49,7 +49,7 @@
 #include <X11/Xlib.h>
 
 void 
-x11Redraw(QWidget * w, const QRect * rect=0)
+x11Redraw(QWidget * w, const QRect * rect)
 {
    QRect qrect;
    if (rect) qrect=*rect;
