@@ -79,8 +79,6 @@ using namespace DJVU;
 # define DJVUNS /**/
 #endif
 
-#include "ddjvuapi.h"
-
 #include "GException.h"
 #include "GSmartPointer.h"
 #include "GThreads.h"
@@ -97,6 +95,8 @@ using namespace DJVU;
 #include "DjVuDocument.h"
 #include "DjVuMessageLite.h"
 #include "DjVuMessage.h"
+
+#include "ddjvuapi.h"
 
 #if HAVE_STDINT_H
 # include <stdint.h>
@@ -1587,12 +1587,12 @@ ddjvu_page_render(ddjvu_page_t *page,
         {
           switch (mode)
             {
-            case DDJVU_RENDER_DEFAULT:
+            case DDJVU_RENDER_COLOR:
               pm = img->get_pixmap(rrect, prect, pixelformat->gamma);
               if (! pm) 
                 bm = img->get_bitmap(rrect, prect);
               break;
-            case DDJVU_RENDER_MASK:
+            case DDJVU_RENDER_BLACK:
               bm = img->get_bitmap(rrect, prect);
               if (! bm)
                 pm = img->get_pixmap(rrect, prect, pixelformat->gamma);
@@ -1652,3 +1652,22 @@ ddjvu_thumbnail_render(ddjvu_document_t *document, int pagenum,
 {
   return 0;
 }
+
+
+// ----------------------------------------
+
+
+GP<DjVuImage>
+ddjvu_get_DjVuImage(ddjvu_page_t *page)
+{
+  return page->img;
+}
+
+
+GP<DjVuDocument>
+ddjvu_get_DjVuDocument(ddjvu_document_t *document)
+{
+  return document->doc;
+}
+
+

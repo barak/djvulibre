@@ -748,8 +748,8 @@ typedef struct ddjvu_rect_s {
    Various ways to render a page. */
 
 typedef enum {
-  DDJVU_RENDER_DEFAULT = 0,     /* color page or stencil */
-  DDJVU_RENDER_MASK,            /* stencil or color page */
+  DDJVU_RENDER_COLOR = 0,       /* color page or stencil */
+  DDJVU_RENDER_BLACK,           /* stencil or color page */
   DDJVU_RENDER_COLORONLY,       /* color page or fail */
   DDJVU_RENDER_MASKONLY,        /* stencil or fail */
   DDJVU_RENDER_BACKGROUND,      /* color background layer */
@@ -945,7 +945,33 @@ union ddjvu_message_s {
 
 
 
+/* -------------------------------------------------- */
+/* BACKDOORS                                          */
+/* -------------------------------------------------- */
+
 #ifdef __cplusplus
-}
+} // extern "C"
 #endif
+
+/* ddjvu_get_DjVuImage ---
+   ddjvu_get_DjVuDocument ---
+   These functions provide an access to the libdjvu objects 
+   associated with the ddjvuapi objects.  These backdoors can
+   be useful for advanced manipulations.  These two functions 
+   are declared in C++ when file "ddjvuapi.h" is included 
+   after the libdjvu header files "DjVuDocument.h". */
+
+#ifdef __cplusplus
+# ifndef NOT_USING_DJVU_NAMESPACE
+#  ifdef _DJVUIMAGE_H
+DDJVUAPI GP<DjVuImage>
+ddjvu_get_DjVuImage(ddjvu_page_t *page);
+#  endif
+#  ifdef _DJVUDOCUMENT_H
+DDJVUAPI GP<DjVuDocument>
+ddjvu_get_DjVuDocument(ddjvu_document_t *document);
+#  endif
+# endif
+#endif
+
 #endif /* DDJVUAPI_H */

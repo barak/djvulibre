@@ -100,7 +100,7 @@ int          flag_aspect = -1;
 int          flag_subsample = -1;
 int          flag_segment = 0;
 int          flag_verbose = 0;
-char         flag_mode = 0;     /* 'f','b','m' or 'c' */
+char         flag_mode = 0;     /* 'c', 'k', 's', 'f','b' */
 char         flag_format = 0;   /* '4','5','6','p','r','t' */
 int          flag_quality = -1;
 const char  *flag_pagespec = 0; 
@@ -205,7 +205,9 @@ render(ddjvu_page_t *page)
   ddjvu_page_type_t type = ddjvu_page_get_type(page);
   char *image = 0;
   int rowsize;
-  int compression;
+#if HAVE_TIFF
+  int compression = COMPRESSION_NONE;
+#endif
   
   /* Process size specification */
   prect.x = 0;
@@ -258,24 +260,25 @@ render(ddjvu_page_t *page)
     }
 
   /* Process mode specification */
-  mode = DDJVU_RENDER_DEFAULT;
+  mode = DDJVU_RENDER_COLOR;
   if (flag_mode == 'f')
     mode = DDJVU_RENDER_FOREGROUND;
   else if (flag_mode == 'b')
     mode = DDJVU_RENDER_BACKGROUND;
   else if (flag_mode == 'c')
-    mode = DDJVU_RENDER_DEFAULT;
-  else if (flag_mode == 'm')
-    mode = DDJVU_RENDER_MASK;
+    mode = DDJVU_RENDER_COLOR;
+  else if (flag_mode == 'k')
+    mode = DDJVU_RENDER_BLACK;
   else if (flag_mode == 's')
     mode = DDJVU_RENDER_MASKONLY;
   else if (flag_format == 'r' || flag_format == '4')
-    mode = DDJVU_RENDER_MASK;
+    mode = DDJVU_RENDER_BLACK;
 
   /* Determine output pixel format */
   style = DDJVU_FORMAT_RGB24;
-  if ((mode==DDJVU_RENDER_MASK) ||
-      (mode==DDJVU_RENDER_DEFAULT) && (type==DDJVU_PAGETYPE_BITONAL))
+  if ((mode==DDJVU_RENDER_BLACK) ||
+      (mode==DDJVU_RENDER_MASKONLY) ||
+      (mode==DDJVU_RENDER_COLOR) && (type==DDJVU_PAGETYPE_BITONAL))
     {
       style = DDJVU_FORMAT_GREY8;
       if ((int)prect.w == iw && (int)prect.h == ih)
@@ -286,9 +289,11 @@ render(ddjvu_page_t *page)
     case 't':
 #if HAVE_TIFF
       compression = COMPRESSION_NONE;
-      if (style==DDJVU_FORMAT_MSBTOLSB && TIFFFindCODEC(COMPRESSION_CCITT_T6))
+      if (style==DDJVU_FORMAT_MSBTOLSB 
+          && TIFFFindCODEC(COMPRESSION_CCITT_T6))
         compression = COMPRESSION_CCITT_T6;
-      else if (flag_quality>0 && TIFFFindCODEC(COMPRESSION_JPEG)) {
+      else if (style!=DDJVU_FORMAT_MSBTOLSB && flag_quality>0 
+               && TIFFFindCODEC(COMPRESSION_JPEG)) {
         compression = COMPRESSION_JPEG;
         style = DDJVU_FORMAT_RGB24;
       } else if (TIFFFindCODEC(COMPRESSION_PACKBITS))
@@ -405,8 +410,8 @@ render(ddjvu_page_t *page)
         if (style == DDJVU_FORMAT_MSBTOLSB) {
           TIFFSetField(tiff, TIFFTAG_BITSPERSAMPLE, (uint16)1);
           TIFFSetField(tiff, TIFFTAG_SAMPLESPERPIXEL, (uint16)1);
-          TIFFSetField(tiff, TIFFTAG_COMPRESSION, compression);
           TIFFSetField(tiff, TIFFTAG_FILLORDER, FILLORDER_MSB2LSB);
+          TIFFSetField(tiff, TIFFTAG_COMPRESSION, compression);
           TIFFSetField(tiff, TIFFTAG_PHOTOMETRIC, PHOTOMETRIC_MINISWHITE);
         } else {
           TIFFSetField(tiff, TIFFTAG_BITSPERSAMPLE, (uint16)8);
@@ -469,7 +474,7 @@ dopage(int pageno)
         {
           if (! strcmp(outputfilename,"-"))
             die("Tiff output requires a valid output file name.");
-          else if (! (tiff = TIFFOpen(outputfilename, "wb")))
+          else if (! (tiff = TIFFOpen(outputfilename, "w")))
             die("Cannot open output tiff file '%s'.", outputfilename);
         } 
       else 
@@ -502,7 +507,7 @@ dopage(int pageno)
 
 
 void
-parse_pagespec(const char *s, int max_page, void (*func)(int))
+parse_pagespec(const char *s, int max_page, void (*dopage)(int))
 {
   static const char *err = "invalid page specification: %s";
   int spec = 0;
@@ -511,7 +516,6 @@ parse_pagespec(const char *s, int max_page, void (*func)(int))
   int end_page = max_page;
   int pageno;
   char *p = (char*)s;
-
   while (*p)
     {
       spec = 0;
@@ -560,10 +564,10 @@ parse_pagespec(const char *s, int max_page, void (*func)(int))
         start_page = max_page;
       if (start_page <= end_page)
         for(pageno=start_page; pageno<=end_page; pageno++)
-          (*func)(pageno);
+          (*dopage)(pageno);
       else
         for(pageno=start_page; pageno>=end_page; pageno--)
-          (*func)(pageno);
+          (*dopage)(pageno);
     }
   if (! spec)
     die(err, s);
@@ -628,11 +632,12 @@ usage()
       "  -subsample=N      Selects direct subsampling factor.\n"
       "  -aspect=no        Authorizes aspect ratio changes\n"
       "  -segment=WxH+X+Y  Selects which segment of the rendered image\n"
-      "  -mode=mask        Only renders the stencil(s).\n"
+      "  -mode=black       Renders a meaningful bitonal image.\n"
+      "  -mode=mask        Only renders the mask layer.\n"
       "  -mode=foreground  Only renders the foreground layer.\n"
       "  -mode=background  Only renders the background layer.\n"
       "  -page=PAGESPEC    Selects page(s) to be decoded.\n"
-      "  -quality=QUAKITY  Specifies jpeg quality for lossy tiff output.\n"
+      "  -quality=QUALITY  Specifies jpeg quality for lossy tiff output.\n"
       "\n"
       "If <outputfile> is a single dash or omitted, the decompressed image\n"
       "is sent to the standard output.  If <djvufile> is a single dash or\n"
@@ -777,8 +782,7 @@ parse_option(int argc, char **argv, int i)
         flag_format='p';
       else if (!strcmp(arg,"rle"))
         flag_format='r';
-      else if (!strcmp(arg,"tif") || 
-               !strcmp(arg,"tiff") )
+      else if (!strcmp(arg,"tiff") || !strcmp(arg,"tif"))
         flag_format='t';
       else
         die(errbadarg,opt,"are: pbm,pgm,ppm,pnm,rle,tiff");
@@ -789,22 +793,18 @@ parse_option(int argc, char **argv, int i)
         die(errnoarg, opt);
       if (flag_mode)
         die(errdupl, opt);
-      if (!strcmp(arg,"c") || 
-          !strcmp(arg,"color") )
+      if (!strcmp(arg,"color") )
         flag_mode = 'c';
       else if (!strcmp(arg,"black"))
-        flag_mode = 'm';
-      else if (!strcmp(arg,"mask") ||
-               !strcmp(arg,"stencil") )
+        flag_mode = 'k';
+      else if (!strcmp(arg,"mask") || !strcmp(arg,"stencil"))
         flag_mode = 's';
-      else if (!strcmp(arg,"fg") ||
-               !strcmp(arg,"foreground") )
+      else if (!strcmp(arg,"foreground") || !strcmp(arg,"fg"))
         flag_mode = 'f';
-      else if (!strcmp(arg,"bg") ||
-               !strcmp(arg,"background") )
+      else if (!strcmp(arg,"background") || !strcmp(arg,"bg"))
         flag_mode = 'b';
       else
-        die(errbadarg,opt,"are: color,mask,fg,bg");
+        die(errbadarg,opt,"are: color,black,mask,fg,bg");
     }
   else if (! strcmp(opt, "page") ||
            ! strcmp(opt, "pages") )
