@@ -1,9 +1,10 @@
 
 By order of importance:
 
-- README file
 - INSTALL instructions
+- README file
 - manual pages
+- plugin help paths
 - compilation check on sgi, solaris
 - djvups executable
 - rpm packages for linux (rh6, rh7)
