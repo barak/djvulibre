@@ -105,14 +105,14 @@ of page
 of document
 .IR myfile.djvu .
 .IP "" 3
-.BI "djvused " "myfile.djvu" " -e 'select " 3 "; size'"
+.BI "djvused " "myfile.djvu" " -e 'select 3; size'"
 .PP
 
 .SS Extracting the hidden text
 Command
 .B print-pure-txt
 outputs the text associated with a page or a document.
-For instance, the following command outputs the text
+For instance, the following shell command outputs the text
 for the entire document.  Lines and pages are delimited
 by the usual control characters.
 .IP "" 3
@@ -123,24 +123,24 @@ Command
 produces a more extensive output describing the structure
 and the location of the text components.  The syntax of this
 output is described later in this man page.  For instance, 
-the following command outputs extended text information
+the following shell command outputs extended text information
 for page 
 .I 3 
 of document
 .IR myfile.djvu .
 .IP "" 3
-.BI "djvused " "myfile.djvu" " -e 'select " 3 "; print-txt'"
+.BI "djvused " "myfile.djvu" " -e 'select 3; print-txt'"
 .PP
 
 .SS Extracting the annotations
 Annotation data can be extracted using command 
 .BR print-ant .
 The syntax of the annotation data is described later in this man page.
-For instance, the following command outputs the annotation data for
-the first page of document
+For instance, the following shell command outputs the annotation data
+for the first page of document
 .BR myfile.djvu .
 .IP "" 3
-.BI "djvused " "myfile.djvu" " -e 'select " 1 "; print-ant'"
+.BI "djvused " "myfile.djvu" " -e 'select 1; print-ant'"
 .PP
 Command 
 .B print-ant
@@ -155,8 +155,8 @@ chunks) and prints the merged information.
 .SS Dumping/restoring annotations and text
 Three commands,
 .BR "output-txt" ", " "output-ant" ", and " "output-all" ","
-produce djvused scripts.
-For instance, the following command produces a djvused script,
+produce djvused scripts.  For instance, the following shell command
+produces a djvused script,
 .IR myfile.dsed ,
 that recreates all the text and annotation data
 in document
@@ -166,9 +166,8 @@ in document
 .PP
 Script
 .I myfile.dsed
-is a text file that can be easily edited.
-The following command then recreates the text and annotation
-information in file
+is a text file that can be easily edited.  The following shell command
+then recreates the text and annotation information in file
 .IR myfile.djvu .
 .IP "" 3
 .BI "djvused " "myfile.djvu" " -f " "myfile.dsed" " -s"
@@ -178,16 +177,15 @@ Both commands
 .B save-page
 and
 .B save-page-with
-create a DjVu file representing the selected component file 
-of a document.  The following command, for instance, 
-creates a file
+create a DjVu file representing the selected component file of a
+document.  The following shell command, for instance, creates a file
 .I p05.djvu
 containing page
 .I 5
 of document
 .IR myfile.djvu .
 .IP "" 3
-.BI "djvused " "myfile.djvu" " -e 'select " "5" "; save-page " "p05.djvu" "'"
+.BI "djvused " "myfile.djvu" " -e 'select 5; save-page " "p05.djvu" "'"
 .PP
 Each page of a document might import data from 
 another component file using the so-called inclusion (
@@ -204,6 +202,18 @@ This file is direcly viewable. Yet collecting several
 such files into a multipage document might lead
 to useless data replication.
 
+.SS Pre-computing thumbnails
+Commands 
+.B set-thumbnails
+constructs thumbnails that can be later displayed by
+DjVu viewers.  The following shell command, for instance,
+computes thumbnails of size 
+.IR 64 x 64
+pixels for all pages of file
+.IR myfile.djvu .
+.IP "" 3
+.BI "djvused " "myfile.djvu" " -e 'set-thumbnails 64'"
+
 .SH DJVUSED COMMANDS
 Command lines might contain zero, one, or more djvused commands and an
 optional comment.  Multiple djvused commands must be separated by a
@@ -218,9 +228,6 @@ shared image data, shared annotations or thumbnails.  Many djvused
 commands operate on selected component files.  All component files are
 initially selected.  The following commands are useful for changing
 the selection.
-.TP
-.BI "n"
-Print the total number of pages in the document.
 .TP
 .BI "ls"
 List all component files in the document.  Each line contains an
@@ -265,6 +272,9 @@ pages in the document.
 Display a help message listing all commands supported by
 .BR djvused .
 .TP
+.BI "n"
+Print the total number of pages in the document.
+.TP
 .BI "dump"
 Display the 
 .SM EA IFF 85
@@ -282,35 +292,84 @@ tags.
 .SS Text and annotation commands
 .TP
 .BI "print-pure-txt"
+Print the text stored in the hidden text layer of the selected pages.
 A similar capability is offered by program
 .BR djvutxt .
+Structural information is sometimes represented by control characters.
+Text from different pages is delimited by form feed characters
+("\\f").  Lines are delimited by newline characters ("\\n").  Columns,
+regions, and paragraphs are sometimes delimited by vertical tab
+("\\013"), group separators ("\\035") and unit separators ("\\037")
+respectively.
 .TP
 .BI "print-txt"
-blabla
+Prints extensive hidden text information for the selected pages.
+This information describes the structure of the text on the 
+document page and locates the structural elements in the page image.
+The syntax of this output is described later in this man page.
 .TP
 .BI "remove-txt"
-blabla
+Remove the hidden text information from the selected component files.
+For instance, executing commands
+.BR "select" " and " "remove-txt"
+removes all hidden text information from the DjVu document.
 .TP
-.BI "set-txt " "djvusedtxtfile"
-blabla
+.BI "set-txt [" "djvusedtxtfile" "]"
+Insert hidden text information into the selected pages.
+The optional argument
+.I djvusedtxtfile
+names a file containing the hidden text information.
+This file must contain data similar to what is produced
+by command
+.B print-txt . 
+When the optional argument is omitted, the
+program reads the hidden text information from the djvused script
+until reaching an end-of-file or a line containing a single period.
 .TP
 .BI "output-txt"
-blabla
+Prints a djvused script that reconstructs the hidden text
+information for the selected pages.  This script can later
+be edited and executed by invoking program
+.B djvused
+with option
+.BR -f .
 .TP
 .BI "print-ant"
-blabla
+Prints the annotations for the selected component file.
+The annotation data is represented using a simple syntax
+described later in this document.
 .TP
 .BI "print-merged-ant"
-blabla
-.TP
+Merge the annotations stored in the selected component files
+with the annotations imported from other component files such
+as the shared annotation component file..
+The annotation data is represented using a simple syntax
+described later in this document.
+TP
 .BI "remove-ant"
-blabla
+Remove the annotation information from the selected component files.
+For instance, executing commands
+.BR "select" " and " "remove-ant"
+removes all annotation information from the DjVu document.
 .TP
-.BI "set-ant " "djvusedantfile"
-blabla
+.BI "set-ant [" "djvusedantfile" "]"
+The optional argument
+.I djvusedantfile
+names a file containing the annotation data.
+This file must contain data similar to what is produced
+by command
+.BR print-ant . 
+When the optional argument is omitted, the
+program reads the annotation data from the djvused script itself
+until reaching an end-of-file or a line containing a single period.
 .TP
 .BI "output-ant"
-blabla
+Prints a djvused script that reconstructs the annotation
+information for the selected pages.  This script can later
+be edited and executed by invoking program
+.B djvused
+with option
+.BR -f .
 .TP
 .BI "print-meta"
 blabla
@@ -319,15 +378,28 @@ blabla
 blabla
 .TP
 .BI "output-all"
-blabla
+Prints a djvused script that reconstructs both the hidden text and the
+annotation information for the selected pages.  This script can later
+be edited and executed by invoking program
+.B djvused
+with option
+.BR -f .
 
 .SS Thumbnail commands
 .TP
-.BI "remove-thumbnails"
-blabla
-.TP
 .BI "set-thumbnails " "sz"
-blabla
+Compute thumbnails of size
+.IR sz x sz
+pixels and insert them into the document.
+DjVu viewers can later display these thumbnails very
+efficiently without need to download the data for
+each page.  Typical thumbnail size range 
+from 48 to 128 pixels.
+.TP
+.BI "remove-thumbnails"
+Remove the pre-computed thumbnails from the DjVu document.
+New thumbnails can then be computed using command
+.BR set-thumbnails .
 
 .SS Save comands
 .TP
@@ -356,6 +428,17 @@ blabla
 .SS Annotation data syntax
 
 .SS Metadata syntax
+
+.SH LIMITATIONS
+.IP "*" 3
+The current version of program 
+.B djvused
+only supports selecting one component file
+or all component files.  There is no way to
+select only a few component files.
+.IP "*" 3
+The DjVu decoder does not properly handle
+non-ascii characters in the annotation string layers.
 
 .SH CREDITS
 This program was initially written by L\('eon Bottou
