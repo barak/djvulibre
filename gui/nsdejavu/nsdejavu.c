@@ -598,11 +598,11 @@ get_viewer_path(strpool *pool)
       return test;
 #else /* ! AUTOCONF */
     dir = dirname(pool, env);
-    test = strconcat(pool, dir, "/../", DEJAVU_DIR, "/", DJVIEW_NAME,0);
+    test = strconcat(pool, dir, "/../DjVu/", DJVIEW_NAME,0);
     if (is_executable(test))
       return test;
     dir = dirname(pool, envs);
-    test = strconcat(pool, dir, "/../", DEJAVU_DIR, "/", DJVIEW_NAME,0);
+    test = strconcat(pool, dir, "/../DjVu/", DJVIEW_NAME,0);
     if (is_executable(test))
       return test;
 #endif
@@ -649,7 +649,7 @@ get_library_path(strpool *pool)
   const char *env = 0;
   if ((env = (const char*)GetPluginPath())) {
     env = dirname(pool, env);
-    env = strconcat(pool, env, "/../", DEJAVU_DIR, 0);
+    env = strconcat(pool, env, "/../DjVu", 0);
     env = pathclean(pool, env);
     return env;
   }
