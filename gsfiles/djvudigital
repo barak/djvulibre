@@ -275,16 +275,16 @@ fi
 
 if [ -z "$outfile" ]
 then
-    outfile=$infile
+    outfile="$infile"
     for ext in gz GZ ps PS eps EPS pdf PDF
     do
        case "$outfile" in
          *.$ext)
-            outfile=`basename $outfile .$ext`
+            outfile=`basename "$outfile" .$ext`
             ;;
        esac
     done
-    outfile=$outfile.djvu
+    outfile="$outfile.djvu"
 fi
 
 # Step 5 -- execute command
