@@ -517,36 +517,38 @@ GPixmap::save_ppm(ByteStream &bs, int raw) const
   head.format("P%c\n%d %d\n255\n", (raw ? '6' : '3'), ncolumns, nrows);
   bs.writall((void*)(const char *)head, head.length());
   if (raw)
-  {
-    for (int y=nrows-1; y>=0; y--) 
     {
-      unsigned char rgb[3];
-      const GPixel *p = (*this)[y];
-      for (int x=0; x<ncolumns; x++)
-      {
-        rgb[0] = p[x].r;
-        rgb[1] = p[x].g;
-        rgb[2] = p[x].b;
-        bs.writall((void*)rgb, sizeof(rgb));  // too slow
-      }
+      int rowsize = ncolumns+ncolumns+ncolumns;
+      GTArray<unsigned char> xrgb(rowsize);
+      for (int y=nrows-1; y>=0; y--) 
+        {
+          const GPixel *p = (*this)[y];
+          unsigned char *d = xrgb;
+          for (int x=0; x<ncolumns; x++) 
+            {
+              *d++ = p[x].r;
+              *d++ = p[x].g;
+              *d++ = p[x].b;
+            }
+          bs.writall((void*)(unsigned char*)xrgb, ncolumns * 3);
+        }
     }
-  }
   else
-  {
-    for (int y=nrows-1; y>=0; y--) 
     {
-      const GPixel *p = (*this)[y];
-      unsigned char eol='\n';
-      for (int x=0; x<ncolumns; )
-      {
-        head.format("%d %d %d  ", p[x].r, p[x].g, p[x].b);
-        bs.writall((void*)(const char *)head, head.length());
-        x += 1;
-        if (x==ncolumns || (x&0x7)==0) 
-          bs.write((void*)&eol, 1);          
-      }
+      for (int y=nrows-1; y>=0; y--) 
+        {
+          const GPixel *p = (*this)[y];
+          unsigned char eol='\n';
+          for (int x=0; x<ncolumns; )
+            {
+              head.format("%d %d %d  ", p[x].r, p[x].g, p[x].b);
+              bs.writall((void*)(const char *)head, head.length());
+              x += 1;
+              if (x==ncolumns || (x&0x7)==0) 
+                bs.write((void*)&eol, 1);          
+            }
+        }
     }
-  }
 }
 
 
