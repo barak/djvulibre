@@ -329,12 +329,6 @@ DjVuMessage::GetProfilePaths(void)
 
     GPosition pos;
 #ifndef UNDER_CE
-    const GUTF8String oldlocale(setlocale(LC_CTYPE,0));
-    GUTF8String defaultlocale(setlocale(LC_CTYPE,""));
-    if(oldlocale != defaultlocale)
-    {
-      setlocale(LC_CTYPE,(const char *)oldlocale);
-    }
     GList< GMap<GUTF8String,GP<lt_XMLTags> > > localemaps;
     for(pos=paths;pos;++pos)
     {
@@ -360,6 +354,13 @@ DjVuMessage::GetProfilePaths(void)
     } 
     GList<GURL> localepaths;
     GList<GURL> osilocalepaths;
+
+    // Need to do it the right way!
+    const GUTF8String oldlocale(setlocale(LC_MESSAGES,0));
+    GUTF8String defaultlocale(setlocale(LC_MESSAGES,""));
+    if(oldlocale != defaultlocale)
+      setlocale(LC_MESSAGES,(const char *)oldlocale);
+
     for(int loop=0;loop++<2;)
     {
       static const char sepchars[]=" _.@";

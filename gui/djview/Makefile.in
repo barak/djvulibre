@@ -41,7 +41,7 @@ MOC = @MOC@
 
 LUPDATE = @LUPDATE@
 LRELEASE = @LRELEASE@
-LANGUAGES = ja_JP
+LANGUAGES = fr_FR ja_JP
 
 DEFS = @DEFS@
 OPTS = @OPTS@
@@ -217,6 +217,7 @@ distclean: clean
 
 lupdate: FORCE
 	for l in ${LANGUAGES} ; do \
+	  test -d ${srcdir}/i18n/$$l || ${MKDIR} ${srcdir}/i18n/$$l ;\
 	  ${LUPDATE} ${CPP_SOURCES} -ts ${srcdir}/i18n/$$l/djview.ts ; \
 	done
 
@@ -230,6 +231,8 @@ lrelease: FORCE
 	    echo  "i18n/$$l/djview.qm: i18n/$$l/djview.ts";\
 	    echo  "	${LRELEASE} i18n/$$l/djview.ts";\
           done ) > Makefile.i18n
+	-@test -d i18n || ${MKDIR} i18n
+	-@for l in ${LANGUAGES} ; do test -d i18n/$$l || ${MKDIR} i18n/$$l; done
 	${MAKE} -f Makefile.i18n
 
 # Boilerplate
