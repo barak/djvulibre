@@ -98,13 +98,12 @@ rm -rf %{buildroot}
 %{_datadir}/djvu/osi/en
 %{_mandir}/man?/*
 %lang(ja) %{_datadir}/djvu/osi/ja*
-%lang(ja) %{_mandir}/ja*
 %lang(fr) %{_datadir}/djvu/osi/fr*
-%lang(fr) %{_mandir}/fr*
 %lang(de) %{_datadir}/djvu/osi/de*
-%lang(de) %{_mandir}/de*
 %lang(zh) %{_datadir}/djvu/osi/zh*
-%lang(zh) %{_mandir}/zh*
+%lang(ja) %{_mandir}/ja*
+%lang(fr) %{_mandir}/fr*
+%lang(de) %{_mandir}/de*
 
 %changelog
 * Wed Nov  5 2003 Leon Bottou <leon@bottou.org> 3.5.12-3

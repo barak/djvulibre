@@ -94,6 +94,6 @@ FORCE:
 
 .ts.qm:
 	ts=`basename $<`; \
-	test -r $$ts || cp $< $$ts ; \
+	test ${srcdir} = "." || cp $< $$ts ; \
 	echo TRANSLATIONS="$$ts" > tmp.pro ; \
 	${LRELEASE} tmp.pro
