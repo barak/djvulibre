@@ -777,9 +777,8 @@ cpaldjvu(const GPixmap &input, GURL &urlout, const cpaldjvuopts &opts)
     }
   pal.index_to_color(bgindex, bgcolor);
   if (opts.verbose)
-    DjVuFormatErrorUTF8( "%s\t%02x\t%02x\t%02x", 
-                         ERR_MSG("cpaldjvu.bkgnd"), 
-                         bgcolor.r, bgcolor.g, bgcolor.b);
+    DjVuPrintErrorUTF8("cpaldjvu: background color is #%02x%02x%02x.\n", 
+                       bgcolor.r, bgcolor.g, bgcolor.b);
 
   // Fill CCImage with color runs
   int xruncount=0,yruncount=0;
@@ -1008,7 +1007,7 @@ main(int argc, const char **argv)
           else if (arg == "-verbose")
             opts.verbose = true;
           else if (arg == "-bgwhite")
-            opts.verbose = true;
+            opts.bgwhite = true;
           else if (arg[0] == '-')
             usage();
           else if (inputppmurl.is_empty())
