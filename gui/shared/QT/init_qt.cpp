@@ -35,10 +35,12 @@
 // $Id$
 // $Name$
 
+#ifdef __GNUG__
+#pragma implementation
+#endif
 #ifdef HAVE_CONFIG_H
 #include "config.h"
 #endif
-
 
 #include <qfileinfo.h>
 #include <qtranslator.h>
@@ -83,7 +85,7 @@ static QWindowsStyle *windows = 0;
 static QMotifStyle *motif = 0;
 #if ( QT_VERSION >= 220 )
 static QMotifPlusStyle *motifplus = 0;
-static QSGIStyle *sgi = 0;
+static QSGIStyle *sgistyle = 0;
 #endif
 #if ( QT_VERSION >= 210 )
 static QPlatinumStyle *platinum = 0;
@@ -423,8 +425,8 @@ InitializeQT(int argc, char ** argv)
 	 QApplication::setStyle(motifplus);
       }else if (style=="sgi")
       {
-	 if ( !sgi ) sgi = new QSGIStyle();
-	 QApplication::setStyle(sgi);
+	 if ( !sgistyle ) sgistyle = new QSGIStyle();
+	 QApplication::setStyle(sgistyle);
 #endif
 #if ( QT_VERSION >= 210 )
       }else if (style=="platinum")

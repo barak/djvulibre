@@ -33,10 +33,12 @@
 //C-
 // $Name$
 static char RCSVersion[]="@(#) $Id$";
+#ifdef __GNUG__
+#pragma implementation
+#endif
 #ifdef HAVE_CONFIG_H
 #include "config.h"
 #endif
-
 
 #include "djvu_file_cache.h"
 

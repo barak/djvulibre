@@ -33,9 +33,13 @@
 // $Id$
 // $Name$
 
+#ifdef __GNUG__
+#pragma implementation
+#endif
 #ifdef HAVE_CONFIG_H
 #include "config.h"
 #endif
+
 // -- Implements class PIXMAP
 // Author: Leon Bottou 07/1997
 

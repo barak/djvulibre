@@ -38,6 +38,9 @@
 #ifdef HAVE_CONFIG_H
 #include "config.h"
 #endif
+#ifdef __GNUG__
+#pragma interface
+#endif
 
 //Placement new support.
 //There is no new.h for WinCE, so we define a placement new here.

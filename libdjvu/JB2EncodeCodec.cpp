@@ -33,9 +33,13 @@
 // $Id$
 // $Name$
 
+#ifdef __GNUG__
+#pragma implementation
+#endif
 #ifdef HAVE_CONFIG_H
 #include "config.h"
 #endif
+
 #ifndef NEED_DECODER_ONLY
 
 #include "JB2Image.h"

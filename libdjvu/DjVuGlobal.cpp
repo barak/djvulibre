@@ -33,9 +33,13 @@
 // $Id$
 // $Name$
 
+#ifdef __GNUG__
+#pragma implementation
+#endif
 #ifdef HAVE_CONFIG_H
 #include "config.h"
 #endif
+
 /** This file impliments the DjVuProgressTask elements.  The memory
     functions are implimented in a separate file, because only the memory
     functions should be compiled with out overloading of the memory functions.

@@ -40,6 +40,9 @@
 #ifdef HAVE_CONFIG_H
 #include "config.h"
 #endif
+#ifdef __GNUG__
+#pragma interface
+#endif
 
 
 #define DJVIEW_VERSION_STR	"3.5"

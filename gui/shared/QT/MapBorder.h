@@ -40,6 +40,9 @@
 #ifdef HAVE_CONFIG_H
 #include "config.h"
 #endif
+#ifdef __GNUG__
+#pragma interface
+#endif
 
 
 #include "MapAreas.h"

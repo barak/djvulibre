@@ -38,6 +38,9 @@
 #ifdef HAVE_CONFIG_H
 #include "config.h"
 #endif
+#ifdef __GNUG__
+#pragma interface
+#endif
 
 /** @name DjVuToPS.h
     Files #"DjVuToPS.h"# and #"DjVuToPS.cpp"# implement code that can be

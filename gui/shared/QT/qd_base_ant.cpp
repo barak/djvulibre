@@ -35,10 +35,12 @@
 // $Id$
 // $Name$
 
+#ifdef __GNUG__
+#pragma implementation
+#endif
 #ifdef HAVE_CONFIG_H
 #include "config.h"
 #endif
-
 
 #include "ByteStream.h"
 #include "qd_base_ant.h"

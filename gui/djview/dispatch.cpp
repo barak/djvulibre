@@ -35,9 +35,13 @@
 // $Id$
 // $Name$
 
+#ifdef __GNUG__
+#pragma implementation
+#endif
 #ifdef HAVE_CONFIG_H
 #include "config.h"
 #endif
+
 #ifndef REPARENT
 #define REPARENT 1
 #endif

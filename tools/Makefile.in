@@ -63,7 +63,7 @@ PROGRAMS = bzz c44 cjb2 cpaldjvu csepdjvu \
 all: ${PROGRAMS}
 
 ${PROGRAMS}:
-	${RPO} $< ${LIBDJVU_A}
+	@${RPO} $< ${LIBDJVU_A}
 	${CXX} -o $@ ${CXXFLAGS} $< ${LIBDJVU} ${LIBS}
 
 install: install-bin install-man

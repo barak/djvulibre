@@ -44,6 +44,9 @@
 #ifdef HAVE_CONFIG_H
 #include "config.h"
 #endif
+#ifdef __GNUG__
+#pragma interface
+#endif
 
 //T// Always include "DjVuGlobal.h"
 #include "DjVuGlobal.h"

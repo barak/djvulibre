@@ -40,6 +40,7 @@ do
         *.cin)
                 base=`basename $src .cin`
                 echo "$base.o : $base.cpp"
+                echo "	\${CXX} \${CXXFLAGS} -c $base.cpp"
                 echo "$base.cpp : ${xdir}$base.cin"
                 echo "	\${BIN2CPP} $base < ${xdir}$base.cin > $base.cpp"
                 objs="$objs $base.o"
