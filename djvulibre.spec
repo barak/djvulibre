@@ -119,6 +119,7 @@ rm -rf %{buildroot}
 %changelog
 * Wed Nov  5 2003 Leon Bottou <leon@bottou.org> 3.5.12-3
 - begin support for i18n files.
+- rename symlink in mozilla plugin dirs.
 * Mon Jul  7 2003 Leon Bottou <leon@bottou.org> 3.5.12-1
 * Thu Apr 24 2003 Leon Bottou <leon@bottou.org> 3.5.11-1
 * Thu Feb  6 2003 Leon Bottou <leon@bottou.org> 3.5.10-2
