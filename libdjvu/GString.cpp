@@ -41,6 +41,7 @@
 #endif
 
 #include "GString.h"
+#include "GThreads.h"
 #include "debug.h"
 
 #include <stdlib.h>
@@ -51,6 +52,18 @@
 #include <wctype.h>
 #include <locale.h>
 #include <wchar.h>
+#endif
+
+#ifndef DO_CHANGELOCALE
+#define DO_CHANGELOCALE 1
+#ifdef UNIX
+#if THREADMODEL != COTHREADS
+#if THREADMODEL != NOTHREADS
+#undef DO_CHANGELOCALE
+#define DO_CHANGELOCALE 0
+#endif
+#endif 
+#endif
 #endif
 
 GBaseString::~GBaseString() {}
@@ -194,7 +207,7 @@ class GStringRep::ChangeLocale
 {
 public:
   ChangeLocale(const int,const char *) {}
-  ~ChangeLocale();
+  ~ChangeLocale() {};
 };
 
 GP<GStringRep>
@@ -395,32 +408,38 @@ GStringRep::Native::ncopy(
   return toUTF8()->ncopy(buf,buflen);
 }
 
-GStringRep::ChangeLocale::ChangeLocale(
-  const int xcategory, const char xlocale[] )
-: category(xcategory)
+GStringRep::ChangeLocale::ChangeLocale(const int xcategory, const char xlocale[] )
+  : category(xcategory)
 {
+#if DO_CHANGELOCALE
+  // This is disabled under UNIX because 
+  // it does not play nice with MT.
   if(xlocale)
-  {
-    locale=setlocale(xcategory,0);
-    if(locale.length() &&(locale!=xlocale))
     {
-      if(locale == setlocale(category,xlocale))
-      {
-        locale.empty();
-      }
-    }else
-    {
-      locale.empty();
+      locale=setlocale(xcategory,0);
+      if(locale.length() &&(locale!=xlocale))
+        {
+          if(locale == setlocale(category,xlocale))
+            {
+              locale.empty();
+            }
+        }
+      else
+        {
+          locale.empty();
+        }
     }
-  }
+#endif
 }
 
 GStringRep::ChangeLocale::~ChangeLocale()
 {
+#if DO_CHANGELOCALE
   if(locale.length())
-  {
-    setlocale(category,(const char *)locale);
-  }
+    {
+      setlocale(category,(const char *)locale);
+    }
+#endif
 }
 
 GNativeString &
@@ -579,20 +598,24 @@ GBaseString::UTF8ToNative(
   GP<GStringRep> retval;
   if(source && source[0]) 
   {
+#if DO_CHANGELOCALE
     GUTF8String lc_ctype(setlocale(LC_CTYPE,0));
+#endif
     bool repeat;
     for(repeat=!currentlocale;;repeat=false)
     {
       retval=(*this)->toNative((GStringRep::EscapeMode)escape);
-      if(!repeat
-        || retval
-        || (lc_ctype == setlocale(LC_CTYPE,""))
-      ) break;
+#if DO_CHANGELOCALE
+      if (!repeat || retval || (lc_ctype == setlocale(LC_CTYPE,"")))
+#endif
+        break;
     }
+#if DO_CHANGELOCALE
     if(!repeat)
-    {
-      setlocale(LC_CTYPE,(const char *)lc_ctype);
-    }
+      {
+        setlocale(LC_CTYPE,(const char *)lc_ctype);
+      }
+#endif
   }
   return GNativeString(retval);
 }
@@ -626,7 +649,9 @@ GBaseString::NativeToUTF8(void) const
   if(length())
   {
     const char *source=(*this);
+#if DO_CHANGELOCALE
     GUTF8String lc_ctype=setlocale(LC_CTYPE,0);
+#endif
     bool repeat;
     for(repeat=true;;repeat=false)
     {
@@ -637,13 +662,17 @@ GBaseString::NativeToUTF8(void) const
           retval=GStringRep::UTF8::create((size_t)0);
         }
       }
+#if DO_CHANGELOCALE
       if(!repeat || retval || (lc_ctype == setlocale(LC_CTYPE,"")))
+#endif
         break;
     }
+#if DO_CHANGELOCALE
     if(!repeat)
     {
       setlocale(LC_CTYPE,(const char *)lc_ctype);
     }
+#endif
   }
   return GUTF8String(retval);
 }
@@ -1627,7 +1656,7 @@ GStringRep::vformat(va_list &args) const
       char *buffer;
       GPBuffer<char> gbuffer(buffer,buflen);
 
-      ChangeLocale locale(LC_ALL,(isNative()?0:"C"));
+      ChangeLocale locale(LC_NUMERIC,(isNative()?0:"C"));
 
       // Format string
 #ifdef USE_VSNPRINTF
@@ -2263,7 +2292,8 @@ GStringRep::UTF8::toInt() const
 static inline long
 Cstrtol(char *data,char **edata, const int base)
 {
-  GStringRep::ChangeLocale locale(LC_ALL,"C");
+  GStringRep::ChangeLocale locale(LC_NUMERIC,"C");
+  while (data && *data==' ') data++;
   return strtol(data,edata,base);
 }
 
@@ -2307,7 +2337,8 @@ GStringRep::UTF8::toLong(
 static inline unsigned long
 Cstrtoul(char *data,char **edata, const int base)
 {
-  GStringRep::ChangeLocale locale(LC_ALL,"C");
+  GStringRep::ChangeLocale locale(LC_NUMERIC,"C");
+  while (data && *data==' ') data++;
   return strtoul(data,edata,base);
 }
 
@@ -2351,7 +2382,8 @@ GStringRep::UTF8::toULong(
 static inline double
 Cstrtod(char *data,char **edata)
 {
-  GStringRep::ChangeLocale locale(LC_ALL,"C");
+  GStringRep::ChangeLocale locale(LC_NUMERIC,"C");
+  while (data && *data==' ') data++;
   return strtod(data,edata);
 }
 
