@@ -1,3 +1,10 @@
+NEW IN VERSION 3.5.9
+--------------------
+- Fix for gcc-3.2.
+- Fix for broken command ddjvu.
+- Modified IW44 for ARM processors.
+- Modified RPM spec file for Mozilla-1.1+.
+
 NEW IN VERSION 3.5.8
 --------------------
 - Fixed printing of b&w documents (broken since 3.5.6)
