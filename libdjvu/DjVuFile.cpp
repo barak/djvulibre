@@ -783,9 +783,9 @@ DjVuFile::get_dpi(int w, int h)
       if ((info->width+red-1)/red==w)
         if ((info->height+red-1)/red==h)
           break;
-        if (red>12)
-          G_THROW( ERR_MSG("DjVuFile.corrupt_BG44") );
-        dpi=info->dpi;
+    if (red>12)
+      G_THROW( ERR_MSG("DjVuFile.corrupt_BG44") );
+    dpi=info->dpi;
   }
   return (dpi ? dpi : 300)/red;
 }
@@ -946,6 +946,7 @@ DjVuFile::decode_chunk( const GUTF8String &id, const GP<ByteStream> &gbs,
     else
     {
       // Refinement chunks
+      GP<IW44Image> bg44 = this->bg44;
       bg44->decode_chunk(gbs);
       desc.format( ERR_MSG("DjVuFile.IW44_bg2") "\t%d\t%d",
 		      bg44->get_serial(), get_dpi(bg44->get_width(), bg44->get_height()));
@@ -1051,27 +1052,26 @@ DjVuFile::decode_chunk( const GUTF8String &id, const GP<ByteStream> &gbs,
     if (!bg44)
     {
       // First chunk
-      GP<IW44Image> gbg44=IW44Image::create_decode(IW44Image::COLOR);
-      IW44Image &xbg44=*gbg44;
-      xbg44.decode_chunk(gbs);
-      GP<DjVuInfo> ginfo=DjVuInfo::create();
-      ginfo->width=xbg44.get_width();
-      ginfo->height=xbg44.get_height();
-      ginfo->dpi=100;
-      bg44=gbg44;
-      info=ginfo;
+      GP<IW44Image> bg44 = IW44Image::create_decode(IW44Image::COLOR);
+      bg44->decode_chunk(gbs);
+      GP<DjVuInfo> info = DjVuInfo::create();
+      info->width = bg44->get_width();
+      info->height = bg44->get_height();
+      info->dpi = 100;
+      this->bg44 = bg44;
+      this->info = info;
       desc.format( ERR_MSG("DjVuFile.IW44_data1") "\t%d\t%d\t%d",
-		      xbg44.get_width(), xbg44.get_height(),
-          get_dpi(xbg44.get_width(), xbg44.get_height()));
+                   bg44->get_width(), bg44->get_height(),
+                   get_dpi(bg44->get_width(), bg44->get_height()));
     } 
     else
     {
       // Refinement chunks
-      IW44Image &xbg44=*bg44;
-      xbg44.decode_chunk(gbs);
+      GP<IW44Image> bg44 = this->bg44;
+      bg44->decode_chunk(gbs);
       desc.format( ERR_MSG("DjVuFile.IW44_data2") "\t%d\t%d",
-		      xbg44.get_serial(),
-          get_dpi(xbg44.get_width(), xbg44.get_height()));
+                   bg44->get_serial(),
+                   get_dpi(bg44->get_width(), bg44->get_height()));
     }
   }
   
