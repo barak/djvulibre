@@ -450,10 +450,13 @@ QXImager::allocateCell(int r, int g, int b)
 
 QXImager::~QXImager(void)
 {
-   if (allocated_colors) 
-     XFreeColors(displ, colormap, allocated_color,
-                 allocated_colors, 0);
-   qxImager = 0;
+#ifdef USE_XSHM
+  DXImage::map.empty();
+#endif
+  if (allocated_colors) 
+    XFreeColors(displ, colormap, allocated_color,
+                allocated_colors, 0);
+  qxImager = 0;
 }
 
 QXImager::QXImager(Display * _displ, void * _visual,

@@ -408,23 +408,31 @@ DjVuMessageLite::AddByteStream(const GP<ByteStream> &bs)
 void
 DjVuWriteError( const char *message )
 {
-  GP<ByteStream> errout = ByteStream::get_stderr();
-  if (errout)
-  {
-    const GUTF8String external = DjVuMessageLite::LookUpUTF8( message );
-    errout->writestring(external+"\n");
-  }
+  G_TRY {
+    GP<ByteStream> errout = ByteStream::get_stderr();
+    if (errout)
+      {
+        const GUTF8String external = DjVuMessageLite::LookUpUTF8( message );
+        errout->writestring(external+"\n");
+      }
+    // Need to catch all exceptions because these might be 
+    // called from an outer exception handler (with prejudice)
+  } G_CATCH_ALL { } G_ENDCATCH;
 }
 
 void
 DjVuWriteMessage( const char *message )
 {
-  GP<ByteStream> strout = ByteStream::get_stdout();
-  if (strout)
-  {
-    const GUTF8String external = DjVuMessageLite::LookUpUTF8( message );
-    strout->writestring(external+"\n");
-  }
+  G_TRY {
+    GP<ByteStream> strout = ByteStream::get_stdout();
+    if (strout)
+      {
+        const GUTF8String external = DjVuMessageLite::LookUpUTF8( message );
+        strout->writestring(external+"\n");
+      }
+    // Need to catch all exceptions because these might be 
+    // called from an outer exception handler (with prejudice)
+  } G_CATCH_ALL { } G_ENDCATCH;
 }
 
 

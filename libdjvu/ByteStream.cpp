@@ -1343,57 +1343,73 @@ ByteStream::get_stderr(void)
 void
 DjVuPrintErrorUTF8(const char *fmt, ... )
 {
-  GP<ByteStream> errout = ByteStream::get_stderr();
-  if (errout)
-  {
-    errout->cp=ByteStream::NATIVE;
-    va_list args;
-    va_start(args, fmt); 
-    const GUTF8String message(fmt,args);
-    errout->writestring(message);
-  }
+  G_TRY {
+    GP<ByteStream> errout = ByteStream::get_stderr();
+    if (errout)
+      {
+        errout->cp=ByteStream::NATIVE;
+        va_list args;
+        va_start(args, fmt); 
+        const GUTF8String message(fmt,args);
+        errout->writestring(message);
+      }
+    // Need to catch all exceptions because these might be 
+    // called from an outer exception handler (with prejudice)
+  } G_CATCH_ALL { } G_ENDCATCH;
 }
 
 void
 DjVuPrintErrorNative(const char *fmt, ... )
 {
-  GP<ByteStream> errout = ByteStream::get_stderr();
-  if (errout)
-  {
-    errout->cp=ByteStream::NATIVE;
-    va_list args;
-    va_start(args, fmt); 
-    const GNativeString message(fmt,args);
-    errout->writestring(message);
-  }
+  G_TRY {
+    GP<ByteStream> errout = ByteStream::get_stderr();
+    if (errout)
+      {
+        errout->cp=ByteStream::NATIVE;
+        va_list args;
+        va_start(args, fmt); 
+        const GNativeString message(fmt,args);
+        errout->writestring(message);
+      }
+    // Need to catch all exceptions because these might be 
+    // called from an outer exception handler (with prejudice)
+  } G_CATCH_ALL { } G_ENDCATCH;
 }
 
 void
 DjVuPrintMessageUTF8(const char *fmt, ... )
 {
-  GP<ByteStream> strout = ByteStream::get_stdout();
-  if (strout)
-  {
-    strout->cp=ByteStream::NATIVE;
-    va_list args;
-    va_start(args, fmt);
-    const GUTF8String message(fmt,args);
-    strout->writestring(message);
-  }
+  G_TRY {
+    GP<ByteStream> strout = ByteStream::get_stdout();
+    if (strout)
+      {
+        strout->cp=ByteStream::NATIVE;
+        va_list args;
+        va_start(args, fmt);
+        const GUTF8String message(fmt,args);
+        strout->writestring(message);
+      }
+    // Need to catch all exceptions because these might be 
+    // called from an outer exception handler (with prejudice)
+  } G_CATCH_ALL { } G_ENDCATCH;
 }
 
 void
 DjVuPrintMessageNative(const char *fmt, ... )
 {
-  GP<ByteStream> strout = ByteStream::get_stdout();
-  if (strout)
-  {
-    strout->cp=ByteStream::NATIVE;
-    va_list args;
-    va_start(args, fmt);
-    const GNativeString message(fmt,args);
-    strout->writestring(message);
-  }
+  G_TRY {
+    GP<ByteStream> strout = ByteStream::get_stdout();
+    if (strout)
+      {
+        strout->cp=ByteStream::NATIVE;
+        va_list args;
+        va_start(args, fmt);
+        const GNativeString message(fmt,args);
+        strout->writestring(message);
+      }
+    // Need to catch all exceptions because these might be 
+    // called from an outer exception handler (with prejudice)
+  } G_CATCH_ALL { } G_ENDCATCH;
 }
 
 /** Looks up the message and writes it to the specified stream. */
