@@ -188,7 +188,7 @@ install-man: FORCE
 
 install-data: FORCE
 	${INSTALL} -d ${DESTDIR}${datadir}/djvu/osi
-	for l in ${LANGUAGES} ; do \
+	-for l in ${LANGUAGES} ; do \
 	  ${INSTALL} -d ${DESTDIR}${datadir}/djvu/osi/$$l ;\
 	  for p in ${LANGFILES} ; do \
 	    test -r i18n/$$l/$$p.qm && \
