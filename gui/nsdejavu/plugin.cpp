@@ -1086,6 +1086,14 @@ Attach(Display * displ, Window window, void * id)
    } G_ENDCATCH;
 }
 
+template<class I, class H> static inline void *
+signal_adapter( H (*signal)(I,H), int sig, void *handler)
+{
+  // This is for adjusting to the various possible 
+  // prototypes of function signal.
+  return (void*) signal(sig, (H)handler);
+}
+
 static void
 StartProgram(void)
 {
@@ -1117,12 +1125,7 @@ StartProgram(void)
    _rev_pipe=fd[1];
 
    // We want to wait for this child.
-#ifdef sgi
-   typedef void (*sighandler_t)(...);
-#else
-   typedef void (*sighandler_t)(int);
-#endif
-   sighandler_t sigsave=signal(SIGCHLD,SIG_DFL);
+   void *sigsave = (void*)signal(SIGCHLD,SIG_DFL);
    
    DEBUG_MSG("trying to fork...\n");
    pid_t pid;
@@ -1134,7 +1137,6 @@ StartProgram(void)
 	// These three lines look crazy, but the this is the only way I know
 	// to orphan a child under all versions of Unix.  Otherwise the
 	// SIGCHLD may cause Netscape to crash.
-
 #ifdef NO_DEBUG
 	// Don't do it in DEBUG mode => all DEBUG messages got lost.
       setsid();
@@ -1218,7 +1220,7 @@ StartProgram(void)
    { int s; waitpid(pid, &s, WNOHANG); }
 
 	// Now reset the signal handler back to what Netscape uses.
-   signal(SIGCHLD,sigsave);
+   signal_adapter(signal, SIGCHLD, sigsave);
    
    DEBUG_MSG("waiting for the child to report back\n");
    G_TRY
