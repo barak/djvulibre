@@ -102,6 +102,9 @@ static QeApplication * qa;
 static char * appFont, * appBGCol, * appFGCol, * appName, * mwGeometry;
 static char * appStyle, * displ_name, * visual_name;
 static bool install_cmap;
+#ifndef NO_DEBUG
+static bool xsynchronize;
+#endif
 
 static void
 FakeDisplayStructure(Display * displ, Visual * visual,
@@ -153,7 +156,7 @@ x11ErrorHandler(Display * displ, XErrorEvent * event)
     case BadPixmap:
     case BadAccess:
       // do not even say anything
-#ifndef DEBUG
+#ifdef NO_DEBUG
       break;  
 #endif
     case BadDrawable:
@@ -349,6 +352,13 @@ ParseQTArgs(int & argc, char ** argv)
 	 DEBUG_MSG(argv[i] << " found\n");
          appStyle = argv[i]+7;
 	 shift(argc, argv, i);
+#ifndef NO_DEBUG
+      } else if (!strcmp(argv[i], "-sync"))
+      {
+	 DEBUG_MSG(argv[i] << " found\n");
+         xsynchronize = true;
+	 shift(argc, argv, i);
+#endif
       } else i++;
    }
 }
@@ -708,13 +718,14 @@ InitStandalone(int argc, char ** argv)
    DjVuPrefs prefs;
    InitializeQT(argc, argv);
    new QXImager(displ, visual, colormap, depth, false, prefs.optimizeLCD);
-
+#ifndef NO_DEBUG
+   if (xsynchronize)  XSynchronize(displ, True);
+#endif     
       // I don't want QT try to quit this application when the viewer's
       // window is closed. There may be an editor's one as well. So:
       // just create a dummy main widget
    QWidget * dummy_main=new QWidget();
    qApp->setMainWidget(dummy_main);
-
 #ifndef STANDALONE_USE_CACHE
    get_file_cache()->enable(0);
 #endif

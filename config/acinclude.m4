@@ -88,6 +88,10 @@ AC_DEFUN(AC_CXX_OPTIMIZE,[
            ;;
       esac
    fi
+   case x"$ac_debug" in
+     x[0-9])  OPTS="$OPTS -DDEBUGLVL=$ac_debug" ;;
+     xr*)   OPTS="$OPTS -DRUNTIME_DEBUG_ONLY" ;;
+   esac
 ])
 
 dnl -------------------------------------------------------
