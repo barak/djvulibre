@@ -62,7 +62,7 @@
 
 // These are hand-tweaked parameters of this classifier.
 
-static const double pithdiff_threshold             = 2.1;
+static const double pithdiff_threshold             = 1.7;
 static const double softdiff_threshold             = 800;
 static const double shiftdiff1_threshold           = 60;
 static const double shiftdiff2_threshold           = 80;
@@ -70,7 +70,7 @@ static const double shiftdiff3_threshold           = 200;
 
 static const double pithdiff_veto_threshold        = 5; // tightly
 static const double softdiff_veto_threshold        = 2500;
-static const double shiftdiff1_veto_threshold      = 1000;
+static const double shiftdiff1_veto_threshold      = 300;
 static const double shiftdiff2_veto_threshold      = 1500;
 static const double shiftdiff3_veto_threshold      = 2000;
 
