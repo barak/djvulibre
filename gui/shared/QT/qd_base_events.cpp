@@ -170,8 +170,11 @@ QDBase::scroll(int dh, int dv, int update_scrollbars)
 
 	 if (rectNew.width()<=rectVisible.width())
 	 {
-	    int hor_align=anno && anno->ant ?
-			  anno->ant->hor_align : DjVuANT::ALIGN_CENTER;
+	    int hor_align=DjVuANT::ALIGN_CENTER;
+            if (anno && anno->ant)
+              hor_align = anno->ant->hor_align;
+            if (override_flags.hor_align!=DjVuANT::ALIGN_UNSPEC)
+              hor_align = override_flags.hor_align;
 	    switch(hor_align)
 	    {
 	       case DjVuANT::ALIGN_LEFT:
@@ -190,8 +193,11 @@ QDBase::scroll(int dh, int dv, int update_scrollbars)
       
 	 if (rectNew.height()<=rectVisible.height())
 	 {
-	    int ver_align=anno && anno->ant ?
-			  anno->ant->ver_align : DjVuANT::ALIGN_CENTER;
+	    int ver_align=DjVuANT::ALIGN_CENTER;
+            if (anno && anno->ant)
+              ver_align = anno->ant->ver_align;
+            if (override_flags.ver_align!=DjVuANT::ALIGN_UNSPEC)
+              ver_align = override_flags.ver_align;
 	    switch(ver_align)
 	    {
 	       case DjVuANT::ALIGN_TOP:
@@ -458,7 +464,7 @@ QDBase::processMouseMoveEvent(QMouseEvent * ev)
       }
    }
    
-   if ((ev->state() & getLensHotKey()))
+   if (isLensVisible() && (ev->state() & getLensHotKey()))
    {
       if (rectDocument.contains(ev->x(), ev->y()))
 	 showLens(ev->x()-prefs.magnifierSize/2,
