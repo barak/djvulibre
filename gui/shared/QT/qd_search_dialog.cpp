@@ -331,10 +331,11 @@ QDSearchDialog::slotSearch(void)
 	 {
            if (all_pages_butt->isChecked())
              showMessage(this, tr("DjVu Search Failed"),
-                         tr("After looking through every page of this document\n"
-                            "we have found, that neither of them contain\n"
-                            "textual information. This means, that the document\n"
-                            "creator did not run an OCR engine on this document.\n"
+                         tr("After looking through every page of this document,\n"
+                            "we have found that none of them contain\n"
+                            "textual information. This means that either the document\n"
+                            "creator did not run an OCR engine on this document,\n"
+			    "or the OCR engine did not recognize any text.\n"
                             "\n"
                             "The search is impossible."), 
                          true, false, true);

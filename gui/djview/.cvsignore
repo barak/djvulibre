@@ -1,0 +1,6 @@
+Makefile
+djview
+*.inc
+*_moc.cpp
+ppm_*.cpp
+bmp_*.cpp
