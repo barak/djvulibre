@@ -592,8 +592,8 @@ AC_DEFUN([AC_PATH_QT],
   if test "x$ac_has_qt" != xno ; then
     test x${QT_CFLAGS+set} != xset && QT_CFLAGS="-I$QTDIR/include"
     test x${QT_LIBS+set} != xset && QT_LIBS="-L$QTDIR/lib -lqt"
-    AC_PATH_PROGS(MOC, [moc moc2 moc3], [unknown], "$QTDIR/bin:$PATH")
-    AC_PATH_PROGS(UIC, [uic uic2 uic3], [unknown], "$QTDIR/bin:$PATH")
+    AC_PATH_PROGS(MOC, [moc moc2 moc3], [unknown], [$QTDIR/bin:$PATH])
+    AC_PATH_PROGS(UIC, [uic uic2 uic3], [unknown], [$QTDIR/bin:$PATH])
     if test -x "$MOC" ; then : ; else 
         AC_MSG_WARN([Cannot run the Qt Meta-Object compiler.])
         ac_has_qt=no

@@ -71,7 +71,10 @@ AC_HEADER_DIRENT
 AC_HEADER_TIME
 AC_HEADER_SYS_WAIT     
 AC_CHECK_HEADERS(wchar.h wctype.h sys/mman.h dlfcn.h iconv.h)
-AC_CHECK_HEADERS(sys/ipc.h sys/shm.h X11/extensions/Xext.h)
+AC_CHECK_HEADERS(sys/ipc.h sys/shm.h)
+AC_CHECK_HEADERS(X11/extensions/Xext.h,,,[#include <X11/Xlib.h>])
+
+
 
 # ----------------------------------------
 # Types
