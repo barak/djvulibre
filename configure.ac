@@ -144,7 +144,7 @@ AC_ARG_ENABLE(xmltools,
    AC_HELP_STRING([--enable-xmltools],
                   [enable compilation of the xml tools (default).]),
    [ac_enable_xmltools=$enableval], 
-   [ac_enable_xmltools=yes] ) 
+   [ac_enable_xmltools=no] ) 
 if test x$ac_enable_xmltools != xno ; then
    XML_YES=''
    XML_NO='#'

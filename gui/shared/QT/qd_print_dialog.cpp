@@ -178,14 +178,15 @@ void
 QDPrintDialog::setZoom(int zoom)
 {
   QString setting;
-  if (zoom<0)
+  if (zoom<=0)
     setting= tr(fit_page_str);
   else if (zoom==100)
     setting= tr(one_to_one_str);
   else if (zoom==cur_zoom)
     setting = tr(current_zoom_str);
-  else
+  else 
     setting = tr(custom_zoom_str);
+  zoom_spin->setValue(zoom<=0 ? 100 : zoom);
   setComboBoxCurrentItem(zoom_menu, setting);
 }
 
@@ -461,9 +462,9 @@ QDPrintDialog::done(int rc)
               struct stat st;
               if (stat(fname, &st)>=0)
                 if (QMessageBox::warning(this, "DjVu",
-                                         tr("File '") + fname + tr("' already exists.\n") +
-                                         tr("Are you sure you want to overwrite it?"),
-                                         tr("&Yes"), tr("&No"), 0, 0, 1))
+                      tr("File '") + fname + tr("' already exists.\n") +
+                      tr("Are you sure you want to overwrite it?"),
+                      tr("&Yes"), tr("&No"), 0, 0, 1))
 		  return;
             }
           
@@ -494,7 +495,7 @@ QDPrintDialog::done(int rc)
          
          int zoom = zoom_spin->value();
          if (! strcmp(zoom_menu->currentText(), tr(fit_page_str)))
-           zoom = DjVuToPS::Options::FIT_PAGE;
+           zoom = 0;
          else if (! strcmp(zoom_menu->currentText(), tr(one_to_one_str)))
            zoom = 100;
          else if (! strcmp(zoom_menu->currentText(), tr(current_zoom_str)))
@@ -505,7 +506,8 @@ QDPrintDialog::done(int rc)
            {
              fdesc = 0;
              fname = printFile;
-             pstr = ByteStream::create(GURL::Filename::UTF8(GStringFromQString(fname)),"wb");
+             pstr = ByteStream::create(
+                      GURL::Filename::UTF8(GStringFromQString(fname)),"wb");
            }
          else
            {
@@ -545,12 +547,16 @@ QDPrintDialog::done(int rc)
          }
          
 	 DjVuToPS::Options & opt=print->options;
-	 opt.set_mode(displ_mode==IDC_DISPLAY_BACKGROUND ? DjVuToPS::Options::BACK :
-		      displ_mode==IDC_DISPLAY_BLACKWHITE ? DjVuToPS::Options::BW :
-		      displ_mode==IDC_DISPLAY_FOREGROUND ? DjVuToPS::Options::FORE :
-		      DjVuToPS::Options::COLOR);
-	 
-	 opt.set_format(printPS ? DjVuToPS::Options::PS : DjVuToPS::Options::EPS);
+	 opt.set_mode(displ_mode==IDC_DISPLAY_BACKGROUND 
+                      ? DjVuToPS::Options::BACK :
+		      displ_mode==IDC_DISPLAY_BLACKWHITE 
+                      ? DjVuToPS::Options::BW :
+		      displ_mode==IDC_DISPLAY_FOREGROUND 
+                      ? DjVuToPS::Options::FORE 
+                      : DjVuToPS::Options::COLOR);
+	 opt.set_format(printPS 
+                        ? DjVuToPS::Options::PS 
+                        : DjVuToPS::Options::EPS);
 	 opt.set_level(printLevel);
          if (printAutoOrient)
            opt.set_orientation(DjVuToPS::Options::AUTO);
@@ -559,11 +565,11 @@ QDPrintDialog::done(int rc)
          else
            opt.set_orientation(DjVuToPS::Options::LANDSCAPE);
 	 opt.set_color(printColor);
-	 opt.set_zoom((DjVuToPS::Options::Zoom) zoom);
+	 opt.set_zoom(zoom);
 	 opt.set_copies(copies_spin->value());
 	 opt.set_frame(printFrame);
+         opt.set_cropmarks(printCropMarks);
 #if 0
-         opt.set_cropmark(printCropMarks);
          if (!bookMode) 
            opt.set_book_signature( 0 );
          else if (bookSign < 4)
@@ -580,7 +586,8 @@ QDPrintDialog::done(int rc)
 	 print->set_prn_progress_cb(progress_cb, this);
 	 print->set_info_cb(info_cb, this);
 	 if ((what==PRINT_DOC || what==PRINT_CUSTOM) && doc)
-	    print->print(*pstr, doc, (what==PRINT_CUSTOM && customPages.length()) ?
+	    print->print(*pstr, doc, 
+                         (what==PRINT_CUSTOM && customPages.length()) ?
 			(const char *) customPages : 0);
 	 else
 	 {
@@ -616,7 +623,7 @@ QDPrintDialog::done(int rc)
              disk_prefs.printCommand = prefs->printCommand 
                = GStringFromQString(printCommand);
              disk_prefs.printFitPage = prefs->printFitPage 
-               = (zoom==DjVuToPS::Options::FIT_PAGE);
+               = !zoom;
              disk_prefs.printZoom = prefs->printZoom 
                = ((disk_prefs.printFitPage) ? 100 : zoom);
              disk_prefs.printAllPages = prefs->printAllPages 
@@ -664,7 +671,6 @@ QDPrintDialog::done(int rc)
 	 showError(this, exc);
       }
    } 
-
    else
    {
      if (printing) {
@@ -848,9 +854,11 @@ QDPrintDialog::QDPrintDialog(const GP<DjVuDocument> & _doc,
    bg_lay=new QVBoxLayout(bg, 10);
    bg_lay->addSpacing(bg->fontMetrics().height());
    bg_lay->addStrut(bg->fontMetrics().width(bg->title()));
-   ps_butt=new QRadioButton(tr("&PostScript File (*.ps)"), bg, "ps_butt");
+   ps_butt=new QRadioButton(tr("&PostScript File (*.ps)"), 
+                            bg, "ps_butt");
    bg_lay->addWidget(ps_butt);
-   eps_butt=new QRadioButton("&Encapsulated PostScript File (*.eps)", bg, "eps_butt");
+   eps_butt=new QRadioButton("&Encapsulated PostScript File (*.eps)", 
+                             bg, "eps_butt");
    bg_lay->addWidget(eps_butt);
 
    // *** Creating 'PostScript level' frame
@@ -1008,16 +1016,18 @@ QDPrintDialog::QDPrintDialog(const GP<DjVuDocument> & _doc,
    if (!prefs->printPS) 
      prefs->printPortrait = 1; 
    setPSFormat(prefs->printPS);
-   setPortrait(prefs->printPortrait || !prefs->printPS, prefs->printAutoOrient);
+   setPortrait(prefs->printPortrait 
+               || !prefs->printPS, prefs->printAutoOrient);
    setColorMode(prefs->printColor);
    setPSLevel(prefs->printLevel);
    setFileName(QStringFromGString(prefs->printFile));
    setCommand(QStringFromGString(prefs->printCommand));
    setBookMode(prefs->bookMode, prefs->bookSign);
-   setBookTwo(prefs->bookTwo, prefs->bookAlign, prefs->bookFold, prefs->bookThick);
+   setBookTwo(prefs->bookTwo, prefs->bookAlign, 
+              prefs->bookFold, prefs->bookThick);
    printToFile(prefs->printToFile);
    if (prefs->printFitPage) 
-     setZoom(-1);
+     setZoom(0);
    else 
      setZoom(prefs->printZoom);
    setPrint(prefs->printAllPages ? PRINT_DOC : PRINT_PAGE);

@@ -90,13 +90,14 @@ static const size_t ps_string_size=15000;
 // ***************************************************************************
 
 DjVuToPS::Options::Options(void)
-: format(PS), level(2), orientation(AUTO), mode(COLOR), zoom(FIT_PAGE),
+: format(PS), level(2), orientation(AUTO), mode(COLOR), zoom(0),
   color(true), calibrate(true), text(false),
-  gamma((double)2.2), copies(1), frame(false)
+  gamma((double)2.2), copies(1), frame(false),
+  cropmarks(false)
 {}
 
 void
-DjVuToPS::Options::set_format(const Format xformat)
+DjVuToPS::Options::set_format(Format xformat)
 {
   if (xformat != EPS && xformat != PS)
     G_THROW(ERR_MSG("DjVuToPS.bad_format"));
@@ -104,15 +105,16 @@ DjVuToPS::Options::set_format(const Format xformat)
 }
 
 void
-DjVuToPS::Options::set_level(const int xlevel)
+DjVuToPS::Options::set_level(int xlevel)
 {
   if (xlevel<1 || xlevel>3)
-    G_THROW((ERR_MSG("DjVuToPS.bad_level") "\t")+GUTF8String(xlevel));
+    G_THROW(ERR_MSG("DjVuToPS.bad_level")
+           + GUTF8String("\t") + GUTF8String(xlevel));
   level=xlevel;
 }
 
 void
-DjVuToPS::Options::set_orientation(const Orientation xorientation)
+DjVuToPS::Options::set_orientation(Orientation xorientation)
 {
   if (xorientation!=PORTRAIT && 
       xorientation!=LANDSCAPE &&
@@ -122,7 +124,7 @@ DjVuToPS::Options::set_orientation(const Orientation xorientation)
 }
 
 void
-DjVuToPS::Options::set_mode(const Mode xmode)
+DjVuToPS::Options::set_mode(Mode xmode)
 {
   if (xmode!=COLOR && xmode!=FORE && xmode!=BACK && xmode!=BW)
     G_THROW(ERR_MSG("DjVuToPS.bad_mode"));
@@ -130,21 +132,21 @@ DjVuToPS::Options::set_mode(const Mode xmode)
 }
 
 void
-DjVuToPS::Options::set_zoom(const Zoom xzoom)
+DjVuToPS::Options::set_zoom(int xzoom)
 {
-  if (xzoom!=FIT_PAGE && !(xzoom>=5 && xzoom<=999))
+  if (xzoom!=0 && !(xzoom>=5 && xzoom<=999))
     G_THROW(ERR_MSG("DjVuToPS.bad_zoom"));
   zoom=xzoom;
 }
 
 void
-DjVuToPS::Options::set_color(const bool xcolor)
+DjVuToPS::Options::set_color(bool xcolor)
 {
   color=xcolor;
 }
 
 void 
-DjVuToPS::Options::set_sRGB(const bool xcalibrate)
+DjVuToPS::Options::set_sRGB(bool xcalibrate)
 {
   calibrate=xcalibrate;
 }
@@ -169,6 +171,12 @@ void
 DjVuToPS::Options::set_frame(bool xframe)
 {
   frame=xframe;
+}
+
+void
+DjVuToPS::Options::set_cropmarks(bool xmarks)
+{
+  cropmarks=xmarks;
 }
 
 void
@@ -317,13 +325,16 @@ DjVuToPS::store_doc_setup(ByteStream &str)
                 "/readG () def\n"
                 "/readB () def\n"
                 "/ReadData {\n"
-                "   currentfile /ASCII85Decode filter dup /RunLengthDecode filter\n"
+                "   currentfile /ASCII85Decode filter dup\n"
+                "   /RunLengthDecode filter\n"
                 "   bufferR readstring pop /readR exch def\n"
                 "   dup status { flushfile } { pop } ifelse\n"
-                "   currentfile /ASCII85Decode filter dup /RunLengthDecode filter\n"
+                "   currentfile /ASCII85Decode filter dup\n"
+                "   /RunLengthDecode filter\n"
                 "   bufferG readstring pop /readG exch def\n"
                 "   dup status { flushfile } { pop } ifelse\n"
-                "   currentfile /ASCII85Decode filter dup /RunLengthDecode filter\n"
+                "   currentfile /ASCII85Decode filter dup\n"
+                "   /RunLengthDecode filter\n"
                 "   bufferB readstring pop /readB exch def\n"
                 "   dup status { flushfile } { pop } ifelse\n"
                 "} bind def\n"
@@ -343,10 +354,13 @@ DjVuToPS::store_doc_setup(ByteStream &str)
       write(str,
             "%% -- procs for foreground layer\n"
             "/g {gsave 0 0 0 0 5 index 5 index setcachedevice\n"
-            "    true [1 0 0 1 0 0] 5 4 roll imagemask grestore } bind def\n"
+            "    true [1 0 0 1 0 0] 5 4 roll imagemask grestore\n"
+            "} bind def\n"
             "/gn {gsave 0 0 0 0 6 index 6 index setcachedevice\n"
-            "    true [1 0 0 1 0 0] 3 2 roll 5 1 roll \n"
-            "    { 1 sub 0 index 2 add 1 index  1 add roll} imagemask grestore pop} bind def\n"
+            "  true [1 0 0 1 0 0] 3 2 roll 5 1 roll \n"
+            "  { 1 sub 0 index 2 add 1 index  1 add roll\n"
+            "  } imagemask grestore pop \n"
+            "} bind def\n"
             "/c {setcolor rmoveto glyphshow} bind def\n"
             "/s {rmoveto glyphshow} bind def\n"
             "/S {rmoveto gsave show grestore} bind def\n" 
@@ -355,9 +369,11 @@ DjVuToPS::store_doc_setup(ByteStream &str)
         {
           write(str,
                 "/DjVuColorSpace [ %s\n"
-                "<< /DecodeLMN [\n"
-                "      {dup 0.03928 le {12.92321 div}{0.055 add 1.055 div 2.4 exp}ifelse}\n"
-                "      bind dup dup ]\n"
+                "<< /DecodeLMN [ { dup 0.03928 le {\n"
+                "       12.92321 div\n"
+                "     } {\n"
+                "       0.055 add 1.055 div 2.4 exp\n"
+                "     } ifelse } bind dup dup ]\n"
                 "   /MatrixLMN [\n"
                 "      0.412457 0.212673 0.019334\n"
                 "      0.357576 0.715152 0.119192\n"
@@ -562,17 +578,32 @@ DjVuToPS::store_page_setup(ByteStream &str,
           "/a22 coeff def\n"
           "/a23 0 def\n"
           "[a11 a21 a12 a22 a13 a23] concat\n"
-          "0 0 image-width image-height rectclip\n"
+          "gsave 0 0 image-width image-height rectclip\n"
           "%% -- begin print\n",
           dpi, grect.width(), grect.height() );
   else
     {
+      int margin = 0;
+      const char *xauto = "false";
+      const char *xportrait = "false";
+      const char *xfit = "false";
+      if (options.get_orientation()==Options::AUTO)
+        xauto = "true";
+      if (options.get_orientation()==Options::PORTRAIT)
+        xportrait = "true";
+      if (options.get_zoom()<=0)
+        xfit = "true";
+      if (align == 0)
+        if (options.get_cropmarks())
+          margin = 36;
+        else if (options.get_frame())
+          margin = 6;
       write(str, 
             "/page-origstate save def\n"
             "/auto-orient %s def\n"
-            "/portrait %s def    %% Specifies image orientation\n"
-            "/fit-page %s def    %% Scale image to fit page?\n"
-            "/zoom %d def        %% Zoom factor in percents\n"
+            "/portrait %s def\n"
+            "/fit-page %s def\n"
+            "/zoom %d def\n"
             "/image-dpi %d def\n"
             "clippath pathbbox\n"
             "2 index sub exch\n"
@@ -585,22 +616,24 @@ DjVuToPS::store_page_setup(ByteStream &str,
             "/image-y 0 def\n"
             "/image-width  %d def\n"
             "/image-height %d def\n"
-            "/halign %d def\n",
+            "/margin %d def\n"
+            "/halign %d def\n"
             "/valign 0 def\n",
-            (options.get_orientation()==Options::AUTO) ? "true" : "false",
-            (options.get_orientation()==Options::PORTRAIT) ? "true" : "false",
-            (options.get_zoom()==Options::FIT_PAGE) ? "true" : "false",
-            options.get_zoom(), 
-            dpi, 
-            grect.width(), 
-            grect.height(),
-            align );
+            xauto, xportrait, xfit, options.get_zoom(), 
+            dpi, grect.width(), grect.height(),
+            margin, align );
       write(str, 
             "%% -- position page\n"
             "auto-orient {\n"
             "  image-height image-width sub\n"
             "  page-height page-width sub\n"
             "  mul 0 ge /portrait exch def\n" 
+            "} if\n"
+            "fit-page {\n"
+            "  /page-width page-width margin 2 mul sub def\n"
+            "  /page-height page-height margin 2 mul sub def\n"
+            "  /page-x page-x 1 halign add margin mul add def\n"
+            "  /page-y page-y 1 valign add margin mul add def\n"
             "} if\n"
             "portrait {\n"
             "  fit-page {\n"
@@ -648,7 +681,7 @@ DjVuToPS::store_page_setup(ByteStream &str,
             "  /a23 start-y image-x coeff mul add def \n"
             "} ifelse\n"
             "[a11 a21 a12 a22 a13 a23] concat\n"
-            "systemdict /rectclip known {\n"
+            "gsave systemdict /rectclip known {\n"
             "  0 0 image-width image-height rectclip } if\n"
             "%% -- begin print\n");
     }
@@ -659,6 +692,27 @@ DjVuToPS::store_page_trailer(ByteStream &str)
 {
   write(str, 
         "%% -- end print\n" 
+        "grestore\n");
+  if (options.get_frame())
+    {
+      write(str, 
+            "%% Drawing frame\n"
+            "gsave 0.7 setgray\n"
+            "1 coeff div setlinewidth\n"
+            "0 0 image-width image-height rectstroke\n"
+            "grestore\n");
+    }
+  if (options.get_cropmarks())
+    {
+      write(str,
+            "%% Drawing crop marks\n"
+            "/cm { gsave translate rotate 1 coeff div dup scale\n"
+            "      0.5 setlinewidth -36 0 moveto 0 0 lineto\n"
+            "      0 -36 lineto stroke grestore } bind def\n"
+            "0 0 0 cm 180 image-width image-height cm\n"
+            "90 image-width 0 cm 270 0 image-height cm\n");
+    }
+  write(str,
         "page-origstate restore\n");
 }
 
@@ -792,20 +846,23 @@ DjVuToPS::print_fg_2layer(ByteStream &str, const GP<DjVuImage> &dimg,
               if (options.get_color())
                 {
                   write(str,"/%d %d %d %f %f %f c\n",
-                        blit->shapeno, blit->left-currentx, blit->bottom-currenty,
+                        blit->shapeno, 
+                        blit->left-currentx, blit->bottom-currenty,
                         ramp[p.r]/255., ramp[p.g]/255., ramp[p.b]/255.);
                 } 
               else
                 {
                   write(str,"/%d %d %d %f c\n",
-                        blit->shapeno, blit->left-currentx, blit->bottom-currenty,
+                        blit->shapeno, 
+                        blit->left-currentx, blit->bottom-currenty,
                         ramp[COLOR_TO_GRAY(p.r, p.g, p.b)]/255.);
                 }
             }
           else
             {
               write(str,"/%d %d %d s\n", 
-                    blit->shapeno, blit->left-currentx, blit->bottom-currenty);
+                    blit->shapeno, 
+                    blit->left-currentx, blit->bottom-currenty);
             }
           currentx = blit->left;
           currenty = blit->bottom;
@@ -925,7 +982,8 @@ DjVuToPS::print_fg_3layer(ByteStream &str, const GP<DjVuImage> &dimg,
                   if (rect2.intersect(rect1,rect2)) 
                     {   
                       write(str,"/%d %d %d s\n",
-                            blit->shapeno, blit->left-currentx, blit->bottom-currenty);
+                            blit->shapeno, 
+                            blit->left-currentx, blit->bottom-currenty);
                       currentx = blit->left;
                       currenty = blit->bottom;
                     }
@@ -1138,7 +1196,8 @@ DjVuToPS::print_bg(ByteStream &str, const GP<DjVuImage> &dimg,
           "   /BitsPerComponent 8\n"
           "   /Decode [0 1]\n"
           "   /ImageMatrix [1 0 0 1 0 0]\n"
-          "   /DataSource currentfile /ASCII85Decode filter /RunLengthDecode filter\n"
+          "   /DataSource currentfile /ASCII85Decode\n"
+          "      filter /RunLengthDecode filter\n"
           "   /Interpolate false >> image\n",
           prn_rect.width(), prn_rect.height());
   
@@ -1148,127 +1207,129 @@ DjVuToPS::print_bg(ByteStream &str, const GP<DjVuImage> &dimg,
   GPBuffer<unsigned char> grle_in(rle_in,ps_chunk_height*prn_rect.width());
   unsigned char *rle_out;
   GPBuffer<unsigned char> grle_out(rle_out,2*ps_chunk_height*prn_rect.width());
-    {
-      // Start storing image in bands
-      unsigned char * rle_out_end = rle_out;
-      GRect grectBand = prn_rect;
-      grectBand.ymax = grectBand.ymin;
-      while(grectBand.ymax < prn_rect.ymax)
-        {
-          GP<GPixmap> pm = 0;
-          // Compute next band
-          grectBand.ymin=grectBand.ymax;
-          grectBand.ymax=grectBand.ymin+band_bytes/grectBand.width();
-          if (grectBand.ymax>prn_rect.ymax)
-            grectBand.ymax=prn_rect.ymax;
-          pm = get_bg_pixmap(dimg, grectBand);
-          unsigned char *buf_ptr = buffer;
-          if (pm)
-            {
-              if (do_color)
-                {
-                  int y=0;
-                  while(y<grectBand.height())
-                    {
-                      int row, y1;
-                      unsigned char *ptr, *ptr1;
-                      // Doing R component of current chunk
-                      for (row=0,ptr=rle_in,y1=y; 
-                           row<ps_chunk_height && y1<grectBand.height(); 
-                           row++,y1++)
-                        {
-                          GPixel *pix = (*pm)[y1];
-                          for (int x=grectBand.width(); x>0; x--,pix++)
-                            *ptr++ = ramp[pix->r];
-                        }
-                      ptr1 = RLE_encode(rle_out, rle_in, ptr); 
-                      *ptr1++ = 0x80;
-                      buf_ptr = ASCII85_encode(buf_ptr, rle_out, ptr1);
-                      *buf_ptr++ = '~'; *buf_ptr++ = '>'; *buf_ptr++ = '\n';
-                      // Doing G component of current chunk
-                      for (row=0,ptr=rle_in,y1=y; 
-                           row<ps_chunk_height && y1<grectBand.height(); 
-                           row++,y1++)
-                        {
-                          GPixel *pix = (*pm)[y1];
-                          for (int x=grectBand.width(); x>0; x--,pix++)
-                            *ptr++ = ramp[pix->g];
-                        }
-                      ptr1 = RLE_encode(rle_out, rle_in, ptr); 
-                      *ptr1++ = 0x80;
-                      buf_ptr = ASCII85_encode(buf_ptr, rle_out, ptr1);
-                      *buf_ptr++ = '~'; 
-                      *buf_ptr++ = '>'; 
-                      *buf_ptr++ = '\n';
-                      // Doing B component of current chunk
-                      for (row=0, ptr=rle_in, y1=y;
-                           row<ps_chunk_height && y1<grectBand.height(); 
-                           row++,y1++)
-                        {
-                          GPixel *pix = (*pm)[y1];
-                          for (int x=grectBand.width(); x>0; x--,pix++)
-                            *ptr++ = ramp[pix->b];
-                        }
-                      ptr1 = RLE_encode(rle_out, rle_in, ptr);
-                      *ptr1++ = 0x80;
-                      buf_ptr = ASCII85_encode(buf_ptr, rle_out, ptr1);
-                      *buf_ptr++ = '~'; 
-                      *buf_ptr++ = '>'; 
-                      *buf_ptr++ = '\n';
-                      y=y1;
-                      if (refresh_cb) 
-                        refresh_cb(refresh_cl_data);
-                    } //while (y>=0)
-                } 
-              else
-                {
-                  // Don't use color
-                  int y=0;
-                  while(y<grectBand.height())
-                    {
-                      unsigned char *ptr = rle_in;
-                      for(int row=0; 
-                          row<ps_chunk_height && y<grectBand.height(); 
-                          row++,y++)
-                        {
-                          GPixel *pix = (*pm)[y];
-                          for (int x=grectBand.width(); x>0; x--,pix++)
-                            *ptr++ = ramp[COLOR_TO_GRAY(pix->r,pix->g,pix->b)];
-                        }
-                      rle_out_end = RLE_encode(rle_out_end, rle_in, ptr);
-                      unsigned char *encode_to = rle_out+(rle_out_end-rle_out)/4*4;
-                      int bytes_left = rle_out_end-encode_to;
-                      buf_ptr = ASCII85_encode(buf_ptr, rle_out, encode_to);
-                      *buf_ptr++ = '\n';
-                      memcpy(rle_out, encode_to, bytes_left);
-                      rle_out_end = rle_out+bytes_left;
-                      if (refresh_cb) 
-                        refresh_cb(refresh_cl_data);
-                    }
-                }
-            } // if (pm)
-          str.writall(buffer, buf_ptr-buffer);
-          if (prn_progress_cb)
-            {
-              double done=(double) (grectBand.ymax-prn_rect.ymin)/prn_rect.height();
-              if ((int) (20*print_done)!=(int) (20*done))
-                {
-                  print_done=done;
-                  prn_progress_cb(done, prn_progress_cl_data);
-                }
-            }
-        } // while(grectBand.yax<grect.ymax)
-      if (! do_color)
-        {
-          unsigned char * buf_ptr = buffer;
-          *rle_out_end++ = 0x80;
-          buf_ptr = ASCII85_encode(buf_ptr, rle_out, rle_out_end);
-          *buf_ptr++='~'; 
-          *buf_ptr++='>'; 
-          *buf_ptr++='\n';
-          str.writall(buffer, buf_ptr-buffer);
-        }
-    } 
+  {
+    // Start storing image in bands
+    unsigned char * rle_out_end = rle_out;
+    GRect grectBand = prn_rect;
+    grectBand.ymax = grectBand.ymin;
+    while(grectBand.ymax < prn_rect.ymax)
+      {
+        GP<GPixmap> pm = 0;
+        // Compute next band
+        grectBand.ymin=grectBand.ymax;
+        grectBand.ymax=grectBand.ymin+band_bytes/grectBand.width();
+        if (grectBand.ymax>prn_rect.ymax)
+          grectBand.ymax=prn_rect.ymax;
+        pm = get_bg_pixmap(dimg, grectBand);
+        unsigned char *buf_ptr = buffer;
+        if (pm)
+          {
+            if (do_color)
+              {
+                int y=0;
+                while(y<grectBand.height())
+                  {
+                    int row, y1;
+                    unsigned char *ptr, *ptr1;
+                    // Doing R component of current chunk
+                    for (row=0,ptr=rle_in,y1=y; 
+                         row<ps_chunk_height && y1<grectBand.height(); 
+                         row++,y1++)
+                      {
+                        GPixel *pix = (*pm)[y1];
+                        for (int x=grectBand.width(); x>0; x--,pix++)
+                          *ptr++ = ramp[pix->r];
+                      }
+                    ptr1 = RLE_encode(rle_out, rle_in, ptr); 
+                    *ptr1++ = 0x80;
+                    buf_ptr = ASCII85_encode(buf_ptr, rle_out, ptr1);
+                    *buf_ptr++ = '~'; *buf_ptr++ = '>'; *buf_ptr++ = '\n';
+                    // Doing G component of current chunk
+                    for (row=0,ptr=rle_in,y1=y; 
+                         row<ps_chunk_height && y1<grectBand.height(); 
+                         row++,y1++)
+                      {
+                        GPixel *pix = (*pm)[y1];
+                        for (int x=grectBand.width(); x>0; x--,pix++)
+                          *ptr++ = ramp[pix->g];
+                      }
+                    ptr1 = RLE_encode(rle_out, rle_in, ptr); 
+                    *ptr1++ = 0x80;
+                    buf_ptr = ASCII85_encode(buf_ptr, rle_out, ptr1);
+                    *buf_ptr++ = '~'; 
+                    *buf_ptr++ = '>'; 
+                    *buf_ptr++ = '\n';
+                    // Doing B component of current chunk
+                    for (row=0, ptr=rle_in, y1=y;
+                         row<ps_chunk_height && y1<grectBand.height(); 
+                         row++,y1++)
+                      {
+                        GPixel *pix = (*pm)[y1];
+                        for (int x=grectBand.width(); x>0; x--,pix++)
+                          *ptr++ = ramp[pix->b];
+                      }
+                    ptr1 = RLE_encode(rle_out, rle_in, ptr);
+                    *ptr1++ = 0x80;
+                    buf_ptr = ASCII85_encode(buf_ptr, rle_out, ptr1);
+                    *buf_ptr++ = '~'; 
+                    *buf_ptr++ = '>'; 
+                    *buf_ptr++ = '\n';
+                    y=y1;
+                    if (refresh_cb) 
+                      refresh_cb(refresh_cl_data);
+                  } //while (y>=0)
+              } 
+            else
+              {
+                // Don't use color
+                int y=0;
+                while(y<grectBand.height())
+                  {
+                    unsigned char *ptr = rle_in;
+                    for(int row=0; 
+                        row<ps_chunk_height && y<grectBand.height(); 
+                        row++,y++)
+                      {
+                        GPixel *pix = (*pm)[y];
+                        for (int x=grectBand.width(); x>0; x--,pix++)
+                          *ptr++ = ramp[COLOR_TO_GRAY(pix->r,pix->g,pix->b)];
+                      }
+                    rle_out_end = RLE_encode(rle_out_end, rle_in, ptr);
+                    unsigned char *encode_to 
+                      = rle_out+(rle_out_end-rle_out)/4*4;
+                    int bytes_left = rle_out_end-encode_to;
+                    buf_ptr = ASCII85_encode(buf_ptr, rle_out, encode_to);
+                    *buf_ptr++ = '\n';
+                    memcpy(rle_out, encode_to, bytes_left);
+                    rle_out_end = rle_out+bytes_left;
+                    if (refresh_cb) 
+                      refresh_cb(refresh_cl_data);
+                  }
+              }
+          } // if (pm)
+        str.writall(buffer, buf_ptr-buffer);
+        if (prn_progress_cb)
+          {
+            double done=(double)(grectBand.ymax 
+                                 - prn_rect.ymin)/prn_rect.height();
+            if ((int) (20*print_done)!=(int) (20*done))
+              {
+                print_done=done;
+                prn_progress_cb(done, prn_progress_cl_data);
+              }
+          }
+      } // while(grectBand.yax<grect.ymax)
+    if (! do_color)
+      {
+        unsigned char * buf_ptr = buffer;
+        *rle_out_end++ = 0x80;
+        buf_ptr = ASCII85_encode(buf_ptr, rle_out, rle_out_end);
+        *buf_ptr++='~'; 
+        *buf_ptr++='>'; 
+        *buf_ptr++='\n';
+        str.writall(buffer, buf_ptr-buffer);
+      }
+  } 
   //restore the scaling
   write(str, "grestore\n");
 }
@@ -1391,7 +1452,9 @@ DjVuToPS::print_image_lev1(ByteStream &str, const GP<DjVuImage> &dimg,
                       else
                         {
                           char *data;
-                          data = bin2hex[ramp[COLOR_TO_GRAY(pix->r, pix->g, pix->b)]];
+                          data = bin2hex[ramp[COLOR_TO_GRAY(pix->r, 
+                                                            pix->g, 
+                                                            pix->b)]];
                           *buf_ptr++ = data[0];
                           *buf_ptr++ = data[1];
                           symbols += 2;
@@ -1444,7 +1507,8 @@ DjVuToPS::print_image_lev1(ByteStream &str, const GP<DjVuImage> &dimg,
           str.writall(buffer, buf_ptr-buffer);
           if (prn_progress_cb)
             {
-              double done=(double) (grectBand.ymax-prn_rect.ymin)/prn_rect.height();
+              double done=(double) (grectBand.ymax 
+                                    - prn_rect.ymin)/prn_rect.height();
               if ((int) (20*print_done)!=(int) (20*done))
                 {
                   print_done=done;
@@ -1515,7 +1579,8 @@ DjVuToPS::print_image_lev2(ByteStream &str, const GP<DjVuImage> &dimg,
             "   /BitsPerComponent 8\n"
             "   /Decode [0 1]\n"
             "   /ImageMatrix [1 0 0 1 0 0]\n"
-            "   /DataSource currentfile /ASCII85Decode filter /RunLengthDecode filter\n"
+            "   /DataSource currentfile /ASCII85Decode\n"
+            "       filter /RunLengthDecode filter\n"
             "   /Interpolate false >> image\n",
             prn_rect.width(), prn_rect.height());
     } 
@@ -1618,7 +1683,8 @@ DjVuToPS::print_image_lev2(ByteStream &str, const GP<DjVuImage> &dimg,
                         *ptr++ = ramp[COLOR_TO_GRAY(pix->r,pix->g,pix->b)];
                     }
                   rle_out_end = RLE_encode(rle_out_end, rle_in, ptr);
-                  unsigned char *encode_to = rle_out+(rle_out_end-rle_out)/4*4;
+                  unsigned char *encode_to = rle_out 
+                    + (rle_out_end-rle_out)/4*4;
                   int bytes_left = rle_out_end-encode_to;
                   buf_ptr = ASCII85_encode(buf_ptr, rle_out, encode_to);
                   *buf_ptr++ = '\n';
@@ -1639,7 +1705,8 @@ DjVuToPS::print_image_lev2(ByteStream &str, const GP<DjVuImage> &dimg,
           str.writall(buffer, buf_ptr-buffer);
           if (prn_progress_cb)
             {
-              double done=(double) (grectBand.ymax-prn_rect.ymin)/prn_rect.height();
+              double done=(double) (grectBand.ymax
+                                    - prn_rect.ymin)/prn_rect.height();
               if ((int) (20*print_done)!=(int) (20*done))
                 {
                   print_done=done;
@@ -1712,30 +1779,21 @@ get_text(GP<DjVuFile> file)
   return 0;
 }
 
-class zone_names_struct 
+struct zone_names_struct 
 {
-public:
   const char *name;
   DjVuTXT::ZoneType ztype;
-  const char separator;
-  zone_names_struct(const char xname[],DjVuTXT::ZoneType xztype,const char xseparator)
-	  : name(xname), ztype(xztype), separator(xseparator) {}
-}; 
-
-static const zone_names_struct * zone_names() {
-  static const zone_names_struct xzone_names[] = 
-  {
-    zone_names_struct("page",   DjVuTXT::PAGE,0),
-    zone_names_struct("column", DjVuTXT::COLUMN,    DjVuTXT::end_of_column ),
-    zone_names_struct("region", DjVuTXT::REGION,    DjVuTXT::end_of_region ),
-    zone_names_struct("para",   DjVuTXT::PARAGRAPH, DjVuTXT::end_of_paragraph ),
-    zone_names_struct("line",   DjVuTXT::LINE,      DjVuTXT::end_of_line ),
-    zone_names_struct("word",   DjVuTXT::WORD,      ' '),
-    zone_names_struct("char",   DjVuTXT::CHARACTER, 0 ),
-    zone_names_struct(0, (DjVuTXT::ZoneType)0 ,0)
-  };
-  return xzone_names;
-}
+  char separator;
+} zone_names[] = {
+  {"page",     DjVuTXT::PAGE,      0 },
+  {"column",   DjVuTXT::COLUMN,    DjVuTXT::end_of_column },
+  {"region",   DjVuTXT::REGION,    DjVuTXT::end_of_region },
+  {"para",     DjVuTXT::PARAGRAPH, DjVuTXT::end_of_paragraph },
+  {"line",     DjVuTXT::LINE,      DjVuTXT::end_of_line },
+  {"word",     DjVuTXT::WORD,      ' ' },
+  {"char",     DjVuTXT::CHARACTER, 0 },
+  {0, (DjVuTXT::ZoneType)0, 0}
+};
 
 static void
 print_ps_string(const char *data, int length, ByteStream &out)
@@ -1764,19 +1822,20 @@ print_ps_string(const char *data, int length, ByteStream &out)
 }
 
 static void
-print_txt_sub(DjVuTXT &txt, DjVuTXT::Zone &zone, ByteStream &out,int &lastx,int &lasty)
+print_txt_sub(DjVuTXT &txt, DjVuTXT::Zone &zone, 
+              ByteStream &out,int &lastx,int &lasty)
 {
   // Zone header
   int zinfo;
-  for (zinfo=0; zone_names()[zinfo].name; zinfo++)
-    if (zone.ztype == zone_names()[zinfo].ztype)
+  for (zinfo=0; zone_names[zinfo].name; zinfo++)
+    if (zone.ztype == zone_names[zinfo].ztype)
       break;  
   // Zone children
   if (zone.children.isempty()) 
     {
       const char *data = (const char*)txt.textUTF8 + zone.text_start;
       int length = zone.text_length;
-      if (data[length-1] == zone_names()[zinfo].separator)
+      if (data[length-1] == zone_names[zinfo].separator)
         length -= 1;
       out.write("( ",2);
       print_ps_string(data,length,out);
@@ -1879,20 +1938,6 @@ DjVuToPS::print_image(ByteStream &str, const GP<DjVuImage> &dimg,
           break;
         }
     }
-  if (options.get_frame())
-    {
-      write(str, 
-            "%% Drawing gray rectangle surrounding the image\n"
-            "gsave\n"
-            "0.7 setgray\n"
-            "1 coeff div setlinewidth\n"
-            "0 image-height %d -%d rectstroke\n"
-            "grestore\n", 
-            prn_rect.width(), prn_rect.height());
-    }
-
-  /////// TODO: crop marks
-  
   if (prn_progress_cb)
     prn_progress_cb(1, prn_progress_cl_data);
 }
@@ -2103,37 +2148,47 @@ DjVuToPS::print(ByteStream &str,
       int pos;
       int start_page = page_range.toLong(start,pos,10);
       if (pos<dash || start_page<=0)
-        G_THROW((ERR_MSG("DjVuToPS.bad_page") "\t")+page_range.substr(start, dash-start));
+        G_THROW(ERR_MSG("DjVuToPS.bad_page") 
+                + GUTF8String("\t")
+                + page_range.substr(start, dash-start));
       if (start_page > 9999999)
-        G_THROW((ERR_MSG("DjVuToPS.big_page") "\t")+page_range.substr(start, dash-start));
+        G_THROW(ERR_MSG("DjVuToPS.big_page") 
+                + GUTF8String("\t")
+                + page_range.substr(start, dash-start));
       if (start_page > doc_pages)
         start_page = doc_pages;
       if (dash<end)
         {
-        if (dash == end-1)
-          G_THROW((ERR_MSG("DjVuToPS.no_to") "\t")+page_range.substr(start, end-start));
-        for(pos=dash+1; pos<end; pos++)
-          {
-            if (page_range[pos] == '-')
-              G_THROW((ERR_MSG("DjVuToPS.bad_range") "\t")+page_range.substr(start, end-start));
-          }
-        int end_page = page_range.toLong(dash+1,pos, 10);
-        if (pos<end || end_page<=0)
-          G_THROW((ERR_MSG("DjVuToPS.bad_page") "\t")+page_range.substr(dash+1, end-dash-1));
-        if (start_page > 9999999)
-          G_THROW((ERR_MSG("DjVuToPS.big_page") "\t")+page_range.substr(dash+1, end-dash-1));
-        if (end_page > doc_pages)
-          end_page = doc_pages;
-        if (start_page < end_page)
-          {
-            for(int page_num=start_page; page_num<=end_page; page_num++)
-              pages_todo.append(page_num-1);
-          }
-        else
-          {
-            for(int page_num=start_page; page_num>=end_page; page_num--)
-              pages_todo.append(page_num-1);
-          }
+          if (dash == end-1)
+            G_THROW(ERR_MSG("DjVuToPS.no_to") + GUTF8String("\t")
+                    + page_range.substr(start, end-start));
+          for(pos=dash+1; pos<end; pos++)
+            {
+              if (page_range[pos] == '-')
+                G_THROW(ERR_MSG("DjVuToPS.bad_range") + GUTF8String("\t")
+                        + page_range.substr(start, end-start));
+            }
+          int end_page = page_range.toLong(dash+1,pos, 10);
+          if (pos<end || end_page<=0)
+            G_THROW(ERR_MSG("DjVuToPS.bad_page")
+                    + GUTF8String("\t")
+                    + page_range.substr(dash+1, end-dash-1));
+          if (start_page > 9999999)
+            G_THROW(ERR_MSG("DjVuToPS.big_page")
+                    + GUTF8String("\t")
+                    + page_range.substr(dash+1, end-dash-1));
+          if (end_page > doc_pages)
+            end_page = doc_pages;
+          if (start_page < end_page)
+            {
+              for(int page_num=start_page; page_num<=end_page; page_num++)
+                pages_todo.append(page_num-1);
+            }
+          else
+            {
+              for(int page_num=start_page; page_num>=end_page; page_num--)
+                pages_todo.append(page_num-1);
+            }
         } 
       else
         {
@@ -2188,7 +2243,9 @@ DjVuToPS::print(ByteStream &str,
                   port->decode_event_received=false;
                   if (djvu_file->is_decode_failed() ||
                       djvu_file->is_decode_stopped())
-                    G_THROW((ERR_MSG("DjVuToPS.no_image") "\t")+GUTF8String(page_num));
+                    G_THROW(ERR_MSG("DjVuToPS.no_image") 
+                            + GUTF8String("\t") +
+                            GUTF8String(page_num));
                   if (dec_progress_cb)
                     dec_progress_cb(port->decode_done, dec_progress_cl_data);
                 }

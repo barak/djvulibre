@@ -6,8 +6,7 @@ NEW IN VERSION 3.5.10
 - Modified key bindings (space does continuous reading)
 - Fixed thumbnail generation on empty pages.
 - Improved csepdjvu option -bgwhite.
-- Improved djvu printing.
-- XML Tools are now compiled by default.
+- Improved djvu printing with booklet mode.
 
 NEW IN VERSION 3.5.9
 --------------------

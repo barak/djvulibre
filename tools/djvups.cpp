@@ -91,7 +91,7 @@ usage(void)
           "\n"
           "Usage: djvups [<options>] [<document.djvu>]\n"
           "Recognized options are:\n"
-          "  -page=<pagelists>                   (default: print all pages)\n"
+          "  -page=<pagelists>                   (default: print all)\n"
           "  -format=<ps|eps>                    (default: ps)\n"
           "  -level=<1|2|3>                      (default: 2)\n"
           "  -orient=<auto|portrait|landscape>   (default: auto)\n"
@@ -100,9 +100,10 @@ usage(void)
           "  -color=<yes|no>                     (default: yes)\n"
           "  -gray                               (same as -color=no)\n"
           "  -colormatch=<yes|no>                (default: yes)\n"
-          "  -gamma=<0.3...5.0>                  (default: bypassed by colormatch)\n"
+          "  -gamma=<0.3...5.0>                  (default: 2.2)\n"
           "  -copies=<1...999999>                (default: 1)\n"
           "  -frame=<yes|no>                     (default: no)\n"
+          "  -cropmarks=<yes|no>                 (default: no)\n"
           "  -text=<yes|no>                      (default: no)\n"
           "\n");
   exit(1);
@@ -208,16 +209,16 @@ main(int argc, char **argv)
           else if (s == "zoom")
             {
               if (arg == "auto" || arg == "fit" || arg == "fit_page")
-                options.set_zoom(DjVuToPS::Options::FIT_PAGE);
+                options.set_zoom(0);
               else if (arg == "1to1" || arg == "onetoone")
-                options.set_zoom((DjVuToPS::Options::Zoom)100);                
+                options.set_zoom(100);                
               else 
                 {
                   int endpos;
                   int z = arg.toLong(0,endpos);
                   if (endpos != (int)arg.length() || z < 25 || z > 2400)
                     complain(dargv[1],"Invalid zoom factor.");
-                  options.set_zoom((DjVuToPS::Options::Zoom)z);
+                  options.set_zoom(z);
                 }
             }
           else if (s == "color")
@@ -267,6 +268,15 @@ main(int argc, char **argv)
                 options.set_frame(true);
               else if (arg == "no")
                 options.set_frame(false);
+              else
+                complain(dargv[1],"Invalid argument. Use \"yes\" or \"no\".");
+            }
+          else if (s == "cropmarks")
+            {
+              if (arg == "yes" || arg == "")
+                options.set_cropmarks(true);
+              else if (arg == "no")
+                options.set_cropmarks(false);
               else
                 complain(dargv[1],"Invalid argument. Use \"yes\" or \"no\".");
             }

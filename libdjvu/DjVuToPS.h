@@ -130,26 +130,9 @@ public:
   class Options
   {
   public:
-    /** Specifies the mode in which a \Ref{DjVuImage} will be rendered.
-             \begin{description}
-                \item[COLOR] All image layers will be rendered
-                \item[FORE] Only foreground image layers will be rendered
-                \item[BACK] Only foreground image layers will be rendered
-                \item[BW] Only image mask will be printed
-             \end{description} */
+    /** Specifies the rendering mode */
     enum Mode { COLOR, FORE, BACK, BW };
-    /** Specifies how the output will be scaled.
-             \begin{description}
-                \item[FIT_PAGE] The output will be scaled (with aspect ratio
-                     unchanged) to occupy as much space as possible).
-                \item[Any positive number] Zoom factor from 5% to 999%.
-                     The \Ref{DjVuImage} will be scaled according to this
-                     zoom factor and the image's #dpi# (which gives the
-                     size of the original image before compression).
-             \end{description}*/
-    enum Zoom { FIT_PAGE=0 };
-    /** Selects the output format ({\bf PostScript} or
-        {\bf Encapsulated PostScript}) */
+    /** Selects the output format */
     enum Format { PS, EPS };
     /** Specifies the orientation of the output image */
     enum Orientation { PORTRAIT, LANDSCAPE, AUTO };
@@ -158,13 +141,14 @@ public:
     int level;
     Orientation orientation;
     Mode mode;
-    Zoom zoom;
+    int zoom;
     bool color;
     bool calibrate;
     bool text;
     double gamma;
     int copies;
     bool frame;
+    bool cropmarks;
   public:
     /** Sets output image format to #PS# or #EPS# */
     void set_format(Format format);
@@ -174,57 +158,65 @@ public:
     void set_orientation(Orientation orientation);
     /** Sets \Ref{DjVuImage} rendering mode (#COLOR#, #BW#, #FORE#, #BACK#) */
     void set_mode(Mode mode);
-    /** Sets zoom factor to #FIT_PAGE# or any positive %% The zoom factor does
-        {\bf not} affect the amount of data sent to the printer. It is used by
-        the PostScript code to additionally scale the image. The reason why is
-        that we do not know the resolution of the printer when we generate the
-        PostScript file. So, we will render the \Ref{DjVuImage} into the
-        rectangle passed to the \Ref{DjVuToPS::print}() function. */
-    void set_zoom(Zoom zoom);
-    /** Affects automatic conversion of \Ref{DjVuImage} to GreyScale mode. */
+    /** Sets zoom factor. Zoom 0 means fit page. */
+    void set_zoom(int zoom);
+    /** Affects automatic conversion to GreyScale mode. */
     void set_color(bool color);
     /** Sets gamma correction factor. Ranges from #0.3# to #5.0#. */    
     void set_gamma(double gamma);
-    /** Sets sRGB color calibration flag. When this is enabled, gamma is
-        clamped to #2.2# regardless of \Ref{set_gamma}.  This option only
-        works with language level 2. */
+    /** Sets sRGB color calibration flag. */
     void set_sRGB(bool calibrate);
-    /** Specifies the number of copies to be printed. This parameter does {\bf
-        not} affect the size of output file. */
+    /** Specifies the number of copies to be printed. */
     void set_copies(int copies);
     /** Specifies if a gray frame around the image should be printed. */
     void set_frame(bool on);
+    /** Specifies if crop marks should be printed. */
+    void set_cropmarks(bool on);
     /** Specifies if a shadow text should be printed. */
     void set_text(bool on);
 
     /** Returns output image format (#PS# or #EPS#) */
-    Format get_format(void) const;
+    Format get_format(void) const {
+      return format; }
     /** Returns PostScript level (#1# or #2#) */
-    int get_level(void) const;
+    int get_level(void) const {
+      return level; }
     /** Returns output image orientation (#PORTRAIT# or #LANDSCAPE#) */
-    Orientation get_orientation(void) const;
-    /** Returns \Ref{DjVuImage} rendering mode (#COLOR#, #FORE#,
-        #BACK#, #BW#) */
-    Mode get_mode(void) const;
+    Orientation get_orientation(void) const {
+      return orientation; }
+    /** Returns \Ref{DjVuImage} rendering mode 
+        (#COLOR#, #FORE#, #BACK#, #BW#) */
+    Mode get_mode(void) const {
+      return mode; }
     /** Returns output zoom factor (#FIT_PAGE# or #ONE_TO_ONE#) */
-    Zoom get_zoom(void) const;
+    int get_zoom(void) const {
+      return zoom; }
     /** Returns color printing flag. */
-    bool get_color(void) const;
+    bool get_color(void) const {
+      return color; }
     /** Returns sRGB color calibration flag. */
-    bool get_sRGB(void) const;
+    bool get_sRGB(void) const {
+      return calibrate; }
     /** Returns printer gamma correction factor */
-    double get_gamma(void) const;
+    double get_gamma(void) const {
+      return ((calibrate) ? ((double)2.2) : gamma); }
     /** Returns the number of copies, which will be printed by printer
         This parameter does {\bf not} affect the size of output file */
-    int get_copies(void) const;
-    /** Returns #TRUE# if there will be a gray frame printed
-        around the image. */
-    bool get_frame(void) const;
+    int get_copies(void) const {
+      return copies; }
+    /** Returns #TRUE# if there will be a gray frame */
+    bool get_frame(void) const {
+      return frame; }
+    /** Returns #TRUE# if there will be a gray frame */
+    bool get_cropmarks(void) const {
+      return cropmarks; }
     /** Returns #TRUE# if there will be a shadow text printed */
-    bool get_text(void) const;
+    bool get_text(void) const {
+      return text; }
+    /* Constructor */
     Options(void);
   };
-
+  
   /** Describes current page processing stage. This is passed to
       the #info_cb()# callback. See \Ref{set_info_cb}() for details. */
   enum Stage { DECODING, PRINTING };
@@ -329,7 +321,8 @@ public:
       \item[page_num] The number of the page being processed
       \item[page_cnt] Counts how many pages have already been processed.
       \item[tot_pages] Counts how many pages will be output enventually.
-      \item[stage] Describes the current processing stage (#DECODING# or #PRINTING#).
+      \item[stage] Describes the current processing stage 
+                   (#DECODING# or #PRINTING#).
       \end{description}
       @param info_cb Callback function to be called
       @param info_cl_data Pointer, which will be passed to #info_cb()#. */
@@ -396,76 +389,6 @@ public:
   DjVuToPS(void);
 };
 
-
-//****************************************************************************
-//******************************** Options ***********************************
-//****************************************************************************
-
-inline DjVuToPS::Options::Format
-DjVuToPS::Options::get_format(void) const
-{
-  return format;
-}
-
-inline int
-DjVuToPS::Options::get_level(void) const
-{
-  return level;
-}
-
-inline DjVuToPS::Options::Orientation
-DjVuToPS::Options::get_orientation(void) const
-{
-  return orientation;
-}
-
-inline DjVuToPS::Options::Mode
-DjVuToPS::Options::get_mode(void) const
-{
-  return mode;
-}
-
-inline DjVuToPS::Options::Zoom
-DjVuToPS::Options::get_zoom(void) const
-{
-  return zoom;
-}
-
-inline bool
-DjVuToPS::Options::get_color(void) const
-{
-  return color;
-}
-
-inline bool
-DjVuToPS::Options::get_sRGB(void) const
-{
-  return calibrate;
-}
-
-inline double
-DjVuToPS::Options::get_gamma(void) const
-{
-  return ((calibrate) ? ((double)2.2) : gamma);
-}
-
-inline int
-DjVuToPS::Options::get_copies(void) const
-{
-   return copies;
-}
-
-inline bool
-DjVuToPS::Options::get_frame(void) const
-{
-  return frame;
-}
-
-inline bool
-DjVuToPS::Options::get_text(void) const
-{
-  return text;
-}
 
 //****************************************************************************
 //******************************** DjVuToPS **********************************

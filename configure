@@ -7756,7 +7756,7 @@ if test "${enable_xmltools+set}" = set; then
   enableval="$enable_xmltools"
   ac_enable_xmltools=$enableval
 else
-  ac_enable_xmltools=yes
+  ac_enable_xmltools=no
 fi;
 if test x$ac_enable_xmltools != xno ; then
    XML_YES=''
