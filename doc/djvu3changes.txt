@@ -540,7 +540,7 @@
     \item
          In a {\em bundled} multipage file, the component files 
          are stored immediately after the #"DIRM"# chunk,
-         within the #"FORM:DJVU"# composite chunk.  
+         within the #"FORM:DJVM"# composite chunk.  
     \item
          In an {\em indirect} multipage file, the component files are 
          stored in different files whose URLs are composed using information 
