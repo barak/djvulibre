@@ -135,7 +135,6 @@ public:
    };
 
 private:
-   const static int	toolbar_edge=5;
    bool			toolbar_shown;
    bool			toolbar_enabled;
    bool			showing_toolbar;
@@ -198,6 +197,7 @@ private slots:
       // Slot called when the system is idle (to update caches)
    void		slotCheckCache(void);
 protected:
+   static const int       toolbar_edge;
    static const char	* search_results_name;
    class QSplitter	* splitter;
    QWidget	* main_widget, * thumb_widget;
@@ -274,6 +274,7 @@ protected:
    virtual void	updateEditToolBar(void) {}
 signals:
    void		sigShowStatus(const QString &name);
+   void         sigQueryFullScreen(bool &);
 public slots:
    void		slotEnableDisplayAllHLinks(void);
    void		slotDisableDisplayAllHLinks(void);

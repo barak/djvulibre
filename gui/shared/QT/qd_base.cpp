@@ -75,6 +75,9 @@
 const char *
 QDBase::search_results_name="Search results";
 
+const int 
+QDBase::toolbar_edge = 3;
+
 static inline
 int round(float v)
 {
@@ -287,412 +290,391 @@ QDBase::setMappers(void)
 void
 QDBase::layout(bool allow_redraw)
 {
-   DEBUG_MSG("QDBase::layout() called\n");
-   DEBUG_MAKE_INDENT(3);
-
-   bool do_redraw=false;
-   bool update_tbar=false;
-
-   if (in_layout)
-   {
+  DEBUG_MSG("QDBase::layout() called\n");
+  DEBUG_MAKE_INDENT(3);
+  
+  if (in_layout)
+    {
       DEBUG_MSG("but we seem to be already here => must be called because of resize\n");
       return;
-   }
+    }
 
-   {
-      IncFlag inc(&in_layout);
-
-	 // Obtain document size
-      int doc_w=0;
-      int doc_h=0;
-      if (dimg)
-      {
-	 doc_w=dimg->get_width();
-	 doc_h=dimg->get_height();
-	 if (doc_w>0 && doc_h>0) image_size_known=1;
-      }
-
-      if (!doc_w || !doc_h)
-      {
-	 DEBUG_MSG("document rectangle is empty...just hide scroll bars\n");
-	 hscroll->hide();
-	 vscroll->hide();
-	 pane->resize(main_widget->width(), main_widget->height());
-	 return;
-      }
-
-      bool hscroll_visible=false;
-      bool vscroll_visible=false;
-      int toolbar_height=!isToolBarEnabled() ? 0 : isToolBarStuck() ?
-			 toolbar->computeHeight(main_widget->width())-1 : toolbar_edge;
-      rectVisible=GRect(0, 0, main_widget->width(), main_widget->height()-toolbar_height);
-      if (cmd_zoom==IDC_ZOOM_STRETCH)
-      {
-	 do_redraw|=allow_redraw;
-	 rectDocument=rectVisible;
-      } else
-      {
-	    // The scaling code can reduce the image *fast* 1, 2, 3, 4, 6 or 12 times
-	    // When "Favor fast magnifications for fast resolutions" is set,
-	    // we're forcing plugin to use these "fast" reductions.
-	    // Note, that the actual zoom factor (in %%) will depend on the
-	    // screen and image dpi.
-	 const int fast_red[]={ 1, 2, 3, 4, 6, 12 };
-	 const int fast_reds=sizeof(fast_red)/sizeof(fast_red[0]);
-	 int red_ind=0;
-	 float red=1/100000.0;
-	 while(true)	// Loop until we're sure about scrollbars and toolbar height
-	 {
-	    int image_dpi=300;
-	    if (dimg) image_dpi=dimg->get_rounded_dpi();
-	    if (image_dpi<=0 || image_dpi>=2400) image_dpi=300;
-
-	    DEBUG_MSG("displ_dpi=" << displ_dpi << ", image_dpi=" << image_dpi << "\n");
-      
-	       // Compute reduction from cmd_zoom
-	    if (cmd_zoom>=IDC_ZOOM_MIN && cmd_zoom<=IDC_ZOOM_MAX)
-	    {
-		  // Fixed resolution
-	       int zoom=cmd_zoom-IDC_ZOOM_MIN;
-	       DEBUG_MSG("zoom=" << zoom << "%\n");
-
-	       red=(float) image_dpi/zoom;
-	    } else if (cmd_zoom==IDC_ZOOM_ONE2ONE)
-	    {
-	       red=1;
-	    } else if (cmd_zoom==IDC_ZOOM_PAGE)
-	    {
-		  // IDC_ZOOM_PAGE case
-	       if (prefs.fastZoom)
-	       {
-		     // We may continue to loop from the previous scroll bar iteration
-		  for(;red_ind<fast_reds;red_ind++)
-		  {
-		     red=fast_red[red_ind];
-		     if (doc_w<=rectVisible.width()*red &&
-			 doc_h<=rectVisible.height()*red)
-			break;
-		  }
-	       }
-	    
-	       if (doc_w>rectVisible.width()*red ||
-		   doc_h>rectVisible.height()*red)
-	       {
-		     // Either we're not in the "fast" mode, or the
-		     // capabilities of the "fast" mode are not sufficient
-		     // to reduce the document so much
-		  float red_w=(float) doc_w/rectVisible.width();
-		  float red_h=(float) doc_h/rectVisible.height();
-		  float red_new=red_w<red_h ? red_h : red_w;
-
-		     // The following is necessary to avoid infinite loop with
-		     // appearing and disappearing scroll bars.
-		  if (red_new>red) red=red_new;
-	       }
-	    } else
-	    {
-		  // Make it IDC_ZOOM_WIDTH even if it's not
-	       if (prefs.fastZoom)
-	       {
-		     // We may continue to loop from the previous scroll bar iteration
-		  for(;red_ind<fast_reds;red_ind++)
-		  {
-		     red=fast_red[red_ind];
-		     if (doc_w<=rectVisible.width()*red)
-			break;
-		  }
-	       }
-
-	       if (doc_w>rectVisible.width()*red)
-	       {
-		     // Either we're not in the "fast" mode, or the
-		     // capabilities of the "fast" mode are not sufficient
-		     // to reduce the document so much
-		  float red_new=(float) doc_w/rectVisible.width();
-	    
-		     // The following is necessary to avoid infinite loop with
-		     // appearing and disappearing scroll bars.
-		  if (red_new>red) red=red_new;
-	       }
-	    }
-	    DEBUG_MSG("reduction=" << red << ", scale factor=" << (1/red) << "\n");
-
-	    // determine scrollbar visibility and modify rectVisible
-	    
-	    // if the viewport is too small to hold toolbar, disable the toolbar
-	    if ( toolbar_height > main_widget->height() )
-	    {
-	       prefs.toolBarOn=0;
-	       toolbar_enabled=FALSE;
-	       toolbar_height=0;
-	    }
-	    
-	    rectVisible=GRect(0, 0, main_widget->width(),
-			      main_widget->height()-toolbar_height);
-	    DEBUG_MSG("before engaging scrolls rectVisible=(" << rectVisible.xmin <<
-		      ", " << rectVisible.ymin << ", " << rectVisible.width() <<
-		      ", " << rectVisible.height() << ")\n");
-	    int sh=hscroll->height();
-	    int sw=vscroll->width();
-	    bool hs_vis=false, vs_vis=false;
-	    if (override_flags.scrollbars &&
-		rectVisible.height()>2*sh && rectVisible.width()>2*sw)
-	    {
-	      while(1)
-              {
-	        if (!hs_vis && doc_w>round(rectVisible.width()*red))
-	        {
-		  rectVisible.ymax=main_widget->height()-toolbar_height-sh;
-		  hs_vis=true;
-	        }else if (!vs_vis && doc_h>round(rectVisible.height()*red))
-	        {
-		  rectVisible.xmax=main_widget->width()-sw;
-		  vs_vis=true;
-	        }else
-                {
-                  break;
-                }
-              }
-	    }
-	    DEBUG_MSG("after engaging scrolls rectVisible=(" << rectVisible.xmin <<
-		      ", " << rectVisible.ymin << ", " << rectVisible.width() <<
-		      ", " << rectVisible.height() << ")\n");
-
-	    DEBUG_MSG("before resizing toolbar rectVisible=(" << rectVisible.xmin <<
-		      ", " << rectVisible.ymin << ", " << rectVisible.width() <<
-		      ", " << rectVisible.height() << ")\n");
-	    int tb_height=!isToolBarEnabled() ? 0 : isToolBarStuck() ?
-			  toolbar->computeHeight(rectVisible.width())-1 : toolbar_edge;
-	    DEBUG_MSG("after resizing toolbar rectVisible=(" << rectVisible.xmin <<
-		      ", " << rectVisible.ymin << ", " << rectVisible.width() <<
-		      ", " << rectVisible.height() << ")\n");
-      
-	    if (hs_vis==hscroll_visible && vs_vis==vscroll_visible &&
-		tb_height==toolbar_height) break;
-	 
-	    DEBUG_MSG("Looks like we need another pass thru resolutions:\n");
-	    DEBUG_MSG("hscroll_visible: was=" << hscroll_visible << ", now=" << hs_vis << "\n");
-	    DEBUG_MSG("vscroll_visible: was=" << vscroll_visible << ", now=" << vs_vis << "\n");
-	    DEBUG_MSG("toolbar_height: was=" << toolbar_height << ", now=" << tb_height << "\n");
-	    hscroll_visible=hs_vis;
-	    vscroll_visible=vs_vis;
-	    toolbar_height=tb_height;
-	 }
-
-	 DEBUG_MSG("hscroll_visible=" << hscroll_visible <<
-		   ", vscroll_visible=" << vscroll_visible << "\n");
-
-	 GRect prevRectDocument=rectDocument;
-      
-	    // Modify rectDocument maintaining document position
-	 if (round(rectDocument.width()*red)!=doc_w ||
-	     round(rectDocument.height()*red)!=doc_h)
-	 {
-	    if (!rectDocument.isempty())
-	    {
-	       GRect rect;
-	       rect.intersect(rectVisible, rectDocument);
-	       int cx=(rect.xmin+rect.xmax)/2-rectDocument.xmin;
-	       int cy=(rect.ymin+rect.ymax)/2-rectDocument.ymin;
-	       rectDocument.xmin=rectDocument.xmax=(int) (rectVisible.width()/2-cx*doc_w/
-							  (red*rectDocument.width()));
-	       rectDocument.ymin=rectDocument.ymax=(int) (rectVisible.height()/2-cy*doc_h/
-							  (red*rectDocument.height()));
-	    }
-	 }
-
-	    // Determine scaled document rectangle (adjusting xmin and ymin)
-	 rectDocument.xmax=rectDocument.xmin+round(doc_w/red);
-	 rectDocument.ymax=rectDocument.ymin+round(doc_h/red);
-
-	 if (isToolBarEnabled() && (prevRectDocument.width()!=rectDocument.width() ||
-				    prevRectDocument.height()!=rectDocument.height()))
-	    update_tbar=true;	// Since getZoom() may now return different value
-	 if (prevRectDocument.width()!=rectDocument.width() ||
-	     prevRectDocument.height()!=rectDocument.height() ||
-	     prevRectDocument.xmin!=rectDocument.xmin ||
-	     prevRectDocument.ymin!=rectDocument.ymin)
-	    do_redraw|=allow_redraw;
-      
-
-	 DEBUG_MSG("before aligning rectDocument=(" << rectDocument.xmin << ", " << rectDocument.ymin << ", " <<
-		   rectDocument.width() << ", " << rectDocument.height() << ")\n");
-   
-	    // adjust document location. Please note: there is a copy of this code in
-	    // Scroll(). If you make any changes, make sure to do it twice :)
-	 int xoff=0;
-	 int yoff=0;
-
-	 int hor_align=DjVuANT::ALIGN_CENTER;
-	 int ver_align=DjVuANT::ALIGN_CENTER;
-	 if (anno && anno->ant)
-	 {
-	    hor_align=anno->ant->hor_align;
-	    ver_align=anno->ant->ver_align;
-	 }
-	 if (override_flags.hor_align!=DjVuANT::ALIGN_UNSPEC)
-	    hor_align=override_flags.hor_align;
-	 if (override_flags.ver_align!=DjVuANT::ALIGN_UNSPEC)
-	    ver_align=override_flags.ver_align;
-	 
-	 if (rectDocument.width()<=rectVisible.width())
-	 {
-	    switch(hor_align)
-	    {
-	       case DjVuANT::ALIGN_LEFT:
-		  xoff=rectVisible.xmin-rectDocument.xmin;
-		  break;
-	       case DjVuANT::ALIGN_CENTER:
-	       case DjVuANT::ALIGN_UNSPEC:
-		  xoff=rectVisible.xmin-rectDocument.xmin+
-		       (rectVisible.width()-rectDocument.width())/2;
-		  break;
-	       case DjVuANT::ALIGN_RIGHT:
-		  xoff=rectVisible.xmax-rectDocument.xmax;
-		  break;
-	    }
-	 } else
-	    if (rectDocument.xmin>rectVisible.xmin)
-	       xoff=rectVisible.xmin-rectDocument.xmin;
-	    else
-	       if (rectDocument.xmax<rectVisible.xmax)
-		  xoff=rectVisible.xmax-rectDocument.xmax;
-
-	 if (rectDocument.height()<=rectVisible.height())
-	 {
-	    switch(ver_align)
-	    {
-	       case DjVuANT::ALIGN_TOP:
-		  yoff=rectVisible.ymin-rectDocument.ymin;
-		  break;
-	       case DjVuANT::ALIGN_CENTER:
-	       case DjVuANT::ALIGN_UNSPEC:
-		  yoff=rectVisible.ymin-rectDocument.ymin+
-		       (rectVisible.height()-rectDocument.height())/2;
-		  break;
-	       case DjVuANT::ALIGN_BOTTOM:
-		  yoff=rectVisible.ymax-rectDocument.ymax;
-		  break;
-	    }
-	 } else
-	    if (rectDocument.ymin>rectVisible.ymin)
-	       yoff=rectVisible.ymin-rectDocument.ymin;
-	    else
-	       if (rectDocument.ymax<rectVisible.ymax)
-		  yoff=rectVisible.ymax-rectDocument.ymax;
+  IncFlag inc(&in_layout);
   
-	 if (rectDocument.width()>0 && rectDocument.height()>0)
-	    rectDocument.translate(xoff, yoff);
+  // Obtain document size
+  int doc_w=0;
+  int doc_h=0;
+  if (dimg)
+    {
+      doc_w=dimg->get_width();
+      doc_h=dimg->get_height();
+      if (doc_w>0 && doc_h>0) 
+        image_size_known = 1;
+    }
+  
+  if (!doc_w || !doc_h)
+    {
+      DEBUG_MSG("document rectangle is empty...just hide scroll bars\n");
+      hscroll->hide();
+      vscroll->hide();
+      pane->resize(main_widget->width(), main_widget->height());
+      return;
+    }
 
-	 DEBUG_MSG("translated rectDocument=(" << rectDocument.xmin << ", " << rectDocument.ymin << ", " <<
-		   rectDocument.width() << ", " << rectDocument.height() << ")\n");
-      }
+  bool do_redraw = false;
+  bool update_tbar = false;
+  bool hscroll_visible = false;
+  bool vscroll_visible = false;
 
-	 // Make the pane be on top so that any transient movements (of the
-	 // toolbar and scrollbars) will not cause any extra Expose events
-	 // TODO: RAISE: pane->raise();
-
-	 // Resize the pane and scroll bars
-      if (hscroll_visible)
-      {
-	 hscroll->move(0, rectVisible.height()+toolbar_height);
-	 hscroll->show();
-      } else hscroll->hide();
-      if (vscroll_visible)
-      {
-	 vscroll->move(rectVisible.width(), 0);
-	 vscroll->show();
-      } else
-      {
-        vscroll->hide();
-      }
-
-	 // Since QDPane is created with WResizeNoErase flag, we need to
-	 // redraw ourselves if the pane's size changed.
-      if (pane->width()!=rectVisible.width() ||
-	  pane->height()!=rectVisible.height()) do_redraw|=allow_redraw;
-   
-      pane->resize(rectVisible.width(), rectVisible.height());
-   
-      hscroll->resize(rectVisible.width(), hscroll->height());
-      vscroll->resize(vscroll->width(), rectVisible.height()+toolbar_height);
-      if (isToolBarEnabled())
-      {
-	 toolbar->resize(rectVisible.width(), toolbar->height());
-	 toolbar->move(0, rectVisible.height());
-	 if (!isToolBarStuck() && isToolBarShown())
-	 {
-	    toolbar_shown=false;
-	    showToolBar(false);
-	 }
-      } else if (toolbar)
-	 toolbar->move(0, main_widget->height());
-
-	 // Now, when everything is in place set the stacking order properly
-      if (toolbar) toolbar->raise();
-      hscroll->raise();
-      vscroll->raise();
-   
-	 // Adjust scroll bars parameters
-      if (vscroll->isVisible())
-      {
-	 int value, sliderSize;
-	 value=rectVisible.ymin-rectDocument.ymin;
-	 if (value<0) value=0;
-	 sliderSize=rectVisible.height()<rectDocument.height() ?
-		    rectVisible.height() : rectDocument.height();
-	 vscroll->setRange(0, rectDocument.height()-sliderSize);
-	 vscroll->setValue(value);
-	 vscroll->setSteps(rectDocument.height()/25, sliderSize);
-      }
-
-      if (hscroll->isVisible())
-      {
-	 int value, sliderSize;
-	 value=rectVisible.xmin-rectDocument.xmin;
-	 if (value<0) value=0;
-	 sliderSize=rectVisible.width()<rectDocument.width() ?
-		    rectVisible.width() : rectDocument.width();
-	 hscroll->setRange(0, rectDocument.width()-sliderSize);
-	 hscroll->setValue(value);
-	 hscroll->setSteps(rectDocument.width()/25, sliderSize);
-      }
-
-	 // Set rectangle mapper
-      setMappers();
-
-      for(GPosition pos=map_areas;pos;++pos)
-	 map_areas[pos]->layout(GRect(0, 0, dimg->get_width(), dimg->get_height()));
+  int toolbar_height = toolbar->computeHeight(main_widget->width());
+  toolbar_enabled = (override_flags.toolbar && prefs.toolBarOn);
+  if (toolbar_height + 2 * hscroll->height() > main_widget->height() )
+    toolbar_enabled = 0;
+  if (!isToolBarEnabled())
+    toolbar_height = 0;
+  else if (!isToolBarStuck())
+    toolbar_height = toolbar_edge;
       
-	 // Resizing margin caches:
-      bm_cache.resize(rectDocument.width(), rectDocument.height(),
-		      rectVisible.width(), rectVisible.height());
-      pm_cache.resize(rectDocument.width(), rectDocument.height(),
-		      rectVisible.width(), rectVisible.height());
+  bool fullscreen = false;
+  emit sigQueryFullScreen(fullscreen);
 
-      if (do_redraw) redraw();
-      if (update_tbar) updateToolBar();
-
-   }
-   
-   if (!toolbar_asked && isToolBarEnabled() &&
-       toolbar->height()*2>pane->height())
-   {
-	 // BEWARE: The enableToolBar() is calling layout() again,
-	 // and layout() will not reenter if in_layout==TRUE.
-	 // That's why this code is beyond the scope of the
-	 // IncFlag inc(&in_layout); above
+  rectVisible = GRect(0, 0, main_widget->width(), main_widget->height()-toolbar_height);
+  if (cmd_zoom==IDC_ZOOM_STRETCH)
+    {
+      do_redraw |= allow_redraw;
+      rectDocument = rectVisible;
+    } 
+  else
+    {
+      // The scaling code can reduce the image *fast* 1, 2, 3, 4, 6 or 12 times
+      // When "Favor fast magnifications for fast resolutions" is set,
+      // we're forcing plugin to use these "fast" reductions.
+      // Note, that the actual zoom factor (in %%) will depend on the
+      // screen and image dpi.
+      const int fast_red[]={ 1, 2, 3, 4, 6, 12 };
+      const int fast_reds=sizeof(fast_red)/sizeof(fast_red[0]);
+      int red_ind=0;
+      float red=1/100000.0;
+      while(true)	// Loop until we're sure about scrollbars and toolbar height
+        {
+          int image_dpi=300;
+          if (dimg) image_dpi=dimg->get_rounded_dpi();
+          if (image_dpi<=0 || image_dpi>=2400) image_dpi=300;
+              
+          DEBUG_MSG("displ_dpi=" << displ_dpi << ", image_dpi=" << image_dpi << "\n");
+              
+          // Compute reduction from cmd_zoom
+          if (cmd_zoom>=IDC_ZOOM_MIN && cmd_zoom<=IDC_ZOOM_MAX)
+            {
+              // Fixed resolution
+              int zoom=cmd_zoom-IDC_ZOOM_MIN;
+              DEBUG_MSG("zoom=" << zoom << "%\n");
+                  
+              red=(float) image_dpi/zoom;
+            } 
+          else if (cmd_zoom==IDC_ZOOM_ONE2ONE)
+            {
+              red=1;
+            } 
+          else if (cmd_zoom==IDC_ZOOM_PAGE)
+            {
+              // IDC_ZOOM_PAGE case
+              if (prefs.fastZoom)
+                {
+                  // We may continue to loop from the previous scroll bar iteration
+                  for(;red_ind<fast_reds;red_ind++)
+                    {
+                      red=fast_red[red_ind];
+                      if (doc_w<=rectVisible.width()*red &&
+                          doc_h<=rectVisible.height()*red)
+                        break;
+                    }
+                }
+                  
+              if (doc_w>rectVisible.width()*red ||
+                  doc_h>rectVisible.height()*red)
+                {
+                  // Either we're not in the "fast" mode, or the
+                  // capabilities of the "fast" mode are not sufficient
+                  // to reduce the document so much
+                  float red_w=(float) doc_w/rectVisible.width();
+                  float red_h=(float) doc_h/rectVisible.height();
+                  float red_new=red_w<red_h ? red_h : red_w;
+                      
+                  // The following is necessary to avoid infinite loop with
+                  // appearing and disappearing scroll bars.
+                  if (red_new>red) red=red_new;
+                }
+            } 
+          else
+            {
+              // Make it IDC_ZOOM_WIDTH even if it's not
+              if (prefs.fastZoom)
+                {
+                  // We may continue to loop from the previous scroll bar iteration
+                  for(;red_ind<fast_reds;red_ind++)
+                    {
+                      red=fast_red[red_ind];
+                      if (doc_w<=rectVisible.width()*red)
+                        break;
+                    }
+                }
+                  
+              if (doc_w>rectVisible.width()*red)
+                {
+                  // Either we're not in the "fast" mode, or the
+                  // capabilities of the "fast" mode are not sufficient
+                  // to reduce the document so much
+                  float red_new=(float) doc_w/rectVisible.width();
+                      
+                  // The following is necessary to avoid infinite loop with
+                  // appearing and disappearing scroll bars.
+                  if (red_new>red) red=red_new;
+                }
+            }
+          DEBUG_MSG("reduction=" << red << ", scale factor=" << (1/red) << "\n");
+              
+          // determine scrollbar visibility and modify rectVisible
+          rectVisible=GRect(0, 0, main_widget->width(),
+                            main_widget->height()-toolbar_height);
+          DEBUG_MSG("before engaging scrolls rectVisible=(" << rectVisible.xmin <<
+                    ", " << rectVisible.ymin << ", " << rectVisible.width() <<
+                    ", " << rectVisible.height() << ")\n");
+          int sh = hscroll->height();
+          int sw = vscroll->width();
+          bool hs_vis=false, vs_vis=false;
+          if (override_flags.scrollbars && !fullscreen && 
+              rectVisible.height()>2*sh && rectVisible.width()>2*sw)
+            {
+              while(1)
+                {
+                  if (!hs_vis && doc_w>round(rectVisible.width()*red))
+                    {
+                      rectVisible.ymax=main_widget->height()-toolbar_height-sh;
+                      hs_vis=true;
+                    }
+                  else if (!vs_vis && doc_h>round(rectVisible.height()*red))
+                    {
+                      rectVisible.xmax=main_widget->width()-sw;
+                      vs_vis=true;
+                    }
+                  else
+                    {
+                      break;
+                    }
+                }
+            }
+          DEBUG_MSG("after engaging scrolls rectVisible=(" << rectVisible.xmin <<
+                    ", " << rectVisible.ymin << ", " << rectVisible.width() <<
+                    ", " << rectVisible.height() << ")\n");
+              
+          if (hs_vis==hscroll_visible && vs_vis==vscroll_visible)
+            break;
+              
+          DEBUG_MSG("Looks like we need another pass thru resolutions:\n");
+          DEBUG_MSG("hscroll_visible: was=" << hscroll_visible << ", now=" << hs_vis << "\n");
+          DEBUG_MSG("vscroll_visible: was=" << vscroll_visible << ", now=" << vs_vis << "\n");
+          hscroll_visible=hs_vis;
+          vscroll_visible=vs_vis;
+        }
+          
+      DEBUG_MSG("hscroll_visible=" << hscroll_visible <<
+                ", vscroll_visible=" << vscroll_visible << "\n");
+          
+      GRect prevRectDocument=rectDocument;
+          
+          // Modify rectDocument maintaining document position
+      if (round(rectDocument.width()*red)!=doc_w ||
+          round(rectDocument.height()*red)!=doc_h)
+        {
+          if (!rectDocument.isempty())
+            {
+              GRect rect;
+              rect.intersect(rectVisible, rectDocument);
+              int cx=(rect.xmin+rect.xmax)/2-rectDocument.xmin;
+              int cy=(rect.ymin+rect.ymax)/2-rectDocument.ymin;
+              rectDocument.xmin=rectDocument.xmax=(int) (rectVisible.width()/2-cx*doc_w/
+                                                         (red*rectDocument.width()));
+              rectDocument.ymin=rectDocument.ymax=(int) (rectVisible.height()/2-cy*doc_h/
+                                                         (red*rectDocument.height()));
+            }
+        }
+          
+      // Determine scaled document rectangle (adjusting xmin and ymin)
+      rectDocument.xmax=rectDocument.xmin+round(doc_w/red);
+      rectDocument.ymax=rectDocument.ymin+round(doc_h/red);
+          
+      if (isToolBarEnabled() && 
+          (prevRectDocument.width()!=rectDocument.width() ||
+           prevRectDocument.height()!=rectDocument.height()))
+        update_tbar=true;	// Since getZoom() may now return different value
+      if (prevRectDocument.width()!=rectDocument.width() ||
+          prevRectDocument.height()!=rectDocument.height() ||
+          prevRectDocument.xmin!=rectDocument.xmin ||
+          prevRectDocument.ymin!=rectDocument.ymin)
+        do_redraw|=allow_redraw;
+          
+      DEBUG_MSG("before aligning rectDocument=(" << 
+                rectDocument.xmin << ", " << rectDocument.ymin << ", " <<
+                rectDocument.width() << ", " << rectDocument.height() << ")\n");
+          
+      // adjust document location. Please note: there is a copy of this code in
+      // Scroll(). If you make any changes, make sure to do it twice :)
+      int xoff=0;
+      int yoff=0;
+          
+      int hor_align=DjVuANT::ALIGN_CENTER;
+      int ver_align=DjVuANT::ALIGN_CENTER;
+      if (anno && anno->ant)
+        {
+          hor_align=anno->ant->hor_align;
+          ver_align=anno->ant->ver_align;
+        }
+      if (override_flags.hor_align!=DjVuANT::ALIGN_UNSPEC)
+        hor_align=override_flags.hor_align;
+      if (override_flags.ver_align!=DjVuANT::ALIGN_UNSPEC)
+        ver_align=override_flags.ver_align;
+          
+      if (rectDocument.width()<=rectVisible.width())
+        {
+          switch(hor_align)
+            {
+            case DjVuANT::ALIGN_LEFT:
+              xoff=rectVisible.xmin-rectDocument.xmin;
+              break;
+            case DjVuANT::ALIGN_CENTER:
+            case DjVuANT::ALIGN_UNSPEC:
+              xoff=rectVisible.xmin-rectDocument.xmin+
+                (rectVisible.width()-rectDocument.width())/2;
+              break;
+            case DjVuANT::ALIGN_RIGHT:
+              xoff=rectVisible.xmax-rectDocument.xmax;
+              break;
+            }
+        } 
+      else if (rectDocument.xmin>rectVisible.xmin)
+        xoff=rectVisible.xmin-rectDocument.xmin;
+      else if (rectDocument.xmax<rectVisible.xmax)
+        xoff=rectVisible.xmax-rectDocument.xmax;
+          
+      if (rectDocument.height()<=rectVisible.height())
+        {
+          switch(ver_align)
+            {
+            case DjVuANT::ALIGN_TOP:
+              yoff=rectVisible.ymin-rectDocument.ymin;
+              break;
+            case DjVuANT::ALIGN_CENTER:
+            case DjVuANT::ALIGN_UNSPEC:
+              yoff=rectVisible.ymin-rectDocument.ymin+
+                (rectVisible.height()-rectDocument.height())/2;
+              break;
+            case DjVuANT::ALIGN_BOTTOM:
+              yoff=rectVisible.ymax-rectDocument.ymax;
+              break;
+            }
+        } 
+      else if (rectDocument.ymin>rectVisible.ymin)
+        yoff=rectVisible.ymin-rectDocument.ymin;
+      else if (rectDocument.ymax<rectVisible.ymax)
+        yoff=rectVisible.ymax-rectDocument.ymax;
+          
+      if (rectDocument.width()>0 && rectDocument.height()>0)
+        rectDocument.translate(xoff, yoff);
+          
+      DEBUG_MSG("translated rectDocument=(" << rectDocument.xmin << 
+                ", " << rectDocument.ymin << ", " <<
+                rectDocument.width() << ", " << rectDocument.height() << ")\n");
+    }
       
-      toolbar_asked=true;
-//      if (QMessageBox::warning(this, "Disable toolbar?",
-//			       "The toolbar will occupy more than half of\n"
-//			       "the active window when shown.\n\n"
-//			       "Do you want to disable it?",
-//			       "&Yes", "&No", 0, 0, 1)==0)
-	 enableToolBar(false);
-   }
+  // Make the pane be on top so that any transient movements (of the
+  // toolbar and scrollbars) will not cause any extra Expose events
+  // TODO: RAISE: pane->raise();
+      
+      // Resize the pane and scroll bars
+  if (hscroll_visible)
+    {
+      hscroll->move(0, rectVisible.height()+toolbar_height);
+      hscroll->show();
+    } 
+  else 
+    hscroll->hide();
+  if (vscroll_visible)
+    {
+      vscroll->move(rectVisible.width(), 0);
+      vscroll->show();
+    } 
+  else
+    vscroll->hide();
 
-   DEBUG_MSG("QDBase::layout(): DONE\n");
+      // Since QDPane is created with WResizeNoErase flag, we need to
+      // redraw ourselves if the pane's size changed.
+  if (pane->width()!=rectVisible.width() ||
+      pane->height()!=rectVisible.height()) 
+    do_redraw |= allow_redraw;
+      
+  pane->resize(rectVisible.width(), rectVisible.height());
+  hscroll->resize(rectVisible.width(), hscroll->height());
+  vscroll->resize(vscroll->width(), rectVisible.height()+toolbar_height);
+      
+  if (isToolBarEnabled())
+    {
+      toolbar->resize(rectVisible.width(), toolbar->height());
+      toolbar->move(0, rectVisible.height());
+      if (!isToolBarStuck() && isToolBarShown())
+        {
+          toolbar_shown=false;
+          showToolBar(false);
+        }
+    } else if (toolbar)
+      toolbar->move(0, main_widget->height());
+      
+      // Now, when everything is in place set the stacking order properly
+  if (toolbar) toolbar->raise();
+  hscroll->raise();
+  vscroll->raise();
+      
+  // Adjust scroll bars parameters
+  if (vscroll->isVisible())
+    {
+      int value, sliderSize;
+      value=rectVisible.ymin-rectDocument.ymin;
+      if (value<0) value=0;
+      sliderSize=rectVisible.height()<rectDocument.height() ?
+        rectVisible.height() : rectDocument.height();
+      vscroll->setRange(0, rectDocument.height()-sliderSize);
+      vscroll->setValue(value);
+      vscroll->setSteps(rectDocument.height()/25, sliderSize);
+    }
+      
+  if (hscroll->isVisible())
+    {
+      int value, sliderSize;
+      value=rectVisible.xmin-rectDocument.xmin;
+      if (value<0) value=0;
+      sliderSize=rectVisible.width()<rectDocument.width() ?
+        rectVisible.width() : rectDocument.width();
+      hscroll->setRange(0, rectDocument.width()-sliderSize);
+      hscroll->setValue(value);
+      hscroll->setSteps(rectDocument.width()/25, sliderSize);
+    }
+      
+  // Set rectangle mapper
+  setMappers();
+      
+  for(GPosition pos=map_areas;pos;++pos)
+    map_areas[pos]->layout(GRect(0, 0, dimg->get_width(), dimg->get_height()));
+      
+      // Resizing margin caches:
+  bm_cache.resize(rectDocument.width(), rectDocument.height(),
+                  rectVisible.width(), rectVisible.height());
+  pm_cache.resize(rectDocument.width(), rectDocument.height(),
+                  rectVisible.width(), rectVisible.height());
+      
+  if (do_redraw) redraw();
+  if (update_tbar) updateToolBar();
+      
+  DEBUG_MSG("QDBase::layout(): DONE\n");
 }
 
 void
@@ -1320,13 +1302,11 @@ QDBase::enableToolBar(bool on)
       if (on)
       {
 	 prefs.toolBarOn=1;
-	 toolbar_enabled=TRUE;
 	 layout();
 	 updateToolBar();
       } else
       {
 	 prefs.toolBarOn=0;
-	 toolbar_enabled=FALSE;
 	 layout();
       }
 }

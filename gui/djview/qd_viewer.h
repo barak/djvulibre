@@ -176,7 +176,6 @@ signals:
    void		sigGetURL(const GURL & url, const GUTF8String &target);
    void		sigPageChanged(int page_num);
    void         sigToggleFullScreen(void);
-   void         sigQueryFullScreen(bool &);
 public:
    SavedData	getSavedData(void) const;
    void		gotoStdPage(const GUTF8String &file_name, bool bypass_local=false);
