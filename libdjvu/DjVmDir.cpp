@@ -361,8 +361,24 @@ DjVmDir::decode(const GP<ByteStream> &gstr)
    }
 }
 
+
 void
 DjVmDir::encode(const GP<ByteStream> &gstr, const bool do_rename) const
+{
+  bool bundled = true;
+  GPosition pos = files_list;
+  if (files_list.size() && !files_list[pos]->offset)
+    bundled = false;
+  for (pos=files_list; pos; ++pos)
+    if ( !bundled !=  !files_list[pos]->offset)
+      //  There directory contains both indirect and bundled records.
+      G_THROW( ERR_MSG("DjVmDir.bad_dir") );
+  // Do the real work
+  encode(gstr, bundled, do_rename);
+}
+
+void
+DjVmDir::encode(const GP<ByteStream> &gstr, const bool bundled, const bool do_rename) const
 {
   ByteStream &str=*gstr;
   DEBUG_MSG("DjVmDir::encode(): encoding contents of the 'DIRM' chunk do_rename=" << do_rename << "\n");
@@ -371,7 +387,6 @@ DjVmDir::encode(const GP<ByteStream> &gstr, const bool do_rename) const
   GCriticalSectionLock lock((GCriticalSection *) &class_lock);
   GPosition pos;
 
-  bool bundled=files_list.size() ? (files_list[files_list]->offset!=0) : true;
   DEBUG_MSG("encoding version number=" << version << ", bundled=" << bundled << "\n");
   str.write8(version | ((int) bundled<< 7));
    
@@ -379,88 +394,66 @@ DjVmDir::encode(const GP<ByteStream> &gstr, const bool do_rename) const
   str.write16(files_list.size());
 
   if (files_list.size())
-  {
-     // Check that there is only one file with shared annotations
-     int shared_anno_cnt=0;
-     for(pos=files_list;pos;++pos)
-     {
+    {
+      // Check that there is only one file with shared annotations
+      int shared_anno_cnt=0;
+      for (pos=files_list; pos; ++pos)
         if (files_list[pos]->is_shared_anno())
-           shared_anno_cnt++;
-     }
-     if (shared_anno_cnt>1)
+          shared_anno_cnt++;
+      if (shared_anno_cnt>1)
         G_THROW( ERR_MSG("DjVmDir.multi_save") );
-     
-     if (bundled)
-     {
-       // We need to store offsets uncompressed. That's because when
-       // we save a DjVmDoc, we first compress the DjVmDir with dummy
-       // offsets and after computing the real offsets we rewrite the
-       // DjVmDir, which should not change its size during this operation
-       DEBUG_MSG("storing offsets for every record\n");
-       for(pos=files_list;pos;++pos)
-       {
-         GP<File> file=files_list[pos];
-         if (!file->offset)
-         {
-           //  The directory contains both indirect and bundled records.
-           G_THROW( ERR_MSG("DjVmDir.bad_dir") );
-         }
-         str.write32(file->offset);
-       }
-     }
+      
+      if (bundled)
+        {
+          // We need to store offsets uncompressed. That's because when
+          // we save a DjVmDoc, we first compress the DjVmDir with dummy
+          // offsets and after computing the real offsets we rewrite the
+          // DjVmDir, which should not change its size during this operation
+          DEBUG_MSG("storing offsets for every record\n");
+          for (pos=files_list; pos; ++pos)
+            {
+              GP<File> file=files_list[pos];
+              if (!file->offset)
+                // The directory contains record without offset
+                G_THROW( ERR_MSG("DjVmDir.bad_dir") );
+              str.write32(file->offset);
+            }
+        }
+      
+      GP<ByteStream> gbs_str=BSByteStream::create(gstr, 50);
+      ByteStream &bs_str=*gbs_str;
+      DEBUG_MSG("storing and compressing sizes for every record\n");
+      for (pos=files_list; pos; ++pos)
+        {
+          const GP<File> file(files_list[pos]);
+          bs_str.write24(file->size);
+        }
+      DEBUG_MSG("storing and compressing flags for every record\n");
+      const bool xdo_rename=(do_rename||!bundled);
+      for(pos=files_list;pos;++pos)
+        {
+          const GP<File> file(files_list[pos]);
+          if(xdo_rename)
+            {
+              const GUTF8String new_id = file->name;
+              if (! new_id)
+                if(!file->oldname.length() || file->oldname == new_id)
+                  file->flags &= ~File::HAS_NAME;
+                else
+                  file->flags |= File::HAS_NAME;
+            }
+          else 
+            {
+              if (!file->name.length() || file->name == file->id)
+                file->flags &= ~File::HAS_NAME;
+              else
+                file->flags |= File::HAS_NAME;
+            }
+          if (file->title.length() && (file->title!=file->id))
+            file->flags |= File::HAS_TITLE;
+          else
+            file->flags &= ~File::HAS_TITLE;
 
-     GP<ByteStream> gbs_str=BSByteStream::create(gstr, 50);
-     ByteStream &bs_str=*gbs_str;
-     DEBUG_MSG("storing and compressing sizes for every record\n");
-     for(pos=files_list;pos;++pos)
-     {
-       const GP<File> file(files_list[pos]);
-       if ((file->offset)?(!bundled):bundled)
-       {
-         //  The directory contains both indirect and bundled records.
-         G_THROW( ERR_MSG("DjVmDir.bad_dir") );
-       }
-       bs_str.write24(file->size);
-     }
-     const bool xdo_rename=(do_rename||!bundled);
-     DEBUG_MSG("storing and compressing flags for every record\n");
-     for(pos=files_list;pos;++pos)
-     {
-       const GP<File> file(files_list[pos]);
-       if(xdo_rename)
-       {
-         const GUTF8String new_id=
-           (file->name.length() && file->name != file->id)
-             ?file->name:file->id;
-         if(!file->oldname.length() || file->oldname == new_id)
-         {
-           file->flags&=~File::HAS_NAME;
-         }else
-         {
-           file->flags|=File::HAS_NAME;
-         }
-       }else if(!file->name.length() || file->name == file->id)
-       {
-         file->flags&=~File::HAS_NAME;
-       }else
-       {
-         file->flags|=File::HAS_NAME;
-       }
-       if((!file->name.length() || file->name == file->id)
-         ||(xdo_rename&&(!file->oldname.length()||(file->oldname == file->name))))
-       {
-         file->flags&=~File::HAS_NAME;
-       }else
-       {
-         file->flags|=File::HAS_NAME;
-       }
-       if (file->title.length() && (file->title!=file->id))
-       {
-         file->flags|=File::HAS_TITLE;
-       }else
-       {
-         file->flags&=~File::HAS_TITLE;
-       }
        bs_str.write8(file->flags);
      }
 
@@ -471,40 +464,37 @@ DjVmDir::encode(const GP<ByteStream> &gstr, const bool do_rename) const
          GUTF8String id;
          GUTF8String name;
          GUTF8String title;
-         if(xdo_rename)
-         {
-           id=(file->name.length())?(file->name):(file->id);
-           if ((file->flags) & File::HAS_NAME)
+         if (xdo_rename)
            {
-             name=file->oldname;
+             id = file->name;
+             if (! id)
+               id = file->id;
+             if ((file->flags) & File::HAS_NAME)
+               name = file->oldname;
            }
-         }else
-         {
-           id=file->id;
-           if ((file->flags) & File::HAS_NAME)
+         else
            {
-             name=file->name;
+             id=file->id;
+             if ((file->flags) & File::HAS_NAME)
+               name = file->name;
            }
-         }
-         if ((file->flags)&File::HAS_TITLE)
-         {
-           title=file->title;
-         }
+         if ((file->flags) & File::HAS_TITLE)
+           title = file->title;
          DEBUG_MSG("rename=" <<xdo_rename<<" id='" << id << "' name='" << name << "' title='" << title << "'\n");
          bs_str.writestring(id);
          bs_str.write8(0);
          if (name.length())
-         {
-           bs_str.writestring(name);
-           bs_str.write8(0);
-         }
+           {
+             bs_str.writestring(name);
+             bs_str.write8(0);
+           }
          if (title.length())
-         {
-           bs_str.writestring(title);
-           bs_str.write8(0);
-         }
+           {
+             bs_str.writestring(title);
+             bs_str.write8(0);
+           }
      }
-  }
+    }
   DEBUG_MSG("done\n");
 }
 

@@ -140,6 +140,8 @@ public:
    void decode(const GP<ByteStream> &stream);
       /** Encodes the directory into the specified stream. */
    void encode(const GP<ByteStream> &stream, const bool do_rename=false) const;
+      /** Encodes the directory into the specified stream, explicitely as bundled or indirect. */
+   void encode(const GP<ByteStream> &stream, const bool bundled, const bool do_rename) const;
       /** Tests if directory defines an {\em indirect} document. */
    bool is_indirect(void) const;
       /** Tests if the directory defines a {\em bundled} document. */
