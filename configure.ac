@@ -164,7 +164,8 @@ fi
 # Rules for building the netscape plugin.
 NSDEJAVU='nsdejavu.so'
 NSDEJAVU_FLAGS='-fpic -DPIC'
-NSDEJAVU_LIBS= "-L${x_libraries:-.} -lXt -lX11"
+NSDEJAVU_LIBS="-lXt -lX11"
+test -n "$x_libraries" && NSDEJAVU_LIBS="-L$x_libraries $NSDEJAVU_LIBS"
 NSDEJAVU_LINK='${CC} -shared -o ${NSDEJAVU} ${CFLAGS} -shared ${OBJS} ${LIBS}'
 case ${host_os} in 
   hpux*) NSDEJAVU="nsdejavu.sl" ;; 
