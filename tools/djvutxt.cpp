@@ -120,10 +120,10 @@ static void
 doPage(const GP<DjVuDocument> & doc, int page_num,
        ByteStream & str_out)
 {
-   GP<DjVuImage> dimg=doc->get_page(page_num);
-   if (!dimg)
-      G_THROW("Failed to decode page.");
-   GP<ByteStream> text_str=dimg->get_text();
+   GP<DjVuFile> file=doc->get_djvu_file(page_num);
+   if (!file)
+      G_THROW("Failed to retrieve document page.");
+   GP<ByteStream> text_str=file->get_text();
    if (text_str)
    {
       GP<DjVuText> text=DjVuText::create();
@@ -146,21 +146,7 @@ main(int argc, char ** argv)
   for(int i=0;i<argc;++i)
     dargv[i]=GNativeString(argv[i]);
   progname=dargv[0]=GOS::basename(dargv[0]);
-   
-#ifdef DEBUG
-   {
-      const GUTF8String debug(GOS::getenv("DEBUG"));
-      if (debug.length())
-      {
-//	 int level=debug.is_int()?atoi((const char *)debug):0;
-         int level=debug.is_int()?debug.toInt():0;
-         if (level<1) level=1;
-         if (level>32) level=32;
-//	 DEBUG_SET_LEVEL(level);
-      }
-   }
-#endif
-   
+
    G_TRY {
       GUTF8String name_in, name_out;
       int page_num=-1;
