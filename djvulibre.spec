@@ -73,7 +73,10 @@ find %{buildroot} \( ! -type d \) -print | \
 rm -rf %{buildroot}
 
 %post 
+# LIBS: Run ldconfig
 /sbin/ldconfig
+# MENU: For debian-style menu systems
+if test -x /usr/bin/update-menus; then /usr/bin/update-menus; fi
 # HACK: Create links to nsdejavu.so in mozilla dirs
 ( for n in %{prefix}/lib/mozilla*  ; do \
   if [ -d $n ] ; then \
@@ -84,7 +87,6 @@ rm -rf %{buildroot}
  fi ; done ) 2>/dev/null || true
 
 %postun 
-/sbin/ldconfig
 # HACK: Remove links to nsdejavu.so in all mozilla dirs
 ( if [ ! -r %{prefix}/lib/netscape/plugins/nsdejavu.so ] ; then \
    for n in %{prefix}/lib/mozilla* ; do \
@@ -92,6 +94,10 @@ rm -rf %{buildroot}
      rm $n/plugins/nsdejavu.so ; \
      rmdir $n/plugins ; \
   fi ; done ; fi ) 2>/dev/null || true
+# MENU: For debian-style menu systems
+if test -x /usr/bin/update-menus; then /usr/bin/update-menus; fi
+# LIBS: Run ldconfig
+/sbin/ldconfig
 
 %files -f files.list
 %defattr(-, root, root)
@@ -108,11 +114,11 @@ rm -rf %{buildroot}
 
 %changelog
 * Fri Apr  9 2004 Leon Bottou <leon@bottou.org> 3.5.13-1
-- release
+- release 3.5.13
 * Thu Apr  8 2004 Leon Bottou <leon@bottou.org> 3.5.13.0.4
-- Runtime generation of file list.
+- runtime generation of file list.
 * Fri Apr  2 2004 Leon Bottou <leon@bottou.org> 3.5.13.0.3
-- Use DESTDIR instead of %makeinstall
+- use DESTDIR instead of %makeinstall
 - make install-desktop-files.
 * Tue Nov 18 2003 Leon Bottou <leon@bottou.org> 3.5.13-0.1
 - new version
