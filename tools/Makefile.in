@@ -99,6 +99,8 @@ FORCE:
 
 # Link
 
+JB2OBJS= jb2cmp.o jb2tune.o
+
 annotate: annotate.o
 	${CXX} -o $@ ${CXXFLAGS} annotate.o ${LIBDJVU} ${LIBS}
 
@@ -108,14 +110,14 @@ bzz: bzz.o
 c44: c44.o
 	${CXX} -o $@ ${CXXFLAGS} c44.o ${LIBDJVU} ${LIBS}
 
-cjb2: cjb2.o
-	${CXX} -o $@ ${CXXFLAGS} cjb2.o ${LIBDJVU} ${MORELIBS}
+cjb2: cjb2.o ${JB2OBJS}
+	${CXX} -o $@ ${CXXFLAGS} cjb2.o ${JB2OBJS} ${LIBDJVU} ${MORELIBS}
 
-cpaldjvu: cpaldjvu.o
-	${CXX} -o $@ ${CXXFLAGS} cpaldjvu.o ${LIBDJVU} ${LIBS}
+cpaldjvu: cpaldjvu.o ${JB2OBJS}
+	${CXX} -o $@ ${CXXFLAGS} cpaldjvu.o ${JB2OBJS} ${LIBDJVU} ${LIBS}
 
-csepdjvu: csepdjvu.o
-	${CXX} -o $@ ${CXXFLAGS} csepdjvu.o ${LIBDJVU} ${LIBS}
+csepdjvu: csepdjvu.o ${JB2OBJS}
+	${CXX} -o $@ ${CXXFLAGS} csepdjvu.o ${JB2OBJS} ${LIBDJVU} ${LIBS}
 
 ddjvu: ddjvu.o
 	${CXX} -o $@ ${CXXFLAGS} ddjvu.o ${LIBDJVU} ${LIBS}

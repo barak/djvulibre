@@ -41,9 +41,9 @@ This program produces a DjVuBitonal file named
 The default compression process is lossless: decoding the DjVuBitonal file at
 full resolution will produce an image exactly identical to the input file.
 Lossy compression is enabled by selecting option
-.B -clean 
-and/or option
-.BR -loose .
+.B -lossy 
+or option
+.BR -clean .
 
 .SH OPTIONS
 .TP
@@ -66,36 +66,38 @@ The threshold mark size is chosen according to the resolution
 specified with option 
 .BR -dpi .
 .TP
-.B "-loose"
+.B "-lossy"
 Substitute patterns with small variations.
 This option enables a heuristic algorithm that encodes certain characters
 by simply replicating the shape of a previously encoded character.
-The shape difference between both characters must represent less
-than 6% of the pixels in the character bounding box.
+This option implies
+.BR --clean .
 .TP
 .B "-verbose"
 Display informational messages while running.
 
 .SH REMARKS
-Lossless encoding is competitive with that of the Lizardtech commercial
-encoders.  Lossy encoding mode lags behind.  Additional algorithms could
-improve the overall performance:
+Lossless encoding is competitive with that of the 
+Lizardtech commercial encoders. 
+The performance of the lossy encoding mode
+was much improved by the new pattern matching code 
+contributed by Ilya Mezhirov.  However it still
+lags behind the performance of commercial encoders.
+Two notable features are missing:
 .IP "*" 3
-Detecting small marks belonging to half-tone patterns
-would improve compression speed.
+Half-tone detection. Collecting small marks belonging 
+to half-tone patterns would improve compression speed.
 .IP "*" 3
-Multi-page character matches would improve the
-compression ratios for multi-page documents.
-.IP "*" 3
-A better pattern matching code would improve the 
-lossy compression ratios.
+Multi-page compression. Matching characters on several pages
+would improve the compression ratios for multi-page documents.
 
 .SH CREDITS
 This program was initially written by L\('eon Bottou
 <leonb@users.sourceforge.net> and was improved by Bill Riemers
 <docbill@sourceforge.net> and many others.
+The pattern matching algorithm for lossy compression
+was contributed by Ilya Mezhirov <ilya@mezhirov.mccme.ru>.
 
 .SH SEE ALSO
 .BR djvu (1),
-.BR pbm (5),
-.BR pnmtotiff (1),
+.BR pbm (5).

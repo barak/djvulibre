@@ -116,6 +116,9 @@
 #include "GOS.h"
 #include "GURL.h"
 #include "DjVuMessage.h"
+
+#include "jb2tune.h"
+
 #include <locale.h>
 #include <stdlib.h>
 #include <math.h>
@@ -634,122 +637,6 @@ CCImage::erase_cc(int ccid)
 // the input image and the provided mask.
 
 
-
-
-// --------------------------------------------------
-// LOSSLESS PATTERN MATCHING
-// --------------------------------------------------
-
-// ISSUE: LOSSY PATTERN MATCHING
-// This is lossless because shapes with different colors
-// can touch each other.  Modifying such shapes may result
-// in unpleasant effects.  But not all shapes are like that...
-
-
-// -- Candidate descriptor for pattern matching
-struct MatchData 
-{
-  GBitmap *bits;       // bitmap pointer
-  int area;            // number of black pixels
-};
-
-
-// -- Creates shape hierarchy and substitutions (lossless)
-void
-tune_jb2image(JB2Image *jimg, int refine_threshold=21)
-{
-  // Pattern matching data
-  int nshapes = jimg->get_shape_count();
-  GTArray<MatchData> library(nshapes);
-  MatchData *lib = library;    // for faster access  
-  // Loop on all shapes
-  for (int current=0; current<nshapes; current++)
-    {
-      // Skip ``special shapes''
-      lib[current].bits = 0;
-      JB2Shape &jshp = jimg->get_shape(current);
-      if (jshp.userdata || !jshp.bits) continue; 
-      // Compute matchdata info
-      GBitmap *bitmap = jshp.bits;
-      int row;
-      int rows = bitmap->rows();
-      int column;
-      int columns = bitmap->columns();
-      int black_pixels = 0;
-      for (row = rows - 1; row >= 0; row--) 
-        for (column = 0; column < columns; column++) 
-          if ((*bitmap)[row][column]) 
-            black_pixels++;
-      lib[current].bits = bitmap;
-      lib[current].area = black_pixels;
-      // Prepare for search
-      int closest_match = -1;
-      int best_score = (refine_threshold * rows * columns + 50) / 100;
-      if (best_score < 2) best_score = 2;
-      bitmap->minborder(2); // ensure sufficient borders
-      // Search closest match
-      for (int candidate = 0; candidate < current; candidate++) 
-        {
-          // Access candidate bitmap
-          GBitmap *cross_bitmap = lib[candidate].bits;
-          if (! cross_bitmap) continue;
-          int cross_columns = cross_bitmap->columns();
-          int cross_rows = cross_bitmap->rows();
-          // Prune
-          if (abs (lib[candidate].area - black_pixels) > best_score) continue;
-          if (abs (cross_rows - rows) > 2) continue;
-          if (abs (cross_columns - columns) > 2) continue;
-          // Compute alignment (these are always +1, 0 or -1)
-          int cross_column_adjust = (cross_columns  - cross_columns/2) 
-            - (columns - columns/2);
-          int cross_row_adjust = (cross_rows  - cross_rows/2) 
-            - (rows - rows/2);
-          // Ensure adequate borders
-          cross_bitmap->minborder (2-cross_column_adjust);
-          cross_bitmap->minborder (2+columns-cross_columns+cross_column_adjust);
-          // Count pixel differences (including borders)
-          int score = 0;
-          unsigned char *p_row;
-          unsigned char *p_cross_row;
-          for (row = -1; row <= rows; row++) 
-            {
-              p_row = (*bitmap) [row];
-              p_cross_row  = (*cross_bitmap)[row+cross_row_adjust] 
-                + cross_column_adjust;
-              for (column = -1; column <= columns; column++) 
-                if (p_row [column] != p_cross_row [column])
-                  score ++;
-              if (score >= best_score)  // prune
-                break;
-            }
-          if (score < best_score) {
-            best_score = score;
-            closest_match = candidate;
-          }
-        }
-      // Decide what to do with the match.
-      if (closest_match >= 0)
-        {
-          // Mark the shape for cross-coding (``soft pattern matching'')
-          jshp.parent = closest_match;
-          // Exact match ==> Substitution
-          if (best_score == 0)
-            lib[current].bits = jshp.bits = 0;
-        }
-    }
-  // Process shape substitutions
-  for (int blitno=0; blitno<jimg->get_blit_count(); blitno++)
-    {
-      JB2Blit *jblt = jimg->get_blit(blitno);
-      JB2Shape &jshp = jimg->get_shape(jblt->shapeno);
-      if (!jshp.bits && jshp.parent>=0)
-        jblt->shapeno = jshp.parent;
-    }
-}
-
-
-
-
 // --------------------------------------------------
 // MAIN COMPRESSION ROUTINE
 // --------------------------------------------------
@@ -887,7 +774,9 @@ cpaldjvu(const GPixmap &input, GURL &urlout, const cpaldjvuopts &opts)
       JB2Shape shape;
       JB2Blit  blit;
       shape.parent = -1;
-      shape.userdata = (ccid >= rimg.nregularccs);
+      shape.userdata = 0;
+      if (ccid >= rimg.nregularccs)
+        shape.userdata |= JB2SHAPE_SPECIAL;
       shape.bits = rimg.get_bitmap_for_cc(ccid);
       shape.bits->compress();
       CC& cc = rimg.ccs[ccid];
@@ -900,7 +789,7 @@ cpaldjvu(const GPixmap &input, GURL &urlout, const cpaldjvuopts &opts)
     }
   
   // Organize JB2Image
-  tune_jb2image(&jimg);
+  tune_jb2image_lossless(&jimg);
   if (opts.verbose)
     {
       int nshape=0, nrefine=0;
@@ -1037,7 +926,7 @@ main(int argc, const char **argv)
               if (*end || opts.dpi<25 || opts.dpi>1200)
                 usage();
             }
-          else if (arg == "-verbose")
+          else if (arg == "-verbose" || arg == "-v")
             opts.verbose = true;
           else if (arg == "-bgwhite")
             opts.bgwhite = true;
