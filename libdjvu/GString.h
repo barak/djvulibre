@@ -1111,13 +1111,15 @@ GBaseString::operator! ( void ) const
 inline GUTF8String
 GUTF8String::upcase( void ) const
 {
-  return (ptr?(*this)->upcase():(*this));
+  if (ptr) return (*this)->upcase();
+  return *this;
 }
 
 inline GUTF8String
 GUTF8String::downcase( void ) const
 {
-  return (ptr?(*this)->downcase():(*this));
+  if (ptr) return (*this)->downcase();
+  return *this;
 }
 
 inline void
@@ -1596,13 +1598,15 @@ GNativeString::operator= (const GNativeString &str)
 inline GNativeString
 GNativeString::upcase( void ) const
 {
-  return (ptr?(*this)->upcase():(*this));
+  if (ptr) return (*this)->upcase();
+  return *this;
 }
 
 inline GNativeString
 GNativeString::downcase( void ) const
 {
-  return (ptr?(*this)->downcase():(*this));
+  if (ptr) return (*this)->downcase();
+  return *this;
 }
 
 #endif // HAS_WCHAR
