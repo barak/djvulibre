@@ -44,8 +44,7 @@
 #pragma interface
 #endif
 
-
-bool
-fixMimeTypes(const char * name_in, const char * name_out);
+bool FixMimeTypes(bool really=false);
+bool FixMailCap(bool really=false);
 
 #endif

@@ -68,48 +68,42 @@ QMimeChecker::slotCheckMimeTypes(void)
 {
    DEBUG_MSG("QMimeChecker::slotCheckMimeTypes\n");
    DjVuPrefs prefs;
-   if (prefs.mimeDontCheck) return;
+   if (prefs.mimeDontCheck) 
+     return;
    
-   G_TRY {
-      GUTF8String ptr=getenv("HOME");
-      if (ptr.length())
-      {
-	 GUTF8String name_in=ptr+"/.mime.types";
-	 GUTF8String name_out=name_in+".new";
-	 bool fixed=fixMimeTypes(name_in, name_out);
-
-	 if (fixed)
-	 {
-	    bool do_it=false;
-	    if (prefs.mimeDontAsk) do_it=true;
-	    else
-	    {
-	       QDMimeDialog d(QStringFromGString(name_in), 0, "mime_check_dialog", TRUE);
-	       if (d.exec()==QDialog::Accepted)
-	       {
-		  do_it=true;
-		  QMessageBox::information(0, "DjVu",
-					   tr("Please restart Netscape for the changes to take effect"));
-	       }
-	       prefs.mimeDontAsk=d.dontAsk();
-	       prefs.mimeDontCheck=d.dontCheck();
+   G_TRY 
+     {
+       if (FixMimeTypes(false) || FixMailCap(false))
+         {
+           bool do_it = true;
+           if (! prefs.mimeDontAsk) 
+             {
+               do_it = false;
+	       QDMimeDialog d(0, "mime_check_dialog", TRUE);
+	       if (d.exec() == QDialog::Accepted)
+                 {
+                   do_it = true;
+                   QMessageBox::information(0, "DjVu",
+                      tr("Please restart Netscape for the changes to take effect"));
+                 }
+	       prefs.mimeDontAsk = d.dontAsk();
+	       prefs.mimeDontCheck = d.dontCheck();
 	       prefs.save();
-	    }
-	    if (do_it)
-	    {
-	       unlink(name_in);
-	       GP<ByteStream> str_in=ByteStream::create(GURL::Filename::UTF8(name_out),"r");
-	       GP<ByteStream> str_out=ByteStream::create(GURL::Filename::UTF8(name_in),"w");
-	       str_out->copy(*str_in);
-	       unlink(name_out);
-	    } else unlink(name_out);
-	 }
-      }
-   } G_CATCH(exc) {} G_ENDCATCH;
+             }
+           if (do_it)
+             {
+	       fixMime();
+             }
+         }
+     } 
+   G_CATCH(exc) 
+     {
+     } 
+   G_ENDCATCH;
 }
 
 void
-checkMimeTypes(void)
+checkMime(void)
 {
    DEBUG_MSG("checkMimeTypes\n");
    static QTimer * timer;
@@ -117,34 +111,29 @@ checkMimeTypes(void)
 
    DjVuPrefs prefs;
    if (prefs.mimeDontCheck) return;
-   
    if (!timer) timer=new QTimer();
    if (!checker) checker=new QMimeChecker();
    QObject::connect(timer, SIGNAL(timeout(void)), checker, SLOT(slotCheckMimeTypes(void)));
-
-   timer->start(5000, TRUE);
+   timer->start(2000, TRUE);
 }
 
 void
-fixMimeTypes(void)
+fixMime(void)
 {
    DEBUG_MSG("fixMimeTypes\n");
-   GUTF8String ptr=getenv("HOME");
-   if (ptr.length())
-   {
-      GUTF8String name_in=ptr+"/.mime.types";
-      GUTF8String name_out=name_in+".new";
-      bool fixed=fixMimeTypes(name_in, name_out);
+   FixMimeTypes(true);
+   FixMailCap(true);
+}
 
-      if (fixed)
-      {
-	 unlink(name_in);
-	 GP<ByteStream> str_in=ByteStream::create(GURL::Filename::UTF8(name_out),"r");
-	 GP<ByteStream> str_out=ByteStream::create(GURL::Filename::UTF8(name_in),"w");
-	 str_out->copy(*str_in);
-      }
-      unlink(name_out);
-   }
+void
+fixPlugins(void)
+{
+  const char *home = getenv("HOME");
+  if (! home) return;
+  GUTF8String fname = GUTF8String(home) + "/.netscape/plugin-list";
+  remove((const char*)fname);
+  fname = GUTF8String(home) + "/.netscape/plugin-list.BAK";
+  remove((const char*)fname);
 }
 
 #include "mime_check_moc.inc"

@@ -42,232 +42,294 @@
 #include "config.h"
 #endif
 
-#include "Arrays.h"
+#include "GContainer.h"
 #include "GString.h"
 #include "debug.h"
-
 #include <stdio.h>
 #include <ctype.h>
 #include <unistd.h>
 
-static DArray<GUTF8String>
-getRecords(FILE * file_in, FILE * file_out)
+
+static GUTF8String
+readRecord(FILE *f)
 {
-   signed char ch;
-   DArray<GUTF8String> records;
-   
-      // Skip (while copying!) leading spaces and comments
-   while(true)
-   {
-      if ((ch=fgetc(file_in))==EOF) return records;
-      
-      if (isspace(ch)) fputc(ch, file_out);
-      else if (ch=='#')
-      {
-	 fputc(ch, file_out);
-	 while(true)
-	 {
-	    if ((ch=fgetc(file_in))==EOF) return records;
-	    fputc(ch, file_out);
-	    if (ch=='\n') break;
-	 }
-      } else break;
-   }
-
-      // No more comments allowed. If we encounter a comment, we will
-      // assume, that the record is over (it's impossible to add '\' after
-      // a comment after all).
-   while(true)
-   {
-      GUTF8String term;
-      bool end_of_rec=false;
-      while(true)
-      {
-	 if (ch=='"')
-	 {
-	    term+=ch;
-	    while(true)
-	    {
-	       if ((ch=fgetc(file_in))==EOF) G_THROW("Unexpected EOF.");
-	       term+=ch;
-	       if (ch=='"') break;
-	       else if (ch=='\n')
-	       {
-		  end_of_rec=true;
-		  break;
-	       }
-	    }
-	 } else if (ch=='\\')
-	 {
-	    if ((ch=fgetc(file_in))==EOF) G_THROW("Unexpected EOF.");
-	    if (ch=='\n') break;
-	    else G_THROW("Malformed file.");
-	 } else if (ch=='#')
-	 {
-	    while((ch=fgetc(file_in))!=EOF && ch!='\n');
-	    end_of_rec=true;
-	 } else if (ch=='\n') end_of_rec=true;
-	 else if (isspace(ch)) break;
-	 else term+=ch;
-	 if (end_of_rec) break;
-	 if ((ch=fgetc(file_in))==EOF) break;
-      }
-
-      records.resize(records.size());
-      records[records.size()-1]=term;
-
-      if (end_of_rec) break;
-      
-	 // Skip white spaces
-      while(true)
-      {
-	 if ((ch=fgetc(file_in))==EOF) return records;
-
-	 if (ch=='#')
-	 {
-	    while((ch=fgetc(file_in))!=EOF && ch!='\n');
-	    return records;
-	 } else if (ch=='\\')
-	 {
-	    if ((ch=fgetc(file_in))==EOF) G_THROW("Unexpected EOF.");
-	    if (ch!='\n') G_THROW("EOL expected.");
-	 } else if (ch=='\n') return records;
-	 else if (!isspace(ch)) break;
-      }
-   }
-   return records;
+  GArray<char> buf;
+  int state = 0;
+  bool escape = false;
+  int c;
+  int pos = 0;
+  while ((c = fgetc(f)) != EOF)
+    {
+      buf.touch(pos);
+      buf[pos++] = c;
+      if (escape)
+        escape = false;
+      else if ((c=='\\') && (state!='#')) 
+        escape = true;
+      else if ((c=='\'' || c=='\"') && (state==0))
+        state = c;
+      else if ((c==state) && (state=='\'' || state=='\"'))
+        state = 0;
+      else if ((c=='\n') && (state=='#' || state==0))
+        break;
+    }
+  return GUTF8String((char*)buf, pos);
 }
 
-bool
-fixMimeTypes(const char * name_in, const char * name_out)
-      // The function will scan file 'name_in' with MIME types description
-      // and will output possibly corrected data into name_out
-      // If smth has been changed, TRUE will be returned. and 'name_out'
-      // file will be preserved. Otherwise it will be destroyed and
-      // FALSE will be returned.
+static int
+readFile(FILE *f, GList<GUTF8String> &fdata)
 {
-   typedef const char * string;
-   const int mime_types=8;
-   const int mime_fields=3;
-   static string mime_type[mime_types][mime_fields]=
-   {
-      { "type=image/x-djvu", "exts=\"djvu,djv\"", "desc=\"DjVu File\"" },
-      { "type=image/x.djvu", "exts=\"\"", "desc=\"DjVu File\"" },
-      { "type=image/djvu", "exts=\"\"", "desc=\"DjVu File\"" },
-      { "type=image/dejavu", "exts=\"\"", "desc=\"DjVu File (obsolete mime type)\"" },
-      { "type=image/x-dejavu", "exts=\"\"", "desc=\"DjVu File (obsolete mime type)\"" },
-      { "type=image/x-iw44", "exts=\"iw44,iw4\"", "desc=\"DjVu File (obsolete mime type)\"" },
-      { "type=image/x-jb2", "exts=\"\"", "desc=\"DjVu File (obsolete mime type)\"" },
-      { "type=image/jb2", "exts=\"\"", "desc=\"DjVu File (obsolete mime type)\"" }
-   };
-   const char title[]="#--Netscape Communications Corporation MIME Information\n";
+  int lines = 0;
+  fdata.empty();
+  while (!feof(f)) {
+    fdata.append(readRecord(f));
+    lines += 1;
+  }
+  return lines;
+}
 
-   FILE * file_in=0, * file_out=0;
-   G_TRY {
-      file_in=fopen(name_in, "r");
-      if (!file_in)
-      {
-	    // The ~/.mime.types doesn't exist => create it
-	 FILE * f=fopen(name_out, "w");
-	 fprintf(f, "%s", title);
-	 for(int type_num=0;type_num<mime_types;type_num++)
-	 {
-	    for(int field_num=0;field_num<mime_fields;field_num++)
-	       fprintf(f, "%s ", mime_type[type_num][field_num]);
-	    fprintf(f, "\n");
-	 }
-	 fclose(f);
-	 return true;
-      }
+static void
+writeFile(FILE *f, GList<GUTF8String> &fdata)
+{
+  for (GPosition pos=fdata; pos; ++pos)
+    fprintf(f,"%s",(const char*)fdata[pos]);
+}
 
-	 // Fine. The input file exist. Check that it has the correct
-	 // starting string and proceed...
-      file_out=fopen(name_out, "w");
+static bool
+line_is_djvu(const char *l)
+{
+  // skip spaces
+  while (isspace(*l))
+    l += 1;
+  // skip "type="
+  if (! strncmp(l,"type=", 5))
+    l += 5;
+  // require "image/"
+  if (strncmp(l,"image/", 6))
+    return false;
+  l += 6;
+  // skip vnd and x prefixes
+  if (! strncmp(l, "vnd.", 4))
+    l += 4;
+  else if (! strncmp(l, "x.", 2))
+    l += 2;
+  else if (! strncmp(l, "x-", 2))
+    l += 2;
+  // require djvu, dejavu, iw44 or jb2
+  if (! strncmp(l, "djvu", 4))
+    l += 4;
+  else if (! strncmp(l, "dejavu", 6))
+    l += 6;
+  else if (! strncmp(l, "iw44", 4))
+    l += 4;
+  else if (! strncmp(l, "jb2", 3))
+    l += 3;
+  else
+    return false;
+  // check remaining char
+  if (*l==0 || *l==';' || isspace(*l))
+    return true;
+  return false;
+}
 
-      bool done=false;
-	 
-      char buffer[1024];
-      fgets(buffer, 1024, file_in);
-      if (strcmp(buffer, title))
-      {
-	 done=true;
-	 fprintf(file_out, "%s", title);
-      }
-      fseek(file_in, 0, SEEK_SET);
+static bool
+line_contains(const char *l, const char *s)
+{
+  int n = strlen(s);
+  while (*l)
+    {
+      if (*l == *s)
+        if (! strncmp(l,s,n))
+          return true;
+      l += 1;
+    }
+  return false;
+}
 
-      bool has_type[mime_types]={ 0, 0, 0, 0, 0, 0, 0, 0 };
-      DArray<GUTF8String> records;
-      while((records=getRecords(file_in, file_out)).size())
-      {
-	 GUTF8String term=records[0];
-	 DEBUG_MSG("records=" << records.size() << ", [0]='" << term << "'\n");
-	 int type_num;
-	 for(type_num=0;type_num<mime_types;type_num++)
-	    if (term==mime_type[type_num][0]) break;
-	 if (type_num<mime_types)
-	 {
-	       // One of our MIME types
-	    has_type[type_num]=true;
-	    bool has_field[mime_fields]={ 0, 0, 0 };
-	    for(int i=0;i<records.size();i++)
-	    {
-	       GUTF8String term=records[i];
-	       const char * ptr;
-	       for(ptr=term;*ptr;ptr++)
-		  if (*ptr=='=') break;
-	       if (*ptr=='=')
-	       {
-		  int symbols=ptr-term+1;
-		  int field_num;
-		  for(field_num=0;field_num<mime_fields;field_num++)
-		     if (!strncmp(mime_type[type_num][field_num], term, symbols)) break;
-		  if (field_num<mime_fields)
-		  {
-		     if (strcmp(mime_type[type_num][field_num], term)) done=true;
-		     if (!has_field[field_num])
-		     {
-			has_field[field_num]=true;
-			fprintf(file_out, "%s ", mime_type[type_num][field_num]);
-		     }
-		     continue;
-		  }
-	       }
-	       fprintf(file_out, "%s ", (const char *) term);
-	    }
-	    for(int field_num=0;field_num<mime_fields;field_num++)
-	       if (!has_field[field_num])
-	       {
-		  done=true;
-		  fprintf(file_out, "%s ", mime_type[type_num][field_num]);
-	       }
-	 } else
-	 {
-	       // Not our MIME type
-	    for(int i=0;i<records.size();i++)
-	       fprintf(file_out, "%s ", (const char *) records[i]);
-	 }
-	 fprintf(file_out, "\n");
-      } // while(getRecords())
+static bool
+line_is_ns_comment(const char *l)
+{
+  while (isspace(*l))
+    l += 1;
+  if (l[0]=='#' && line_contains(l,"Netscape Helper"))
+    return true;
+  return false;
+}
 
-      for(int type_num=0;type_num<mime_types;type_num++)
-	 if (!has_type[type_num])
-	 {
-	    done=true;
-	    for(int field_num=0;field_num<mime_fields;field_num++)
-	       fprintf(file_out, "%s ", mime_type[type_num][field_num]);
-	    fprintf(file_out, "\n");
-	 }
+static bool
+line_matches(const char *l, const char *m)
+{
+  while (isspace(*l) || (l[0]=='\\' && isspace(l[1])))
+    l += 1;
+  while (isspace(*m))
+    m += 1;
+  while (*m && *l)
+    {
+      if (isspace(*m) && (isspace(*l) || (l[0]=='\\' && isspace(l[1]))))
+        {
+          while (isspace(*l) || (l[0]=='\\' && isspace(l[1])))
+            l += 1;
+          while (isspace(*m))
+            m += 1;
+        }
+      else if (*l != *m)
+        return false;
+      l += 1;
+      m += 1;
+    }
+  while (isspace(*l) || (l[0]=='\\' && isspace(l[1])))
+    l += 1;
+  while (isspace(*m))
+    m += 1;
+  if (*m || *l)
+    return false;
+  return true;
+}
 
-      fclose(file_in);
-      fclose(file_out);
+bool 
+FixMailCap(bool really=false)
+{
+  bool modified = false;
+  // Locate home directory
+  const char *home = getenv("HOME");
+  if (! home)
+    return modified;
+  // Locate mailcap file
+  GUTF8String fname = GUTF8String(home) + "/.mailcap";
+  FILE *f = fopen((const char*)fname, "r");
+  if (! f)
+    return modified;
+  // Read mailcap file
+  GList<GUTF8String> fdata;
+  readFile(f, fdata);
+  fclose(f);
+  // Eliminate dubious records
+  bool again = true;
+  while (again)
+    {
+      again = false;
+      bool previous_line_is_comment = false;
+      for (GPosition pos = fdata; pos; ++pos)
+        {
+          bool zap = false;
+          const char *l = (const char*) fdata[pos];
+          if (line_is_ns_comment(l))
+            {
+              zap = previous_line_is_comment;
+              previous_line_is_comment = true;
+            }
+          else
+            {
+              previous_line_is_comment = false;
+              if (line_is_djvu(l))
+                if (! line_contains(l, "x-mozilla-flags=plugin:DjVu 3.5"))
+                  zap = true;
+            }
+          if (zap)
+            {
+              again = modified = true;
+              fdata.del(pos);
+              break;
+            }
+        }
+    }
+  // Save
+  if (modified && really)
+    {
+      FILE *out = fopen((const char*)fname, "w");
+      writeFile(out, fdata);
+      fclose(out);
+    }
+  // Return modified
+  return modified;
+}
 
-      if (!done) unlink(name_out);
-      return done;
-   } G_CATCH(exc) {
-      if (file_in) fclose(file_in);
-      if (file_out) fclose(file_out);
-      unlink(name_out);
-      exc.get_line();
-   } G_ENDCATCH;
-   return false;
+
+static const char *ns_comment = "#mime types added by Netscape Helper";
+
+static const char *mime_types[] = {
+  "type=image/x.djvu desc=\"DjVu File\"",
+  "type=image/x-djvu desc=\"DjVu File\" exts=\"djvu,djv\"",
+  "type=image/x-dejavu desc=\"DjVu File (obsolete mime type)\"",
+  "type=image/x-iw44 desc=\"DjVu File (obsolete mime type)\" exts=\"iw44,iw4\"",
+  "type=image/djvu desc=\"DjVu File\"",
+};
+
+#define N_MIME_TYPES ((int)(sizeof(mime_types)/sizeof(mime_types[0])))
+
+bool 
+FixMimeTypes(bool really)
+{
+  bool modified = false;
+  // Locate home directory
+  const char *home = getenv("HOME");
+  if (! home)
+    return modified;
+  // Locate mailcap file
+  GUTF8String fname = GUTF8String(home) + "/.mime.types";
+  FILE *f = fopen((const char*)fname, "r");
+  // Read mailcap file
+  GList<GUTF8String> fdata;
+  if (f) {
+    readFile(f, fdata);
+    fclose(f);
+  }
+  // Initialize array of observed entries
+  int i;
+  bool seen[N_MIME_TYPES];
+  for(i=0; i<N_MIME_TYPES; i++)
+    seen[i] = false;
+  // Eliminate dubious records
+  bool again = true;
+  while (again)
+    {
+      again = false;
+      bool previous_line_is_comment = false;
+      for (GPosition pos = fdata; pos; ++pos)
+        {
+          bool zap = false;
+          const char *l = (const char*) fdata[pos];
+          if (line_is_ns_comment(l)) 
+            {
+              zap = previous_line_is_comment;
+              previous_line_is_comment = true;
+            } 
+          else
+            {
+              previous_line_is_comment = false;
+              if (line_is_djvu(l))
+                {
+                  for (i=0; i<N_MIME_TYPES; i++)
+                    if (line_matches(l, mime_types[i]))
+                      break;
+                  if (i<N_MIME_TYPES)
+                    seen[i] = true;
+                  else
+                    zap = true;
+                }
+            }
+          if (zap)
+            {
+              again = modified = true;
+              fdata.del(pos);
+              break;
+            }
+        }
+    }
+  // Check that all required lines are present
+  for (i=0; i<N_MIME_TYPES; i++)
+    if (! seen[i])
+      modified = true;
+  // Save
+  if (modified && really)
+    {
+      FILE *out = fopen((const char*)fname, "w");
+      writeFile(out, fdata);
+      for (i=0; i<N_MIME_TYPES; i++)
+        if (! seen[i])
+          fprintf(out, "%s\n%s\n", ns_comment, mime_types[i]);
+      fclose(out);
+    }
+  // Return
+  return modified;
 }

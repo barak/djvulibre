@@ -44,11 +44,8 @@
 #pragma interface
 #endif
 
-
-void
-checkMimeTypes(void);
-
-void
-fixMimeTypes(void);
+void checkMime(void);
+void fixMime(void);
+void fixPlugins(void);
 
 #endif

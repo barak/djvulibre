@@ -59,8 +59,7 @@ public:
    bool		dontCheck(void) const;
    
       // Mode comes in DjVuAnno format
-   QDMimeDialog(const QString & mime_fname, QWidget * parent=0,
-		const char * name=0, bool modal=FALSE);
+   QDMimeDialog(QWidget * parent=0, const char *name=0, bool modal=FALSE);
    ~QDMimeDialog(void) {};
 };
 

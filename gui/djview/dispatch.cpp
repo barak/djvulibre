@@ -450,7 +450,7 @@ AttachWindow(void)
 #endif
                    // Initialize Qt
                    InitializeQT(argc, argv);
-                   checkMimeTypes();
+                   checkMime();
 
                    // Close display
                    XCloseDisplay(displ);

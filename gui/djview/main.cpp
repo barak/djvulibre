@@ -178,6 +178,7 @@ ShowUsage(void)
           "	-debug[=<level>]        - print debug information\n"
 #endif
 #endif
+          "     -fix                    - fix configuration of Netscape helpers\n"
           );
 }
       
@@ -238,10 +239,10 @@ main(int argc, char ** argv)
           ShowUsage();
           exit(0);
         }
-      else if (!strcmp(argv[i],"-fix_mime_types") ||
-               !strcmp(argv[i],"-fix-mime-types") )
+      else if (!strncmp(argv[i],"-fix", 4))
         {
-          fixMimeTypes();
+          fixMime();
+          fixPlugins();
           exit(0);
         }
       else if (!strcmp(argv[i],"-netscape"))
