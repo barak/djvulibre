@@ -95,6 +95,7 @@ fprintdate(FILE *f, const char *fmt, const time_t *tim)
   strftime(ctim, sizeof(ctim)-1, "%a, %d %b %Y %H:%M:%S GMT", ttim);
   fprintf(stdout, fmt, ctim);
 #else
+  struct tm *ttim = gmtime(tim);
   fprintf(stdout,fmt, asctime(ttim));
 #endif
 }
