@@ -1,10 +1,16 @@
 #!/bin/sh
 
-
-# Base
 DESTDIR=
 srcdir=.
-datadir="/usr/share"
+
+datadir=/usr/share
+for arg ; do
+  case "$arg" in
+      --datadir=*)
+	  datadir=`echo "$arg" | sed -e 's/^[^=]*=//'` ;;
+  esac
+done
+
 applications="$datadir/applications"
 icons="$datadir/icons"
 pixmaps="$datadir/pixmaps"
@@ -12,33 +18,39 @@ mime_info="$datadir/mime-info"
 application_registry="$datadir/application-registry"
 applnk="$datadir/applnk"
 mimelnk="$datadir/mimelnk"
-menutype=applnk
-onlyexistingdirs=no
+menus=applnk
 dryrun=no
 
 # Autodetect
 
 desktop_file_install=`which desktop-file-install 2>/dev/null`
 if [ -x "$desktop_file_install" ] ; then
-    menutype=redhat
-elif [ x${XDG_CONFIG_DIRS} != x ] ; then
-    menudtype=xdg
+    menus=redhat
+elif [ -n "${XDG_CONFIG_DIRS}" ] ; then
+    menus=xdg
 elif [ -r /etc/xdg/menus/applications.menu ] ; then
-    menutype=xdg
+    menus=xdg
 fi
 
 kdeconfig=`which kde-config 2>/dev/null`
-if [ -x "$kdeconfig" ]
-then
+if [ -x "$kdeconfig" ] ; then
     d=`$kdeconfig --path mime | sed -e 's/^.*://g'`
     test -d "$d" && dir_mimelnk="$d"
     d=`$kdeconfig --path apps | sed -e 's/^.*://g'`
     test -d "$d" && dir_applnk="$d"
 fi
 
+test -d "$applications"         || applications=no
+test -d "$icons"                || icons=no
+test -d "$pixmaps"              || pixmaps=no
+test -d "$mime_info"            || mime_info=no
+test -d "$application_registry" || application_registry=no
+test -d "$applnk"               || applnk=no
+test -d "$mimelnk"              || mimelnk=no
+
 # Arguments
-for arg
-do
+
+for arg ; do
   case "$arg" in
       --destdir=*)
 	  DESTDIR=`echo "$arg" | sed -e 's/^[^=]*=//'` ;;
@@ -60,28 +72,25 @@ do
 	  applnk=`echo "$arg" | sed -e 's/^[^=]*=//'` ;;
       --mimelnk=*)
 	  mimelnk=`echo "$arg" | sed -e 's/^[^=]*=//'` ;;
-      --menutype=*)
-	  menutype=`echo "$arg" | sed -e 's/^[^=]*=//'` ;;
-      --onlyexistingdirs)
-	  onlyexistingdirs=yes ;;
+      --menus=*)
+	  menus=`echo "$arg" | sed -e 's/^[^=]*=//'` ;;
       --dryrun|-n)
 	  dryrun=yes ;;
       --help)
 cat >&2 <<EOF
 Usage: installer.sh [..options..]
 Valid options are:
-    --destdir=DIR (default: /)
-    --srcdir=DIR (default: .)
-    --datadir=DIR (default: $datadir)
-    --applications=DIR (default: $applications)
-    --icons=DIR (default: $icons)
-    --pixmaps=DIR (default: $pixmaps)
-    --mime_info=DIR (default: $mime_info)
-    --application_registry=DIR (default: $application_registry)
-    --applnk=DIR (default: $applnk)
-    --mimelnk=DIR (default: $mimelnk)
-    --menutype=(applnk|redhat|xdg)
-    --onlyexistingdirs
+    --destdir=DIR              (/)
+    --srcdir=DIR               (.)
+    --datadir=DIR              ($datadir)
+    --applications=DIR         ($applications)
+    --icons=DIR                ($icons)
+    --pixmaps=DIR              ($pixmaps)
+    --mime_info=DIR            ($mime_info)
+    --application_registry=DIR ($application_registry)
+    --applnk=DIR               ($applnk)
+    --mimelnk=DIR              ($mimelnk)
+    --menus=MODEL              ($menus)
 EOF
           exit 0 
 	  ;;
@@ -103,8 +112,7 @@ run()
 
 makedir()
 {
-    if [ ! -d $1 -a $onlyexistingdirs = no ]
-    then
+    if [ ! -d $1 ] ; then
 	makedir `dirname $1`
 	run mkdir $1
     fi
@@ -112,8 +120,7 @@ makedir()
 
 install()
 {
-    if [ -d `dirname $2` -a ! -d "$2" ]
-    then
+    if [ -d `dirname $2` -a ! -d "$2" ] ; then
 	test -f $2 && run rm -f $2
 	run cp $srcdir/$1 $2
 	run chmod 644 $2
@@ -122,23 +129,22 @@ install()
 
 # Fixup
 
-case "$menutype" in
+case "$menus" in
     redhat) 
-	test -x $desktop_file_install || menutype=xdg ;;
+	test -x $desktop_file_install || menus=xdg ;;
     applnk) 
 	;;
     xdg)    
 	;;
     *)
-	echo 1>&2 "$0: incorrect menutype (one of applnk,redhat,xdg)"
+	echo 1>&2 "$0: incorrect menus (one of applnk,redhat,xdg)"
 	exit 10
 	;;
 esac
 
 # Go
 
-if [ "$icons" != no ]
-then
+if [ "$icons" != no ] ; then
   makedir $DESTDIR$icons/hicolor/48x48/mimetypes
   makedir $DESTDIR$icons/hicolor/32x32/mimetypes
   makedir $DESTDIR$icons/hicolor/22x22/mimetypes
@@ -147,49 +153,42 @@ then
   install hi48-mimetype-djvu.png $DESTDIR$icons/hicolor/22x22/mimetypes/djvu.png
 fi
 
-if [ "$pixmaps" != no ]
-then
+if [ "$pixmaps" != no ] ; then
   makedir $DESTDIR$pixmaps
   install hi48-mimetype-djvu.png $DESTDIR$pixmaps/djvu.png
 fi
 
-if [ "$mime_info" != no ]
-then
+if [ "$mime_info" != no ] ; then
   makedir $DESTDIR$mime_info
   install djvu.mime $DESTDIR$mime_info/djvu.mime
   install djvu.keys $DESTDIR$mime_info/djvu.keys
 fi
 
-if [ "$application_registry" != no ]
-then
+if [ "$application_registry" != no ] ; then
   makedir $DESTDIR$application_registry
   install djvu.applications $DESTDIR$application_registry
 fi
 
-if [ "$mimelnk" != no ]
-then
+if [ "$mimelnk" != no ] ; then
   makedir $DESTDIR$mimelnk/image
   install x-djvu.desktop $DESTDIR$mimelnk/image/x-djvu.desktop
 fi
 
-case "$menutype" in
+case "$menus" in
     redhat)
-	if [ "$applications" != no ] 
-	then
+	if [ "$applications" != no ] ; then
  	  makedir $DESTDIR$applications
 	  run $desktop_file_install --vendor= --dir=$DESTDIR$applications djview.desktop
         fi
 	;;
     xdg)
-	if [ "$applications" != no ] 
-	then
+	if [ "$applications" != no ] ; then
 	  makedir $DESTDIR$applications
 	  install djview.desktop $DESTDIR$applications/djview.desktop
 	fi
 	;;
     applnk)
-	if [ "$applnk" != no ] 
-	then
+	if [ "$applnk" != no ] ; then
 	  makedir $DESTDIR$applnk/Graphics
 	  install djview.desktop $DESTDIR$applnk/Graphics/djview.desktop
 	fi
