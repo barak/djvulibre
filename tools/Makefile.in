@@ -58,7 +58,7 @@ CXXFLAGS = @CXXFLAGS@ ${CXXRPOFLAGS} ${FLAGS}
 PROGRAMS = bzz c44 cjb2 cpaldjvu csepdjvu \
 	   ddjvu djvm djvmcvt djvudump \
 	   djvups djvuextract djvumake \
-	   djvused djvutxt
+	   djvused djvutxt djvuserve
 
 all: ${PROGRAMS}
 
@@ -114,6 +114,7 @@ djvuextract: djvuextract.o
 djvumake: djvumake.o
 djvused: djvused.o
 djvutxt: djvutxt.o
+djvuserve: djvuserve.o
 
 @SHARED_NO@${PROGRAMS}: ${LIBDJVU_A}
 
