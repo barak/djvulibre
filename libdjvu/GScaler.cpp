@@ -52,7 +52,6 @@
 //C- +------------------------------------------------------------------
 // 
 // $Id$
-// $Name$
 
 #ifdef HAVE_CONFIG_H
 # include "config.h"
@@ -376,17 +375,15 @@ GBitmapScaler::get_line(int fy,
           const unsigned char *inp0 = botline + x;
           int sy1 = mini(line.height(), (1<<yshift));
           for (int sy=0; sy<sy1; sy++,inp0+=rowsize)
-            {
-              const unsigned char *inp1 = inp0;
-              int sx1 = mini(x+sw, line.xmax);
-              s += sx1 - x;
-              const unsigned char *inp2 = inp1 + sx1 - x;
-              while (inp1 < inp2)
-                {
-                  g += conv[*inp1];
-                  inp1++;
-                }
-            }
+	    {
+	      const unsigned char *inp1;
+	      const unsigned char *inp2 = inp0 + mini(x+sw, line.xmax) - x;
+	      for (inp1=inp0; inp1<inp2; inp1++)
+		{
+		  g += conv[*inp1];
+		  s += 1;
+		}
+	    }
           if (s == rnd+rnd)
             *p = (g+rnd)>>div;
           else
@@ -565,16 +562,14 @@ GPixmapScaler::get_line(int fy,
       int sy1 = mini(line.height(), (1<<yshift));
       for (int sy=0; sy<sy1; sy++,inp0+=rowsize)
         {
-          const GPixel *inp1 = inp0;
-          int sx1 = mini(x+sw, line.xmax);
-          s += sx1 - x;
-          const GPixel *inp2 = inp1 + sx1 - x;
-          while (inp2 < inp1)
+	  const GPixel *inp1;
+	  const GPixel *inp2 = inp0 + mini(x+sw, line.xmax) - x;
+          for (inp1 = inp0; inp1<inp2; inp1++)
             {
               r += inp1->r;  
               g += inp1->g;  
               b += inp1->b; 
-              inp1++;
+              s += 1;
             }
         }
       if (s == rnd+rnd)
