@@ -1,30 +1,35 @@
 
 
 
-PREREQUISITES
+1- PREREQUISITES
+================
+
+
+
+2- COMPILE
+==========
+
+
+2.1- CONFIGURE
 -------------
 
 
+2.2- MAKE
+---------
+
+
+2.2- INSTALL
+---------
 
 
 
 
-CONFIGURATION
--------------
+3- PLUGIN ISSUES
+================
 
 
-
-
-COMPILATION & INSTALLATION
---------------------------
-
-
-
-
-
-
-USING THE DJVU PLUGIN WITH NETSCAPE 4.7
----------------------------------------
+3.1- NETSCAPE 4.7
+-----------------
 
 
 The DjVu netscape plugin is a shared library which runs program djview
@@ -36,8 +41,7 @@ Therefore, unless you specified a different prefix to the configure program,
 the shared library is installed in /usr/local/lib/netscape/plugins.  This is a
 good thing since Netscape 4 always searches this directory for plugins.
 
-
-DISABLING PREVIOUS VERSIONS OF THE DJVU PLUGIN
+3.1.1- DISABLING PREVIOUS VERSIONS OF THE DJVU PLUGIN
 
 You might have however to first disable any previous version of the plugin.
 Selecting menu "Help->About Plugins" in Netscape displays the current list of
@@ -54,8 +58,7 @@ corresponding "netscape" or ".netscape" directory.  Note that "nsdejavu.so"
 and "DjVu" are often symbolic links to the actual installation directory.
 Removing the symbolic links is sufficient to disable the plugin.
 
-
-ALTERNATIVE PLUGIN INSTALLATION STRATEGIES
+3.1.2- ALTERNATIVE PLUGIN INSTALLATION STRATEGIES
 
 More complicated cases can be dealt using one of the following strategies.
 
@@ -82,9 +85,8 @@ are explained in the README file that usually comes with the netscape
 distribution.
 
 
-
-USING THE DJVU PLUGIN WITH NETSCAPE 6.1
----------------------------------------
+3.2- NETSCAPE 6.1
+-----------------
 
 It seems that netscape 6 only recognize plugins installed inside its own
 plugin directory.  This can be done using a symbolic link.  Let us assume that
@@ -97,9 +99,8 @@ installed in /usr/local/lib/netscape/plugins.
 You can then run Netscape 6.1 and view DjVu images.
 
 
-
-USING THE DJVU PLUGIN WITH KONQUEROR
-------------------------------------
+3.3- KONQUEROR-2.2
+------------------
 
 The DjVu plugin works decently with the konqueror web browser.  There are some
 problems with embedded DjVu images.  You need KDE-2.2 or better for that.
@@ -112,8 +113,14 @@ should display a list of recognized plugins.  Check that "nsdejavu.so" appears
 there.  You should now be able to use DjVu with Konqueror.
 
 
-
-USING THE DJVU PLUGIN WITH MOZILLA
-----------------------------------
+3.4- MOZILLA
+------------
 
 I was not even able to launch mozilla on my rh7.1+ box.
+
+
+
+
+4- MAKING RPMS
+==============
+
