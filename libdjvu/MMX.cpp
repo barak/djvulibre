@@ -149,9 +149,9 @@ MMXControl::enable_mmx()
                     // Execute CPUID
                     "movl $1,%%eax\n\t"
                     "cpuid\n"
-                    "1:\tmovl %%edx, %0\n\t"
                     // EBX contains magic when -fPIC is on.
-                    "popl %%ebx"
+		    "1:\tpopl %%ebx\n\t"
+                    "movl %%edx, %0"
                     : "=m" (cpuflags) :
                     : "eax","ebx","ecx","edx");
 #endif
