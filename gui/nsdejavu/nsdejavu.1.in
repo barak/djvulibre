@@ -19,7 +19,7 @@
 .\" You should have received a copy of the GNU General Public
 .\" License along with this manual. Otherwise check the web site
 .\" of the Free Software Foundation at http://www.fsf.org.
-.TH NSDEJAVU 1 "10/11/2001" "DjVuLibre-3.5" "DjVuLibre-3.5"
+.TH NSDEJAVU 1 "10/19/2002" "DjVuLibre-3.5" "DjVuLibre-3.5"
 .de SS
 .SH \\0\\0\\0\\$*
 ..
@@ -65,12 +65,18 @@ is in fact a DjVu document.
 Web server normally provide a 
 .SM MIME 
 type to web browsers.  
-The MIME type for DjVu documents is
+The official MIME type for DjVu documents is
+.BR image/vnd.djvu .
+For compatibility with ancient versions of the 
+DjVu viewer, it is common to use instead the
+experimental MIME type
 .BR image/x-djvu .
-Web servers should be configured to send the proper information for 
-DjVu documents. See the DjVu tutorial for more information (
+Web servers should be configured to send the proper 
+MIME type for DjVu documents. See the DjVu tutorial 
+for more information (
 .B http://www.djvuzone.org/support/tutorial/ 
-).  Most web browsers also recognize files ending with
+).  
+Most web browsers also recognize files ending with
 .B .djvu
 or
 .B .djv 
