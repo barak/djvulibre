@@ -1181,6 +1181,7 @@ QDViewer::predecode(void)
 void
 QDViewer::checkWMProps(void)
 {
+   if (!in_netscape) return;
    DEBUG_MSG("QDViewer::checkWMProps(): searching for DjVu properties\n");
 #ifdef UNIX
    Display * displ=x11Display();
