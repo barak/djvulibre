@@ -204,7 +204,7 @@ void
 QDViewerShell::about(void)
 {
    QeDialog * d=new QeDialog(this, "about", TRUE);
-   d->setCaption(tr("About DjVu"));
+   d->setCaption(tr("About DjView"));
 
    QWidget * start=d->startWidget();
    
@@ -216,15 +216,15 @@ QDViewerShell::about(void)
    vlay->addWidget(frame);
    QVBoxLayout * frame_vlay=new QVBoxLayout(frame, 20, 10);
 
-   label=new QeLabel(tr("LizardTech DjVu(tm) standalone viewer"), frame);
+   label=new QeLabel(tr("DjVu(tm) standalone viewer"), frame);
    QFont font=label->font();
    font.setBold(TRUE);
-   font.setPointSize(font.pointSize()+5);
+   font.setPointSize(font.pointSize()+3);
    label->setFont(font);
    label->setAlignment(AlignCenter);
    frame_vlay->addWidget(label);
 
-   QString ver=tr("Version ")+DJVIEW_VERSION_STR;
+   QString ver=tr("Version DjVuLibre-")+DJVIEW_VERSION_STR;
    label=new QeLabel(ver, frame);
    label->setAlignment(AlignCenter);
    frame_vlay->addWidget(label);
