@@ -14,6 +14,10 @@ Source: http://prdownloads.sourceforge.net/djvu/djvulibre-%{version}.tar.gz
 BuildRoot: /var/tmp/djvulibre-root
 URL: http://djvu.sourceforge.net
 
+#These are RH specific:
+# Requires: qt, libstdc++
+# BuildRequires: qt-devel, libstdc++-devel
+
 %description 
 
 DjVu is a web-centric format and software platform for distributing documents
@@ -41,47 +45,43 @@ DjVulibre-3.5 contains:
 - An up-to-date version of the C++ DjVu Reference Library.
 
 %changelog
+* Wed Oct  9 2002 Leon Bottou <leonb@users.sourceforge.net> 3.5.9-2
+- fixed logic for uninstalling nsdejavu links.
+- copy stuff from the freshrpms spec file.
 * Sun Oct  6 2002 Leon Bottou <leonb@users.sourceforge.net> 3.5.9-1
-- version 3.5.9-1
-- added logic to 
+- added logic to install nsdejavu for mozilla.
 * Wed May 29 2002 Leon Bottou <leonb@users.sourceforge.net> 3.5.6-1
 - bumped to version 3.5.6-1
 * Mon Apr 1 2002  Leon Bottou <leonb@users.sourceforge.net> 3.5.5-2
-- bumped to version 3.5.5-2
 - changed group to Applications/Publishing
 * Tue Mar 25 2002 Leon Bottou <leonb@users.sourceforge.net> 3.5.5-2
-- bumped to version 3.5.5-2
 * Tue Jan 22 2002 Leon Bottou <leonb@users.sourceforge.net> 3.5.4-2
-- bumped to version 3.5.4-1.
 - fixed for properly locating the man directory.
-- bumped to version 3.5.4-2.
 * Wed Jan 16 2002 Leon Bottou <leonb@users.sourceforge.net> 3.5.3-1
-- bumped to version 3.5.3-1
 * Fri Dec  7 2001 Leon Bottou <leonb@users.sourceforge.net> 3.5.2-1
-- bumped to version 3.5.2-1.
 * Wed Dec  5 2001 Leon Bottou <leonb@users.sourceforge.net> 3.5.1-1
 - created spec file for rh7.x.
 
 %prep
-%setup
+%setup -q
 
 %build
-./configure --prefix=%{prefix} --mandir=%{mandir}
+%configure
 make
 
 %install
-rm -rf $RPM_BUILD_ROOT
-install -d $RPM_BUILD_ROOT
-make prefix="$RPM_BUILD_ROOT"%{prefix} \
-     mandir="$RPM_BUILD_ROOT"%{mandir} \
-     install
-mkdir "$RPM_BUILD_ROOT"%{prefix}/lib/mozilla
-mkdir "$RPM_BUILD_ROOT"%{prefix}/lib/mozilla/plugins
-( cd "$RPM_BUILD_ROOT"%{prefix}/lib/mozilla/plugins ; \
-  ln -s ../../netscape/plugins/nsdejavu.so . )
+rm -rf %{buildroot}
+%makeinstall
+# Install link for mozilla
+mkdir -p %{buildroot}%{_libdir}/mozilla/plugins
+ln -s ../../netscape/plugins/nsdejavu.so %{buildroot}%{_libdir}/mozilla/plugins/
+# Quick fix to stop ldconfig from complaining
+find %{buildroot}%{_libdir} -name "*.so*" -exec chmod 755 {} \;
+# Quick cleanup of the docs
+rm -rf doc/CVS 2>/dev/null || :
 
 %clean
-rm -rf $RPM_BUILD_ROOT
+rm -rf %{buildroot}
 
 %post 
 /sbin/ldconfig
