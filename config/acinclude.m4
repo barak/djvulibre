@@ -642,7 +642,11 @@ AC_DEFUN([AC_PATH_QT],
                      [where the Qt root is installed.]),
       [ test x$withval != xyes && QTDIR=$withval ])
   test x$no_x = xyes && QTDIR=no
-  # Resolve variables
+  # Check for the lib64 thing
+  lib=`basename "$libdir"`
+  case "$lib" in lib*) ;; *) lib="lib" ;; esac
+  if test $lib = "lib" ; then libs="lib" ; else libs="$lib lib" ; fi
+  # Standard qt directory
   ac_has_qt=no
   if test x$QTDIR != xno ; then
     AC_MSG_CHECKING([for Qt root directory])
@@ -652,12 +656,15 @@ AC_DEFUN([AC_PATH_QT],
        ac_userdef_qt=yes
        ac_has_qt="user defined QT_CFLAGS and QT_LIBS" # no questions asked
     else
-       ac_qt_dirs="/usr/lib/qt /usr/local /usr/X11R6 /usr"
-       for n in /usr/lib/qt-2.* ; do test -d $n && ac_qt_dirs="$n $ac_qt_dirs" ; done
-       test -d /usr/lib/qt2 && ac_qt_dirs="/usr/lib/qt2 $ac_qt_dirs"
-       for n in /usr/lib/qt-3.* ; do test -d $n && ac_qt_dirs="$n $ac_qt_dirs" ; done
-       test -d /usr/lib/qt3 && ac_qt_dirs="/usr/lib/qt3 $ac_qt_dirs"
-       test -d "$QTDIR" && ac_qt_dirs="$QTDIR $ac_qt_dirs"
+       ac_qt_dirs="/usr/local /usr/X11R6 /usr"
+       for lib in $libs ; do 
+         for n in /usr/$lib/qt* ; do
+           test -d $n && ac_qt_dirs="$n $ac_qt_dirs" ; 
+         done
+       done
+       if test -d "$QTDIR" ; then 
+         ac_qt_dirs="$QTDIR $ac_qt_dirs"
+       fi
        for dir in $ac_qt_dirs ; do
           if test -r $dir/include/qwidget.h ; then
             ac_has_qt=$dir
@@ -666,42 +673,33 @@ AC_DEFUN([AC_PATH_QT],
           fi
        done
     fi
-    # Unusual install: bsd style
+    # Unusual install
     if test "x$ac_has_qt" = xno ; then
       ac_qt_names="qt3 qt2 qt"
       ac_qt_dirs="$QTDIR $prefix /sw /usr /usr/X11R6 /usr/local"
       for d in $ac_qt_dirs ; do
         for n in $ac_qt_names ; do
           if test -r $d/include/$n/qwidget.h ; then
+            for lib in $libs ; do
               for l in lib$n.so lib$n-mt.so lib$n-mt.dylib lib$n.a lib$n-mt.a ; do
-                  if test -r $d/lib/$l ; then
+                  if test -r $d/$lib/$l ; then
                       QT_CFLAGS="-I$d/include/$n"
-                      QT_LIBS="-L$d/lib -l$n"
+                      QT_LIBS="-L$d/$lib -l$n"
                       QTDIR=$d
-                      ac_has_qt="non standard Qt install"
+                      ac_has_qt="bsd-style Qt install"
                       break 3
                   fi
               done
-          fi
-        done
-      done
-    fi
-    # Unusual install: debian style
-    if test "x$ac_has_qt" = xno ; then
-      ac_qt_names="qt3 qt2 qt"
-      ac_qt_dirs="$QTDIR $prefix /sw /usr /usr/X11R6 /usr/local"
-      for d in $ac_qt_dirs ; do
-        for n in $ac_qt_names ; do
-          if test -r $d/include/$n/qwidget.h ; then
               for l in libqt.so libqt-mt.so libqt-mt.dylib libqt.a libqt-mt.a; do
-                  if test -r $d/lib/$l ; then
+                  if test -r $d/$lib/$l ; then
                       QT_CFLAGS="-I$d/include/$n"
-                      QT_LIBS="-L$d/lib -lqt"
+                      QT_LIBS="-L$d/$lib -lqt"
                       QTDIR=$d
-                      ac_has_qt="non standard Qt install"
+                      ac_has_qt="debian-style Qt install"
                       break 3
                   fi
               done
+            done
           fi
         done
       done
@@ -712,8 +710,16 @@ AC_DEFUN([AC_PATH_QT],
   # Programs
   if test "x$ac_has_qt" != xno ; then
     if test "x$ac_userdef_qt" != xyes ; then
-        test x${QT_CFLAGS+set} != xset && QT_CFLAGS="-I$QTDIR/include"
-        test x${QT_LIBS+set} != xset && QT_LIBS="-L$QTDIR/lib -lqt"
+        if test x${QT_CFLAGS+set} != xset ; then
+           QT_CFLAGS="-I$QTDIR/include"
+        fi
+        if test x${QT_LIBS+set} != xset ; then
+           if test -d $QTDIR/$lib ; then
+             QT_LIBS="-L$QTDIR/$lib -lqt"
+           else
+             QT_LIBS="-L$QTDIR/lib -lqt"
+           fi
+        fi
         # KDE-3.0 styles require qt-mt even in non KDE applications. 
         # Bero dixit. See kde bug #40823.
         qt_libdir=
