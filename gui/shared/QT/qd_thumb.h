@@ -82,37 +82,27 @@ private:
    public:
       int		page;
       GP<DataPool>	pool;
-      Pending(int _page, const GP<DataPool> & _pool) :
-	    page(_page), pool(_pool) {}
+      Pending(int _page, const GP<DataPool> & _pool) 
+        : page(_page), pool(_pool) {}
    };
    GP<DjVuDocument>	doc;
    QDPort		port;
    QDMessenger		messenger;
-   class QPopupMenu	* popup_menu;
-   int			popup_menu_id;
-
    bool			need_rescan;
-
    GArray<QPixmap>	pixmaps_arr;
    GList<int>		pixmaps_list;
-
    GPList<Pending>	pending_list;
 
    QCursor	normalCursor;
-
    bool		fast_mode;
    int		cur_page_num;
-
    bool         rowMajor;
    int          min_list_width;
    int          max_list_width;
    
    QPixmap	getImage(int page_num, int width, int height);
-   void		processCommand(int cmd);
-
    static void	trigger_cb(void * cl_data);
 private slots:
-   void		slotPopup(int);
    void		slotNotifyFileFlagsChanged(const GP<DjVuFile> & source,
 					   long set_mask, long clr_mask);
    void		slotNotifyDocFlagsChanged(const GP<DjVuDocument> & source,
@@ -121,7 +111,6 @@ private slots:
    void         slotGotoPage(QListBoxItem *);
 protected:
    virtual void	resizeEvent(QResizeEvent * ev);
-   virtual void	mousePressEvent(QMouseEvent * ev);
    virtual void	dataSet(int page_num, const TArray<char> & data) {}
    void		setData(int page_num, const TArray<char> & data);
    bool		getDataForPage(int page_num);

@@ -290,11 +290,11 @@ main(int argc, char ** argv)
               url.add_djvu_cgi_argument("PAGE", GUTF8String(page_num));
             }
           shell->openURL(url);
+          
+          if (full_screen && !shell->isFullScreen())
+            shell->slotToggleFullScreen();
         }
-    
-      if (full_screen && !shell->isFullScreen())
-        shell->slotToggleFullScreen();
-
+      
       qApp->connect( qApp, SIGNAL(lastWindowClosed()), qApp, SLOT(quit()) );
       rc = qApp->exec();
     }

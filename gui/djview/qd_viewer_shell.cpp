@@ -515,11 +515,16 @@ QDViewerShell::QDViewerShell(QWidget * parent, const char * name)
    QPopupMenu * nav_pane=new QPopupMenu(this);
    nav_pane->insertItem(tr("&Next Page"), IDC_NAV_NEXT_PAGE);
    nav_pane->insertItem(tr("&Previous Page"), IDC_NAV_PREV_PAGE);
+#if 0
    nav_pane->insertItem(tr("&+10 Pages"), IDC_NAV_NEXT_PAGE10);
    nav_pane->insertItem(tr("&-10 Pages"), IDC_NAV_PREV_PAGE10);
+#endif
    nav_pane->insertItem(tr("&First Page"), IDC_NAV_FIRST_PAGE);
    nav_pane->insertItem(tr("&Last Page"), IDC_NAV_LAST_PAGE);
    nav_pane->insertItem(tr("&Goto Page..."), IDC_NAV_GOTO_PAGE);
+   nav_pane->insertSeparator();
+   nav_pane->insertItem(tr("&Back"), IDC_HISTORY_BACK);
+   nav_pane->insertItem(tr("&Forward"), IDC_HISTORY_FORW);
    connect(nav_pane, SIGNAL(aboutToShow(void)), this, SLOT(slotAboutToShowMenu(void)));
    connect(nav_pane, SIGNAL(activated(int)), this, SLOT(slotMenuCB(int)));
    menu->insertItem(tr("&Navigate"), nav_pane, IDC_NAVIGATE);
@@ -528,6 +533,7 @@ QDViewerShell::QDViewerShell(QWidget * parent, const char * name)
    info_pane->insertItem(tr("&Page Information"), IDC_ABOUT_PAGE);
    info_pane->insertItem(tr("&Document Information"), IDC_ABOUT_DOC);
    info_pane->insertItem(tr("Show &Thumbnails"), IDC_THUMB_SHOW);
+   info_pane->insertItem(tr("Show &Bookmarks"), IDC_BOOKMARKS_SHOW);
    connect(info_pane, SIGNAL(aboutToShow(void)), this, SLOT(slotAboutToShowMenu(void)));
    connect(info_pane, SIGNAL(activated(int)), this, SLOT(slotMenuCB(int)));
    menu->insertItem(tr("&Info"), info_pane, IDC_INFO);

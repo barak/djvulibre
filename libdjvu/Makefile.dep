@@ -43,9 +43,6 @@ DjVuDumpHelper.o: DjVuDumpHelper.cpp ../config.h DjVuDumpHelper.h \
   GSmartPointer.h DjVuGlobal.h DataPool.h GThreads.h GException.h \
   GString.h GContainer.h GURL.h Arrays.h DjVmDir.h DjVuInfo.h GRect.h \
   IFFByteStream.h ByteStream.h
-DjVuDynamic.o: DjVuDynamic.cpp ../config.h GException.h DjVuGlobal.h \
-  DjVuDynamic.h GString.h GContainer.h GSmartPointer.h GURL.h Arrays.h \
-  GThreads.h
 DjVuErrorList.o: DjVuErrorList.cpp ../config.h DjVuErrorList.h DjVuPort.h \
   GThreads.h DjVuGlobal.h GException.h GURL.h GString.h GContainer.h \
   GSmartPointer.h Arrays.h DjVmDoc.h DjVmDir.h GOS.h DataPool.h

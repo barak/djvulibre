@@ -126,8 +126,6 @@ QDViewer::createPopupMenu(void)
    rot_pane->insertItem(tr("Right side down"), IDC_ROTATE_270);
    popup_menu->insertItem(tr("&Rotation"), rot_pane, IDC_ROTATE);
 
-   popup_menu->insertSeparator();
-
    QPopupMenu * nav_pane=new QPopupMenu(this, "nav_pane");
    connect(nav_pane, SIGNAL(activated(int)), 
            popup_menu, SIGNAL(activated(int)));
@@ -136,15 +134,11 @@ QDViewer::createPopupMenu(void)
    nav_pane->insertItem(tr("&First Page"), IDC_NAV_FIRST_PAGE);
    nav_pane->insertItem(tr("&Last Page"), IDC_NAV_LAST_PAGE);
    nav_pane->insertItem(tr("&Goto Page..."), IDC_NAV_GOTO_PAGE);
+   nav_pane->insertSeparator();
+   nav_pane->insertItem(tr("&Back"), IDC_HISTORY_BACK);
+   nav_pane->insertItem(tr("&Forward"), IDC_HISTORY_FORW);
    popup_menu->insertItem(tr("&Navigate"), nav_pane, IDC_NAVIGATE);
-
-   QPopupMenu * hist_pane=new QPopupMenu(this, "hist_pane");
-   connect(hist_pane, SIGNAL(activated(int)), 
-           popup_menu, SIGNAL(activated(int)));
-   hist_pane->insertItem(tr("&Back"), IDC_HISTORY_BACK);
-   hist_pane->insertItem(tr("&Forward"), IDC_HISTORY_FORW);
-   popup_menu->insertItem(tr("&History"), hist_pane, IDC_HISTORY);
-
+   
    popup_menu->insertSeparator();
 
    popup_menu->setCheckable(TRUE);
@@ -190,7 +184,8 @@ QDViewer::setupMenu(QMenuData * menu)
 	 menu->setItemEnabled(IDC_PREFERENCES, TRUE);
       if (menu->findItem(IDC_HELP_DEJAVU))
 	 menu->setItemEnabled(IDC_HELP_DEJAVU, TRUE);
-   } else
+   } 
+   else
    {
 	 // Enable everything
       setItemsEnabled(menu, TRUE);
@@ -267,10 +262,7 @@ QDViewer::setupMenu(QMenuData * menu)
           menu->setItemEnabled(IDC_NAV_FIRST_PAGE, doc_page>0);
           menu->setItemEnabled(IDC_NAV_LAST_PAGE, doc_page!=doc_pages-1);
           menu->setItemEnabled(IDC_NAV_GOTO_PAGE, doc_pages>1);
-        }
 
-      if (menu->findItem(IDC_HISTORY))
-        {
           menu->setItemEnabled(IDC_HISTORY_BACK, hundo.size());
           menu->setItemEnabled(IDC_HISTORY_FORW, hredo.size());
         }

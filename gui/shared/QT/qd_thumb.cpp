@@ -156,11 +156,7 @@ QDThumbItem::setData(const TArray<char> & d)
       page_height=iwpix->get_height();
 
       list->dataSet(page_num, data);
-#ifdef QT1
-      list->updateItem(page_num, TRUE);
-#else
       list->updateItem(page_num);
-#endif
    }
 }
 
@@ -177,16 +173,12 @@ QDThumbItem::paint(QPainter * p)
    if ( cur_page ) 
      {
       QRect r (HMARGIN/2, VMARGIN/2, width()-HMARGIN, height()-VMARGIN);
-#ifdef QT1
-      p->drawRect(HMARGIN/2, VMARGIN/2, width()-HMARGIN, height()-VMARGIN);
-#else
       QStyle &style = listBox()->style();
 #ifdef QT2
       style.drawFocusRect(p, r, listBox()->colorGroup(), NULL, TRUE );
 #else
       style.drawPrimitive(QStyle::PE_FocusRect, p, r, listBox()->colorGroup(),
 			  QStyle::Style_HasFocus);
-#endif
 #endif
     }
    p->translate(HMARGIN, VMARGIN);
@@ -513,85 +505,15 @@ QDThumbnails::setData(int page_num, const TArray<char> & data)
 void
 QDThumbnails::resizeEvent(QResizeEvent * ev)
 {
-
-   // ideally, we should readjust splitter's position
-   // based on whether the scrollbar (be horizontal or vertical)
-   // is visible or not
-
-   if ( ev->size().width() < min_list_width )
-   {
-      QSplitter *parent = dynamic_cast<QSplitter *>(parentWidget());
-
-      if ( parent ) 
-      {
-	 QValueList<int> minSizes=parent->sizes();
-	 if ( minSizes[0] < minSizes[1] ) 
-	 {
-	    minSizes[0] = min_list_width;
-	    minSizes[1] += minSizes[0] - min_list_width;
-	 }
-	 else 
-	 {
-	    minSizes[1] = min_list_width;
-	    minSizes[0] += minSizes[1] - min_list_width;
-	 }
-
-	 parent->setSizes(minSizes);
-	 return;
-      }
-   }
-   
    // We want to keep the top cell on the screen.
    // It's especially important to do it in our case since
    // the cells' size changes during the list resize.
-#ifdef QT1
-   int top_cell=topCell();
-   QListBox::resizeEvent(ev);
-   if (top_cell>=0) setTopCell(top_cell);
-#else
    int top_item=topItem();
    QListBox::resizeEvent(ev);
    if (top_item>=0) setTopItem(top_item);
-#endif
-
    // the layout has to be redone 
    triggerUpdate(TRUE);
    
-}
-
-void
-QDThumbnails::processCommand(int cmd)
-{
-   switch(cmd)
-   {
-      case IDC_TH_CLOSE:
-	 emit sigCloseThumbnails();
-	 break;
-   }
-}
-
-void
-QDThumbnails::slotPopup(int cmd)
-{
-   popup_menu_id=cmd;
-}
-
-void
-QDThumbnails::mousePressEvent(QMouseEvent * ev)
-{
-   try
-   {
-	 // Do the popup menu
-      if (ev->button()==RightButton)
-      {
-	 popup_menu_id=-1;
-	 popup_menu->exec(QCursor::pos());
-	 if (popup_menu_id>=0) processCommand(popup_menu_id);
-      } else QListBox::mousePressEvent(ev);
-   } catch(const GException & exc)
-   {
-      showError(topLevelWidget(), exc);
-   }
 }
 
 void
@@ -627,20 +549,11 @@ QDThumbnails::setCurPageNum(int cur_page_num_in)
 	    if (it && it->cur_page!=on)
 	    {
 	       it->cur_page=on;
-#ifdef QT1
-	       updateItem(page_num, TRUE);
-#else
 	       updateItem(page_num);
-#endif
 	    }
 	 }
-#ifdef QT1
-	 if (!rowIsVisible(cur_page_num))
-	    setTopCell(cur_page_num);
-#else
 	 if (!itemVisible(cur_page_num))
 	    setTopItem(cur_page_num);
-#endif
       }
    }
 }
@@ -675,11 +588,7 @@ QDThumbnails::rescan(void)
    if (doc && doc->is_init_complete())
    {
       setAutoUpdate(FALSE);
-#ifdef QT1
-      clearList();
-#else
       clear();
-#endif
 
       int pages=doc->get_pages_num();
       pixmaps_arr.empty();
@@ -698,20 +607,13 @@ QDThumbnails::rescan(void)
 	    QDThumbItem * it=(QDThumbItem *) item(page_num);
 	    if (it) it->cur_page=(page_num==cur_page_num);
 	 }
-#ifdef QT1
-	 if (!rowIsVisible(cur_page_num))
-           setTopCell(cur_page_num);
-#else
 	 if (!itemVisible(cur_page_num))
            setTopItem(cur_page_num);
-#endif
       }
-	 
       setAutoUpdate(TRUE);
       repaint();
-
-      if (isVisible()) getDataForNextPage();
-
+      if (isVisible()) 
+        getDataForNextPage();
       need_rescan=false;
    }
 }
@@ -781,17 +683,21 @@ QDThumbnails::QDThumbnails(QWidget * parent, const char * name, bool _rowMajor) 
       min_list_width=MIN_ITEM_WIDTH+HMARGIN;
       max_list_width=MAX_ITEM_WIDTH+HMARGIN;
       setRowMode(1);
+      setVScrollBarMode(AlwaysOff);
+      setHScrollBarMode(AlwaysOn);
    }
    else
    {
       min_list_width=MIN_ITEM_WIDTH+VMARGIN;
       max_list_width=MAX_ITEM_WIDTH+VMARGIN;
+      setColumnMode(1);
+      setHScrollBarMode(AlwaysOff);
+      setVScrollBarMode(AlwaysOn);
    }
    
    need_rescan=true;
    cur_page_num=-1;
    pending_list.empty();
-
    normalCursor=cursor();
    
       // Now set minimum and maximum width
@@ -807,24 +713,13 @@ QDThumbnails::QDThumbnails(QWidget * parent, const char * name, bool _rowMajor) 
       setMaximumWidth(max_list_width);
    }
 
-      // Create the popup menu
-   popup_menu=new QPopupMenu(this, "qd_thumb_menu");
-   connect(popup_menu, SIGNAL(activated(int)), this, SLOT(slotPopup(int)));
-   popup_menu->insertItem(tr("&Close thumbnails"), IDC_TH_CLOSE);
-   
       // Connect slots
    connect(&port, SIGNAL(sigNotifyFileFlagsChanged(const GP<DjVuFile> &, long, long)),
            this, SLOT(slotNotifyFileFlagsChanged(const GP<DjVuFile> &, long, long)));
    connect(&port, SIGNAL(sigNotifyDocFlagsChanged(const GP<DjVuDocument> &, long, long)),
            this, SLOT(slotNotifyDocFlagsChanged(const GP<DjVuDocument> &, long, long)));
    connect(&messenger, SIGNAL(sigGeneralReq(int)), this, SLOT(slotTriggerCB(int)));
-#ifdef QT1
-   // use double click for selection 
-   connect(this, SIGNAL(selected(int)), this, SIGNAL(sigGotoPage(int)));
-#else 
-   // use single click for selection 
    connect(this, SIGNAL(clicked(QListBoxItem *)), this, SLOT(slotGotoPage(QListBoxItem *)));
-#endif
    
 #ifdef QT2
       //********************************************************************
