@@ -1268,7 +1268,7 @@ Event_hnd(Widget w, XtPointer cl_data, XEvent * event, Boolean * cont)
   Instance *inst;
   void *id = (void*)cl_data;
   *cont = True;
-  if (map_lookup(&instance, id, (void**)&inst) >= 0)
+  if (map_lookup(&instance, id, &inst) >= 0)
     {
       Widget   wid = inst->widget;
       Display *dpy = XtDisplay(wid);
