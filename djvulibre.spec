@@ -72,9 +72,6 @@ make
 %install
 rm -rf %{buildroot}
 %makeinstall
-# Install link for mozilla
-mkdir -p %{buildroot}%{_libdir}/mozilla/plugins
-ln -s ../../netscape/plugins/nsdejavu.so %{buildroot}%{_libdir}/mozilla/plugins/
 # Quick fix to stop ldconfig from complaining
 find %{buildroot}%{_libdir} -name "*.so*" -exec chmod 755 {} \;
 # Quick cleanup of the docs
@@ -86,10 +83,12 @@ rm -rf %{buildroot}
 %post 
 /sbin/ldconfig
 # Create links to nsdejavu.so in mozilla dirs
+# The name of the link is nsdjvu.so in order to make
+# sure they do not get removed when upgrading rpms.
 ( for n in %{prefix}/lib/mozilla*  ; do \
   if [ -d $n ] ; then \
    test -d $n/plugins || mkdir $n/plugins ; \
-   ln -s %{prefix}/lib/netscape/plugins/nsdejavu.so $n/plugins ; \
+   ln -s ../../netscape/plugins/nsdejavu.so $n/plugins/nsdjvu.so ; \
  fi ; done ) 2>/dev/null || true
 
 %postun 
@@ -97,8 +96,8 @@ rm -rf %{buildroot}
 # Remove links to nsdejavu.so in all mozilla dirs
 ( if ! [ -r %{prefix}/lib/netscape/plugins/nsdejavu.so ] ; then \
    for n in %{prefix}/lib/mozilla* ; do \
-    if [ -h $n/plugins/nsdejavu.so ] ; then \
-     rm $n/plugins/nsdejavu.so ; \
+    if [ -h $n/plugins/nsdjvu.so ] ; then \
+     rm $n/plugins/nsdjvu.so ; \
      rmdir $n/plugins ; \
   fi ; done ; fi ) 2>/dev/null || true
 
