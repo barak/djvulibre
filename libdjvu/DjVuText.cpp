@@ -428,8 +428,11 @@ DjVuTXT::Zone::find_zones(GList<Zone *> &list,
     }
   else if( text_end > string_start)
     {
-      for (GPosition pos=children; pos; ++pos)
-        children[pos].find_zones(list,string_start,string_end);
+      if (children.size())
+        for (GPosition pos=children; pos; ++pos)
+          children[pos].find_zones(list,string_start,string_end);
+      else
+        list.append(const_cast<Zone *>(this));
     }
 }
 
@@ -464,21 +467,25 @@ DjVuTXT::Zone::get_smallest(GList<GRect> &list, const int padding) const
       const GRect &xrect=zone_parent->rect;
       if(xrect.height() < xrect.width())
         {
-          list.append(GRect(rect.xmin-padding,xrect.ymin-padding,rect.width()+2*padding,xrect.height()+2*padding));
+          list.append(GRect(rect.xmin-padding,xrect.ymin-padding,rect.width()
+                            +2*padding,xrect.height()+2*padding));
         }
       else
         {
-          list.append(GRect(xrect.xmin-padding,rect.ymin-padding,xrect.width()+2*padding,rect.height()+2*padding));
+          list.append(GRect(xrect.xmin-padding,rect.ymin-padding,xrect.width()
+                            +2*padding,rect.height()+2*padding));
         }
     }
   else
     {
-      list.append(GRect(rect.xmin-padding,rect.ymin-padding,rect.width()+2*padding,rect.height()+2*padding));
+      list.append(GRect(rect.xmin-padding,rect.ymin-padding,rect.width()
+                        +2*padding,rect.height()+2*padding));
     }
 }
 
 void
-DjVuTXT::get_zones(int zone_type, const Zone *parent, GList<Zone *> & zone_list) const 
+DjVuTXT::get_zones(int zone_type, const Zone *parent, 
+                   GList<Zone *> & zone_list) const 
    // get all the zones of  type zone_type under zone node parent
 {
    // search all branches under parent

@@ -86,7 +86,8 @@ bool	QDSearchDialog::search_backwards=false;
 
 
 static GList<DjVuTXT::Zone*>
-search_string(DjVuTXT *txt, QString dat, int &pfrom, bool fwd, bool casep, bool wordp)
+search_string(DjVuTXT *txt, QString dat, int &pfrom, 
+              bool fwd, bool casep, bool wordp)
 {
   GList<DjVuTXT::Zone*> res;
   // Access utf8 string
@@ -126,9 +127,9 @@ search_string(DjVuTXT *txt, QString dat, int &pfrom, bool fwd, bool casep, bool 
       foundx = found + dat.length();
       if (!wordp)
         break;
-      if ((found==0 || !qtext[found-1].isLetterOrNumber()) &&
-          (foundx==(int)qtext.length() || !qtext[foundx].isLetterOrNumber()) )
-        break;
+      if (found==0 || !qtext[found-1].isLetterOrNumber())
+        if (foundx==(int)qtext.length() || !qtext[foundx].isLetterOrNumber())
+          break;
       if (fwd) {
         if (++pfrom >= (int)qtext.length())
           return res;
@@ -208,10 +209,11 @@ QDSearchDialog::slotSearch(void)
 	       int done=5*(20*pool->get_size()/pool->get_length());
 	       if (done!=last_done)
 	       {
-		  QString buffer=tr("Loading page ")+QString::number(page_num+1)+": "+
-		     QString::number(done)+"%...";
-		  status_label->setText(buffer);
-		  last_done=done;
+                 QString buffer=tr("Loading page %1: %2%...")
+                   .arg(page_num+1)
+                   .arg(done);
+                 status_label->setText(buffer);
+                 last_done=done;
 	       }
 	       qApp->processEvents(100);
 	    }

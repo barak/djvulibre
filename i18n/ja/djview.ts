@@ -1074,7 +1074,7 @@ Are you sure you want to overwrite it?</source>
     </message>
     <message>
         <source>Loading page </source>
-        <translation>ページをロードしています </translation>
+        <translation type="obsolete">ページをロードしています </translation>
     </message>
     <message>
         <source>&amp;Yes</source>
@@ -1192,6 +1192,10 @@ The search is impossible.</source>
 この文書は OCR が実行されていない可能性があります。
 
 検索は実行できません。</translation>
+    </message>
+    <message>
+        <source>Loading page %1: %2%...</source>
+        <translation>ページ %1 をロードしています: %2...</translation>
     </message>
 </context>
 <context>

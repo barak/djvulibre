@@ -1028,7 +1028,7 @@ automatic color matching.</source>
     </message>
     <message>
         <source>Loading page </source>
-        <translation type="unfinished"></translation>
+        <translation type="obsolete"></translation>
     </message>
     <message>
         <source>End of document reached. Continue from the beginning?</source>
@@ -1123,6 +1123,10 @@ creator did not run an OCR engine on this document,
 or the OCR engine did not recognize any text.
 
 The search is impossible.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Loading page %1: %2%...</source>
         <translation type="unfinished"></translation>
     </message>
 </context>

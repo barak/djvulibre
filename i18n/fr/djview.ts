@@ -1096,7 +1096,7 @@ Voulez vous le remplacer?</translation>
     </message>
     <message>
         <source>Loading page </source>
-        <translation>Téléchargement de la page</translation>
+        <translation type="obsolete">Téléchargement de la page</translation>
     </message>
     <message>
         <source>&amp;Yes</source>
@@ -1215,6 +1215,10 @@ logiciel de lecture automatique (OCR), soit que le logiciel de lecture
 automatique n&apos;a pas localisé de texte.
 
 La recherche est impossible.</translation>
+    </message>
+    <message>
+        <source>Loading page %1: %2%...</source>
+        <translation>Téléchargement de la page %1: %2%...</translation>
     </message>
 </context>
 <context>

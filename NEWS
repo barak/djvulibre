@@ -5,6 +5,8 @@ NEW IN VERSION 3.5.14
 - Revamped install for desktop information files
 - Compilation uses libtool and makes shared libs on more platforms.
 - Simplified api ddjvuapi.h.
+- Enhanced ddjvu based on ddjvuapi.
+- ddjvu can produce tiff files.
 
 NEW IN VERSION 3.5.13
 ---------------------
