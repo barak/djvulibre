@@ -17,7 +17,7 @@
 //C- DjVuLibre-3.5 is derived from the DjVu(r) Reference Library
 //C- distributed by Lizardtech Software.  On July 19th 2002, Lizardtech 
 //C- Software authorized us to replace the original DjVu(r) Reference 
-//C- Library notice by the following text (see etc/PATENT.djvu):
+//C- Library notice by the following text (see doc/lizard2002.djvu):
 //C-
 //C-  ------------------------------------------------------------------
 //C- | DjVu (r) Reference Library (v. 3.5)
