@@ -44,6 +44,7 @@
 #include <stdlib.h>
 #include <stdarg.h>
 #include <errno.h>
+#include <locale.h>
 
 #include "IW44Image.h"
 #include "GOS.h"
@@ -1595,6 +1596,8 @@ execute()
 int 
 main(int argc, char **argv)
 {
+  setlocale(LC_ALL,"");
+  djvu_programname(argv[0]);
   G_TRY
      {
       for (int i=1; i<argc; i++)
