@@ -1,3 +1,9 @@
+djvulibre (3.5.14-2) unstable; urgency=low
+
+  * versioned build dependency on debhelper (for debian pedants)
+
+ --
+
 djvulibre (3.5.14-1) unstable; urgency=high
 
   * New upstream release, with no real changes from last upload
