@@ -1638,6 +1638,25 @@ Attach(Display * displ, Window window, void * id)
   return 1;
 }
 
+static void
+UnsetVariable(const char *var)
+{
+  const char *ptr = getenv(var);
+  if (ptr && ptr[0])
+    {
+      /* Putenv() does not work on RH5.1.
+         But Unsetenv() is available. */
+#ifdef __linux__
+      unsetenv(var);
+#else
+      const char *env = malloc(strlen(var)+2);
+      strcpy(env, var);
+      strcat(env, "=");
+      putenv(env);
+#endif
+    }
+}
+
 static int
 StartProgram(void)
 {
@@ -1703,27 +1722,10 @@ StartProgram(void)
         close(s);
       
       // This is needed for RedHat's version of Netscape.
-      ptr=0;
-      if ((ptr=getenv("LD_PRELOAD")) && strlen(ptr))
-        {
-	  /* Whatever you say, putenv() doesn't 
-             help for RH 5.1. unsetenv() is needed. */
-#ifdef __linux__
-	  unsetenv("LD_PRELOAD");
-#else
-	  putenv(strdup("LD_PRELOAD="));
-#endif
-        }
-      if ((ptr=getenv("XNLSPATH")) && strlen(ptr))
-        {
-	  /* Whatever you say, putenv() doesn't 
-             help for RH 5.1. unsetenv() is needed. */
-#ifdef __linux__
-	  unsetenv("XNLSPATH");
-#else
-	  putenv(strdup("XNLSPATH="));
-#endif
-        }
+      UnsetVariable("LD_PRELOAD");
+      UnsetVariable("XNLSPATH");
+      // This is needed to disable session management in Qt
+      UnsetVariable("SESSION_MANAGER");      
       
       /* Old autoinstaller fails to set the "executable" flag. */
       if (stat(path, &st)>=0)
