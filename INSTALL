@@ -299,8 +299,14 @@ The DjVu plugin then works okay.
 4.1- GNU/LINUX
 --------------
 
-Simply typing "configure ; make" should work on 
-most recent distributions.
+Simply typing "configure ; make" should work on most recent distributions.
+
+In addition, the tarball contains a valid spec file for the rpm packager.
+The following command should perform all the compilation steps.
+
+        $ rpm -ta djvulibre-3.5.X.tar.gz
+
+The resulting rpm files can be found in the usual places.
 
 
 4.2- SGI IRIX 6.5
@@ -334,8 +340,4 @@ Successful compilation using gnu-make, qt-2.3.1 and gcc-2.95.3.
 The configure command line was:
   $ ./configure \
         JPEG_LIBS='/usr/local/lib/libjpeg.a' \
-        JPEG_CFLAGS='-I/usr/local/include' \
-        QT_CFLAGS='-I/usr/X11R6/include/qt2' \
-        QT_LIBS='-lqt2' \
-        MOC=/usr/X11R6/bin/moc2
-
+        JPEG_CFLAGS='-I/usr/local/include'
