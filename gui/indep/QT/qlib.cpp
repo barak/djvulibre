@@ -289,10 +289,11 @@ QeFileDialog::done(int rc)
       return;
     }
 
-  QString fileName=selectedFile();
+  QString fileName = selectedFile();
+  QCString cFileName = fileName.local8Bit();
 #ifdef UNIX
   struct stat st;
-  if (::stat(fileName, &st)>=0)
+  if (::stat(cFileName, &st)>=0)
     {
       if (S_ISFIFO(st.st_mode) || S_ISCHR(st.st_mode) ||
 	  S_ISBLK(st.st_mode) || S_ISSOCK(st.st_mode))
@@ -304,7 +305,7 @@ QeFileDialog::done(int rc)
         }
       if (!forWriting)
         {
-          int fd=::open(fileName, O_RDONLY);
+          int fd=::open(cFileName, O_RDONLY);
           if (fd<0)
             {
               QMessageBox::critical(this, "DjVu",
@@ -323,7 +324,7 @@ QeFileDialog::done(int rc)
                                    + tr("Are you sure you want to overwrite it?"),
                                    "&Yes", "&No", 0, 0, 1))
             return;
-          int fd=::open(fileName, O_WRONLY);
+          int fd=::open(cFileName, O_WRONLY);
           if (fd<0)
             {
               QMessageBox::critical(this, "DjVu",

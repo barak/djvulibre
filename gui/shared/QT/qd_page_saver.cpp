@@ -79,111 +79,6 @@
 
 
 
-//***************************************************************************
-//*************************** QDPageNameDialog dialog ***********************
-//***************************************************************************
-
-class QDPageNameDialog : public QeDialog
-{
-   Q_OBJECT
-private:
-   QLineEdit	* text;
-protected:
-   virtual void	done(int);
-protected slots:
-   void		slotBrowse(void);
-public:
-   GUTF8String	pageName(void) const { return GStringFromQString(text->text()); }
-   QDPageNameDialog(const char * message, const char * page_name,
-		    QWidget * parent=0, const char * name=0);
-   ~QDPageNameDialog(void) {};
-};
-
-void
-QDPageNameDialog::slotBrowse(void)
-{
-   static const char* filters[]={ "*.djvu", "*.djv", 0, 0 };
-   QString filter2 = tr("All files (*)");
-   filters[2] = filter2;
-
-   GUTF8String page_full_name=GStringFromQString(text->text());
-   QString page_dir=QFileInfo(QStringFromGString(page_full_name)).dirPath();
-   if (!QFileInfo(page_dir).isDir()) page_dir=QeFileDialog::lastSaveDir;
-   if (!QFileInfo(page_dir).isDir()) page_dir=QDir::currentDirPath();
-   page_full_name=GURL::expand_name(GOS::basename(page_full_name), page_dir);
-   QeFileDialog fd(page_dir, filters[0], this, "djvu_fd", TRUE);
-   fd.setFilters((const char **) filters);
-   fd.setCaption(tr("Select DjVu page file name..."));
-   fd.setSelection(QStringFromGString(page_full_name));
-      
-   if (fd.exec()==QDialog::Accepted) text->setText(fd.selectedFile());
-}
-
-void
-QDPageNameDialog::done(int rc)
-{
-   if (rc==Accepted)
-   {
-      try
-      {
-	    // Try to create the named file.
-	 GUTF8String fname=GStringFromQString(text->text());
-	 GP<ByteStream> gstr_in=ByteStream::create(GURL::Filename::UTF8(fname),"a");
-      } catch(const GException & exc)
-      {
-         QString qmesg(exc.get_cause());
-	 showError(this, tr("DjVu Error"), qmesg);
-	 return;
-      }
-   }
-   QeDialog::done(rc);
-}
-
-QDPageNameDialog::QDPageNameDialog(const char * message, const char * page_name,
-				   QWidget * parent, const char * name) :
-      QeDialog(parent, name, TRUE)
-{
-   QWidget * start=startWidget();
-
-   setCaption(tr("Page file name"));
-
-   QVBoxLayout * vlay=new QVBoxLayout(start, 10, 5, "vlay");
-
-   QLabel * label=new QLabel(message, start, "message_label");
-   vlay->addWidget(label);
-   label->setMaximumHeight(label->sizeHint().height());
-
-   QHBoxLayout * hlay=new QHBoxLayout();
-   vlay->addLayout(hlay);
-
-   label=new QLabel(tr("File name: "), start, "fname_label");
-   hlay->addWidget(label);
-   label->setMaximumHeight(label->sizeHint().height());
-
-   text=new QLineEdit(start, "text");
-   text->setText(page_name);
-   hlay->addWidget(text, 1);
-
-   QPushButton * browse_butt=new QPushButton(tr("&Browse"), start, "browse_butt");
-   hlay->addWidget(browse_butt);
-   browse_butt->setMaximumHeight(browse_butt->sizeHint().height());
-   
-   QHBoxLayout * butt_lay=new QHBoxLayout(10);
-   vlay->addLayout(butt_lay);
-   butt_lay->addStretch(1);
-   QPushButton * ok_butt=new QPushButton(tr("&OK"), start, "ok_butt");
-   butt_lay->addWidget(ok_butt);
-   QPushButton * cancel_butt=new QPushButton(tr("&Cancel"), start, "cancel_butt");
-   butt_lay->addWidget(cancel_butt);
-   ok_butt->setDefault(TRUE);
-   ok_butt->setMaximumHeight(ok_butt->sizeHint().height());
-   cancel_butt->setMaximumHeight(cancel_butt->sizeHint().height());
-   
-      // Connecting signals and slots
-   connect(ok_butt, SIGNAL(clicked(void)), this, SLOT(accept(void)));
-   connect(cancel_butt, SIGNAL(clicked(void)), this, SLOT(reject(void)));
-   connect(browse_butt, SIGNAL(clicked(void)), this, SLOT(slotBrowse(void)));
-}
 
 //***************************************************************************
 //*************************** QDFileFormatDialog dialog *********************
@@ -320,8 +215,8 @@ QDFilesListDialog::QDFilesListDialog(const GP<DjVmDoc> & doc,
    for(GPosition pos=files_list;pos;++pos)
       msg+="\""+QStringFromGString(files_list[pos]->get_save_name())+"\", ";
 
-   msg[msg.length()-1]=0;
-   msg+=tr(".\n\nAre you sure you want to proceed?\n");
+   msg[msg.length()-2] = '.';
+   msg+=tr("\n\nAre you sure you want to proceed?\n");
    
    QLabel * label=new QLabel(msg, start);
    label->setMinimumWidth(300);
@@ -392,9 +287,9 @@ QDPageSaver::getDjVmDoc(void)
 }
 
 static QString
-getDir(const char * name)
+getDir(GUTF8String name)
 {
-   QString dir=name;
+   QString dir = QStringFromGString(name);
    while(!QFileInfo(dir).isDir()) dir=QFileInfo(dir).dirPath();
    return dir;
 }
@@ -419,8 +314,10 @@ QDPageSaver::saveSeparate(void)
       QeFileDialog::lastSaveDir=save_dir;
       GP<DjVmDoc> doc=getDjVmDoc();
       QDFilesListDialog dlg(doc, fd.selectedFile(), parent);
+      GUTF8String idxname = "index.djvu";
       if (dlg.exec()==QDialog::Accepted)
-	 doc->expand(GURL::Filename::UTF8(GStringFromQString(fd.selectedFile())), 0);
+        doc->expand(GURL::Filename::UTF8(GStringFromQString(fd.selectedFile())), 
+                    idxname);
    }
 }
 
@@ -443,7 +340,8 @@ QDPageSaver::saveBundled(void)
    fd.setFilters((const char **) filters);
    fd.setCaption(QeFileDialog::tr("Select DjVu page output file name..."));
    {
-     GUTF8String gfname=GURL::expand_name(file_url.fname(),save_dir);
+     GUTF8String gfname=GURL::expand_name(file_url.fname(),
+                                          GStringFromQString(save_dir));
      fd.setSelection(QStringFromGString(gfname));
    }
       
@@ -477,7 +375,8 @@ QDPageSaver::saveMerged(void)
    fd.setFilters((const char **) filters);
    fd.setCaption(QeFileDialog::tr("Select DjVu page output file name..."));
    {
-     GUTF8String gfname=GURL::expand_name(file_url.fname(),save_dir);
+     GUTF8String gfname=GURL::expand_name(file_url.fname(),
+                                          GStringFromQString(save_dir));
      fd.setSelection(QStringFromGString(gfname));
    }
       

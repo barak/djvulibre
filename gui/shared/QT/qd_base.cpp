@@ -1070,8 +1070,8 @@ QDBase::exportToPNM(void)
       if (file_url.is_local_file_url())
 	 while(true)
 	 {
-	    QString dir
-              =QFileInfo(QStringFromGString(file_url.UTF8Filename())).dirPath();
+	    QString dir = QFileInfo(QStringFromGString(
+                            file_url.UTF8Filename())).dirPath();
 	    if (dir)
               {
                 save_dir=dir;
@@ -1081,7 +1081,8 @@ QDBase::exportToPNM(void)
 	 }
    if (!QFileInfo(save_dir).isDir()) save_dir=QDir::currentDirPath();
 
-   GUTF8String fname=GURL::expand_name(file_url.fname(), save_dir);
+   GUTF8String fname=GURL::expand_name(file_url.fname(), 
+                                       GStringFromQString(save_dir));
    QFileInfo fi=QFileInfo(QStringFromGString(fname));
    fname=GStringFromQString(fi.dirPath())+"/"+GOS::basename(fname, ".djvu")+ext;
    

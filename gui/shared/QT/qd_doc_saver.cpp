@@ -92,7 +92,7 @@ protected slots:
    void		slotBrowse(void);
 public:
    GUTF8String	docName(void) const { return GStringFromQString(text->text()); }
-   QDDocNameDialog(const char * message, const char * doc_name,
+   QDDocNameDialog(GUTF8String message, GUTF8String doc_name,
 		   QWidget * parent=0, const char * name=0);
    ~QDDocNameDialog(void) {};
 };
@@ -109,7 +109,8 @@ QDDocNameDialog::slotBrowse(void)
    QString doc_dir=fi.dirPath();
    if (!QFileInfo(doc_dir).isDir()) doc_dir=QeFileDialog::lastSaveDir;
    if (!QFileInfo(doc_dir).isDir()) doc_dir=QDir::currentDirPath();
-   doc_full_name=GURL::expand_name(GOS::basename(doc_full_name), doc_dir);
+   doc_full_name=GURL::expand_name(GOS::basename(doc_full_name), 
+                                   GStringFromQString(doc_dir));
    QeFileDialog fd(doc_dir, filters[0], this, "djvu_fd", TRUE);
    fd.setFilters((const char **) filters);
    fd.setCaption("Select DjVu document file name...");
@@ -155,7 +156,7 @@ QDDocNameDialog::done(int rc)
    QeDialog::done(rc);
 }
 
-QDDocNameDialog::QDDocNameDialog(const char * message, const char * doc_name,
+QDDocNameDialog::QDDocNameDialog(GUTF8String message, GUTF8String doc_name,
 				 QWidget * parent, const char * name) :
       QeDialog(parent, name, TRUE)
 {
@@ -165,7 +166,7 @@ QDDocNameDialog::QDDocNameDialog(const char * message, const char * doc_name,
 
    QVBoxLayout * vlay=new QVBoxLayout(start, 10, 5, "vlay");
 
-   QLabel * label=new QLabel(message, start, "message_label");
+   QLabel * label=new QLabel( QStringFromGString(message), start, "message_label");
    vlay->addWidget(label);
    label->setMaximumHeight(label->sizeHint().height());
 
@@ -176,7 +177,7 @@ QDDocNameDialog::QDDocNameDialog(const char * message, const char * doc_name,
    label->setMaximumHeight(label->sizeHint().height());
 
    text=new QLineEdit(start, "text");
-   text->setText(doc_name);
+   text->setText(QStringFromGString(doc_name));
    hlay->addWidget(text, 1);
 
    QPushButton * browse_butt=new QPushButton("&Browse", start, "browse_butt");
@@ -207,14 +208,15 @@ class QDSavedFilesDialog : public QeDialog
 {
    Q_OBJECT
 public:
-   QDSavedFilesDialog(const GP<DjVuDocument> & doc, const char * dir_name,
-		      const char * doc_name, QWidget * parent=0, const char * name=0);
+   QDSavedFilesDialog(const GP<DjVuDocument> & doc, 
+                      GUTF8String dir_name, GUTF8String doc_name, 
+                      QWidget * parent=0, const char * name=0);
    ~QDSavedFilesDialog(void) {};
 };
 
 QDSavedFilesDialog::QDSavedFilesDialog(const GP<DjVuDocument> & doc,
-				       const char * dir_name,
-				       const char * doc_name,
+                                       GUTF8String dir_name, 
+                                       GUTF8String doc_name, 
 				       QWidget * parent, const char * name) :
       QeDialog(parent, name, TRUE)
 {
@@ -230,7 +232,8 @@ QDSavedFilesDialog::QDSavedFilesDialog(const GP<DjVuDocument> & doc,
    if (doc->get_doc_type()==DjVuDocument::OLD_BUNDLED ||
        doc->get_doc_type()==DjVuDocument::OLD_INDEXED)
      message = message + tr(" (plus additional included files)");
-   message = message + tr(" into the directory '") + dir_name + "'.";
+   message = message + tr(" into the directory '") 
+     + QStringFromGString(dir_name) + "'.";
    QLabel *label = new QLabel(message, start);
    label->setAlignment(AlignLeft | WordBreak);
    vlay->addWidget(label);
@@ -368,12 +371,14 @@ QDDocSaver::save(void)
           doc_name=doc_name.substr(0,i)+".djvu";
         }
       }
-      doc_full_name=GURL::expand_name(doc_name, doc_dir);
+      doc_full_name=GURL::expand_name(doc_name, GStringFromQString(doc_dir));
 
       GUTF8String message;
-      if (saveas_bundled) message="Please enter the document file name in the field below.";
-      else message="Please enter the name of the top-level file in the field below.\n"
-		   "All other files will be saved in the same directory.";
+      if (saveas_bundled) 
+        message="Please enter the document file name in the field below.";
+      else 
+        message="Please enter the name of the top-level file in the field below.\n"
+          "All other files will be saved in the same directory.";
       bool conflict=false;
       do
       {
@@ -486,8 +491,8 @@ QDDocSaver::save(void)
 	 if (!saveas_bundled)
 	 {
 	    // Last question before we overwrite everything...
-	    QDSavedFilesDialog sd(doc, doc_dir, doc_name,
-				  parent, "saved_files_dialog");
+	    QDSavedFilesDialog sd(doc, GStringFromQString(doc_dir), 
+                                  doc_name, parent, "saved_files_dialog");
 	    if (sd.exec()!=QDialog::Accepted) return;
 	 }
 	 doc->save_as(GURL::Filename::UTF8(doc_full_name), saveas_bundled);

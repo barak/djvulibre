@@ -89,24 +89,24 @@
 
 #include <time.h>
 
-#define START_STATUS QT_TRANSLATE_NOOP("QDViewerShell","Select \"File\" and then \"Open\" to load a DjVu file")
+#define START_STATUS QT_TRANSLATE_NOOP("QDViewerShell", \
+           "Select \"File\" and then \"Open\" to load a DjVu file")
 
 void
 QDViewerShell::openFile(const QString &qfname, const QString &qid)
 {
-   const char * const fname=qfname;
-   const char * id=qid;
+   GUTF8String fname = GStringFromQString(qfname);
+   GUTF8String id = GStringFromQString(qid);
    DEBUG_MSG("QDViewerShell::openFile(): opening file '" << fname << "'\n");
    DEBUG_MAKE_INDENT(3);
-
    GURL url;
 
-   if (strcmp(fname, "-"))
+   if (fname != "-")
    {
       url=GURL::Filename::UTF8(GURL::expand_name(fname));
-      if (id)
+      if (!! id)
       {
-	 url=GURL::UTF8(url.fname()+id,url.base());
+	 url=GURL::UTF8(url.fname()+id, url.base());
       }
    }
    openURL(url);
