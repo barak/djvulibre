@@ -1704,28 +1704,30 @@ NPP_GetJavaClass(void)
    return NULL;
 }
 
+
+#ifndef DJVIEW_VERSION_STR
+#define DJVIEW_VERSION_STR  DJVIEW_VERSION " (experimental)"
+#endif
+
 NPError
 NPP_GetValue(void *future, NPPVariable variable, void *value)
 {
    NPError err = NPERR_NO_ERROR;
-
+   
    switch (variable)
-   {
-      case NPPVpluginNameString:
-         *((char **)value) = "LizardTech, Inc.";
-         break;
-      case NPPVpluginDescriptionString:
-         *((char **)value) =
-           "LizardTech, Inc. DjVu Plug-In (Version "
-#ifdef DJVIEW_VERSION_STR
-           DJVIEW_VERSION_STR 
-#else
-	   DJVU_VERSION " (EXPERIMENTAL)"
-#endif
-           ") for displaying compressed DjVu images";
-         break;
-      default:
-         err = NPERR_GENERIC_ERROR;
-   }
+     {
+     case NPPVpluginNameString:
+       *((char **)value) = "DjVu " DJVIEW_VERSION_STR;
+       break;
+     case NPPVpluginDescriptionString:
+     *((char **)value) =
+       "This is the <a href=\"http://www.sourceforge.net/projects/djvu\">"
+       "djvulibre-" DJVIEW_VERSION_STR "</a> version of the DjVu plugin.<br>\n"
+       "More information can be found at <a href=\"http://www.lizardtech.com\">LizardTech, Inc.</a> "
+       "and <a href=\"http://www.djvuzone.org\">DjVuZone</a>.\n";
+     break;
+     default:
+       err = NPERR_GENERIC_ERROR;
+     }
    return err;
 }
