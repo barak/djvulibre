@@ -1,11 +1,9 @@
 
 By order of importance:
 
-- INSTALL instructions
 - README file
 - manual pages
-- plugin help paths & about boxes
-- compilation check on sgi, solaris
+- change QDViewer::gotoStdPage
 - djvups executable
 - rpm packages for linux (rh6, rh7)
 - ht:/dig plugin
