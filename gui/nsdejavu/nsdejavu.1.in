@@ -1,3 +1,5 @@
+.\" -*- nroff -*-
+.\"
 .\" Copyright (c) 2001 Leon Bottou, Yann Le Cun, Patrick Haffner,
 .\"                    AT&T Corp., and Lizardtech, Inc.
 .\"
@@ -70,7 +72,9 @@ The official MIME type for DjVu documents is
 For compatibility with ancient versions of the
 DjVu viewer, it is common to use instead the
 experimental MIME type
-.BR image/x-djvu .
+.B image/x-djvu
+or
+.BR image/x.djvu .
 Web servers should be configured to send the proper
 MIME type for DjVu documents. See the DjVu tutorial
 for more information (
@@ -81,6 +85,23 @@ Most web browsers also recognize files ending with
 or
 .B .djv
 as DjVu files.
+
+An easy way to check if an http server is giving an appropriate
+content-type is to invoke the following command with a URL
+corresponding to a DjVu file on the server, such as
+.BR http://nips.djvuzone.org/djvu/nips13/AgueraFairhallBialek.djvu .
+.IP "" 2
+.BI "wget --debug --output-file=/dev/null " URL " 2>&1 | grep Content-Type"
+.PP
+The result should be one of the following, preferably the first.
+.IP "" 2
+.B Content-Type: image/vnd.djvu
+.br
+.B Content-Type: image/x.djvu
+.br
+.B Content-Type: image/x-djvu
+.PP
+Any other MIME type indicates a server misconfiguration.
 
 .SH CGI-STYLE FLAGS
 
