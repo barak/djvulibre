@@ -285,6 +285,17 @@ Private_GetJavaClass(void)
  *
  ***********************************************************************/
 
+#ifdef __cplusplus
+extern "C" {
+  char *NP_GetMIMEDescription(void);
+  NPError NP_GetValue(void *future, NPPVariable variable, void *value);
+  NPError NP_Initialize(NPNetscapeFuncs* nsTable, NPPluginFuncs* pluginFuncs);
+  NPError NP_Shutdown(void);
+}
+#endif
+
+
+
 /*
  * NP_GetMIMEDescription
  *	- Netscape needs to know about this symbol
