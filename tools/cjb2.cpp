@@ -324,16 +324,14 @@ CCImage::make_ccs_from_ccids()
 {
   int n;
   Run *pruns = runs;
-
   // Find maximal ccid
-  int maxccid = -1;
+  int maxccid = nregularccs-1;
   for (n=0; n<=runs.hbound(); n++)
     if (pruns[n].ccid > maxccid)
       maxccid = runs[n].ccid;
+  // Renumber ccs 
   GTArray<int> armap(0,maxccid);
   int *rmap = armap;
-  
-  // Renumber ccs 
   for (n=0; n<=maxccid; n++)
     armap[n] = -1;
   for (n=0; n<=runs.hbound(); n++)
@@ -638,12 +636,12 @@ CCImage::get_bitmap_for_cc(const int ccid) const
 GP<JB2Image> 
 CCImage::get_jb2image() const
 {
-  if (ccs.hbound() < 0)
-    G_THROW("Must first perform a cc analysis");
   GP<JB2Image> jimg = JB2Image::create();
   jimg->set_dimension(width, height);
   if (runs.hbound() < 0)
     return jimg;
+  if (ccs.hbound() < 0)
+    G_THROW("Must first perform a cc analysis");
   // Iterate over CCs
   for (int ccid=0; ccid<=ccs.hbound(); ccid++)
     {
