@@ -481,7 +481,10 @@ QDPrintDialog::done(int rc)
           int what=str2id(what_menu->currentText());
           QString customPages=custompages_text->text();
           if (what==PRINT_CUSTOM && customPages.length()==0)
-	    G_THROW("Empty \"Custom pages\" list specified.");
+            {
+              QCString msg = tr("No custom pages were specified").utf8();
+              G_THROW((const char*)msg);
+            }
           
           if (file_butt->isChecked())
             {
@@ -489,9 +492,10 @@ QDPrintDialog::done(int rc)
               struct stat st;
               if (stat(fname, &st)>=0)
                 if (QMessageBox::warning(this, "DjVu",
-                      tr("File '") + fname + tr("' already exists.\n") +
-                      tr("Are you sure you want to overwrite it?"),
-                      tr("&Yes"), tr("&No"), 0, 0, 1))
+                                         tr("File '%1 already exists.\n"
+                                            "Are you sure you want to overwrite it?")
+                                         .arg(fname),
+                                         tr("&Yes"), tr("&No"), 0, 0, 1))
 		  return;
             }
           
@@ -559,8 +563,11 @@ QDPrintDialog::done(int rc)
 #endif
               // Open pipe to command
               fdesc = popen((const char*)printCommand, "w");
-              if (!fdesc)
-                G_THROW("Cannot launch specified print command");
+              if (! fdesc)
+                {
+                  QCString msg = tr("Cannot launch specified print command").utf8();
+                  G_THROW((const char*)msg);
+                }
               pstr = ByteStream::create(fdesc, "wb", false);
            }
 
@@ -885,7 +892,7 @@ QDPrintDialog::QDPrintDialog(const GP<DjVuDocument> & _doc,
    ps_butt=new QRadioButton(tr("&PostScript File (*.ps)"), 
                             bg, "ps_butt");
    bg_lay->addWidget(ps_butt);
-   eps_butt=new QRadioButton("&Encapsulated PostScript File (*.eps)", 
+   eps_butt=new QRadioButton(tr("&Encapsulated PostScript File (*.eps)"), 
                              bg, "eps_butt");
    bg_lay->addWidget(eps_butt);
 #ifndef QT1

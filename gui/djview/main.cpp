@@ -75,6 +75,7 @@
 #include "init_qt.h"
 #include "qd_viewer_shell.h"
 #include "DjVuDocument.h"
+#include "DjVuMessage.h"
 #include "GURL.h"
 #include "djvu_file_cache.h"
 #include "qlib.h"
@@ -82,15 +83,24 @@
 #include "mime_check.h"
 #include "version.h"
 
+class QDJView : public QObject { Q_OBJECT }; // for DJView::tr()
+
+static void
+DjVuPrintError(QString q)
+{
+  QCString msg = q.utf8();
+  DjVuPrintErrorUTF8("%s",(const char*)msg);
+}
 
 static void 
 ShowUsage(void)
 {
-  DjVuPrintErrorUTF8("%s\n",
 #ifdef DJVULIBRE_VERSION
-  ("DJVIEW --- DjVuLibre-" DJVULIBRE_VERSION "\n"
+  DjVuPrintError(QDJView::tr("DJVIEW --- DjVuLibre-%1")
+                 .arg(DJVULIBRE_VERSION));
 #endif
-   "DjVu document viewer.\n\n"
+  DjVuPrintError(QDJView::tr
+  ("DjVu document viewer.\n\n"
    "Usage: djview <options_list> <file_name>\n"
    "Options:\n"
    "     -file <file_name>       - alternative way to specify file name\n"
@@ -103,19 +113,26 @@ ShowUsage(void)
    "     -display <display>      - specify X11 display name\n"
    "     -fn <fontname>          - specify Qt/X11 default font\n"
    "     -bg <color>             - specify Qt/X11 default background color\n"
-   "     -fg <color>             - specify Qt/X11 default foreground color\n"
+   "     -fg <color>             - specify Qt/X11 default foreground color\n" 
+   ));
 #ifndef QT1
-   "     -btn <color>            - specify Qt/X11 default button color\n"
+  DjVuPrintError(QDJView::tr
+  ("     -btn <color>            - specify Qt/X11 default button color\n"
    "     -visual TrueColor       - forces use of a TrueColor visual (8 bit display)\n"
    "     -ncols <count>          - limit color palette use (8 bit display)\n"
    "     -cmap                   - install private colormap (8 bit display)\n"
+   ));
 #endif
 #ifndef NO_DEBUG
 #ifdef RUNTIME_DEBUG_ONLY
-   "     -debug[=<level>]        - print debug information\n"
+  DjVuPrintError(QDJView::tr
+  ("     -debug[=<level>]        - print debug information\n"
+   ));
 #endif
 #endif
-   "     -fix                    - fix configuration of Netscape helpers\n"
+  DjVuPrintError(QDJView::tr
+  ("     -fix                    - fix configuration of Netscape helpers\n"
+   "\n" 
    ));
 }
 
@@ -212,16 +229,16 @@ main(int argc, char ** argv)
           else if (!strcmp(arg,"-page") && i<argc-1)
             {
               if (page_num)
-                DjVuPrintErrorUTF8("djview: "
-                                   "duplicate page specification\n");
+                DjVuPrintError(QDJView::tr("djview: "
+                                  "duplicate page specification\n"));
               page_num = atoi(argv[++i]);
               continue;
             }
           else if (!strncmp(arg,"-page=",6) && i<argc-1)
             {
               if (page_num)
-                DjVuPrintErrorUTF8("djview: warning: "
-                                   "duplicate page specification\n");
+                DjVuPrintError(QDJView::tr("djview: warning: "
+                                  "duplicate page specification\n"));
               page_num = atoi(arg+6);
               continue;
             }
@@ -246,23 +263,23 @@ main(int argc, char ** argv)
             }
           else if (arg[0] == '-')
             {
-              DjVuPrintErrorUTF8("djview: warning: "
-                                 "unrecognized option '%s'\n", arg);
+              DjVuPrintError(QDJView::tr("djview: warning: "
+                                "unrecognized option '%1'\n").arg(arg));
               continue;
             }
           
           if (! file_name)
             file_name = GNativeString(arg);
           else
-            DjVuPrintErrorUTF8("djview: warning: "
-                               "duplicate filename specification\n");
+            DjVuPrintError(QDJView::tr("djview: warning: "
+                              "duplicate filename specification\n"));
         }
       if (page_num < 0)
-        DjVuPrintErrorUTF8("djview: warning: "
-                           "illegal page number\n");
+        DjVuPrintError(QDJView::tr("djview: warning: "
+                          "illegal page number\n"));
       if (page_num > 0 && !file_name)
-        DjVuPrintErrorUTF8("djview: warning: "
-                           "page specification without a file name\n");
+        DjVuPrintError(QDJView::tr("djview: warning: "
+                          "page specification without a file name\n"));
       
       // We are ready to fly
       DjVuPrefs prefs;
@@ -308,4 +325,6 @@ main(int argc, char ** argv)
   exit(rc);
 }
 
+
+#include "main_moc.inc"
 

@@ -740,15 +740,15 @@ AC_DEFUN([AC_PATH_QT],
           QT_LIBS="$newqtlibs"
         fi
     fi
-    AC_PATH_PROGS(MOC, [moc moc3 moc2], [unknown], [$QTDIR/bin $PATH])
-    AC_PATH_PROGS(UIC, [uic uic3 uic2], [unknown], [$QTDIR/bin $PATH])
+    AC_PATH_PROGS(MOC, [moc moc3 moc2], [:], [$QTDIR/bin $PATH])
+    AC_PATH_PROGS(UIC, [uic uic3 uic2], [:], [$QTDIR/bin $PATH])
+    AC_PATH_PROGS(LUPDATE, [lupdate],   [:], [$QTDIR/bin $PATH])
+    AC_PATH_PROGS(LRELEASE,[lrelease],  [:], [$QTDIR/bin $PATH])
     if test -x "$MOC" ; then : ; else 
-        AC_MSG_WARN([Cannot run the Qt Meta-Object compiler.])
+        AC_MSG_WARN([Cannot locate the Qt Meta-Object compiler.])
         ac_has_qt=no
         QTDIR=no
     fi
-    AC_PATH_PROGS(LUPDATE, [lupdate], [unknown], [$QTDIR/bin $PATH])
-    AC_PATH_PROGS(LRELEASE,[lrelease], [unknown], [$QTDIR/bin $PATH])
   fi
   # Execute
   if test "x$ac_has_qt" != xno ; then

@@ -8169,7 +8169,7 @@ fi
 
   test -n "$MOC" && break
 done
-test -n "$MOC" || MOC="unknown"
+test -n "$MOC" || MOC=":"
 
     for ac_prog in uic uic3 uic2
 do
@@ -8214,14 +8214,8 @@ fi
 
   test -n "$UIC" && break
 done
-test -n "$UIC" || UIC="unknown"
+test -n "$UIC" || UIC=":"
 
-    if test -x "$MOC" ; then : ; else
-        { echo "$as_me:$LINENO: WARNING: Cannot run the Qt Meta-Object compiler." >&5
-echo "$as_me: WARNING: Cannot run the Qt Meta-Object compiler." >&2;}
-        ac_has_qt=no
-        QTDIR=no
-    fi
     for ac_prog in lupdate
 do
   # Extract the first word of "$ac_prog", so it can be a program name with args.
@@ -8265,7 +8259,7 @@ fi
 
   test -n "$LUPDATE" && break
 done
-test -n "$LUPDATE" || LUPDATE="unknown"
+test -n "$LUPDATE" || LUPDATE=":"
 
     for ac_prog in lrelease
 do
@@ -8310,8 +8304,14 @@ fi
 
   test -n "$LRELEASE" && break
 done
-test -n "$LRELEASE" || LRELEASE="unknown"
+test -n "$LRELEASE" || LRELEASE=":"
 
+    if test -x "$MOC" ; then : ; else
+        { echo "$as_me:$LINENO: WARNING: Cannot locate the Qt Meta-Object compiler." >&5
+echo "$as_me: WARNING: Cannot locate the Qt Meta-Object compiler." >&2;}
+        ac_has_qt=no
+        QTDIR=no
+    fi
   fi
   # Execute
   if test "x$ac_has_qt" != xno ; then

@@ -245,6 +245,8 @@ qd_about_dialog_moc.cpp : ${srcdir}/qd_about_dialog.h
 	${MOC} ${srcdir}/qd_about_dialog.h -o qd_about_dialog_moc.cpp
 main.o : ${srcdir}/main.cpp
 	${CXX} ${CXXFLAGS} -c ${srcdir}/main.cpp
+main_moc.inc : ${srcdir}/main.cpp
+	${MOC} ${srcdir}/main.cpp -o main_moc.inc
 ppm_djvu_logo.o : ppm_djvu_logo.cpp
 	${CXX} ${CXXFLAGS} -c ppm_djvu_logo.cpp
 ppm_djvu_logo.cpp : ${top_srcdir}/gui/shared/cin_data/ppm_djvu_logo.cin
@@ -464,5 +466,6 @@ MOCINCS = \
  netscape_moc.inc \
  dispatch_moc.inc \
  mime_check_moc.inc \
+ main_moc.inc \
 
 

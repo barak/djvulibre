@@ -253,17 +253,29 @@ QDSearchDialog::slotSearch(void)
             else
 	    {
 	       asked_once=true;
-	       QString msg=all_pages_butt->isChecked() ? tr("document") : tr("page");
-	       if (fwd)
-               {
-                 msg=tr("End of ")+msg+tr(" reached. Continue from the beginning?");
-               }
+	       QString msg;
+               if (all_pages_butt->isChecked())
+                 {
+                   if (fwd)
+                     msg=tr("End of document reached. "
+                            "Continue from the beginning?");
+                   else
+                     msg=tr("Beginning of document reached. "
+                            "Continue from the end?");
+                 }
                else
+                 {
+                   if (fwd)
+                     msg=tr("End of page reached. "
+                            "Continue from the beginning?");
+                   else
+                     msg=tr("Beginning of page reached. "
+                            "Continue from the end?");
+                 }
+
+	       if (QMessageBox::information(this, "DjVu", msg, 
+                                            tr("&Yes"), tr("&No"))==0)
                {
-                 msg=tr("Beginning of ")+msg+tr(" reached. Continue from the end?");
-               }
-	       if (QMessageBox::information(this, "DjVu", msg, tr("&Yes"), tr("&No"))==0)
-	       {
 		  if (all_pages_butt->isChecked())
 		  {
 		     if (fwd) 
@@ -317,21 +329,28 @@ QDSearchDialog::slotSearch(void)
       {
 	 if (no_txt)
 	 {
-	    if (all_pages_butt->isChecked())
-	       showMessage(this, tr("DjVu Search Failed"),
-			   tr("After looking through every page of this document\n")+
-			   tr("we have found, that neither of them contain\ntextual information.")+
-			   tr("This means, that the document\ncreator did not run an OCR engine on this document.\n\n")+
-			   tr("The search is impossible."), true, false, true);
-	    else
-	       showMessage(this, tr("DjVu Search Failed"),
-			   tr("This page does not contain textual information,\n")+
-			   tr("which means that either creator of this document did not run an OCR engine on it, ")+
-			   tr("or the OCR engine did not recognize any text on this page.\n\n")+
-			   tr("The search is impossible."), true, false, true);
-	 } else showInfo(this, "DjVu", tr("Search string not found"));
+           if (all_pages_butt->isChecked())
+             showMessage(this, tr("DjVu Search Failed"),
+                         tr("After looking through every page of this document\n"
+                            "we have found, that neither of them contain\n"
+                            "textual information. This means, that the document\n"
+                            "creator did not run an OCR engine on this document.\n"
+                            "\n"
+                            "The search is impossible."), 
+                         true, false, true);
+           else
+             showMessage(this, tr("DjVu Search Failed"),
+                         tr("This page does not contain textual information,\n"
+                            "which means that either the creator of this document\n" 
+                            "did not run an OCR engine on it, or the OCR engine\n"
+                            "did not recognize any text on this page.\n"
+                            "\n"
+                            "The search is impossible."), 
+                         true, false, true);
+	 } else 
+           showInfo(this, "DjVu", tr("Search string not found"));
       }
-
+      
       in_search=false;
       search_butt->setText(tr("&Find"));
       {
@@ -340,7 +359,8 @@ QDSearchDialog::slotSearch(void)
       }
       text->setEnabled(TRUE);
       clear_butt->setEnabled(TRUE);
-   } catch(const GException & exc)
+   } 
+   catch(const GException & exc)
    {
       status_label->hide();
       in_search=false;

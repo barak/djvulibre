@@ -252,67 +252,34 @@ or &apos;ASCII %2&apos; format. Which one do you prefer?
         <source>All files (*)</source>
         <translation type="unfinished"></translation>
     </message>
-</context>
-<context>
-    <name>QDFileFormatDialog</name>
     <message>
-        <source>DjVu page file format</source>
+        <source>Select DjVu document file name...</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>It seems that contents of this page are currently </source>
+        <source>File &apos;%1&apos; already exists.
+Are you sure you want to overwrite it?
+</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>scattered over more than one file. </source>
+        <source>&amp;Yes</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>So you can now do either of the following:</source>
+        <source>&amp;No</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Create all these files. This is useful if you plan </source>
+        <source>DjVu document file name</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>to save more than one page and then to insert them </source>
+        <source>File name: </source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>into another document: the shared files will remain shared.</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Pack all these files into one bundle </source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>(so called BUNDLED format). This is convenient because </source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>you will have only one file and will still be able </source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>to split it into many when necessary.</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Merge chunks from all files and store them </source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>into one file. </source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Use this if you need the simplest structure of the file </source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>and you do not plan to separate the chunks again.</source>
+        <source>&amp;Browse</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
@@ -325,28 +292,119 @@ or &apos;ASCII %2&apos; format. Which one do you prefer?
     </message>
 </context>
 <context>
-    <name>QDFilesListDialog</name>
+    <name>QDDocSaver</name>
     <message>
-        <source>DjVu: Files list</source>
+        <source>DjVu Error</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>The following files will be created in directory &quot;</source>
+        <source>File format</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>
-
-Are you sure you want to proceed?
+        <source>Would you like to save the document in
+BUNDLED format (one file) or in INDIRECT
+format (many files: ideal for web browsing)?
 </source>
         <translation type="unfinished"></translation>
     </message>
+    <message>
+        <source>&amp;Bundled</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>&amp;Indirect</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>&amp;Cancel</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Please enter the document file name.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Please enter the name of the main document file.
+All other files will be saved in the same directory.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>The chosen name coincides with the name of
+one of the files composing this multipage document.
+Please choose another name.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Please wait while the file is being downloaded...        </source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Please wait</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Data stream from Netscape has been stopped.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Please wait while all pages are being loaded...        </source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
+    <name>QDFileFormatDialog</name>
+    <message>
+        <source>DjVu page file format</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>&amp;OK</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>&amp;Cancel</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>It seems that contents of this page are scattered over more than one file.
+You have the following options:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Create all these files. This is useful if you plan to save several page to insert them into another document. The shared files will remain shared.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Pack all these files into one bundle (so called BUNDLED format). This is convenient because you will have only one file and will still be able to split it into many when necessary.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Merge chunks from all files and store them into one file. Use this if you need the simplest structure of the file and you do not plan to separate the chunks again.</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
+    <name>QDFilesListDialog</name>
     <message>
         <source>&amp;Yes</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <source>&amp;No</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>DjVu: File list</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>The following files will be created in directory &apos;%1&apos;.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Are you sure you want to proceed?
+</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -406,6 +464,81 @@ gray shades look similar.</source>
     </message>
     <message>
         <source>&lt;b&gt;Hyperlinks:&lt;/b&gt;&lt;ul&gt;&lt;li&gt;Hyperlinks are hilited when the mouse hovers above the hyperlink region or when the the key combination specified in the &lt;i&gt;show all hyperlinks&lt;/i&gt; box is depressed.&lt;/li&gt;&lt;li&gt;The &lt;i&gt;disable hyperlink popups&lt;/i&gt; option hides the popup messages optionally associated with the hyperlinks.&lt;/li&gt;&lt;li&gt;The &lt;i&gt;draw using simple border&lt;/i&gt; option selects simpler hiliting effects.&lt;/li&gt;&lt;/ul&gt;</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
+    <name>QDJView</name>
+    <message>
+        <source>DJVIEW --- DjVuLibre-%1</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>DjVu document viewer.
+
+Usage: djview &lt;options_list&gt; &lt;file_name&gt;
+Options:
+     -file &lt;file_name&gt;       - alternative way to specify file name
+     -page &lt;page_num&gt;        - number of the page to display
+     -help                   - print this message
+     -style=motif            - Motif look and feel
+     -style=windows          - Win95 look and feel
+     -fullscreen, -fs        - run in full screen mode
+     -geometry &lt;geometry&gt;    - specify X11 startup geometry
+     -display &lt;display&gt;      - specify X11 display name
+     -fn &lt;fontname&gt;          - specify Qt/X11 default font
+     -bg &lt;color&gt;             - specify Qt/X11 default background color
+     -fg &lt;color&gt;             - specify Qt/X11 default foreground color
+</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>     -btn &lt;color&gt;            - specify Qt/X11 default button color
+     -visual TrueColor       - forces use of a TrueColor visual (8 bit display)
+     -ncols &lt;count&gt;          - limit color palette use (8 bit display)
+     -cmap                   - install private colormap (8 bit display)
+</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>     -debug[=&lt;level&gt;]        - print debug information
+</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>     -fix                    - fix configuration of Netscape helpers
+
+</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>djview: duplicate page specification
+</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>djview: warning: duplicate page specification
+</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>djview: warning: unrecognized option &apos;%1&apos;
+</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>djview: warning: duplicate filename specification
+</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>djview: warning: illegal page number
+</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>djview: warning: page specification without a file name
+</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -532,6 +665,10 @@ Would  you like to update these files now?</source>
         <source>All files (*)</source>
         <translation type="unfinished"></translation>
     </message>
+    <message>
+        <source>Cannot save the page because data is missing.</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>QDPane</name>
@@ -588,19 +725,6 @@ Would  you like to update these files now?</source>
     </message>
     <message>
         <source>Select output file name</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>File &apos;</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>&apos; already exists.
-</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Are you sure you want to overwrite it?</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
@@ -853,19 +977,45 @@ automatic color matching.</source>
         <source>&amp;Cancel</source>
         <translation type="unfinished"></translation>
     </message>
+    <message>
+        <source>No custom pages were specified</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>File &apos;%1 already exists.
+Are you sure you want to overwrite it?</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Cannot launch specified print command</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>&amp;Encapsulated PostScript File (*.eps)</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>QDSavedFilesDialog</name>
     <message>
-        <source>This will create the following files</source>
+        <source>This will create the following files (plus additional included files) into the directory &apos;%1&apos;.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source> (plus additional included files)</source>
+        <source>This will create the following files into the directory &apos;%1&apos;.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source> into the directory &apos;</source>
+        <source>Are you sure you want to do this?
+</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>&amp;Yes</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>&amp;No</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -877,30 +1027,6 @@ automatic color matching.</source>
     </message>
     <message>
         <source>Loading page </source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>document</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>page</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>End of </source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source> reached. Continue from the beginning?</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Beginning of </source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source> reached. Continue from the end?</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
@@ -917,42 +1043,6 @@ automatic color matching.</source>
     </message>
     <message>
         <source>DjVu Search Failed</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>After looking through every page of this document
-</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>we have found, that neither of them contain
-textual information.</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>This means, that the document
-creator did not run an OCR engine on this document.
-
-</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>The search is impossible.</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>This page does not contain textual information,
-</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>which means that either creator of this document did not run an OCR engine on it, </source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>or the OCR engine did not recognize any text on this page.
-
-</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
@@ -997,6 +1087,40 @@ creator did not run an OCR engine on this document.
     </message>
     <message>
         <source>C&amp;lose</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>End of document reached. Continue from the beginning?</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Beginning of document reached. Continue from the end?</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>End of page reached. Continue from the beginning?</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Beginning of page reached. Continue from the end?</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>After looking through every page of this document
+we have found, that neither of them contain
+textual information. This means, that the document
+creator did not run an OCR engine on this document.
+
+The search is impossible.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>This page does not contain textual information,
+which means that either the creator of this document
+did not run an OCR engine on it, or the OCR engine
+did not recognize any text on this page.
+
+The search is impossible.</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -1657,6 +1781,10 @@ uses outdated tools.
         <source>Failed to open file &apos;%1&apos;</source>
         <translation type="unfinished"></translation>
     </message>
+    <message>
+        <source>Failed to open file &apos;%1&apos; for reading</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>QDWPaper</name>
@@ -1767,10 +1895,6 @@ not a pipe, socket or device file.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Select DjVu page output file name...</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>Cannot open file &apos;%1&apos; for reading.
 %2</source>
         <translation type="unfinished"></translation>
@@ -1787,6 +1911,10 @@ Are you sure you want to overwrite it?</source>
     </message>
     <message>
         <source>Failed to stat file &apos;%1&apos;</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Select a name for the DjVu page...</source>
         <translation type="unfinished"></translation>
     </message>
 </context>

@@ -64,8 +64,10 @@ static GP<DjVuFileCache> cache=NULL;
 
 DjVuFileCache * get_file_cache(void)
 {
-   if (!cache) cache=DjVuFileCache::create();
-   if (!cache) G_THROW("Failed to initialize DjVuFile cache.");
+   if (!cache) 
+     cache=DjVuFileCache::create();
+   if (!cache) 
+     G_THROW("Failed to initialize DjVuFile cache.");
    return cache;
 }
 
