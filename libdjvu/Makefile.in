@@ -34,7 +34,6 @@ LN_S = @LN_S@
 TOUCH = @TOUCH@
 INSTALL = @INSTALL@
 RANLIB = @RANLIB@
-RPO = CXX=@CXX@ @RPO@
 
 DEFS = @DEFS@
 OPTS = @OPTS@
@@ -44,8 +43,8 @@ JPEG_CFLAGS=@JPEG_CFLAGS@
 THREAD_LIBS = @THREAD_LIBS@
 THREAD_CFLAGS = @THREAD_CFLAGS@
 
-LIBDJVU_A = libdjvu.a
-LIBDJVU_SO = libdjvu-${PACKAGE_VERSION}.so
+LIBDJVU_A = libdjvulibre.a
+LIBDJVU_SO = libdjvulibre-${PACKAGE_VERSION}.so
 
 @SHARED_YES@CXXPICFLAGS = -fPIC -DPIC
 @SHARED_NO@CXXPICFLAGS =
@@ -58,8 +57,8 @@ LIBS= ${JPEG_LIBS} ${THREAD_LIBS} @LIBS@
 CFLAGS = @CFLAGS@ ${FLAGS}
 CXXFLAGS = @CXXFLAGS@ ${CXXPICFLAGS} ${CXXRPOFLAGS} ${FLAGS}
 
+@RPO_YES@all: libdjvu-rpo
 all: ${LIBDJVU_A} 
-
 @SHARED_YES@all: ${LIBDJVU_SO}
 
 install: install-data
@@ -80,7 +79,6 @@ OBJS = \
 	XMLParser.o XMLTags.o DjVuDynamic.o
 
 ${LIBDJVU_A} : ${OBJS}
-	@${RPO} ${OBJS}
 	@echo "[ generating $@ ... ]"
 	-${RM} 2>/dev/null ${LIBDJVU_A}
 	${AR} cru ${LIBDJVU_A} ${OBJS}
@@ -89,6 +87,15 @@ ${LIBDJVU_A} : ${OBJS}
 @SHARED_YES@${LIBDJVU_SO} : ${OBJS}
 @SHARED_YES@	@echo "[ linking $@ ... ]"
 @SHARED_YES@	${CXXSHARED} -o ${LIBDJVU_SO} ${CXXFLAGS} ${OBJS} ${LIBS}
+
+@RPO_YES@libdjvu-rpo: ${OBJS}
+@RPO_YES@	@echo "[ performing library closure ... ]"
+@RPO_YES@	@echo "int main() { return 0; }" > $@.cpp
+@RPO_YES@	${CXX} ${CXXFLAGS} -c $@.cpp
+@RPO_YES@	${CXX} ${CXXFLAGS} -o $@ $@.o ${OBJS} ${LIBS} || \
+@RPO_YES@	${CXX} ${CXXFLAGS} -o $@ $@.o ${OBJS} ${LIBS} || \
+@RPO_YES@	${CXX} ${CXXFLAGS} -o $@ $@.o ${OBJS} ${LIBS} || \
+@RPO_YES@	${CXX} ${CXXFLAGS} -o $@ $@.o ${OBJS} ${LIBS} 
 
 install-data: FORCE
 	${INSTALL} -d ${datadir}/djvu
@@ -100,14 +107,12 @@ install-data: FORCE
 install-lib: ${LIBDJVU_SO} FORCE
 	${INSTALL} -d ${libdir}
 	${INSTALL} -m 644 ${LIBDJVU_SO} ${libdir}
-	-${RM} 2>/dev/null ${libdir}/libdjvu.so 
-	cd ${libdir} && ${LN_S} ${LIBDJVU_SO} libdjvu.so
 
 depend: FORCE
 	${CXX} -MM ${CXXFLAGS} ${srcdir}/*.cpp > Makefile.dep
 
 clean: FORCE
-	-${RM} 2>/dev/null *.o *.a *.so *.stamp
+	-${RM} 2>/dev/null *.o *.a *.so libdjvu*
 
 distclean: clean 
 	-${RM} -r 2>/dev/null Makefile *.rpo ii_files

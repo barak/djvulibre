@@ -34,7 +34,6 @@ LN_S = @LN_S@
 TOUCH = @TOUCH@
 INSTALL = @INSTALL@
 RANLIB = @RANLIB@
-RPO = CXX=@CXX@ @RPO@
 BIN2CPP = ${top_builddir}/gui/bin2cpp/bin2cpp
 MOC = @MOC@
 
@@ -50,8 +49,8 @@ QT_CFLAGS = @QT_CFLAGS@
 X_LIBS = @X_LIBS@
 X_CFLAGS = @X_CFLAGS@
 
-LIBDJVU_A = ${top_builddir}/libdjvu/libdjvu.a
-LIBDJVU_SO = ${top_builddir}/libdjvu/libdjvu-${PACKAGE_VERSION}.so
+LIBDJVU_A = ${top_builddir}/libdjvu/libdjvulibre.a
+LIBDJVU_SO = ${top_builddir}/libdjvu/libdjvulibre-${PACKAGE_VERSION}.so
 @SHARED_YES@LIBDJVU = -Wl,-rpath,${libdir} ${LIBDJVU_SO}
 @SHARED_NO@LIBDJVU = ${LIBDJVU_A}
 
@@ -179,7 +178,6 @@ CFLAGS = @CFLAGS@ ${FLAGS}
 CXXFLAGS = @CXXFLAGS@ ${CXXRPOFLAGS} ${FLAGS}
 
 djview: ${OBJS}
-	@${RPO} ${OBJS} ${LIBDJVU_A}
 	${CXX} -o $@ ${CXXFLAGS} ${OBJS} ${LIBDJVU} ${LIBS}
 
 install: install-bin install-man

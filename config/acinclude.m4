@@ -169,24 +169,23 @@ dnl Defines option --enable-rpo and searches program RPO.
 dnl Set output variables CXXRPOFLAGS and RPO. 
 dnl -------------------------------------------------------
 AC_DEFUN([AC_CXX_RPO],
-[ AC_ARG_VAR(RPO,[Location of the RPO program.])
+[ CXXRPOFLAGS=
+  RPO_YES='#'
+  RPO_NO=''
   if test x$GXX = xyes ; then
     AC_ARG_ENABLE([rpo],
-    AC_HELP_STRING([--enable-rpo],
-                   [Enable compilation with option -frepo]),
-    [ac_rpo=$enableval], [ac_rpo=no] )
-  if test x$ac_rpo != xno ; then
-    CXXRPOFLAGS=-frepo
-    AC_PATH_PROG(RPO, rpo, [unknown], $PATH)
-    if ! test -x ${RPO} ; then
-        AC_MSG_ERROR([Cannot find rpo program])
+      AC_HELP_STRING([--enable-rpo],
+                     [Enable compilation with option -frepo]),
+      [ac_rpo=$enableval], [ac_rpo=no] )
+    if test x$ac_rpo != xno ; then
+      CXXRPOFLAGS=-frepo
+      RPO_YES=''
+      RPO_NO='#'
     fi
-  else
-    CXXRPOFLAGS=
-    RPO=':'
   fi
   AC_SUBST(CXXRPOFLAGS)
- fi 
+  AC_SUBST(RPO_YES)
+  AC_SUBST(RPO_NO)
 ])
 
 

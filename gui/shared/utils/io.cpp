@@ -304,10 +304,11 @@ ReadInteger(int fd, int refresh_pipe, void (* refresh_cb)(void))
    int type;
    Read(fd, &type, sizeof(type), refresh_pipe, refresh_cb);
 #ifdef PLUGIN
-   if (type!=TYPE_INTEGER) G_THROW("PipeError: Unexpected type of data read from the pipe.");
+   if (type!=TYPE_INTEGER) 
+     G_THROW("PipeError: Unexpected type of data read from the pipe.");
 #else
    if (type!=TYPE_INTEGER)
-      throw PIPE_ERROR("ReadInteger", "Unexpected type of data read from the pipe.");
+     throw PIPE_ERROR("ReadInteger", "Unexpected type of data read from the pipe.");
 #endif
    
    int var;
@@ -326,10 +327,11 @@ ReadDouble(int fd, int refresh_pipe, void (* refresh_cb)(void))
    int type;
    Read(fd, &type, sizeof(type), refresh_pipe, refresh_cb);
 #ifdef PLUGIN
-   if (type!=TYPE_DOUBLE) G_THROW("PipeError: Unexpected type of data read from the pipe.");
+   if (type!=TYPE_DOUBLE) 
+     G_THROW("PipeError: Unexpected type of data read from the pipe.");
 #else
    if (type!=TYPE_DOUBLE)
-      throw PIPE_ERROR("ReadDouble", "Unexpected type of data read from the pipe.");
+     throw PIPE_ERROR("ReadDouble", "Unexpected type of data read from the pipe.");
 #endif
    
    double var;
@@ -348,10 +350,11 @@ ReadPointer(int fd, int refresh_pipe, void (* refresh_cb)(void))
    int type;
    Read(fd, &type, sizeof(type), refresh_pipe, refresh_cb);
 #ifdef PLUGIN
-   if (type!=TYPE_POINTER) G_THROW("PipeError: Unexpected type of data read from the pipe.");
+   if (type!=TYPE_POINTER) 
+     G_THROW("PipeError: Unexpected type of data read from the pipe.");
 #else
    if (type!=TYPE_POINTER)
-      throw PIPE_ERROR("ReadPointer", "Unexpected type of data read from the pipe.");
+     throw PIPE_ERROR("ReadPointer", "Unexpected type of data read from the pipe.");
 #endif
    
    void * ptr;
@@ -370,10 +373,11 @@ ReadArray(int fd, int refresh_pipe, void (* refresh_cb)(void))
    int type;
    Read(fd, &type, sizeof(type), refresh_pipe, refresh_cb);
 #ifdef PLUGIN
-   if (type!=TYPE_ARRAY) G_THROW("PipeError: Unexpected type of data read from the pipe.");
+   if (type!=TYPE_ARRAY) 
+     G_THROW("PipeError: Unexpected type of data read from the pipe.");
 #else
    if (type!=TYPE_ARRAY)
-      throw PIPE_ERROR("ReadArray", "Unexpected type of data read from the pipe.");
+     throw PIPE_ERROR("ReadArray", "Unexpected type of data read from the pipe.");
 #endif
    
    int size;

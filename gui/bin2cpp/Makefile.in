@@ -37,13 +37,12 @@ RANLIB = @RANLIB@
 
 DEFS = @DEFS@
 OPTS = @OPTS@
-CXXRPOFLAGS = @CXXRPOFLAGS@
 JPEG_LIBS=@JPEG_LIBS@
 JPEG_CFLAGS=@JPEG_CFLAGS@
 THREAD_LIBS = @THREAD_LIBS@
 THREAD_CFLAGS = @THREAD_CFLAGS@
 
-LIBDJVU_A = ${top_builddir}/libdjvu/libdjvu.a
+LIBDJVU_A = ${top_builddir}/libdjvu/libdjvulibre.a
 LIBDJVU = ${LIBDJVU_A}
 # Note: we always use the static version of libdjvu
 # because bin2cpp is used during the build process
@@ -53,7 +52,7 @@ INCS = -I${top_builddir} -I${top_srcdir}/libdjvu -I${srcdir}
 FLAGS = ${DEFS} ${INCS} ${OPTS} ${JPEG_CFLAGS} ${THREAD_CFLAGS}
 LIBS= ${JPEG_LIBS} ${THREAD_LIBS} @LIBS@
 CFLAGS = @CFLAGS@ ${FLAGS}
-CXXFLAGS = @CXXFLAGS@ ${CXXRPOFLAGS} ${FLAGS}
+CXXFLAGS = @CXXFLAGS@ ${FLAGS}
 
 PROGRAMS = bin2cpp
 
