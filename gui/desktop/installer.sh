@@ -1,8 +1,26 @@
 #!/bin/sh
+#
+# DjVuLibre-3.5
+# Copyright (c) 2002  Leon Bottou and Yann Le Cun.
+# Copyright (c) 2001  AT&T
+#
+# This software is subject to, and may be distributed under, the
+# GNU General Public License, Version 2. The license should have
+# accompanied the software or you may obtain a copy of the license
+# from the Free Software Foundation at http://www.fsf.org .
+#
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+# 
+# DjVuLibre-3.5 is derived from the DjVu(r) Reference Library
+# distribued by Lizardtech Software.  On July 19th 2002, Lizardtech 
+# Software authorized us to replace the original DjVu(r) Reference 
+# Library by the following notice (see etc/PATENT.djvu):
 
 DESTDIR=
 srcdir=.
-
 datadir=/usr/share
 for arg ; do
   case "$arg" in
@@ -10,6 +28,13 @@ for arg ; do
 	  datadir=`echo "$arg" | sed -e 's/^[^=]*=//'` ;;
   esac
 done
+
+# ------------------------------------------
+# It is likely that this script will need
+# many adjustement to work reliably on a
+# large number of platforms. Please submit
+# patches to http://djvu.sourceforge.net.
+# ------------------------------------------
 
 applications="$datadir/applications"
 icons="$datadir/icons"
