@@ -79,6 +79,14 @@ grep -q djvusep src/contrib.mak || \
   cat $gsfiles/contrib.mak.add >> src/contrib.mak
 
 
+###### Local jpeg/png/zlib
+
+for lib in jpeg libpng zlib ; do
+ for libn in $lib-* ; do
+   if test -r $lib ; then : ; else ln -s $libn $lib ; fi
+ done
+done
+
 ###### Configure
 
 ./configure \
