@@ -51,8 +51,8 @@
 #include <qmainwindow.h>
 #include <qlabel.h>
 #include <qtimer.h>
+#include <qwidgetstack.h>
 
-#include "qt_n_in_one.h"
 #include "prefs.h"
 #include "djvu_viewer.h"
 
@@ -72,7 +72,7 @@ private:
    QMenuBar	* menu;
    QFrame       * status_frame;
    QLabel	* status_bar;
-   QeNInOne	* main;
+   QWidgetStack	* main;
    QWidget	* wpaper;
    QWidget	* vparent;
 

@@ -68,6 +68,7 @@
 #include <qprogressbar.h>
 #include <qspinbox.h>
 #include <qcombobox.h>
+#include <qobjectlist.h>
 
 #include "qt_fix.h"
 
@@ -291,7 +292,7 @@ void
 QDPrintDialog::slotDstChanged(void)
 {
    int printer=printer_butt->isChecked();
-   dst_widget->setActiveWidget(printer ? printer_widget : file_widget);
+   dst_widget->raiseWidget(printer ? printer_widget : file_widget);
    eps_butt->setEnabled(!printer);
    ps_butt->setEnabled(!printer);
    if (printer) ps_butt->setChecked(TRUE);
@@ -464,7 +465,7 @@ QDPrintDialog::done(int rc)
               pstr = ByteStream::create(fdesc, "wb", false);
            }
 
-         prog_widget->setActiveWidget(progress);
+         prog_widget->raiseWidget(progress);
 	 progress->reset();
 	 GP<DjVuToPS> print = new DjVuToPS();
 
@@ -509,7 +510,7 @@ QDPrintDialog::done(int rc)
 	       prn_rect=img_rect;
 	    print->print(*pstr, dimg, prn_rect, img_rect);
 	 }
-	 prog_widget->setActiveWidget(save_butt);
+	 prog_widget->raiseWidget(save_butt);
 	 pstr->flush();
          if (fdesc)
            pclose(fdesc);
@@ -535,7 +536,7 @@ QDPrintDialog::done(int rc)
       {
 	 if (fdesc) pclose(fdesc);
 	 if (!! fname) unlink(fname);
-	 prog_widget->setActiveWidget(save_butt);
+	 prog_widget->raiseWidget(save_butt);
 	 printing=0;
 	 setAlmostDisabled(FALSE);
 	 setSensitivity();
@@ -543,7 +544,7 @@ QDPrintDialog::done(int rc)
       {
 	 if (fdesc) pclose(fdesc);
 	 if (!! fname) unlink(fname);
-	 prog_widget->setActiveWidget(save_butt);
+	 prog_widget->raiseWidget(save_butt);
 	 printing=0;
 	 setAlmostDisabled(FALSE);
 	 setSensitivity();
@@ -792,7 +793,7 @@ QDPrintDialog::QDPrintDialog(const GP<DjVuDocument> & _doc,
    gb_lay1->addStretch(1);
    gb_lay1->addWidget(top_w);
    gb_lay1->addStretch(1);
-   QeNInOne * bot_w=new QeNInOne(gb, "bot_w");
+   QWidgetStack * bot_w=new QWidgetStack(gb, "bot_w");
    gb_lay->addWidget(bot_w);
 
       // *** top_w
@@ -830,7 +831,7 @@ QDPrintDialog::QDPrintDialog(const GP<DjVuDocument> & _doc,
 
    //***************** Creating the OK/Cancel buttons ***************
    QHBoxLayout * prg_lay=new QHBoxLayout(vlay);
-   prog_widget=new QeNInOne(start, "prog_widget");
+   prog_widget=new QWidgetStack(start, "prog_widget");
    prg_lay->addWidget(prog_widget, 1);
    progress=new QProgressBar(prog_widget, "progress_bar");
    progress->setIndicatorFollowsStyle(FALSE);
@@ -838,7 +839,7 @@ QDPrintDialog::QDPrintDialog(const GP<DjVuDocument> & _doc,
 
    save_butt=new QCheckBox(tr("&Save settings to disk"), prog_widget, "save_butt");
    save_butt->setChecked(TRUE);
-   prog_widget->setActiveWidget(save_butt);
+   prog_widget->raiseWidget(save_butt);
    QPushButton * ok_butt=new QPushButton(tr("&OK"), start, "ok_butt");
    ok_butt->setDefault(TRUE);
    prg_lay->addWidget(ok_butt);

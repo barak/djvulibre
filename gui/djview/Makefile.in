@@ -93,12 +93,10 @@ CPP_SOURCES = \
  ${top_srcdir}/gui/indep/except/exceptions.cpp \
  ${top_srcdir}/gui/indep/except/throw_error.cpp \
  ${top_srcdir}/gui/indep/QX/qx_imager.cpp \
- ${top_srcdir}/gui/indep/QX/rem_netscape.cpp \
  ${top_srcdir}/gui/indep/QX/qxlib.cpp \
  ${top_srcdir}/gui/indep/QT/qt_fix.cpp \
  ${top_srcdir}/gui/indep/QT/qt_imager.cpp \
  ${top_srcdir}/gui/indep/QT/qt_painter.cpp \
- ${top_srcdir}/gui/indep/QT/qt_n_in_one.cpp \
  ${top_srcdir}/gui/indep/QT/qlib.cpp \
  ${top_srcdir}/gui/indep/utils/col_db.cpp \
  ${top_srcdir}/gui/indep/utils/execdir.cpp \

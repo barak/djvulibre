@@ -51,8 +51,6 @@
 #include "GPixmap.h"
 #include "GString.h"
 
-#include "qt_n_in_one.h"
-
 #include <qdialog.h>
 #include <qpushbutton.h>
 #include <qcombobox.h>
@@ -100,7 +98,7 @@ class QeExcMessage : public QeDialog
 {
    Q_OBJECT
 private:
-   QeNInOne	* details;
+   QWidget	* details;
    QPushButton	* details_butt;
 private slots:
    void		switchDetails(void);

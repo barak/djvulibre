@@ -47,6 +47,7 @@
 #include "qlib.h"
 
 #include <qapplication.h>
+#include <qobjectlist.h>
 
 #include "qt_fix.h"
 

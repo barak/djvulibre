@@ -137,7 +137,7 @@ QDViewerShell::openURL(const GURL & url)
 
    try
    {
-      main->setActiveWidget(wpaper);
+      main->raiseWidget(wpaper);
       
       if (djvu)
       {
@@ -151,7 +151,7 @@ QDViewerShell::openURL(const GURL & url)
 	      this, SLOT(slotGetURL(const GURL &, const GUTF8String &)));
 
       djvu->attach(vparent);
-      main->setActiveWidget(vparent);
+      main->raiseWidget(vparent);
 
       DataPool::load_file(clean_url);
       GP<DataPool> pool=DataPool::create(clean_url);
@@ -170,7 +170,7 @@ QDViewerShell::openURL(const GURL & url)
 
    } catch(const GException & exc)
    {
-      main->setActiveWidget(wpaper);
+      main->raiseWidget(wpaper);
       if (djvu)
       {
 	 djvu->detach();
@@ -523,8 +523,7 @@ QDViewerShell::QDViewerShell(QWidget * parent, const char * name)
 
    QWidget * central=new QWidget(this);
    QVBoxLayout * vlay=new QVBoxLayout(central, 0, 0, "vlay");
-   main=new QeNInOne(central, "main");
-   main->dontResize(TRUE);
+   main=new QWidgetStack(central, "main");
    vlay->addWidget(main, 1);
    status_frame=new QFrame(central);
    status_frame->setFrameStyle(QFrame::Panel | QFrame::Raised);
@@ -576,7 +575,7 @@ QDViewerShell::QDViewerShell(QWidget * parent, const char * name)
    }
 
    vparent=new QWidget(main, "vparent");
-   main->setActiveWidget(wpaper);
+   main->raiseWidget(wpaper);
 
    status_bar->setText(tr(START_STATUS));
    slotAboutToShowMenu();

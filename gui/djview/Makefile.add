@@ -23,8 +23,6 @@ qx_imager.o : ${top_srcdir}/gui/indep/QX/qx_imager.cpp
 	${CXX} ${CXXFLAGS} -c ${top_srcdir}/gui/indep/QX/qx_imager.cpp
 qx_imager_moc.inc : ${top_srcdir}/gui/indep/QX/qx_imager.cpp
 	${MOC} ${top_srcdir}/gui/indep/QX/qx_imager.cpp -o qx_imager_moc.inc
-rem_netscape.o : ${top_srcdir}/gui/indep/QX/rem_netscape.cpp
-	${CXX} ${CXXFLAGS} -c ${top_srcdir}/gui/indep/QX/rem_netscape.cpp
 qxlib.o : ${top_srcdir}/gui/indep/QX/qxlib.cpp
 	${CXX} ${CXXFLAGS} -c ${top_srcdir}/gui/indep/QX/qxlib.cpp
 qt_fix.o : ${top_srcdir}/gui/indep/QT/qt_fix.cpp
@@ -40,12 +38,6 @@ qt_imager.o : ${top_srcdir}/gui/indep/QT/qt_imager.cpp
 	${CXX} ${CXXFLAGS} -c ${top_srcdir}/gui/indep/QT/qt_imager.cpp
 qt_painter.o : ${top_srcdir}/gui/indep/QT/qt_painter.cpp
 	${CXX} ${CXXFLAGS} -c ${top_srcdir}/gui/indep/QT/qt_painter.cpp
-qt_n_in_one.o : ${top_srcdir}/gui/indep/QT/qt_n_in_one.cpp
-	${CXX} ${CXXFLAGS} -c ${top_srcdir}/gui/indep/QT/qt_n_in_one.cpp
-qt_n_in_one_moc.o : qt_n_in_one_moc.cpp
-	${CXX} ${CXXFLAGS} -c qt_n_in_one_moc.cpp
-qt_n_in_one_moc.cpp : ${top_srcdir}/gui/indep/QT/qt_n_in_one.h
-	${MOC} ${top_srcdir}/gui/indep/QT/qt_n_in_one.h -o qt_n_in_one_moc.cpp
 qlib.o : ${top_srcdir}/gui/indep/QT/qlib.cpp
 	${CXX} ${CXXFLAGS} -c ${top_srcdir}/gui/indep/QT/qlib.cpp
 qlib_moc.o : qlib_moc.cpp
@@ -398,8 +390,6 @@ OBJS = \
  qt_fix_moc.o \
  qt_imager.o \
  qt_painter.o \
- qt_n_in_one.o \
- qt_n_in_one_moc.o \
  qlib.o \
  qlib_moc.o \
  col_db.o \

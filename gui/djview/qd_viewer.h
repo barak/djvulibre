@@ -124,7 +124,7 @@ private:
 
 #ifdef UNIX
    // Platform dependent class used to issue remote commands to netscape
-   RemoteNetscape	rem_netscape;
+   unsigned long getClientWindow();
 
       // These pipe used to catch errors coming from a child process
       // They're passed to children for substituting their stderr stream

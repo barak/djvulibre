@@ -52,10 +52,10 @@
 
 #include <qdialog.h>
 #include <qstring.h>
+#include <qwidgetstack.h>
 #include <sys/types.h>
 
 #include "prefs.h"
-#include "qt_n_in_one.h"
 #include "qt_fix.h"
 
 class QDPrintDialog : public QeDialog
@@ -78,12 +78,12 @@ private:
    class QComboBox	* zoom_menu;
    class QSpinBox	* zoom_spin;
 
-   QeNInOne		* dst_widget;
+   QWidgetStack		* dst_widget;
    QWidget		* printer_widget, * file_widget;
    class QRadioButton	* printer_butt, * file_butt;
    class QLineEdit	* printer_text, * file_text;
 
-   QeNInOne		* prog_widget;
+   QWidgetStack		* prog_widget;
    class QProgressBar	* progress;
    class QPushButton	* cancel_butt;
 

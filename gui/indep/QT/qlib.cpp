@@ -45,7 +45,6 @@
 #define INCLUDE_MENUITEM_DEF
 
 #include "qlib.h"
-#include "qt_n_in_one.h"
 #include "debug.h"
 #include "exc_msg.h"
 #include "exc_misc.h"
@@ -115,23 +114,25 @@ getExcMsg(const char *exc_cause)
 void
 QeExcMessage::switchDetails(void)
 {
-   try
-   {
-      if (details->isVisible())
-      {
-	 details_butt->setText(tr("&Details"));
-	 details->hide();
-      } else
-      {
-	 details_butt->setText(tr("Hide &Details"));
-	 details->show();
-      }
-      details_butt->setMinimumWidth(details_butt->sizeHint().width());
-
-   } catch(const GException & exc)
-   {
+  try
+    {
+      if (! details->isHidden())
+        {
+          details_butt->setText(tr("&Details"));
+          details->hide();
+          layout()->activate();
+          resize(1,1);
+        } 
+      else
+        {
+          details_butt->setText(tr("Hide &Details"));
+          details->show();
+        }
+    }
+  catch(const GException & exc)
+    {
       warning(QStringFromGString(getExcMsg(exc.get_cause())));   
-   }
+    }
 }
 
 QeExcMessage::QeExcMessage(const GException & exc, const char * title,
@@ -159,39 +160,35 @@ QeExcMessage::QeExcMessage(const GException & exc, const char * title,
    hlay->addWidget(text);
 
       // Creating "details" of the exception
-   details=new QeNInOne(this);
-   details->dontResize(FALSE);
+   details = new QWidget(this);
    vlay->addWidget(details);
-   QWidget * w=new QWidget(details);
-   QGridLayout * glay=new QGridLayout(w, 4, 2, 0, 10);
-   QFrame * sep=new QFrame(w, "separator");
+   QGridLayout * glay=new QGridLayout(details, 4, 2, 0, 10);
+   QFrame * sep=new QFrame(details, "separator");
    sep->setFrameStyle(QFrame::HLine | QFrame::Sunken);
-   sep->setMinimumHeight(sep->sizeHint().height());
-   sep->setMaximumHeight(sep->sizeHint().height());
    glay->addMultiCellWidget(sep, 0, 0, 0, 1);
    QLabel * name, * value;
    QFont font;
-   name=new QLabel(tr("Function name"), w, "func_name");
+   name=new QLabel(tr("Function name"), details, "func_name");
    glay->addWidget(name, 1, 0);
    QString func_name=exc.get_function();
    if (!func_name) func_name="unknown";
-   value=new QLabel(func_name, w, "func_value");
+   value=new QLabel(func_name, details, "func_value");
    value->setFont(QFont("courier", value->font().pointSize()));
    value->setFrameStyle(QFrame::WinPanel | QFrame::Sunken);
    glay->addWidget(value, 1, 1);
-   name=new QLabel(tr("File name"), w, "file_name");
+   name=new QLabel(tr("File name"), details, "file_name");
    glay->addWidget(name, 2, 0);
    QString file_name=exc.get_file();
    if (!file_name) file_name="unknown";
-   value=new QLabel(file_name, w, "file_value");
+   value=new QLabel(file_name, details, "file_value");
    value->setFont(QFont("courier", value->font().pointSize()));
    value->setFrameStyle(QFrame::WinPanel | QFrame::Sunken);
    glay->addWidget(value, 2, 1);
-   name=new QLabel(tr("Line number"), w, "line_name");
+   name=new QLabel(tr("Line number"), details, "line_name");
    glay->addWidget(name, 3, 0);
    char buffer[128];
    sprintf(buffer, "%d", exc.get_line());
-   value=new QLabel(buffer, w, "line_value");
+   value=new QLabel(buffer, details, "line_value");
    value->setFont(QFont("courier", value->font().pointSize()));
    value->setFrameStyle(QFrame::WinPanel | QFrame::Sunken);
    glay->addWidget(value, 3, 1);

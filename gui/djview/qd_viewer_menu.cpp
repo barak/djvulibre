@@ -378,12 +378,6 @@ QDViewer::processCommand(int cmd)
 	    print(cmd);
 	    break;
       
-	 case IDC_SEND_PAGE:
-#ifdef UNIX // for now
-	    rem_netscape.SendPage();
-#endif
-	    break;
-
 	 case IDC_SAVE_PAGE_AS:
 	    savePageAs();
 	    break;
