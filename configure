@@ -7499,11 +7499,11 @@ echo $ECHO_N "checking for Qt root directory... $ECHO_C" >&6
        ac_has_qt="user defined QT_CFLAGS and QT_LIBS" # no questions asked
     else
        ac_qt_dirs="/usr/lib/qt /usr/local /usr/X11R6 /usr"
-       for n in /usr/lib/qt-3.* ; do test -d $n && ac_qt_dirs="$n $ac_qt_dirs" ; done
-       test -d /usr/lib/qt3 && ac_qt_dirs="/usr/lib/qt3 $ac_qt_dirs"
        for n in /usr/lib/qt-2.* ; do test -d $n && ac_qt_dirs="$n $ac_qt_dirs" ; done
        test -d /usr/lib/qt2 && ac_qt_dirs="/usr/lib/qt2 $ac_qt_dirs"
-       test -d "$QTDIR" && ac_qt_dirs="$QTDIR $ac_qt2_dirs"
+       for n in /usr/lib/qt-3.* ; do test -d $n && ac_qt_dirs="$n $ac_qt_dirs" ; done
+       test -d /usr/lib/qt3 && ac_qt_dirs="/usr/lib/qt3 $ac_qt_dirs"
+       test -d "$QTDIR" && ac_qt_dirs="$QTDIR $ac_qt_dirs"
        for dir in $ac_qt_dirs ; do
           if test -r $dir/include/qwidget.h ; then
             ac_has_qt=$dir
@@ -7569,7 +7569,7 @@ echo "${ECHO_T}$ac_has_qt_mt" >&6
           QT_LIBS="$newqtlibs"
         fi
     fi
-    for ac_prog in moc moc2 moc3
+    for ac_prog in moc moc3 moc2
 do
   # Extract the first word of "$ac_prog", so it can be a program name with args.
 set dummy $ac_prog; ac_word=$2
@@ -7614,7 +7614,7 @@ fi
 done
 test -n "$MOC" || MOC="unknown"
 
-    for ac_prog in uic uic2 uic3
+    for ac_prog in uic uic3 uic2
 do
   # Extract the first word of "$ac_prog", so it can be a program name with args.
 set dummy $ac_prog; ac_word=$2
@@ -7915,7 +7915,7 @@ echo "$as_me: WARNING: Your c++ compiler ($cxxver) has known problems.
 -------------------------------------------" >&2;}
         ;;
     redhat)
-        # Check for the infamous early 2.96 compiler
+        # Check for infamous early 2.96 compiler
         for n in `g++ -v 2>&1 | grep version` ; do rhversion=$n ; done
         case "$rhversion" in
           2.96-1[0-9][0-9]*) ;;

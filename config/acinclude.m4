@@ -630,11 +630,11 @@ AC_DEFUN([AC_PATH_QT],
        ac_has_qt="user defined QT_CFLAGS and QT_LIBS" # no questions asked
     else
        ac_qt_dirs="/usr/lib/qt /usr/local /usr/X11R6 /usr"
-       for n in /usr/lib/qt-3.* ; do test -d $n && ac_qt_dirs="$n $ac_qt_dirs" ; done
-       test -d /usr/lib/qt3 && ac_qt_dirs="/usr/lib/qt3 $ac_qt_dirs"
        for n in /usr/lib/qt-2.* ; do test -d $n && ac_qt_dirs="$n $ac_qt_dirs" ; done
        test -d /usr/lib/qt2 && ac_qt_dirs="/usr/lib/qt2 $ac_qt_dirs"
-       test -d "$QTDIR" && ac_qt_dirs="$QTDIR $ac_qt2_dirs"
+       for n in /usr/lib/qt-3.* ; do test -d $n && ac_qt_dirs="$n $ac_qt_dirs" ; done
+       test -d /usr/lib/qt3 && ac_qt_dirs="/usr/lib/qt3 $ac_qt_dirs"
+       test -d "$QTDIR" && ac_qt_dirs="$QTDIR $ac_qt_dirs"
        for dir in $ac_qt_dirs ; do
           if test -r $dir/include/qwidget.h ; then
             ac_has_qt=$dir
@@ -697,8 +697,8 @@ AC_DEFUN([AC_PATH_QT],
           QT_LIBS="$newqtlibs"
         fi
     fi
-    AC_PATH_PROGS(MOC, [moc moc2 moc3], [unknown], [$QTDIR/bin $PATH])
-    AC_PATH_PROGS(UIC, [uic uic2 uic3], [unknown], [$QTDIR/bin $PATH])
+    AC_PATH_PROGS(MOC, [moc moc3 moc2], [unknown], [$QTDIR/bin $PATH])
+    AC_PATH_PROGS(UIC, [uic uic3 uic2], [unknown], [$QTDIR/bin $PATH])
     if test -x "$MOC" ; then : ; else 
         AC_MSG_WARN([Cannot run the Qt Meta-Object compiler.])
         ac_has_qt=no
