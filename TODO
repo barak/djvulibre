@@ -9,8 +9,8 @@ RELEASE 2
 - ht:/dig plugin
 
 RELEASE 3
-- upgraded cpaldjvu
-- simple ps-to-djvu translator
+- better encoders (cjb2, cpaldjvu, csepdjvu)
+- gs based ps-to-djvu translator
 
 LATER MAYBE
 - creating hidden text layers
