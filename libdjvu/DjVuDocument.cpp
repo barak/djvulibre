@@ -1149,11 +1149,9 @@ DjVuDocument::process_threqs(void)
                 if(bm)
                   pm=GPixmap::create(*bm);
                 else
-                  pm = GPixmap::create(rect.height(), rect.width(), &GPixel::WHITE);
+                  pm = GPixmap::create(rect.height(), rect.width(), 
+                                       &GPixel::WHITE);
               }
-              if (!pm) 
-                G_THROW( ERR_MSG("DjVuDocument.cant_render") "\t" 
-                         + GUTF8String(req->page_num+1));
               
               // Store and compress the pixmap
               GP<IW44Image> iwpix=IW44Image::create_encode(*pm);
