@@ -222,49 +222,35 @@ public:
   enum Stage { DECODING, PRINTING };
   
 private:
-  static char bin2hex[256][2];
-  void (*refresh_cb)(void *refresh_cl_data);
+  void (*refresh_cb)(void*);
   void  *refresh_cl_data;
-  void (*prn_progress_cb)(double done, void *prn_progress_cl_data);
+  void (*prn_progress_cb)(double, void*);
   void  *prn_progress_cl_data;
-  void (*dec_progress_cb)(double done, void *dec_progress_cl_data);
+  void (*dec_progress_cb)(double, void*);
   void  *dec_progress_cl_data;
-  void (*info_cb)(int page_num, int page_cnt, int tot_pages,
-                  Stage stage, void *info_cl_data);
+  void (*info_cb)(int,int,int,Stage,void*);
   void  *info_cl_data;
   unsigned char ramp[256];
   GP<DecodePort> port;
 protected:
-  static void write(ByteStream &str, const char *format, ...);
-  static unsigned char *ASCII85_encode(unsigned char *dst,
-                                       const unsigned char *src_start,
-                                       const unsigned char *src_end);
-  static unsigned char *RLE_encode(unsigned char *dst,
-                                   const unsigned char *src_start,
-                                   const unsigned char *src_end);
-  void store_doc_prolog(ByteStream &str, int pages, 
-                        int dpi, const GRect &grect);
-  void store_doc_setup(ByteStream &str);
-  void store_doc_trailer(ByteStream &str);
-  void store_page_setup(ByteStream &str, int dpi, 
-                        const GRect &print_rect, int align=0);
-  void store_page_trailer(ByteStream &str);
-  void make_gamma_ramp(const GP<DjVuImage> &dimg);
-  void print_image_lev1(ByteStream &str, const GP<DjVuImage> &dimg,
-                        const GRect &print_rect);
-  void print_image_lev2(ByteStream &str, const GP<DjVuImage> &dimg,
-                        const GRect &print_rect);
-  void print_bg(ByteStream &str, const GP<DjVuImage> &dimg,
-                const GRect &print_rect);
-  void print_fg_3layer(ByteStream &str, const GP<DjVuImage> &dimg,
-                       const GRect &print_rect, unsigned char *blit_list);
-  void print_fg_2layer(ByteStream &str, const GP<DjVuImage> &dimg,
-                       const GRect &print_rect, unsigned char *blit_list);
-  void print_fg(ByteStream &str, const GP<DjVuImage> &dimg,
-                const GRect &print_rect);
-  void print_image(ByteStream &str, const GP<DjVuImage> &dimg,
-                   const GRect &print_rect, const GP<DjVuTXT> &txt);
-
+  void store_doc_prolog(ByteStream&,int,int,GRect*);
+  void store_doc_setup(ByteStream&);
+  void store_doc_trailer(ByteStream&);
+  void store_page_setup(ByteStream&,int,const GRect&,int align=0);
+  void store_page_trailer(ByteStream&);
+  void make_gamma_ramp(GP<DjVuImage>);
+  void print_image_lev1(ByteStream&,GP<DjVuImage>,const GRect&);
+  void print_image_lev2(ByteStream&,GP<DjVuImage>,const GRect&);
+  void print_bg(ByteStream&,GP<DjVuImage>,const GRect&);
+  void print_fg_3layer(ByteStream&,GP<DjVuImage>,const GRect&,unsigned char*);
+  void print_fg_2layer(ByteStream&,GP<DjVuImage>,const GRect&,unsigned char*);
+  void print_fg(ByteStream&,GP<DjVuImage>,const GRect&);
+  void print_image(ByteStream&,GP<DjVuImage>,const GRect&,GP<DjVuTXT>);
+  void parse_range(GP<DjVuDocument>,GUTF8String,GList<int>&);
+  GP<DjVuImage> decode_page(GP<DjVuDocument>,int,int,int);
+  void process_single_page(ByteStream&,GP<DjVuDocument>,int,int,int);
+  void process_double_page(ByteStream&,GP<DjVuDocument>,int,int,int,int,int);
+  
 public:
   /** Options affecting the print result. Please refer to
       \Ref{DjVuToPS::Options} for details. */
@@ -288,10 +274,9 @@ public:
       \Ref{set_info_cb}() function.  See \Ref{set_dec_progress_cb}() to find
       out how to learn the decoding progress.
       
-      @param prn_progress_cb Callback function to be called
-      @param prn_progress_cl_data Pointer passed to #prn_progress_cb()#. */
-  void set_prn_progress_cb(void (*prn_progress_cb)(double, void*),
-                           void *prn_progress_cl_data);
+      @param cb Callback function to be called
+      @param data Pointer passed to #cb()#. */
+  void set_prn_progress_cb(void (*cb)(double, void*), void *data);
   /** Callback used to report the progress of decoding.  The progress is a
       double number from 0 to 1.  This callback is only used when printing a
       \Ref{DjVuDocument} in a multithreaded environment. In all other cases it
@@ -304,10 +289,9 @@ public:
       of the page being processed, the total number of pages and the number of
       processed pages.
           
-      @param dec_progress_cb Callback function to be called
-      @param dec_progress_cl_data Pointer passed to #dec_progress_cb()#. */
-  void set_dec_progress_cb(void (*dec_progress_cb)(double, void*),
-                           void *dec_progress_cl_data);
+      @param cb Callback function to be called
+      @param data Pointer passed to #cb()#. */
+  void set_dec_progress_cb(void (*cb)(double, void*), void *data);
   /** Callback used to report the current printing stage of a
       \Ref{DjVuDocument}.  When printing a \Ref{DjVuDocument} ({\bf not} a
       \Ref{DjVuImage}), the #DjVuToPS# class will decode and output every page
@@ -324,10 +308,9 @@ public:
       \item[stage] Describes the current processing stage 
                    (#DECODING# or #PRINTING#).
       \end{description}
-      @param info_cb Callback function to be called
-      @param info_cl_data Pointer, which will be passed to #info_cb()#. */
-  void set_info_cb(void (*info_cb)(int, int, int, Stage,void*),
-                   void *info_cl_data);
+      @param cb Callback function to be called
+      @param data Pointer, which will be passed to #cb()#. */
+  void set_info_cb(void (*cb)(int,int,int,Stage,void*), void *data);
   //@}
   
   /** Prints the specified \Ref{DjVuImage} #dimg# into the
@@ -358,9 +341,9 @@ public:
       @param prn_rect Part of img_rect to send to printer.
       @param override_dpi Optional parameter allowing you to override
              dpi setting that would otherwise be extracted from #dimg# */
-   void print(ByteStream &str, const GP<DjVuImage> &dimg,
+   void print(ByteStream&, GP<DjVuImage> dimg,
               const GRect &prn_rect, const GRect &img_rect,
-              int override_dpi=-1);
+              int override_dpi=-1 );
   
   /** Outputs the specifies pages from the \Ref{DjVuDocument} into the
       \Ref{ByteStream} in PostScript format.  The function will generate a
@@ -380,9 +363,8 @@ public:
       \item {\bf 10-1} - Will print pages 1 to 10 in reverse order.
       \item {\bf 1-10,12-20} - Will print pages 1 to 20 with page 11 skipped.
       \end{itemize} */
-  void print(ByteStream &str, const GP<DjVuDocument> &doc,
-             GUTF8String page_range);
-  void print(ByteStream &str, const GP<DjVuDocument> &doc);
+  void print(ByteStream&, GP<DjVuDocument> doc, GUTF8String page_range);
+  void print(ByteStream&, GP<DjVuDocument> doc);
  
   
   /** Default constructor. Initializes the class. */

@@ -741,7 +741,7 @@ QDPrintDialog::QDPrintDialog(const GP<DjVuDocument> & _doc,
    progress->setIndicatorFollowsStyle(FALSE);
    progress->setCenterIndicator(TRUE);
    save_butt=new QCheckBox(tr("&Save settings"), prog_widget, "save_butt");
-   save_butt->setChecked(FALSE);
+   save_butt->setChecked(TRUE);
    prog_widget->raiseWidget(save_butt);
    QPushButton * ok_butt=new QPushButton(tr("&OK"), start, "ok_butt");
    ok_butt->setDefault(TRUE);
