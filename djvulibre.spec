@@ -1,4 +1,4 @@
-%define release 0.2
+%define release 0.3
 %define version 3.5.13
 %define prefix %{?_prefix:%{_prefix}}%{!?_prefix:/usr}
 %define mandir %{?_mandir:%{_mandir}}%{!?_mandir:%{prefix}/man}
@@ -91,20 +91,14 @@ rm -rf %{buildroot}
 %files
 %defattr(-, root, root)
 %doc README COPYRIGHT COPYING INSTALL NEWS TODO doc
-%{_bindir}/*
-%{_libdir}/*.so*
-%{_libdir}/*/plugins/*.so*
-%{_datadir}/djvu/languages.xml
-%{_datadir}/djvu/osi/en
-%{_datadir}/djvu/pubtext
-%{_mandir}/man?/*
-%lang(ja) %{_datadir}/djvu/osi/ja*
-%lang(fr) %{_datadir}/djvu/osi/fr*
-%lang(de) %{_datadir}/djvu/osi/de*
-%lang(zh) %{_datadir}/djvu/osi/zh*
-%lang(ja) %{_mandir}/ja*
-%lang(fr) %{_mandir}/fr*
-%lang(de) %{_mandir}/de*
+/
+#%lang(ja) %{_datadir}/djvu/osi/ja*
+#%lang(fr) %{_datadir}/djvu/osi/fr*
+#%lang(de) %{_datadir}/djvu/osi/de*
+#%lang(zh) %{_datadir}/djvu/osi/zh*
+#%lang(ja) %{_mandir}/ja*
+#%lang(fr) %{_mandir}/fr*
+#%lang(de) %{_mandir}/de*
 
 %changelog
 * Fri Apr  2 2004 Leon Bottou <leon@bottou.org>
