@@ -447,18 +447,18 @@ QDBase::paint(QPaintDevice * drawable,	// Where to paint
       } // while(...)
 
       p.setClipping(FALSE);
+      grectWin = rectVisible;
    }
    else
    {
-     rectVisible = in_rect;
+     grectWin = in_rect;
    }
 
        // Set new clipping rectangle
-   grectWin=in_rect;
-   grectWin.intersect(grectWin, rectVisible);
+   grectWin.intersect(grectWin, in_rect);
    p.setClipRect(grectWin.xmin-dr_x, grectWin.ymin-dr_y,
 		 grectWin.width(), grectWin.height());
-      
+   
       // Draw margins and frame around the document
    if (rectDocument.xmin>rectVisible.xmin)
    {
@@ -514,9 +514,9 @@ QDBase::paint(QPaintDevice * drawable,	// Where to paint
          p.setPen(qeImager->getGrayColor(0.7));
        p.drawRect(rectDocument.xmin, rectDocument.ymin,
                   rectDocument.width(), rectDocument.height());
-       p.end();
      }
-     
+   p.setClipping(FALSE);
+   p.end();
    DEBUG_MSG("QDBase::paint(): DONE\n");
 }
 
@@ -564,7 +564,10 @@ QDBase::paintLens(const GRect * clip_rect)
 	 p.drawLine(lens_rect.xmax-1, yc, lens_rect.xmax-1-dash, yc);
 	 p.drawLine(xc, lens_rect.ymin, xc, lens_rect.ymin+dash);
 	 p.drawLine(xc, lens_rect.ymax-1, xc, lens_rect.ymax-1-dash);
-      } catch(...)
+         p.setClipping(FALSE);
+         p.end();
+      } 
+      catch(...)
       {
 	 rectDocument=savedRectDocument;
 	 setMappers();
