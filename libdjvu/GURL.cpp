@@ -1103,9 +1103,9 @@ GURL::encode_reserved(const GUTF8String &gs)
     //   filename_to_url()
     // unreserved characters
     if ( (ss>='a' && ss<='z') ||
-       (ss>='A' && ss<='Z') ||
-       (ss>='0' && ss<='9') ||
-       (strchr("$-_.+!*'(),:~?&;=", ss)) ) 
+         (ss>='A' && ss<='Z') ||
+         (ss>='0' && ss<='9') ||
+         (strchr("$-_.+!*'(),:~=", ss)) ) 
     {
       *d = ss;
       continue;
