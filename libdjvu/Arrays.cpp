@@ -64,7 +64,13 @@
 #include "Arrays.h"
 #include "GException.h"
 
-#include "DjVu_begin.h"
+
+#ifdef HAVE_NAMESPACES
+namespace DJVU {
+# ifdef NOT_DEFINED // Just to fool emacs c++ mode
+}
+#endif
+#endif
 
 ArrayRep::ArrayRep(int xelsize,
 		   void (* xdestroy)(void *, int, int),
@@ -245,7 +251,13 @@ ArrayRep::ins(int n, const void * what, unsigned int howmany)
 }
 
 
-#include "DjVu_end.h"
+
+#ifdef HAVE_NAMESPACES
+}
+# ifndef NOT_USING_DJVU_NAMESPACE
+using namespace DJVU;
+# endif
+#endif
 
 
 // ---------------------------------------
@@ -256,7 +268,13 @@ ArrayRep::ins(int n, const void * what, unsigned int howmany)
 
 #ifndef DO_NOT_MOVE_GET_DATA_TO_ARRAYS_CPP
 #include "ByteStream.h"
-#include "DjVu_begin.h"
+
+#ifdef HAVE_NAMESPACES
+namespace DJVU {
+# ifdef NOT_DEFINED // Just to fool emacs c++ mode
+}
+#endif
+#endif
 TArray<char>
 ByteStream::get_data(void)
 {
@@ -272,7 +290,13 @@ ByteStream::get_data(void)
      return data;
    }
 }
-#include "DjVu_end.h"
+
+#ifdef HAVE_NAMESPACES
+}
+# ifndef NOT_USING_DJVU_NAMESPACE
+using namespace DJVU;
+# endif
+#endif
 #endif
 
 // ---------------------------------------

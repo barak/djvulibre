@@ -120,7 +120,13 @@
 //@{
 
 #include "DjVuGlobal.h"
-#include "DjVu_begin.h"
+
+#ifdef HAVE_NAMESPACES
+namespace DJVU {
+# ifdef NOT_DEFINED // Just to fool emacs c++ mode
+}
+#endif
+#endif
 
 
 
@@ -340,5 +346,11 @@ G_EXTHROW
 #define G_THROW_OTHER(msg) G_THROW_TYPE(msg,GException::GOTHER)
 
 // -------------- THE END
-#include "DjVu_end.h"
+
+#ifdef HAVE_NAMESPACES
+}
+# ifndef NOT_USING_DJVU_NAMESPACE
+using namespace DJVU;
+# endif
+#endif
 #endif

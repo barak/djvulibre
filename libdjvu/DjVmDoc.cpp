@@ -67,7 +67,13 @@
 #include "GOS.h"
 #include "debug.h"
 
-#include "DjVu_begin.h"
+
+#ifdef HAVE_NAMESPACES
+namespace DJVU {
+# ifdef NOT_DEFINED // Just to fool emacs c++ mode
+}
+#endif
+#endif
 
 static const char octets[4]={0x41,0x54,0x26,0x54};
 
@@ -621,4 +627,10 @@ DjVmDoc::expand(const GURL &codebase, const GUTF8String &idx_name)
    }
 }
 
-#include "DjVu_end.h"
+
+#ifdef HAVE_NAMESPACES
+}
+# ifndef NOT_USING_DJVU_NAMESPACE
+using namespace DJVU;
+# endif
+#endif

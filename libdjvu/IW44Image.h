@@ -167,7 +167,13 @@
 #include "GSmartPointer.h"
 #include "ZPCodec.h"
 
-#include "DjVu_begin.h"
+
+#ifdef HAVE_NAMESPACES
+namespace DJVU {
+# ifdef NOT_DEFINED // Just to fool emacs c++ mode
+}
+#endif
+#endif
 
 class GRect;
 class IFFByteStream;
@@ -744,6 +750,12 @@ IW44Image::Block::set(int n, int val, IW44Image::Map *map)
 
 //@}
 
-#include "DjVu_end.h"
+
+#ifdef HAVE_NAMESPACES
+}
+# ifndef NOT_USING_DJVU_NAMESPACE
+using namespace DJVU;
+# endif
+#endif
 #endif
 

@@ -65,7 +65,13 @@
 
 
 #include "DjVuPort.h"
-#include "DjVu_begin.h"
+
+#ifdef HAVE_NAMESPACES
+namespace DJVU {
+# ifdef NOT_DEFINED // Just to fool emacs c++ mode
+}
+#endif
+#endif
 
 class ByteStream;
 
@@ -178,5 +184,11 @@ inline bool
 DjVuErrorList::HasStatus(void) const
 { return !Status.isempty(); }
 
-#include "DjVu_end.h"
+
+#ifdef HAVE_NAMESPACES
+}
+# ifndef NOT_USING_DJVU_NAMESPACE
+using namespace DJVU;
+# endif
+#endif
 #endif

@@ -75,7 +75,13 @@
 #endif
 #endif
 
-#include "DjVu_begin.h"
+
+#ifdef HAVE_NAMESPACES
+namespace DJVU {
+# ifdef NOT_DEFINED // Just to fool emacs c++ mode
+}
+#endif
+#endif
 
 const char * DataPool::Stop = ERR_MSG("STOP");
 
@@ -1826,4 +1832,10 @@ DataPool::Counter::dec(void)
    counter--;
 }
 
-#include "DjVu_end.h"
+
+#ifdef HAVE_NAMESPACES
+}
+# ifndef NOT_USING_DJVU_NAMESPACE
+using namespace DJVU;
+# endif
+#endif

@@ -68,7 +68,13 @@
 #include "Arrays.h"
 #include "GThreads.h"
 
-#include "DjVu_begin.h"
+
+#ifdef HAVE_NAMESPACES
+namespace DJVU {
+# ifdef NOT_DEFINED // Just to fool emacs c++ mode
+}
+#endif
+#endif
 
 /** @name GURL.h
     Files #"GURL.h"# and #"GURL.cpp"# contain the implementation of the
@@ -430,5 +436,11 @@ GURL::is_valid(void) const
 
 //@}
 
-#include "DjVu_end.h"
+
+#ifdef HAVE_NAMESPACES
+}
+# ifndef NOT_USING_DJVU_NAMESPACE
+using namespace DJVU;
+# endif
+#endif
 #endif

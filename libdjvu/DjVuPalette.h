@@ -68,7 +68,13 @@
 #include "GPixmap.h"
 #include <string.h>
 
-#include "DjVu_begin.h"
+
+#ifdef HAVE_NAMESPACES
+namespace DJVU {
+# ifdef NOT_DEFINED // Just to fool emacs c++ mode
+}
+#endif
+#endif
 
 
 /** @name DjVuPalette.h
@@ -323,7 +329,13 @@ DjVuPalette::get_color(int nth, GPixel &p) const
 
 
 // ------------ THE END
-#include "DjVu_end.h"
+
+#ifdef HAVE_NAMESPACES
+}
+# ifndef NOT_USING_DJVU_NAMESPACE
+using namespace DJVU;
+# endif
+#endif
 #endif
       
       

@@ -120,7 +120,13 @@
 #endif
 #endif
 
-#include "DjVu_begin.h"
+
+#ifdef HAVE_NAMESPACES
+namespace DJVU {
+# ifdef NOT_DEFINED // Just to fool emacs c++ mode
+}
+#endif
+#endif
 
 // static const char filespecslashes[] = "file://";
 static const char slash='/';
@@ -430,5 +436,11 @@ GOS::getenv(const GUTF8String &name)
 }
 
 
-#include "DjVu_end.h"
+
+#ifdef HAVE_NAMESPACES
+}
+# ifndef NOT_USING_DJVU_NAMESPACE
+using namespace DJVU;
+# endif
+#endif
 

@@ -73,7 +73,13 @@
 #include "GSmartPointer.h"
 #include "GException.h"
 
-#include "DjVu_begin.h"
+
+#ifdef HAVE_NAMESPACES
+namespace DJVU {
+# ifdef NOT_DEFINED // Just to fool emacs c++ mode
+}
+#endif
+#endif
 
 
 // ------ STATIC CRITICAL SECTION
@@ -215,5 +221,11 @@ GPBufferBase::set(const size_t t,const char c)
   }
 }
 
-#include "DjVu_end.h"
+
+#ifdef HAVE_NAMESPACES
+}
+# ifndef NOT_USING_DJVU_NAMESPACE
+using namespace DJVU;
+# endif
+#endif
 

@@ -114,7 +114,13 @@ __inline int dup2(int _a, int _b ) { return _dup2(_a, _b);}
 #include <errno.h>
 #endif
 
-#include "DjVu_begin.h"
+
+#ifdef HAVE_NAMESPACES
+namespace DJVU {
+# ifdef NOT_DEFINED // Just to fool emacs c++ mode
+}
+#endif
+#endif
 
 const char *ByteStream::EndOfFile=ERR_MSG("EOF");
 
@@ -1458,7 +1464,13 @@ ByteStream::getAsUTF8(void)
   return GUTF8String(buffer);
 }
 
-#include "DjVu_end.h"
+
+#ifdef HAVE_NAMESPACES
+}
+# ifndef NOT_USING_DJVU_NAMESPACE
+using namespace DJVU;
+# endif
+#endif
 
 void
 DjVuPrintErrorUTF8(const char *fmt, ... )

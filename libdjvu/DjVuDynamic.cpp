@@ -77,7 +77,13 @@
 #include <dlfcn.h>
 #endif
 
-#include "DjVu_begin.h"
+
+#ifdef HAVE_NAMESPACES
+namespace DJVU {
+# ifdef NOT_DEFINED // Just to fool emacs c++ mode
+}
+#endif
+#endif
 
 
 class DjVuDynamicLib : public GPEnabled
@@ -227,4 +233,10 @@ DjVuDynamic::DjVuDynamic(void)
   error=ERR_MSG("DjVuDynamicLib.failed_open") "\t" "(null)";
 }
 
-#include "DjVu_end.h"
+
+#ifdef HAVE_NAMESPACES
+}
+# ifndef NOT_USING_DJVU_NAMESPACE
+using namespace DJVU;
+# endif
+#endif
