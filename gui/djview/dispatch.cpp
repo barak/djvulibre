@@ -66,7 +66,6 @@
 #include "qlib.h"
 #include "mime_check.h"
 
-#include <iostream.h>
 #include <qtimer.h>
 #include <qapplication.h>
 
@@ -210,7 +209,7 @@ QDispatchObject::slotGetURL(const GURL & url, const GUTF8String &qtarget)
       request_data(url, qtarget, djvu);
    } catch(const GException & exc)
    {
-      cerr << exc.get_cause() << "\n";
+      exc.perror();
    }
 }
 
@@ -236,7 +235,7 @@ QDispatchObject::slotShowStatus(const QString &qstatus)
       }
    } catch(const GException & exc)
    {
-      cerr << exc.get_cause() << "\n";
+      exc.perror();
    }
 }
 
@@ -330,7 +329,7 @@ New(void)
 	 WritePointer(pipe_write, djvu);
       } catch(PipeError & exc)
       {
-	 cerr << exc.get_cause() << "\n";
+	 exc.perror();
 	 instance.empty();
 	 PipesAreDead();
       }
@@ -379,7 +378,7 @@ DetachWindow(void)
 	 WriteString(pipe_write, OK_STRING);
       } catch(PipeError & exc)
       {
-	 cerr << exc.get_cause() << "\n";
+	 exc.perror();
 	 instance.empty();
 	 PipesAreDead();
       }
@@ -399,133 +398,136 @@ AttachWindow(void)
    QWidget * shell=0;
    DjVuViewer * djvu=0;
    try
-   {
-      try
-      {
-	 GCriticalSectionLock lock(&instance_lock);
-	 
-	 djvu=(DjVuViewer *) ReadPointer(pipe_read);
-	 GUTF8String displ_name=ReadString(pipe_read);
-	 GUTF8String back_color=ReadString(pipe_read);
-	 Window window=(Window) ReadInteger(pipe_read);
-	 colormap=(Colormap) ReadInteger(pipe_read);
-	 int visual_id=ReadInteger(pipe_read);
-	 int width=ReadInteger(pipe_read);
-	 int height=ReadInteger(pipe_read);
-	 
-	 if (instance.contains((u_long) djvu))
-	 {
-	    if (!displ)
-	    {
-		  // This is first connection to the display => Initialize the toolkit
-	       DEBUG_MSG("connecting to the display " << (const char *) displ_name << "\n");
-
-	       displ=XOpenDisplay(displ_name);
-	       if (!displ) throw ERROR_MESSAGE("AttachWindow",
-					       ERR_MSG("AttachWindow.open_display_fail") "\t" +
-					       GUTF8String(XDisplayName(displ_name)));
-	       DEBUG_MSG("successfully opened connection to the display\n");
-
-	       XVisualInfo vinfo, * vinfo_list;
-	       int count;
-	       vinfo.visualid=visual_id;
-	       vinfo_list=XGetVisualInfo(displ, VisualIDMask, &vinfo, &count);
-	       if (!vinfo_list || !count)
-		  throw ERROR_MESSAGE("AttachWindow",
-				      ERR_MSG("AttachWindow.no_netscape_visual"));
-	       visual=vinfo_list[0].visual;
-	       depth=vinfo_list[0].depth;
-	       XFree(vinfo_list);
-
-	       int argc=1;
-	       char ** argv=new char*[3];
-	       argv[0]=DJVIEW_NAME;
-	       if (back_color.length())
-	       {
-		  argv[argc++]="-bg";
-		  argv[argc]=new char[back_color.length()+1];
-		  strcpy(argv[argc++], back_color);
-	       }
-
-	       DjVuPrefs prefs;
-	       InitializeQT(argc, argv);
-	       new QXImager(displ, visual, colormap, depth,
-			    true, prefs.optimizeLCD);
-
-	       qApp->setMainWidget(new QWidget(0, "dummy_main_widget"));
-
-	       checkMimeTypes();
-	    }
-
-	    DEBUG_MSG("displ=" << displ << ", visual=" << visual <<
-		      ", colormap=" << colormap << ", depth=" << depth << "\n");
-	 
-	    shell=new QWidget(0, "djvu_shell");
-	    shell->setGeometry(0, 0, width, height);
-	    
-	    XSync(displ, False);		// I want all windows to be created now
-#ifdef REPARENT
-	    XReparentWindow(displ, shell->winId(), window, 0, 0);
+     {
+       try
+         {
+           GCriticalSectionLock lock(&instance_lock);
+           
+           djvu=(DjVuViewer *) ReadPointer(pipe_read);
+           GUTF8String displ_name=ReadString(pipe_read);
+           GUTF8String back_color=ReadString(pipe_read);
+           Window window=(Window) ReadInteger(pipe_read);
+           // Colormap colormap=(Colormap) ReadInteger(pipe_read);
+           // int visual_id=ReadInteger(pipe_read);
+           int width=ReadInteger(pipe_read);
+           int height=ReadInteger(pipe_read);
+           
+           if (instance.contains((u_long) djvu))
+             {
+               if (!qApp)
+                 {
+                   // This is first connection to the display => Initialize the toolkit
+                   DEBUG_MSG("checking connection to the display " << (const char *) displ_name << "\n");
+                   Display *displ=XOpenDisplay(displ_name);
+                   if (!displ) 
+                     throw ERROR_MESSAGE("AttachWindow",
+                                         ERR_MSG("AttachWindow.open_display_fail") "\t" +
+                                         GUTF8String(XDisplayName(displ_name)));
+                   
+                   // Build arguments
+                   int argc = 0;
+                   static char * argv[10];
+                   argv[argc++] = DJVIEW_NAME;
+                   // -display
+                   static char s_display[128];
+                   if (displ_name.length()>0 && displ_name.length()<sizeof(s_display)-1)
+                     {
+                       strcpy(s_display, (const char*)displ_name);
+                       argv[argc++] = "-display";
+                       argv[argc++] = s_display;
+                     }
+#ifdef COPY_BACKGROUND_COLOR
+                   // -bg
+                   static char s_bg[128];
+                   if (back_color.length()>0 && back_color.length()<sizeof(s_bg)-1)
+                     {
+                       strcpy(s_bg, (const char*)back_color);
+                       argv[argc++]="-bg";
+                       argv[argc++] = s_bg;
+                     }
+                   // - one could check the colormap
+                   //   and the visual id to add more options.
 #endif
-	    djvu->attach(shell);
-	    shell->show();
+                   // Initialize Qt
+                   InitializeQT(argc, argv);
+                   checkMimeTypes();
 
-	    PluginInstance & inst=instance[(u_long) djvu];
-	    inst.attachWindow(shell);
-	 } // if instance is valid
-	 
-	 WriteString(pipe_write, OK_STRING);
-      } catch(PipeError & exc)
-      {
-	 cerr << exc.get_cause() << "\n";
-	 instance.empty();
-	 PipesAreDead();
-      }
-   } catch(const GException & exc)
-   {
-      if (instance.contains((u_long) djvu))
-      {
-	 djvu->detach();
-	 instance[(u_long) djvu].detachWindow();
-      }
-      if (shell) qeApp->killWidget(shell);
-      WriteString(pipe_write, ERR_STRING);
-      WriteString(pipe_write, exc.get_cause());
-   }
+                   // Close display
+                   XCloseDisplay(displ);
+                 }
+               
+               shell=new QWidget(0, "djvu_shell");
+               shell->setGeometry(0, 0, width, height);
+               
+
+#ifdef REPARENT
+               Display *displ = qt_xdisplay();
+               XSync(displ, False);
+               XReparentWindow(displ, shell->winId(), window, 0, 0);
+#endif
+               djvu->attach(shell);
+               shell->show();
+               
+               PluginInstance & inst=instance[(u_long) djvu];
+               inst.attachWindow(shell);
+             } // if instance is valid
+           
+           WriteString(pipe_write, OK_STRING);
+         } 
+       catch(PipeError & exc)
+         {
+           exc.perror();
+           instance.empty();
+           PipesAreDead();
+         }
+     } 
+   catch(const GException & exc)
+     {
+       if (instance.contains((u_long) djvu))
+         {
+           djvu->detach();
+           instance[(u_long) djvu].detachWindow();
+         }
+       if (shell) qeApp->killWidget(shell);
+       WriteString(pipe_write, ERR_STRING);
+       WriteString(pipe_write, exc.get_cause());
+     }
 }
 
 static void
 Resize(void)
 {
-   DEBUG_MSG("Resize() called\n");
-   DEBUG_MAKE_INDENT(3);
-   
-   try
-   {
+  DEBUG_MSG("Resize() called\n");
+  DEBUG_MAKE_INDENT(3);
+  
+  try
+    {
       try
-      {
-	 GCriticalSectionLock lock(&instance_lock);
-	 
-	 DjVuViewer * djvu=(DjVuViewer *) ReadPointer(pipe_read);
-	 int width=ReadInteger(pipe_read);
-	 int height=ReadInteger(pipe_read);
-	 if (instance.contains((u_long) djvu))
-	 {
-	    PluginInstance & inst=instance[(u_long) djvu];
-	    if (inst.shell) inst.shell->resize(width, height);
-	 }
-	 WriteString(pipe_write, OK_STRING);
-      } catch(PipeError & exc)
-      {
-	 cerr << exc.get_cause() << "\n";
-	 instance.empty();
-	 PipesAreDead();
-      }
-   } catch(const GException & exc)
-   {
+        {
+          GCriticalSectionLock lock(&instance_lock);
+          
+          DjVuViewer * djvu=(DjVuViewer *) ReadPointer(pipe_read);
+          int width=ReadInteger(pipe_read);
+          int height=ReadInteger(pipe_read);
+          if (instance.contains((u_long) djvu))
+            {
+              PluginInstance & inst=instance[(u_long) djvu];
+              if (inst.shell) inst.shell->resize(width, height);
+            }
+          WriteString(pipe_write, OK_STRING);
+        } 
+      catch(PipeError & exc)
+        {
+          exc.perror();
+          instance.empty();
+          PipesAreDead();
+        }
+    } 
+  catch(const GException & exc)
+    {
       WriteString(pipe_write, ERR_STRING);
       WriteString(pipe_write, exc.get_cause());
-   }
+    }
 }
 
 static void
@@ -570,7 +572,7 @@ Destroy(void)
 	 WriteInteger(pipe_write, saved.imgy);
       } catch(PipeError & exc)
       {
-	 cerr << exc.get_cause() << "\n";
+	 exc.perror();
 	 instance.empty();
 	 PipesAreDead();
       }
@@ -604,7 +606,7 @@ Print(void)
 	 WriteString(pipe_write, OK_STRING);
       } catch(PipeError & exc)
       {
-	 cerr << exc.get_cause() << "\n";
+	 exc.perror();
 	 instance.empty();
 	 PipesAreDead();
       }
@@ -681,7 +683,7 @@ NewStream(void)
 						// means "never send data"
       } catch(PipeError & exc)
       {
-	 cerr << exc.get_cause() << "\n";
+	 exc.perror();
 	 instance.empty();
 	 PipesAreDead();
       }
@@ -813,7 +815,7 @@ Write(void)
 	    // of this stream and will never try to pipe its data again
       } catch(PipeError & exc)
       {
-	 cerr << exc.get_cause() << "\n";
+	 exc.perror();
 	 GCriticalSectionLock lock(&instance_lock);
 	 instance.empty();
 	 PipesAreDead();
@@ -857,7 +859,7 @@ DestroyStream(void)
 	 WriteString(pipe_write, OK_STRING);
       } catch(PipeError & exc)
       {
-	 cerr << exc.get_cause() << "\n";
+	 exc.perror();
 	 GCriticalSectionLock lock(&instance_lock);
 	 instance.empty();
 	 PipesAreDead();
@@ -893,7 +895,7 @@ URLNotify(void)
 	 WriteString(pipe_write, OK_STRING);
       } catch(PipeError & exc)
       {
-	 cerr << exc.get_cause() << "\n";
+	 exc.perror();
 	 GCriticalSectionLock lock(&instance_lock);
 	 instance.empty();
 	 PipesAreDead();
@@ -971,7 +973,7 @@ Dispatch(void)
    } catch(PipeError & exc)
    {
       DEBUG_MSG("Dispatch(): caught exception '" << exc.get_cause() << "'\n");
-      cerr << exc.get_cause() << "\n";
+      exc.perror();
       instance.empty();
       PipesAreDead();
    }

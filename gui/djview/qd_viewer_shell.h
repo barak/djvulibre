@@ -67,8 +67,6 @@ class QDViewerShell : public QMainWindow
 {
    Q_OBJECT
 private:
-   static int	instances;
-   
    GP<DjVuViewer>djvu;
    
    QeMenuBar	* menu;

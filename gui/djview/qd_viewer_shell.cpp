@@ -57,6 +57,7 @@
 #include "exc_msg.h"
 
 #include <qapplication.h>
+#include <qwidgetlist.h>
 #include <qkeycode.h>
 #include <qfiledialog.h>
 #include <qlabel.h>
@@ -69,9 +70,7 @@
 
 #include "qt_fix.h"
 
-#define START_STATUS	QT_TRANSLATE_NOOP("QDViewerShell","Select \"File\" and then \"Open\" to load a DjVu file")
-
-int	QDViewerShell::instances;
+#define START_STATUS QT_TRANSLATE_NOOP("QDViewerShell","Select \"File\" and then \"Open\" to load a DjVu file")
 
 void
 QDViewerShell::setDjVuDir(const GUTF8String &qdir)
@@ -412,12 +411,16 @@ QDViewerShell::slotAboutToShowMenu(void)
      setItemsEnabled(menu, FALSE);
    else 
      viewer->setupMenu(menu);
+      // Check presence of other windows
+   QWidgetList  *list = QApplication::topLevelWidgets();
+   int instances = list->count();
+   delete list;
       // Enable the top-level things, Open and Exit and some more
    for(u_int i=0;i<menu->count();i++)
       menu->setItemEnabled(menu->idAt(i), TRUE);
    menu->setItemEnabled(IDC_OPEN, TRUE);
    menu->setItemEnabled(IDC_NEW_WINDOW, TRUE);
-   menu->setItemEnabled(IDC_CLOSE, instances>1);
+   menu->setItemEnabled(IDC_CLOSE, (instances>1) ? TRUE : FALSE);
    menu->setItemEnabled(IDC_EXIT, TRUE);
    menu->setItemEnabled(IDC_ABOUT_DEJAVU, TRUE);
    menu->setItemEnabled(IDC_HELP_DEJAVU, TRUE);
@@ -613,15 +616,12 @@ QDViewerShell::QDViewerShell(QWidget * parent, const char * name)
    status_bar->setText(tr(START_STATUS));
    slotAboutToShowMenu();
 
-   instances++;
 }
 
 QDViewerShell::~QDViewerShell(void)
 {
    DEBUG_MSG("QDViewerShell::QDViewerShell(): destroying itself\n");
    DEBUG_MAKE_INDENT(3);
-
-   if (--instances==0) qApp->quit();
 }
 
 // END OF FILE

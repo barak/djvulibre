@@ -61,13 +61,13 @@
 #include <netinet/in.h>
 #include <sys/types.h>
 #include <sys/time.h>
-#include <iostream.h>
 #include <arpa/inet.h>
 
 #include <qsocketnotifier.h>
 #include <qapplication.h>
 
 #include "qt_fix.h"
+#include "init_qt.h"
 
 // This object is here just to provide a way to connect to socket notifiers
 class QDWatcher : public QObject
@@ -118,11 +118,11 @@ QDWatcher::slotInput(int)
       Dispatch();
    } catch(PipeError & exc)
    {
-      cerr << exc.get_cause() << "\n";
+      exc.perror();
       PipesAreDead();
    } catch(const GException & exc)
    {
-      cerr << exc.get_cause() << "\n";
+      exc.perror();
    }
 }
 
@@ -158,6 +158,7 @@ WorkWithNetscape(void)
 	 }
 	 int rc=qApp->exec();
 	 DEBUG_MSG("QApplication::exec() returned rc=" << rc << "\n");
+         CleanupQT();
 	 exit(rc);
       }
       fd_set read_fds;

@@ -55,13 +55,7 @@
 #include <X11/Xlib.h>
 #include <X11/Xutil.h>
 
-extern Display		* displ;
-extern Visual		* visual;
-extern Colormap		colormap;
-extern int		depth;
-
-void InitializeQT(int argc, char ** argv);
-void InitStandalone(int argc, char ** argv);
-void ParseQTArgs(int & argc, char ** argv);
+void InitializeQT(int &argc, char ** argv);
+void CleanupQT(void);
 
 #endif

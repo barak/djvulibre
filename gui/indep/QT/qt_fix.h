@@ -80,16 +80,12 @@ public:
       // to block. It will not kill a widget if it has already been deleted
       // by someone.
    void		killWidget(QWidget * widget);
-
       // Resizes and moved widget in accordance with X11 geometry data.
    void		setWidgetGeometry(QWidget * w);
-   
 #ifdef UNIX
    bool		x11EventResult;
    virtual bool	x11EventFilter(XEvent * ev);
-   QeApplication(Display * displ);
 #endif
-   
    QeApplication(int & argc, char ** argv);
 };
 #endif

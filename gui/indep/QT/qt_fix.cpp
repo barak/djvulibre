@@ -268,12 +268,6 @@ QeApplication::x11EventFilter(XEvent * ev)
 #endif
 }
 
-QeApplication::QeApplication(Display * displ) 
-  : QApplication(displ) 
-{ 
-  construct(); 
-}
-
 void
 QeApplication::setWidgetGeometry(QWidget * widget)
 {
@@ -293,14 +287,18 @@ QeApplication::setWidgetGeometry(QWidget * widget)
       w=QMAX(w, minSize.width());
       h=QMAX(h, minSize.height());
       if ((m & XNegative)) x=desktop()->width()+x-w;
-	    
       if ((m & YNegative)) y=desktop()->height()+y-h;
       widget->setGeometry(x, y, w, h);
+      // Next widget has same size but different location
+      if ((m & WidthValue) && (m & HeightValue))
+        geometry = QString("%1x%2").arg(w).arg(h);
+      else
+        geometry = QString();
    }
 }
 
-QeApplication::QeApplication(int & argc, char ** argv) :
-  QApplication(argc, argv)
+QeApplication::QeApplication(int & argc, char ** argv) 
+  : QApplication(argc, argv)
 {
   construct();
   gamma=2.2;
