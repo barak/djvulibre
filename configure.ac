@@ -232,6 +232,7 @@ if test x$GXX != xyes ; then
   fi
 else
   cxxver="`$CXX --version | sed -e 's/^gcc-//' -e 's/^egcs-//'`"
+  # The line above does not work with gcc greater than 3...
   action=none
   case "$cxxver" in
 changequote(<<, >>)dnl          
