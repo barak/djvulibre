@@ -1,0 +1,54 @@
+#C- This program is free software; you can redistribute it and/or 
+#C- modify it under the terms of the GNU General Public License, 
+#C- version 2.  The license should have accompanied the program 
+#C- or you may obtain a copy of the license from the Free Software
+#C- Foundation at http://www.fsf.org.
+#C- 
+#C- This program is distributed in the hope that it will be useful,
+#C- but WITHOUT ANY WARRANTY; without even the implied warranty of
+#C- MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+#C- GNU General Public License for more details.
+
+@SET_MAKE@
+SHELL = @SHELL@
+VPATH = @srcdir@
+PACKAGE_NAME = @PACKAGE_NAME@
+PACKAGE_VERSION = @PACKAGE_VERSION@
+
+srcdir = @srcdir@
+top_srcdir = @top_srcdir@
+top_builddir = ..
+
+prefix = @prefix@
+exec_prefix = @exec_prefix@
+bindir = @bindir@
+datadir = @datadir@
+libdir = @libdir@
+mandir = @mandir@
+
+INSTALL = @INSTALL@
+
+all:
+
+depend:
+
+clean:
+
+distclean:
+
+install: install-bin install-man
+
+install-bin: djvudigital FORCE
+	${INSTALL} -d ${DESTDIR}${bindir}
+	${INSTALL} -m 0755 ${srcdir}/djvudigital ${DESTDIR}${bindir}
+
+install-man: FORCE
+	${INSTALL} -d ${DESTDIR}${mandir}/man1
+	${INSTALL} -m 0755 ${srcdir}/djvudigital.1 ${DESTDIR}${mandir}/man1
+
+FORCE:
+.PHONY: FORCE
+
+
+
+

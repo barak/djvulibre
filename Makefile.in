@@ -22,16 +22,22 @@ datadir = @datadir@
 libdir = @libdir@
 mandir = @mandir@
 
-SUBDIRS_STD = libdjvu tools 
+SUBDIRS_STD = libdjvu tools
+
 @XML_YES@SUBDIRS_XML = xmltools
 @XML_NO@SUBDIRS_XML = 
+
 @GUI_YES@SUBDIRS_GUI = gui
 @GUI_NO@SUBDIRS_GUI =
+
+SUBDIRS_GS = gsfiles
+
 @I18N_YES@SUBDIRS_I18N = i18n
 @I18N_NO@SUBDIRS_I18N =
 
 SUBDIRS = ${SUBDIRS_STD} ${SUBDIRS_XML} \
-          ${SUBDIRS_GUI} ${SUBDIRS_I18N}
+          ${SUBDIRS_GUI} ${SUBDIRS_GS} \
+	  ${SUBDIRS_I18N}
 
 world: all
 	@echo "Congratulations: the compilation was successful!"

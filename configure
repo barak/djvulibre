@@ -8290,6 +8290,8 @@ ac_config_files="$ac_config_files gui/djview/Makefile"
 
 ac_config_files="$ac_config_files gui/nsdejavu/Makefile"
 
+ac_config_files="$ac_config_files gsfiles/Makefile"
+
 ac_config_files="$ac_config_files i18n/Makefile"
 
 ac_config_files="$ac_config_files i18n/ja/Makefile"
@@ -8778,6 +8780,7 @@ do
   "gui/bin2cpp/Makefile" ) CONFIG_FILES="$CONFIG_FILES gui/bin2cpp/Makefile" ;;
   "gui/djview/Makefile" ) CONFIG_FILES="$CONFIG_FILES gui/djview/Makefile" ;;
   "gui/nsdejavu/Makefile" ) CONFIG_FILES="$CONFIG_FILES gui/nsdejavu/Makefile" ;;
+  "gsfiles/Makefile" ) CONFIG_FILES="$CONFIG_FILES gsfiles/Makefile" ;;
   "i18n/Makefile" ) CONFIG_FILES="$CONFIG_FILES i18n/Makefile" ;;
   "i18n/ja/Makefile" ) CONFIG_FILES="$CONFIG_FILES i18n/ja/Makefile" ;;
   "i18n/de/Makefile" ) CONFIG_FILES="$CONFIG_FILES i18n/de/Makefile" ;;
