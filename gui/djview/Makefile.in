@@ -34,7 +34,7 @@ LN_S = @LN_S@
 TOUCH = @TOUCH@
 INSTALL = @INSTALL@
 RANLIB = @RANLIB@
-RPO = @RPO@
+RPO = CXX=@CXX@ @RPO@
 BIN2CPP = ${top_builddir}/gui/bin2cpp/bin2cpp
 MOC = @MOC@
 
