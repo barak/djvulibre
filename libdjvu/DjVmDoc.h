@@ -210,8 +210,8 @@ public:
 private:
    void save_file(const GURL &codebase, const DjVmDir::File &file,
      GMap<GUTF8String,GUTF8String> *incl) const;
-   GP<DjVmDir>			dir;
-   GMap<GUTF8String, GP<DataPool> >	data;
+   GP<DjVmDir> dir;
+   GPMap<GUTF8String, DataPool > data;
 private: // dummy stuff
    static void write(ByteStream *);
    static void write_index(ByteStream *);

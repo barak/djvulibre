@@ -241,7 +241,7 @@ GList<GURL>
 DjVuMessage::GetProfilePaths(void)
 {
   static bool first=true;
-  static GList<GURL> &realpaths = GList<GURL>::static_reference();
+  static GList<GURL> realpaths;
   if(first)
   {
     first=false;

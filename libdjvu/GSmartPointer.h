@@ -70,6 +70,8 @@
 #include "DjVuGlobal.h"
 
 
+/* What is this innovation ? 
+   What does it do that a GArray does not do ? */
 class GPBufferBase
 {
 public:

@@ -380,7 +380,8 @@ DjVuMessageLite::InsertArg( GUTF8String &message,
 //  translated message, a buffer size (bytes), and a message_list. The translated
 //  result is returned in msg_buffer encoded in UTF-8. In case of error, msg_buffer is
 //  empty (i.e., msg_buffer[0] == '\0').
-void DjVuMessageLite_LookUp( char *msg_buffer, const unsigned int buffer_size, const char *message )
+void 
+DjVuMessageLite_LookUp( char *msg_buffer, const unsigned int buffer_size, const char *message )
 {
   GUTF8String converted = DjVuMessageLite::LookUpUTF8( message );
   if( converted.length() >= buffer_size )
@@ -404,8 +405,8 @@ DjVuMessageLite::AddByteStream(const GP<ByteStream> &bs)
 void
 DjVuWriteError( const char *message )
 {
-  static ByteStream * const errout=static_const_GP(ByteStream::create(2,0,false));
-  if(errout)
+  GP<ByteStream> errout = ByteStream::get_stderr();
+  if (errout)
   {
     const GUTF8String external = DjVuMessageLite::LookUpUTF8( message );
     errout->writestring(external+"\n");
@@ -415,8 +416,8 @@ DjVuWriteError( const char *message )
 void
 DjVuWriteMessage( const char *message )
 {
-  static ByteStream * const strout=static_const_GP(ByteStream::create(1,0,false));
-  if(strout)
+  GP<ByteStream> strout = ByteStream::get_stdout();
+  if (strout)
   {
     const GUTF8String external = DjVuMessageLite::LookUpUTF8( message );
     strout->writestring(external+"\n");

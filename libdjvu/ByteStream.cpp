@@ -1124,7 +1124,7 @@ ByteStream::create(const int fd,char const * const mode,const bool closeme)
   const char *default_mode="rb";
 #if HAS_MEMMAP
 
-  if ((!mode&&(fd!=1)&&(fd!=2)) || (mode&&(GUTF8String("rb") == mode)))
+  if ((!mode&&(fd!=0)&&(fd!=1)&&(fd!=2)) || (mode&&(GUTF8String("rb") == mode)))
   {
     MemoryMapByteStream *rb=new MemoryMapByteStream();
     retval=rb;
@@ -1314,11 +1314,33 @@ MemoryMapByteStream::~MemoryMapByteStream()
 
 ByteStream::Wrapper::~Wrapper() {}
 
+
+GP<ByteStream> 
+ByteStream::get_stdin(void)
+{
+  static GP<ByteStream> gp = ByteStream::create(0,0,false);
+  return gp;
+}
+
+GP<ByteStream> 
+ByteStream::get_stdout(void)
+{
+  static GP<ByteStream> gp = ByteStream::create(1,0,false);
+  return gp;
+}
+
+GP<ByteStream> 
+ByteStream::get_stderr(void)
+{
+  static GP<ByteStream> gp = ByteStream::create(2,0,false);
+  return gp;
+}
+
 void
 DjVuPrintErrorUTF8(const char *fmt, ... )
 {
-  static ByteStream * const errout=static_const_GP(ByteStream::create(2,0,false));
-  if(errout)
+  GP<ByteStream> errout = ByteStream::get_stderr();
+  if (errout)
   {
     errout->cp=ByteStream::NATIVE;
     va_list args;
@@ -1331,8 +1353,8 @@ DjVuPrintErrorUTF8(const char *fmt, ... )
 void
 DjVuPrintErrorNative(const char *fmt, ... )
 {
-  static ByteStream * const errout=static_const_GP(ByteStream::create(2,0,false));
-  if(errout)
+  GP<ByteStream> errout = ByteStream::get_stderr();
+  if (errout)
   {
     errout->cp=ByteStream::NATIVE;
     va_list args;
@@ -1345,8 +1367,8 @@ DjVuPrintErrorNative(const char *fmt, ... )
 void
 DjVuPrintMessageUTF8(const char *fmt, ... )
 {
-  static ByteStream * const strout=static_const_GP(ByteStream::create(1,0,false));
-  if(strout)
+  GP<ByteStream> strout = ByteStream::get_stdout();
+  if (strout)
   {
     strout->cp=ByteStream::NATIVE;
     va_list args;
@@ -1359,8 +1381,8 @@ DjVuPrintMessageUTF8(const char *fmt, ... )
 void
 DjVuPrintMessageNative(const char *fmt, ... )
 {
-  static ByteStream * const strout=static_const_GP(ByteStream::create(1,0,false));
-  if(strout)
+  GP<ByteStream> strout = ByteStream::get_stdout();
+  if (strout)
   {
     strout->cp=ByteStream::NATIVE;
     va_list args;

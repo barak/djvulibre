@@ -1400,19 +1400,20 @@ GStringRep::toEscaped( const bool tosevenbit ) const
 }
 
 
-static inline const GMap<GUTF8String,GUTF8String> &
+static const GMap<GUTF8String,GUTF8String> &
 BasicMap( void )
 {
-  static GMap<GUTF8String,GUTF8String> &Basic=
-    GMap<GUTF8String,GUTF8String>::static_reference();
-  Basic["lt"]   = GUTF8String('<');
-  Basic["gt"]   = GUTF8String('>');
-  Basic["amp"]  = GUTF8String('&');
-  Basic["apos"] = GUTF8String('\47');
-  Basic["quot"] = GUTF8String('\42');
+  static GMap<GUTF8String,GUTF8String> Basic;
+  if (! Basic.size())
+    {
+      Basic["lt"]   = GUTF8String('<');
+      Basic["gt"]   = GUTF8String('>');
+      Basic["amp"]  = GUTF8String('&');
+      Basic["apos"] = GUTF8String('\47');
+      Basic["quot"] = GUTF8String('\42');
+    }
   return Basic;
 }
-
 
 GUTF8String
 GUTF8String::fromEscaped( const GMap<GUTF8String,GUTF8String> ConvMap ) const

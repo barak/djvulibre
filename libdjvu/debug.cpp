@@ -80,9 +80,8 @@ static DjVuDebug debug_obj;
 static GMap<long, DjVuDebug> &
 debug_map(void)
 {
-  static GMap<long, DjVuDebug> &map=
-    GMap<long, DjVuDebug>::static_reference();
-  return map;
+  static GMap<long, DjVuDebug> xmap;
+  return xmap;
 }
 #endif
 

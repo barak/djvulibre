@@ -162,6 +162,34 @@ if test "$ac_cv_cxx_exceptions" = yes; then
 fi
 ])
 
+
+dnl -------------------------------------------------------
+dnl @synopsis AC_CXX_RPO
+dnl Defines option --enable-rpo and searches program RPO.
+dnl Set output variables CXXRPOFLAGS and RPO. 
+dnl -------------------------------------------------------
+AC_DEFUN([AC_CXX_RPO],
+[ AC_ARG_VAR(RPO,[Location of the RPO program.])
+  if test x$GXX = xyes ; then
+    AC_ARG_ENABLE([rpo],
+    AC_HELP_STRING([--enable-rpo],
+                   [Enable compilation with option -frepo]),
+    [ac_rpo=$enableval], [ac_rpo=no] )
+  if test x$ac_rpo != xno ; then
+    CXXRPOFLAGS=-frepo
+    AC_PATH_PROG(RPO, rpo, [unknown], $PATH)
+    if ! test -x ${RPO} ; then
+        AC_MSG_ERROR([Cannot find rpo program])
+    fi
+  else
+    CXXRPOFLAGS=
+    RPO=':'
+  fi
+  AC_SUBST(CXXRPOFLAGS)
+ fi 
+])
+
+
 dnl ------------------------------------------------------------------
 dnl @synopsis AC_PATH_PTHREAD([ACTION-IF-FOUND[, ACTION-IF-NOT-FOUND]])
 dnl This macro figures out how to build C programs using POSIX
@@ -535,11 +563,8 @@ AC_DEFUN([AC_PATH_QT],
   if test x$QTDIR != xno ; then
     test x{$QT_CFLAGS+set} != set && QT_CFLAGS="-I$QTDIR/include"
     test x{$QT_LIBS+set} != set && QT_LIBS="-L$QTDIR/lib -lqt"
-    saved_PATH="$PATH"
-    PATH="$QTDIR/bin:$PATH"
-    AC_PATH_PROG(MOC, moc, [unknown], $ac_qt_programs:$PATH)
-    AC_PATH_PROG(UIC, uic, [unknown], $ac_qt_programs:$PATH)
-    PATH="$saved_PATH"
+    AC_PATH_PROG(MOC, moc, [unknown], "$QTDIR/bin:$PATH")
+    AC_PATH_PROG(UIC, uic, [unknown], "$QTDIR/bin:$PATH")
     test -x "$MOC" || QTDIR=no
   fi
   # Execute

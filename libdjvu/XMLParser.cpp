@@ -189,19 +189,21 @@ lt_XMLParser::Impl::parse(const GP<ByteStream> &bs)
   parse(*tags);
 }
   
-static inline const GMap<GUTF8String,GMapArea::BorderType> &
+static const GMap<GUTF8String,GMapArea::BorderType> &
 BorderTypeMap(void)
 {
-  static GMap<GUTF8String,GMapArea::BorderType> &typeMap=
-    GMap<GUTF8String,GMapArea::BorderType>::static_reference();
-  typeMap["none"]=GMapArea::NO_BORDER;
-  typeMap["xor"]=GMapArea::XOR_BORDER;
-  typeMap["solid"]=GMapArea::SOLID_BORDER;
-  typeMap["default"]=GMapArea::SOLID_BORDER;
-  typeMap["shadowout"]=GMapArea::SHADOW_OUT_BORDER;
-  typeMap["shadowin"]=GMapArea::SHADOW_IN_BORDER;
-  typeMap["etchedin"]=GMapArea::SHADOW_EIN_BORDER;
-  typeMap["etchedout"]=GMapArea::SHADOW_EOUT_BORDER;
+  static GMap<GUTF8String,GMapArea::BorderType> typeMap;
+  if (! typeMap.size()) 
+    {
+      typeMap["none"]=GMapArea::NO_BORDER;
+      typeMap["xor"]=GMapArea::XOR_BORDER;
+      typeMap["solid"]=GMapArea::SOLID_BORDER;
+      typeMap["default"]=GMapArea::SOLID_BORDER;
+      typeMap["shadowout"]=GMapArea::SHADOW_OUT_BORDER;
+      typeMap["shadowin"]=GMapArea::SHADOW_IN_BORDER;
+      typeMap["etchedin"]=GMapArea::SHADOW_EIN_BORDER;
+      typeMap["etchedout"]=GMapArea::SHADOW_EOUT_BORDER;
+    }
   return typeMap;
 }
 

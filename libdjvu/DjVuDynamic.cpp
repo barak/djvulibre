@@ -55,17 +55,16 @@ class DjVuDynamicLib : public GPEnabled
 public:
   DjVuDynamicLib(const GUTF8String &name);
   ~DjVuDynamicLib();
-  static GP<DjVuDynamicLib> create(
-    const GUTF8String &name,GUTF8String &error);
+  static GP<DjVuDynamicLib> create(const GUTF8String &name,GUTF8String &error);
   void *lookup(const GUTF8String &name);
 private:
   const GUTF8String name;
+  GMap<GUTF8String,void *> smap;
 #ifdef WIN32
   HINSTANCE handle;
 #else
   void *handle;
 #endif
-  GMap<GUTF8String,void *> map;
 };
 
 DjVuDynamicLib::DjVuDynamicLib(const GUTF8String &xname)
@@ -113,78 +112,73 @@ DjVuDynamicLib::~DjVuDynamicLib()
 void *
 DjVuDynamicLib::lookup(const GUTF8String &name)
 {
-  GPosition pos=map.contains(name);
+  GPosition pos = smap.contains(name);
   if(handle && !pos)
   {
 #ifdef WIN32
-    map[name]=GetProcAddress(handle,(const char *)name);
+    smap[name]=GetProcAddress(handle,(const char *)name);
 #else
-    map[name]=dlsym(handle,(const char *)name);
+    smap[name]=dlsym(handle,(const char *)name);
 #endif
-    pos=map.contains(name);
+    pos = smap.contains(name);
   }
-  return pos?map[pos]:0;
+  return pos ? smap[pos] : 0;
 }
 
 static DjVuDynamicLib *
-LookupDjVuDynamic(
-  const GUTF8String &libname,GUTF8String &error)
+LookupDjVuDynamic(const GUTF8String &libname,GUTF8String &error)
 {
-  static GMap<GUTF8String, DjVuDynamicLib *> &map=
-    GMap<GUTF8String, DjVuDynamicLib *>::static_reference();
+  static GPMap<GUTF8String, DjVuDynamicLib> lmap;
   DjVuDynamicLib *retval=0;
-  {
-    GPosition pos=map.contains(libname);
-    if(! pos)
+  GPosition pos = lmap.contains(libname);
+  if(! pos)
     {
-      map[libname]=retval=static_const_GP(DjVuDynamicLib::create(libname,error));
-    }else
-    {
-      retval=map[pos];
-      if(!retval)
-      {
-        error=(ERR_MSG("DjVuDynamicLib.failed_open") "\t")+libname;
-      }
+      retval = DjVuDynamicLib::create(libname,error);
+      lmap[libname]= retval;
     }
-  }
+  else
+    {
+      retval = lmap[pos];
+    }
+  if(!retval)
+    {
+      error=(ERR_MSG("DjVuDynamicLib.failed_open") "\t")+libname;
+    }
   return retval;
 }
 
 DjVuDynamic::DjVuDynamic(const GUTF8String &libname)
-: lib(0)
 {
-  GP<GPEnabled>::operator=(lib=LookupDjVuDynamic(libname,error));
+  lib = LookupDjVuDynamic(libname,error);
 }
 
 DjVuDynamic::DjVuDynamic(const GURL &liburl)
-: lib(0)
 {
-  GP<GPEnabled>::operator=(lib=LookupDjVuDynamic(liburl.UTF8Filename(),error));
+  lib = LookupDjVuDynamic(liburl.UTF8Filename(),error);
 }
 
 void *
 DjVuDynamic::lookup(const GUTF8String &symname, const bool nothrow)
 {
   void *retval=0;
-  if(lib)
-  {
-    retval=lib->lookup(symname); 
-  }else if(!nothrow)
-  {
-    G_THROW(error);
-  }
+  if (lib)
+    {
+      retval=lib->lookup(symname); 
+    }
+  else if(!nothrow)
+    {
+      G_THROW(error);
+    }
   return retval;
 }
 #else // defined(WIN32) || HAS_DLOPEN
 
 DjVuDynamic::DjVuDynamic(const GUTF8String &libname)
-: lib(0)
 {
   error=(ERR_MSG("DjVuDynamicLib.failed_open") "\t")+libname;
 }
 
 DjVuDynamic::DjVuDynamic(const GURL &liburl)
-: lib(0)
 {
   error=(ERR_MSG("DjVuDynamicLib.failed_open") "\t")+liburl.get_string();
 }
@@ -199,7 +193,6 @@ DjVuDynamic::lookup(const GUTF8String &symname, const bool nothrow=false)
 #endif // defined(WIN32) || HAS_DLOPEN 
 
 DjVuDynamic::DjVuDynamic(void)
-: lib(0)
 {
   error=ERR_MSG("DjVuDynamicLib.failed_open") "\t" "(null)";
 }

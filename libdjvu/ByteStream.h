@@ -292,13 +292,20 @@ public:
   static GP<ByteStream> create(
     FILE * const f, char const * const mode, const bool closeme);
   /** Creates a ByteStream object for allocating the memory area of
-    length #sz# starting at address #buffer#.  This call impliments 
-    a read-only ByteStream interface for a memory area specified by
-    the user at construction time. Calls to function #read# directly
-    access this memory area.  The user must therefore make sure that its
-    content remain valid long enough.  */
+      length #sz# starting at address #buffer#.  This call impliments 
+      a read-only ByteStream interface for a memory area specified by
+      the user at construction time. Calls to function #read# directly
+      access this memory area.  The user must therefore make sure that its
+      content remain valid long enough.  */
   static GP<ByteStream> create_static(
     void const * const buffer, const size_t size);
+  
+  /** Easy access to preallocated stdin/stdout/stderr bytestreams */
+  static GP<ByteStream> get_stdin(void);
+  static GP<ByteStream> get_stdout(void);  
+  static GP<ByteStream> get_stderr(void);
+
+  /** This is the conventional name for EOF exceptions */
   static const char *EndOfFile;
   /** Returns the contents of the file as a GNativeString */
   GNativeString getAsNative(void);

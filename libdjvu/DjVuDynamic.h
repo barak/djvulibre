@@ -45,7 +45,7 @@
 class GURL;
 class DjVuDynamicLib;
 
-class DjVuDynamic : public GP<GPEnabled>
+class DjVuDynamic
 {
 public:
   DjVuDynamic(void);
@@ -53,7 +53,7 @@ public:
   DjVuDynamic(const GURL &liburl);
   /// Load a dynamic library symbol from the specified library
   void *lookup(const GUTF8String &symname, const bool nothrow=false);
-  DjVuDynamicLib *lib;
+  GP<DjVuDynamicLib> lib;
   GUTF8String error;
 };
 

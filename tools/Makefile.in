@@ -34,6 +34,7 @@ LN_S = @LN_S@
 TOUCH = @TOUCH@
 INSTALL = @INSTALL@
 RANLIB = @RANLIB@
+RPO = @RPO@
 
 DEFS = @DEFS@
 OPTS = @OPTS@
@@ -45,6 +46,7 @@ THREAD_CFLAGS = @THREAD_CFLAGS@
 
 LIBDJVU_A = ${top_builddir}/libdjvu/libdjvu.a
 LIBDJVU_SO = ${top_builddir}/libdjvu/libdjvu-${PACKAGE_VERSION}.so
+
 @SHARED_YES@LIBDJVU = -Wl,-rpath,${libdir} ${LIBDJVU_SO}
 @SHARED_NO@LIBDJVU = ${LIBDJVU_A}
 
@@ -61,6 +63,7 @@ PROGRAMS = bzz c44 cjb2 cpaldjvu csepdjvu \
 all: ${PROGRAMS}
 
 ${PROGRAMS}:
+	${RPO} $< ${LIBDJVU_A}
 	${CXX} -o $@ ${CXXFLAGS} $< ${LIBDJVU} ${LIBS}
 
 install: install-bin install-man

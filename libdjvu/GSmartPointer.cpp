@@ -38,9 +38,6 @@
 #endif
 // - Author: Leon Bottou, 05/1997
 
-#if 0 // Put this into *one* file, which instantiates all the required containers
-#endif
-
 #include <string.h>
 #include "GThreads.h"
 #include "GSmartPointer.h"

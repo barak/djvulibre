@@ -41,7 +41,7 @@
 
 #if defined(HAVE_COTHREAD) || !defined(AUTOCONF)
 #include "GThreads.h"
-#if THREADMODEL == COTHREADS
+#if THREADMODEL==COTHREADS
 
 /* --------------- begin cothread specific code --------------- */
 

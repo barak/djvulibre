@@ -71,12 +71,11 @@ public:
 };
 
   
-static GMap<void *,GP<DjVuProgressTask::Data> > &
+static GPMap<void *,DjVuProgressTask::Data> &
 get_map(void)
 {
-  static GMap<void *,GP<DjVuProgressTask::Data> > &map=
-    GMap<void *,GP<DjVuProgressTask::Data> >::static_reference(); 
-  return map;
+  static GPMap<void *,DjVuProgressTask::Data> xmap;
+  return xmap;
 }
 
 djvu_progress_callback *

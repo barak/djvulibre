@@ -34,6 +34,7 @@ LN_S = @LN_S@
 TOUCH = @TOUCH@
 INSTALL = @INSTALL@
 RANLIB = @RANLIB@
+RPO = @RPO@
 BIN2CPP = ${top_builddir}/gui/bin2cpp/bin2cpp
 MOC = @MOC@
 
@@ -178,6 +179,7 @@ CFLAGS = @CFLAGS@ ${FLAGS}
 CXXFLAGS = @CXXFLAGS@ ${CXXRPOFLAGS} ${FLAGS}
 
 djview: ${OBJS}
+	@${RPO} ${OBJS} ${LIBDJVU_A}
 	${CXX} -o $@ ${CXXFLAGS} ${OBJS} ${LIBDJVU} ${LIBS}
 
 install: install-bin install-man

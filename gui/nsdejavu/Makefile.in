@@ -35,6 +35,7 @@ LN_S = @LN_S@
 TOUCH = @TOUCH@
 INSTALL = @INSTALL@
 RANLIB = @RANLIB@
+RPO = @RPO@
 
 DEFS = @DEFS@ -DDEBUGLVL=0 -DPLUGIN -DXP_UNIX \
 	-DUSE_EXCEPTION_EMULATION \
@@ -74,7 +75,7 @@ include ${srcdir}/Makefile.add
 makeadd: FORCE
 	${SHELL} ${top_srcdir}/etc/makegen \
 	  --srcdir=${srcdir} --top_srcdir=${top_srcdir} \
-	  ${SOURCES} > ${srcdir}/Makefile.add ; 
+	  ${SOURCES} > ${srcdir}/Makefile.add
 
 INCS = -I${top_builddir} ${SRCINCS}
 FLAGS = ${DEFS} ${INCS} ${OPTS}
@@ -82,6 +83,7 @@ CFLAGS = @CFLAGS@ ${FLAGS}
 CXXFLAGS = @CXXFLAGS@ ${CXXRPOFLAGS} ${FLAGS}
 
 ${NSDEJAVU_PROGRAM} : ${OBJS}
+	@${RPO} ${OBJS}
 	${CXX} -o $@ ${NSDEJAVU_LDFLAGS} ${OBJS} ${NSDEJAVU_LIBS}
 
 install: ${NSDEJAVU_PROGRAM} FORCE

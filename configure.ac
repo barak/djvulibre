@@ -33,6 +33,7 @@ AC_CXX_BOOL
 AC_CXX_EXCEPTIONS
 AC_CXX_MEMBER_TEMPLATES
 AC_CXX_OPTIMIZE
+AC_CXX_RPO
 
 dnl saved_CC="$CC"
 dnl CC="$CXX"
@@ -195,25 +196,6 @@ fi
 AC_SUBST(SHARED_YES)
 AC_SUBST(SHARED_NO)
 
-# Should we use option -frepo
-if test x$GXX = xyes ; then
- AC_ARG_ENABLE([rpo],
-   AC_HELP_STRING([--enable-rpo],
-                  [Enable compilation with option -frepo]),
-   [ac_rpo=$enableval], [ac_rpo=no] )
- if test x$ac_rpo != xno ; then
-    CXXRPOFLAGS=-frepo
-    RPO_YES=''
-    RPO_NO='#'
- else
-    CXXRPOFLAGS=
-    RPO_YES='#'
-    RPO_NO=''
- fi
- AC_SUBST(CXXRPOFLAGS)
- AC_SUBST(RPO_YES)
- AC_SUBST(RPO_NO)
-fi
 
 
 # ----------------------------------------
@@ -236,7 +218,12 @@ AC_OUTPUT
 # Final message
 echo ""
 echo "Configuration is done."
-echo "Now type 'make' and 'make install'."
+echo "Compile with command:"
+test x$GXX = xyes && \
+echo "    $ make depend"
+echo "    $ make"
+echo "Then install the binaries in $prefix with command:"
+echo "    # make install"
 
 # ----------------------------------------
 # Stuff added to config.h

@@ -34,6 +34,7 @@ LN_S = @LN_S@
 TOUCH = @TOUCH@
 INSTALL = @INSTALL@
 RANLIB = @RANLIB@
+RPO = @RPO@
 
 DEFS = @DEFS@
 OPTS = @OPTS@
@@ -45,9 +46,6 @@ THREAD_CFLAGS = @THREAD_CFLAGS@
 
 LIBDJVU_A = libdjvu.a
 LIBDJVU_SO = libdjvu-${PACKAGE_VERSION}.so
-
-@RPO_YES@LIBDJVU_RPO = libdjvu-rpo.o
-@RPO_NO@LIBDJVU_RPO = 
 
 @SHARED_YES@CXXPICFLAGS = -fPIC -DPIC
 @SHARED_NO@CXXPICFLAGS =
@@ -81,16 +79,12 @@ OBJS = \
 	DjVuMessageLite.o DjVuMessage.o GUnicode.o UnicodeByteStream.o \
 	XMLParser.o XMLTags.o DjVuDynamic.o
 
-${LIBDJVU_A} : ${OBJS} ${LIBDJVU_RPO}
+${LIBDJVU_A} : ${OBJS}
+	@${RPO} ${OBJS}
 	@echo "[ generating $@ ... ]"
 	-${RM} 2>/dev/null ${LIBDJVU_A}
 	${AR} cru ${LIBDJVU_A} ${OBJS}
 	${RANLIB} ${LIBDJVU_A}
-
-@RPO_YES@${LIBDJVU_RPO} : ${OBJS}
-@RPO_YES@	@echo "[ forcing repository closure ... ]"
-@RPO_YES@	-${CXX} -o $@ ${CXXFLAGS} ${OBJS} ${LIBS}
-@RPO_YES@	${TOUCH} $@
 
 @SHARED_YES@${LIBDJVU_SO} : ${OBJS}
 @SHARED_YES@	@echo "[ linking $@ ... ]"

@@ -747,28 +747,3 @@ GSetBase::empty()
 //  for (int i=0; i<nbuckets; i++)
 //    table[i] = 0;
 }
-
-static GPList<GPEnabled> &
-get_list(void)
-{
-  static GPList<GPEnabled> list;
-  return list;
-}
-
-GPEnabled *
-static_const_GPBase(GPEnabled *foo)
-{
-  if(foo)
-  {
-    static GPList<GPEnabled> &list=get_list();
-    list.append(foo);
-  }
-  return foo;
-}
-
-void
-static_destruct(void)
-{
-  get_list().empty();
-}
-
