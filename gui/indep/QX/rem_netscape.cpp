@@ -68,18 +68,19 @@ extern "C" int gethostname(char *, int);
 
 #define MAX_TIMEOUT	15
 
-u_long RemoteNetscape::GetTopWindow(void)
+unsigned long RemoteNetscape::GetTopWindow(void)
 {
    if (top_window) return top_window;
    
-   DEBUG_MSG("RemoteNetscape::GetTopWindow(): traversing the tree up to reach the shell...\n");
+   DEBUG_MSG("RemoteNetscape::GetTopWindow(): traversing the tree ...\n");
    DEBUG_MAKE_INDENT(3);
 
    Display * displ=(Display *) RemoteNetscape::displ;
    Window ref_window=(Window) RemoteNetscape::ref_window;
    
    if (!displ || !ref_window)
-      throw ERROR_MESSAGE("RemoteNetscape::GetTopWindow", "Display has not been intialized yet.");
+      throw ERROR_MESSAGE("RemoteNetscape::GetTopWindow", 
+			  "Display has not been intialized yet.");
    
    Atom atom_wm=XInternAtom(displ, "WM_STATE", True);
    if (!atom_wm) return 0;
@@ -120,13 +121,13 @@ u_long RemoteNetscape::GetTopWindow(void)
       }
    }
    DEBUG_MSG("got window=" << shell_win << "\n");
-   top_window=(u_long) shell_win;
+   top_window=(unsigned long) shell_win;
    return shell_win;
 }
 
 void RemoteNetscape::ObtainLock(void)
 {
-   DEBUG_MSG("RemoteNetscape::ObtainLock(): trying to obtain lock on Netscape's window.\n");
+   DEBUG_MSG("RemoteNetscape::ObtainLock(): trying to obtain lock.\n");
    DEBUG_MAKE_INDENT(3);
    
    if (!displ || !ref_window)
@@ -158,15 +159,15 @@ void RemoteNetscape::ObtainLock(void)
       
       Atom type=0;
       int format;
-      u_long items, bytes_to_go;
-      u_char * prop=0;
+      unsigned long items, bytes_to_go;
+      unsigned char * prop=0;
       if (XGetWindowProperty(displ, GetTopWindow(), atom_lock,
 			     0, 0xffff/sizeof(long), False,
 			     XA_STRING, &type, &format, &items,
 			     &bytes_to_go, &prop)!=Success || !prop || !type)
       {
 	 XChangeProperty(displ, GetTopWindow(), atom_lock, XA_STRING,
-			 8, PropModeReplace, (u_char *) lock_data,
+			 8, PropModeReplace, (unsigned char *) lock_data,
 			 strlen(lock_data)+1);
 	 locked=1;
 	 DEBUG_MSG("locked!\n");
@@ -221,17 +222,19 @@ void RemoteNetscape::ReleaseLock(void)
    char lock_data[MAXHOSTNAMELEN+128];
    sprintf(lock_data, "Locked by pid%d@", (int) getpid());
    if (gethostname(lock_data+strlen(lock_data), MAXHOSTNAMELEN)<0)
-      ThrowError("RemoteNetscape::ObtainLock", "Failed to query local host name");
+      ThrowError("RemoteNetscape::ObtainLock", 
+		 "Failed to query local host name");
    
    Atom type=0;
    int format;
-   u_long items, bytes_to_go;
-   u_char * prop=0;
+   unsigned long items, bytes_to_go;
+   unsigned char * prop=0;
    if (XGetWindowProperty(displ, GetTopWindow(), atom_lock,
 			  0, 0xffff/sizeof(long), True, // Will be deleted
 			  XA_STRING, &type, &format, &items,
 			  &bytes_to_go, &prop)!=Success || !prop || !type)
-      throw ERROR_MESSAGE("RemoteNetscape::ReleaseLock", "Internal error: no lock to release.");
+      throw ERROR_MESSAGE("RemoteNetscape::ReleaseLock", 
+			  "Internal error: no lock to release.");
    if (prop && type)
    {
       have_lock=0;
@@ -245,11 +248,12 @@ void RemoteNetscape::ReleaseLock(void)
 
 void RemoteNetscape::SendCommand(const char * cmd)
 {
-   DEBUG_MSG("RemoteNetscape::SendCommand(): sending command '" << cmd << "'\n");
+   DEBUG_MSG("RemoteNetscape::SendCommand(): '" << cmd << "'\n");
    DEBUG_MAKE_INDENT(3);
    
    if (!displ || !ref_window)
-      throw ERROR_MESSAGE("RemoteNetscape::SendCommand", "Display has not been intialized yet.");
+      throw ERROR_MESSAGE("RemoteNetscape::SendCommand", 
+			  "Display has not been intialized yet.");
 
    Display * displ=(Display *) RemoteNetscape::displ;
    
@@ -263,7 +267,7 @@ void RemoteNetscape::SendCommand(const char * cmd)
 			  MOZILLA_RESPONSE_PROP "' atom.");
    
    XChangeProperty(displ, GetTopWindow(), atom_cmd, XA_STRING, 8,
-		   PropModeReplace, (u_char *) cmd, strlen(cmd)+1);
+		   PropModeReplace, (unsigned char *) cmd, strlen(cmd)+1);
    DEBUG_MSG("command sent...\n");
    
    time_t start_time=time(0);
@@ -284,22 +288,24 @@ void RemoteNetscape::SendCommand(const char * cmd)
       {
 	 Atom type=0;
 	 int format;
-	 u_long items, bytes_to_go;
-	 u_char * prop=0;
+	 unsigned long items, bytes_to_go;
+	 unsigned char * prop=0;
 	 try
 	 {
 	    if (XGetWindowProperty(displ, GetTopWindow(), atom_res,
 				   0, 0xffff/sizeof(long), True, // Will be deleted
 				   XA_STRING, &type, &format, &items,
 				   &bytes_to_go, &prop)!=Success || !prop || !type)
-	       throw ERROR_MESSAGE("RemoteNetscape::SendCommand", "Failed to read reply.");
+	       throw ERROR_MESSAGE("RemoteNetscape::SendCommand", 
+				   "Failed to read reply.");
 	    
 	    DEBUG_MSG("got reply '" << prop << "'\n");
 	    if (strlen((char *) prop)<5)
-	       throw ERROR_MESSAGE("RemoteNetscape::SendCommand", "Got corrupted reply.");
+	       throw ERROR_MESSAGE("RemoteNetscape::SendCommand", 
+				   "Got corrupted reply.");
 	    if (*prop!='2')
-	       throw ERROR_MESSAGE("RemoteNetscape::SendCommand", "Command failed: "+
-				   GUTF8String((char *) prop+4));
+	       throw ERROR_MESSAGE("RemoteNetscape::SendCommand", 
+				   "Command failed: "+ GUTF8String((char *) prop+4));
 	    XFree(prop); prop=0;
 	 } catch(...)
 	 {

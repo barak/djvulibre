@@ -62,15 +62,15 @@
 class QXImager : public QeImager
 {
 protected:
-   int		colormap_warned;
-   int		in_netscape;
+   int		  colormap_warned;
+   int		  in_netscape;
 
-   Display	* displ;
-   void		* visual;
-   HANDLE	colormap;
-   int		depth;
-   bool		is_color;
-   u_int32	red_mask, green_mask, blue_mask;
+   Display	 *displ;
+   void		 *visual;
+   unsigned long  colormap;
+   int		  depth;
+   bool		  is_color;
+   u_int32	  red_mask, green_mask, blue_mask;
 
    bool		optimizeLCD;
    int		machine_byte_order;
@@ -110,15 +110,14 @@ public:
    class PatchRect : public GPEnabled
    {
    public:
-      GRect		rect;
-      GP<GPixmap>	pixmap;
-      int		pm_x0, pm_y0;
-
-      PatchRect(const GRect & _rect, const GP<GPixmap> & _pixmap,
-		int _pm_x0=0, int _pm_y0=0) :
-	    rect(_rect), pixmap(_pixmap), pm_x0(_pm_x0), pm_y0(_pm_y0) {}
+     GRect		rect;
+     GP<GPixmap>	pixmap;
+     int		pm_x0, pm_y0;
+     PatchRect(const GRect & _rect, const GP<GPixmap> & _pixmap,
+	       int _pm_x0=0, int _pm_y0=0) 
+       : rect(_rect), pixmap(_pixmap), pm_x0(_pm_x0), pm_y0(_pm_y0) {}
    };
-   
+  
    virtual u_int32	getGrayXColor(float level);
    virtual u_int32	getXColor(u_char r, u_char g, u_char b);
    virtual u_int32	getXColor(u_int32 color);
@@ -187,7 +186,7 @@ public:
    void		dither(GPixmap & gpix, int x0=0, int y0=0);
    
    QXImager(Display * _displ, void * _visual,
-	    HANDLE _colormap, int _depth,
+	    unsigned long _colormap, int _depth,
 	    bool _in_netscape, bool _optimizeLCD);
    ~QXImager(void);
 };

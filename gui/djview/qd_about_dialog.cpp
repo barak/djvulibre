@@ -81,8 +81,7 @@ QDAboutDialog::QDAboutDialog(QWidget *parent, const char *name, bool modal)
       label->setAlignment(AlignCenter);
       frame_vlay->addWidget(label);
       frame_vlay->activate();
-      QHBoxLayout * hlay=new QHBoxLayout(10);
-      vlay->addLayout(hlay);
+      QHBoxLayout * hlay=new QHBoxLayout(vlay, 10);
       hlay->addStretch(1);
       QePushButton * butt=new QePushButton(tr("&Close"), start);
       butt->setDefault(TRUE);

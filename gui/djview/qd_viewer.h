@@ -46,9 +46,6 @@
 
 
 #include "qd_base.h"
-#ifdef UNIX
-#include "rem_netscape.h"
-#endif
 #include "saved_data.h"
 #include "DjVuDocument.h"
 #include "qd_port.h"
@@ -58,8 +55,12 @@
 #ifndef QT1
 #include <qtimer.h>
 #endif
-
 #include "qt_fix.h"
+
+#ifdef UNIX
+#include "rem_netscape.h"
+#endif
+
 
 // QDViewer defines popup menu (QDANTBAse doesn't have one since it's
 // inherited by both QDViewer and QDEditor which may override it) and

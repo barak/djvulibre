@@ -716,27 +716,29 @@ QeSpinBox::eventFilter(QObject * obj, QEvent * ev)
 bool
 QeProgressBar::setIndicator(QString & string, int progress, int totalSteps)
 {
-  bool rc=QProgressBar::setIndicator(string, progress, totalSteps) ||
-    prefix_changed;
-  if (prefix.length()) string=prefix+string;
-  prefix_changed=0;
+  bool rc = prefix_changed;
+  if ( QProgressBar::setIndicator(string, progress, totalSteps) )
+    rc = true;
+  if (prefix.length()) 
+    string = prefix + string;
+  prefix_changed = false;
   return rc;
 }
 
 void
 QeProgressBar::setPrefix(const QString & _prefix)
 {
-  prefix_changed=(prefix!=_prefix);
+  prefix_changed = (prefix!=_prefix);
   prefix=_prefix;
 }
 
 QeProgressBar::QeProgressBar(QWidget * parent=0, const char * name=0) 
-  : QProgressBar(parent, name), prefix_changed(0) 
+  : QProgressBar(parent, name), prefix_changed(false) 
 {
 }
 
 QeProgressBar::QeProgressBar(int totalSteps, QWidget * parent=0, const char * name=0) 
-  : QProgressBar(totalSteps, parent, name), prefix_changed(0) 
+  : QProgressBar(totalSteps, parent, name), prefix_changed(false) 
 {
 }
 
@@ -811,9 +813,10 @@ QeDialog::event(QEvent * ev)
    {
       if (ev->type()==QEvent::Resize)
       {
-	    // Resize the aux_widget to respond to manual (mouse) resize
+	 // Resize the aux_widget to respond to manual (mouse) resize
 	 aux_widget->resize(width(), height());
-      } else if (ev->type()==QEvent::LayoutHint)
+      } 
+      else if (ev->type()==QEvent::LayoutHint)
       {
 	 int min_width=aux_widget->minimumSize().width();
 	 int min_height=aux_widget->minimumSize().height();
@@ -892,7 +895,7 @@ QeDialog::eventFilter(QObject * obj, QEvent * ev)
 	 // Called when there is a valid parent
 {
 #ifdef QT1
-   if (ev->type()==QEvent::LayoutHint)
+   if (ev->type()==Event_LayoutHint)
    {
       int width, height;
       if (!wresizable && (width=minimumSize().width())) setMaximumWidth(width);
@@ -1001,14 +1004,13 @@ QeDialog::QeDialog(QWidget * parent_, const char * name,
      modal(modal_), parent(parent_), aux_widget(0),
      wresizable(false), hresizable(false)
 {
+#ifdef QT1
       // Note: parent here *may* be non-zero even when QDialog ate
       // zero parent. This is why we make this strange check
    if (!parentWidget())
    {
-#ifdef QT1
       aux_widget=new QWidget(this, "aux_dialog_widget");
       aux_widget->setGeometry(0, 0, width(), height());
-#endif
       if (parent) connect(parent, SIGNAL(destroyed(void)),
 			  this, SLOT(slotParentDestroyed(void)));
    } else
@@ -1021,8 +1023,14 @@ QeDialog::QeDialog(QWidget * parent_, const char * name,
       // latter case QT doesn't care to search for the top level widget
    if (parent) makeTransient(this, parent->topLevelWidget());
    setResizable(0);
-#ifdef QT1
    resize(0, 0);
+#else
+   if (!parentWidget() && parent)
+     {
+       makeTransient(this, parent->topLevelWidget());
+       connect(parent, SIGNAL(destroyed(void)),
+	       this, SLOT(slotParentDestroyed(void)));     
+     }
 #endif
 }
 
@@ -1151,6 +1159,7 @@ QeDialog::x11Event(XEvent * ev)
 void
 QeDialog::setResizeDecorations(bool enabled)
 {
+#ifdef QT1
       // We remove "resize" WM decorations and functions for Motif Window
       // Manager ONLY. Let's hope, that QT-2.0 will be smart enough to do it
       // itself for any WM.
@@ -1201,6 +1210,7 @@ QeDialog::setResizeDecorations(bool enabled)
 		      32, PropModeReplace, (u_char *) &hints,
 		      sizeof(MwmHints)/4);
    }
+#endif
 }
 
 // QECOMBOBOX ----------------------------------------

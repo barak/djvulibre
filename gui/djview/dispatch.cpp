@@ -46,11 +46,8 @@
 #define REPARENT 1
 #endif
 
-#include <sys/time.h>
-
 #include "DataPool.h"
-
-#include "ZPCodec.h"		// Hates to be included after QT stuff
+#include "ZPCodec.h" // Hates to be included after QT stuff
 
 #include "io.h"
 #include "prefs.h"
@@ -67,9 +64,14 @@
 #include "mime_check.h"
 
 #include <qtimer.h>
+#include <sys/time.h>
 #include <qapplication.h>
 
 #include "qt_fix.h"
+
+#include <X11/Xlib.h>
+#include <X11/Xutil.h>
+
 
 class PluginInstance
 {

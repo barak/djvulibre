@@ -54,6 +54,8 @@
 #include <qcombobox.h>
 #include <qlabel.h>
 #include <qpushbutton.h>
+#include <qtabwidget.h>
+
 #include <stdio.h>
 
 #include "qt_fix.h"
@@ -109,36 +111,40 @@ QDHlinkPrefs::slotMagHotKeyChanged(DjVuPrefs::MagButtType key)
 }
 
 QDHlinkPrefs::QDHlinkPrefs(DjVuPrefs * prefs, QWidget * parent, const char * name) :
-      QeGroupBox(tr("Hyperlinks Preferences"), parent, name)
+      QWidget(parent, name)
 {
-   DEBUG_MSG("QDHlinkPrefs::QDHlinkOptimPrefs(): Creating 'Hyperlinks Preferences' box...\n");
+   DEBUG_MSG("QDHlinkPrefs::QDHlinkOptimPrefs(): ...\n");
    DEBUG_MAKE_INDENT(3);
 
    QVBoxLayout * vlay=new QVBoxLayout(this, 10, 5, "hlink_vlay");
    vlay->addSpacing(fontMetrics().height());
+   vlay->addStretch(1);
 
-   popup_butt=new QeCheckBox(tr("Disable popup messages"), this, "popup_butt");
+   popup_butt=new QeCheckBox(tr("Disable hyperlink popup messages."),
+			     this, "popup_butt");
    popup_butt->setChecked(!prefs->hlinksPopup);
    vlay->addWidget(popup_butt);
    
-   border_butt=new QeCheckBox(tr("Draw using simple border"), this, "border_butt");
+   border_butt=new QeCheckBox(tr("Draw hyperlinks using simple border."), 
+			      this, "border_butt");
    border_butt->setChecked(prefs->hlinksBorder);
    vlay->addWidget(border_butt);
+   vlay->addStretch(1);
    
-   QHBoxLayout * hlay=new QHBoxLayout(5, "hlink_hlay");
-   vlay->addLayout(hlay);
-   QeLabel * key_label=new QeLabel(tr("'Show all hyperlinks' key"), this);
+   QHBoxLayout * hlay=new QHBoxLayout(vlay, 5);
+   QeLabel * key_label=new QeLabel(tr("\"Show all hyperlinks\" key:"), this);
    hlay->addWidget(key_label);
-   hlay->addStretch(1);
    key_menu=new QeComboBox(this, "key_menu");
    for(int i=0;i<DjVuPrefs::HLB_ITEMS;i++)
       key_menu->insertItem(DjVuPrefs::hlb_names[i], i);
    key_menu->setCurrentItem(prefs->hlb_num);
    hlay->addWidget(key_menu);
 
+   vlay->addStretch(2);
    vlay->activate();
 
-   QString key_tip=tr("Combination of keys to be pressed to display\nall the hyperlinks present on the page.");
+   QString key_tip=tr("Combination of keys to be pressed to display\n"
+		      "all the hyperlinks present on the page.");
    QToolTip::add(key_label, key_tip); QToolTip::add(key_menu, key_tip);
 
    connect(key_menu, SIGNAL(activated(int)),
@@ -210,42 +216,27 @@ QDViewerPrefs::QDViewerPrefs(DjVuPrefs * _prefs, QWidget * parent,
    DEBUG_MAKE_INDENT(3);
 
    setCaption(tr("DjVu: Viewer Preferences"));
-   QWidget * start=startWidget();
+   QWidget *start = startWidget();
    QVBoxLayout * top_vlay=new QVBoxLayout(start, 10, 5, "top_vlay");
-
-   QHBoxLayout * hlay=new QHBoxLayout(5);
-   top_vlay->addLayout(hlay);
-
-   QVBoxLayout * vlay=new QVBoxLayout(5);
-   hlay->addLayout(vlay);
-
-      // *** Left column
+   QTabWidget *tabwidget = new QTabWidget(start, "tabwidget");
+   top_vlay->addWidget(tabwidget);
    
-   gamma_prefs=new QDGammaPrefs(prefs, start, "gamma_prefs");
-   vlay->addWidget(gamma_prefs);
+      // *** Tabs
+   gamma_prefs = new QDGammaPrefs(_prefs, tabwidget, "gamma_prefs");
+   tabwidget->addTab(gamma_prefs, tr("Gamma"));
+   tbar_prefs=new QDTbarPrefs(_prefs, tabwidget, "tbar_prefs");
+   tabwidget->addTab(tbar_prefs, tr("Toolbar"));
+   hlink_prefs=new QDHlinkPrefs(_prefs, tabwidget, "hlink_prefs");
+   tabwidget->addTab(hlink_prefs, tr("Links"));
+   lens_prefs=new QDLensPrefs(_prefs, tabwidget, "lens_prefs");
+   tabwidget->addTab(lens_prefs, tr("Lens"));
+   cache_prefs=new QDCachePrefs(_prefs, true, tabwidget, "cache_prefs");
+   tabwidget->addTab(cache_prefs, tr("Cache"));
+   optim_prefs=new QDOptimPrefs(_prefs, tabwidget, "optim_prefs");
+   tabwidget->addTab(optim_prefs, tr("Optimization"));
 
-   optim_prefs=new QDOptimPrefs(prefs, start, "optim_prefs");
-   vlay->addWidget(optim_prefs);
-
-      // *** Right column
-   
-   vlay=new QVBoxLayout(5);
-   hlay->addLayout(vlay);
-   
-   hlink_prefs=new QDHlinkPrefs(prefs, start, "hlink_prefs");
-   vlay->addWidget(hlink_prefs);
-
-   cache_prefs=new QDCachePrefs(prefs, true, start, "cache_prefs");
-   vlay->addWidget(cache_prefs);
-
-   tbar_prefs=new QDTbarPrefs(prefs, start, "tbar_prefs");
-   vlay->addWidget(tbar_prefs);
-
-   lens_prefs=new QDLensPrefs(prefs, start, "lens_prefs");
-   vlay->addWidget(lens_prefs);
-
-   QHBoxLayout * butt_lay=new QHBoxLayout(5);
-   top_vlay->addLayout(butt_lay);
+      // ** Bottom Row
+   QHBoxLayout * butt_lay=new QHBoxLayout(top_vlay, 5);
    global_butt=new QeCheckBox(tr("Update preferences globally"), start, "global_butt");
    global_butt->setChecked(TRUE);
    butt_lay->addWidget(global_butt);
@@ -255,14 +246,12 @@ QDViewerPrefs::QDViewerPrefs(DjVuPrefs * _prefs, QWidget * parent,
    butt_lay->addWidget(ok_butt);
    QePushButton * cancel_butt=new QePushButton(tr("&Cancel"), start, "cancel_butt");
    butt_lay->addWidget(cancel_butt);
-   
    top_vlay->activate();
 
       // Connecting signals and slots
    connect(ok_butt, SIGNAL(clicked(void)), this, SLOT(accept(void)));
    connect(cancel_butt, SIGNAL(clicked(void)), this, SLOT(reject(void)));
    connect(global_butt, SIGNAL(toggled(bool)), this, SLOT(slotGlobalToggled(bool)));
-
    connect(hlink_prefs, SIGNAL(sigHotKeyChanged(DjVuPrefs::HLButtType)),
 	   lens_prefs, SLOT(slotHlHotKeyChanged(DjVuPrefs::HLButtType)));
    connect(lens_prefs, SIGNAL(sigHotKeyChanged(DjVuPrefs::MagButtType)),

@@ -294,7 +294,7 @@ QDViewer::QDViewer(int _in_netscape,
       QDBase(parent, name), in_netscape(_in_netscape),
       plugin_data(_plugin_data), welcome(0), about(0), page_port(0, 0), doc_port(0, 0)
 #ifdef UNIX
-      , rem_netscape(x11Display(), (u_long) winId())
+      , rem_netscape(x11Display(), (unsigned long) winId())
 #endif
 {
    DEBUG_MSG("QDViewer::QDViewer(): Initializing class...\n");

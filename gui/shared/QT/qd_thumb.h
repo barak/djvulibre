@@ -49,6 +49,7 @@
 #include "GContainer.h"
 
 #include <qlistbox.h>
+#include <qcursor.h>
 
 #include "qt_fix.h"
 

@@ -42,18 +42,21 @@
 #include "config.h"
 #endif
 
-#include <qfileinfo.h>
-#include <qtranslator.h>
-
-#include "djvu_file_cache.h"
-#include "init_qt.h"
 #include "debug.h"
 #include "GString.h"
 #include "DjVuMessage.h"
 #include "GURL.h"
+
+#include <qfileinfo.h>
+#include <qtranslator.h>
+#include <qstyle.h>
+
 #include "exc_msg.h"
 #include "exc_res.h"
+#include "qlib.h"
 #include "qx_imager.h"
+#include "djvu_file_cache.h"
+#include "init_qt.h"
 
 #include "prefs.h"
 
@@ -62,6 +65,10 @@
 #endif
 #include <signal.h>
 #include <stdio.h>
+
+#include <X11/Xlib.h>
+#include <X11/Xutil.h>
+
 
 Display		* displ;
 Visual		* visual;
@@ -145,11 +152,10 @@ static bool
 InstallLangTranslator(void)
 {
 #ifndef QT1
+#ifdef QT2
    // guess the char set 
   QFont::CharSet char_set = QFont::charSetForLocale();
-  
-  // load locale sepcific font 
-#ifdef QT2
+   // load locale sepcific font 
   QFont font;
   font.setCharSet(char_set);
   switch (char_set)
@@ -166,12 +172,13 @@ InstallLangTranslator(void)
     }
    if ( font != QApplication::font() ) 
      QApplication::setFont( font, TRUE );
-#endif
-   
    // load language translation files
-   bool have_translation=false;
-   QString encoding=QFont::encodingName(char_set);
+   QString encoding = QFont::encodingName(char_set);
    QString lang = "lang_"+encoding+".qm";
+#else
+   QString lang = "lang.qm";
+#endif
+   bool have_translation=false;
    GList<GURL> paths = DjVuMessage::GetProfilePaths();
    for(GPosition pos=paths; !have_translation && pos; ++pos)
      {

@@ -69,7 +69,7 @@ class QDViewerShell : public QMainWindow
 private:
    GP<DjVuViewer>djvu;
    
-   QeMenuBar	* menu;
+   QMenuBar	* menu;
    QFrame       * status_frame;
    QLabel	* status_bar;
    QeNInOne	* main;

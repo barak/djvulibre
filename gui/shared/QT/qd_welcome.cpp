@@ -94,10 +94,17 @@ QDWelcome::QDWelcome(QWidget * parent, const char * name, bool modal) :
    QHBoxLayout * hlay=new QHBoxLayout(10);
    vlay->addLayout(hlay);
    label=new QeLabel(start, "icon");
-   label->setPixmap(QMessageBox::standardIcon(QMessageBox::Information,
-					      QApplication::style()));
+#if defined(QT1) || defined(QT2)
+   QPixmap iconpm = QMessageBox::standardIcon(QMessageBox::Information,
+					      QApplication::style() );
+#else
+   QPixmap iconpm = QMessageBox::standardIcon(QMessageBox::Information);
+#endif
+   label->setPixmap(iconpm);
    hlay->addWidget(label);
-   label=new QeLabel(tr("These functions and many others can be\naccessed from within a DjVu document\nby clicking the right mouse button."), start, "info");
+   label=new QeLabel(tr("These functions and many others can be\n"
+			"accessed from within a DjVu document\n"
+			"by clicking the right mouse button."), start, "info");
    label->setAlignment(AlignCenter);
    hlay->addWidget(label, 1);
 

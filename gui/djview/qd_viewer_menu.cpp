@@ -346,21 +346,23 @@ QDViewer::processCommand(int cmd)
 	    break;
 	    
 	 case IDC_ABOUT_PAGE:
-	    if (dimg && dimg->get_width() && dimg->get_height())
-	    {
-	       GUTF8String desc=DjVuMessageLite::LookUpUTF8(dimg->get_long_description());
-	       showMessage(this, tr("DjVu: Page Information"), QStringFromGString(desc), 1, 1);
-	    }
-	    break;
-
+	   if (dimg && dimg->get_width() && dimg->get_height())
+	      {
+		GUTF8String desc = dimg->get_long_description();
+		GUTF8String ldesc = DjVuMessageLite::LookUpUTF8(desc);
+		showMessage(this, tr("DjVu: Page Information"), 
+			    QStringFromGString(ldesc), 1, 1);
+	      }
+	   break;
+	   
 	 case IDC_ABOUT_DOC:
 	    if (djvu_doc)
-	    {
-	       QDDocInfo info(djvu_doc, this, "doc_info", 1);
-	       connect(&info, SIGNAL(sigGotoPage(int)),
-		       this, SLOT(slotGotoPage(int)));
-	       info.show();
-	    }
+	      {
+		QDDocInfo info(djvu_doc, this, "doc_info", TRUE);
+		connect(&info, SIGNAL(sigGotoPage(int)),
+			this, SLOT(slotGotoPage(int)));
+		info.exec();
+	      }
 	    break;
 
 	 case IDC_THUMB_SHOW:

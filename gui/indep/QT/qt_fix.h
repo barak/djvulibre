@@ -96,10 +96,6 @@ public:
 #include <qdialog.h>
 #endif
 class QeDialog : public QDialog
-// Simple hack: No need now to do resize(0, 0) AND the dialog will always try
-// to get its minimum size even after removing/adding new widgets
-// Also: pass it non-zero parent, and it will become transient to it
-// regardless of modal mode
 {
    Q_OBJECT
 private:
@@ -394,22 +390,4 @@ public:
 
 #endif
 
-#ifndef __QT_FIX_H_
-#define __QT_FIX_H_
-#include "GString.h"
-#include "qstring.h"
-inline GUTF8String
-GStringFromQString(const QString & x)
-{
-  GUTF8String retval=(const char *)x.utf8();
-  return retval;
-}
-inline QString
-QStringFromGString(const GUTF8String & x)
-{
-  QString retval=QString::fromUtf8((const char *)x);
-  return retval;
-}
-
-#endif /* __QT_FIX_H_ */
 

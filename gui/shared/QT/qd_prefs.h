@@ -61,20 +61,21 @@ class QDGammaDispl : public QFrame
 {
    Q_OBJECT
 private:
-   double	gamma;
+   double gamma;
 protected:
-   virtual void	resizeEvent(QResizeEvent *);
-   virtual void	paintEvent(QPaintEvent *);
-   virtual bool	event(QEvent *);
-public slots:
-   void		setGamma(int _gamma);
+  virtual void paintEvent(QPaintEvent *);
 public:
-   QDGammaDispl(QWidget * parent=0, const char * name=0);
-   ~QDGammaDispl(void) {}
+  virtual void resize(int, int);
+  virtual void setGeometry(int, int, int, int);
+public slots:
+  void setGamma(int _gamma);
+public:
+  QDGammaDispl(QWidget * parent=0, const char * name=0);
+  ~QDGammaDispl(void) {}
 };
 
 // "Gamma Correction: box
-class QDGammaPrefs : public QeGroupBox
+class QDGammaPrefs : public QWidget
 {
    Q_OBJECT
 private:
@@ -93,7 +94,7 @@ public:
 };
 
 // "Magnifying Glass" box
-class QDLensPrefs : public QeGroupBox
+class QDLensPrefs : public QWidget
 {
    Q_OBJECT
 private:
@@ -114,7 +115,7 @@ public:
 };
 
 // "Optimization" box
-class QDOptimPrefs : public QeGroupBox
+class QDOptimPrefs : public QWidget
 {
    Q_OBJECT
 private:
@@ -129,7 +130,7 @@ public:
 };
 
 // "Cache Preferences" box
-class QDCachePrefs : public QeGroupBox
+class QDCachePrefs : public QWidget
 {
    Q_OBJECT
 private:
@@ -151,7 +152,7 @@ public:
 };
 
 // "Toolbar Preferences Box"
-class QDTbarPrefs : public QeGroupBox
+class QDTbarPrefs : public QWidget
 {
    Q_OBJECT
 private:

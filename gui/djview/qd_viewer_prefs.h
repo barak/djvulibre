@@ -52,7 +52,7 @@
 #include "qt_fix.h"
 
 // "Hyperlink Preferences box"
-class QDHlinkPrefs : public QeGroupBox
+class QDHlinkPrefs : public QWidget
 {
    Q_OBJECT
 private:

@@ -368,6 +368,25 @@ QDPrintDialog::info_cb(int page_num, int page_cnt, int tot_pages,
 }
 
 void
+QDPrintDialog::setAlmostDisabled(bool disabled)
+{
+  QObject *obj;
+  const QObjectList *lst = startWidget()->children();
+  if (lst) 
+    {
+      QObjectListIt it(*lst);
+      for( ; (obj = it.current()); ++it) 
+	if (obj->isWidgetType()) 
+	  ((QWidget*)obj)->setEnabled(!disabled);
+    }
+  if (disabled) 
+    {
+      cancel_butt->setEnabled(TRUE);
+      progress->setEnabled(TRUE);
+    }
+}
+
+void
 QDPrintDialog::done(int rc)
 {
    DEBUG_MSG("QDPrintDialog::done() called\n");
@@ -401,11 +420,7 @@ QDPrintDialog::done(int rc)
       
 	 printing=1;
 	 interrupt_printing=0;
-
-	 ::setEnabled(this, FALSE);
-	 ::setEnabled(cancel_butt, TRUE);
-	 ::setEnabled(progress, TRUE);
-	 
+	 setAlmostDisabled(TRUE);
 	 bool printToFile=file_butt->isChecked();
          QString printFile=file_text->text();
          QString printCommand=printer_text->text();
@@ -519,7 +534,7 @@ QDPrintDialog::done(int rc)
 				  what==PRINT_DOC || what==PRINT_CUSTOM;
 	 disk_prefs.save();
 
-	 ::setEnabled(this, TRUE);
+	 setAlmostDisabled(FALSE);
 	 setSensitivity();
 	 QeDialog::done(rc);
       } catch(Interrupted &)
@@ -528,7 +543,7 @@ QDPrintDialog::done(int rc)
 	 if (!! fname) unlink(fname);
 	 prog_widget->setActiveWidget(save_butt);
 	 printing=0;
-	 ::setEnabled(this, TRUE);
+	 setAlmostDisabled(FALSE);
 	 setSensitivity();
       } catch(const GException & exc)
       {
@@ -536,7 +551,7 @@ QDPrintDialog::done(int rc)
 	 if (!! fname) unlink(fname);
 	 prog_widget->setActiveWidget(save_butt);
 	 printing=0;
-	 ::setEnabled(this, TRUE);
+	 setAlmostDisabled(FALSE);
 	 setSensitivity();
 	 showError(this, exc);
       }
@@ -650,8 +665,7 @@ QDPrintDialog::QDPrintDialog(const GP<DjVuDocument> & _doc,
    start->installEventFilter(this);
    
    QVBoxLayout * vlay=new QVBoxLayout(start, 10);
-   QHBoxLayout * hlay=new QHBoxLayout(10);
-   vlay->addLayout(hlay);
+   QHBoxLayout * hlay=new QHBoxLayout(vlay);
 
    QeButtonGroup * bg;
    QVBoxLayout * bg_lay;
@@ -693,8 +707,7 @@ QDPrintDialog::QDPrintDialog(const GP<DjVuDocument> & _doc,
    bg_lay->addWidget(grey_butt);
    bg_lay->activate();
 
-   hlay=new QHBoxLayout(10);
-   vlay->addLayout(hlay);
+   hlay=new QHBoxLayout(vlay);
    
    //************* Creating 'Scaling' frame *******************
    bg=scale_bg=new QeButtonGroup(tr("Scaling"), start);
@@ -721,8 +734,7 @@ QDPrintDialog::QDPrintDialog(const GP<DjVuDocument> & _doc,
    bg_lay=new QVBoxLayout(bg, 10);
    bg_lay->addSpacing(bg->fontMetrics().height());
    bg_lay->addStrut(bg->fontMetrics().width(bg->title()));
-   bg_hlay=new QHBoxLayout(10);
-   bg_lay->addLayout(bg_hlay);
+   bg_hlay=new QHBoxLayout(bg_lay);
    
    copies_spin=new QeSpinBox(1, 99, 1, bg, "print_spin");
    copies_spin->setSpecialValueText(tr("1 copy"));
@@ -736,8 +748,7 @@ QDPrintDialog::QDPrintDialog(const GP<DjVuDocument> & _doc,
    what_menu=new QeComboBox(FALSE, bg, "print_menu");
    bg_hlay->addWidget(what_menu);
 
-   bg_hlay=new QHBoxLayout(10);
-   bg_lay->addLayout(bg_hlay);
+   bg_hlay=new QHBoxLayout(bg_lay);
 
    custompages_label=new QeLabel(tr("C&ustom pages:"), bg);
    bg_hlay->addWidget(custompages_label);
@@ -747,7 +758,8 @@ QDPrintDialog::QDPrintDialog(const GP<DjVuDocument> & _doc,
    bg_hlay->addWidget(custompages_text, 1);
    custompages_label->setBuddy(custompages_text);
    bg_lay->activate();
-   static const QString tip=tr("Enter a list of page ranges here\nseparated by commas like 1,2,10-12.\n")+
+   static const QString tip=tr("Enter a list of page ranges here\n"
+			       "separated by commas like 1,2,10-12.\n")+
       tr("To make multiple copies try 1,1,1,1.\n")+
       tr("To print in reverse try 10-1.");
    QToolTip::add(custompages_label, tip);
@@ -759,9 +771,8 @@ QDPrintDialog::QDPrintDialog(const GP<DjVuDocument> & _doc,
    vlay->addWidget(bg);
    bg_lay=new QVBoxLayout(bg, 10);
    bg_lay->addSpacing(bg->fontMetrics().height());
-   bg_hlay=new QHBoxLayout(10);
+   bg_hlay=new QHBoxLayout(bg_lay);
    bg_hlay->addSpacing(bg->fontMetrics().height());
-   bg_lay->addLayout(bg_hlay);
    
    level1_butt=new QeRadioButton(tr("Level &1"), bg, "level1_butt");
    bg_hlay->addWidget(level1_butt);
@@ -785,10 +796,9 @@ QDPrintDialog::QDPrintDialog(const GP<DjVuDocument> & _doc,
       //**************** Creating the "destination" frame *************
    QeGroupBox * gb=new QeGroupBox(tr("Print destination"), start, "gb");
    vlay->addWidget(gb);
-   QVBoxLayout * gb_lay=new QVBoxLayout(gb, 10, 5, "gb_lay");
+   QVBoxLayout * gb_lay=new QVBoxLayout(gb, 10);
    gb_lay->addSpacing(gb->fontMetrics().height());
-   QHBoxLayout * gb_lay1=new QHBoxLayout(0, "gb_lay1");
-   gb_lay->addLayout(gb_lay1);
+   QHBoxLayout * gb_lay1=new QHBoxLayout(gb_lay);
    QWidget * top_w=new QWidget(gb, "top_w");
    gb_lay1->addStretch(1);
    gb_lay1->addWidget(top_w);
@@ -798,13 +808,13 @@ QDPrintDialog::QDPrintDialog(const GP<DjVuDocument> & _doc,
    gb_lay->activate();
 
       // *** top_w
-   QHBoxLayout * top_lay=new QHBoxLayout(top_w, 0, 5, "top_lay");
+   QHBoxLayout * top_lay=new QHBoxLayout(top_w, 0, 5);
    label=new QeLabel(tr("Send Image To:"), top_w, "crazy_label");
    top_lay->addWidget(label);
    QeButtonGroup * dst_bg=new QeButtonGroup(top_w);
    dst_bg->setFrameStyle(QFrame::NoFrame);
    top_lay->addWidget(dst_bg);
-   QHBoxLayout * dst_lay=new QHBoxLayout(dst_bg, 0, 5);
+   QHBoxLayout * dst_lay=new QHBoxLayout(dst_bg, 0, 5, "dst_lay");
    printer_butt=new QeRadioButton(tr("Printe&r"), dst_bg, "printer_butt");
    dst_lay->addWidget(printer_butt);
    file_butt=new QeRadioButton(tr("F&ile"), dst_bg, "file_butt");
@@ -835,8 +845,7 @@ QDPrintDialog::QDPrintDialog(const GP<DjVuDocument> & _doc,
    file_lay->activate();
 
    //***************** Creating the OK/Cancel buttons ***************
-   QHBoxLayout * prg_lay=new QHBoxLayout(5, "prg_lay");
-   vlay->addLayout(prg_lay);
+   QHBoxLayout * prg_lay=new QHBoxLayout(vlay);
    prog_widget=new QeNInOne(start, "prog_widget");
    prg_lay->addWidget(prog_widget, 1);
    progress=new QeProgressBar(20, prog_widget, "progress_bar");

@@ -111,6 +111,7 @@ private:
    void			adjustScaling(void);
    void			adjustWhat(void);
    void			setSensitivity(void);
+   void                 setAlmostDisabled(bool disabled);
 private slots:
    void		slotBrowse(void);
    void		slotFormatChanged(void);

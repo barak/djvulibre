@@ -55,6 +55,7 @@
 
 #include <qpainter.h>
 #include <qimage.h>
+#include <qstyle.h>
 #include <qapplication.h>
 #include <qpopupmenu.h>
 #include <qsplitter.h>
@@ -66,11 +67,7 @@
 #define MAX_ITEM_WIDTH	256
 #define VMARGIN		8
 #define HMARGIN		8
-
-#define VMARGIN_FIX     0  // see drawFocusRect
-
 #define MAX_IMAGES	15
-
 #define IDC_TH_CLOSE	0
 
 //****************************************************************************
@@ -159,33 +156,27 @@ QDThumbItem::clearData(void)
 void
 QDThumbItem::paint(QPainter * p)
 {
-
-   //if (cur_page)
-   //p->drawRect(HMARGIN/2, VMARGIN/2, width()-HMARGIN, height()-VMARGIN);
-   
-   // with regard to item selection rect:
-   // 1) we can't simple draw a rect for list item selection. the rect 
-   //    attributes have to be in harmony with the list focus settings 
-   // 2) we shrink the rect a bit at the bottom due to the demond of 
-   //    QMotifStyle (bug ?) - see doc for drawFocusRect
-   // 3) ideally we should use painter's background color 
-   //    (p->backgroundColor()) for rect color in calling function 
-   //    drawFocusRect. however, a side effect comes with it is that 
-   //    the rect drawn for the current use a dash line style - i just 
-   //    don't know how to change it to solid style. trying enforcing 
-   //    p->setPen(Qt::SolidLine) won't work ... which 
-   //    may be a bad idea anyway
-
-   QRect r (HMARGIN/2, VMARGIN/2, width()-HMARGIN, height()-VMARGIN-VMARGIN_FIX);
    if ( cur_page ) 
-     listBox()->style().drawFocusRect( p, r, listBox()->colorGroup(), NULL, TRUE );
-   
+     {
+      QRect r (HMARGIN/2, VMARGIN/2, width()-HMARGIN, height()-VMARGIN);
+#ifdef QT1
+      p->drawRect(HMARGIN/2, VMARGIN/2, width()-HMARGIN, height()-VMARGIN);
+#else
+      QStyle &style = listBox()->style();
+#ifdef QT2
+      style.drawFocusRect(p, r, listBox()->colorGroup(), NULL, TRUE );
+#else
+      style.drawPrimitive(QStyle::PE_FocusRect, p, r, listBox()->colorGroup(),
+			  QStyle::Style_HasFocus);
+#endif
+#endif
+    }
    p->translate(HMARGIN, VMARGIN);
 
    // inflation factor used to be 3/2, 10/9 may be enough ?
    int text_height=p->fontMetrics().height()*10/9;
    int w=width()-2*HMARGIN;
-   int h=height()-2*VMARGIN-VMARGIN_FIX;
+   int h=height()-2*VMARGIN;
    QString buffer=QDThumbnails::tr("Page ")+QString::number(page_num+1);
    p->drawText(0, h-text_height, w, text_height,
 	       Qt::AlignHCenter | Qt::AlignVCenter, buffer);
@@ -809,7 +800,7 @@ QDThumbnails::QDThumbnails(QWidget * parent, const char * name, bool _rowMajor) 
    connect(&port, SIGNAL(sigNotifyDocFlagsChanged(const GP<DjVuDocument> &, long, long)),
            this, SLOT(slotNotifyDocFlagsChanged(const GP<DjVuDocument> &, long, long)));
    connect(&messenger, SIGNAL(sigGeneralReq(int)), this, SLOT(slotTriggerCB(int)));
-#if 1
+#ifdef QT1
    // use double click for selection 
    connect(this, SIGNAL(selected(int)), this, SIGNAL(sigGotoPage(int)));
 #else 
@@ -817,6 +808,7 @@ QDThumbnails::QDThumbnails(QWidget * parent, const char * name, bool _rowMajor) 
    connect(this, SIGNAL(clicked(QListBoxItem *)), this, SLOT(slotGotoPage(QListBoxItem *)));
 #endif
    
+#ifdef QT2
       //********************************************************************
       // The following is necessary because of the QT bug.
       // They're trying to make QListBox use palette().base() for
@@ -832,11 +824,9 @@ QDThumbnails::QDThumbnails(QWidget * parent, const char * name, bool _rowMajor) 
       // So I have to call QWidget::setPalette().
       // Finally, even QWidget can spoil my scrollbars, and I force it
       // do not propagate the palette using setPalettePropagation()
-
       // Create scrollbars before changing the palette's background
    verticalScrollBar();
    horizontalScrollBar();
-   
       // Modify the palette
    QPalette p=palette().copy();
    QColorGroup g=p.normal();
@@ -845,6 +835,7 @@ QDThumbnails::QDThumbnails(QWidget * parent, const char * name, bool _rowMajor) 
    setPalettePropagation(NoChildren);
    QWidget::setPalette(p);	// QTableView will otherwise change scrollbars
       //********************************************************************
+#endif
 }
 
 void

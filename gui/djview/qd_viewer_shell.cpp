@@ -360,9 +360,11 @@ void
 QDViewerShell::slotAboutToShowMenu(void)
 {
   // The viewer does most of the job
-  QDViewer * viewer;
-  if (!djvu || !(viewer=djvu->getQDViewer()))
-     setItemsEnabled(menu, FALSE);
+  QDViewer * viewer = 0;
+  if (djvu)
+    viewer=djvu->getQDViewer();
+  if (!viewer)
+    setItemsEnabled(menu, FALSE);
   else 
     viewer->setupMenu(menu);
   // Check presence of other windows
@@ -434,7 +436,10 @@ QDViewerShell::QDViewerShell(QWidget * parent, const char * name)
 
    connect(&gu_timer, SIGNAL(timeout(void)), this, SLOT(slotGetURLTimeout(void)));
    
-   menu=new QeMenuBar(this, "menu_bar");
+   menu = menuBar();
+#ifdef QT2
+   menu->setSeparator(QMenuBar::InWindowsStyle);
+#endif
    connect(menu, SIGNAL(activated(int)), this, SLOT(slotMenuCB(int)));
    
    QPopupMenu * file_pane=new QPopupMenu();

@@ -110,7 +110,6 @@ QDDocNameDialog::done(int rc)
 	 char ch;
 	 str->read(&ch, 1);
 	 GUTF8String mesg="File '"+fname+"' already exists.\n"
-				  "\n"
 				  "Are you sure you want to overwrite it?\n";
 	 if (QMessageBox::warning(this, "File already exists",
 				  QStringFromGString(mesg),
@@ -150,8 +149,7 @@ QDDocNameDialog::QDDocNameDialog(const char * message, const char * doc_name,
    vlay->addWidget(label);
    label->setMaximumHeight(label->sizeHint().height());
 
-   QHBoxLayout * hlay=new QHBoxLayout();
-   vlay->addLayout(hlay);
+   QHBoxLayout * hlay=new QHBoxLayout(vlay);
 
    label=new QeLabel("File name: ", start, "fname_label");
    hlay->addWidget(label);
@@ -165,8 +163,7 @@ QDDocNameDialog::QDDocNameDialog(const char * message, const char * doc_name,
    hlay->addWidget(browse_butt);
    browse_butt->setMaximumHeight(browse_butt->sizeHint().height());
    
-   QHBoxLayout * butt_lay=new QHBoxLayout(10);
-   vlay->addLayout(butt_lay);
+   QHBoxLayout * butt_lay=new QHBoxLayout(vlay);
    butt_lay->addStretch(1);
    QePushButton * ok_butt=new QePushButton("&OK", start, "ok_butt");
    butt_lay->addWidget(ok_butt);
@@ -207,67 +204,50 @@ QDSavedFilesDialog::QDSavedFilesDialog(const GP<DjVuDocument> & doc,
    DEBUG_MAKE_INDENT(3);
 
    setCaption("Files list to save");
-   setResizable(TRUE);
 
    QWidget * start=startWidget();
 
-   resize(0, 0);
-   
    QVBoxLayout * vlay=new QVBoxLayout(start, 10, 0, "vlay");
-
-   QLabel * label;
-   QFont font;
-
+   QString message = tr("This will create the following files");
    if (doc->get_doc_type()==DjVuDocument::OLD_BUNDLED ||
        doc->get_doc_type()==DjVuDocument::OLD_INDEXED)
-      label=new QeLabel(QString("This will create the following files plus everything else "
-				"included into them in the directory '")+dir_name+"'", start);
-   else label=new QeLabel(QString("This will create the following files in the directory '")+
-			  dir_name+"'", start);
-   label->setAlignment(AlignCenter | WordBreak);
+     message = message + tr(" (plus additional included files)");
+   message = message + tr(" into the directory '") + dir_name + "'.";
+   QLabel *label = new QeLabel(message, start);
+   label->setAlignment(AlignLeft | WordBreak);
+   vlay->addWidget(label);
+   vlay->addStrut(300);
+
+   label=new QeLabel("Are you sure you want to do it?\n", start);
    vlay->addWidget(label);
 
-   label=new QLabel("\nAre you sure you want to do it?\n", start);
-   label->setMinimumHeight(label->sizeHint().height());
-   label->setMinimumWidth(label->sizeHint().width()*3/2);
-   label->setAlignment(AlignCenter);
-   vlay->addWidget(label);
-
-   QeRowColumn * rc=new QeRowColumn(start, "files_list");
-   rc->setMinVisibleRows(8);
-   rc->setHorInterval(25);
-   rc->setVerInterval(10);
-   rc->setBackgroundColor(white);
-   rc->setAlignment(AlignLeft | AlignTop);
-
-   new QLabel(doc_name, rc, "rc_item");
-   
+   QListBox * rc = new QListBox(start, "files_list");
+   rc->setSelectionMode(QListBox::NoSelection);
+   rc->setColumnMode(QListBox::FitToWidth);
    if (doc->get_doc_type()==DjVuDocument::OLD_BUNDLED ||
        doc->get_doc_type()==DjVuDocument::OLD_INDEXED)
-   {
-      GURL dir_url=GURL::Filename::UTF8(dir_name);
-      for(int page=0;page<doc->get_pages_num();page++)
-      {
-	 GURL url=GURL::UTF8(doc->page_to_url(page).name(),dir_url);
-         GUTF8String gfname=url.fname();
-	 new QLabel(QStringFromGString(gfname), rc, "rc_item");
-      }
-   } else
-   {
-      GP<DjVmDir> dir=doc->get_djvm_dir();
-      GPList<DjVmDir::File> flist=dir->get_files_list();
-      for(GPosition pos=flist;pos;++pos)
-      {
-         GUTF8String gfname=flist[pos]->get_save_name();
-	 new QLabel(QStringFromGString(gfname), rc, "rc_item");
-      }
-   }
-   vlay->addWidget(rc, 1);
-
+     {
+       GURL dir_url=GURL::Filename::UTF8(dir_name);
+       for(int page=0;page<doc->get_pages_num();page++)
+	 {
+	   GURL url=GURL::UTF8(doc->page_to_url(page).name(),dir_url);
+	   GUTF8String gfname=url.fname();
+	   rc->insertItem(QStringFromGString(gfname));
+	 }
+     } 
+   else
+     {
+       GP<DjVmDir> dir=doc->get_djvm_dir();
+       GPList<DjVmDir::File> flist=dir->get_files_list();
+       for(GPosition pos=flist;pos;++pos)
+	 {
+	   GUTF8String gfname=flist[pos]->get_save_name();
+	   rc->insertItem(QStringFromGString(gfname));
+	 }
+     }
+   vlay->addWidget(rc);
    vlay->addSpacing(10);
-
-   QHBoxLayout * butt_lay=new QHBoxLayout(10);
-   vlay->addLayout(butt_lay);
+   QHBoxLayout * butt_lay=new QHBoxLayout(vlay, 5);
    butt_lay->addStretch(1);
    QePushButton * yes_butt=new QePushButton("&Yes", start, "yes_butt");
    butt_lay->addWidget(yes_butt);
@@ -275,6 +255,7 @@ QDSavedFilesDialog::QDSavedFilesDialog(const GP<DjVuDocument> & doc,
    butt_lay->addWidget(no_butt);
    yes_butt->setDefault(TRUE);
    
+   butt_lay->activate();
    vlay->activate();
 
       // Connecting signals and slots

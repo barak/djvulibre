@@ -55,11 +55,11 @@
 
 #include <qapplication.h>
 #include <qwidget.h>
-#include <X11/Xlib.h>
-#include <X11/Xutil.h>
 #include "qlib.h"
 #include "qt_fix.h"
 
+#include <X11/Xlib.h>
+#include <X11/Xutil.h>
 #ifdef USE_XSHM
 #include <sys/ipc.h>
 #include <sys/shm.h>
@@ -460,7 +460,7 @@ QXImager::~QXImager(void)
 }
 
 QXImager::QXImager(Display * _displ, void * _visual,
-		   HANDLE _colormap, int _depth,
+		   unsigned long _colormap, int _depth,
 		   bool _in_netscape, bool _optimizeLCD) :
       in_netscape(_in_netscape), displ(_displ), visual(_visual),
       colormap(_colormap), depth(_depth), is_color(true),
@@ -505,59 +505,61 @@ QXImager::QXImager(Display * _displ, void * _visual,
    if (depth<8)
    {
       char buffer[1024];
-      sprintf(buffer, "Sorry, but depth %d is not supported.", depth);
-      if (in_netscape) strcat(buffer, "\n\nPlease rerun Netscape with '-visual' flag to change the\n"
-			      "visual type or switch to a different hardware.");
+      sprintf(buffer, "Depth %d is not supported.", depth);
+      if (in_netscape) 
+	strcat(buffer, 
+	       "\n\nPlease rerun Netscape with '-visual' flag to change the\n"
+	       "visual type or switch to a different hardware.");
       throw ERROR_MESSAGE("QXImager::QXImager", buffer);
    }
    if (visual->c_class==PseudoColor && depth>=15)
-   {
-      char buffer[1024];
-      sprintf(buffer, "Sorry, but visual PseudoColor is not supported for depth %d.", depth);
-      if (in_netscape) strcat(buffer, "\n\nPlease rerun Netscape with '-visual' flag to change the\n"
-			      "visual type or switch to a different hardware.");
-      throw ERROR_MESSAGE("QXImager::QXImager", buffer);
-   }
+     {
+       char buffer[1024];
+       sprintf(buffer, "Visual PseudoColor is not supported for depth %d.", depth);
+       if (in_netscape) 
+	 strcat(buffer, 
+		"\n\nPlease rerun Netscape with '-visual' flag to change the\n"
+		"visual type or switch to a different hardware.");
+       throw ERROR_MESSAGE("QXImager::QXImager", buffer);
+     }
    if (visual->c_class==StaticColor && depth>=15)
-   {
-      char buffer[1024];
-      sprintf(buffer, "Sorry, but visual StaticColor is not supported for depth %d.", depth);
-      if (in_netscape) strcat(buffer, "\n\nPlease rerun Netscape with '-visual' flag to change the\n"
-			      "visual type or switch to a different hardware.");
-      throw ERROR_MESSAGE("QXImager::QXImager", buffer);
-   }
+     {
+       char buffer[1024];
+       sprintf(buffer, "Visual StaticColor is not supported for depth %d.", depth);
+       if (in_netscape) 
+	 strcat(buffer, 
+		"\n\nPlease rerun Netscape with '-visual' flag to change the\n"
+		"visual type or switch to a different hardware.");
+       throw ERROR_MESSAGE("QXImager::QXImager", buffer);
+     }
    if (visual->c_class==DirectColor && depth>=15)
-   {
-      char buffer[1024];
-      sprintf(buffer, "Sorry, but visual DirectColor is not supported for depth %d.", depth);
-      if (in_netscape) strcat(buffer, "\n\nPlease rerun Netscape with '-visual' flag to change the\n"
-			      "visual type or switch to a different hardware.");
-      throw ERROR_MESSAGE("QXImager::QXImager", buffer);
-   }
+     {
+       char buffer[1024];
+       sprintf(buffer, "Visual DirectColor is not supported for depth %d.", depth);
+       if (in_netscape) 
+	 strcat(buffer, 
+		"\n\nPlease rerun Netscape with '-visual' flag to change the\n"
+		"visual type or switch to a different hardware.");
+       throw ERROR_MESSAGE("QXImager::QXImager", buffer);
+     }
    if (visual->c_class==StaticGray && depth!=8)
-   {
-      char buffer[1024];
-      if (in_netscape)
-	 sprintf(buffer,
-		 "Sorry, but visual StaticGray is not supported for depth %d.\n"
-		 "Please rerun Netscape with '-visual' flag to change the\n"
-		 "visual type or switch to a different hardware.", depth);
-      else
-	 sprintf(buffer,
-		 "Sorry, but visual StaticGray is not supported for depth %d.", depth);
-      throw ERROR_MESSAGE("QXImager::QXImager", buffer);
-   }
+     {
+       char buffer[1024];
+       sprintf(buffer, "Visual StaticGray is not supported for depth %d.", depth);
+       if (in_netscape) 
+	 strcat(buffer, 
+		"\n\nPlease rerun Netscape with '-visual' flag to change the\n"
+		"visual type or switch to a different hardware.");
+       throw ERROR_MESSAGE("QXImager::QXImager", buffer);
+     }
    if (visual->c_class==GrayScale && depth!=8)
    {
-      char buffer[1024];
-      if (in_netscape)
-	 sprintf(buffer,
-		 "Sorry, but visual GrayScale is not supported for depth %d.\n"
-		 "Please rerun Netscape with '-visual' flag to change the\n"
-		 "visual type or switch to a different hardware.", depth);
-      else
-	 sprintf(buffer,
-		 "Sorry, but visual GrayScale is not supported for depth %d.", depth);
+     char buffer[1024];
+      sprintf(buffer, "Visual GrayScale is not supported for depth %d.", depth);
+      if (in_netscape) 
+	strcat(buffer, 
+	       "\n\nPlease rerun Netscape with '-visual' flag to change the\n"
+	       "visual type or switch to a different hardware.");
       throw ERROR_MESSAGE("QXImager::QXImager", buffer);
    }
 
@@ -569,7 +571,7 @@ QXImager::QXImager(Display * _displ, void * _visual,
       if (!is_color)
       {
 	 int i;
-
+	 
 	 bool done[256];
 	 for(i=0;i<256;i++)
 	    done[i]=false;

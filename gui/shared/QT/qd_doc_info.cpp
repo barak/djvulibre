@@ -436,10 +436,7 @@ QDDocInfo::show(void)
    {
       ::showError(this, exc);
    }
-//     setMinimumSize(sizeHint());
-//     setMaximumSize(sizeHint());
    ActivateLayouts(this);
-//   QeDialog::show();
    QTabDialog::show();
 }
 
@@ -617,13 +614,6 @@ QDDocInfo::slotRightButtonPressed(QListViewItem * item,
 QDDocInfo::QDDocInfo(const GP<DjVuDocument> & _doc, QWidget * parent,
                      const char * name, bool modal) :
       QTabDialog(parent, name, modal), doc(_doc), port(1, 0)
-//      QeDialog(parent, name, modal), doc(_doc), port(1, 0)
-      // NOTE!
-      // * For OLD_INDIRECT and SINGLE_PAGE documents we create
-      //   only one page_list
-      // * For OLD_BUNDLED documents we create page_list and file_list
-      // * For BUNDLED and INDIRECT documents we create all lists:
-      //   page_list, thumb_list, and file_list
 {
    DEBUG_MSG("QDDocInfo::QDDocInfo(): Creating 'Doc Info' dialog...\n");
    DEBUG_MAKE_INDENT(3);
@@ -631,17 +621,11 @@ QDDocInfo::QDDocInfo(const GP<DjVuDocument> & _doc, QWidget * parent,
    int doc_type=doc->get_doc_type();
 
    setCaption(tr("DjVu multipage document info"));
-//tmp   setResizable(TRUE);
-
-//tmp   QWidget * start=startWidget();
-   QWidget * start=this;
 
    page_list=thumb_list=file_list=0;
    page_info_butt=thumb_info_butt=file_info_butt=0;
    
-   //resize(0, 0);
-//   QVBoxLayout * vlay=new QVBoxLayout(start, 10, 10, "vlay");
-   QWidget *summary_widget=new QWidget(start, "summary_widget");
+   QWidget *summary_widget=new QWidget(this, "summary_widget");
    QVBoxLayout * summary_vlay=new QVBoxLayout(summary_widget, 10, 10, "summary_vlay");
    {
      QeLabel * label;
@@ -671,13 +655,12 @@ QDDocInfo::QDDocInfo(const GP<DjVuDocument> & _doc, QWidget * parent,
          rows=4;
          break;
      }
-     QGridLayout * summary_glay=new QGridLayout(rows, 2, 5, "summary_glay");
-     summary_vlay->addLayout(summary_glay);
+     QGridLayout *summary_glay = new QGridLayout(summary_vlay, rows, 2, 5);
      int row=0;
      if (doc_type!=DjVuDocument::OLD_INDEXED)
      {
          //**** "Name" field
-        label=new QeLabel(tr("Document Name:"), summary_widget);
+	label=new QeLabel(tr("Document Name:"), summary_widget);
         summary_glay->addWidget(label, row, 0);
         GUTF8String fname_str=doc->get_init_url().fname();
         label=new QeLabel(QStringFromGString(fname_str), summary_widget);
@@ -726,7 +709,7 @@ QDDocInfo::QDDocInfo(const GP<DjVuDocument> & _doc, QWidget * parent,
        label=new QeLabel(tr("Files:"), summary_widget);
        summary_glay->addWidget(label, row, 0);
        if (doc_type==DjVuDocument::BUNDLED ||
-         doc_type==DjVuDocument::INDIRECT)
+           doc_type==DjVuDocument::INDIRECT)
        {
          GUTF8String mesg=doc->get_djvm_dir()->get_files_num();
          label=new QeLabel(QStringFromGString(mesg), summary_widget);
@@ -761,7 +744,7 @@ QDDocInfo::QDDocInfo(const GP<DjVuDocument> & _doc, QWidget * parent,
      //************************* page_list ********************************
      //********************************************************************
    {
-     page_widget=new QWidget(start, "page_widget");
+     page_widget=new QWidget(this, "page_widget");
      QVBoxLayout * page_vlay=new QVBoxLayout(page_widget, 10, 5);
 
      page_list=new QListView(page_widget, "page_list_view");
@@ -778,8 +761,7 @@ QDDocInfo::QDDocInfo(const GP<DjVuDocument> & _doc, QWidget * parent,
 		   tr("Press the right mouse button to see popup menu."));
      page_vlay->addWidget(page_list, 1);
 
-     QHBoxLayout * page_hlay=new QHBoxLayout(10);
-     page_vlay->addLayout(page_hlay);
+     QHBoxLayout * page_hlay=new QHBoxLayout(page_vlay,5);
      page_hlay->addStretch(1);
      page_info_butt=new QePushButton(tr("&Info"), page_widget, "page_info_butt");
      page_info_butt->setEnabled(FALSE);
@@ -803,7 +785,7 @@ QDDocInfo::QDDocInfo(const GP<DjVuDocument> & _doc, QWidget * parent,
        {
          if(!thumb_widget)
          {
-           thumb_widget=new QWidget(start, "thumb_widget");
+           thumb_widget=new QWidget(this, "thumb_widget");
            QVBoxLayout * thumb_vlay=new QVBoxLayout(thumb_widget, 10, 5);
 
            thumb_list=new QListView(thumb_widget, "thumb_list_view");
@@ -818,24 +800,20 @@ QDDocInfo::QDDocInfo(const GP<DjVuDocument> & _doc, QWidget * parent,
            thumb_list->setAllColumnsShowFocus(TRUE);
            thumb_vlay->addWidget(thumb_list, 1);
 
-           QHBoxLayout * thumb_hlay=new QHBoxLayout(10);
-           thumb_vlay->addLayout(thumb_hlay);
+           QHBoxLayout * thumb_hlay=new QHBoxLayout(thumb_vlay);
            thumb_hlay->addStretch(1);
            thumb_info_butt=new QePushButton(tr("&Info"), thumb_widget, "thumb_info_butt");
            thumb_info_butt->setEnabled(FALSE);
            thumb_hlay->addWidget(thumb_info_butt);
-
-           thumb_vlay->activate();
          }
          thumb_items.resize(count);
          GUTF8String file_size="unknown";
          if (frec->size>0)
            file_size=GUTF8String(frec->size);
          GUTF8String count_str=GUTF8String(count+1);
-         thumb_items[count]=new QDThumbListItem(thumb_list,
-                                                 count_str,
-						 frec->get_save_name(),
-                                                 "unknown", file_size);
+         thumb_items[count]=new QDThumbListItem(thumb_list, count_str, 
+						frec->get_save_name(), "unknown",
+						file_size);
          count++;
        }
      }
@@ -843,10 +821,10 @@ QDDocInfo::QDDocInfo(const GP<DjVuDocument> & _doc, QWidget * parent,
      {
        thumb_list->setVScrollBarMode(QScrollView::AlwaysOn);
        const int min_thumb_width=thumb_list->sizeHint().width()+
-				  thumb_list->verticalScrollBar()->width();
+	 thumb_list->verticalScrollBar()->width();
        thumb_list->setMinimumWidth(min_thumb_width);
        const int min_list_height=
-        ((QListViewItem *) thumb_items[0])->height()*10;
+	 ((QListViewItem *) thumb_items[0])->height()*10;
        thumb_list->setMinimumHeight(min_list_height);
      }
    }
@@ -854,9 +832,9 @@ QDDocInfo::QDDocInfo(const GP<DjVuDocument> & _doc, QWidget * parent,
      //********************************************************************
      //************************* file_list ********************************
      //********************************************************************
-   if(djvm_dir || djvm_dir0)
+   if (djvm_dir || djvm_dir0)
    {
-     file_widget=new QWidget(start, "file_widget");
+     file_widget=new QWidget(this, "file_widget");
      QVBoxLayout * file_vlay=new QVBoxLayout(file_widget, 10, 5);
 
      file_list=new QListView(file_widget, "file_list_view");
@@ -864,17 +842,18 @@ QDDocInfo::QDDocInfo(const GP<DjVuDocument> & _doc, QWidget * parent,
      file_list->setColumnWidthMode(FILE_NUM_COL, QListView::Maximum);
      file_list->addColumn(tr("File Name"));
      file_list->setColumnWidthMode(FILE_FILE_COL, QListView::Maximum);
-     file_list->setColumnWidth(FILE_FILE_COL, file_list->header()->cellSize(FILE_FILE_COL)*3/2);
+     file_list->setColumnWidth(FILE_FILE_COL, 
+			       file_list->header()->cellSize(FILE_FILE_COL)*3/2);
      file_list->addColumn(tr("File Type"));
      file_list->setColumnWidthMode(FILE_TYPE_COL, QListView::Maximum);
-     file_list->setColumnWidth(FILE_TYPE_COL, file_list->header()->cellSize(FILE_TYPE_COL)*3/2);
+     file_list->setColumnWidth(FILE_TYPE_COL, 
+			       file_list->header()->cellSize(FILE_TYPE_COL)*3/2);
      file_list->addColumn(tr("File Size"));
      file_list->setColumnWidthMode(FILE_SIZE_COL, QListView::Maximum);
      file_list->setAllColumnsShowFocus(TRUE);
      file_vlay->addWidget(file_list, 1);
 
-     QHBoxLayout * file_hlay=new QHBoxLayout(10);
-     file_vlay->addLayout(file_hlay);
+     QHBoxLayout * file_hlay=new QHBoxLayout(file_vlay);
      file_hlay->addStretch(1);
      file_info_butt=new QePushButton(tr("&Info"), file_widget, "file_info_butt");
      file_info_butt->setEnabled(FALSE);
@@ -905,13 +884,12 @@ QDDocInfo::QDDocInfo(const GP<DjVuDocument> & _doc, QWidget * parent,
      GUTF8String page_str=GUTF8String(page+1);
      GUTF8String fname_str=url.fname();
      if(page_list)
-     {
-       page_items[page]=new QDPageListItem(
-         page_list, page_str, fname_str, "unknown");
-     }
+       page_items[page]=new QDPageListItem(page_list, page_str, 
+					   fname_str, "unknown");
+
      if (doc_type==DjVuDocument::OLD_BUNDLED ||
-       doc_type==DjVuDocument::BUNDLED ||
-       doc_type==DjVuDocument::INDIRECT)
+	 doc_type==DjVuDocument::BUNDLED     ||
+	 doc_type==DjVuDocument::INDIRECT     )
      {
           // Can fill out data right here. No download required.
           // Thanks to complete information in DjVmDir[0]
@@ -934,7 +912,8 @@ QDDocInfo::QDDocInfo(const GP<DjVuDocument> & _doc, QWidget * parent,
        }
        if(page_list)
        {
-         ((QDPageListItem *)page_items[page])->setText(PAGE_SIZE_COL, QStringFromGString(size_str));
+	 ((QDPageListItem *)page_items[page]) ->
+	     setText(PAGE_SIZE_COL, QStringFromGString(size_str));
        }
        if (page_size>0 && total_size>=0)
        {
@@ -1019,48 +998,31 @@ QDDocInfo::QDDocInfo(const GP<DjVuDocument> & _doc, QWidget * parent,
    {
       // Final adjustments of the lists
      page_list->setVScrollBarMode(QScrollView::AlwaysOn);
-     const int min_list_width=page_list->sizeHint().width()+page_list->verticalScrollBar()->width();
+     const int min_list_width = page_list->sizeHint().width()
+                              + page_list->verticalScrollBar()->width();
      page_list->setMinimumWidth(min_list_width);
-     const int min_list_height=((QListViewItem *) page_items[0])->height()*10;
+     const int min_list_height = ((QListViewItem *) page_items[0])->height()*10;
      page_list->setMinimumHeight(min_list_height);
    }
    if (file_list)
    {
       file_list->setVScrollBarMode(QScrollView::AlwaysOn);
-      const int min_file_width=file_list->sizeHint().width()+
-				  file_list->verticalScrollBar()->width();
+      const int min_file_width = file_list->sizeHint().width()
+			       + file_list->verticalScrollBar()->width();
       file_list->setMinimumWidth(min_file_width);
       const int min_list_height=((QListViewItem *) file_items[0])->height()*10;
       file_list->setMinimumHeight(min_list_height);
    }
    
-//   if (doc_type==DjVuDocument::OLD_INDEXED ||
-//       doc_type==DjVuDocument::SINGLE_PAGE)
-//   {
-	 // And three buttons at the bottom, of course
-//      QHBoxLayout * butt_lay=new QHBoxLayout(10);
-//      summary_vlay->addLayout(butt_lay);
-//      butt_lay->addStretch(1);
-//      page_info_butt=new QePushButton("&Info", start, "page_info_butt");
-//      page_info_butt->setEnabled(FALSE);
-//      butt_lay->addWidget(page_info_butt);
-//      page_goto_butt=new QePushButton("&Goto", start, "page_goto_butt");
-//      page_goto_butt->setEnabled(FALSE);
-//      butt_lay->addWidget(page_goto_butt);
-//      summary_vlay->activate();
-//      addTab(summary_widget, "&Summary");
-//   } else
-   {
-      summary_vlay->activate();
+   summary_vlay->activate();
+   addTab(summary_widget, tr("&Summary"));
+   if(page_widget)
+     addTab(page_widget, tr("&Pages"));
+   if (thumb_widget)
+     addTab(thumb_widget, tr("&Thumbnails"));
+   if(file_widget)
+     addTab(file_widget,tr("&All Files"));
 
-      addTab(summary_widget, tr("&Summary"));
-      if(page_widget)
-        addTab(page_widget, tr("&Pages"));
-      if (thumb_widget)
-	 addTab(thumb_widget, tr("&Thumbnails"));
-      if(file_widget)
-	 addTab(file_widget,tr("&All Files"));
-   }
    setOKButton(tr("&Close"));
 
    if(page_widget)

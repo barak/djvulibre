@@ -120,8 +120,7 @@ QDMimeDialog::QDMimeDialog(QWidget * parent, const char * name, bool modal)
    
    frame_vlay->activate();
    
-   QHBoxLayout * butt_lay=new QHBoxLayout(10);
-   vlay->addLayout(butt_lay);
+   QHBoxLayout * butt_lay=new QHBoxLayout(vlay,5);
    butt_lay->addStretch(1);
    QePushButton * yes_butt=new QePushButton(tr("&Yes"), start, "yes_butt");
    yes_butt->setDefault(TRUE);
