@@ -1,0 +1,291 @@
+#!/bin/sh
+
+
+# Step 1 -- utilities
+
+usage()
+{
+    cat 1>&2 <<\END
+Usage:  djvudigital [options] inputfile [outputfile]
+More information is displayed by typing
+    djvudigital --help
+END
+    exit 10
+}
+
+getarg()
+{
+        echo "$1" | sed -e 's/^[^=]*=//'
+}
+
+getargs()
+{
+        echo "$1" | sed -e 's/^[^=]*=//' -e 's/,/ /g'
+}
+
+pathexpand()
+{
+    tmpvar="$PATH"
+    tmpdir=
+    while [ -n "$tmpvar" ]
+    do
+      IFS=':' read tmpdir tmpvar <<EOF
+$tmpvar
+EOF
+      test -x $tmpdir/$1 && echo $tmpdir/$1
+    done
+}
+
+checkps2utf8()
+{
+    if [ -z "$djvutext" ] 
+    then
+        if ( "$gsdjvu" -dNODISPLAY -c '(ps2utf8.ps) runlibfile quit' \
+             | grep -q WRITESYSTEMDICT )
+        then
+            djvutext="/tmp/dj$$.ps"
+            trap "rm 2>/dev/null $djvutext" 0
+            cat > $djvutext <<\EOF
+(ps2utf8.ps) runlibfile currentglobal /setglobal load true setglobal 
+.ps2utf8 begin /onpage { } bind def /onfont { pop pop pop } bind def
+/onmark { pop pop pop pop currentx currenty currentpoint 
+.djvutextmark } bind def end exec
+EOF
+        else
+            cat 1>&2 <<\EOF
+djvudigital: cannot locate file "ps2utf8.ps".
++--------------------------------------------------------------------+
+| DjVuDigital relies on this file to extract text from postscript    |
+| and pdf files. Options --words or --lines cannot work without this |
+| file. Please visit http://djvu.sourceforge.net/gsdjvu.             |
++--------------------------------------------------------------------+
+EOF
+            exit 10
+        fi
+    fi
+}
+
+
+# Step 1 -- locate gsdjvu executable
+
+gsdjvu=
+for gs in ${GSDJVU} `pathexpand gs` `pathexpand gsdjvu`
+do
+  if [ -z "$gsdjvu" ] && ( "$gs" -h 2>&1 | grep -q djvusep )
+  then
+     gsdjvu="$gs"
+  fi
+done
+
+if [ -z "$gsdjvu" ]
+then
+    cat 1>&2 <<\EOF
+djvudigital: cannot locate suitable ghostscript executable.
++--------------------------------------------------------------------+
+| DjVuDigital relies on a special ghostscript device driver, but     |
+| could not find a ghostscript executable that implement this driver.|
+| Please visit http://djvu.sourceforge.net/gsdjvu.                   
++--------------------------------------------------------------------+
+EOF
+    exit 10
+fi
+
+
+# Step 2 -- locate csepdjvu executable
+
+csepdjvu=
+for cs in ${CSEPDJVU} `pathexpand msepdjvu` `pathexpand csepdjvu`
+do
+  if [ -z "$csepdjvu" ] && ( "$cs" -h 2>&1 | grep -q quality )
+  then
+      csepdjvu="$cs"
+  fi
+done
+
+if [ -z "$csepdjvu" ]
+then
+    cat 1>&2 <<\EOF
+djvudigital: cannot locate csepdjvu executable.
++--------------------------------------------------------------------+
+| DjVuDigital was not able to locate the djvulibre tool "cspdjvu".   |
+| Please make sure that the djvulibre tools are properly installed.  |
++--------------------------------------------------------------------+
+EOF
+    exit 10
+fi
+
+
+# Step 3 -- process arguments
+
+gsarg0="-sDEVICE=djvusep -dNOPAUSE -dBATCH -dSAFER"
+gsarg1=
+gsarg2=
+csepargs=
+dpi="300"
+gsprinted="-dPrinted"
+gsepsf="-dEPSCrop"
+gsverbosity=
+csepverbosity='-v'
+djvutext=
+infile=
+outfile=
+run=
+
+for n
+do
+  case $n in 
+      --*) 
+          ;;
+      -*)  
+          n="-$n" 
+          ;;
+  esac
+  case $n in
+      --help)
+          man djvudigital
+          exit 10
+          ;;
+      --check)
+          echo 1>&2 "Using: $gsdjvu"
+          echo 1>&2 "  and: $csepdjvu"
+          exit 0
+          ;;
+      --dpi=[0-9]*)
+          dpi="`getarg $n`"
+          ;;
+      --verbose|--v)
+          gsverbosity=''
+          csepverbosity='-vv'
+          ;;
+      --dryrun)
+          run=echo
+          ;;
+      --quiet|--q)
+          gsverbosity='-q'
+          csepverbosity=''
+          ;;
+      --psrotate=0)
+          gsarg2="-c << /Orientation 0 >> setpagedevice"
+          ;;
+      --psrotate=90)
+          gsarg2="-c << /Orientation 3 >> setpagedevice"
+          ;;
+      --psrotate=180)
+          gsarg2="-c << /Orientation 2 >> setpagedevice"
+          ;;
+      --psrotate=270)
+          gsarg2="-c << /Orientation 1 >> setpagedevice"
+          ;;
+      --epsf=no)
+          gsepsf=
+          ;;
+      --epsf=ignore)
+          gsepsf="-dNOEPS"
+          ;;
+      --epsf=fit)
+          gsepsf="-dEPSFitPage"
+          ;;
+      --epsf=crop)
+          gsepsf="-dEPSCrop"
+          ;;
+      --words)
+          checkps2utf8
+          gsarg0="$gsarg0 -dDELAYBIND -dWRITESYSTEMDICT"
+          gsarg1="-f $djvutext"
+          ;;
+      --lines)
+          checkps2utf8
+          gsarg0="$gsarg0 -dDELAYBIND -dWRITESYSTEMDICT"
+          gsarg1="-f $djvutext"
+          csepargs="$csepargs -t"
+          ;;
+      --pdf=screen)
+          gsprinted="-dPrinted=false"
+          ;;
+      --pdf=printed)
+          gsprinted="-dPrinted=true"
+          ;;
+      --exact-color)
+          gsarg0="-dUseCIEColor $gsarg0"
+          ;;
+      --threshold=*)
+          gsarg0=" -dThreshold=`getarg $n` $gsarg0"
+          ;;
+      --bg-subsample=*)
+          gsarg0=" -dBgSubsample=`getarg $n` $gsarg0"
+          ;;
+      --bg-slices=*)
+          csepargs=" -q`getarg $n` $csepargs"
+          ;;
+      --fg-colors=*)
+          gsarg0=" -dFgColors=`getarg $n` $gsarg0"
+          ;;
+      --fg-image-colors=*)
+          gsarg0=" -dFgImgColors=`getarg $n` $gsarg0"
+          ;;
+      --gsarg=*)
+          gsarg0=" `getargs $n` $gsarg0"
+          ;;
+      --cseparg=*)
+          csepargs="$csepargs `getargs $n`"
+          ;;
+      -*)
+          usage
+          ;;
+      *)
+          if [ -z "$infile" ] ; then
+              infile=$n
+          elif [ -z "$outfile" ] ; then
+              outfile=$n
+          else
+              usage
+          fi
+          ;;
+  esac
+done
+
+
+# Step 4 -- check input filename
+
+if [ -z "$infile" ] ; then
+    usage
+elif [ ! -r "$infile" -a -z "$run" ]; then
+    echo "djvudigital: cannot open $infile for reading" 1>&2
+    exit 10
+fi
+
+if [ -z "$outfile" ]
+then
+    outfile=$infile
+    for ext in gz GZ ps PS eps EPS pdf PDF
+    do
+       case "$outfile" in
+         *.$ext)
+            outfile=`basename $outfile .$ext`
+            ;;
+       esac
+    done
+    outfile=$outfile.djvu
+fi
+
+# Step 5 -- execute command
+
+if [ "$csepverbosity" != "" -o "$gsverbosity" != "-q" ] 
+then
+    test -z "$run" && echo "DJVUDIGITAL --- DjVuLibre-3.5"
+fi
+
+backend="$csepdjvu -d "'"'"$dpi"'"'" $csepverbosity $csepargs - "'"'"$outfile"'"'
+
+
+case "$infile" in
+    *.gz|*.GZ)
+        gzip -d -c "$infile" | \
+        $run $gsdjvu "-r$dpi" $gsverbosity $gsprinted $gsepsf \
+            "-sOutputFile=|$backend" $gsarg0 $gsarg1 $gsarg2 -_ -c quit
+        ;;
+    *)
+        $run $gsdjvu "-r$dpi" $gsverbosity $gsprinted $gsepsf \
+            "-sOutputFile=|$backend" $gsarg0 $gsarg1 $gsarg2 -f "$infile" -c quit
+        ;;
+esac

@@ -1,0 +1,976 @@
+%%%% This is to be called as follows:
+%%%% gs -q \
+%%%%   -dDELAYBIND -dWRITESYSTEMDICT ps2utf8.ps 
+%%%%   -dNOPAUSE -dBATCH -dSAFER -f myfile.ps
+
+
+% If SIMPLE is defined, just the text is written,
+% with a guess at line breaks and word spacing.
+%
+% If SIMPLE is not defined,
+% lines are written to stdout as follows:
+%
+%	F <height> <width> (<fontname>)
+%		Indicate the font height and the width of a space.
+%
+%	P
+%		Indicate the end of the page.
+%
+%	S <x> <y> (<string>) <dx> <dy>
+%		Display a string.
+%
+% <width>, <height>, <dx> and <dy> are integer dimensions in units of 1/720".
+% <x> and <y> are integer coordinates, in units of 1/720", with the origin
+% at the lower left. <string> and <fontname> are strings represented with
+% the standard PostScript escape conventions.
+
+
+%%% ------------------------------------------------------------------------
+%%% Initialization
+
+% Check that system directory is writable
+systemdict wcheck not { 
+  (ps2utf8: must use option -dWRITESYSTEMDICT\n) print quit 
+} if
+
+% Check that bind has been suspended
+DELAYBIND NOBIND or not {
+  (ps2utf8: must use option -dDELAYBIND or -dNOBIND\n) print quit
+} if
+
+% Check that we have .cshowglyph
+/.cshowglyph where { pop } {
+  (ps2utf8: interpreter does not support .cshowglyph\n) print quit
+} ifelse
+
+% Set global memory. 
+currentglobal /setglobal load true setglobal
+
+% Define dictionary for ps2utf8 code
+systemdict begin
+/.ps2utf8 100 dict def
+.ps2utf8 begin
+
+% Standard coordinate matrix (tenth of points)
+/stdmatrix gsave initmatrix 0.1 0.1 scale
+           matrix currentmatrix grestore def
+
+% Each glyph of show/ashow is normally described individually.
+% When -dFAST is provided, however, show/ashow produce grouped descriptions.
+systemdict /FAST known /FAST exch def
+
+% These replicate ps2ascii features.
+systemdict /SIMPLE known /SIMPLE exch def
+systemdict /COMPLEX known /COMPLEX exch def
+
+
+%%% ------------------------------------------------------------------------
+%%% Output procedures.
+
+% The following procedures are called when certain events occur.
+% The default definition allows for implementing the normal mode.
+% The SIMPLE mode is selected by redefining these procedures...
+
+% <str> <x0> <y0> <x1> <y1> onmark -
+% This is called whenever an operator outputs text.
+% When FAST is unset, this is called for each glyph.
+% When FAST is set, this is called for each
+% Arguments:
+%  <str>:  	UTF8 string.
+%  <x0>, <y0>:	Position of the point before drawing.
+%  <x1>, <y1>:	Position of the point after drawing.
+/onmark {
+        (T ) =only
+        3 index 0.5 add cvi =only ( ) =only
+        2 index 0.5 add cvi =only ( ) =only
+        5 4 roll ==only ( ) =only
+        exch 4 3 roll sub 0.5 add cvi =only ( ) =only
+        exch sub 0.5 add cvi =only (\n) =only
+} bind def
+
+% <fontname> <fontw> <fonth> onfont -
+% This is called whenever new text
+% is drawn either with a different font
+% or with a different transformation
+% matrix
+/onfont {
+        (F ) =only
+        0.5 add cvi =only ( ) =only
+        0.5 add cvi =only ( ) =only
+        ==
+} bind def
+
+% - onpage -
+% This is called whenever a page is output.
+/onpage {
+    (P) = 
+} bind def
+
+% <mark> ... oncomplex -
+% This is called by various operators
+% in order to replicate ps2ascii complex mode.
+
+/oncomplex {
+    counttomark array astore exch pop 
+    COMPLEX { { =only } forall (\n) =only } { pop } ifelse
+} bind def
+
+
+
+%%% ------------------------------------------------------------------------
+%%% UTF8 translations for Adobe glyphs.
+
+% Glyph translation dictionary
+/glyphmap <<
+  /A <41> /a <61> /Aacute <C381> /aacute <C3A1> /Aacutesmall <C3A1>
+  /Abreve <C482> /abreve <C483> /Acircumflex <C382> /acircumflex <C3A2>
+  /Acircumflexsmall <C3A2> /Acute <C2B4> /acute <C2B4> /acutecomb <CC81>
+  /Acutesmall <C2B4> /Adieresis <C384> /adieresis <C3A4> /Adieresissmall
+  <C3A4> /AE <C386> /ae <C3A6> /AEacute <C7BC> /aeacute <C7BD> /AEsmall
+  <C3A6> /afii00208 <E28095> /afii10017 <D090> /afii10018 <D091>
+  /afii10019 <D092> /afii10020 <D093> /afii10021 <D094> /afii10022 <D095>
+  /afii10023 <D081> /afii10024 <D096> /afii10025 <D097> /afii10026 <D098>
+  /afii10027 <D099> /afii10028 <D09A> /afii10029 <D09B> /afii10030 <D09C>
+  /afii10031 <D09D> /afii10032 <D09E> /afii10033 <D09F> /afii10034 <D0A0>
+  /afii10035 <D0A1> /afii10036 <D0A2> /afii10037 <D0A3> /afii10038 <D0A4>
+  /afii10039 <D0A5> /afii10040 <D0A6> /afii10041 <D0A7> /afii10042 <D0A8>
+  /afii10043 <D0A9> /afii10044 <D0AA> /afii10045 <D0AB> /afii10046 <D0AC>
+  /afii10047 <D0AD> /afii10048 <D0AE> /afii10049 <D0AF> /afii10050 <D290>
+  /afii10051 <D082> /afii10052 <D083> /afii10053 <D084> /afii10054 <D085>
+  /afii10055 <D086> /afii10056 <D087> /afii10057 <D088> /afii10058 <D089>
+  /afii10059 <D08A> /afii10060 <D08B> /afii10061 <D08C> /afii10062 <D08E>
+  /afii10063 <D0B3> /afii10064 <D0B1> /afii10065 <D0B0> /afii10066 <D0B1>
+  /afii10067 <D0B2> /afii10068 <D0B3> /afii10069 <D0B4> /afii10070 <D0B5>
+  /afii10071 <D191> /afii10072 <D0B6> /afii10073 <D0B7> /afii10074 <D0B8>
+  /afii10075 <D0B9> /afii10076 <D0BA> /afii10077 <D0BB> /afii10078 <D0BC>
+  /afii10079 <D0BD> /afii10080 <D0BE> /afii10081 <D0BF> /afii10082 <D180>
+  /afii10083 <D181> /afii10084 <D182> /afii10085 <D183> /afii10086 <D184>
+  /afii10087 <D185> /afii10088 <D186> /afii10089 <D187> /afii10090 <D188>
+  /afii10091 <D189> /afii10092 <D18A> /afii10093 <D18B> /afii10094 <D18C>
+  /afii10095 <D18D> /afii10096 <D18E> /afii10097 <D18F> /afii10098 <D291>
+  /afii10099 <D192> /afii10100 <D193> /afii10101 <D194> /afii10102 <D195>
+  /afii10103 <D196> /afii10104 <D197> /afii10105 <D198> /afii10106 <D199>
+  /afii10107 <D19A> /afii10108 <D19B> /afii10109 <D19C> /afii10110 <D19E>
+  /afii10145 <D08F> /afii10146 <D1A2> /afii10147 <D1B2> /afii10148 <D1B4>
+  /afii10192 <D0B4> /afii10193 <D19F> /afii10194 <D1A3> /afii10195 <D1B3>
+  /afii10196 <D1B5> /afii10831 <D0BF> /afii10832 <D182> /afii10846 <D399>
+  /afii299 <E2808E> /afii300 <E2808F> /afii301 <E2808D> /afii57381 <D9AA>
+  /afii57388 <D88C> /afii57392 <D9A0> /afii57393 <D9A1> /afii57394 <D9A2>
+  /afii57395 <D9A3> /afii57396 <D9A4> /afii57397 <D9A5> /afii57398 <D9A6>
+  /afii57399 <D9A7> /afii57400 <D9A8> /afii57401 <D9A9> /afii57403 <D89B>
+  /afii57407 <D89F> /afii57409 <D8A1> /afii57410 <D8A2> /afii57411 <D8A3>
+  /afii57412 <D8A4> /afii57413 <D8A5> /afii57414 <D8A6> /afii57415 <D8A7>
+  /afii57416 <D8A8> /afii57417 <D8A9> /afii57418 <D8AA> /afii57419 <D8AB>
+  /afii57420 <D8AC> /afii57421 <D8AD> /afii57422 <D8AE> /afii57423 <D8AF>
+  /afii57424 <D8B0> /afii57425 <D8B1> /afii57426 <D8B2> /afii57427 <D8B3>
+  /afii57428 <D8B4> /afii57429 <D8B5> /afii57430 <D8B6> /afii57431 <D8B7>
+  /afii57432 <D8B8> /afii57433 <D8B9> /afii57434 <D8BA> /afii57440 <D980>
+  /afii57441 <D981> /afii57442 <D982> /afii57443 <D983> /afii57444 <D984>
+  /afii57445 <D985> /afii57446 <D986> /afii57448 <D988> /afii57449 <D989>
+  /afii57450 <D98A> /afii57451 <D98B> /afii57452 <D98C> /afii57453 <D98D>
+  /afii57454 <D98E> /afii57455 <D98F> /afii57456 <D990> /afii57457 <D991>
+  /afii57458 <D992> /afii57470 <D987> /afii57505 <DAA4> /afii57506 <D9BE>
+  /afii57507 <DA86> /afii57508 <DA98> /afii57509 <DAAF> /afii57511 <D9B9>
+  /afii57512 <DA88> /afii57513 <DA91> /afii57514 <DABA> /afii57519 <DB92>
+  /afii57534 <DB95> /afii57636 <E282AA> /afii57645 <D6BE> /afii57658
+  <D783> /afii57664 <D790> /afii57665 <D791> /afii57666 <D792> /afii57667
+  <D793> /afii57668 <D794> /afii57669 <D795> /afii57670 <D796> /afii57671
+  <D797> /afii57672 <D798> /afii57673 <D799> /afii57674 <D79A> /afii57675
+  <D79B> /afii57676 <D79C> /afii57677 <D79D> /afii57678 <D79E> /afii57679
+  <D79F> /afii57680 <D7A0> /afii57681 <D7A1> /afii57682 <D7A2> /afii57683
+  <D7A3> /afii57684 <D7A4> /afii57685 <D7A5> /afii57686 <D7A6> /afii57687
+  <D7A7> /afii57688 <D7A8> /afii57689 <D7A9> /afii57690 <D7AA> /afii57694
+  <EFACAA> /afii57695 <EFACAB> /afii57700 <EFAD8B> /afii57705 <EFAC9F>
+  /afii57716 <D7B0> /afii57717 <D7B1> /afii57718 <D7B2> /afii57723
+  <EFACB5> /afii57793 <D6B4> /afii57794 <D6B5> /afii57795 <D6B6>
+  /afii57796 <D6BB> /afii57797 <D6B8> /afii57798 <D6B7> /afii57799 <D6B0>
+  /afii57800 <D6B2> /afii57801 <D6B1> /afii57802 <D6B3> /afii57803 <D782>
+  /afii57804 <D781> /afii57806 <D6B9> /afii57807 <D6BC> /afii57839 <D6BD>
+  /afii57841 <D6BF> /afii57842 <D780> /afii57929 <CABC> /afii61248
+  <632F6F> /afii61289 <6C> /afii61352 <4E6F> /afii61573 <E280AC>
+  /afii61574 <E280AD> /afii61575 <E280AE> /afii61664 <E2808C> /afii63167
+  <D9AD> /afii64937 <CABD> /Agrave <C380> /agrave <C3A0> /Agravesmall
+  <C3A0> /aleph <D790> /Alpha <CE91> /alpha <CEB1> /Alphatonos <CE86>
+  /alphatonos <CEAC> /Amacron <C480> /amacron <C481> /ampersand <26>
+  /ampersandsmall <26> /angle <E288A0> /angleleft <E28CA9> /angleright
+  <E28CAA> /anoteleia <CE87> /Aogonek <C484> /aogonek <C485> /approxequal
+  <E28988> /Aring <C385> /aring <C3A5> /Aringacute <C7BA> /aringacute
+  <C7BB> /Aringsmall <C3A5> /arrowboth <E28694> /arrowdblboth <E28794>
+  /arrowdbldown <E28793> /arrowdblleft <E28790> /arrowdblright <E28792>
+  /arrowdblup <E28791> /arrowdown <E28693> /arrowleft <E28690> /arrowright
+  <E28692> /arrowup <E28691> /arrowupdn <E28695> /arrowupdnbse <E286A8>
+  /asciicircum <5E> /asciitilde <7E> /Asmall <61> /asterisk <2A>
+  /asteriskmath <E28897> /asuperior <61> /at <40> /Atilde <C383> /atilde
+  <C3A3> /Atildesmall <C3A3> /B <42> /b <62> /backslash <5C> /bar <7C>
+  /Beta <CE92> /beta <CEB2> /block <E29688> /braceleft <7B> /braceright
+  <7D> /bracketleft <5B> /bracketright <5D> /breve <CB98> /Brevesmall
+  <CB98> /brokenbar <C2A6> /Bsmall <62> /bsuperior <62> /bullet <E280A2>
+  /C <43> /c <63> /Cacute <C486> /cacute <C487> /Caron <CB87> /caron
+  <CB87> /Caronsmall <CB87> /carriagereturn <E286B5> /Ccaron <C48C>
+  /ccaron <C48D> /Ccedilla <C387> /ccedilla <C3A7> /Ccedillasmall <C3A7>
+  /Ccircumflex <C488> /ccircumflex <C489> /Cdotaccent <C48A> /cdotaccent
+  <C48B> /cedilla <C2B8> /Cedillasmall <C2B8> /cent <C2A2> /centinferior
+  <C2A2> /centoldstyle <C2A2> /centsuperior <C2A2> /Chi <CEA7> /chi <CF87>
+  /circle <E2978B> /circlemultiply <E28A97> /circleplus <E28A95>
+  /circumflex <CB86> /Circumflexsmall <CB86> /club <E299A3> /colon <3A>
+  /colonmonetary <E282A1> /comma <2C> /commaaccent <20CCA6> /commainferior
+  <2C> /commasuperior <2C> /congruent <E28985> /copyright <C2A9>
+  /copyrightsans <C2A9> /copyrightserif <C2A9> /Csmall <63> /currency
+  <C2A4> /cyrBreve <CB98> /cyrbreve <CB98> /cyrFlex <CB86> /cyrflex <CB86>
+  /D <44> /d <64> /dagger <E280A0> /daggerdbl <E280A1> /Dbar <C390> /dbar
+  <C3B0> /dblGrave <20CC8F> /dblgrave <20CC8F> /Dcaron <C48E> /dcaron
+  <C48F> /Dcroat <C490> /dcroat <C491> /degree <C2B0> /Delta <CE94> /delta
+  <CEB4> /diamond <E299A6> /Dieresis <C2A8> /dieresis <C2A8>
+  /DieresisAcute <20CC88CC81> /dieresisacute <20CC88CC81> /DieresisGrave
+  <20CC88CC80> /dieresisgrave <20CC88CC80> /Dieresissmall <C2A8>
+  /dieresistonos <CE85> /divide <C3B7> /dkshade <E29693> /dnblock <E29684>
+  /dollar <24> /dollarinferior <24> /dollaroldstyle <24> /dollarsuperior
+  <24> /dong <E282AB> /dotaccent <CB99> /Dotaccentsmall <CB99>
+  /dotbelowcomb <CCA3> /dotlessi <69> /dotlessj <6A> /dotmath <E28B85>
+  /Dsmall <64> /dsuperior <64> /E <45> /e <65> /Eacute <C389> /eacute
+  <C3A9> /Eacutesmall <C3A9> /Ebreve <C494> /ebreve <C495> /Ecaron <C49A>
+  /ecaron <C49B> /Ecircumflex <C38A> /ecircumflex <C3AA> /Ecircumflexsmall
+  <C3AA> /Edieresis <C38B> /edieresis <C3AB> /Edieresissmall <C3AB>
+  /Edotaccent <C496> /edotaccent <C497> /Egrave <C388> /egrave <C3A8>
+  /Egravesmall <C3A8> /eight <38> /eightinferior <38> /eightoldstyle <38>
+  /eightsuperior <38> /element <E28888> /ellipsis <2E2E2E> /Emacron <C492>
+  /emacron <C493> /emdash <2D2D2D> /emptyset <E28885> /endash <2D2D>
+  /Eng <C58A> /eng <C58B> /Eogonek <C498> /eogonek <C499> /Epsilon <CE95>
+  /epsilon <CEB5> /Epsilontonos <CE88> /epsilontonos <CEAD> /equal <3D>
+  /equivalence <E289A1> /Esmall <65> /estimated <E284AE> /esuperior <65>
+  /Eta <CE97> /eta <CEB7> /Etatonos <CE89> /etatonos <CEAE> /Eth <C390>
+  /eth <C3B0> /Ethsmall <C3B0> /Euro <E282AC> /exclam <21> /exclamdbl
+  <2121> /exclamdown <C2A1> /exclamdownsmall <C2A1> /exclamsmall <21>
+  /existential <E28883> /F <46> /f <66> /female <E29980> /ff <6666> /ffi
+  <666669> /ffl <66666C> /fi <6669> /figuredash <E28092> /filledbox
+  <E296A0> /filledrect <E296AC> /five <35> /fiveeighths <354738>
+  /fiveinferior <35> /fiveoldstyle <35> /fivesuperior <35> /fl <666C>
+  /florin <C692> /four <34> /fourinferior <34> /fouroldstyle <34>
+  /foursuperior <34> /fraction <47> /franc <E282A3> /Fsmall <66> /G <47>
+  /g <67> /Gamma <CE93> /gamma <CEB3> /Gbreve <C49E> /gbreve <C49F>
+  /Gcaron <C7A6> /gcaron <C7A7> /Gcircumflex <C49C> /gcircumflex <C49D>
+  /Gcommaaccent <C4A2> /gcommaaccent <C4A3> /Gdotaccent <C4A0> /gdotaccent
+  <C4A1> /germandbls <C39F> /gradient <E28887> /Grave <60> /grave <60>
+  /gravecomb <CC80> /Gravesmall <60> /greater <3E> /greaterequal <E289A5>
+  /Gsmall <67> /guillemotleft <C2AB> /guillemotright <C2BB> /guilsinglleft
+  <E280B9> /guilsinglright <E280BA> /H <48> /h <68> /H18533 <E2978F>
+  /H18543 <E296AA> /H18551 <E296AB> /H22073 <E296A1> /Hbar <C4A6> /hbar
+  <C4A7> /Hcircumflex <C4A4> /hcircumflex <C4A5> /heart <E299A5>
+  /hookabovecomb <CC89> /house <E28C82> /Hsmall <68> /Hungarumlaut <CB9D>
+  /hungarumlaut <CB9D> /Hungarumlautsmall <CB9D> /hyphen <2D>
+  /hypheninferior <2D> /hyphensuperior <2D> /I <49> /i <69> /Iacute <C38D>
+  /iacute <C3AD> /Iacutesmall <C3AD> /Ibreve <C4AC> /ibreve <C4AD>
+  /Icircumflex <C38E> /icircumflex <C3AE> /Icircumflexsmall <C3AE>
+  /Idieresis <C38F> /idieresis <C3AF> /Idieresissmall <C3AF> /Idot <C4B0>
+  /Idotaccent <C4B0> /Ifraktur <49> /Igrave <C38C> /igrave <C3AC>
+  /Igravesmall <C3AC> /IJ <494A> /ij <696A> /Imacron <C4AA> /imacron
+  <C4AB> /infinity <E2889E> /integral <E288AB> /integralbt <E28CA1>
+  /integraltp <E28CA0> /intersection <E288A9> /invbullet <E29798>
+  /invcircle <E29799> /invsmileface <E298BB> /Iogonek <C4AE> /iogonek
+  <C4AF> /Iota <CE99> /iota <CEB9> /Iotadieresis <CEAA> /iotadieresis
+  <CF8A> /iotadieresistonos <CE90> /Iotatonos <CE8A> /iotatonos <CEAF>
+  /Ismall <69> /isuperior <69> /Itilde <C4A8> /itilde <C4A9> /J <4A> /j
+  <6A> /Jcircumflex <C4B4> /jcircumflex <C4B5> /Jsmall <6A> /K <4B> /k
+  <6B> /Kappa <CE9A> /kappa <CEBA> /Kcommaaccent <C4B6> /kcommaaccent
+  <C4B7> /kgreenlandic <C4B8> /Ksmall <6B> /L <4C> /l <6C> /Lacute <C4B9>
+  /lacute <C4BA> /Lambda <CE9B> /lambda <CEBB> /Lcaron <C4BD> /lcaron
+  <C4BE> /Lcommaaccent <C4BB> /lcommaaccent <C4BC> /Ldot <4CC2B7> /ldot
+  <6CC2B7> /less <3C> /lessequal <E289A4> /lfblock <E2968C> /lira <E282A4>
+  /LL <4C4C> /ll <6C6C> /logicaland <E288A7> /logicalnot <C2AC> /logicalor
+  <E288A8> /longs <73> /lozenge <E2978A> /Lslash <C581> /lslash <C582>
+  /Lslashsmall <C582> /Lsmall <6C> /lsuperior <6C> /ltshade <E29691> /M
+  <4D> /m <6D> /Macron <C2AF> /macron <CB89> /Macronsmall <C2AF> /male
+  <E29982> /minus <2D> /minute <E280B2> /Msmall <6D> /msuperior <6D>
+  /Mu <CE9C> /mu <CEBC> /multiply <C397> /musicalnote <E299AA>
+  /musicalnotedbl <E299AB> /N <4E> /n <6E> /Nacute <C583> /nacute <C584>
+  /napostrophe <CABC6E> /Ncaron <C587> /ncaron <C588> /Ncommaaccent <C585>
+  /ncommaaccent <C586> /nine <39> /nineinferior <39> /nineoldstyle <39>
+  /ninesuperior <39> /notelement <E28889> /notequal <E289A0> /notsubset
+  <E28A84> /Nsmall <6E> /nsuperior <6E> /Ntilde <C391> /ntilde <C3B1>
+  /Ntildesmall <C3B1> /Nu <CE9D> /nu <CEBD> /numbersign <23> /O <4F> /o
+  <6F> /Oacute <C393> /oacute <C3B3> /Oacutesmall <C3B3> /Obreve <C58E>
+  /obreve <C58F> /Ocircumflex <C394> /ocircumflex <C3B4> /Ocircumflexsmall
+  <C3B4> /Odieresis <C396> /odieresis <C3B6> /Odieresissmall <C3B6> /OE
+  <C592> /oe <C593> /OEsmall <C593> /ogonek <CB9B> /Ogoneksmall <CB9B>
+  /Ograve <C392> /ograve <C3B2> /Ogravesmall <C3B2> /Ohorn <C6A0> /ohorn
+  <C6A1> /Ohungarumlaut <C590> /ohungarumlaut <C591> /Omacron <C58C>
+  /omacron <C58D> /Omega <CEA9> /omega <CF89> /omega1 <CF80> /Omegatonos
+  <CE8F> /omegatonos <CF8E> /Omicron <CE9F> /omicron <CEBF> /Omicrontonos
+  <CE8C> /omicrontonos <CF8C> /one <31> /onedotenleader <2E> /oneeighth
+  <314738> /onefitted <31> /onehalf <C2BD> /oneinferior <31> /oneoldstyle
+  <31> /onequarter <C2BC> /onesuperior <C2B9> /onethird <314733>
+  /openbullet <E297A6> /ordfeminine <C2AA> /ordmasculine <C2BA>
+  /orthogonal <E2889F> /Oslash <C398> /oslash <C3B8> /Oslashacute <C7BE>
+  /oslashacute <C7BF> /Oslashsmall <C3B8> /Osmall <6F> /osuperior <6F>
+  /Otilde <C395> /otilde <C3B5> /Otildesmall <C3B5> /P <50> /p <70>
+  /paragraph <C2B6> /parenleft <28> /parenleftinferior <28>
+  /parenleftsuperior <28> /parenright <29> /parenrightinferior <29>
+  /parenrightsuperior <29> /partialdiff <E28882> /percent <25> /period
+  <2E> /periodcentered <C2B7> /periodinferior <2E> /periodsuperior <2E>
+  /perpendicular <E28AA5> /perthousand <E280B0> /perthousandzero <30>
+  /peseta <E282A7> /Phi <CEA6> /phi <CF86> /phi1 <CF86> /Pi <CEA0> /pi
+  <CF80> /plus <2B> /plusminus <C2B1> /polishslash <2F> /prescription
+  <E2849E> /product <E2888F> /propersubset <E28A82> /propersuperset
+  <E28A83> /proportional <E2889D> /Psi <CEA8> /psi <CF88> /Psmall <70> /Q
+  <51> /q <71> /Qsmall <71> /question <3F> /questiondown <C2BF>
+  /questiondownsmall <C2BF> /questionsmall <3F> /quotedbl <22>
+  /quotedblbase <22> /quotedblleft <22> /quotedblright <22>
+  /quoteleft <27> /quotereversed <60> /quoteright <27>
+  /quotesinglbase <27> /quotesingle <27> /R <52> /r <72> /Racute
+  <C594> /racute <C595> /radical <E2889A> /Rcaron <C598> /rcaron <C599>
+  /Rcommaaccent <C596> /rcommaaccent <C597> /reflexsubset <E28A86>
+  /reflexsuperset <E28A87> /registered <C2AE> /registersans <C2AE>
+  /registerserif <C2AE> /revlogicalnot <E28C90> /Rfraktur <52> /Rho <CEA1>
+  /rho <CF81> /ring <CB9A> /Ringsmall <CB9A> /Rsmall <72> /rsuperior <72>
+  /rtblock <E29690> /rupiah <5270> /S <53> /s <73> /Sacute <C59A> /sacute
+  <C59B> /Scaron <C5A0> /scaron <C5A1> /Scaronsmall <C5A1> /Scedilla
+  <C59E> /scedilla <C59F> /Scircumflex <C59C> /scircumflex <C59D>
+  /Scommaaccent <C898> /scommaaccent <C899> /second <E280B2E280B2>
+  /section <C2A7> /semicolon <3B> /seven <37> /seveneighths <374738>
+  /seveninferior <37> /sevenoldstyle <37> /sevensuperior <37> /SF010000
+  <E2948C> /SF020000 <E29494> /SF030000 <E29490> /SF040000 <E29498>
+  /SF050000 <E294BC> /SF060000 <E294AC> /SF070000 <E294B4> /SF080000
+  <E2949C> /SF090000 <E294A4> /SF100000 <E29480> /SF110000 <E29482>
+  /SF190000 <E295A1> /SF200000 <E295A2> /SF210000 <E29596> /SF220000
+  <E29595> /SF230000 <E295A3> /SF240000 <E29591> /SF250000 <E29597>
+  /SF260000 <E2959D> /SF270000 <E2959C> /SF280000 <E2959B> /SF360000
+  <E2959E> /SF370000 <E2959F> /SF380000 <E2959A> /SF390000 <E29594>
+  /SF400000 <E295A9> /SF410000 <E295A6> /SF420000 <E295A0> /SF430000
+  <E29590> /SF440000 <E295AC> /SF450000 <E295A7> /SF460000 <E295A8>
+  /SF470000 <E295A4> /SF480000 <E295A5> /SF490000 <E29599> /SF500000
+  <E29598> /SF510000 <E29592> /SF520000 <E29593> /SF530000 <E295AB>
+  /SF540000 <E295AA> /shade <E29692> /Sigma <CEA3> /sigma <CF83> /sigma1
+  <CF82> /similar <E288BC> /six <36> /sixinferior <36> /sixoldstyle <36>
+  /sixsuperior <36> /slash <2F> /smileface <E298BA> /space <20> /spade
+  <E299A0> /Ssmall <73> /ssuperior <73> /sterling <C2A3> /suchthat
+  <E2888B> /summation <E28891> /sun <E298BC> /T <54> /t <74> /Tau <CEA4>
+  /tau <CF84> /Tbar <C5A6> /tbar <C5A7> /Tcaron <C5A4> /tcaron <C5A5>
+  /Tcedilla <C89A> /tcedilla <C89B> /Tcommaaccent <C89A> /tcommaaccent
+  <C89B> /therefore <E288B4> /Theta <CE98> /theta <CEB8> /theta1 <CEB8>
+  /Thorn <C39E> /thorn <C3BE> /Thornsmall <C3BE> /three <33> /threeeighths
+  <334738> /threeinferior <33> /threeoldstyle <33> /threequarters <C2BE>
+  /threequartersemdash <E28094> /threesuperior <C2B3> /tilde <CB9C>
+  /tildecomb <CC83> /Tildesmall <CB9C> /tonos <CE84> /trademark <544D>
+  /trademarksans <544D> /trademarkserif <544D> /triagdn <E296BC> /triaglf
+  <E29784> /triagrt <E296BA> /triagup <E296B2> /Tsmall <74> /tsuperior
+  <74> /two <32> /twodotenleader <2E2E> /twoinferior <32> /twooldstyle
+  <32> /twosuperior <C2B2> /twothirds <324733> /U <55> /u <75> /Uacute
+  <C39A> /uacute <C3BA> /Uacutesmall <C3BA> /Ubreve <C5AC> /ubreve <C5AD>
+  /Ucircumflex <C39B> /ucircumflex <C3BB> /Ucircumflexsmall <C3BB>
+  /Udieresis <C39C> /udieresis <C3BC> /Udieresissmall <C3BC> /Ugrave
+  <C399> /ugrave <C3B9> /Ugravesmall <C3B9> /Uhorn <C6AF> /uhorn <C6B0>
+  /Uhungarumlaut <C5B0> /uhungarumlaut <C5B1> /Umacron <C5AA> /umacron
+  <C5AB> /underscore <5F> /underscoredbl <E28097> /union <E288AA>
+  /universal <E28880> /Uogonek <C5B2> /uogonek <C5B3> /upblock <E29680>
+  /Upsilon <CEA5> /upsilon <CF85> /Upsilon1 <CEA5> /Upsilondieresis <CEAB>
+  /upsilondieresis <CF8B> /upsilondieresistonos <CEB0> /Upsilontonos
+  <CE8E> /upsilontonos <CF8D> /Uring <C5AE> /uring <C5AF> /Usmall <75>
+  /Utilde <C5A8> /utilde <C5A9> /V <56> /v <76> /Vsmall <76> /W <57> /w
+  <77> /Wacute <E1BA82> /wacute <E1BA83> /Wcircumflex <C5B4> /wcircumflex
+  <C5B5> /Wdieresis <E1BA84> /wdieresis <E1BA85> /weierstrass <E28498>
+  /Wgrave <E1BA80> /wgrave <E1BA81> /Wsmall <77> /X <58> /x <78> /Xi
+  <CE9E> /xi <CEBE> /Xsmall <78> /Y <59> /y <79> /Yacute <C39D> /yacute
+  <C3BD> /Yacutesmall <C3BD> /Ycircumflex <C5B6> /ycircumflex <C5B7>
+  /Ydieresis <C5B8> /ydieresis <C3BF> /Ydieresissmall <C3BF> /yen <C2A5>
+  /Ygrave <E1BBB2> /ygrave <E1BBB3> /Ysmall <79> /Z <5A> /z <7A> /Zacute
+  <C5B9> /zacute <C5BA> /Zcaron <C5BD> /zcaron <C5BE> /Zcaronsmall <C5BE>
+  /Zdot <C5BB> /zdot <C5BC> /Zdotaccent <C5BB> /zdotaccent <C5BC> /zero
+  <30> /zeroinferior <30> /zerooldstyle <30> /zerosuperior <30> /Zeta
+  <CE96> /zeta <CEB6> /Zsmall <7A>
+>> def
+
+% <string> hex2int (<number> true | false)
+% Convert hexadecimal string to number 
+/hex2intdict 24 dict def
+16#30 1 16#39 { hex2intdict exch dup 16#30 sub put } for
+16#41 1 16#46 { hex2intdict exch dup 16#41 sub 10 add put } for
+16#61 1 16#66 { hex2intdict exch dup 16#61 sub 10 add put } for
+/hex2int {
+  0 exch true exch {
+    dup hex2intdict exch known {
+      hex2intdict exch get  
+        % stack: <num> <bool> <v>
+      3 -1 roll 16 mul add exch
+    } {
+      pop pop false
+    } ifelse
+  } forall
+  % stack: <num> <bool>
+  { true } { pop false } ifelse
+} bind def
+
+% <number> int2utf8 <string>
+% Convert number (16 bits) to UTF8
+/int2utf8 {
+  dup 16#80 lt {
+    1 string dup 
+        % stack: <n> <string> <string>
+    3 1 roll exch 0 exch put
+  }{
+    dup 16#800 lt {
+      dup 2 string dup 
+        % stack: <n> <n> <str> <str> 
+      3 1 roll exch 1 exch 16#3F and 16#80 or put dup
+        % stack: <n> <str> <str>
+      3 1 roll exch 0 exch -6 bitshift 16#C0 or put
+    }{
+      dup dup 3 string dup 
+        % stack: <n> <n> <n> <str> <str> 
+      3 1 roll exch 2 exch 16#3F and 16#80 or put dup
+        % stack: <n> <n> <str> <str>
+      3 1 roll exch 1 exch -6 bitshift 16#3F and 16#80 or put dup
+        % stack: <n> <str> <str>
+      3 1 roll exch 0 exch -12 bitshift 16#0F and 16#E0 or put
+    } ifelse
+  } ifelse
+} bind def
+
+% <glyph> glyphtoutf8 ( <string> true | false )
+% Return UTF8 string for an Adobe glyph
+/glyph2utf8 {
+  dup glyphmap exch known {
+    glyphmap exch get true
+  }{
+    % check for /uniXXXX names
+    dup length 7 eq {
+      7 string cvs dup 0 3 getinterval (uni) eq {
+        3 4 getinterval hex2int {
+          int2utf8 true
+        } if
+      }{
+        pop false
+      } ifelse
+    }{
+      pop false
+    } ifelse
+  } ifelse
+} bind def
+
+
+
+%%% ------------------------------------------------------------------------
+%%% UTF8 translations for CID fonts
+%%%   See Adobe note #5411 "ToUnicode"
+%%%   Need to provide cmap for PDF supported CID families
+%%%   Need to provide access to PDF's ToUnicode maps
+
+% <cid> cidtoutf8 ( <string> true | false )
+% This function should return a UTF8 string
+% for code <cid> associated with the current
+% font (which is guaranteed to be a CID font)
+/cid2utf8 {
+    % not implemented, but goes here.
+    pop false 
+} bind def
+
+
+%%% ------------------------------------------------------------------------
+%%% Font information
+
+% Variables
+/fontname 250 string def
+/fontnamelen 0 def
+/fontw 0 def
+/fonth 0 def
+
+
+% - fontsignature <fontname> <fontw> <fonth>
+% Extract a signature from the current font.
+/fontsignature {
+    % font name
+    currentfont /FontName .knownget not { (Unknown) } if
+    dup type /stringtype ne { 250 string cvs } if
+    % font measurements
+    currentfont /FontBBox .knownget not { {0 0 0 0} } if
+    aload pop exch 4 -1 roll sub 3 1 roll exch sub % stack: dx dy
+    2 copy .max 0 ne {
+        currentfont /FontMatrix get dtransform
+    } { % try better
+        pop pop
+	currentfont /FontType get 1 eq {
+          oncomplex /oncomplex {} def
+          (X) stringwidth /oncomplex exch def
+          dup mul exch dup mul add sqrt
+          dup 1.3 mul
+        } {
+          % give up
+          0 0 
+        } ifelse
+    } ifelse
+    % scale measurement to tenth of points
+    2 copy .max 0 ne {
+        0 exch dtransform stdmatrix idtransform
+        dup mul exch dup mul add sqrt
+        exch 0 dtransform stdmatrix idtransform
+        dup mul exch dup mul add sqrt
+        exch
+    } if
+} bind def
+
+% - dofont -
+% Checks whether the font has changed
+/dofont {
+    fontsignature
+    1 index fontw eq
+    1 index fonth eq and
+    3 index fontname 0 fontnamelen getinterval
+    eq and {
+        pop pop pop
+    }{
+        /fonth exch def
+        /fontw exch def
+        dup length /fontnamelen exch def
+        fontname cvs fontw fonth
+        //.ps2utf8 /onfont .knownget
+        { exec } { pop pop pop } ifelse
+    } ifelse
+} bind def
+
+
+%%% ------------------------------------------------------------------------
+%%% Redefinition of the text operators
+
+% <cid|glyph> makeutf8 <utf8string>
+% Computes UTF8 equivalent for a glyph or cid.
+% Returns a space for unknown translation
+/makeutf8 {
+   dup type /nametype eq {
+     glyph2utf8  
+   }{
+     currentfont /CIDFontType known { 
+       cid2utf8 
+     }{
+       pop false
+     } ifelse
+   } ifelse
+   % stack: <code> (<stringutf8> true | false)
+   not { <20> } if
+} bind def
+
+% <name> <proc> sodef -
+% Redefine operator <name> in <systemdict>
+/sodef {  
+  systemdict 2 index known {
+    systemdict begin obind def end
+  } if
+} bind def
+
+% Variables
+/currentx 0 def
+/currenty 0 def
+/realshow /show load def
+
+% <code> <dx> <dy> cshowstart <utf8str> <showstr>
+% This function must be called at the beginning of a 
+% cshow procedure. After saving the current point, it
+% returns the utf8 translation and a string for realshow
+/cshowstart {
+   dofont
+   currentpoint /currenty exch def /currentx exch def
+   pop pop .cshowglyph makeutf8 exch
+   1 string dup 0 4 -1 roll put
+} bind def
+
+% <showstr> showstart <utf8str> <showstr>
+% This function saves the current point and
+% returns the UTF8 translation and the string itself.
+/showstart {
+  dofont
+  currentpoint /currenty exch def /currentx exch def dup 
+  userdict begin % Strange: cshow wants current dict in local vm
+    [ exch { pop pop pop .cshowglyph makeutf8 } exch cshow ] end
+  dup 0 exch { length add } forall string exch 0 exch
+    % stack: <concatstring> 0 <arrayofstrings>
+  { dup length
+      % stack: <concatstring> <index> <string> <length>
+    4 copy pop putinterval exch pop add
+  } forall pop exch
+} bind def
+
+% <utf8str> domark -
+% This is called to emit the text information
+% Comes in two forms depending on the availability of .txtmark
+/domark {
+    currentx currenty transform stdmatrix itransform
+    currentpoint transform stdmatrix itransform
+    //.ps2utf8 /onmark .knownget
+     { exec } { pop pop pop pop pop } ifelse
+} bind def
+
+% Redefine GLYPHSHOW
+/glyphshow {
+  //.ps2utf8 begin 
+     currentpoint /currenty exch def /currentx exch def 
+     dup makeutf8 exch end //glyphshow 
+  //.ps2utf8 begin domark end
+} sodef
+
+% Redefine SHOW
+FAST {
+  /show { 
+    //.ps2utf8 begin showstart end 
+    //realshow 
+    //.ps2utf8 begin domark end 
+  } sodef
+}{
+  /show { {
+      //.ps2utf8 begin cshowstart end 
+      //realshow
+      //.ps2utf8 begin domark end
+    } exch cshow
+  } sodef
+} ifelse
+
+% Redefine ASHOW
+FAST {
+  /ashow {
+    //.ps2utf8 begin showstart end 
+    exch 4 1 roll //ashow
+    //.ps2utf8 begin domark end
+  } sodef
+}{
+  /ashow { {
+      //.ps2utf8 begin cshowstart end 
+      //realshow 2 index 2 index rmoveto
+      //.ps2utf8 begin domark end
+    } exch cshow pop pop
+  } sodef
+} ifelse
+
+% Redefine WIDTHSHOW
+FAST {
+  /widthshow {
+    //.ps2utf8 begin showstart end 
+    exch 5 1 roll //widthshow
+    //.ps2utf8 begin domark end
+  } sodef
+}{
+  /widthshow { {
+      //.ps2utf8 begin cshowstart end 
+      //realshow 1 index .cshowchar eq { 3 index 3 index rmoveto } if
+      //.ps2utf8 begin domark end
+    } exch cshow pop pop pop
+  } sodef
+} ifelse
+
+% Redefine AWIDTHSHOW
+FAST {
+  /awidthshow {
+    //.ps2utf8 begin showstart end 
+    exch 7 1 roll //awidthshow
+    //.ps2utf8 begin domark end
+  } sodef
+}{
+  /awidthshow { {
+      //.ps2utf8 begin cshowstart end 
+      //realshow 2 index 2 index rmoveto
+      3 index .cshowchar eq { 5 index 5 index rmoveto } if
+      //.ps2utf8 begin domark end
+    } exch cshow pop pop pop pop pop
+  } sodef
+} ifelse
+
+% Redefine KSHOW
+FAST {
+  /kshow {
+    //.ps2utf8 begin showstart end 
+    exch 3 1 roll //kshow
+    //.ps2utf8 begin domark end
+  } sodef
+}{
+  /kshow { 
+    exch [ /.cshowchar load /.cshownextchar load 5 2 /roll load 
+           /.ps2utf8 load /begin load /cshowstart cvx /end load 
+           .ps2utf8 /realshow get
+           /.ps2utf8 load /begin load /domark cvx /end load
+           /dup load 0 /ge load 0 { pop pop } /ifelse load ]
+    dup dup length 3 sub  
+      % stack: <str> <proc> <array> <array> <index>
+    4 -1 roll put cvx exch cshow
+  } sodef
+} ifelse
+
+% Helpers for [X][Y]SHOW
+FAST {
+  /moveshow {
+     pop 3 -1 roll                     
+        % stack: <numstring> <procf> <string>
+     //.ps2utf8 begin showstart end   
+        % stack: <numstring> <procf> <utfstring> <string>
+     4 2 roll exec
+     //.ps2utf8 begin domark end
+  } def
+}{
+  /moveshow { 
+      % stack: <showstr> <numarray> <procf> <proca>
+      2 index type /arraytype ne {
+          % use fast method (numstring!)
+        pop 3 -1 roll 
+        //.ps2utf8 begin showstart end   
+        4 2 roll exec
+        //.ps2utf8 begin domark end
+      } {
+          % use cshow method
+        3 1 roll pop -1 % stack: <showstr> <proca> <numarray> <-1>
+        4 -1 roll {
+          //.ps2utf8 begin cshowstart gsave end //realshow 
+          //.ps2utf8 begin domark grestore 2 index exec end 
+        } cshow pop pop pop 
+      } ifelse
+  } def
+}ifelse 
+
+% Redefine XSHOW
+/xshow { { //xshow } 
+  { 1 add 2 copy get 0 rmoveto }
+  //moveshow exec 
+} sodef
+
+% Redefine YSHOW
+/yshow { { //yshow } 
+  { 1 add 2 copy get 0 exch rmoveto }
+  //moveshow exec 
+} sodef
+
+% Redefine YXSHOW
+/xyshow { { //xyshow }
+  { 1 add 2 copy get 3 1 roll
+    1 add 2 copy get 4 -1 roll exch rmoveto }
+  //moveshow exec 
+} sodef
+
+%%% ------------------------------------------------------------------------
+%%% Redefinition of the page operators
+
+/dopage {
+    //.ps2utf8 /onpage .knownget { exec } if
+} bind def
+
+/copypage {
+    //.ps2utf8 begin dopage end //copypage
+} sodef
+
+/showpage {
+    //.ps2utf8 begin dopage end //showpage
+} sodef
+
+
+%%% ------------------------------------------------------------------------
+%%% TeX/LaTeX hacks ( derived from ps2ascii.ps )
+
+/T1Encoding [
+  /grave /acute /circumflex /tilde /dieresis /hungarumlaut /ring /caron
+  /breve /macron /dotaccent /cedilla /ogonek /quotesinglbase
+  /guilsinglleft /guilsinglright /quotedblleft /quotedblright
+  /quotedblbase /guillemotleft /guillemotright /endash /emdash /cwm
+  /perthousandzero /dotlessi /dotlessj /ff /fi /fl /ffi /ffl /space
+  /exclam /quotedbl /numbersign /dollar /percent /ampersand /quoteright
+  /parenleft /parenright /asterisk /plus /comma /hyphen /period /slash
+  /zero /one /two /three /four /five /six /seven /eight /nine /colon
+  /semicolon /less /equal /greater /question /at /A /B /C /D /E /F /G /H
+  /I /J /K /L /M /N /O /P /Q /R /S /T /U /V /W /X /Y /Z /bracketleft
+  /backslash /bracketright /asciicircum /underscore /quoteleft /a /b /c /d
+  /e /f /g /h /i /j /k /l /m /n /o /p /q /r /s /t /u /v /w /x /y /z
+  /braceleft /bar /braceright /asciitilde /hyphen /Abreve /Aogonek /Cacute
+  /Ccaron /Dcaron /Ecaron /Eogonek /Gbreve /Lacute /Lcaron /Lslash /Nacute
+  /Ncaron /Eng /Ohungarumlaut /Racute /Rcaron /Sacute /Scaron /Scedilla
+  /Tcaron /Tcedilla /Uhungarumlaut /Uring /Ydieresis /Zacute /Zcaron /Zdot
+  /IJ /Idot /dbar /section /abreve /aogonek /cacute /ccaron /dcaron
+  /ecaron /eogonek /gbreve /lacute /lcaron /lslash /nacute /ncaron /eng
+  /ohungarumlaut /racute /rcaron /sacute /scaron /scedilla /tcaron
+  /tcedilla /uhungarumlaut /uring /ydieresis /zacute /zcaron /zdot /ij
+  /exclamdown /questiondown /sterling /Agrave /Aacute /Acircumflex /Atilde
+  /Adieresis /Aring /AE /Ccedilla /Egrave /Eacute /Ecircumflex /Edieresis
+  /Igrave /Iacute /Icircumflex /Idieresis /Eth /Ntilde /Ograve /Oacute
+  /Ocircumflex /Otilde /Odieresis /OE /Oslash /Ugrave /Uacute /Ucircumflex
+  /Udieresis /Yacute /Thorn /Germandbls /agrave /aacute /acircumflex
+  /atilde /adieresis /aring /ae /ccedilla /egrave /eacute /ecircumflex
+  /edieresis /igrave /iacute /icircumflex /idieresis /eth /ntilde /ograve
+  /oacute /ocircumflex /otilde /odieresis /oe /oslash /ugrave /uacute
+  /ucircumflex /udieresis /yacute /thorn /germandbls
+] def
+
+/OT1Encoding [
+  /Gamma /Delta /Theta /Lambda /Xi /Pi /Sigma /Upsilon /Phi /Psi /Omega
+  /ff /fi /fl /ffi /ffl /dotlessi /dotlessj /grave /acute /caron /breve
+  /macron /ring /cedilla /germandbls /ae /oe /oslash /AE /OE /Oslash
+  /polishslash /exclam /quotedblright /numbersign /dollar /percent
+  /ampersand /quoteright /parenleft /parenright /asterisk /plus /comma
+  /hyphen /period /slash /zero /one /two /three /four /five /six /seven
+  /eight /nine /colon /semicolon /exclamdown /equal /questiondown
+  /question /at /A /B /C /D /E /F /G /H /I /J /K /L /M /N /O /P /Q /R /S
+  /T /U /V /W /X /Y /Z /bracketleft /quotedblleft /bracketright
+  /asciicircum /dotaccent /quoteleft /a /b /c /d /e /f /g /h /i /j /k /l
+  /m /n /o /p /q /r /s /t /u /v /w /x /y /z /endash /emdash /hungarumlaut
+  /asciitilde /dieresis /Abreve /Aogonek /Cacute /Ccaron /Dcaron /Ecaron
+  /Eogonek /Gbreve /Lacute /Lcaron /Lslash /Nacute /Ncaron /Eng
+  /Ohungarumlaut /Racute /Rcaron /Sacute /Scaron /Scedilla /Tcaron
+  /Tcedilla /Uhungarumlaut /Uring /Ydieresis /Zacute /Zcaron /Zdot /IJ
+  /Idot /dbar /section /abreve /aogonek /cacute /ccaron /dcaron /ecaron
+  /eogonek /gbreve /lacute /lcaron /lslash /nacute /ncaron /eng
+  /ohungarumlaut /racute /rcaron /sacute /scaron /scedilla /tcaron
+  /tcedilla /uhungarumlaut /uring /ydieresis /zacute /zcaron /zdot /ij
+  /exclamdown /questiondown /sterling /Agrave /Aacute /Acircumflex /Atilde
+  /Adieresis /Aring /AE /Ccedilla /Egrave /Eacute /Ecircumflex /Edieresis
+  /Igrave /Iacute /Icircumflex /Idieresis /Eth /Ntilde /Ograve /Oacute
+  /Ocircumflex /Otilde /Odieresis /OE /Oslash /Ugrave /Uacute /Ucircumflex
+  /Udieresis /Yacute /Thorn /Germandbls /agrave /aacute /acircumflex
+  /atilde /adieresis /aring /ae /ccedilla /egrave /eacute /ecircumflex
+  /edieresis /igrave /iacute /icircumflex /idieresis /eth /ntilde /ograve
+  /oacute /ocircumflex /otilde /odieresis /oe /oslash /ugrave /uacute
+  /ucircumflex /udieresis /yacute /thorn /germandbls
+] def
+
+% Hack DVIPS to place proper encoding vector into fonts
+/df-tail {
+    /nn 9 dict N nn begin
+        %%  Choose an encoding based on the highest position occupied.
+        dup 128 gt { /T1Encoding } { /OT1Encoding } ifelse 
+        .ps2utf8 exch get /Encoding X
+        %%  Go on
+        /FontType 3 N
+	/FontMatrix fntrx N
+        string /base X
+        array /BitMaps X
+        /BuildChar {CharBuilder} N
+    end
+    dup { /foo setfont } 2 array copy cvx N
+    load 0 nn put /ctr 0 N [
+} def
+
+% Define start-hook to replace df-tail and D by our versions.
+% Unfortunately, the user can redefine start-hook and thus bypass
+% these changes, but I don't see an obvious way around that.
+userdict /start-hook {
+  TeXDict begin /df-tail .ps2utf8 /df-tail get bind def end
+} put 
+
+
+%%% ------------------------------------------------------------------------
+%%% Quasi-OCR for SIMPLE mode.
+
+
+SIMPLE {
+    % variables
+    /lastx 0 def
+    /lasty 0 def
+    /lastorient 0 def
+    /fdim 0 def
+    /f0 0 def
+    /f1 0 def
+    /f2 0 def
+
+    % <n> median3 <m>
+    /median3 {
+        f1 dup 0 eq { pop dup } if /f2 exch def
+        f0 dup 0 eq { pop dup } if /f1 exch def
+        /f0 exch def
+        % compute median
+        f0 f1 gt {
+            f2 f0 gt { f0 } { f2 f1 gt { f2 } { f1 } ifelse } ifelse
+        } {
+            f2 f1 gt { f1 } { f2 f0 gt { f2 } { f0 } ifelse } ifelse
+        } ifelse
+    } bind def
+    
+    % <x1> <y1> <x2> <y2> xydiff <dx> <dy>
+    /xydiff { 
+        3 -1 roll sub 3 1 roll exch sub exch
+    } bind def
+    
+    % <x1> <y1> <x2> <y2> xyorient <orient>
+    /xyorient {
+        xydiff 2 copy abs exch abs exch ge {
+            pop 0 ge { 1 } { -1 } ifelse      % horizontal
+        } {
+            exch pop 0 ge { 2 } { -2 } ifelse % vertical
+        } ifelse
+    } bind def
+
+    % redefine output procedure 'onpage'
+    /onpage {
+        /lastorient 0 def
+        (\n\014) =only
+    } bind def
+
+    % redefine output procedure 'onfont'    
+    /onfont {
+        add 2 div
+        dup /f0 exch def
+        dup /f1 exch def
+        dup /f2 exch def
+        pop pop
+    } bind def
+
+    % redefine output procedure 'onmark'
+    /onmark {
+        % get font characteristic dimensions
+        fonth fontw add 2 div dup 0 eq {
+            pop 4 copy xydiff abs exch abs
+            2 copy le { exch } if pop
+            median3
+        } if
+        /fdim exch def
+        % get orientation
+        4 copy xyorient
+        lastorient 0 ne {
+            dup lastorient ne  {
+                (\n) =only % orientation change
+            } {
+                % stack: str x1 y1 x2 y2 orient
+                4 index lastx sub
+                4 index lasty sub
+                2 index abs 2 eq { exch } if
+                % stack: str x1 y1 x2 y2 orient dh dv 
+                abs fonth 0.90 mul gt fonth 0 gt and {
+                    pop (\n) =only % move off the line
+                } {
+                    % stack: str x1 y1 x2 y2 orient dh
+                    1 index 0 le { neg } if
+                    dup neg fdim gt {
+                        pop (\n) =only % move backwards
+                    } {
+                        % stack: str x1 y1 x2 y2 orient dh
+                        fdim 0.1 mul 1 add gt {
+                            ( ) =only % space
+                        } if
+                    } ifelse
+                } ifelse
+            } ifelse
+        } if
+        % output the string
+        /lastorient exch def        
+        /lasty exch def
+        /lastx exch def
+        pop pop =only
+    } bind def
+
+} if % SIMPLE
+
+
+%%% ------------------------------------------------------------------------
+%%% Finalization
+
+% Finish directories
+end % ps2utf8
+end % systemdict
+
+% Perform delayed binds
+NOBIND { 
+  systemdict begin .bindoperators end 
+}{ 
+  .bindnow 
+} ifelse
+
+% Binding is then back to normal
+systemdict begin
+      /NOBIND false def
+      /DELAYBIND false def 
+      /bind /.bind load def 
+end
+
+% Make systemdict readonly
+% systemdict readonly pop
+
+% Restore allocation mode
+exec
