@@ -58,9 +58,9 @@ nsdejavu.la: nsdejavu.lo
 
 nsdejavu.x: nsdejavu.la
 	eval `grep '^dlname=' nsdejavu.la` && \
-	  echo $${dlname=nsdejavu.so} | sed -e 's/\.[0-9.]*$$//g' > $@ 
+	  echo $${dlname-nsdejavu.so} | sed -e 's/\.[0-9.]*$$//g' > $@ 
 
-nsdejavu.1: ${srcdir}/nsdejavu.1.in nsdejavu.x
+nsdejavu.1: nsdejavu.1.in nsdejavu.x
 	eval "NSDEJAVU=`cat nsdejavu.x`" && \
 	  sed < ${srcdir}/nsdejavu.1.in > nsdejavu.1 \
 	   -e 's,LIBDIR,${libdir},' -e "s,NSDEJAVUSO,$$NSDEJAVU,"
