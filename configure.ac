@@ -355,7 +355,9 @@ AH_BOTTOM([
 
 /* - BOOL */
 #if !defined(HAVE_BOOL) && !defined(bool)
-#define bool char
+#define bool  char
+#define true  1
+#define false 0
 #endif
 
 /* - WCHAR etc.*/

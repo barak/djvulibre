@@ -110,7 +110,11 @@ GUTF8String::~GUTF8String() {}
 // For Solaris, wctomb() and mbtowc() are thread safe, and 
 // wcrtomb() and mbrtowc() don't exist.
 
-static inline  int
+#define wcrtomb MYwcrtomb
+#define mbrtowc MYmbrtowc
+#define mbrlen  MYmbrlen
+
+static inline int
 wcrtomb(char *bytes,wchar_t w,mbstate_t *)
 {
   return wctomb(bytes,w);
