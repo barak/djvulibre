@@ -531,6 +531,7 @@ QDPrintDialog::done(int rc)
 
 	 setAlmostDisabled(FALSE);
 	 setSensitivity();
+         emit sigDone();
 	 QeDialog::done(rc);
       } catch(Interrupted &)
       {
@@ -558,7 +559,7 @@ QDPrintDialog::done(int rc)
        interrupt_printing=1;
      } else {
        emit sigDone();
-       QDialog::done(rc);
+       QeDialog::done(rc);
      }
    }
 }
