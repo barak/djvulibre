@@ -59,6 +59,7 @@
 #include <qrect.h>
 #include <qmenudata.h>
 #include <qstring.h>
+#include <qtimer.h>
 
 #include "debug.h"
 
