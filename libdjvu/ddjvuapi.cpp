@@ -72,6 +72,7 @@ namespace DJVU {
   struct ddjvu_page_s;
   struct ddjvu_format_s;
   struct ddjvu_message_p;
+  struct ddjvu_thumbnail_p;
 }
 using namespace DJVU;
 # define DJVUNS DJVU::
@@ -83,9 +84,11 @@ using namespace DJVU;
 #include "GSmartPointer.h"
 #include "GThreads.h"
 #include "GContainer.h"
+#include "ByteStream.h"
 #include "GString.h"
 #include "GBitmap.h"
 #include "GPixmap.h"
+#include "GScaler.h"
 #include "DjVuPort.h"
 #include "DataPool.h"
 #include "DjVuInfo.h"
@@ -137,6 +140,7 @@ struct DJVUNS ddjvu_document_s : public DjVuPort
   GP<DjVuDocument> doc;
   GMonitor monitor;
   GPMap<int,DataPool> streams;
+  GPMap<int,ddjvu_thumbnail_p> thumbnails;
   int streamid;
   void *userdata;
   bool fileflag;
@@ -1654,12 +1658,79 @@ ddjvu_page_render(ddjvu_page_t *page,
 // ----------------------------------------
 
 
+struct DJVUNS ddjvu_thumbnail_p : public GPEnabled
+{
+  int pagenum;
+  ddjvu_document_t *document;
+  GTArray<char> data;
+  GP<DataPool> pool;
+}; 
+
+static void
+thumbnail_cb(void *cldata)
+{
+  ddjvu_thumbnail_p *thumb = (ddjvu_thumbnail_p*)cldata;
+  if (thumb->document)
+    {
+      GMonitorLock(&thumb->document->monitor);
+      if (thumb->pool && thumb->pool->is_eof())
+        {
+          GP<DataPool> pool = thumb->pool;
+          int size = pool->get_size();
+          thumb->pool = 0;
+          thumb->data.resize(0,size-1);
+          pool->get_data( (void*)(char*)thumb->data, 0, size);
+          if (thumb->document->doc)
+            {
+              GP<ddjvu_message_p> p = new ddjvu_message_p;
+              p->p.m_thumbnail.pagenum = thumb->pagenum;
+              msg_push(xhead(DDJVU_THUMBNAIL, thumb->document), p);
+            }      
+        }
+    }
+}
+
 ddjvu_status_t
 ddjvu_thumbnail_status(ddjvu_document_t *document, int pagenum, int start)
 {
-  return DDJVU_OPERATION_NOTSTARTED;
+  G_TRY
+    {
+      GMonitorLock(&document->monitor);
+      GPosition p = document->thumbnails.contains(pagenum);
+      GP<ddjvu_thumbnail_p> thumb;
+      if (p)
+        {
+          thumb = document->thumbnails[p];
+        } 
+      else
+        {
+          DjVuDocument *doc = document->doc;
+          GP<DataPool> pool = doc->get_thumbnail(pagenum, !start);
+          if (pool)
+            {
+              thumb = new ddjvu_thumbnail_p;
+              thumb->document = document;
+              thumb->pagenum = pagenum;
+              thumb->pool = pool;
+              document->thumbnails[pagenum] = thumb;
+              pool->add_trigger(-1, thumbnail_cb, (void*)(ddjvu_thumbnail_p*)thumb);
+            }
+        }
+      if (! thumb)
+        return DDJVU_OPERATION_NOTSTARTED;        
+      else if (thumb->pool)
+        return DDJVU_OPERATION_STARTED;
+      else if (thumb->data.size() > 0)
+        return DDJVU_OPERATION_OK;
+    }
+  G_CATCH(ex)
+    {
+      ERROR(document, ex);
+    }
+  G_ENDCATCH;
+  return DDJVU_OPERATION_FAILED;
 }
-
+ 
 int
 ddjvu_thumbnail_render(ddjvu_document_t *document, int pagenum, 
                        int *wptr, int *hptr,
@@ -1667,7 +1738,54 @@ ddjvu_thumbnail_render(ddjvu_document_t *document, int pagenum,
                        unsigned long rowsize,
                        char *imagebuffer)
 {
-  return 0;
+  G_TRY
+    {
+      GP<ddjvu_thumbnail_p> thumb;
+      ddjvu_status_t status = ddjvu_thumbnail_status(document,pagenum,FALSE);
+      if (status == DDJVU_OPERATION_OK)
+        {
+          GMonitorLock(&document->monitor);
+          thumb = document->thumbnails[pagenum];
+        }
+      if (! (thumb && wptr && hptr))
+        return FALSE;
+      if (! (thumb->data.size() > 0))
+        return FALSE;
+      /* Decode wavelet data */
+      int size = thumb->data.size();
+      char *data = (char*)thumb->data;
+      GP<IW44Image> iw = IW44Image::create_decode(IW44Image::COLOR);
+      iw->decode_chunk(ByteStream::create_static((void*)data, size));
+      int w = iw->get_width();
+      int h = iw->get_height();
+      /* Restore aspect ratio */
+      double dw = (double)w / *wptr;
+      double dh = (double)h / *hptr;
+      if (dw > dh) 
+        *hptr = (int)(h / dw);
+      else
+        *wptr = (int)(w / dh);
+      if (! imagebuffer)
+        return TRUE;
+      /* Render and scale image */
+      GP<GPixmap> pm = iw->get_pixmap();
+      double thumbgamma = document->doc->get_thumbnails_gamma();
+      pm->color_correct(pixelformat->gamma / thumbgamma);
+      GP<GPixmapScaler> scaler = GPixmapScaler::create(w, h, *wptr, *hptr);
+      GP<GPixmap> scaledpm = GPixmap::create();
+      GRect scaledrect(0, 0, *wptr, *hptr);
+      scaler->scale(GRect(0, 0, w, h), *pm, scaledrect, *scaledpm);
+      /* Convert */
+      fmt_dither(scaledpm, pixelformat, 0, 0);
+      fmt_convert(scaledpm, pixelformat, imagebuffer, rowsize);
+      return TRUE;
+    }
+  G_CATCH(ex)
+    {
+      ERROR(document, ex);
+    }
+  G_ENDCATCH;
+  return FALSE;
 }
 
 

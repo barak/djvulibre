@@ -23122,8 +23122,8 @@ echo $ECHO_N "checking for Debian menu directory... $ECHO_C" >&6
     xdir="`eval echo \"$prefix\"`"
     dtop_menu=`echo $dtop_menu | sed -e 's:^'"$xdir"'/:${prefix}/:'`
 
-       echo "$as_me:$LINENO: result: ${dtop_menu-\"no\"}" >&5
-echo "${ECHO_T}${dtop_menu-\"no\"}" >&6
+       echo "$as_me:$LINENO: result: ${dtop_menu:-no}" >&5
+echo "${ECHO_T}${dtop_menu:-no}" >&6
 
        # dtop_applications
        if test -z "$dtop_menu" ; then
@@ -23145,8 +23145,8 @@ echo $ECHO_N "checking for XDG menu directory... $ECHO_C" >&6
     xdir="`eval echo \"$prefix\"`"
     dtop_applications=`echo $dtop_applications | sed -e 's:^'"$xdir"'/:${prefix}/:'`
 
-           echo "$as_me:$LINENO: result: ${dtop_applications-\"no\"}" >&5
-echo "${ECHO_T}${dtop_applications-\"no\"}" >&6
+           echo "$as_me:$LINENO: result: ${dtop_applications:-no}" >&5
+echo "${ECHO_T}${dtop_applications:-no}" >&6
        fi
 
        # dtop_pixmaps
@@ -23165,8 +23165,8 @@ echo $ECHO_N "checking for Gnome icon directory... $ECHO_C" >&6
     xdir="`eval echo \"$prefix\"`"
     dtop_pixmaps=`echo $dtop_pixmaps | sed -e 's:^'"$xdir"'/:${prefix}/:'`
 
-       echo "$as_me:$LINENO: result: ${dtop_pixmaps-\"no\"}" >&5
-echo "${ECHO_T}${dtop_pixmaps-\"no\"}" >&6
+       echo "$as_me:$LINENO: result: ${dtop_pixmaps:-no}" >&5
+echo "${ECHO_T}${dtop_pixmaps:-no}" >&6
 
        # dtop_mime_info
        echo "$as_me:$LINENO: checking for Gnome mimetype directory" >&5
@@ -23184,8 +23184,8 @@ echo $ECHO_N "checking for Gnome mimetype directory... $ECHO_C" >&6
     xdir="`eval echo \"$prefix\"`"
     dtop_mime_info=`echo $dtop_mime_info | sed -e 's:^'"$xdir"'/:${prefix}/:'`
 
-       echo "$as_me:$LINENO: result: ${dtop_mime_info-\"no\"}" >&5
-echo "${ECHO_T}${dtop_mime_info-\"no\"}" >&6
+       echo "$as_me:$LINENO: result: ${dtop_mime_info:-no}" >&5
+echo "${ECHO_T}${dtop_mime_info:-no}" >&6
 
        # dtop_application_registry
        echo "$as_me:$LINENO: checking for Gnome association directory" >&5
@@ -23203,8 +23203,8 @@ echo $ECHO_N "checking for Gnome association directory... $ECHO_C" >&6
     xdir="`eval echo \"$prefix\"`"
     dtop_application_registry=`echo $dtop_application_registry | sed -e 's:^'"$xdir"'/:${prefix}/:'`
 
-       echo "$as_me:$LINENO: result: ${dtop_application_registry-\"no\"}" >&5
-echo "${ECHO_T}${dtop_application_registry-\"no\"}" >&6
+       echo "$as_me:$LINENO: result: ${dtop_application_registry:-no}" >&5
+echo "${ECHO_T}${dtop_application_registry:-no}" >&6
 
        # dtop_icons
        echo "$as_me:$LINENO: checking for KDE icon directory" >&5
@@ -23224,8 +23224,8 @@ echo $ECHO_N "checking for KDE icon directory... $ECHO_C" >&6
     xdir="`eval echo \"$prefix\"`"
     dtop_icons=`echo $dtop_icons | sed -e 's:^'"$xdir"'/:${prefix}/:'`
 
-       echo "$as_me:$LINENO: result: ${dtop_icons-\"no\"}" >&5
-echo "${ECHO_T}${dtop_icons-\"no\"}" >&6
+       echo "$as_me:$LINENO: result: ${dtop_icons:-no}" >&5
+echo "${ECHO_T}${dtop_icons:-no}" >&6
 
        # dtop_applnk
        if test -z "$dtop_menu" -a -z "$dtop_applications" ; then
@@ -23246,8 +23246,8 @@ echo $ECHO_N "checking for KDE menu directory... $ECHO_C" >&6
     xdir="`eval echo \"$prefix\"`"
     dtop_applnk=`echo $dtop_applnk | sed -e 's:^'"$xdir"'/:${prefix}/:'`
 
-           echo "$as_me:$LINENO: result: ${dtop_applnk-\"no\"}" >&5
-echo "${ECHO_T}${dtop_applnk-\"no\"}" >&6
+           echo "$as_me:$LINENO: result: ${dtop_applnk:-no}" >&5
+echo "${ECHO_T}${dtop_applnk:-no}" >&6
        fi
 
        # dtop_mimelnk
@@ -23268,8 +23268,8 @@ echo $ECHO_N "checking for KDE mimetype directory... $ECHO_C" >&6
     xdir="`eval echo \"$prefix\"`"
     dtop_mimelnk=`echo $dtop_mimelnk | sed -e 's:^'"$xdir"'/:${prefix}/:'`
 
-       echo "$as_me:$LINENO: result: ${dtop_mimelnk-\"no\"}" >&5
-echo "${ECHO_T}${dtop_mimelnk-\"no\"}" >&6
+       echo "$as_me:$LINENO: result: ${dtop_mimelnk:-no}" >&5
+echo "${ECHO_T}${dtop_mimelnk:-no}" >&6
    fi
 
 

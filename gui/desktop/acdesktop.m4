@@ -74,7 +74,7 @@ AC_DEFUN([AC_FIND_DESKTOP_DIRS],[
            dtop_menu="/usr/lib/menu"
        fi
        AC_VARIFY(dtop_menu)
-       AC_MSG_RESULT(${dtop_menu-"no"})
+       AC_MSG_RESULT(${dtop_menu:-no})
    
        # dtop_applications
        if test -z "$dtop_menu" ; then
@@ -86,7 +86,7 @@ AC_DEFUN([AC_FIND_DESKTOP_DIRS],[
                fi
            fi
            AC_VARIFY(dtop_applications)
-           AC_MSG_RESULT(${dtop_applications-"no"})
+           AC_MSG_RESULT(${dtop_applications:-no})
        fi
 
        # dtop_pixmaps
@@ -95,7 +95,7 @@ AC_DEFUN([AC_FIND_DESKTOP_DIRS],[
            dtop_pixmaps="/usr/share/pixmaps"
        fi
        AC_VARIFY(dtop_pixmaps)
-       AC_MSG_RESULT(${dtop_pixmaps-"no"})
+       AC_MSG_RESULT(${dtop_pixmaps:-no})
 
        # dtop_mime_info
        AC_MSG_CHECKING([for Gnome mimetype directory])
@@ -103,7 +103,7 @@ AC_DEFUN([AC_FIND_DESKTOP_DIRS],[
            dtop_mime_info="/usr/share/mime-info"
        fi
        AC_VARIFY(dtop_mime_info)
-       AC_MSG_RESULT(${dtop_mime_info-"no"})
+       AC_MSG_RESULT(${dtop_mime_info:-no})
 
        # dtop_application_registry
        AC_MSG_CHECKING([for Gnome association directory])
@@ -111,7 +111,7 @@ AC_DEFUN([AC_FIND_DESKTOP_DIRS],[
            dtop_application_registry="/usr/share/application-registry"
        fi
        AC_VARIFY(dtop_application_registry)
-       AC_MSG_RESULT(${dtop_application_registry-"no"})
+       AC_MSG_RESULT(${dtop_application_registry:-no})
 
        # dtop_icons
        AC_MSG_CHECKING([for KDE icon directory])
@@ -121,7 +121,7 @@ AC_DEFUN([AC_FIND_DESKTOP_DIRS],[
            dtop_icons="/usr/share/icons"
        fi
        AC_VARIFY(dtop_icons)
-       AC_MSG_RESULT(${dtop_icons-"no"})
+       AC_MSG_RESULT(${dtop_icons:-no})
 
        # dtop_applnk
        if test -z "$dtop_menu" -a -z "$dtop_applications" ; then
@@ -132,7 +132,7 @@ AC_DEFUN([AC_FIND_DESKTOP_DIRS],[
                dtop_applnk="/usr/share/applnk"
            fi
            AC_VARIFY(dtop_applnk)
-           AC_MSG_RESULT(${dtop_applnk-"no"})
+           AC_MSG_RESULT(${dtop_applnk:-no})
        fi
 
        # dtop_mimelnk
@@ -143,7 +143,7 @@ AC_DEFUN([AC_FIND_DESKTOP_DIRS],[
            dtop_mimelnk="/usr/share/mimelnk"
        fi
        AC_VARIFY(dtop_mimelnk)
-       AC_MSG_RESULT(${dtop_mimelnk-"no"})
+       AC_MSG_RESULT(${dtop_mimelnk:-no})
    fi
 
    AC_SUBST(dtop_applications)

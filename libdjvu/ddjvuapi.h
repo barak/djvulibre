@@ -253,8 +253,7 @@ typedef enum {
   DDJVU_REDISPLAY,
   DDJVU_CHUNK,
   DDJVU_THUMBNAIL,
-  DDJVU_SAVE_PROGRESS,
-  DDJVU_PRINT_PROGRESS,
+  DDJVU_JOBINFO,
 } ddjvu_message_tag_t;
 
 
@@ -887,6 +886,7 @@ ddjvu_thumbnail_status(ddjvu_document_t *document, int pagenum, int start);
 
 struct ddjvu_message_thumbnail_s { /* ddjvu_message_t::m_thumbnail */
   ddjvu_message_any_t  any;
+  int pagenum;
 }; 
 
 
