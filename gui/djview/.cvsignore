@@ -1,6 +1,7 @@
-Makefile
-djview
 *.inc
 *_moc.cpp
-ppm_*.cpp
+.libs
+Makefile
 bmp_*.cpp
+djview
+ppm_*.cpp
