@@ -122,7 +122,7 @@ GScaler.o: ./GScaler.cpp ../config.h GScaler.h GException.h DjVuGlobal.h \
 GSmartPointer.o: ./GSmartPointer.cpp ../config.h GThreads.h DjVuGlobal.h \
   GException.h GSmartPointer.h
 GString.o: ./GString.cpp ../config.h GString.h DjVuGlobal.h GContainer.h \
-  GException.h GSmartPointer.h debug.h
+  GException.h GSmartPointer.h GThreads.h debug.h
 GThreads.o: ./GThreads.cpp ../config.h GThreads.h DjVuGlobal.h \
   GException.h DjVuMessageLite.h GString.h GContainer.h GSmartPointer.h
 GUnicode.o: ./GUnicode.cpp ../config.h GString.h DjVuGlobal.h \

@@ -484,7 +484,7 @@ init_qt.o: ../../gui/shared/QT/init_qt.cpp ../../config.h \
   ../../gui/indep/except/exc_base.h ../../gui/indep/except/exc_res.h \
   ../../gui/indep/QX/qx_imager.h ../../gui/indep/QT/qt_imager.h \
   ../../gui/indep/utils/int_types.h ../../libdjvu/GBitmap.h \
-  ../../gui/shared/utils/prefs.h 
+  ../../gui/shared/utils/prefs.h
 qd_messenger.o: ../../gui/shared/QT/qd_messenger.cpp ../../config.h \
   ../../gui/shared/QT/qd_messenger.h ../../libdjvu/GThreads.h \
   ../../libdjvu/DjVuGlobal.h ../../libdjvu/GException.h \
@@ -599,10 +599,9 @@ prefs.o: ../../gui/shared/utils/prefs.cpp ../../config.h \
   ../../libdjvu/GException.h ../../libdjvu/GSmartPointer.h \
   ../../libdjvu/debug.h ../../gui/shared/res/djvu_base_res.h
 mime_utils.o: ../../gui/shared/utils/mime_utils.cpp ../../config.h \
-  ../../libdjvu/Arrays.h ../../libdjvu/GException.h \
+  ../../libdjvu/GContainer.h ../../libdjvu/GException.h \
   ../../libdjvu/DjVuGlobal.h ../../libdjvu/GSmartPointer.h \
-  ../../libdjvu/GString.h ../../libdjvu/GContainer.h \
-  ../../libdjvu/debug.h
+  ../../libdjvu/GString.h ../../libdjvu/debug.h
 saved_data.o: ../../gui/shared/res/saved_data.cpp ../../config.h \
   ../../gui/shared/res/saved_data.h
 netscape.o: ./netscape.cpp ../../config.h ../../libdjvu/ZPCodec.h \
@@ -629,8 +628,8 @@ netscape.o: ./netscape.cpp ../../config.h ../../libdjvu/ZPCodec.h \
   ../../gui/shared/res/djvu_base_res.h \
   ../../gui/indep/except/exc_msg.h \
   ../../gui/shared/utils/io.h ../../gui/indep/except/exc_sys.h \
-  netscape_moc.inc \
-  
+  ../../gui/shared/QT/init_qt.h \
+  netscape_moc.inc 
 dispatch.o: ./dispatch.cpp ../../config.h ../../libdjvu/DataPool.h \
   ../../libdjvu/GThreads.h ../../libdjvu/DjVuGlobal.h \
   ../../libdjvu/GException.h ../../libdjvu/GString.h \

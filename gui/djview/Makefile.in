@@ -72,8 +72,7 @@ CIN_SOURCES = \
  ${top_srcdir}/gui/shared/cin_data/ppm_vpin_out.cin \
  ${top_srcdir}/gui/shared/cin_data/ppm_vpin_in.cin \
  ${top_srcdir}/gui/shared/cin_data/ppm_djview_icon.cin \
- ${top_srcdir}/gui/shared/cin_data/bmp_djview_front1.cin \
- ${top_srcdir}/gui/shared/cin_data/bmp_djview_front2.cin \
+ ${top_srcdir}/gui/shared/cin_data/bmp_djview_front.cin \
  ${top_srcdir}/gui/shared/cin_data/ppm_vprint.cin \
  ${top_srcdir}/gui/shared/cin_data/ppm_vfind.cin \
  ${top_srcdir}/gui/shared/cin_data/ppm_vsave.cin \

@@ -326,14 +326,10 @@ ppm_djview_icon.o : ppm_djview_icon.cpp
 	${CXX} ${CXXFLAGS} -c ppm_djview_icon.cpp
 ppm_djview_icon.cpp : ${top_srcdir}/gui/shared/cin_data/ppm_djview_icon.cin
 	${BIN2CPP} ppm_djview_icon < ${top_srcdir}/gui/shared/cin_data/ppm_djview_icon.cin > ppm_djview_icon.cpp
-bmp_djview_front1.o : bmp_djview_front1.cpp
-	${CXX} ${CXXFLAGS} -c bmp_djview_front1.cpp
-bmp_djview_front1.cpp : ${top_srcdir}/gui/shared/cin_data/bmp_djview_front1.cin
-	${BIN2CPP} bmp_djview_front1 < ${top_srcdir}/gui/shared/cin_data/bmp_djview_front1.cin > bmp_djview_front1.cpp
-bmp_djview_front2.o : bmp_djview_front2.cpp
-	${CXX} ${CXXFLAGS} -c bmp_djview_front2.cpp
-bmp_djview_front2.cpp : ${top_srcdir}/gui/shared/cin_data/bmp_djview_front2.cin
-	${BIN2CPP} bmp_djview_front2 < ${top_srcdir}/gui/shared/cin_data/bmp_djview_front2.cin > bmp_djview_front2.cpp
+bmp_djview_front.o : bmp_djview_front.cpp
+	${CXX} ${CXXFLAGS} -c bmp_djview_front.cpp
+bmp_djview_front.cpp : ${top_srcdir}/gui/shared/cin_data/bmp_djview_front.cin
+	${BIN2CPP} bmp_djview_front < ${top_srcdir}/gui/shared/cin_data/bmp_djview_front.cin > bmp_djview_front.cpp
 ppm_vprint.o : ppm_vprint.cpp
 	${CXX} ${CXXFLAGS} -c ppm_vprint.cpp
 ppm_vprint.cpp : ${top_srcdir}/gui/shared/cin_data/ppm_vprint.cin
@@ -490,8 +486,7 @@ OBJS = \
  ppm_vpin_out.o \
  ppm_vpin_in.o \
  ppm_djview_icon.o \
- bmp_djview_front1.o \
- bmp_djview_front2.o \
+ bmp_djview_front.o \
  ppm_vprint.o \
  ppm_vfind.o \
  ppm_vsave.o \

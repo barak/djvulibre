@@ -580,7 +580,7 @@ QDViewerShell::QDViewerShell(QWidget * parent, const char * name)
 
       // Create the startup image
    wpaper=0;
-   str=CINData::get(time(0) % 2 ? "bmp_djview_front1" : "bmp_djview_front2");
+   str=CINData::get("bmp_djview_front");
    if (str)
    {
       GTArray<char> data;
