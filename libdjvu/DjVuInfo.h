@@ -97,6 +97,11 @@ class ByteStream;
     version of the DjVu file format implemented by this release of the DjVu
     Reference Library. */
 #define DJVUVERSION              25
+/** DjVu format version. This is the value used in files produced 
+    with DjVuLibre. This is smaller than DJVUVERSION because version
+    number inflation causes problems with older software.
+ */ 
+#define DJVUVERSION_FOR_OUTPUT   24
 /** This is the version which introduced orientations. */
 #define DJVUVERSION_ORIENTATION  22
 /** Oldest DjVu format version supported by this library.  This release of the

@@ -84,7 +84,11 @@ namespace DJVU {
 
 DjVuInfo::DjVuInfo()
   : width(0), height(0), 
+#ifdef DJVUVERSION_FOR_OUTPUT
+    version(DJVUVERSION_FOR_OUTPUT),
+#else
     version(DJVUVERSION),
+#endif
     dpi(300), gamma(2.2), compressable(false), orientation(GRect::BULRNR)
 {
 }

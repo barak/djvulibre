@@ -1,8 +1,9 @@
 NEW IN VERSION 3.5.13
 ---------------------
-- Navigation history.
-- DjView option -fullscreen.
-- Raised DJVUVERSION to 25 and DJVUVERSION_TONEW to 50!
+- Navigation history in djview.
+- New option -fullscreen in djview.
+- Silently processes files up to version 25. 
+- Only produces files with version 24.
 - TODO: Bookmarks.
 - TODO: MacOS X fixes.
 
