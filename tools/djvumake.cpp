@@ -682,8 +682,8 @@ main(int argc, char **argv)
             {
               if (flag_contains_bg)
                 DjVuPrintErrorUTF8("%s","djvumake: Duplicate BGxx chunk\n");
-              dargv[i].setat(4,0);
-              create_raw_chunk(iff, dargv[i], GURL::Filename::UTF8(5+(const char *)dargv[i]));
+              GUTF8String chkid = dargv[i].substr(0,4);
+              create_raw_chunk(iff, chkid, GURL::Filename::UTF8(5+(const char *)dargv[i]));
               flag_contains_bg = 1;
             }
           else if (!dargv[i].cmp("FGjp=",5) ||
@@ -692,8 +692,8 @@ main(int argc, char **argv)
             {
               if (flag_contains_fg)
                 DjVuPrintErrorUTF8("%s","djvumake: duplicate 'FGxx' chunk\n");
-              dargv[i].setat(4,0);
-              create_raw_chunk(iff, dargv[i], GURL::Filename::UTF8(5+(const char *)dargv[i]));
+              GUTF8String chkid = dargv[i].substr(0,4);
+              create_raw_chunk(iff, chkid, GURL::Filename::UTF8(5+(const char *)dargv[i]));
               flag_contains_fg = 1;
             }
           else if (!dargv[i].cmp("INCL=",5))
