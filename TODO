@@ -1,6 +1,5 @@
 
 - rechunking feature in c44
-- rewrite parser for annotation layer
 - ht:/dig plugin
 - better encoders (cjb2, cpaldjvu, csepdjvu)
 - gs based ps-to-djvu translator
