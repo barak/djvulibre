@@ -196,6 +196,17 @@ fi
 AC_SUBST(SHARED_YES)
 AC_SUBST(SHARED_NO)
 
+# Work around broken compilers with the famous LPR0 bug
+if test x$ac_shared_libdjvu != xno && test x$GXX = xyes; then
+    AC_MSG_CHECKING([if $CXX has the LPR0 bug])
+    echo 'extern "C" { inline int sqr(int x) throw() { return x * x ; } } int main() {} ' > conftest.cc
+    if ${CXX} -fPIC ${OPTS} conftest.cc -o conftest >/dev/null 2>/dev/null ; then
+        AC_MSG_RESULT([no])
+    else
+        AC_MSG_RESULT([yes])
+        OPTS=`echo $OPTS | sed -e 's/-mcpu=i686/-mpentium/'`
+    fi
+fi
 
 
 # ----------------------------------------
