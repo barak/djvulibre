@@ -2719,7 +2719,10 @@ GNativeString::operator+(const GUTF8String &s2) const
 GUTF8String
 GUTF8String::operator+(const GNativeString &s2) const
 {
-  return GStringRep::UTF8::create(*this,s2.ptr?s2->toUTF8(true):s2);
+  GP<GStringRep> g = s2;
+  if (s2.ptr)
+    g = s2->toUTF8(true);
+  return GStringRep::UTF8::create(*this,g);
 }
 
 GUTF8String
