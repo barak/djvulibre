@@ -97,8 +97,8 @@ above requirements.
 The DjVu image compression is based on three technologies:
 .SS DjVuPhoto
 DjVuPhoto, also known as 
-.SM IW44
-, is a wavelet-based continuous-tone image
+.SM IW44,
+is a wavelet-based continuous-tone image
 compression technique with progressive decoding/rendering.  It is best used
 for encoding photographic images in colors or in shades of gray.  Images are
 typically half the size as 
@@ -106,8 +106,8 @@ typically half the size as
 for the same distortion.
 .SS DjVuBitonal
 DjVuBitonal, also known as 
-.SM JB2
-, is a bitonal image compression that takes
+.SM JB2,
+is a bitonal image compression that takes
 advantage of repetitions of nearly identical shapes on the page (such as
 characters) to efficiently compress text images.  It is best used to compress
 black and white images representing text and simple drawings.  A typical
@@ -297,6 +297,9 @@ A
 .SM CGI
 program for generating indirect multi-page DjVu documents
 on the fly.
+.TP
+.BR djvutoxml "(1), " djvuxmlparser (1)
+Command line tools to edit DjVu metadata as XML files.
 
 .SH DJVU ENCODERS AND ANY2DJVU
 
