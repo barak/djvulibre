@@ -45,8 +45,6 @@
 
 #include "qwidget.h"
 
-void ActivateLayouts(QWidget * start);
-
 #if (defined(QT_FIX_DO_ALL) || defined(QAPPLICATION_H)) && !defined(QeAPPLICATION_DEFINED)
 #define QeAPPLICATION_DEFINED
 #ifdef QT_FIX_DO_ALL
@@ -75,7 +73,6 @@ public slots:
 public:
    float	gamma;
    QString	geometry;
-   
       // killWidget() kills the mentioned widget when QApplication is about
       // to block. It will not kill a widget if it has already been deleted
       // by someone.
@@ -132,172 +129,6 @@ public:
 };
 #endif
 
-#if (defined(QT_FIX_DO_ALL) || defined(QLABEL_H)) && !defined(QeLABEL_DEFINED)
-#define QeLABEL_DEFINED
-#ifdef QT_FIX_DO_ALL
-#include <qlabel.h>
-#endif
-class QeLabel : public QLabel
-{
-   Q_OBJECT
-private:
-   void	setMinSize(void);
-   inline bool	isText(void) const { return !pixmap() && !movie(); }
-   virtual void	resizeEvent(QResizeEvent * ev);
-public:
-   QeLabel(QWidget * parent=0, const char * name=0, WFlags f=0);
-   QeLabel(const QString & text, QWidget * parent=0, const char * name=0, WFlags f=0);
-   QeLabel(QWidget * buddy, const QString & text, QWidget * parent, const char * name=0, WFlags f=0);
-public slots:
-   virtual void	show(void);
-};
-#endif
-
-#if (defined(QT_FIX_DO_ALL) || defined(QPUSHBUTTON_H)) && !defined(QePUSHBUTTON_DEFINED)
-#define QePUSHBUTTON_DEFINED
-#ifdef QT_FIX_DO_ALL
-#include <qpushbutton.h>
-#endif
-class QePushButton : public QPushButton
-{
-   Q_OBJECT
-private:
-   int infl_w, infl_h;
-   void setMinSize(void);
-public:
-   void inflateWidth(int _infl_w);
-   void inflateHeight(int _infl_h);
-   virtual QSize sizeHint(void) const;
-   QePushButton(QWidget * parent=0, const char * name=0);
-   QePushButton(const QString & text, QWidget * parent=0, const char * name=0);
-public slots:
-   virtual void show(void);
-};
-#endif
-
-#if (defined(QT_FIX_DO_ALL) || defined(QCHECKBOX_H)) && !defined(QeCHECKBOX_DEFINED)
-#define QeCHECKBOX_DEFINED
-#ifdef QT_FIX_DO_ALL
-#include <qcheckbox.h>
-#endif
-class QeCheckBox : public QCheckBox
-{
-   Q_OBJECT
-private:
-   void	setMinSize(void);
-public:
-   QeCheckBox(QWidget * parent=0, const char * name=0);
-   QeCheckBox(const QString & text, QWidget * parent, const char * name=0);
-public slots:
-   virtual void show(void);
-};
-#endif
-
-#if (defined(QT_FIX_DO_ALL) || defined(QRADIOBUTTON_H)) && !defined(QeRADIOBUTTON_DEFINED)
-#define QeRADIOBUTTON_DEFINED
-#ifdef QT_FIX_DO_ALL
-#include <qradiobutton.h>
-#endif
-class QeRadioButton : public QRadioButton
-{
-   Q_OBJECT
-private:
-   void	setMinSize(void);
-public:
-   QeRadioButton(QWidget * parent=0, const char * name=0);
-   QeRadioButton(const QString & text, QWidget * parent, const char * name=0);
-public slots:
-   virtual void show(void);
-};
-#endif
-
-#if (defined(QT_FIX_DO_ALL) || defined(QLINEEDIT_H)) && !defined(QeLINEEDIT_DEFINED)
-#define QeLINEEDIT_DEFINED
-#ifdef QT_FIX_DO_ALL
-#include <qlineedit.h>
-#endif
-class QeLineEdit : public QLineEdit
-{
-   Q_OBJECT
-private:
-   void	setMinMaxSize(void);
-public slots:
-   virtual void	show(void);
-public:
-   QeLineEdit(QWidget * parent=0, const char * name=0);
-signals:
-   void textChanged(const QString & text);
-};
-#endif
-
-#if (defined(QT_FIX_DO_ALL) || defined(QSLIDER_H)) && !defined(QeSLIDER_DEFINED)
-#define QeSLIDER_DEFINED
-#ifdef QT_FIX_DO_ALL
-#include <qslider.h>
-#endif
-class QeSlider : public QSlider
-{
-   Q_OBJECT
-private:
-   void	setMinMaxSize(void);
-public:
-   QeSlider(QWidget * parent=0, const char * name=0);
-   QeSlider(Orientation ori, QWidget * parent=0, const char * name=0);
-   QeSlider(int min, int max, int step, int value,
-	    Orientation ori, QWidget * parent=0, const char * name=0);
-public slots:
-   virtual void	show(void);
-};
-#endif
-
-
-#if (defined(QT_FIX_DO_ALL) || defined(QCOMBOBOX_H)) && !defined(QeCOMBOBOX_DEFINED)
-#define QeCOMBOBOX_DEFINED
-#ifdef QT_FIX_DO_ALL
-#include <qcombobox.h>
-#endif
-class QeComboBox : public QComboBox
-{
-   Q_OBJECT
-private:
-   void setMinMaxSize(void);
-public:
-   void	setCurrentItem(const QString & text);
-   void setCurrentItem(int item_num);
-
-   QeComboBox(QWidget * parent=0, const char * name=0);
-   QeComboBox(bool rw, QWidget * parent=0, const char * name=0);
-signals:
-   void activated(const QString & text);
-   void highlighted(const QString & text);
-   void textChanged(const QString & text);
-
-public slots:
-   virtual void	show(void);
-};
-#endif
-
-#if (defined(QT_FIX_DO_ALL) || defined(QSPINBOX_H)) && !defined(QeSPINBOX_DEFINED)
-#define QeSPINBOX_DEFINED
-#ifdef QT_FIX_DO_ALL
-#include <qspinbox.h>
-#endif
-class QeSpinBox : public QSpinBox
-{
-   Q_OBJECT
-private:
-   void setMinMaxSize(void);
-protected:
-   virtual bool	eventFilter(QObject *, QEvent *);
-public:
-   QeSpinBox(QWidget * parent=0, const char * name=0);
-   QeSpinBox(int min, int max, int step=-1,
-	     QWidget * parent=0, const char * name=0);
-public slots:
-   virtual void	show(void);
-};
-#endif
-
 #if (defined(QT_FIX_DO_ALL) || defined(QPROGRESSBAR_H)) && !defined(QePROGRESSBAR_DEFINED)
 #define QePROGRESSBAR_DEFINED
 #ifdef QT_FIX_DO_ALL
@@ -316,51 +147,6 @@ public:
    
    QeProgressBar(QWidget * parent=0, const char * name=0);
    QeProgressBar(int totalSteps, QWidget * parent=0, const char * name=0);
-};
-#endif
-
-#if (defined(QT_FIX_DO_ALL) || defined(QGROUPBOX_H)) && !defined(QeGROUPBOX_DEFINED)
-#define QeGROUPBOX_DEFINED
-#ifdef QT_FIX_DO_ALL
-#include <qgroupbox.h>
-#endif
-class QeGroupBox : public QGroupBox
-{
-   Q_OBJECT
-private:
-   void	init(void);
-public:
-   QeGroupBox(QWidget * parent=0, const char * name=0);
-   QeGroupBox(const QString & title, QWidget * parent=0, const char * name=0);
-};
-#endif
-
-#if (defined(QT_FIX_DO_ALL) || defined(QBUTTONGROUP_H)) && !defined(QeBUTTONGROUP_DEFINED)
-#define QeBUTTONGROUP_DEFINED
-#ifdef QT_FIX_DO_ALL
-#include <qbuttongroup.h>
-#endif
-class QeButtonGroup : public QButtonGroup
-{
-   Q_OBJECT
-private:
-   void	init(void);
-public:
-   QeButtonGroup(QWidget * parent=0, const char * name=0);
-   QeButtonGroup(const QString & title, QWidget * parent=0, const char * name=0);
-};
-#endif
-
-#if (defined(QT_FIX_DO_ALL) || defined(QMENUBAR_H)) && !defined(QeMENUBAR_DEFINED)
-#define QeMENUBAR_DEFINED
-#ifdef QT_FIX_DO_ALL
-#include <qmenubar.h>
-#endif
-class QeMenuBar : public QMenuBar
-{
-   Q_OBJECT
-public:
-   QeMenuBar(QWidget * parent=0, const char * name=0);
 };
 #endif
 

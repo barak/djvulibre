@@ -68,7 +68,7 @@ class QDPageNameDialog : public QeDialog
 {
    Q_OBJECT
 private:
-   QeLineEdit	* text;
+   QLineEdit	* text;
 protected:
    virtual void	done(int);
 protected slots:
@@ -129,38 +129,36 @@ QDPageNameDialog::QDPageNameDialog(const char * message, const char * page_name,
 
    QVBoxLayout * vlay=new QVBoxLayout(start, 10, 5, "vlay");
 
-   QeLabel * label=new QeLabel(message, start, "message_label");
+   QLabel * label=new QLabel(message, start, "message_label");
    vlay->addWidget(label);
    label->setMaximumHeight(label->sizeHint().height());
 
    QHBoxLayout * hlay=new QHBoxLayout();
    vlay->addLayout(hlay);
 
-   label=new QeLabel(tr("File name: "), start, "fname_label");
+   label=new QLabel(tr("File name: "), start, "fname_label");
    hlay->addWidget(label);
    label->setMaximumHeight(label->sizeHint().height());
 
-   text=new QeLineEdit(start, "text");
+   text=new QLineEdit(start, "text");
    text->setText(page_name);
    hlay->addWidget(text, 1);
 
-   QePushButton * browse_butt=new QePushButton(tr("&Browse"), start, "browse_butt");
+   QPushButton * browse_butt=new QPushButton(tr("&Browse"), start, "browse_butt");
    hlay->addWidget(browse_butt);
    browse_butt->setMaximumHeight(browse_butt->sizeHint().height());
    
    QHBoxLayout * butt_lay=new QHBoxLayout(10);
    vlay->addLayout(butt_lay);
    butt_lay->addStretch(1);
-   QePushButton * ok_butt=new QePushButton(tr("&OK"), start, "ok_butt");
+   QPushButton * ok_butt=new QPushButton(tr("&OK"), start, "ok_butt");
    butt_lay->addWidget(ok_butt);
-   QePushButton * cancel_butt=new QePushButton(tr("&Cancel"), start, "cancel_butt");
+   QPushButton * cancel_butt=new QPushButton(tr("&Cancel"), start, "cancel_butt");
    butt_lay->addWidget(cancel_butt);
    ok_butt->setDefault(TRUE);
    ok_butt->setMaximumHeight(ok_butt->sizeHint().height());
    cancel_butt->setMaximumHeight(cancel_butt->sizeHint().height());
    
-   vlay->activate();
-
       // Connecting signals and slots
    connect(ok_butt, SIGNAL(clicked(void)), this, SLOT(accept(void)));
    connect(cancel_butt, SIGNAL(clicked(void)), this, SLOT(reject(void)));
@@ -175,9 +173,9 @@ class QDFileFormatDialog : public QeDialog
 {
    Q_OBJECT
 private:
-   QeRadioButton	* separate_butt;
-   QeRadioButton	* bundled_butt;
-   QeRadioButton	* merged_butt;
+   QRadioButton	* separate_butt;
+   QRadioButton	* bundled_butt;
+   QRadioButton	* merged_butt;
 public:
    enum { BUNDLED, SEPARATE, MERGED };
 
@@ -204,7 +202,7 @@ QDFileFormatDialog::QDFileFormatDialog(QWidget * parent, const char * name) :
 
    QVBoxLayout * vlay=new QVBoxLayout(start, 10, 5, "vlay");
 
-   QeLabel * label=new QeLabel(tr("It seems that contents of this page are currently ")+
+   QLabel * label=new QLabel(tr("It seems that contents of this page are currently ")+
 			       tr("scattered over more than one file. ")+
 			       tr("So you can now do either of the following:"), start);
    label->setMinimumWidth(300);
@@ -217,30 +215,30 @@ QDFileFormatDialog::QDFileFormatDialog(QWidget * parent, const char * name) :
    vlay->addLayout(glay);
    glay->setColStretch(1, 1);
    
-   separate_butt=new QeRadioButton("", start, "separate_butt");
+   separate_butt=new QRadioButton("", start, "separate_butt");
    separate_butt->setChecked(FALSE);
    glay->addWidget(separate_butt, 0, 0);
-   label=new QeLabel(tr("Create all these files. This is useful if you plan ")+
+   label=new QLabel(tr("Create all these files. This is useful if you plan ")+
 		     tr("to save more than one page and then to insert them ")+
 		     tr("into another document: the shared files will remain shared."),
 		     start, "separate_label");
    label->setAlignment(WordBreak);
    glay->addWidget(label, 0, 1);
 
-   bundled_butt=new QeRadioButton("", start, "bundled_butt");
+   bundled_butt=new QRadioButton("", start, "bundled_butt");
    bundled_butt->setChecked(TRUE);
    glay->addWidget(bundled_butt, 1, 0);
-   label=new QeLabel(tr("Pack all these files into one bundle ")+
+   label=new QLabel(tr("Pack all these files into one bundle ")+
 		     tr("(so called BUNDLED format). This is convenient because ")+
 		     tr("you will have only one file and will still be able ")+
 		     tr("to split it into many when necessary."), start, "bundled_label");
    label->setAlignment(WordBreak);
    glay->addWidget(label, 1, 1);
 
-   merged_butt=new QeRadioButton("", start, "merged_butt");
+   merged_butt=new QRadioButton("", start, "merged_butt");
    merged_butt->setChecked(FALSE);
    glay->addWidget(merged_butt, 2, 0);
-   label=new QeLabel(tr("Merge chunks from all files and store them ")+
+   label=new QLabel(tr("Merge chunks from all files and store them ")+
 		     tr("into one file. ")+
 		     tr("Use this if you need the simplest structure of the file ")+
 		     tr("and you do not plan to separate the chunks again."),
@@ -259,14 +257,12 @@ QDFileFormatDialog::QDFileFormatDialog(QWidget * parent, const char * name) :
    QHBoxLayout * butt_lay=new QHBoxLayout(10);
    vlay->addLayout(butt_lay);
    butt_lay->addStretch(1);
-   QePushButton * ok_butt=new QePushButton(tr("&OK"), start, "ok_butt");
+   QPushButton * ok_butt=new QPushButton(tr("&OK"), start, "ok_butt");
    butt_lay->addWidget(ok_butt);
-   QePushButton * cancel_butt=new QePushButton(tr("&Cancel"), start, "cancel_butt");
+   QPushButton * cancel_butt=new QPushButton(tr("&Cancel"), start, "cancel_butt");
    butt_lay->addWidget(cancel_butt);
    ok_butt->setDefault(TRUE);
    
-   vlay->activate();
-
       // Connecting signals and slots
    connect(ok_butt, SIGNAL(clicked(void)), this, SLOT(accept(void)));
    connect(cancel_butt, SIGNAL(clicked(void)), this, SLOT(reject(void)));
@@ -306,7 +302,7 @@ QDFilesListDialog::QDFilesListDialog(const GP<DjVmDoc> & doc, const QString & di
    msg[msg.length()-1]=0;
    msg+=tr(".\n\nAre you sure you want to proceed?\n");
    
-   QeLabel * label=new QeLabel(msg, start);
+   QLabel * label=new QLabel(msg, start);
    label->setMinimumWidth(300);
    label->setAlignment(WordBreak);
    vlay->addWidget(label);
@@ -314,14 +310,12 @@ QDFilesListDialog::QDFilesListDialog(const GP<DjVmDoc> & doc, const QString & di
    QHBoxLayout * butt_lay=new QHBoxLayout(10);
    vlay->addLayout(butt_lay);
    butt_lay->addStretch(1);
-   QePushButton * ok_butt=new QePushButton(tr("&Yes"), start, "ok_butt");
+   QPushButton * ok_butt=new QPushButton(tr("&Yes"), start, "ok_butt");
    butt_lay->addWidget(ok_butt);
-   QePushButton * cancel_butt=new QePushButton(tr("&No"), start, "cancel_butt");
+   QPushButton * cancel_butt=new QPushButton(tr("&No"), start, "cancel_butt");
    butt_lay->addWidget(cancel_butt);
    ok_butt->setDefault(TRUE);
    
-   vlay->activate();
-
       // Connecting signals and slots
    connect(ok_butt, SIGNAL(clicked(void)), this, SLOT(accept(void)));
    connect(cancel_butt, SIGNAL(clicked(void)), this, SLOT(reject(void)));

@@ -100,7 +100,7 @@ class QeExcMessage : public QeDialog
    Q_OBJECT
 private:
    QeNInOne	* details;
-   QePushButton	* details_butt;
+   QPushButton	* details_butt;
 private slots:
    void		switchDetails(void);
 public:

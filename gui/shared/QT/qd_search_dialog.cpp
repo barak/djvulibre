@@ -305,22 +305,22 @@ QDSearchDialog::QDSearchDialog(int page_num_, const GP<DjVuDocument> & doc_,
    setResizable(true, false);
    
    QWidget * start=startWidget();
-   QeLabel * label;
+   QLabel * label;
    
    QVBoxLayout * vlay=new QVBoxLayout(start, 10, 10);
 
    QHBoxLayout * hlay=new QHBoxLayout(10);
    vlay->addLayout(hlay);
-   label=new QeLabel(tr("Find: "), start);
+   label=new QLabel(tr("Find: "), start);
    hlay->addWidget(label);
-   text=new QeLineEdit(start, "search_text");
+   text=new QLineEdit(start, "search_text");
    label->setBuddy(text);
    hlay->addWidget(text, 1);
 
    hlay=new QHBoxLayout(10);
    vlay->addLayout(hlay);
 
-   all_pages_butt=new QeCheckBox(tr("Search &all pages"), start, "all_pages_butt");
+   all_pages_butt=new QCheckBox(tr("Search &all pages"), start, "all_pages_butt");
    if (doc->get_pages_num()>1)
       all_pages_butt->setChecked(all_pages);
    else
@@ -331,17 +331,17 @@ QDSearchDialog::QDSearchDialog(int page_num_, const GP<DjVuDocument> & doc_,
    hlay->addWidget(all_pages_butt);
    hlay->addStretch(1);
    
-   case_butt=new QeCheckBox(tr("&Case sensitive"), start, "case_butt");
+   case_butt=new QCheckBox(tr("&Case sensitive"), start, "case_butt");
    case_butt->setChecked(case_sensitive);
    hlay->addWidget(case_butt);
    hlay->addStretch(1);
 
-   whole_word_butt=new QeCheckBox(tr("&Whole word"), start, "whole_word_butt");
+   whole_word_butt=new QCheckBox(tr("&Whole word"), start, "whole_word_butt");
    whole_word_butt->setChecked(whole_word);
    hlay->addWidget(whole_word_butt);
    hlay->addStretch(1);
 
-   back_butt=new QeCheckBox(tr("Search &backwards"), start, "back_butt");
+   back_butt=new QCheckBox(tr("Search &backwards"), start, "back_butt");
    back_butt->setChecked(search_backwards);
    hlay->addWidget(back_butt);
    
@@ -355,16 +355,14 @@ QDSearchDialog::QDSearchDialog(int page_num_, const GP<DjVuDocument> & doc_,
    }
    butt_lay->addWidget(status_label);
    butt_lay->addStretch(1);
-   search_butt=new QePushButton(tr("&Find"), start, "search_butt");
+   search_butt=new QPushButton(tr("&Find"), start, "search_butt");
    search_butt->setEnabled(FALSE);
    butt_lay->addWidget(search_butt);
-   clear_butt=new QePushButton(tr("&Clear"), start, "clear_butt");
+   clear_butt=new QPushButton(tr("&Clear"), start, "clear_butt");
    butt_lay->addWidget(clear_butt);
-   QePushButton * close_butt=new QePushButton(tr("C&lose"), start, "close_butt");
+   QPushButton * close_butt=new QPushButton(tr("C&lose"), start, "close_butt");
    butt_lay->addWidget(close_butt);
    search_butt->setDefault(TRUE);
-
-   vlay->activate();
 
    connect(search_butt, SIGNAL(clicked(void)), this, SLOT(slotSearch(void)));
    connect(clear_butt, SIGNAL(clicked(void)), text, SLOT(clear(void)));

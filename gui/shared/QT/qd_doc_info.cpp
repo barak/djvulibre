@@ -436,7 +436,6 @@ QDDocInfo::show(void)
    {
       ::showError(this, exc);
    }
-   ActivateLayouts(this);
    QTabDialog::show();
 }
 
@@ -483,13 +482,13 @@ QDDocInfo::slotShowInfo(void)
       d->setCaption(tr("Please wait..."));
       QWidget * start=d->startWidget();
       QVBoxLayout * vlay=new QVBoxLayout(start, 10, 10);
-      QeLabel * l;
-      l=new QeLabel(tr("Please wait while I'm downloading the data..."), start);
+      QLabel * l;
+      l=new QLabel(tr("Please wait while I'm downloading the data..."), start);
       vlay->addWidget(l);
       QHBoxLayout * hlay=new QHBoxLayout(10);
       vlay->addLayout(hlay);
       hlay->addStretch(1);
-      QePushButton * cancel_butt=new QePushButton(tr("&Cancel"), start);
+      QPushButton * cancel_butt=new QPushButton(tr("&Cancel"), start);
       cancel_butt->setDefault(TRUE);
       hlay->addWidget(cancel_butt);
       connect(cancel_butt, SIGNAL(clicked(void)), d, SLOT(reject(void)));
@@ -628,10 +627,10 @@ QDDocInfo::QDDocInfo(const GP<DjVuDocument> & _doc, QWidget * parent,
    QWidget *summary_widget=new QWidget(this, "summary_widget");
    QVBoxLayout * summary_vlay=new QVBoxLayout(summary_widget, 10, 10, "summary_vlay");
    {
-     QeLabel * label;
+     QLabel * label;
      QFont font;
 
-     label=new QeLabel(tr("Document Information"), summary_widget, "title_label");
+     label=new QLabel(tr("Document Information"), summary_widget, "title_label");
      label->setAlignment(AlignCenter);
      font=label->font();
      font.setPointSize(font.pointSize()+2);
@@ -660,19 +659,19 @@ QDDocInfo::QDDocInfo(const GP<DjVuDocument> & _doc, QWidget * parent,
      if (doc_type!=DjVuDocument::OLD_INDEXED)
      {
          //**** "Name" field
-	label=new QeLabel(tr("Document Name:"), summary_widget);
+	label=new QLabel(tr("Document Name:"), summary_widget);
         summary_glay->addWidget(label, row, 0);
         GUTF8String fname_str=doc->get_init_url().fname();
-        label=new QeLabel(QStringFromGString(fname_str), summary_widget);
+        label=new QLabel(QStringFromGString(fname_str), summary_widget);
         label->setFont(QFont("courier", label->font().pointSize()));
         label->setFrameStyle(QFrame::WinPanel | QFrame::Sunken);
         summary_glay->addWidget(label, row++, 1);
      }
    
         //**** "Format" field
-     label=new QeLabel(tr("Document Format:"), summary_widget);
+     label=new QLabel(tr("Document Format:"), summary_widget);
      summary_glay->addWidget(label, row, 0);
-     label=new QeLabel(doc_type==DjVuDocument::BUNDLED ? tr("BUNDLED") :
+     label=new QLabel(doc_type==DjVuDocument::BUNDLED ? tr("BUNDLED") :
                      doc_type==DjVuDocument::OLD_BUNDLED ? tr("Obsolete BUNDLED") :
                      doc_type==DjVuDocument::INDIRECT ? tr("INDIRECT") :
                      doc_type==DjVuDocument::OLD_INDEXED ? tr("Obsolete INDEXED") :
@@ -683,19 +682,19 @@ QDDocInfo::QDDocInfo(const GP<DjVuDocument> & _doc, QWidget * parent,
      summary_glay->addWidget(label, row++, 1);
 
       //**** "Total size" field
-     label=new QeLabel(tr("Total size:"), summary_widget);
+     label=new QLabel(tr("Total size:"), summary_widget);
      summary_glay->addWidget(label, row, 0);
-     size_label=label=new QeLabel(tr("unknown"), summary_widget);
+     size_label=label=new QLabel(tr("unknown"), summary_widget);
      label->setFont(QFont("courier", label->font().pointSize()));
      label->setFrameStyle(QFrame::WinPanel | QFrame::Sunken);
      summary_glay->addWidget(label, row++, 1);
 
       //**** "Pages Number" field
-     label=new QeLabel(tr("Pages:"), summary_widget);
+     label=new QLabel(tr("Pages:"), summary_widget);
      summary_glay->addWidget(label, row, 0);
      {
        GUTF8String mesg=GUTF8String(doc->get_pages_num());
-       label=new QeLabel(QStringFromGString(mesg), summary_widget);
+       label=new QLabel(QStringFromGString(mesg), summary_widget);
      }
      label->setFont(QFont("courier", label->font().pointSize()));
      label->setFrameStyle(QFrame::WinPanel | QFrame::Sunken);
@@ -706,18 +705,18 @@ QDDocInfo::QDDocInfo(const GP<DjVuDocument> & _doc, QWidget * parent,
          doc_type==DjVuDocument::INDIRECT)
      {
        //**** "Files Number" field
-       label=new QeLabel(tr("Files:"), summary_widget);
+       label=new QLabel(tr("Files:"), summary_widget);
        summary_glay->addWidget(label, row, 0);
        if (doc_type==DjVuDocument::BUNDLED ||
            doc_type==DjVuDocument::INDIRECT)
        {
          GUTF8String mesg=doc->get_djvm_dir()->get_files_num();
-         label=new QeLabel(QStringFromGString(mesg), summary_widget);
+         label=new QLabel(QStringFromGString(mesg), summary_widget);
 
        }else if (doc_type==DjVuDocument::OLD_BUNDLED)
        {
          GUTF8String mesg=doc->get_djvm_dir0()->get_files_num();
-         label=new QeLabel(QStringFromGString(mesg), summary_widget);
+         label=new QLabel(QStringFromGString(mesg), summary_widget);
        }
        label->setFont(QFont("courier", label->font().pointSize()));
        label->setFrameStyle(QFrame::WinPanel | QFrame::Sunken);
@@ -763,10 +762,10 @@ QDDocInfo::QDDocInfo(const GP<DjVuDocument> & _doc, QWidget * parent,
 
      QHBoxLayout * page_hlay=new QHBoxLayout(page_vlay,5);
      page_hlay->addStretch(1);
-     page_info_butt=new QePushButton(tr("&Info"), page_widget, "page_info_butt");
+     page_info_butt=new QPushButton(tr("&Info"), page_widget, "page_info_butt");
      page_info_butt->setEnabled(FALSE);
      page_hlay->addWidget(page_info_butt);
-     page_goto_butt=new QePushButton(tr("&Goto"), page_widget, "page_goto_butt");
+     page_goto_butt=new QPushButton(tr("&Goto"), page_widget, "page_goto_butt");
      page_goto_butt->setEnabled(FALSE);
      page_hlay->addWidget(page_goto_butt);
    }
@@ -802,7 +801,7 @@ QDDocInfo::QDDocInfo(const GP<DjVuDocument> & _doc, QWidget * parent,
 
            QHBoxLayout * thumb_hlay=new QHBoxLayout(thumb_vlay);
            thumb_hlay->addStretch(1);
-           thumb_info_butt=new QePushButton(tr("&Info"), thumb_widget, "thumb_info_butt");
+           thumb_info_butt=new QPushButton(tr("&Info"), thumb_widget, "thumb_info_butt");
            thumb_info_butt->setEnabled(FALSE);
            thumb_hlay->addWidget(thumb_info_butt);
          }
@@ -855,11 +854,9 @@ QDDocInfo::QDDocInfo(const GP<DjVuDocument> & _doc, QWidget * parent,
 
      QHBoxLayout * file_hlay=new QHBoxLayout(file_vlay);
      file_hlay->addStretch(1);
-     file_info_butt=new QePushButton(tr("&Info"), file_widget, "file_info_butt");
+     file_info_butt=new QPushButton(tr("&Info"), file_widget, "file_info_butt");
      file_info_butt->setEnabled(FALSE);
      file_hlay->addWidget(file_info_butt);
-
-     file_vlay->activate();
    }
 
       //********************************************************************
@@ -1014,7 +1011,6 @@ QDDocInfo::QDDocInfo(const GP<DjVuDocument> & _doc, QWidget * parent,
       file_list->setMinimumHeight(min_list_height);
    }
    
-   summary_vlay->activate();
    addTab(summary_widget, tr("&Summary"));
    if(page_widget)
      addTab(page_widget, tr("&Pages"));

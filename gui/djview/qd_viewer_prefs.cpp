@@ -120,28 +120,27 @@ QDHlinkPrefs::QDHlinkPrefs(DjVuPrefs * prefs, QWidget * parent, const char * nam
    vlay->addSpacing(fontMetrics().height());
    vlay->addStretch(1);
 
-   popup_butt=new QeCheckBox(tr("Disable hyperlink popup messages."),
+   popup_butt=new QCheckBox(tr("Disable hyperlink popup messages."),
 			     this, "popup_butt");
    popup_butt->setChecked(!prefs->hlinksPopup);
    vlay->addWidget(popup_butt);
    
-   border_butt=new QeCheckBox(tr("Draw hyperlinks using simple border."), 
+   border_butt=new QCheckBox(tr("Draw hyperlinks using simple border."), 
 			      this, "border_butt");
    border_butt->setChecked(prefs->hlinksBorder);
    vlay->addWidget(border_butt);
    vlay->addStretch(1);
    
    QHBoxLayout * hlay=new QHBoxLayout(vlay, 5);
-   QeLabel * key_label=new QeLabel(tr("\"Show all hyperlinks\" key:"), this);
+   QLabel * key_label=new QLabel(tr("\"Show all hyperlinks\" key:"), this);
    hlay->addWidget(key_label);
-   key_menu=new QeComboBox(this, "key_menu");
+   key_menu=new QComboBox(this, "key_menu");
    for(int i=0;i<DjVuPrefs::HLB_ITEMS;i++)
       key_menu->insertItem(DjVuPrefs::hlb_names[i], i);
    key_menu->setCurrentItem(prefs->hlb_num);
    hlay->addWidget(key_menu);
 
    vlay->addStretch(2);
-   vlay->activate();
 
    QString key_tip=tr("Combination of keys to be pressed to display\n"
 		      "all the hyperlinks present on the page.");
@@ -237,16 +236,15 @@ QDViewerPrefs::QDViewerPrefs(DjVuPrefs * _prefs, QWidget * parent,
 
       // ** Bottom Row
    QHBoxLayout * butt_lay=new QHBoxLayout(top_vlay, 5);
-   global_butt=new QeCheckBox(tr("Update preferences globally"), start, "global_butt");
+   global_butt=new QCheckBox(tr("Update preferences globally"), start, "global_butt");
    global_butt->setChecked(TRUE);
    butt_lay->addWidget(global_butt);
    butt_lay->addStretch(1);
-   QePushButton * ok_butt=new QePushButton(tr("&OK"), start, "ok_butt");
+   QPushButton * ok_butt=new QPushButton(tr("&OK"), start, "ok_butt");
    ok_butt->setDefault(TRUE);
    butt_lay->addWidget(ok_butt);
-   QePushButton * cancel_butt=new QePushButton(tr("&Cancel"), start, "cancel_butt");
+   QPushButton * cancel_butt=new QPushButton(tr("&Cancel"), start, "cancel_butt");
    butt_lay->addWidget(cancel_butt);
-   top_vlay->activate();
 
       // Connecting signals and slots
    connect(ok_butt, SIGNAL(clicked(void)), this, SLOT(accept(void)));

@@ -151,7 +151,12 @@ QDPrintDialog::setZoom(int zoom)
    {
       setting=custom_zoom_str;
    }
-   zoom_menu->setCurrentItem(setting);
+   for (int i=0; i<zoom_menu->count(); i++)
+     if (setting == zoom_menu->text(i))
+       {
+	 zoom_menu->setCurrentItem(i);
+	 break;
+       }
 }
 
 void
@@ -211,12 +216,17 @@ QDPrintDialog::slotBrowse(void)
 void
 QDPrintDialog::adjustScaling(void)
 {
-   if (eps_butt->isChecked())
-   {
-     const QString setting(one_to_one_str);
-     zoom_menu->setCurrentItem(setting);
-   }
-   zoom_menu->setEnabled(ps_butt->isChecked());
+  if (eps_butt->isChecked())
+    {
+      const QString setting(one_to_one_str);
+      for (int i=0; i<zoom_menu->count(); i++)
+	if (setting == zoom_menu->text(i))
+	  {
+	    zoom_menu->setCurrentItem(i);
+	    break;
+	  }
+    }
+  zoom_menu->setEnabled(ps_butt->isChecked());
 }
 
 void
@@ -352,8 +362,9 @@ QDPrintDialog::info_cb(int page_num, int page_cnt, int tot_pages,
    QString prefix=stage==DjVuToPS::DECODING ? tr("Decoding") : tr("Printing");
    if (tot_pages>1)
    {
-      QString buffer=tr(" page #")+QString::number(page_num+1)+" ("+QString::number(page_cnt+1)+
-	 "/"+QString::number(tot_pages)+"): ";
+      QString buffer=tr(" page #") + QString::number(page_num+1)
+	+ " (" + QString::number(page_cnt+1)
+	+ "/" + QString::number(tot_pages) + "): ";
       prefix=prefix+buffer;
    } else
    {
@@ -658,7 +669,7 @@ QDPrintDialog::QDPrintDialog(const GP<DjVuDocument> & _doc,
    cur_page_num=doc->url_to_page(dimg->get_djvu_file()->get_url());
 
    QWidget * start=startWidget();
-   QeLabel * label;
+   QLabel * label;
    
    setCaption(tr("DjVu Print Dialog"));
 
@@ -667,97 +678,92 @@ QDPrintDialog::QDPrintDialog(const GP<DjVuDocument> & _doc,
    QVBoxLayout * vlay=new QVBoxLayout(start, 10);
    QHBoxLayout * hlay=new QHBoxLayout(vlay);
 
-   QeButtonGroup * bg;
+   QButtonGroup * bg;
    QVBoxLayout * bg_lay;
    QHBoxLayout * bg_hlay;
 
       //************* Creating 'File format' frame *******************
-   bg=format_bg=new QeButtonGroup("File format", start);
+   bg=format_bg=new QButtonGroup("File format", start);
    hlay->addWidget(bg);
    bg_lay=new QVBoxLayout(bg, 10);
    bg_lay->addSpacing(bg->fontMetrics().height());
    bg_lay->addStrut(bg->fontMetrics().width(bg->title()));
-   ps_butt=new QeRadioButton(tr("&PostScript"), bg, "ps_butt");
+   ps_butt=new QRadioButton(tr("&PostScript"), bg, "ps_butt");
    bg_lay->addWidget(ps_butt);
-   eps_butt=new QeRadioButton("&EPSF", bg, "eps_butt");
+   eps_butt=new QRadioButton("&EPSF", bg, "eps_butt");
    bg_lay->addWidget(eps_butt);
-   bg_lay->activate();
 
       //************* Creating 'Orientation' frame *******************
-   bg=orient_bg=new QeButtonGroup(tr("Orientation"), start);
+   bg=orient_bg=new QButtonGroup(tr("Orientation"), start);
    hlay->addWidget(bg);
    bg_lay=new QVBoxLayout(bg, 10);
    bg_lay->addSpacing(bg->fontMetrics().height());
    bg_lay->addStrut(bg->fontMetrics().width(bg->title()));
-   portrait_butt=new QeRadioButton(tr("Po&rtrait"), bg, "portrait_butt");
+   portrait_butt=new QRadioButton(tr("Po&rtrait"), bg, "portrait_butt");
    bg_lay->addWidget(portrait_butt);
-   landscape_butt=new QeRadioButton(tr("&Landscape"), bg, "landscape_butt");
+   landscape_butt=new QRadioButton(tr("&Landscape"), bg, "landscape_butt");
    bg_lay->addWidget(landscape_butt);
-   bg_lay->activate();
 
       //************* Creating 'Color model' frame *******************
-   bg=color_bg=new QeButtonGroup(tr("Color model"), start);
+   bg=color_bg=new QButtonGroup(tr("Color model"), start);
    hlay->addWidget(bg);
    bg_lay=new QVBoxLayout(bg, 10);
    bg_lay->addSpacing(bg->fontMetrics().height());
    bg_lay->addStrut(bg->fontMetrics().width(bg->title()));
-   color_butt=new QeRadioButton(tr("&Color"), bg, "color_butt");
+   color_butt=new QRadioButton(tr("&Color"), bg, "color_butt");
    bg_lay->addWidget(color_butt);
-   grey_butt=new QeRadioButton(tr("&GreyScale"), bg, "grey_butt");
+   grey_butt=new QRadioButton(tr("&GreyScale"), bg, "grey_butt");
    bg_lay->addWidget(grey_butt);
-   bg_lay->activate();
 
    hlay=new QHBoxLayout(vlay);
    
    //************* Creating 'Scaling' frame *******************
-   bg=scale_bg=new QeButtonGroup(tr("Scaling"), start);
+   bg=scale_bg=new QButtonGroup(tr("Scaling"), start);
    hlay->addWidget(bg);
    bg_lay=new QVBoxLayout(bg, 10);
    bg_lay->addSpacing(bg->fontMetrics().height());
    bg_lay->addStrut(bg->fontMetrics().width(bg->title()));
-   zoom_menu=new QeComboBox(FALSE, bg, "zoom_menu");
+   zoom_menu=new QComboBox(FALSE, bg, "zoom_menu");
    zoom_menu->insertItem(tr(fit_page_str));
    zoom_menu->insertItem(tr(one_to_one_str));
    zoom_menu->insertItem(tr(current_zoom_str));
    zoom_menu->insertItem(tr(custom_zoom_str));
    bg_lay->addWidget(zoom_menu);
-   zoom_spin=new QeSpinBox(5, 999, 1, bg, "zoom_spin");
+   zoom_spin=new QSpinBox(5, 999, 1, bg, "zoom_spin");
    zoom_spin->setSuffix("%");
    zoom_spin->setEnabled(FALSE);
    zoom_spin->setValue(100);
    bg_lay->addWidget(zoom_spin);
-   bg_lay->activate();
 
    //************* Creating 'What to Print' frame *******************
-   bg=what_bg=new QeButtonGroup(tr("What to print"), start);
+   bg=what_bg=new QButtonGroup(tr("What to print"), start);
    hlay->addWidget(bg);
    bg_lay=new QVBoxLayout(bg, 10);
    bg_lay->addSpacing(bg->fontMetrics().height());
    bg_lay->addStrut(bg->fontMetrics().width(bg->title()));
    bg_hlay=new QHBoxLayout(bg_lay);
    
-   copies_spin=new QeSpinBox(1, 99, 1, bg, "print_spin");
+   copies_spin=new QSpinBox(1, 99, 1, bg, "print_spin");
    copies_spin->setSpecialValueText(tr("1 copy"));
    copies_spin->setSuffix(tr(" copies"));
    copies_spin->setValue(1);
    bg_hlay->addWidget(copies_spin);
 
-   label=new QeLabel(tr("of the"), bg);
+   label=new QLabel(tr("of the"), bg);
    bg_hlay->addWidget(label);
    
-   what_menu=new QeComboBox(FALSE, bg, "print_menu");
+   what_menu=new QComboBox(FALSE, bg, "print_menu");
    bg_hlay->addWidget(what_menu);
 
    bg_hlay=new QHBoxLayout(bg_lay);
 
-   custompages_label=new QeLabel(tr("C&ustom pages:"), bg);
+   custompages_label=new QLabel(tr("C&ustom pages:"), bg);
    bg_hlay->addWidget(custompages_label);
-   custompages_text=new QeLineEdit(bg, "custompages_text");
+   custompages_text=new QLineEdit(bg, "custompages_text");
    custompages_text->setMaxLength(128);
    custompages_text->setEnabled(FALSE);
    bg_hlay->addWidget(custompages_text, 1);
    custompages_label->setBuddy(custompages_text);
-   bg_lay->activate();
    static const QString tip=tr("Enter a list of page ranges here\n"
 			       "separated by commas like 1,2,10-12.\n")+
       tr("To make multiple copies try 1,1,1,1.\n")+
@@ -767,34 +773,33 @@ QDPrintDialog::QDPrintDialog(const GP<DjVuDocument> & _doc,
    
 
       //*********** Creating 'PostScript level' frame ****************
-   bg=new QeButtonGroup(tr("PostScript level"), start);
+   bg=new QButtonGroup(tr("PostScript level"), start);
    vlay->addWidget(bg);
    bg_lay=new QVBoxLayout(bg, 10);
    bg_lay->addSpacing(bg->fontMetrics().height());
    bg_hlay=new QHBoxLayout(bg_lay);
    bg_hlay->addSpacing(bg->fontMetrics().height());
    
-   level1_butt=new QeRadioButton(tr("Level &1"), bg, "level1_butt");
+   level1_butt=new QRadioButton(tr("Level &1"), bg, "level1_butt");
    bg_hlay->addWidget(level1_butt);
    QToolTip::add(level1_butt,
                  tr("Generate a portable PostScript. This option is useful\n"
                     "with very old printers and produces very large files.") );
-   level2_butt=new QeRadioButton(tr("Level &2"), bg, "level2_butt");
+   level2_butt=new QRadioButton(tr("Level &2"), bg, "level2_butt");
    bg_hlay->addWidget(level2_butt);
    QToolTip::add(level2_butt,
                  tr("Create a smaller and faster PostScript output.\n"
                     "This is the best choice for most printers.") );
-   level3_butt=new QeRadioButton(tr("Level &3"), bg, "level3_butt");
+   level3_butt=new QRadioButton(tr("Level &3"), bg, "level3_butt");
    bg_hlay->addWidget(level3_butt);
    QToolTip::add(level3_butt,
                  tr("Create the smallest and fastest PostScript output.\n"
                     "Only use this option with recent PS Level 3 printers.\n"
                     "Older printers (even some older level 3 printers) might\n"
                     "print very slowly or not at all.") );
-   bg_lay->activate();
 
       //**************** Creating the "destination" frame *************
-   QeGroupBox * gb=new QeGroupBox(tr("Print destination"), start, "gb");
+   QGroupBox * gb=new QGroupBox(tr("Print destination"), start, "gb");
    vlay->addWidget(gb);
    QVBoxLayout * gb_lay=new QVBoxLayout(gb, 10);
    gb_lay->addSpacing(gb->fontMetrics().height());
@@ -805,44 +810,39 @@ QDPrintDialog::QDPrintDialog(const GP<DjVuDocument> & _doc,
    gb_lay1->addStretch(1);
    QeNInOne * bot_w=new QeNInOne(gb, "bot_w");
    gb_lay->addWidget(bot_w);
-   gb_lay->activate();
 
       // *** top_w
    QHBoxLayout * top_lay=new QHBoxLayout(top_w, 0, 5);
-   label=new QeLabel(tr("Send Image To:"), top_w, "crazy_label");
+   label=new QLabel(tr("Send Image To:"), top_w, "crazy_label");
    top_lay->addWidget(label);
-   QeButtonGroup * dst_bg=new QeButtonGroup(top_w);
+   QButtonGroup * dst_bg=new QButtonGroup(top_w);
    dst_bg->setFrameStyle(QFrame::NoFrame);
    top_lay->addWidget(dst_bg);
    QHBoxLayout * dst_lay=new QHBoxLayout(dst_bg, 0, 5, "dst_lay");
-   printer_butt=new QeRadioButton(tr("Printe&r"), dst_bg, "printer_butt");
+   printer_butt=new QRadioButton(tr("Printe&r"), dst_bg, "printer_butt");
    dst_lay->addWidget(printer_butt);
-   file_butt=new QeRadioButton(tr("F&ile"), dst_bg, "file_butt");
+   file_butt=new QRadioButton(tr("F&ile"), dst_bg, "file_butt");
    dst_lay->addWidget(file_butt);
-   dst_lay->activate();
-   top_lay->activate();
 
       // *** bot_w
    dst_widget=bot_w;
    printer_widget=new QWidget(bot_w, "printer_widget");
    QHBoxLayout * print_lay=new QHBoxLayout(printer_widget, 0, 5, "print_lay");
-   label=new QeLabel(tr("Print Command:"), printer_widget);
+   label=new QLabel(tr("Print Command:"), printer_widget);
    print_lay->addWidget(label);
-   printer_text=new QeLineEdit(printer_widget, "printer_text");
+   printer_text=new QLineEdit(printer_widget, "printer_text");
    printer_text->setMaxLength(128);
    print_lay->addWidget(printer_text, 1);
-   print_lay->activate();
 
    file_widget=new QWidget(bot_w, "file_widget");
    QHBoxLayout * file_lay=new QHBoxLayout(file_widget, 0, 5, "file_lay");
-   label=new QeLabel(tr("File Name:"), file_widget);
+   label=new QLabel(tr("File Name:"), file_widget);
    file_lay->addWidget(label);
-   file_text=new QeLineEdit(file_widget, "file_text");
+   file_text=new QLineEdit(file_widget, "file_text");
    file_text->setMaxLength(128);
    file_lay->addWidget(file_text, 1);
-   QePushButton * browse_butt=new QePushButton(tr("Browse..."), file_widget, "browse_butt");
+   QPushButton * browse_butt=new QPushButton(tr("Browse..."), file_widget, "browse_butt");
    file_lay->addWidget(browse_butt);
-   file_lay->activate();
 
    //***************** Creating the OK/Cancel buttons ***************
    QHBoxLayout * prg_lay=new QHBoxLayout(vlay);
@@ -850,17 +850,15 @@ QDPrintDialog::QDPrintDialog(const GP<DjVuDocument> & _doc,
    prg_lay->addWidget(prog_widget, 1);
    progress=new QeProgressBar(20, prog_widget, "progress_bar");
 
-   save_butt=new QeCheckBox(tr("&Save settings to disk"), prog_widget, "save_butt");
+   save_butt=new QCheckBox(tr("&Save settings to disk"), prog_widget, "save_butt");
    save_butt->setChecked(TRUE);
    prog_widget->setActiveWidget(save_butt);
-   QePushButton * ok_butt=new QePushButton(tr("&OK"), start, "ok_butt");
+   QPushButton * ok_butt=new QPushButton(tr("&OK"), start, "ok_butt");
    ok_butt->setDefault(TRUE);
    prg_lay->addWidget(ok_butt);
-   cancel_butt=new QePushButton(tr("&Cancel"), start, "cancel_butt");
+   cancel_butt=new QPushButton(tr("&Cancel"), start, "cancel_butt");
    prg_lay->addWidget(cancel_butt);
    
-   vlay->activate();
-
       // Connecting signals
    connect(ps_butt, SIGNAL(toggled(bool)), this, SLOT(slotFormatChanged(void)));
    connect(eps_butt, SIGNAL(toggled(bool)), this, SLOT(slotFormatChanged(void)));

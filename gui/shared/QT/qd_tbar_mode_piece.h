@@ -52,7 +52,7 @@ class QDTBarModePiece : public QDTBarPiece
 {
    Q_OBJECT
 private:
-   class QeComboBox	* zoom_menu, * mode_menu;
+   class QComboBox	* zoom_menu, * mode_menu;
    class QDToolButton	* zoom_in_butt, * zoom_out_butt, * pane_butt;
    class QDToolButton	* zoom_select_butt, * text_select_butt, * pin_butt;
    bool         qdtoolbar_child;

@@ -79,8 +79,8 @@ class QDGammaPrefs : public QWidget
 {
    Q_OBJECT
 private:
-   class QeCheckBox	* match_butt;
-   class QeSlider	* displ_slider, * print_slider;
+   class QCheckBox	* match_butt;
+   class QSlider	* displ_slider, * print_slider;
    class QDGammaDispl	* preview;
 private slots:
    void		matchToggled(bool state);
@@ -98,7 +98,7 @@ class QDLensPrefs : public QWidget
 {
    Q_OBJECT
 private:
-   class QeComboBox	* size_menu, * scale_menu, * hkey_menu;
+   class QComboBox	* size_menu, * scale_menu, * hkey_menu;
 private slots:
    void		slotHotKeyChanged(const QString & text);
 signals:
@@ -119,7 +119,7 @@ class QDOptimPrefs : public QWidget
 {
    Q_OBJECT
 private:
-   class QeCheckBox	* fastzoom_butt, * lcd_butt, * fastthumb_butt;
+   class QCheckBox	* fastzoom_butt, * lcd_butt, * fastthumb_butt;
 public:
    bool		fastZoom(void) const;
    bool		fastThumb(void) const;
@@ -134,9 +134,9 @@ class QDCachePrefs : public QWidget
 {
    Q_OBJECT
 private:
-   class QeComboBox		* mcache_menu;
-   class QeLabel		* pcache_label;
-   class QeComboBox		* pcache_menu;
+   class QComboBox		* mcache_menu;
+   class QLabel		* pcache_label;
+   class QComboBox		* pcache_menu;
    class QPushButton		* pcache_butt;
 private slots:
    void		slotClearCache(void);
@@ -156,10 +156,10 @@ class QDTbarPrefs : public QWidget
 {
    Q_OBJECT
 private:
-   class QeCheckBox		* on_butt;
-   class QeCheckBox		* vis_butt;
-   class QeLabel		* delay_label;
-   class QeSpinBox		* delay_spin;
+   class QCheckBox		* on_butt;
+   class QCheckBox		* vis_butt;
+   class QLabel		* delay_label;
+   class QSpinBox		* delay_spin;
 private slots:
    void		slotTBToggled(bool);
 public:

@@ -127,7 +127,7 @@ QeExcMessage::switchDetails(void)
 	 details->show();
       }
       details_butt->setMinimumWidth(details_butt->sizeHint().width());
-      ActivateLayouts(details_butt);
+
    } catch(const GException & exc)
    {
       warning(QStringFromGString(getExcMsg(exc.get_cause())));   
@@ -144,7 +144,7 @@ QeExcMessage::QeExcMessage(const GException & exc, const char * title,
    QHBoxLayout * hlay=new QHBoxLayout(vlay);
 
       // Creating icon and text
-   QeLabel * icon=new QeLabel(this, "exc_icon");
+   QLabel * icon=new QLabel(this, "exc_icon");
 #if defined(QT1) || defined(QT2)
    QPixmap iconpm = QMessageBox::standardIcon(QMessageBox::Critical,
 					      QApplication::style() );
@@ -154,7 +154,7 @@ QeExcMessage::QeExcMessage(const GException & exc, const char * title,
    icon->setPixmap(iconpm);
    hlay->addWidget(icon);
       
-   QeLabel * text=new QeLabel(QStringFromGString(getExcMsg(exc.get_cause())),
+   QLabel * text=new QLabel(QStringFromGString(getExcMsg(exc.get_cause())),
 						 this, "exc_text");
    hlay->addWidget(text);
 
@@ -169,45 +169,42 @@ QeExcMessage::QeExcMessage(const GException & exc, const char * title,
    sep->setMinimumHeight(sep->sizeHint().height());
    sep->setMaximumHeight(sep->sizeHint().height());
    glay->addMultiCellWidget(sep, 0, 0, 0, 1);
-   QeLabel * name, * value;
+   QLabel * name, * value;
    QFont font;
-   name=new QeLabel(tr("Function name"), w, "func_name");
+   name=new QLabel(tr("Function name"), w, "func_name");
    glay->addWidget(name, 1, 0);
    QString func_name=exc.get_function();
    if (!func_name) func_name="unknown";
-   value=new QeLabel(func_name, w, "func_value");
+   value=new QLabel(func_name, w, "func_value");
    value->setFont(QFont("courier", value->font().pointSize()));
    value->setFrameStyle(QFrame::WinPanel | QFrame::Sunken);
    glay->addWidget(value, 1, 1);
-   name=new QeLabel(tr("File name"), w, "file_name");
+   name=new QLabel(tr("File name"), w, "file_name");
    glay->addWidget(name, 2, 0);
    QString file_name=exc.get_file();
    if (!file_name) file_name="unknown";
-   value=new QeLabel(file_name, w, "file_value");
+   value=new QLabel(file_name, w, "file_value");
    value->setFont(QFont("courier", value->font().pointSize()));
    value->setFrameStyle(QFrame::WinPanel | QFrame::Sunken);
    glay->addWidget(value, 2, 1);
-   name=new QeLabel(tr("Line number"), w, "line_name");
+   name=new QLabel(tr("Line number"), w, "line_name");
    glay->addWidget(name, 3, 0);
    char buffer[128];
    sprintf(buffer, "%d", exc.get_line());
-   value=new QeLabel(buffer, w, "line_value");
+   value=new QLabel(buffer, w, "line_value");
    value->setFont(QFont("courier", value->font().pointSize()));
    value->setFrameStyle(QFrame::WinPanel | QFrame::Sunken);
    glay->addWidget(value, 3, 1);
-   glay->activate();
    details->hide();
    
       // Creating buttons
    hlay=new QHBoxLayout(vlay);
    hlay->addStretch(1);
-   QePushButton * ok_butt=new QePushButton(tr("&OK"), this, "ok_butt");
+   QPushButton * ok_butt=new QPushButton(tr("&OK"), this, "ok_butt");
    ok_butt->setDefault(TRUE);
    hlay->addWidget(ok_butt);
-   details_butt=new QePushButton(tr("&Details"), this, "details_butt");
+   details_butt=new QPushButton(tr("&Details"), this, "details_butt");
    hlay->addWidget(details_butt);
-
-   vlay->activate();
 
    connect(ok_butt, SIGNAL(clicked()), this, SLOT(reject()));
    connect(details_butt, SIGNAL(clicked()), this, SLOT(switchDetails()));
@@ -283,7 +280,7 @@ showMessage(QWidget * parent, const QString &qtitle, const QString &qmessage,
    dialog->setCaption(title);
    QWidget * start=dialog->startWidget();
    QVBoxLayout * vlay=new QVBoxLayout(start, 20, 10, "vlay");
-   QeLabel * label=new QeLabel(message, start, "msg_label");
+   QLabel * label=new QLabel(message, start, "msg_label");
    if (draw_frame)
    {
       label->setFrameStyle(QFrame::Box | QFrame::Sunken);
@@ -312,7 +309,7 @@ showMessage(QWidget * parent, const QString &qtitle, const QString &qmessage,
    
    QHBoxLayout * hlay=new QHBoxLayout(vlay);
    hlay->addStretch(1);
-   QePushButton * butt=new QePushButton(QePushButton::tr("&Close"), start, "close_butt");
+   QPushButton * butt=new QPushButton(QPushButton::tr("&Close"), start, "close_butt");
    butt->setDefault(TRUE);
    hlay->addWidget(butt);
 

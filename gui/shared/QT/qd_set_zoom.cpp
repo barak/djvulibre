@@ -114,23 +114,23 @@ QDSetZoom::QDSetZoom(int zoom, QWidget * parent, const char * name) :
    QVBoxLayout * vlay=new QVBoxLayout(start, 10, 10);
    QHBoxLayout * hlay=new QHBoxLayout(10);
    vlay->addLayout(hlay);
-   QeLabel * label=new QeLabel(tr("Custom zoom"), start, "zoom_label");
+   QLabel * label=new QLabel(tr("Custom zoom"), start, "zoom_label");
    hlay->addWidget(label);
-   spin=new QeSpinBox(5, IDC_ZOOM_MAX-IDC_ZOOM_MIN, 10, start, "goto_menu");
+   spin=new QSpinBox(5, IDC_ZOOM_MAX-IDC_ZOOM_MIN, 10, start, "goto_menu");
    spin->setValidator(new QDSetZoomVal(spin));
    spin->setValue(zoom);
    hlay->addWidget(spin);
-   label=new QeLabel(" %", start, "% label");
+   label=new QLabel(" %", start, "% label");
    hlay->addWidget(label);
 
       // Create the buttons
    hlay=new QHBoxLayout(10);
    vlay->addLayout(hlay);
    hlay->addStretch(1);
-   QePushButton * ok_butt=new QePushButton(tr("&OK"), start, "ok_butt");
+   QPushButton * ok_butt=new QPushButton(tr("&OK"), start, "ok_butt");
    ok_butt->setDefault(TRUE);
    hlay->addWidget(ok_butt);
-   QePushButton * cancel_butt=new QePushButton(tr("&Cancel"), start, "cancel_butt");
+   QPushButton * cancel_butt=new QPushButton(tr("&Cancel"), start, "cancel_butt");
    hlay->addWidget(cancel_butt);
 
       // Connect signals

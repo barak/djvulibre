@@ -66,7 +66,7 @@ class QDDocNameDialog : public QeDialog
 {
    Q_OBJECT
 private:
-   QeLineEdit	* text;
+   QLineEdit	* text;
 protected:
    virtual void	done(int);
 protected slots:
@@ -145,36 +145,34 @@ QDDocNameDialog::QDDocNameDialog(const char * message, const char * doc_name,
 
    QVBoxLayout * vlay=new QVBoxLayout(start, 10, 5, "vlay");
 
-   QeLabel * label=new QeLabel(message, start, "message_label");
+   QLabel * label=new QLabel(message, start, "message_label");
    vlay->addWidget(label);
    label->setMaximumHeight(label->sizeHint().height());
 
    QHBoxLayout * hlay=new QHBoxLayout(vlay);
 
-   label=new QeLabel("File name: ", start, "fname_label");
+   label=new QLabel("File name: ", start, "fname_label");
    hlay->addWidget(label);
    label->setMaximumHeight(label->sizeHint().height());
 
-   text=new QeLineEdit(start, "text");
+   text=new QLineEdit(start, "text");
    text->setText(doc_name);
    hlay->addWidget(text, 1);
 
-   QePushButton * browse_butt=new QePushButton("&Browse", start, "browse_butt");
+   QPushButton * browse_butt=new QPushButton("&Browse", start, "browse_butt");
    hlay->addWidget(browse_butt);
    browse_butt->setMaximumHeight(browse_butt->sizeHint().height());
    
    QHBoxLayout * butt_lay=new QHBoxLayout(vlay);
    butt_lay->addStretch(1);
-   QePushButton * ok_butt=new QePushButton("&OK", start, "ok_butt");
+   QPushButton * ok_butt=new QPushButton("&OK", start, "ok_butt");
    butt_lay->addWidget(ok_butt);
-   QePushButton * cancel_butt=new QePushButton("&Cancel", start, "cancel_butt");
+   QPushButton * cancel_butt=new QPushButton("&Cancel", start, "cancel_butt");
    butt_lay->addWidget(cancel_butt);
    ok_butt->setDefault(TRUE);
    ok_butt->setMaximumHeight(ok_butt->sizeHint().height());
    cancel_butt->setMaximumHeight(cancel_butt->sizeHint().height());
    
-   vlay->activate();
-
       // Connecting signals and slots
    connect(ok_butt, SIGNAL(clicked(void)), this, SLOT(accept(void)));
    connect(cancel_butt, SIGNAL(clicked(void)), this, SLOT(reject(void)));
@@ -213,12 +211,12 @@ QDSavedFilesDialog::QDSavedFilesDialog(const GP<DjVuDocument> & doc,
        doc->get_doc_type()==DjVuDocument::OLD_INDEXED)
      message = message + tr(" (plus additional included files)");
    message = message + tr(" into the directory '") + dir_name + "'.";
-   QLabel *label = new QeLabel(message, start);
+   QLabel *label = new QLabel(message, start);
    label->setAlignment(AlignLeft | WordBreak);
    vlay->addWidget(label);
    vlay->addStrut(300);
 
-   label=new QeLabel("Are you sure you want to do it?\n", start);
+   label=new QLabel("Are you sure you want to do it?\n", start);
    vlay->addWidget(label);
 
    QListBox * rc = new QListBox(start, "files_list");
@@ -249,15 +247,12 @@ QDSavedFilesDialog::QDSavedFilesDialog(const GP<DjVuDocument> & doc,
    vlay->addSpacing(10);
    QHBoxLayout * butt_lay=new QHBoxLayout(vlay, 5);
    butt_lay->addStretch(1);
-   QePushButton * yes_butt=new QePushButton("&Yes", start, "yes_butt");
+   QPushButton * yes_butt=new QPushButton("&Yes", start, "yes_butt");
    butt_lay->addWidget(yes_butt);
-   QePushButton * no_butt=new QePushButton("&No", start, "no_butt");
+   QPushButton * no_butt=new QPushButton("&No", start, "no_butt");
    butt_lay->addWidget(no_butt);
    yes_butt->setDefault(TRUE);
    
-   butt_lay->activate();
-   vlay->activate();
-
       // Connecting signals and slots
    connect(yes_butt, SIGNAL(clicked(void)), this, SLOT(accept(void)));
    connect(no_butt, SIGNAL(clicked(void)), this, SLOT(reject(void)));

@@ -55,7 +55,7 @@ class QDSetZoom : public QeDialog
 {
    Q_OBJECT
 private:
-   QeSpinBox	* spin;
+   QSpinBox	* spin;
 public:
    int		getZoom(void) const;
 

@@ -59,10 +59,8 @@ class QDWelcome : public QeDialog
 {
    Q_OBJECT
 private:
-   QeCheckBox		* never_butt;
-   QePushButton		* close_butt;
-protected slots:
-   virtual bool		eventFilter(QObject *, QEvent * ev);
+   QCheckBox		* never_butt;
+   QPushButton		* close_butt;
 signals:
    void		closed(void);
    void		preferences(void);

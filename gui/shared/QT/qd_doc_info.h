@@ -60,9 +60,9 @@ class QDDocInfo : public QTabDialog
 {
    Q_OBJECT
 private:
-   QePushButton		* page_goto_butt;
-   QePushButton		* page_info_butt, * thumb_info_butt, * file_info_butt;
-   QeLabel		* size_label;
+   QPushButton		* page_goto_butt;
+   QPushButton		* page_info_butt, * thumb_info_butt, * file_info_butt;
+   QLabel		* size_label;
    QListView		* page_list, * file_list, * thumb_list;
 
 //   QTabDialog	* tab_dialog;

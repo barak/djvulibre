@@ -238,7 +238,7 @@ QDViewer::runPopupMenu(QMouseEvent * ev)
       popup_menu->setItemChecked(IDC_FULL_SCREEN, fullscreen);
       
 	 // Strange as it may seem, but I can't process popup menu commands
-	 // directly from a slot connected to the proper activate() signal.
+	 // directly from a slot connected to the proper activated() signal.
 	 // The reason is the fact, that QT dislikes when a modal dialog
 	 // is created while the popup menu is still running.
       popup_menu_id=-1;

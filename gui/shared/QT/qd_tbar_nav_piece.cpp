@@ -135,10 +135,10 @@ QDTBarNavPiece::create(void)
    if ( qdtoolbar_child ) 
       ((QDToolBar *)toolbar)->addLeftWidget(separator);
    
-   label=new QeLabel(tr("Page"), toolbar, "page_label");
+   label=new QLabel(tr("Page"), toolbar, "page_label");
    QToolTip::add(label, tr("Page"));
    
-   page_menu=new QeComboBox(TRUE, toolbar, "page_menu");
+   page_menu=new QComboBox(TRUE, toolbar, "page_menu");
    page_menu->setInsertionPolicy(QComboBox::NoInsertion);
    page_menu->setValidator(new QDValidator(page_menu));
    connect(page_menu, SIGNAL(activated(const QString &)),

@@ -186,7 +186,7 @@ QDGammaPrefs::QDGammaPrefs(DjVuPrefs * prefs, QWidget * parent, const char * nam
    DEBUG_MSG("QDGammaPrefs::QDGammaPrefs(): Creating 'Gamma correction' box...\n");
    DEBUG_MAKE_INDENT(3);
 
-   QeLabel * label;
+   QLabel * label;
    QVBoxLayout * topvlay=new QVBoxLayout(this, 10, 5, "hlink_vlay");
    topvlay->addSpacing(fontMetrics().height());
    
@@ -204,22 +204,22 @@ QDGammaPrefs::QDGammaPrefs(DjVuPrefs * prefs, QWidget * parent, const char * nam
    QVBoxLayout * vlay=new QVBoxLayout(5);
    glay->addLayout(vlay, 0, 0);
    vlay->addStretch(1);
-   label=new QeLabel(tr("Screen color correction.\n") +
+   label=new QLabel(tr("Screen color correction.\n") +
                      tr("Adjust slider until\n"
 			"gray shades look similar."), this );
    label->setAlignment(AlignCenter);
    vlay->addWidget(label);
    vlay->addSpacing(5);
-   displ_slider=new QeSlider(5, 50, 1, (int) (prefs->dScreenGamma*10),
+   displ_slider=new QSlider(5, 50, 1, (int) (prefs->dScreenGamma*10),
 			     QSlider::Horizontal, this, "displ_slider");
    displ_slider->setTickmarks(QSlider::Below);
    displ_slider->setTickInterval(5);
    vlay->addWidget(displ_slider);
 
    QHBoxLayout * hlay=new QHBoxLayout(vlay, 1);
-   hlay->addWidget(new QeLabel(tr("Darker"), this));
+   hlay->addWidget(new QLabel(tr("Darker"), this));
    hlay->addStretch(1);
-   hlay->addWidget(new QeLabel(tr("Lighter"), this));
+   hlay->addWidget(new QLabel(tr("Lighter"), this));
    vlay->addStretch(1);
    
       // Preview box
@@ -236,10 +236,10 @@ QDGammaPrefs::QDGammaPrefs(DjVuPrefs * prefs, QWidget * parent, const char * nam
    vlay=new QVBoxLayout(5);
    glay->addLayout(vlay, 2, 0);
    vlay->addStretch(1);
-   label=new QeLabel(tr("Printer color correction."), this);
+   label=new QLabel(tr("Printer color correction."), this);
    label->setAlignment(AlignCenter);
    vlay->addWidget(label);
-   print_slider=new QeSlider(5, 50, 1, prefs->dPrinterGamma==0 ?
+   print_slider=new QSlider(5, 50, 1, prefs->dPrinterGamma==0 ?
 			     (int) (prefs->dScreenGamma*10) :
 			     (int) (prefs->dPrinterGamma*10),
 			     QSlider::Horizontal, this, "print_slider");
@@ -248,13 +248,13 @@ QDGammaPrefs::QDGammaPrefs(DjVuPrefs * prefs, QWidget * parent, const char * nam
    vlay->addWidget(print_slider);
 
    hlay=new QHBoxLayout(vlay,5);
-   hlay->addWidget(new QeLabel(tr("Darker"), this));
+   hlay->addWidget(new QLabel(tr("Darker"), this));
    hlay->addStretch(1);
-   hlay->addWidget(new QeLabel(tr("Lighter"), this));
+   hlay->addWidget(new QLabel(tr("Lighter"), this));
    vlay->addStretch(1);
 
       // Check Box
-   match_butt=new QeCheckBox(tr("Automatic color matching."), this, "match_butt");
+   match_butt=new QCheckBox(tr("Automatic color matching."), this, "match_butt");
    match_butt->setChecked(false);
    if (prefs->dPrinterGamma==0)
      {
@@ -264,8 +264,6 @@ QDGammaPrefs::QDGammaPrefs(DjVuPrefs * prefs, QWidget * parent, const char * nam
      }   
    glay->addWidget(match_butt, 2, 2, Qt::AlignCenter);
 
-   topvlay->activate();
-   
       // Connecting signals and slots
    connect(displ_slider, SIGNAL(valueChanged(int)), preview, SLOT(setGamma(int)));
    connect(match_butt, SIGNAL(toggled(bool)), this, SLOT(matchToggled(bool)));
@@ -330,7 +328,14 @@ QDLensPrefs::slotHlHotKeyChanged(DjVuPrefs::HLButtType key)
    if (key==DjVuPrefs::HLB_CTRL && cur_text==ctrl_hkey ||
        key==DjVuPrefs::HLB_SHIFT && cur_text==shift_hkey ||
        key==DjVuPrefs::HLB_ALT && cur_text==alt_hkey)
-      hkey_menu->setCurrentItem(mid_hkey);
+     {
+       for (int i=0; i<hkey_menu->count(); i++)
+	 if (hkey_menu->text(i) == mid_hkey)
+	   {
+	     hkey_menu->setCurrentItem(i);
+	     break;
+	   }
+     }
 }
    
 QDLensPrefs::QDLensPrefs(DjVuPrefs * prefs, QWidget * parent, const char * name) 
@@ -346,9 +351,9 @@ QDLensPrefs::QDLensPrefs(DjVuPrefs * prefs, QWidget * parent, const char * name)
    glay->setColStretch(0, 1);
    glay->setColStretch(1, 1);
 
-   QeLabel * size_label=new QeLabel(tr("Size: "), this);
+   QLabel * size_label=new QLabel(tr("Size: "), this);
    glay->addWidget(size_label,1,0);
-   size_menu=new QeComboBox(FALSE, this, "mag_size_menu");
+   size_menu=new QComboBox(FALSE, this, "mag_size_menu");
    for(int i=0;i<DjVuPrefs::legal_mag_size_num;i++)
    {
       int size=DjVuPrefs::legal_mag_size[i];
@@ -361,9 +366,9 @@ QDLensPrefs::QDLensPrefs(DjVuPrefs * prefs, QWidget * parent, const char * name)
    }
    glay->addWidget(size_menu,1,1);
 
-   QeLabel * mag_label=new QeLabel(tr("Magnification: "), this);
+   QLabel * mag_label=new QLabel(tr("Magnification: "), this);
    glay->addWidget(mag_label,2,0);
-   scale_menu=new QeComboBox(FALSE, this, "mag_scale_menu");
+   scale_menu=new QComboBox(FALSE, this, "mag_scale_menu");
    for(int i=0;i<DjVuPrefs::legal_mag_scale_num;i++)
    {
       int scale=DjVuPrefs::legal_mag_scale[i];
@@ -375,23 +380,29 @@ QDLensPrefs::QDLensPrefs(DjVuPrefs * prefs, QWidget * parent, const char * name)
    }
    glay->addWidget(scale_menu,2,1);
 
-   QeLabel * label=new QeLabel(tr("To activate press: "), this);
+   QLabel * label=new QLabel(tr("To activate press: "), this);
    glay->addWidget(label,3,0);
-   hkey_menu=new QeComboBox(FALSE, this, "hkey_menu");
+   hkey_menu=new QComboBox(FALSE, this, "hkey_menu");
    hkey_menu->insertItem(tr(ctrl_hkey));
    hkey_menu->insertItem(tr(shift_hkey));
    hkey_menu->insertItem(tr(alt_hkey));
    hkey_menu->insertItem(tr(mid_hkey));
    QString cur_hkey=ctrl_hkey;
+   int item = 0;
    if (prefs->magnifierHotKey==DjVuPrefs::MAG_CTRL)
-      cur_hkey=ctrl_hkey;
+     { cur_hkey=ctrl_hkey; item=0; }
    else if (prefs->magnifierHotKey==DjVuPrefs::MAG_SHIFT)
       cur_hkey=shift_hkey;
    else if (prefs->magnifierHotKey==DjVuPrefs::MAG_ALT)
       cur_hkey=alt_hkey;
    else if (prefs->magnifierHotKey==DjVuPrefs::MAG_MID)
       cur_hkey=mid_hkey;
-   hkey_menu->setCurrentItem(cur_hkey);
+   for (int i=0; i<hkey_menu->count(); i++)
+     if (cur_hkey == hkey_menu->text(i))
+       {
+	 hkey_menu->setCurrentItem(i);
+	 break;
+       }
    glay->addWidget(hkey_menu,3,1);
    
    QString tip=tr("To use the magnifying glass\n"
@@ -438,23 +449,22 @@ QDOptimPrefs::QDOptimPrefs(DjVuPrefs * prefs, QWidget * parent, const char * nam
    vlay->addSpacing(fontMetrics().height());
    vlay->addStretch(1);
 
-   fastzoom_butt=new QeCheckBox(tr("Favor fast magnifications for \"Fit\" resolutions."),
+   fastzoom_butt=new QCheckBox(tr("Favor fast magnifications for \"Fit\" resolutions."),
 				this, "fastzoom_butt");
    fastzoom_butt->setChecked(prefs->fastZoom);
    vlay->addWidget(fastzoom_butt);
 
-   fastthumb_butt=new QeCheckBox(tr("Enable fast thumbnails."),
+   fastthumb_butt=new QCheckBox(tr("Enable fast thumbnails."),
 				 this, "fastthumb_butt");
    fastthumb_butt->setChecked(prefs->fastThumb);
    vlay->addWidget(fastthumb_butt);
 
-   lcd_butt=new QeCheckBox(tr("Optimize images for 24-bit LCD displays."),
+   lcd_butt=new QCheckBox(tr("Optimize images for 24-bit LCD displays."),
 			   this, "lcd_butt");
    lcd_butt->setChecked(prefs->optimizeLCD);
    vlay->addWidget(lcd_butt);
 
    vlay->addStretch(2);
-   vlay->activate();
 }
 
 //***************************************************************************
@@ -514,9 +524,9 @@ QDCachePrefs::QDCachePrefs(DjVuPrefs * prefs, bool pcache_on,
    glay->setColStretch(1, 1);
    glay->setColStretch(2, 1);
 
-   QeLabel * mcache_label=new QeLabel(tr("Off screen cache size:"), this);
+   QLabel * mcache_label=new QLabel(tr("Off screen cache size:"), this);
    glay->addWidget(mcache_label, 1, 0);
-   mcache_menu=new QeComboBox(this, "mcache_menu");
+   mcache_menu=new QComboBox(this, "mcache_menu");
    int mcache_item=-1;
    mcache_menu->insertItem("0 Mb"); mcache_item+=(prefs->mcacheSize>=0);
    mcache_menu->insertItem("1 Mb"); mcache_item+=(prefs->mcacheSize>=1);
@@ -528,10 +538,10 @@ QDCachePrefs::QDCachePrefs(DjVuPrefs * prefs, bool pcache_on,
 
    if (pcache_on)
    {
-      pcache_label=new QeLabel(tr("Decoded pages cache:"), this);
+      pcache_label=new QLabel(tr("Decoded pages cache:"), this);
       pcache_label->setEnabled(get_file_cache()->is_enabled());
       glay->addWidget(pcache_label, 2, 0);
-      pcache_menu=new QeComboBox(this, "pcache_menu");
+      pcache_menu=new QComboBox(this, "pcache_menu");
       pcache_menu->setEnabled(get_file_cache()->is_enabled());
       int pcache_item=-1;
       pcache_menu->insertItem("0 Mb"); pcache_item+=(prefs->pcacheSize>=0);
@@ -612,25 +622,24 @@ QDTbarPrefs::QDTbarPrefs(DjVuPrefs * prefs, QWidget * parent, const char * name)
    QVBoxLayout * vlay=new QVBoxLayout(this, 10, 5, "tbar_vlay");
    vlay->addSpacing(fontMetrics().height());
    vlay->addStretch(1);
-   on_butt=new QeCheckBox(tr("Toolbar enabled"), this, "on_butt");
+   on_butt=new QCheckBox(tr("Toolbar enabled"), this, "on_butt");
    on_butt->setChecked(prefs->toolBarOn);
    vlay->addWidget(on_butt);
-   vis_butt=new QeCheckBox(tr("Always visible"), this, "vis_butt");
+   vis_butt=new QCheckBox(tr("Always visible"), this, "vis_butt");
    vis_butt->setChecked(prefs->toolBarAlwaysVisible);
    vis_butt->setEnabled(prefs->toolBarOn);
    vlay->addWidget(vis_butt);
    vlay->addStretch(1);
    QHBoxLayout * spin_lay=new QHBoxLayout(vlay,5);
-   delay_label=new QeLabel(tr("Toolbar hide delay:"), this, "delay_label");
+   delay_label=new QLabel(tr("Toolbar hide delay:"), this, "delay_label");
    delay_label->setEnabled(prefs->toolBarOn && !prefs->toolBarAlwaysVisible);
    spin_lay->addWidget(delay_label);
-   delay_spin=new QeSpinBox(0, 5000, 250, this, "delay_spin");
+   delay_spin=new QSpinBox(0, 5000, 250, this, "delay_spin");
    delay_spin->setSuffix(" msec");
    delay_spin->setValue(prefs->toolBarDelay);
    delay_spin->setEnabled(prefs->toolBarOn && !prefs->toolBarAlwaysVisible);
    spin_lay->addWidget(delay_spin);
    vlay->addStretch(2);
-   vlay->activate();
 
    connect(on_butt, SIGNAL(toggled(bool)), this, SLOT(slotTBToggled(bool)));
    connect(vis_butt, SIGNAL(toggled(bool)), this, SLOT(slotTBToggled(bool)));

@@ -54,9 +54,9 @@ class QDTBarNavPiece : public QDTBarPiece
 private:
    bool		created;
    
-   class QeComboBox	* page_menu;
+   class QComboBox	* page_menu;
    class QFrame		* separator;
-   class QeLabel	* label;
+   class QLabel	* label;
    class QDToolButton	* npage_butt, * ppage_butt;
    class QDToolButton	* nnpage_butt, * pppage_butt;
    class QDToolButton	* fpage_butt, * lpage_butt;

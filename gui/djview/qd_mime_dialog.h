@@ -53,7 +53,7 @@ class QDMimeDialog : public QeDialog
 {
    Q_OBJECT
 private:
-   class QeRadioButton	* again_butt, * dontask_butt, * dontcheck_butt;
+   class QRadioButton	* again_butt, * dontask_butt, * dontcheck_butt;
 public:
    bool		dontAsk(void) const;
    bool		dontCheck(void) const;

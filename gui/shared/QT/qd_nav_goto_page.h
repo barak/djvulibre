@@ -56,7 +56,7 @@ class QDNavGotoPage : public QeDialog
 {
    Q_OBJECT
 private:
-   QeComboBox	* menu;
+   QComboBox	* menu;
 public:
    int		getPageNum(void) const;
    

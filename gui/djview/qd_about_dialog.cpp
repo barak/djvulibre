@@ -63,13 +63,13 @@ QDAboutDialog::QDAboutDialog(QWidget *parent, const char *name, bool modal)
 {
       setCaption(tr("About DjView"));
       QWidget * start=startWidget();
-      QeLabel * label;
+      QLabel * label;
       QVBoxLayout * vlay=new QVBoxLayout(start, 10, 10);
       QFrame * frame=new QFrame(start);
       frame->setFrameStyle(QFrame::Box | QFrame::Sunken);
       vlay->addWidget(frame);
       QVBoxLayout * frame_vlay=new QVBoxLayout(frame, 20, 10);
-      label=new QeLabel(tr("DjVu standalone viewer\nand browser plugin."), frame);
+      label=new QLabel(tr("DjVu standalone viewer\nand browser plugin."), frame);
       QFont font=label->font();
       font.setBold(TRUE);
       font.setPointSize(font.pointSize()+3);
@@ -77,17 +77,15 @@ QDAboutDialog::QDAboutDialog(QWidget *parent, const char *name, bool modal)
       label->setAlignment(AlignCenter);
       frame_vlay->addWidget(label);
       QString ver=tr("Version DjVuLibre-")+DJVIEW_VERSION_STR;
-      label=new QeLabel(ver, frame);
+      label=new QLabel(ver, frame);
       label->setAlignment(AlignCenter);
       frame_vlay->addWidget(label);
-      frame_vlay->activate();
       QHBoxLayout * hlay=new QHBoxLayout(vlay, 10);
       hlay->addStretch(1);
-      QePushButton * butt=new QePushButton(tr("&Close"), start);
+      QPushButton * butt=new QPushButton(tr("&Close"), start);
       butt->setDefault(TRUE);
       hlay->addWidget(butt);
       hlay->addStretch(1);
-      vlay->activate();
       connect(butt, SIGNAL(clicked(void)), this, SLOT(accept(void)));
 }
 

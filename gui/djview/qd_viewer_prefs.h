@@ -56,9 +56,9 @@ class QDHlinkPrefs : public QWidget
 {
    Q_OBJECT
 private:
-   QeCheckBox		* popup_butt;
-   QeCheckBox		* border_butt;
-   QeComboBox		* key_menu;
+   QCheckBox		* popup_butt;
+   QCheckBox		* border_butt;
+   QComboBox		* key_menu;
 private slots:
    void		slotHotKeyChanged(int);
 signals:
@@ -86,7 +86,7 @@ private:
    QDCachePrefs		* cache_prefs;
    QDTbarPrefs		* tbar_prefs;
    
-   class QeCheckBox	* global_butt;
+   class QCheckBox	* global_butt;
    bool			cache_disabled;
 
    DjVuPrefs		* prefs;

@@ -64,28 +64,28 @@ class QDPrintDialog : public QeDialog
 public:
    enum What { PRINT_PAGE, PRINT_DOC, PRINT_CUSTOM, PRINT_WIN };
 private:
-   class QeRadioButton	* ps_butt, * eps_butt;
-   class QeRadioButton	* portrait_butt, * landscape_butt;
-   class QeRadioButton	* color_butt, * grey_butt;
-   class QeRadioButton	* level1_butt, * level2_butt, * level3_butt;
-   class QeComboBox	* what_menu;
-   class QeSpinBox	* copies_spin;
-   class QeLabel	* custompages_label;
-   class QeLineEdit	* custompages_text;
-   class QeCheckBox	* save_butt;
-   class QeButtonGroup	* format_bg, * orient_bg, * color_bg;
-   class QeButtonGroup	* scale_bg, * what_bg;
-   class QeComboBox	* zoom_menu;
-   class QeSpinBox	* zoom_spin;
+   class QRadioButton	* ps_butt, * eps_butt;
+   class QRadioButton	* portrait_butt, * landscape_butt;
+   class QRadioButton	* color_butt, * grey_butt;
+   class QRadioButton	* level1_butt, * level2_butt, * level3_butt;
+   class QComboBox	* what_menu;
+   class QSpinBox	* copies_spin;
+   class QLabel	* custompages_label;
+   class QLineEdit	* custompages_text;
+   class QCheckBox	* save_butt;
+   class QButtonGroup	* format_bg, * orient_bg, * color_bg;
+   class QButtonGroup	* scale_bg, * what_bg;
+   class QComboBox	* zoom_menu;
+   class QSpinBox	* zoom_spin;
 
    QeNInOne		* dst_widget;
    QWidget		* printer_widget, * file_widget;
-   class QeRadioButton	* printer_butt, * file_butt;
-   class QeLineEdit	* printer_text, * file_text;
+   class QRadioButton	* printer_butt, * file_butt;
+   class QLineEdit	* printer_text, * file_text;
 
    QeNInOne		* prog_widget;
    class QeProgressBar	* progress;
-   class QePushButton	* cancel_butt;
+   class QPushButton	* cancel_butt;
 
    GP<DjVuDocument>	doc;
    GP<DjVuImage>	dimg;

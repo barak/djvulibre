@@ -89,7 +89,7 @@ QDMimeDialog::QDMimeDialog(QWidget * parent, const char * name, bool modal)
                     " type when sending DjVu documents via e-mail.\n\nWould "
                     " you like to update these files now?");
 
-   QeLabel * label=new QeLabel(msg, frame);
+   QLabel * label=new QLabel(msg, frame);
    label->setAlignment(AlignLeft | WordBreak);
    frame_vlay->addWidget(label);
 
@@ -98,11 +98,11 @@ QDMimeDialog::QDMimeDialog(QWidget * parent, const char * name, bool modal)
    sep->setMinimumHeight(sep->sizeHint().height());
    frame_vlay->addWidget(sep);
    
-   again_butt=new QeRadioButton(tr("Next time &check this again"), frame);
+   again_butt=new QRadioButton(tr("Next time &check this again"), frame);
    frame_vlay->addWidget(again_butt);
-   dontask_butt=new QeRadioButton(tr("Next time do the update &silently"), frame);
+   dontask_butt=new QRadioButton(tr("Next time do the update &silently"), frame);
    frame_vlay->addWidget(dontask_butt);
-   dontcheck_butt=new QeRadioButton(tr("&Never do this check again"), frame);
+   dontcheck_butt=new QRadioButton(tr("&Never do this check again"), frame);
    frame_vlay->addWidget(dontcheck_butt);
    
    label->setMinimumWidth(again_butt->sizeHint().width()*2);
@@ -118,17 +118,13 @@ QDMimeDialog::QDMimeDialog(QWidget * parent, const char * name, bool modal)
    dontcheck_butt->setChecked(prefs.mimeDontCheck && !prefs.mimeDontAsk);
    again_butt->setChecked(!prefs.mimeDontCheck && !prefs.mimeDontAsk);
    
-   frame_vlay->activate();
-   
    QHBoxLayout * butt_lay=new QHBoxLayout(vlay,5);
    butt_lay->addStretch(1);
-   QePushButton * yes_butt=new QePushButton(tr("&Yes"), start, "yes_butt");
+   QPushButton * yes_butt=new QPushButton(tr("&Yes"), start, "yes_butt");
    yes_butt->setDefault(TRUE);
    butt_lay->addWidget(yes_butt);
-   QePushButton * no_butt=new QePushButton(tr("&No"), start, "no_butt");
+   QPushButton * no_butt=new QPushButton(tr("&No"), start, "no_butt");
    butt_lay->addWidget(no_butt);
-   
-   vlay->activate();
    
    connect(yes_butt, SIGNAL(clicked(void)), this, SLOT(accept(void)));
    connect(no_butt, SIGNAL(clicked(void)), this, SLOT(reject(void)));

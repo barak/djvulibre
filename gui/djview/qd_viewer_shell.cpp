@@ -535,8 +535,6 @@ QDViewerShell::QDViewerShell(QWidget * parent, const char * name)
    status_bar->setFixedHeight(status_bar->sizeHint().height());
    status_bar->setAlignment(AlignVCenter | AlignLeft);
    flay->addWidget(status_bar);
-   flay->activate();
-   vlay->activate();
    setCentralWidget(central);
 
       // Create the startup image
@@ -563,7 +561,7 @@ QDViewerShell::QDViewerShell(QWidget * parent, const char * name)
 
 	    // OK. Successfully decoded image. Get rid of default
 	    // wallpaper and create the label with the pixmap
-	 QeLabel * l=new QeLabel(main, "wpaper");
+	 QLabel * l=new QLabel(main, "wpaper");
 	 l->setAlignment(AlignCenter);
 	 l->setBackgroundColor(white);
 	 l->setPixmap(qpix);

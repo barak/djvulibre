@@ -123,9 +123,9 @@ QDNavGotoPage::QDNavGotoPage(GP<DjVuDocument> &doc,
    QVBoxLayout * vlay=new QVBoxLayout(start, 10, 10);
    QHBoxLayout * hlay=new QHBoxLayout(10);
    vlay->addLayout(hlay);
-   QeLabel * label=new QeLabel(tr("Goto page"), start, "goto_label");
+   QLabel * label=new QLabel(tr("Goto page"), start, "goto_label");
    hlay->addWidget(label);
-   menu=new QeComboBox(TRUE, start, "goto_menu");
+   menu=new QComboBox(TRUE, start, "goto_menu");
    menu->setInsertionPolicy(QComboBox::NoInsertion);
    menu->setValidator(new QDPageNumVal(menu));
    hlay->addWidget(menu);
@@ -134,10 +134,10 @@ QDNavGotoPage::QDNavGotoPage(GP<DjVuDocument> &doc,
    hlay=new QHBoxLayout(10);
    vlay->addLayout(hlay);
    hlay->addStretch(1);
-   QePushButton * ok_butt=new QePushButton(tr("&OK"), start, "ok_butt");
+   QPushButton * ok_butt=new QPushButton(tr("&OK"), start, "ok_butt");
    ok_butt->setDefault(TRUE);
    hlay->addWidget(ok_butt);
-   QePushButton * cancel_butt=new QePushButton(tr("&Cancel"), start, "cancel_butt");
+   QPushButton * cancel_butt=new QPushButton(tr("&Cancel"), start, "cancel_butt");
    hlay->addWidget(cancel_butt);
 
       // Set menu contents

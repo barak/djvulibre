@@ -83,7 +83,7 @@ void QeNInOne::recomputeMinMax(void)
    if (max_w!=max.width()) { setMaximumWidth(max_w); done=1; }
    if (min_h!=min.height()) { setMinimumHeight(min_h); done=1; }
    if (max_h!=max.height()) { setMaximumHeight(max_h); done=1; }
-   if (done) ActivateLayouts(this);
+   if (done) updateGeometry();
 }
 #else
 QSize QeNInOne::sizeHint(void) const
@@ -201,7 +201,6 @@ void QeNInOne::setActiveWidget(QWidget * new_w)
 #ifdef QT1
 	 setMinimumSize(activeWidget->minimumSize());
 	 setMaximumSize(activeWidget->maximumSize());
-	 ActivateLayouts(this);
 #else
          updateGeometry();
 #endif
@@ -278,7 +277,6 @@ void QeNInOne::hide(void)
    {
 #ifdef QT1
       setFixedSize(QSize(1, 1));
-      ActivateLayouts(this);
 #endif
    }
 

@@ -165,7 +165,7 @@ QDTBarModePiece::QDTBarModePiece(QWidget * toolbar) : QDTBarPiece(toolbar)
    else
       qdtoolbar_child=FALSE;
    
-   mode_menu=new QeComboBox(FALSE, toolbar, "mode_menu");
+   mode_menu=new QComboBox(FALSE, toolbar, "mode_menu");
    mode_menu->insertItem(tr("Color"));
    mode_menu->insertItem(tr("B&W"));
    mode_menu->insertItem(tr("Fore"));
@@ -186,7 +186,7 @@ QDTBarModePiece::QDTBarModePiece(QWidget * toolbar) : QDTBarPiece(toolbar)
       ((QDToolBar *)toolbar)->addLeftWidget(frame);
 #endif
    
-   zoom_menu=new QeComboBox(TRUE, toolbar, "zoom_menu");
+   zoom_menu=new QComboBox(TRUE, toolbar, "zoom_menu");
    zoom_menu->setInsertionPolicy(QComboBox::NoInsertion);
    zoom_menu->setValidator(new QDZoomValidator(zoom_menu));
    int i;

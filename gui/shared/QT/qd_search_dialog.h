@@ -61,13 +61,13 @@ private:
    static bool	search_backwards;
    static bool	whole_word;
 
-   class QeLineEdit	* text;
-   class QeCheckBox	* all_pages_butt;
-   class QeCheckBox	* case_butt;
-   class QeCheckBox	* back_butt;
-   class QeCheckBox	* whole_word_butt;
-   class QePushButton	* search_butt;
-   class QePushButton	* clear_butt;
+   class QLineEdit	* text;
+   class QCheckBox	* all_pages_butt;
+   class QCheckBox	* case_butt;
+   class QCheckBox	* back_butt;
+   class QCheckBox	* whole_word_butt;
+   class QPushButton	* search_butt;
+   class QPushButton	* clear_butt;
    class QLabel		* status_label;
 
    bool			in_search;
