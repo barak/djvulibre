@@ -599,9 +599,9 @@ DjVuToPS::store_page_setup(ByteStream &str, int page_num,
   else
     {
       write(str, 
-            "/portrait %s def        %% Specifies image orientation\n"
-            "/fit-page %s def        %% If true, the image will be scaled to fit the page\n"
-            "/zoom %d def        %% Zoom factor in percents used to pre-scale image\n"
+            "/portrait %s def    %% Specifies image orientation\n"
+            "/fit-page %s def    %% Scale image to fit page?\n"
+            "/zoom %d def        %% Zoom factor in percents\n"
             "/image-dpi %d def\n"
             "clippath pathbbox\n"
             "2 index sub exch\n"
@@ -630,8 +630,10 @@ DjVuToPS::store_page_setup(ByteStream &str, int page_num,
             "  } {\n"
             "    /coeff 72 image-dpi div zoom mul 100 div def\n"
             "  } ifelse\n"
-            "  /start-x page-x page-width image-width coeff mul sub 2 div add def\n"
-            "  /start-y page-y page-height image-height coeff mul sub 2 div add def\n"
+            "  /start-x page-x page-width image-width\n"
+            "      coeff mul sub 2 div add def\n"
+            "  /start-y page-y page-height image-height\n"
+            "      coeff mul sub 2 div add def\n"
             "  /a11 coeff def\n"
             "  /a12 0 def\n"
             "  /a13 start-x def\n"
@@ -650,8 +652,10 @@ DjVuToPS::store_page_setup(ByteStream &str, int page_num,
             "  } {\n"
             "    /coeff 72 image-dpi div zoom mul 100 div def\n"
             "  } ifelse\n"
-            "  /start-x page-x page-width add page-width image-height coeff mul sub 2 div sub def\n"
-            "  /start-y page-y page-height image-width coeff mul sub 2 div add def\n"
+            "  /start-x page-x page-width add page-width image-height\n"
+            "      coeff mul sub 2 div sub def\n"
+            "  /start-y page-y page-height image-width\n"
+            "      coeff mul sub 2 div add def\n"
             "  /a11 0 def\n"
             "  /a12 coeff neg def\n"
             "  /a13 start-x image-y coeff neg mul sub def\n"
@@ -789,8 +793,10 @@ DjVuToPS::print_fg_2layer(ByteStream &str, const GP<DjVuImage> &dimg,
   GPixel p;
   int currentx=0;
   int currenty=0;
-  GP<DjVuPalette>pal = dimg->get_fgbc();
+  GP<DjVuPalette> pal = dimg->get_fgbc();
   GP<JB2Image> jb2 = dimg->get_fgjb();
+  if (! pal) return;
+  if (! jb2) return;
   int num_blits = jb2->get_blit_count();
   int current_blit;
   for(current_blit=0; current_blit<num_blits; current_blit++)
@@ -831,6 +837,7 @@ DjVuToPS::print_fg_3layer(ByteStream &str, const GP<DjVuImage> &dimg,
 {
   GRect prn_rect;
   GP<GPixmap> brush = dimg->get_fgpm();
+  if (! brush) return;
   int br = brush->rows();
   int bc = brush->columns();
   int red = compute_red(dimg->get_width(),dimg->get_height(),bc,br);
@@ -840,6 +847,7 @@ DjVuToPS::print_fg_3layer(ByteStream &str, const GP<DjVuImage> &dimg,
   prn_rect.xmax = (cprn_rect.xmax+red-1)/red;
   int color_nb = ((options.get_color()) ? 3 : 1);
   GP<JB2Image> jb2 = dimg->get_fgjb();
+  if (! jb2) return;
   int pw = bc;
   int ph = 2;
 
@@ -919,7 +927,8 @@ DjVuToPS::print_fg_3layer(ByteStream &str, const GP<DjVuImage> &dimg,
                       }
                   }
               }
-            unsigned char *stop_ascii = ASCII85_encode(s_ascii_encoded,s,s+w*h*color_nb);
+            unsigned char *stop_ascii = 
+              ASCII85_encode(s_ascii_encoded,s,s+w*h*color_nb);
             *stop_ascii++='\0';
             write(str,"%s",s_ascii_encoded);
             write(str,"~> %d %d P\n", w, h);
@@ -950,6 +959,7 @@ DjVuToPS::print_fg(ByteStream &str, const GP<DjVuImage> &dimg,
                    const GRect &prn_rect)
 {
   GP<JB2Image> jb2=dimg->get_fgjb();
+  if (! jb2) return;
   int num_blits = jb2->get_blit_count();
   int num_shapes = jb2->get_shape_count();
   unsigned char *dict_shapes = 0;
