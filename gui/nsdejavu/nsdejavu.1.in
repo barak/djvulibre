@@ -411,6 +411,17 @@ Galeon internally uses the Mozilla rendering engine.
 Install the plugin for Mozilla and it should also
 work for Galeon.
 .PP
+.SS Mozilla Firebird
+.PP
+The DjVu plugin works nicely with Mozilla Firebird 0.6.1 or better.
+You must establish a link from the Firebird plugin directory.  
+Assuming that Mozilla is installed under 
+.IR /usr/lib/mozilla-firebird :
+.IP "" 2
+.BI "cd " "/usr/lib/mozilla-firebird" "/plugins"
+.br
+.B "ln -s LIBDIR/netscape/plugins/NSDEJAVUSO ."
+.PP
 .SS Konqueror
 .PP
 The DjVu plugin works with

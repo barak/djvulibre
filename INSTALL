@@ -282,9 +282,21 @@ Works nicely.
 Install the plugin for mozilla and it will work for galeon.
 
 
+3.6- MOZILLA FIREBIRD
+---------------------
 
-3.6- OPERA-6
-------------
+You must establish a link from the mozilla plugin directory.  Let us assume
+that mozilla is installed under /usr/lib/mozilla-firebird and 
+that the DjVu plug-in is installed in /usr/local/lib/netscape/plugins.
+
+    $ cd /usr/lib/mozilla-firebird/plugins
+    $ ln -s /usr/local/lib/netscape/plugins/nsdejavu.so nsdejavu.so
+
+Works nicely.
+
+
+3.7- OPERA
+----------
 
 You must install openmotif to have plugin support in Opera.
 The DjVu plugin then works okay.  
