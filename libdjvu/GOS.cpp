@@ -370,7 +370,7 @@ GOS::encode_mbcs_reserved(const char * filename)
 
 #if defined(AUTOCONF) && !defined(HAVE_STRERROR)
 #define NEED_STRERROR
-#elif defined(sun) && ! defined(svr4)
+#elif defined(sun) && !defined(__svr4__)
 #define NEED_STRERROR
 #endif
 #ifdef NEED_STRERROR
