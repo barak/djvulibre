@@ -15,9 +15,9 @@
 # GNU General Public License for more details.
 # 
 # DjVuLibre-3.5 is derived from the DjVu(r) Reference Library
-# distribued by Lizardtech Software.  On July 19th 2002, Lizardtech 
-# Software authorized us to replace the original DjVu(r) Reference 
-# Library by the following notice (see etc/PATENT.djvu):
+# distribued by Lizardtech Software.
+#
+# $Id$
 #
 # ----------------------------------------
 # Initialization
@@ -399,7 +399,7 @@ echo ""
 echo "Configuration is done."
 echo "Compile with command:"
 test x$GXX = xyes && \
-echo "    $ make depend"
+echo "    $ make depend     (optional!)"
 echo "    $ make"
 echo "Then install the binaries in $prefix with command:"
 echo "    # make install"

@@ -73,7 +73,7 @@ OBJS = \
 
 ${LIBDJVU_LA} : ${OBJS}
 	@echo "[ generating $@ ... ]"
-	${LIBTOOL} --mode=link ${CXX} ${CXXFLAGS} \
+	${LIBTOOL} --mode=link ${CXX} ${CXXFLAGS} -no-undefined \
 	    -rpath ${libdir} -version-info ${LIBDJVU_VER} \
 	    ${OBJS} ${LIBS} -o ${LIBDJVU_LA}
 
