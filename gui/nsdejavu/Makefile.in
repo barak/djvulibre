@@ -58,19 +58,20 @@ nsdejavu.la: nsdejavu.lo
 
 nsdejavu.x: nsdejavu.la
 	eval `grep '^dlname=' nsdejavu.la` && \
-	  echo $${dlname-nsdejavu.so} | sed -e 's/\.[0-9.]*$$//g' > $@ 
+	  echo $${dlname} | sed -e 's/\(\.[0-9][0-9]*\)*//g' > $@ 
 
 nsdejavu.1: nsdejavu.1.in nsdejavu.x
-	eval "NSDEJAVU=`cat nsdejavu.x`" && \
+	eval "nsdejavu=`cat nsdejavu.x`" && \
 	  sed < ${srcdir}/nsdejavu.1.in > nsdejavu.1 \
-	   -e 's,LIBDIR,${libdir},' -e "s,NSDEJAVUSO,$$NSDEJAVU,"
+	   -e 's,LIBDIR,${libdir},' -e "s,NSDEJAVUSO,$$nsdejavu,"
 
 install: install-bin install-man
 
 install-bin: nsdejavu.la FORCE
 	${INSTALL} -d ${DESTDIR}${plugindir}	
-	eval "NSDEJAVU=`cat nsdejavu.x`" && \
-	  ${INSTALL} -m 0644 .libs/$$NSDEJAVU ${DESTDIR}${plugindir}
+	eval "nsdejavu=`cat nsdejavu.x`" && \
+	  eval `grep '^dlname=' nsdejavu.la` && \
+	  ${INSTALL} -m 0644 .libs/$$dlname ${DESTDIR}${plugindir}/$$nsdejavu
 
 install-man: nsdejavu.1 FORCE
 	${INSTALL} -d ${DESTDIR}${mandir}/man1
