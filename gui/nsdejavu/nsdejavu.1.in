@@ -91,7 +91,7 @@ content-type is to invoke the following command with a URL
 corresponding to a DjVu file on the server, such as
 .BR http://nips.djvuzone.org/djvu/nips13/AgueraFairhallBialek.djvu .
 .IP "" 2
-.BI "wget --debug --output-file=/dev/null " URL " 2>&1 | grep Content-Type"
+.BI "wget --debug --output-document=/dev/null " URL " 2>&1 | grep Content-Type"
 .PP
 The result should be one of the following, preferably the first.
 .IP "" 2
