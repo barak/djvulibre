@@ -546,26 +546,49 @@ AC_DEFUN([AC_PATH_QT],
   # Resolve variables
   if test x$QTDIR != xno ; then
     AC_MSG_CHECKING([for Qt root directory])
-    if test x${QT_CFLAGS+set} != xset -a x${QT_LIBS+set} != xset ; then
+    if test x${QT_CFLAGS+set} = xset -o x${QT_LIBS+set} = xset ; then
+       ac_has_qt=yes   # no questions asked
+    else
+       ac_has_qt=no    # check QTDIR
        ac_qt_dirs="/usr/lib/qt /usr/local /usr/X11R6 /usr"
        for n in /usr/lib/qt-2.* ; do test -d $n && ac_qt_dirs="$n $ac_qt_dirs" ; done
        ac_qt_dirs="$QTDIR /usr/lib/qt2 $ac_qt_dirs"
-       QTDIR=no
        for dir in $ac_qt_dirs ; do
           if test -r $dir/include/qwidget.h ; then
+            ac_has_qt="$dir"'/{lib,include}'
             QTDIR=$dir
             break
           fi
        done
     fi
-    AC_MSG_RESULT($QTDIR)
   fi
+  # Unusual install
+  if test x$ac_has_qt = xno -a x$QTDIR != xno ; then
+     ac_qt_names="qt qt2"
+     ac_qt_dirs="$QTDIR /usr /usr/X11R6 /usr/local"
+     for d in $ac_qt_dirs ; do
+       for n in $ac_qt_names ; do
+         if test -r $d/include/$n/qwidget.h ; then
+           for l in lib$n.so lib$n.a ; do
+             if test -r $d/include/$n/qwidget.h ; then
+               QT_CFLAGS="-I$d/include/$n"
+               QT_LIBS="-L$d -l$n"
+               QTDIR=$d
+               ac_has_qt="$d"'/{lib,include/'"$n"'}'
+               break 3
+             fi
+           done
+         fi
+       done
+     done
+  fi
+  AC_MSG_RESULT($ac_has_qt)
   # Programs
   if test x$QTDIR != xno ; then
     test x${QT_CFLAGS+set} != xset && QT_CFLAGS="-I$QTDIR/include"
     test x${QT_LIBS+set} != xset && QT_LIBS="-L$QTDIR/lib -lqt"
-    AC_PATH_PROG(MOC, moc, [unknown], "$QTDIR/bin:$PATH")
-    AC_PATH_PROG(UIC, uic, [unknown], "$QTDIR/bin:$PATH")
+    AC_PATH_PROGS(MOC, [moc moc2], [unknown], "$QTDIR/bin:$PATH")
+    AC_PATH_PROGS(UIC, [uic uic2], [unknown], "$QTDIR/bin:$PATH")
     if test -x "$MOC" ; then : ; else 
         AC_MSG_WARN([Cannot run the Qt Meta-Object compiler.])
         QTDIR=no
