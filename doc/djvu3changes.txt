@@ -498,11 +498,13 @@
           (<key> "<value>")
        \end{verbatim}
        parameter #<key># is a symbolic attribute name such as #year#,
-       #booktitle#, #editor#, #author#, and parameter is a UTF-8 encoded 
-       string representing the attribute value.  It is suggested to use the 
-       same key names as the BibTeX bibliography system.
+       #booktitle#, #editor#, #author#, and parameter #<value>#
+       is a UTF-8 encoded string representing the attribute value.  
+       Common C escape sequences are recognized.
+       It is suggested to use the same key names as 
+       the BibTeX bibliography system.
 
-       Metadata pertaining to the entire document are usually placed
+       Metadata pertaining to the entire document should be placed
        in a shared annotation file (and therefore are seen in all pages).
        Metadata pertaining to a particular page are usually places
        inside an #"ANTz"# chunk in this particular page.
