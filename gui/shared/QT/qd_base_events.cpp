@@ -640,8 +640,8 @@ QDBase::eventFilter(QObject *obj, QEvent *e)
 				    ma->layout(GRect(0, 0, dimg->get_width(), dimg->get_height()));
 				    ma->repaint();
 				 }
-
-				 QApplication::clipboard()->setText((const char *)UTF8selectedtext);
+                                 
+				 QApplication::clipboard()->setText(QStringFromGString(UTF8selectedtext));
 			      }
 			   }
 			}
