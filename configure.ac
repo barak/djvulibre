@@ -176,7 +176,7 @@ AC_SUBST(NSDEJAVU_LIBS)
 
 # Should libdjvu be a shared library ?
 ac_shared_libdjvu=no
-if test x$ac_debug != xyes ; then
+if test x$ac_debug = xno ; then
   case "${host_os}" in
     *linux*) ac_shared_libdjvu=yes ;;
   esac
