@@ -356,6 +356,7 @@ QDViewer::QDViewer(int _in_netscape,
       if (plugin_data.cmd_mode<=0) setMode(IDC_DISPLAY_COLOR, 1, MODE_DEFAULT);
       else setMode(plugin_data.cmd_mode, true, MODE_TAGS);
    }
+   pane->setFocus();
 }
 
 QDViewer::~QDViewer(void)
@@ -497,7 +498,6 @@ QDViewer::eventFilter(QObject *obj, QEvent *e)
            if (in_netscape)
              {
                DEBUG_MSG("QDViewer::eventFilter(): Got Event_Enter\n");
-               pane->setFocus();
                // Reparenting prevent the window manager to send proper focus events.
                Window w;
                XEvent focusevent;
