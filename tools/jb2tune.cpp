@@ -75,8 +75,10 @@
 
 #define REFINE_THRESHOLD 21
 
+
+
 // ----------------------------------------
-// UTILS
+// UTILITIES
 
 
 // Keep informations for pattern matching
@@ -86,6 +88,7 @@ struct MatchData
   int area;            // number of black pixels
   int match;           // jb2cmp pattern match
 };
+
 
 // Compute the number of black pixels.
 static int 
@@ -104,6 +107,41 @@ compute_area(GBitmap *bits)
     }
   return black_pixels;
 }
+
+
+// Estimate position of baseline.
+// The baseline position is measured in quarter pixels.
+// Using fractional pixels makes a big improvement.
+static int
+compute_baseline(GBitmap *bits)
+{
+   int h = bits->rows();
+   int w = bits->columns();
+   GTArray<int> mass(h);
+   int i, j, m;
+   int tm = 0;
+   for (i=0; i<h; i++)
+     {
+       unsigned char *row = (*bits)[i];
+       for (j=0; j<w; j++)
+         if (row[j])
+           break;
+       for (m = w-j; m>0; m--)
+         if (row[j+m-1])
+           break;
+       mass[i] = m;
+       tm += m;
+     }
+   m = 0;
+   i = 0;
+   while (m * 6 < tm * 4)
+     {
+       m += mass[i/4];
+       i += 1;
+     }
+   return i;
+}
+
 
 // Fill the MatchData array for lossless compression
 static void
@@ -124,6 +162,7 @@ compute_matchdata_lossless(JB2Image *jimg, MatchData *lib)
     }
 }
 
+
 // Interface with Ilya's data structures.
 static ComparableImage 
 compute_comparable_image(GBitmap *bits)
@@ -134,6 +173,7 @@ compute_comparable_image(GBitmap *bits)
   for (int i=0; i<h; i++) p[h-i-1] = (*bits)[i];
   return prepare_comparable_image(p, w, h);  
 }
+
 
 // Compute MatchData array for lossy compression.
 static void
@@ -177,37 +217,6 @@ compute_matchdata_lossy(JB2Image *jimg, MatchData *lib)
       free_comparable_image(handles[i]);
 }
 
-// Locate key lines in bitmap
-// (this needs more work)
-static int
-compute_line(GBitmap *bits)
-{
-  int h = bits->rows();
-  int w = bits->columns();
-  GTArray<int> mass(h);
-  int i, j, m, tm=0;
-  for (i=0; i<h; i++)
-    {
-      unsigned char *row = (*bits)[i];
-      for (j=0; j<w; j++)
-        if (row[j])
-          break;
-      for (m = w-j; m>0; m--)
-        if (row[j+m-1])
-          break;
-      mass[i] = m;
-      tm += m;
-    }
-  i = -1;
-  j = h;
-  m = 0;
-  while (i < j && 6 * m <= tm)
-    m += mass[++i];
-  m = 0;
-  while (i < j && 6 * m <= tm)
-    m += mass[--j];
-  return (i + i + j) / 3;
-}
 
 // Reorganize jb2image on the basis of matchdata.
 // Also locate cross-coding buddys.
@@ -296,7 +305,10 @@ tune_jb2image(JB2Image *jimg, MatchData *lib, bool lossy)
           jshp.parent = closest;
           // Exact match ==> Substitution
           if (best_score == 0)
-            lib[current].bits = 0;
+            {
+              lib[current].match = closest;
+              lib[current].bits = 0;
+            }
           // ISSUE: CROSS-IMPROVING.  When we decide not to do a substitution,
           // we can slightly modify the current shape in order to make it
           // closer to the matching shape, therefore improving the file size.
@@ -312,31 +324,39 @@ tune_jb2image(JB2Image *jimg, MatchData *lib, bool lossy)
       JB2Shape &jshp = jimg->get_shape(jblt->shapeno);
       if (lib[jblt->shapeno].bits==0 && jshp.parent>=0)
         {
+          // Locate parent
+          int parent = jshp.parent;
+          while (! lib[parent].bits)
+            parent = lib[parent].match;
           // Compute coordinate adjustment.
           int cols = jshp.bits->columns();
           int rows = jshp.bits->rows();
-          int cross_cols = lib[jshp.parent].bits->columns();
-          int cross_rows = lib[jshp.parent].bits->rows();
+          int cross_cols = lib[parent].bits->columns();
+          int cross_rows = lib[parent].bits->rows();
           int cross_col_adjust = (cross_cols-cross_cols/2)-(cols-cols/2);
           int cross_row_adjust = (cross_rows-cross_rows/2)-(rows-rows/2);
-          // Refine vertical adjustment
+           // Refine vertical adjustment
           if (lossy)
             {
-              int baseline_adjust = 
-                compute_line(lib[jshp.parent].bits) -
-                compute_line(jshp.bits);
-              if (abs(baseline_adjust - cross_row_adjust) <= 1)
-                cross_row_adjust = baseline_adjust;
+              int adjust = compute_baseline(lib[parent].bits) 
+                         - compute_baseline(jshp.bits);
+              if (adjust < 0)
+                adjust = - (2 - adjust) / 4;
+              else
+                adjust =   (2 + adjust) / 4;
+              if (abs(adjust - cross_row_adjust) <= 1 + cols/16 )
+                cross_row_adjust = adjust;
             }
           // Update blit record.
           jblt->bottom -= cross_row_adjust;
           jblt->left   -= cross_col_adjust;
-          jblt->shapeno = jshp.parent;
+          jblt->shapeno = parent;
           // Update shape record.
           jshp.bits = 0;
         }
     }
 }
+
 
 
 

@@ -290,7 +290,7 @@ InitializeQT(int &argc, char ** argv)
    // Setup applications properties
    DjVuPrefs prefs;
    qeApp->gamma = prefs.dScreenGamma;
-   qeApp->geometry = "800x600";
+   qeApp->geometry = "680x480";
    if (geometry.length())
      qeApp->geometry = geometry;
    if (name.length())

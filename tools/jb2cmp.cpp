@@ -75,6 +75,8 @@ static const double shiftdiff2_veto_threshold      = 1500;
 static const double shiftdiff3_veto_threshold      = 2000;
 
 static const double size_difference_threshold = 10;
+static const double mass_difference_threshold = 15;
+
 static const double pith_falloff              = .85;
 static const double shiftdiff1_falloff        = .9;
 static const double shiftdiff2_falloff        = 1;
@@ -88,7 +90,7 @@ typedef unsigned char byte;
 
 typedef struct ComparableImageData {
     byte **pixels;                   // 0:white, 255:black (unlike PGM)
-    int width, height;
+    int width, height, mass;
     byte signature[SIGNATURE_SIZE];  // for shiftdiff 1 and 3 tests
     byte signature2[SIGNATURE_SIZE]; // for shiftdiff 2 test
 } Image;
@@ -108,13 +110,15 @@ typedef struct ComparableImageData {
 static int 
 dimensions_test(Image *i1, Image *i2)
 {
-    int w1 = i1->width, h1 = i1->height;
-    int w2 = i2->width, h2 = i2->height;
-    
-    if (w1 > (100. + size_difference_threshold) * w2 / 100) return -1;
-    if (w2 > (100. + size_difference_threshold) * w1 / 100) return -1;
-    if (h1 > (100. + size_difference_threshold) * h2 / 100) return -1;
-    if (h2 > (100. + size_difference_threshold) * h1 / 100) return -1;
+    int w1 = i1->width, h1 = i1->height, m1 = i1->mass;
+    int w2 = i2->width, h2 = i2->height, m2 = i2->mass;
+
+    if (100.* w1 > (100.+ size_difference_threshold) * w2 ) return -1;
+    if (100.* w2 > (100.+ size_difference_threshold) * w1 ) return -1;
+    if (100.* h1 > (100.+ size_difference_threshold) * h2 ) return -1;
+    if (100.* h2 > (100.+ size_difference_threshold) * h1 ) return -1;
+    if (100.* m1 > (100.+ mass_difference_threshold) * m2 ) return -1;
+    if (100.* m2 > (100.+ mass_difference_threshold) * m1 ) return -1;
     
     return 0;
 }
@@ -905,7 +909,7 @@ ComparableImage
 prepare_comparable_image(byte **pixels, int w, int h)
 /*{{{*/
 {
-    int i;
+    int i, mass;
     Image *img = MALLOC(Image);
     byte *pool = MALLOCV(byte, w * h);
 
@@ -917,15 +921,19 @@ prepare_comparable_image(byte **pixels, int w, int h)
     for (i = 0; i < h; i++)
         img->pixels[i] = pool + i * w;
 
+    mass = 0;
     for (i = 0; i < h; i++)
     {
         int j;
         for (j = 0; j < w; j++) 
             if (pixels[i][j]) 
+            {
                 img->pixels[i][j] = 255;
+                mass += 1;
+            }
     }
+    img->mass = mass;
     find_pith_and_signature(img);
-
     return img;
 }
 /*}}}*/
