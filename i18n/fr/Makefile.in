@@ -27,9 +27,9 @@ datadir = @datadir@
 libdir = @libdir@
 mandir = @mandir@
 
-LANGUAGE=dummy
-man= ${DESTDIR}${mandir}/${LANGUAGE}/man1
-qm= ${DESTDIR}${datadir}/djvu/osi/${LANGUAGE}
+LANGCODE=dummy
+man= ${DESTDIR}${mandir}/${LANGCODE}/man1
+qm= ${DESTDIR}${datadir}/djvu/osi/${LANGCODE}
 
 QMFILES = qt.qm djview.qm
 
@@ -52,7 +52,7 @@ install: install-man
 
 # Install localized qm files.
 install-qm: ${QMFILES} FORCE
-	test ${LANGUAGE} != dummy
+	test ${LANGCODE} != dummy
 	-${INSTALL} -d ${qm}
 	-for n in ${QMFILES} ; do \
 	  if test -r $$n ; then \
@@ -64,7 +64,7 @@ install-qm: ${QMFILES} FORCE
 
 # Install localized man pages
 install-man: FORCE ${NSDEJAVU1}
-	test ${LANGUAGE} != dummy
+	test ${LANGCODE} != dummy
 	-${INSTALL} -d ${man}
 	-for n in ${MANFILES} ; do \
 	   if test -r $$n ; then \

@@ -18,11 +18,11 @@ SUBDIRS= @LINGUAS@
 
 all install depend clean: FORCE
 	for d in ${SUBDIRS} ; do \
-	  ( cd $$d && ${MAKE} LANGUAGE=$$d $@ ) || exit ; done
+	  ( cd $$d && ${MAKE} LANGCODE=$$d $@ ) || exit ; done
 
 distclean: FORCE
 	for d in ${SUBDIRS}; do \
-	  ( cd $$d && ${MAKE} LANGUAGE=$$d $@ ); done
+	  ( cd $$d && ${MAKE} LANGCODE=$$d $@ ); done
 	-${RM} Makefile 
 
 FORCE:
