@@ -182,6 +182,32 @@ GPBase::assign (const GPBase &sptr)
   return *this;
 }
 
+
+// ------ GPBUFFERBASE
+
+
+void
+GPBufferBase::replace(void *nptr,const size_t n)
+{
+  resize(0,0);
+  ptr=nptr;
+  num=n;
+}
+
+GPBufferBase::GPBufferBase(void *&xptr,const size_t n,const size_t t) 
+  : ptr(xptr), num(n)
+{
+  if (n)
+    xptr = ::operator new(n*t);
+  else
+    xptr = 0;
+}
+
+GPBufferBase::~GPBufferBase()
+{
+  ::operator delete(ptr);
+}
+
 void 
 GPBufferBase::swap(GPBufferBase &other)
 {
@@ -197,28 +223,27 @@ void
 GPBufferBase::resize(const size_t n, const size_t t)
 {
   if(!n && !ptr)
-  {
-    num=0;
-  }else
-  {
-    const size_t s=ptr?(((num<n)?num:n)*t):0;
-    void *nptr;
-    GPBufferBase gnptr(nptr, n, t);
-    if(s)
     {
-      memcpy(nptr, ptr, s);
+      num=0;
     }
-    swap(gnptr);
-  }
+  else
+    {
+      const size_t s=ptr?(((num<n)?num:n)*t):0;
+      void *nptr;
+      GPBufferBase gnptr(nptr, n, t);
+      if(s)
+        {
+          memcpy(nptr, ptr, s);
+        }
+      swap(gnptr);
+    }
 }
 
 void
 GPBufferBase::set(const size_t t,const char c)
 {
   if(num)
-  {
     memset(ptr,c,num*t);
-  }
 }
 
 

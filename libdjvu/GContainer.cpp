@@ -304,7 +304,7 @@ GArrayBase::ins(int n, const void *src, int howmany)
       while (nmaxhi < hibound+howmany)
         nmaxhi += (nmaxhi < 8 ? 8 : (nmaxhi > 32768 ? 32768 : nmaxhi));
       int bytesize = traits.size * (nmaxhi-minlo+1);
-      void *ndata = operator new (bytesize);
+      void *ndata; //  = operator new (bytesize);
       GPBufferBase gndata(ndata,bytesize,1);
       memset(ndata, 0, bytesize);  // slower but cleaner
       if (hibound >= lobound)

@@ -110,46 +110,21 @@ namespace DJVU {
 
 /* What is this innovation ? 
    What does it do that a GArray does not do ? */
+
 class GPBufferBase
 {
 public:
   GPBufferBase(void *&,const size_t n,const size_t t);
   void swap(GPBufferBase &p);
   void resize(const size_t n,const size_t t);
-  inline void replace(void *nptr,const size_t n);
+  void replace(void *nptr,const size_t n);
   void set(const size_t t,const char c);
   ~GPBufferBase();
-  operator int(void) const;
+  operator int(void) const { return ptr ? num : 0; }
 private:
   void *&ptr;
   size_t num;
 };
-
-inline
-GPBufferBase::operator int(void) const
-{
-  return ptr?num:0;
-}
-
-inline void
-GPBufferBase::replace(void *nptr,const size_t n)
-{
-  resize(0,0);
-  ptr=nptr;
-  num=n;
-}
-
-inline
-GPBufferBase::GPBufferBase(void *&xptr,const size_t n,const size_t t) : ptr(xptr), num(n)
-{
-  xptr=(n*t)?(::operator new(n*t)):0;
-}
-
-inline
-GPBufferBase::~GPBufferBase()
-{
-  ::operator delete(ptr);
-}
 
 template<class TYPE>
 class GPBuffer : public GPBufferBase
