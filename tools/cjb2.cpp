@@ -79,7 +79,7 @@
     \begin{description}
     \item[-dpi xxx]  Specify image resolution (default 300).
     \item[-clean]    Clean small flyspecs (lossy).
-    \item[-loose]    Substitute patterns with small variations (lossy).
+    \item[-lossy]    Lossy compression (implies -clean as well)
     \item[-verbose]  Displays additional messages.
     \end{description}
     Encoding is lossless unless one or several lossy options are selected.
