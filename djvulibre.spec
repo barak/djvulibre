@@ -75,6 +75,10 @@ install -d $RPM_BUILD_ROOT
 make prefix="$RPM_BUILD_ROOT"%{prefix} \
      mandir="$RPM_BUILD_ROOT"%{mandir} \
      install
+mkdir "$RPM_BUILD_ROOT"%{prefix}/lib/mozilla
+mkdir "$RPM_BUILD_ROOT"%{prefix}/lib/mozilla/plugins
+( cd "$RPM_BUILD_ROOT"%{prefix}/lib/mozilla/plugins ; \
+  ln -s ../../netscape/plugins/nsdejavu.so . )
 
 %clean
 rm -rf $RPM_BUILD_ROOT
