@@ -27,7 +27,7 @@ datadir = @datadir@
 libdir = @libdir@
 mandir = @mandir@
 
-LANG=dummy #overriden from the command line
+LANG=dummy
 man= ${DESTDIR}${mandir}/${LANG}/man1
 qm= ${DESTDIR}${datadir}/djvu/osi/${LANG}
 
@@ -93,7 +93,7 @@ FORCE:
 .SUFFIXES: .ts .qm
 
 .ts.qm:
-	ts=`basename $<`; \
-	test ${srcdir} = "." || cp $< $$ts ; \
-	echo TRANSLATIONS="$$ts" > tmp.pro ; \
-	${LRELEASE} tmp.pro
+	if test ${LRELEASE} = ":" ; then : ; else \
+	  echo TRANSLATIONS=tmp.ts > tmp.pro && \
+	  cp $< tmp.ts && ${LRELEASE} tmp.pro && cp tmp.qm $@ && \
+	  ${RM} tmp.qm tmp.ts tmp.pro ; fi

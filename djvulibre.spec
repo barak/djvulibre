@@ -1,5 +1,5 @@
-%define release 3
-%define version 3.5.12
+%define release 0.1
+%define version 3.5.13
 %define prefix %{?_prefix:%{_prefix}}%{!?_prefix:/usr}
 %define mandir %{?_mandir:%{_mandir}}%{!?_mandir:%{prefix}/man}
 
@@ -106,26 +106,36 @@ rm -rf %{buildroot}
 %lang(de) %{_mandir}/de*
 
 %changelog
+* Tue Nov 18 2003 Leon Bottou <leon@bottou.org> 3.5.13-0.1
+- new version
 * Wed Nov  5 2003 Leon Bottou <leon@bottou.org> 3.5.12-3
 - support for i18n
 - rename symlink in mozilla plugin dirs.
 * Mon Jul  7 2003 Leon Bottou <leon@bottou.org> 3.5.12-1
+- new version
 * Thu Apr 24 2003 Leon Bottou <leon@bottou.org> 3.5.11-1
+- new version
 * Thu Feb  6 2003 Leon Bottou <leon@bottou.org> 3.5.10-2
+- new version
 * Fri Jan 24 2003 Leon Bottou <leon@bottou.org> 3.5.10-1
+- new version
 * Wed Oct  9 2002 Leon Bottou <leonb@users.sourceforge.net> 3.5.9-2
 - fixed logic for uninstalling nsdejavu links.
 - copy stuff from the freshrpms spec file.
 * Sun Oct  6 2002 Leon Bottou <leonb@users.sourceforge.net> 3.5.9-1
 - added logic to install nsdejavu for mozilla.
 * Wed May 29 2002 Leon Bottou <leonb@users.sourceforge.net> 3.5.6-1
+- new version
 * Mon Apr 1 2002  Leon Bottou <leonb@users.sourceforge.net> 3.5.5-2
 - changed group to Applications/Publishing
 * Tue Mar 25 2002 Leon Bottou <leonb@users.sourceforge.net> 3.5.5-2
+- new version
 * Tue Jan 22 2002 Leon Bottou <leonb@users.sourceforge.net> 3.5.4-2
 - fixed for properly locating the man directory.
 * Wed Jan 16 2002 Leon Bottou <leonb@users.sourceforge.net> 3.5.3-1
+- new version
 * Fri Dec  7 2001 Leon Bottou <leonb@users.sourceforge.net> 3.5.2-1
+- new version
 * Wed Dec  5 2001 Leon Bottou <leonb@users.sourceforge.net> 3.5.1-1
 - created spec file for rh7.x.
 
