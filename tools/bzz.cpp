@@ -83,13 +83,16 @@ void
 usage(void)
 {
   DjVuPrintErrorUTF8(
-          "BZZ -- ZPCoded Burrows Wheeler compression\n"
-          "  Copyright © 1999-2000 LizardTech, Inc. All Rights Reserved.\n"
+#ifdef DJVULIBRE_VERSION
+          "BZZ --- DjVuLibre-" DJVULIBRE_VERSION "\n"
+#endif
+          "Compress/decompress <infile> using the Burrows Wheeler\n"
+          "transform and the ZP adaptive binary coder.\n\n"
           "Usage [encoding]: %s -e[<blocksize>] <infile> <outfile>\n"
           "Usage [decoding]: %s -d <infile> <outfile>\n"
           "  Argument <blocksize> must be in range [900..4096] (default 1100).\n"
-          "  Arguments <infile> and <outfile> can be '-' for stdin/stdout.\n",
-          program, program);
+          "  Arguments <infile> and <outfile> can be '-' for stdin/stdout.\n"
+          , program, program);
   exit(1);
 }
 

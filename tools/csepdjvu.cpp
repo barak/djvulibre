@@ -1229,18 +1229,22 @@ check_for_another_page(BufferByteStream &bs, const csepdjvuopts &opts)
 void
 usage()
 {
-  DjVuPrintErrorUTF8("%s",
-          "Usage: csepdjvu <...options_or_separatedfiles...> <outputdjvufile>\n"
-          "Options are:\n"
-          "   -d <n>     Sets resolution to <n> dpi (default: 300).\n"
-          "   -q <spec>  Selects quality level for background (default: 72+11+10+10)\n"
-          "              See option -slice in program c44 for additional information\n"
-          "   -v         Displays a brief message per page.\n"
-          "   -vv        Displays lots of messages.\n"
-          "Each separated files contain one or more pages\n"
-          "Each page is composed of:\n"
-          " (1) a B&W-RLE or Color-RLE image representing the foreground,\n"
-          " (2) an optional PPM image representing the background layer.\n" );
+  DjVuPrintErrorUTF8(
+#ifdef DJVULIBRE_VERSION
+         "CSEPDJVU --- DjVuLibre-" DJVULIBRE_VERSION "\n"
+#endif
+         "DjVu encoder working with \"separated\" files\n\n"
+         "Usage: csepdjvu <...options_or_separatedfiles...> <outputdjvufile>\n"
+         "Options are:\n"
+         "   -d <n>     Sets resolution to <n> dpi (default: 300).\n"
+         "   -q <spec>  Selects quality level for background (default: 72+11+10+10)\n"
+         "              See option -slice in program c44 for additional information\n"
+         "   -v         Displays a brief message per page.\n"
+         "   -vv        Displays lots of messages.\n"
+         "Each separated files contain one or more pages\n"
+         "Each page is composed of:\n"
+         " (1) a B&W-RLE or Color-RLE image representing the foreground,\n"
+         " (2) an optional PPM image representing the background layer.\n" );
   exit(10);
 }
 

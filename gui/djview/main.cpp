@@ -69,9 +69,11 @@ static void
 ShowUsage(void)
 {
   DjVuPrintErrorUTF8("%s\n",
-          "DJVU Viewer  djvulibre-" DJVIEW_VERSION_STR "\n\n"
-          "Synopsis\n"
-          "     djview <options_list> <file_name>\n"
+#ifdef DJVULIBRE_VERSION
+          "DJVIEW --- DjVuLibre-" DJVULIBRE_VERSION "\n"
+#endif
+          "DjVu document viewer.\n\n"
+          "Usage: djview <options_list> <file_name>\n"
           "Options:\n"
           "     -file <file_name>       - alternative way to specify file name\n"
           "     -page <page_num>        - number of the page to display\n"

@@ -153,8 +153,11 @@ int dpi = 300;
 void 
 usage()
 {
-  printf("DJVUMAKE -- Create a DjVu file\n"
-         "  Copyright © 1999-2000 LizardTech, Inc. All Rights Reserved.\n"
+  DjVuPrintErrorUTF8(
+#ifdef DJVULIBRE_VERSION
+         "DJVUMAKE --- DjVuLibre-" DJVULIBRE_VERSION "\n"
+#endif
+         "Utility for manually assembling DjVu files\n\n"
          "Usage: djvumake djvufile ...arguments...\n"
          "\n"
          "The arguments describe the successive chunks of the DJVU file.\n"

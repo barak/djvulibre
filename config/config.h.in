@@ -24,6 +24,9 @@
 /* directory "prefix" */
 #undef DIR_PREFIX
 
+/* version string */
+#undef DJVULIBRE_VERSION
+
 /* define if bool is a built-in type */
 #undef HAVE_BOOL
 

@@ -132,8 +132,10 @@ static const char * progname;
 static void Usage(void)
 {
    DjVuPrintErrorUTF8(
-     "DJVMCVT -- DjVu multipage document conversion utility\n"
-     "   Copyright (c) 1999-2000 LizardTech, Inc. All Rights Reserved.\n"
+#ifdef DJVULIBRE_VERSION
+     "DJVMCVT --- DjVuLibre-" DJVULIBRE_VERSION "\n"
+#endif
+     "DjVu multipage document conversion utility\n"
      "\n"
      "Usage:\n"
      "\n"

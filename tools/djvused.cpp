@@ -1526,7 +1526,13 @@ init_command_map(void)
 void
 usage()
 {
-  fprintf(stderr,"Usage: djvused [options] djvufile\n"
+  DjVuPrintErrorUTF8(
+#ifdef DJVULIBRE_VERSION
+          "DJVUSED --- DjVuLibre-" DJVULIBRE_VERSION "\n"
+#endif
+          "Simple DjVu file manipulation program\n"
+          "\n"
+          "Usage: djvused [options] djvufile\n"
           "Executes scripting commands on djvufile.\n"
           "Script command come either from a script file (option -f),\n"
           "from the command line (option -e), or from stdin (default).\n"

@@ -32,15 +32,15 @@ DjVu without JPEG support.  You might even never notice the difference.
 1.3 - QT
 --------
 
-The graphical user interface of the viewer relies on the Qt2 library
+The graphical user interface of the viewer relies on the Qt library
 from TrollTech <http://www.trolltech.com>.  The command line tools 
 do not rely on Qt and can be compiled independently.
 
-The source code of the Qt2 library can be downloaded from 
+The source code of the Qt library can be downloaded from 
 <ftp://ftp.trolltech.com/qt/source/qt-x11-2.3.1.tar.gz>.
-Avoid versions earlier than 2.2.0.  
 
-No tests have been performed with Qt3 yet.
+Avoid versions earlier than 2.2.0.
+Suggested versions are 2.3.1 and 3.0.1.
 
 
 1.4 - THREADS

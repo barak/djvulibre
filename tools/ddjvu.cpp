@@ -272,8 +272,10 @@ void
 usage()
 {
   DjVuPrintErrorUTF8("%s",
-          "DDJVU -- DjVu decompression utility\n"
-          "  Copyright © 1999-2000 LizardTech, Inc. All Rights Reserved.\n"
+#ifdef DJVULIBRE_VERSION
+          "DDJVU --- DjVuLibre-" DJVULIBRE_VERSION "\n"
+#endif
+          "DjVu decompression utility\n\n"
           "Usage: ddjvu [options] [<djvufile> [<pnmfile>]]\n\n"
           "Options:\n"
           "  -v                  Prints various informational messages.\n"

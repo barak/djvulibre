@@ -99,21 +99,18 @@ static const char * progname;
 static void
 usage(void)
 {
-   DjVuPrintErrorUTF8("\
-DJVUTXT -- DjVu TXT* chunks extractor\n\
-   Copyright © 1999-2000 LizardTech, Inc. All Rights Reserved.\n\
-\n\
-Usage:\n\
-	%s [--page <page_num>] <djvu_file_in> [<txt_file_out>]\n\
-\n\
-The program will decode and output to <txt_file_out> ASCII text from\n\
-every TXT* (TXTa or TXTz) chunk found in the source <djvu_file_in>\n\
-DjVu document.\n\
-\n\
-TXT* chunks contain information about the text present within the given\n\
-page, and its location. These chunks should have been generated with\n\
-the help of an OCR engine, and encoded using capabilities provided by\n\
-this library.\n\n", progname);
+   DjVuPrintErrorUTF8(
+#ifdef DJVULIBRE_VERSION
+          "DJVUTXT --- DjVuLibre-" DJVULIBRE_VERSION "\n"
+#endif
+          "Extracts hidden text from Djvu files\n"
+          "\n"
+          "Usage: %s [--page <page_num>] <djvu_file_in> [<txt_file_out>]\n"
+          "Decode and output to <txt_file_out> ASCII text from\n"
+          "every TXT* (TXTa or TXTz) chunk found in the source <djvu_file_in>\n"
+          "DjVu document. These chunks should have been generated with\n"
+          "the help of an OCR engine, and encoded using capabilities provided by\n"
+          "this library.\n\n", progname);
 }
 
 static void

@@ -937,7 +937,12 @@ cpaldjvu(const GPixmap &input, GURL &urlout, const cpaldjvuopts &opts)
 void
 usage()
 {
-  DjVuPrintErrorUTF8("Usage: cpaldjvu [options] <inputppmfile> <outputdjvufile>\n"
+  DjVuPrintErrorUTF8(
+#ifdef DJVULIBRE_VERSION
+         "CPALDJVU --- DjVuLibre-" DJVULIBRE_VERSION "\n"
+#endif
+         "DjVu encoder for images with few colors\n\n"
+         "Usage: cpaldjvu [options] <inputppmfile> <outputdjvufile>\n"
           "Options are:\n"
           "   -colors [2-1024] Maximum number of colors during quantization (default 256).\n"
           "   -dpi [25-1200]   Resolution written into the output file (default 100).\n"

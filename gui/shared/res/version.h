@@ -44,8 +44,11 @@
 #pragma interface
 #endif
 
-
+#ifdef DJVULIBRE_VERSION
+#define DJVIEW_VERSION_STR	DJVULIBRE_VERSION
+#else
 #define DJVIEW_VERSION_STR	"3.5"
 #define DJEDIT_VERSION_STR	"3.5"
+#endif
 
 #endif

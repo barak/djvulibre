@@ -4,7 +4,7 @@
 # ----------------------------------------
 
 AC_PREREQ(2.50)
-AC_INIT(djvu, 3.5)
+AC_INIT(djvulibre, 3.5.3)
 AC_REVISION($Id$)
 AC_CONFIG_AUX_DIR(config)
 AC_CONFIG_SRCDIR(INSTALL)
@@ -268,8 +268,9 @@ AC_SUBST(NSDEJAVU_LINK)
 # End
 # ----------------------------------------
 
-# Define installation paths
+# Define installation paths and version string
 AC_DEFINE_INSTALL_PATHS
+AC_DEFINE_UNQUOTED(DJVULIBRE_VERSION,["${PACKAGE_VERSION}"],[version string])
 
 # Output files
 AC_CONFIG_FILES(Makefile)

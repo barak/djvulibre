@@ -62,23 +62,28 @@
 void
 usage(void)
 {
-  DjVuPrintErrorUTF8("Usage: djvups [<options>] [<document.djvu>]\n"
-                     "\n"
-                     "Recognized options are:\n"
-                     "  -page=<pagelists>                   (default: print all pages)\n"
-                     "  -format=<ps|eps>                    (default: ps)\n"
-                     "  -level=<1|2|3>                      (default: 2)\n"
-                     "  -orientation=<portrait|landscape>   (default: portrait)\n"
-                     "  -mode=<color|bw|fore|back>          (default: color)\n"
-                     "  -zoom=<auto|25...2400)              (default: auto)\n"
-                     "  -color=<yes|no>                     (default: yes)\n"
-                     "  -gray                               (same as -color=no)\n"
-                     "  -colormatch=<yes|no>                (default: yes)\n"
-                     "  -gamma=<0.3...5.0>                  (default: bypassed by colormatch)\n"
-                     "  -copies=<1...999999>                (default: 1)\n"
-                     "  -frame=<yes|no>                     (default: no)\n"
-                     "  -text=<yes|no>                      (default: no)\n"
-                     "\n");
+  DjVuPrintErrorUTF8(
+#ifdef DJVULIBRE_VERSION
+          "DJVUPS --- DjVuLibre-" DJVULIBRE_VERSION "\n"
+#endif
+          "Convert DjVu documents into PostScript files\n"
+          "\n"
+          "Usage: djvups [<options>] [<document.djvu>]\n"
+          "Recognized options are:\n"
+          "  -page=<pagelists>                   (default: print all pages)\n"
+          "  -format=<ps|eps>                    (default: ps)\n"
+          "  -level=<1|2|3>                      (default: 2)\n"
+          "  -orientation=<portrait|landscape>   (default: portrait)\n"
+          "  -mode=<color|bw|fore|back>          (default: color)\n"
+          "  -zoom=<auto|25...2400)              (default: auto)\n"
+          "  -color=<yes|no>                     (default: yes)\n"
+          "  -gray                               (same as -color=no)\n"
+          "  -colormatch=<yes|no>                (default: yes)\n"
+          "  -gamma=<0.3...5.0>                  (default: bypassed by colormatch)\n"
+          "  -copies=<1...999999>                (default: 1)\n"
+          "  -frame=<yes|no>                     (default: no)\n"
+          "  -text=<yes|no>                      (default: no)\n"
+          "\n");
   exit(1);
 }
 

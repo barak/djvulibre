@@ -247,9 +247,12 @@ IWEncoderParms parms[MAXCHUNKS];
 void 
 usage()
 {
-  printf("C44 -- Image compression utility using IW44 wavelets\n"
-         "Copyright (c) 1999-2000 LizardTech, Inc. All Rights Reserved.\n"
-         "Usage: c44 [options] pnm-or-jpeg-file [djvufile]\n\n"
+  DjVuPrintErrorUTF8(
+#ifdef DJVULIBRE_VERSION
+         "C44 --- DjVuLibre-" DJVULIBRE_VERSION "\n"
+#endif
+         "Image compression utility using IW44 wavelets\n\n"
+         "Usage: c44 [options] pnm-or-jpeg-file [djvufile]\n"
          "Options:\n"
          "    -slice n+...+n   -- select an increasing sequence of data slices\n"
          "                        expressed as integers ranging from 1 to 140.\n"

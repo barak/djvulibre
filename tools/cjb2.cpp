@@ -885,13 +885,18 @@ cjb2(const GURL &urlin, const GURL &urlout, const cjb2opts &opts)
 void
 usage()
 {
-  DjVuPrintErrorUTF8("Usage: cjb2 [options] <inputpbmfile> <outputdjvufile>\n"
-          "Options are:\n"
-          "   -dpi [25-1200] Specify image resolution (default 300).\n"
-          "   -clean         Remove small flyspecs (lossy).\n"
-          "   -loose         Substitute patterns with small variations (lossy).\n"
-          "   -verbose       Displays additional messages.\n"
-          "Encoding is lossless unless one or several lossy options are selected.\n" );
+  DjVuPrintErrorUTF8(
+#ifdef DJVULIBRE_VERSION
+         "CJB2 --- DjVuLibre-" DJVULIBRE_VERSION "\n"
+#endif
+         "Simple DjVuBitonal encoder\n\n"
+         "Usage: cjb2 [options] <inputpbmfile> <outputdjvufile>\n"
+         "Options are:\n"
+         "   -dpi [25-1200] Specify image resolution (default 300).\n"
+         "   -clean         Remove small flyspecs (lossy).\n"
+         "   -loose         Substitute patterns with small variations (lossy).\n"
+         "   -verbose       Displays additional messages.\n"
+         "Encoding is lossless unless one or several lossy options are selected.\n" );
   exit(10);
 }
 

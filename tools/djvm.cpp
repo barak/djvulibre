@@ -126,8 +126,10 @@ static void
 usage(void)
 {
    DjVuPrintErrorUTF8(
-           "DJVM -- DjVu multipage document manipulation utility\n"
-           "   Copyright (c) 1999-2000 LizardTech, Inc. All Rights Reserved.\n"
+#ifdef DJVULIBRE_VERSION
+           "DJVM --- DjVuLibre-" DJVULIBRE_VERSION "\n"
+#endif
+           "DjVu multipage document manipulation utility\n"
            "\n"
            "Usage:\n"
            "   To compose a multipage document:\n"

@@ -116,9 +116,11 @@ display(const GURL &url)
 void
 usage()
 {
-  DjVuPrintErrorUTF8("%s",
-          "DJVUDUMP -- Describes IFF85 files\n"
-          "  Copyright © 1999-2000 LizardTech, Inc. All Rights Reserved.\n"
+  DjVuPrintErrorUTF8(
+#ifdef DJVULIBRE_VERSION
+          "DJVUDUMP --- DjVuLibre-" DJVULIBRE_VERSION "\n"
+#endif
+          "Describes DjVu and IFF85 files\n\n"
           "Usage: djvudump <iff_filenames>\n" );
   exit(1);
 }

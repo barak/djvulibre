@@ -2108,10 +2108,6 @@ NPP_GetJavaClass(void)
 }
 
 
-#ifndef DJVIEW_VERSION_STR
-#define DJVIEW_VERSION_STR  DJVIEW_VERSION " (experimental)"
-#endif
-
 NPError
 NPP_GetValue(void *future, NPPVariable variable, void *value)
 {
@@ -2119,14 +2115,23 @@ NPP_GetValue(void *future, NPPVariable variable, void *value)
    switch (variable)
      {
      case NPPVpluginNameString:
+#ifdef DJVULIBRE_VERSION
+       *((char **)value) = "DjVuLibre-" DJVIEW_VERSION_STR;
+#else
        *((char **)value) = "DjVu " DJVIEW_VERSION_STR;
+#endif
        break;
      case NPPVpluginDescriptionString:
      *((char **)value) =
+#ifdef DJVULIBRE_VERSION
        "This is the <a href=\"http://www.sourceforge.net/projects/djvu\">"
-       "djvulibre-" DJVIEW_VERSION_STR "</a> version of the DjVu plugin.<br>"
+       "DjvuLibre-" DJVULIBRE_VERSION "</a> version of the DjVu plugin.<br>"
        "More information can be found at <a href=\"http://www.lizardtech.com\">LizardTech, Inc.</a> "
        "and <a href=\"http://www.djvuzone.org\">DjVuZone</a>.";
+#else
+       "Seems to be the DjVu-" DJVIEW_VERSION_STR " browser plug-in\n"
+       "Check with <a href=\"http://www.lizardtech.com\">LizardTech, Inc.</a>\n";
+#endif
      break;
      default:
        err = NPERR_GENERIC_ERROR;

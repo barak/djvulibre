@@ -203,8 +203,11 @@ void
 usage()
 {
   DjVuPrintErrorUTF8("%s",
-          "DJVUEXTRACT -- Extracts components of a DJVU file\n"
-          "  Copyright © 1999-2000 LizardTech, Inc. All Rights Reserved.\n"
+#ifdef DJVULIBRE_VERSION
+          "DJVUEXTRACT --- DjVuLibre-" DJVULIBRE_VERSION "\n"
+#endif
+          "Extracts components of a DjVu file\n"
+          "\n"
           "Usage:\n"
 	  "   djvuextract <djvufile> [-page=<num>] {...<chunkid>=<file>...} \n");
   exit(1);

@@ -1,5 +1,5 @@
 %define prefix /usr
-%define version 3.5.2
+%define version 3.5.3
 %define release 1
 
 Prefix: %{prefix}
