@@ -1,0 +1,119 @@
+
+
+
+PREREQUISITES
+-------------
+
+
+
+
+
+
+CONFIGURATION
+-------------
+
+
+
+
+COMPILATION & INSTALLATION
+--------------------------
+
+
+
+
+
+
+USING THE DJVU PLUGIN WITH NETSCAPE 4.7
+---------------------------------------
+
+
+The DjVu netscape plugin is a shared library which runs program djview
+in slave mode. This shared library is normally installed in:
+
+        ${prefix}/lib/netscape/plugins/nsdejavu.so.
+
+Therefore, unless you specified a different prefix to the configure program,
+the shared library is installed in /usr/local/lib/netscape/plugins.  This is a
+good thing since Netscape 4 always searches this directory for plugins.
+
+
+DISABLING PREVIOUS VERSIONS OF THE DJVU PLUGIN
+
+You might have however to first disable any previous version of the plugin.
+Selecting menu "Help->About Plugins" in Netscape displays the current list of
+plugins.  Previous versions of the plugin were often installed in one of the
+following locations.
+
+        ${HOME}/.netscape/plugins/nsdejavu.so
+        /usr/lib/netscape/plugins/nsdejavu.so
+        /opt/netscape/plugins/nsdejavu.so
+
+You can safely remove these files to disable the previous version of the DjVu
+plugin. You can also remove the directory "DjVu" that was installed under the
+corresponding "netscape" or ".netscape" directory.  Note that "nsdejavu.so"
+and "DjVu" are often symbolic links to the actual installation directory.
+Removing the symbolic links is sufficient to disable the plugin.
+
+
+ALTERNATIVE PLUGIN INSTALLATION STRATEGIES
+
+More complicated cases can be dealt using one of the following strategies.
+
+- You can explicitely set the plugin search path by setting the
+  environment variable NPX_PLUGIN_PATH before starting netscape.
+  Setting this variable overrides Netscape default search directories.
+
+    $ NPX_PLUGIN_PATH="${prefix}/lib/netscape/plugins:$HOME/.netscape/plugins"
+    $ export NPX_PLUGIN_PATH ; netscape
+
+- You can create a symbolic link to nsdejavu.so from a place that
+  is normally searched by netscape.
+
+    $ cd $HOME/.netscape ; mkdir plugins ; cd plugins
+    $ ln -s ${prefix}/lib/netscape/plugins/nsdejavu.so nsdejavu.so
+ 
+  You must not copy nsdejavu.so but create a symbolic link.  This is necessary
+  because nsdejavu.so will first locate its normal installation directory by 
+  following the symbolic link, and then will locate the DjVu viewer djview.
+  
+You can then restart Netscape and select menu "Help->About Plugins" to check
+that the DjVu plugin is properly recognized.  The netscape plugin search rules
+are explained in the README file that usually comes with the netscape
+distribution.
+
+
+
+USING THE DJVU PLUGIN WITH NETSCAPE 6.1
+---------------------------------------
+
+It seems that netscape 6 only recognize plugins installed inside its own
+plugin directory.  This can be done using a symbolic link.  Let us assume that
+netscape 6 is installed in /usr/local/netscape6 and that the DjVu plugin is
+installed in /usr/local/lib/netscape/plugins.  
+
+    $ cd /usr/local/netscape6/plugins
+    $ ln -s /usr/local/lib/netscape/plugins/nsdejavu.so nsdejavu.so
+
+You can then run Netscape 6.1 and view DjVu images.
+
+
+
+USING THE DJVU PLUGIN WITH KONQUEROR
+------------------------------------
+
+The DjVu plugin works decently with the konqueror web browser.  There are some
+problems with embedded DjVu images.  You need KDE-2.2 or better for that.
+
+In Konqueror, select "Settings->Configure Konqueror".  When the dialog
+appears, select the icon "Netscape Plugins".  Make sure that directory
+"${prefix}/lib/netscape/plugins" appears in the list of plugin directories.
+Then press button "Scan for new plugins".  Clicking the "Plugins" tab button
+should display a list of recognized plugins.  Check that "nsdejavu.so" appears
+there.  You should now be able to use DjVu with Konqueror.
+
+
+
+USING THE DJVU PLUGIN WITH MOZILLA
+----------------------------------
+
+I was not even able to launch mozilla on my rh7.1+ box.

@@ -1,0 +1,13 @@
+
+By order of importance:
+
+- README file
+- INSTALL instructions
+- manual pages
+- compilation check on sgi, solaris
+- djvups executable
+- rpm packages for linux (rh6, rh7)
+- ht:/dig plugin
+
+
+
