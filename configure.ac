@@ -138,10 +138,7 @@ AC_PATH_QT(,
 
 
 # Check compilation of xmltools
-ac_enable_xmltools=no
-case "${host_os}" in
-   *cygwin*) ac_enable_xmltools=yes ;;
-esac
+ac_enable_xmltools=yes
 AC_ARG_ENABLE(xmltools,
    AC_HELP_STRING([--enable-xmltools],
                   [enable compilation of the djvu xml tools.]),

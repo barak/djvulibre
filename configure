@@ -8358,10 +8358,7 @@ echo "${ECHO_T}setting QT_LIBS=$QT_LIBS" >&6
 
 
 # Check compilation of xmltools
-ac_enable_xmltools=no
-case "${host_os}" in
-   *cygwin*) ac_enable_xmltools=yes ;;
-esac
+ac_enable_xmltools=yes
 # Check whether --enable-xmltools or --disable-xmltools was given.
 if test "${enable_xmltools+set}" = set; then
   enableval="$enable_xmltools"
