@@ -58,11 +58,14 @@ CXXFLAGS = @CXXFLAGS@ ${CXXRPOFLAGS} ${FLAGS}
 PROGRAMS = bzz c44 cjb2 cpaldjvu csepdjvu \
 	   ddjvu djvm djvmcvt djvudump \
 	   djvups djvuextract djvumake \
-	   djvused djvutxt djvuserve \
-           djvutoxml djvuxmlparser xml2native \
-	   xml2utf16 xml2utf8
+	   djvused djvutxt djvuserve
 
-all: ${PROGRAMS}
+# These programs are built but are not installed
+# because they do not have man pages yet.
+PROGRAMS2 = djvutoxml djvuxmlparser xml2native \
+            xml2utf16 xml2utf8
+
+all: ${PROGRAMS} ${PROGRAMS2}
 
 install: install-bin install-man
 
