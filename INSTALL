@@ -384,9 +384,12 @@ The DjVuLibre distribution assumes that you
 have the Fink distribution installed in directory /sw.
 Among the required packages: libjpeg qt3 qt3-linguist qt3-dev.
 
-Once this is done, djvulibre should compile and 
-install without problems. Note that the djvulibre plugin 
-does not run in Safari or MSIE. It only runs in X11 based 
-browsers such as mozilla or konqueror.  Similarly
-the viewer djview only runs under X11.
+The configure command line is
+  $ ./configure --prefix=/sw
+
+DjVuLibre should then compile and install without problems. 
+
+REMARK: The DjVuLibre viewer 'djview' runs under X11.
+Similarly, the DjVuLibre plugin does not run in Safari or MSIE. 
+It only runs in X11 based browsers such as mozilla or konqueror.
 
