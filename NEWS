@@ -1,3 +1,8 @@
+NEW IN VERSION 3.5.5
+--------------------
+- Removed annoying flicker with djview/Qt3
+
+
 NEW IN VERSION 3.5.4
 --------------------
 - Fixed bug in djview print dialog.

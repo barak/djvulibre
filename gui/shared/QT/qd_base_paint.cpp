@@ -85,6 +85,8 @@ QDBase::redraw(const GRect * grect)
       //
       // So, what I do here - I just send the X11 expose event manually :(
 
+   QPaintEvent * ev=new QPaintEvent(qrect);
+   QApplication::postEvent(pane, ev);
 #ifdef UNIX
    x11Redraw(pane, &qrect);
 #else
@@ -101,7 +103,6 @@ QDBase::setBackgroundColor(u_int32 color, int do_redraw)
      {
        back_color=color;
        back_pixmap=qeImager->getColorPixmap(64, 64, color);
-       pane->setBackgroundPixmap(back_pixmap);
      }
    if (do_redraw) 
      redraw();

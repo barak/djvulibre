@@ -59,14 +59,12 @@ void
 QDBase::preScroll(void)
 {
    DEBUG_MSG("QDBase::preScroll(): preparing the pane for scroll\n");
-   pane->setBackgroundMode(NoBackground);
 }
 
 void
 QDBase::postScroll(void)
 {
    DEBUG_MSG("QDBase::postScroll(): finishing scroll\n");
-   pane->setBackgroundPixmap(back_pixmap);
 }
 
 void

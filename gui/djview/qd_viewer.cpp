@@ -803,10 +803,10 @@ QDViewer::showUpgradeDialog(void)
    if (in_netscape)
    {
      if (!QMessageBox::information(this, tr("Upgrade DjVu now!"),
-                                   tr("You are using an obsolete version of the\nDjVu plugin. "
-                                      "To install the newest\nversion click \"Download\" and "
-                                      "follow the\ninstructions.\n"),
-                                   tr("&Download"), tr("&Ignore"), 0, 0, 1))
+              tr("You are using an obsolete version of the\nDjVu plugin. "
+                 "To install the newest\nversion click \"Download\" and "
+                 "follow the\ninstructions.\n"),
+              tr("&Download"), tr("&Ignore"), 0, 0, 1))
        getURL(DJVIEW_DOWNLOAD_URL, "_blank");
    } else
      ::showError(this, tr("Upgrade DjVu now!"),
@@ -1504,7 +1504,9 @@ QDViewer::createThumbnails(bool _rowMajor)
    thumbnails->setDjVuDocument(djvu_doc);
    thumbnails->setFastMode(prefs.fastThumb);
    thumbnails->setCurPageNum(djvu_doc->url_to_page(dimg->get_djvu_file()->get_url()));
-   connect(thumbnails, SIGNAL(sigGotoPage(int)), this, SLOT(slotGotoPage(int)));
-   connect(thumbnails, SIGNAL(sigCloseThumbnails(void)), this, SLOT(slotCloseThumbnails(void)));
+   connect(thumbnails, SIGNAL(sigGotoPage(int)), 
+           this, SLOT(slotGotoPage(int)));
+   connect(thumbnails, SIGNAL(sigCloseThumbnails(void)), 
+           this, SLOT(slotCloseThumbnails(void)));
    return thumbnails;
 }

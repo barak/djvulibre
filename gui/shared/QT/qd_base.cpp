@@ -1061,7 +1061,8 @@ QDBase::exportToPNM(void)
 	 if (bw)
 	 {
 	    GP<GBitmap> bmp=dimg->get_bitmap(grect, doc_grect);
-	    if (!bmp) throw ERROR_MESSAGE("QDBase::exportToPNM", ERR_MSG("QDBase.bitmap_not_found"));
+	    if (!bmp) throw ERROR_MESSAGE("QDBase::exportToPNM", 
+                                          ERR_MSG("QDBase.bitmap_not_found"));
 	    for(int n=bmp->rows()-1;n>=0;n--)
 	    {
 	       const unsigned char * row=(*bmp)[n];
@@ -1118,7 +1119,8 @@ QDBase::exportToPNM(void)
 		  pix=dimg->get_fg_pixmap(grect, doc_grect, prefs.dScreenGamma);
 		  break;
 	    }
-	    if (!pix) throw ERROR_MESSAGE("QDBase::exportToPNM", ERR_MSG("QDBase.pixmap_not_found"));
+	    if (!pix) throw ERROR_MESSAGE("QDBase::exportToPNM", 
+                                          ERR_MSG("QDBase.pixmap_not_found"));
 	    if (raw)
 	    {
 	       TArray<char> buffer(3*pix->columns());
@@ -1433,11 +1435,13 @@ QDBase::slotToolBarTimeout(void)
       paint(&cache, 0, pane->height()-toolbar->height(),
 	    GRect(0, pane->height()-toolbar->height(),
 		  pane->width(), toolbar->height()));
+
       QWidget w(pane);
       w.setBackgroundMode(NoBackground);
       w.setGeometry(0, pane->height()-toolbar->height(),
 		    pane->width(), toolbar->width());
       w.show();
+
       const int steps=10;
       int start_y=toolbar->y();
       int end_y=pane->height();
@@ -1464,25 +1468,21 @@ QDBase::slotToolBarTimeout(void)
       }
       toolbar_shown=0;
       if (i<steps) showToolBar();
-      
-      pane->setBackgroundMode(NoBackground);
       w.hide();
-      pane->setBackgroundPixmap(back_pixmap);
    }
 }
 
 void
 QDBase::slotSetRotate(int cmd_rotate)
 {
-   //if (getCMDZoom()!=cmd_zoom)
-   setRotate(cmd_rotate);
+  setRotate(cmd_rotate);
 }
 
 void
 QDBase::slotSetZoom(int cmd_zoom)
 {
-   if (getCMDZoom()!=cmd_zoom)
-      setZoom(cmd_zoom, true, ZOOM_MANUAL);
+  if (getCMDZoom()!=cmd_zoom)
+    setZoom(cmd_zoom, true, ZOOM_MANUAL);
 }
 
 void

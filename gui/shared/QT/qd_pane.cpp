@@ -301,14 +301,16 @@ QDPane::QDPane(QWidget * parent, const char * name) :
    XSetWindowAttributes attr;
    attr.backing_store=WhenMapped;
    XChangeWindowAttributes(x11Display(), winId(), CWBackingStore, &attr);
+#endif
 
    setWFlags(WPaintClever);	// Prevent QT from "optimization"
    setWFlags(WResizeNoErase);	// New QT tries to be smart and repaint()s
-   				// the window itself, which is NOT what I want
+   setWFlags(WRepaintNoErase);  // the window itself, which is NOT what I want
    				// I want event compression.
 
+   setBackgroundMode(NoBackground);
+
    connect(&timer, SIGNAL(timeout(void)), this, SLOT(slotTimeout(void)));
-#endif
 }
 
 QDPane::~QDPane(void)

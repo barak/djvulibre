@@ -240,8 +240,6 @@ if test x${qt_version+set} = xset ; then
      AC_MSG_ERROR([We no longer support Qt-1x.])
   elif test "$qt_version" -lt 220 ; then
      AC_MSG_WARN([We suggest using QT-2.2.0 or better.])
-  elif test "$qt_version" -ge 300 ; then
-     AC_MSG_WARN([We do not yet support QT-3.x.])
   fi
 fi
 

@@ -80,13 +80,7 @@ private:
 private slots:
    void		slotTimeout(void);
 protected:
-      // These two result in the window update after scrolling when I reset
-      // the pane's mode from NoBackground to FixedPixmap
-   virtual void	backgroundColorChange(const QColor &) {};
-   virtual void	backgroundPixmapChange(const QPixmap &) {};
-
-      // These two repaint the pane when mouse just enters or leaves the window
-      // How sweet...
+   // Do not repaint the pane when mouse just enters or leaves the window
    virtual void	focusInEvent(QFocusEvent *) {};
    virtual void	focusOutEvent(QFocusEvent *) {};
 
