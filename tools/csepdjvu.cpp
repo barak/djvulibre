@@ -1343,10 +1343,21 @@ main(int argc, const char **argv)
               if (*end || opts.dpi<25 || opts.dpi>144000)
                 usage();
             }
-          else if (arg == "-q" && i+1<argc)
+          else if (arg == "-q" && i+1 < argc)
             {
               // Specify background quality
               parse_slice(dargv[++i], opts);
+            }
+          else if (arg == "-l" || arg == "-t" || arg == "-h")
+            {
+              DjVuPrintErrorUTF8("csepdjvu: option %s not yet supported\n",
+                                 (const char *)arg );
+            }
+          else if ((arg == "-j" || arg == "-p") && i+1 < argc)
+            {
+              i += 1;
+              DjVuPrintErrorUTF8("csepdjvu: option %s not yet supported\n",
+                                 (const char *)arg );
             }
           else 
             {
