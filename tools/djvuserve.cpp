@@ -197,6 +197,8 @@ djvuserver_file(GURL pathurl)
   headers(&statbuf);
   if (head) 
     return;
+  fprintf(stdout,"\n");
+  fflush(stdout);
   GP<ByteStream> in = ByteStream::create(pathurl,"rb");
   GP<ByteStream> out = ByteStream::get_stdout("ab");
   out->copy(*in);
