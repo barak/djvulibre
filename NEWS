@@ -2,6 +2,7 @@ NEW IN VERSION 3.5.13
 ---------------------
 - Navigation history.
 - DjView option -fullscreen.
+- Raised DJVUVERSION to 25 and DJVUVERSION_TONEW to 50!
 - TODO: Bookmarks.
 - TODO: MacOS X fixes.
 
