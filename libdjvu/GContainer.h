@@ -691,13 +691,6 @@ protected:
   void throw_invalid(void *c) const no_return;
 };
 
-inline void 
-GPosition::throw_invalid(void *c) const
-{
-  G_THROW((c == cont)?(ptr? ERR_MSG("GContainer.bad_pos") : ERR_MSG("GContainer.bad_pos_null") ): ERR_MSG("GContainer.bad_pos_cont") );
-}
-
-
 
 class GListBase : public GCont
 {

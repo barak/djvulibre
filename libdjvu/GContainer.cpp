@@ -323,6 +323,17 @@ GArrayBase::ins(int n, const void *src, int howmany)
 
 
 
+void 
+GPosition::throw_invalid(void *c) const
+{
+  if (c != cont)
+    G_THROW( ERR_MSG("GContainer.bad_pos") );
+  else if (! ptr)
+    G_THROW( ERR_MSG("GContainer.bad_pos_null") );
+  else 
+    G_THROW( ERR_MSG("GContainer.bad_pos_cont") );
+}
+
 
 
 // ------------------------------------------------------------
