@@ -1032,15 +1032,6 @@ QDPrintDialog::QDPrintDialog(const GP<DjVuDocument> & _doc,
                                 bg);
    bg_lay->addWidget(bk_mode_butt);
    hlay = new QHBoxLayout(bg_lay);
-   label = new QLabel("Print",bg);
-   hlay->addWidget(label);
-   bk_mode_menu = new QComboBox(false, bg, "bk_mode_menu");
-   bk_mode_menu->insertItem(tr(recto_verso_str));
-   bk_mode_menu->insertItem(tr(recto_only_str));
-   bk_mode_menu->insertItem(tr(verso_only_str));
-   hlay->addWidget(bk_mode_menu);
-   hlay->addStretch(1);
-   hlay = new QHBoxLayout(bg_lay);
    label = new QLabel("Each booklet contains",bg);
    hlay->addWidget(label);
    bk_max_spin = new QSpinBox(bg);
@@ -1049,6 +1040,15 @@ QDPrintDialog::QDPrintDialog(const GP<DjVuDocument> & _doc,
    bk_max_spin->setSuffix(tr(" sheet(s)."));
    bk_max_spin->setSpecialValueText(tr("as many sheets as needed."));
    hlay->addWidget(bk_max_spin);
+   hlay->addStretch(1);
+   hlay = new QHBoxLayout(bg_lay);
+   label = new QLabel("Print",bg);
+   hlay->addWidget(label);
+   bk_mode_menu = new QComboBox(false, bg, "bk_mode_menu");
+   bk_mode_menu->insertItem(tr(recto_verso_str));
+   bk_mode_menu->insertItem(tr(recto_only_str));
+   bk_mode_menu->insertItem(tr(verso_only_str));
+   hlay->addWidget(bk_mode_menu);
    hlay->addStretch(1);
 #ifndef QT1
    QWhatsThis::add(bg,

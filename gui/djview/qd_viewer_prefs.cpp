@@ -164,16 +164,16 @@ QDHlinkPrefs::QDHlinkPrefs(DjVuPrefs * prefs, QWidget * parent, const char * nam
 #ifndef QT1
    QWhatsThis::add(this,
                    tr("<b>Hyperlinks:</b><ul>"
-                      "<li>The <i>disable hyperlink popups</i> option"
-                      " hides the popup messages optionally associated with"
-                      " the hyperlinks in DjVu documents.</li>"
-                      "<li>The <i>draw using simple border</i> option"
-                      " reduces the graphical effects associated"
-                      " with hyperlinks.</li>"
-                      "<li>All hyperlinks are hilited when the"
+                      "<li>Hyperlinks are hilited when the mouse hovers"
+                      " above the hyperlink region or when the"
                       " the key combination specified"
                       " in the <i>show all hyperlinks</i> box"
                       " is depressed.</li>"
+                      "<li>The <i>disable hyperlink popups</i> option"
+                      " hides the popup messages optionally associated with"
+                      " the hyperlinks.</li>"
+                      "<li>The <i>draw using simple border</i> option"
+                      " selects simpler hiliting effects.</li>"
                       "</ul>"));
 #endif
 
