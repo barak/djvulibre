@@ -91,7 +91,7 @@ AC_HEADER_STDC
 AC_HEADER_DIRENT
 AC_HEADER_TIME
 AC_HEADER_SYS_WAIT     
-AC_CHECK_HEADERS(wchar.h wctype.h sys/mman.h dlfcn.h iconv.h)
+AC_CHECK_HEADERS(wchar.h wctype.h sys/mman.h iconv.h)
 AC_CHECK_HEADERS(sys/ipc.h sys/shm.h)
 AC_CHECK_HEADERS(X11/extensions/Xext.h,,,[#include <X11/Xlib.h>])
 
@@ -110,7 +110,7 @@ AC_CHECK_TYPES(mbstate_t,,,[#include "wchar.h"])
 AC_FUNC_MMAP
 AC_FUNC_FORK
 AC_CHECK_FUNCS(wcrtomb iswspace strerror vsnprintf)
-AC_CHECK_FUNCS(gethostname iconv strftime)
+AC_CHECK_FUNCS(gethostname iconv strftime getpwuid)
 
 # ----------------------------------------
 # Test auxilliary packages

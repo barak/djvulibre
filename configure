@@ -4488,8 +4488,7 @@ done
 
 
 
-
-for ac_header in wchar.h wctype.h sys/mman.h dlfcn.h iconv.h
+for ac_header in wchar.h wctype.h sys/mman.h iconv.h
 do
 as_ac_Header=`echo "ac_cv_header_$ac_header" | $as_tr_sh`
 if eval "test \"\${$as_ac_Header+set}\" = set"; then
@@ -6014,7 +6013,8 @@ done
 
 
 
-for ac_func in gethostname iconv strftime
+
+for ac_func in gethostname iconv strftime getpwuid
 do
 as_ac_var=`echo "ac_cv_func_$ac_func" | $as_tr_sh`
 echo "$as_me:$LINENO: checking for $ac_func" >&5
