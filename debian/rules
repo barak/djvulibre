@@ -44,6 +44,15 @@ clean:
 	-test -r /usr/share/misc/config.guess && \
 	  cp -f /usr/share/misc/config.guess config/config.guess
 	dh_clean
+# sleazy hack to avoid
+#  dpkg-source: cannot represent change to XXX: binary file contents changed
+# for XXX in
+#  mac/DjVuFilter/DjVu.icns
+#  mac/DjVuFilter/English.lproj/InfoPlist.strings
+#  mac/DjVuFilter/English.lproj/Localizable.strings
+#  tools/jb2cmp.djvu
+	-rm -r mac
+	-rm tools/jb2cmp.djvu
 
 plugsubdir=netscape/plugins-libc6
 plug=$(plugsubdir)/nsdejavu.so

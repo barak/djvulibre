@@ -5,8 +5,9 @@ djvulibre (3.5.13.pre14-5) unstable; urgency=low
     switch, document in djvu(1) and nsdejavu(1) (closes: #257020)
   * upstream CVS fix for djview "find text" bug (closes: #257662)
   * flush private CVS repository; share with upstream on djvu.sourceforge.net
+  * sleazy debian/rules hack to avoid modified binary source file build issue
 
- -- Barak A. Pearlmutter <bap@debian.org>  Thu,  8 Jul 2004 19:09:02 +0100
+ -- Barak A. Pearlmutter <bap@debian.org>  Thu,  8 Jul 2004 23:12:34 +0100
 
 djvulibre (3.5.13.pre14-4) unstable; urgency=low
 
