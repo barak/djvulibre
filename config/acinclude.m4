@@ -741,8 +741,9 @@ AC_DEFUN([AC_PATH_QT],
           esac
         done
         ac_has_qt_mt=no
-        for n in ${qt_libdir}/lib${qt_libname}-mt.so.3.* \
-	         ${qt_libdir}/lib${qt_libname}-mt.dylib; do
+        for n in ${qt_libdir}/lib${qt_libname}-mt.so \
+	         ${qt_libdir}/lib${qt_libname}-mt.dylib \
+		 ${qt_libdir}/lib${qt_libname}-mt.dll.a; do
           if test -r $n ; then
             ac_has_qt_mt=yes
           fi
