@@ -31,8 +31,7 @@
 //C- TO ANY WARRANTY OF NON-INFRINGEMENT, OR ANY IMPLIED WARRANTY OF
 //C- MERCHANTIBILITY OR FITNESS FOR A PARTICULAR PURPOSE.
 //C-
-// $Name$
-static char RCSVersion[]="@(#) $Id$";
+
 #ifdef __GNUG__
 #pragma implementation
 #endif
