@@ -181,6 +181,26 @@ back	Display the background only.
 .TE
 .PP
 .TP
+.BI hor_align= keyword
+Specify the horizontal position of the page in the viewer window.
+Argument
+.I keyword
+must be 
+.BR left ,
+.BR center ,
+or
+.BR right .
+.TP
+.BI ver_align= keyword
+Specify the vertical position of the page in the viewer window.
+Argument
+.I keyword
+must be
+.BR top ,
+.BR center ,
+or
+.BR bottom .
+.TP
 .BI toolbar= keyword {(,|+|-) keyword }
 Controls the appearance and the contents of the toolbar.
 The argument of option
