@@ -1046,20 +1046,7 @@ do_bitmap(const DjVuImage &dimg, BImager get,
     if( dimg.get_rotate()%4 )
     {
         GRectMapper mapper;
-
-        GRect input, output;
-
-        input = GRect(0,0,all.width(), all.height());
-        if( dimg.get_rotate() & 1 )
-            output = GRect(0,0,all.height(), all.width());
-        else
-            output = GRect(0,0,all.width(), all.height());
-
-        mapper.clear();
-        mapper.set_input(input);
-        mapper.set_output(output);
         mapper.rotate((4-dimg.get_rotate())%4);
-
         mapper.map(rect);
         mapper.map(all);
     }
@@ -1125,20 +1112,7 @@ do_pixmap(const DjVuImage &dimg, PImager get,
     if( dimg.get_rotate()%4 )
     {
         GRectMapper mapper;
-
-        GRect input, output;
-
-        input = GRect(0,0,all.width(), all.height());
-        if( dimg.get_rotate() & 1 )
-            output = GRect(0,0,all.height(), all.width());
-        else
-            output = GRect(0,0,all.width(), all.height());
-
-        mapper.clear();
-        mapper.set_input(input);
-        mapper.set_output(output);
         mapper.rotate((4-dimg.get_rotate())%4);
-
         mapper.map(rect);
         mapper.map(all);
     }

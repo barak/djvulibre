@@ -376,8 +376,9 @@ GMarginCache<TPixmap>::addRect(const GRect & grect, const GP<TPixmap> & pix)
    }
 
    // rotation may cause some round-off errors - exact fit may not be possible
-   if ((int) pix->columns() > grect.width() ||
-       (int) pix->rows() > grect.height())
+   // BALLOONY. +/- 90 degree rotations should not produce round-off errors.
+   if ((int) pix->columns() != grect.width() ||
+       (int) pix->rows() != grect.height())
    {
       G_THROW("Pixmap being cached doesn't fit into the rectangle.");
    }

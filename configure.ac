@@ -78,6 +78,7 @@ AC_CHECK_HEADERS(sys/ipc.h sys/shm.h)
 # ----------------------------------------
 
 AC_CHECK_TYPES(wchar_t)
+AC_CHECK_TYPES(long long int)
 AC_CHECK_TYPES(mbstate_t,,,[#include "wchar.h"])
 
 # ----------------------------------------

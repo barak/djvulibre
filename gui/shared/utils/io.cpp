@@ -131,80 +131,50 @@ Read(int fd, void * buffer, int length,
 static void
 Write(int fd, const void * buffer, int length)
 {
-      // We need to ignore SIGPIPE signal
-      // Unfortunately neither sigprocmask() nor sigaction() seem to
-      // be able to do it alone. sigprocmask() blocks SIGPIPE for some
-      // time, but it is still delivered when we restore block mask.
-      // sigaction() sometimes ignores SIGPIPE, but sometimes it still
-      // gets thru from write().
-      // So, the solution is to block SIGPIPE for the duration of the
-      // function using sigprocmask() and use SIG_IGN handler for the
-      // moment when we restore the old block mask.
+#ifdef SIGPIPE
+  // Disable SIGPIPE and leave it that way!
+  sigset_t mask;
+  struct sigaction act;
+  sigemptyset(&mask);
+  sigaddset(&mask, SIGPIPE);
+  sigprocmask(SIG_BLOCK, &mask, 0);
+  sigaction(SIGPIPE, 0, &act);
+  act.sa_handler = SIG_IGN;
+  sigaction(SIGPIPE, &act, 0);
+#endif
 
-      // Block SIGPIPE (prevent it from being delivered)
-   sigset_t new_mask, old_mask;
-   sigemptyset(&new_mask);
-   sigaddset(&new_mask, SIGPIPE);
-   sigprocmask(SIG_BLOCK, &new_mask, &old_mask);
-   
-   G_TRY {
 #ifdef PLUGIN
+  int size=length;
+  const char * ptr=(const char *) buffer;
+  while(size>0)
+    {
+      errno = 0;
+      int res=write(fd, ptr, size);
+      if (res<0 && errno==EINTR) continue;
+      if (res<=0)
+        G_THROW(GUTF8String("PipeError: Failed to write data into pipe:\n") + strerror(errno));
+      size-=res; ptr+=res;
+    }
+#else
+  try
+    {
       int size=length;
       const char * ptr=(const char *) buffer;
       while(size>0)
-      {
-         errno = 0;
-	 int res=write(fd, ptr, size);
-	 if (res<0 && errno==EINTR) continue;
-	 if (res<=0)
-           G_THROW(GUTF8String("PipeError: Failed to write data into pipe:\n") + strerror(errno));
-	 size-=res; ptr+=res;
-      }
-#else
-      try
-      {
-	 int size=length;
-	 const char * ptr=(const char *) buffer;
-	 while(size>0)
-	 {
-            errno = 0;
-	    int res=write(fd, ptr, size);
-	    if (res<0 && errno==EINTR) continue;
-	    if (res<=0) 
-              ThrowError("Write", "Failed to write data into pipe");
-	    size-=res; ptr+=res;
-	 }
-      } catch(Exception & exc)
-      {
-	 throw PipeError(exc);
-      }
+        {
+          errno = 0;
+          int res=write(fd, ptr, size);
+          if (res<0 && errno==EINTR) continue;
+          if (res<=0) 
+            ThrowError("Write", "Failed to write data into pipe");
+          size-=res; ptr+=res;
+        }
+    } 
+  catch(Exception & exc)
+    {
+      throw PipeError(exc);
+    }
 #endif
-   } G_CATCH_ALL {
-         // Set SIGPIPE behaviour to SIG_IGN
-      struct sigaction new_action, old_action;
-      sigaction(SIGPIPE, 0, &new_action);
-      new_action.sa_handler=SIG_IGN;
-      new_action.sa_flags=SA_NODEFER;
-      sigaction(SIGPIPE, &new_action, &old_action);
-	 // Unblock SIG_PIPE (it WILL be delivered and IGNORED now)
-      sigprocmask(SIG_SETMASK, &old_mask, 0);
-	 // Restore previous SIGPIPE behaviour.
-      sigaction(SIGPIPE, &old_action, 0);
-      G_RETHROW;
-   } G_ENDCATCH;
-
-      // Set SIGPIPE behaviour to SIG_IGN
-   struct sigaction new_action, old_action;
-   sigaction(SIGPIPE, 0, &new_action);
-   new_action.sa_handler=SIG_IGN;
-   new_action.sa_flags=SA_NODEFER;
-   sigaction(SIGPIPE, &new_action, &old_action);
-
-      // Unblock SIG_PIPE (it WILL be delivered and IGNORED now)
-   sigprocmask(SIG_SETMASK, &old_mask, 0);
-
-      // Restore previous SIGPIPE behaviour.
-   sigaction(SIGPIPE, &old_action, 0);
 }
 
 void
@@ -278,10 +248,11 @@ ReadString(int fd, int refresh_pipe, void (* refresh_cb)(void))
    int type;
    Read(fd, &type, sizeof(type), refresh_pipe, refresh_cb);
 #ifdef PLUGIN
-   if (type!=TYPE_STRING) G_THROW("PipeError: Unexpected type of data read from the pipe.");
+   if (type!=TYPE_STRING) 
+     G_THROW("PipeError: Unexpected type of data read from the pipe.");
 #else
    if (type!=TYPE_STRING)
-      throw PIPE_ERROR("ReadString", "Unexpected type of data read from the pipe.");
+     throw PIPE_ERROR("ReadString", "Unexpected type of data read from the pipe.");
 #endif
    
    int length;

@@ -300,8 +300,8 @@ private:
   int   code;
   // Helper
   void  precalc();
-  friend int operator*(int n, GRatio r ) { return (int)(((double)n * (double)r.p + (double)r.q/2) / (double)r.q); };
-  friend int operator/(int n, GRatio r ) { return (int)(((double)n * (double)r.q + (double)r.p/2) / (double)r.p); };
+  friend int operator*(int n, GRatio r ); 
+  friend int operator/(int n, GRatio r ); 
   GRatio rw;
   GRatio rh;
 };

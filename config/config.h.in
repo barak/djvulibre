@@ -72,6 +72,9 @@
 /* Define if you have the `m' library (-lm). */
 #undef HAVE_LIBM
 
+/* Define if the system has the type `long long int'. */
+#undef HAVE_LONG_LONG_INT
+
 /* Define if the system has the type `mbstate_t'. */
 #undef HAVE_MBSTATE_T
 
