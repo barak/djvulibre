@@ -1649,7 +1649,7 @@ UnsetVariable(const char *var)
 #ifdef __linux__
       unsetenv(var);
 #else
-      const char *env = malloc(strlen(var)+2);
+      char *env = malloc(strlen(var)+2);
       strcpy(env, var);
       strcat(env, "=");
       putenv(env);
