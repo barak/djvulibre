@@ -63,6 +63,7 @@
 
 #include <stdlib.h>
 #include <string.h>
+#include <locale.h>
 
 #ifdef HAVE_NAMESPACES
 namespace DJVU {
@@ -255,10 +256,15 @@ xhead(ddjvu_message_tag_t tag,
 
 
 ddjvu_context_t *
-ddjvu_context_create(void)
+ddjvu_context_create(const char *programname)
 {
   G_TRY
     {
+      if (programname)
+        {
+          setlocale(LC_ALL,"");
+          djvu_programname(programname);
+        }
       ddjvu_context_t *ctx = new ddjvu_context_s;
       ctx->cache = DjVuFileCache::create();
       ctx->callback = 0;
@@ -560,7 +566,12 @@ GP<DataPool>
 ddjvu_document_s::request_data(const DjVuPort*p, const GURL &url)
 {
   GP<DataPool> pool;
-  if (doc && !fileflag)
+  if (fileflag)
+    {
+      if (doc && url.is_local_file_url())
+        return DataPool::create(url);
+    }
+  else if (doc)
     {
       streamid += 1;
       {
@@ -585,7 +596,7 @@ ddjvu_document_s::request_data(const DjVuPort*p, const GURL &url)
           p->tmp2 = (const char*)url.get_string();
           p->p.m_newstream.url = (const char*)(p->tmp2);
         }
-    }
+        }
   return pool;
 }
 
@@ -609,19 +620,20 @@ ddjvu_document_create(ddjvu_context_t *ctx,
       d->fileflag = false;
       d->docinfoflag = false;
       d->myctx = ctx;
+      d->doc = DjVuDocument::create_noinit();
       if (url)
         {
           GURL gurl = GUTF8String(url);
-          d->doc = DjVuDocument::create(gurl, d, xcache);
           d->urlflag = true;
+          d->doc->start_init(gurl, d, xcache);
         }
       else
         {
           GUTF8String s;
           s.format("ddjvu:///%p/index.djvu", d);
           GURL gurl = s;
-          d->doc = DjVuDocument::create(gurl, d, xcache);
           d->urlflag = false;
+          d->doc->start_init(gurl, d, xcache);
         }
       return d;
     }
@@ -650,7 +662,8 @@ ddjvu_document_create_by_filename(ddjvu_context_t *ctx,
       d->urlflag = false;
       d->docinfoflag = false;
       d->myctx = ctx;
-      d->doc = DjVuDocument::create(gurl, d, xcache);
+      d->doc = DjVuDocument::create_noinit();
+      d->doc->start_init(gurl, d, xcache);
       return d;
     }
   G_CATCH(ex)
@@ -1132,7 +1145,10 @@ ddjvu_page_get_short_description(ddjvu_page_t *page)
   G_TRY
     {
       if (page && page->img)
-        return xstr(page->img->get_short_description());
+        {
+          const char *desc = page->img->get_short_description();
+          return xstr(DjVuMessageLite::LookUpUTF8(desc));
+        }
     }
   G_CATCH(ex)
     {
@@ -1148,7 +1164,10 @@ ddjvu_page_get_long_description(ddjvu_page_t *page)
   G_TRY
     {
       if (page && page->img)
-        return xstr(page->img->get_long_description());
+        {
+          const char *desc = page->img->get_long_description();
+          return xstr(DjVuMessageLite::LookUpUTF8(desc));
+        }
     }
   G_CATCH(ex)
     {
@@ -1380,8 +1399,9 @@ fmt_convert_row(const GPixel *p, int w,
       {
         unsigned char s=0, m=0x80;
         while (--w >= 0) {
-          if ( 5*p->b + 9*p->g + 2*p->b < 128*16 ) { m |= s; }
+          if ( 5*p->b + 9*p->g + 2*p->b < 0xc00 ) { s |= m; }
           if (! (m >>= 1)) { *buf++ = s; s=0; m=0x80; }
+          p += 1;
         }
         if (s < 0x80) { *buf++ = s; }
         break;
@@ -1390,8 +1410,9 @@ fmt_convert_row(const GPixel *p, int w,
       {
         unsigned char s=0, m=0x1;
         while (--w >= 0) {
-          if ( 5*p->b + 9*p->g + 2*p->b < 128*16 ) { m |= s; }
+          if ( 5*p->b + 9*p->g + 2*p->b < 0xc00 ) { s |= m; }
           if (! (m <<= 1)) { *buf++ = s; s=0; m=0x1; }
+          p += 1;
         }
         if (s > 0x1) { *buf++ = s; }
         break;
@@ -1474,8 +1495,9 @@ fmt_convert_row(unsigned char *p, unsigned char *g, int w,
       {
         unsigned char s=0, m=0x80;
         while (--w >= 0) {
-          if (g[*p] < 128) { m |= s; }
+          if (g[*p] < 0xc0) { s |= m; }
           if (! (m >>= 1)) { *buf++ = s; s=0; m=0x80; }
+          p += 1;
         }
         if (s < 0x80) { *buf++ = s; }
         break;
@@ -1484,8 +1506,9 @@ fmt_convert_row(unsigned char *p, unsigned char *g, int w,
       {
         unsigned char s=0, m=0x1;
         while (--w >= 0) {
-          if (g[*p] < 128) { m |= s; }
+          if (g[*p] < 0xc0) { s |= m; }
           if (! (m <<= 1)) { *buf++ = s; s=0; m=0x1; }
+          p += 1;
         }
         if (s > 0x1) { *buf++ = s; }
         break;
@@ -1522,7 +1545,9 @@ fmt_convert(GBitmap *bm, const ddjvu_format_t *fmt, char *buffer, int rowsize)
 static void
 fmt_dither(GPixmap *pm, const ddjvu_format_t *fmt, int x, int y)
 {
-  if (fmt->ditherbits < 15)
+  if (fmt->ditherbits < 8)
+    return;
+  else if (fmt->ditherbits < 15)
     pm->ordered_666_dither(x, y);
   else if (fmt->ditherbits < 24)
     pm->ordered_32k_dither(x, y);
@@ -1563,8 +1588,7 @@ ddjvu_page_render(ddjvu_page_t *page,
           switch (mode)
             {
             case DDJVU_RENDER_DEFAULT:
-              if (pixelformat->ditherbits < 8)
-                pm = img->get_pixmap(rrect, prect, pixelformat->gamma);
+              pm = img->get_pixmap(rrect, prect, pixelformat->gamma);
               if (! pm) 
                 bm = img->get_bitmap(rrect, prect);
               break;

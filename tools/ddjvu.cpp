@@ -52,477 +52,774 @@
 //C- +------------------------------------------------------------------
 // 
 // $Id$
-// $Name$
+
+
+/* Program ddjvu has been rewritten to use the ddjvuapi only.
+ * This file should compile both as C and C++. 
+ */
 
 #ifdef HAVE_CONFIG_H
 # include "config.h"
 #endif
-#if NEED_GNUG_PRAGMAS
-# pragma implementation
+
+#include <stdlib.h>
+#include <stdio.h>
+#include <stdarg.h>
+#include <string.h>
+#include <locale.h>
+#include <errno.h>
+
+#include "libdjvu/ddjvuapi.h"
+
+#if defined(WIN32) || defined(__CYGWIN32__)
+# include <io.h>
+#endif
+#if HAVE_PUTC_UNLOCKED
+# define putc putc_unlocked
+#endif
+#if HAVE_TIFF
+# include <tiffio.h>
 #endif
 
-/** @name ddjvu
 
-    {\bf Synopsis}
-    \begin{verbatim}
-        ddjvu [options] djvufilename [pnmfilename]
-    \end{verbatim}
+ddjvu_context_t *ctx;
+ddjvu_document_t *doc;
 
-    {\bf Description} --- File #"ddjvu.cpp"# illustrates how to decode and
-    render a DjVu file using class #DjVuImage#.  This program decodes all
-    variants of DjVu files, including the wavelet files produced by \Ref{c44},
-    and produces PNM files (see \Ref{PNM and RLE file formats}).
+double       flag_scale = -1;
+int          flag_size = -1;
+int          flag_aspect = -1;
+int          flag_subsample = -1;
+int          flag_segment = 0;
+int          flag_verbose = 0;
+char         flag_mode = 0;     /* 'f','b','m' or 'c' */
+char         flag_format = 0;   /* '4','5','6','p','r','t' */
+int          flag_tiffq = -1;
+const char  *flag_pagespec = 0; 
+ddjvu_rect_t info_size;
+ddjvu_rect_t info_segment;
+const char  *inputfilename;
+const char  *outputfilename;
 
-    {\bf Arguments} --- Argument #djvufilename# is the name of the input DjVu
-    file.  A single dash #"-"# represents the standard input.  Argument
-    #pnmfilename# is the name of the output PNM file.  Omitting this argument
-    or specifying a single dash #"-"# represents the standard output.
+FILE *fout;
+#if HAVE_TIFF
+TIFF *tiff;
+#endif
 
-    {\bf Output Resolution} --- Three options control the resolution of the 
-    output PNM image.  At most one of these three options can be specified.
-    The default resolution, used when no other option is specified, is equivalent
-    to specifying #-scale 100#.
-    \begin{description}
-    \item[-N] This option (e.g #"-3"# or #"-19"#) specifies a subsampling
-       factor #N#.  Rendering the full DjVu image would create an image whose
-       dimensions are #N# times smaller than the DjVu image size.
-    \item[-scale N] This option takes advantage of the #dpi# field stored in
-       the #"INFO"# chunk of the DjVu image (cf. \Ref{DjVuInfo}).  Argument
-       #N# is a magnification percentage relative to the adequate resolution
-       for a 100dpi device such as a screen.
-    \item[-size WxH] This option provides total control on the resolution and
-       the aspect ratio of the image.  The vertical and horizontal resolutions
-       will be separately adjusted in such a way that the complete DjVu image
-       is rendered into a PNM file of width #W# and height #H#.
-    \end{description}
-    
-    {\bf Rendering Mode Selection} --- The default rendering mode merges all
-    the layers of the DjVu image and outputs an adequate PNM file. IW44 files
-    Compound djVu files and Photo DjVu files are always rendered as PPM
-    files. Bilevel DjVu files are rendered as PBM files if the
-    subsampling factor is 1.  Otherwise, they are rendered as PGM files
-    because the resolution change gives better results with anti-aliasing.
-    Three options alter this default behavior.
-    \begin{description}
-    \item[-black] Renders only the foreground layer mask.  This mode does not
-       work with IW44 files because these files have no foreground layer mask.
-       The output file will be a PBM file if the subsampling factor is 1.
-       Otherwise the output file will be an anti-aliased PGM file.
-    \item[-foreground] Renders only the foreground layer on a white
-       background.  This mode works only with Compound DjVu files. The output
-       file always is a PPM file.
-    \item[-background] Renders only the background layer. This mode works only
-       with Compound DjVu files and IW44 files. The output file always is a PPM
-       file.
-    \end{description}
 
-    {\bf Other Options} --- The following two options are less commonly used:
-    \begin{description}
-    \item[-segment WxH+X+Y] Selects an image segment to render. Conceptually,
-       #ddjvu# renders the full page using the specified resolution, and
-       then extracts a subimage of width #W# and height #H#, starting at
-       position (#X#,#Y#) relative to the bottom left corner of the page.
-       Both operations of course happen simultaneously.  Rendering a small
-       subimage is much faster than rendering the complete image.  Note that
-       the output PNM file will always have size #WxH#.
-    \item[-v] Causes #ddjvu# to print abundant information about the
-       structure of the DjVu file, the compression ratios, the memory usage,
-       and the decoding and rendering times.
-    \item[-page N] This can be used to decode a specific page of a multipage
-       document. Page numbers start from #1#. If this option is omitted,
-       #1# is assumed.
-    \end{description}
-
-    @memo
-    Decodes and renders a DjVu file.
-    @author
-    Yann Le Cun <yann@research.att.com>\\
-    L\'eon Bottou <leonb@research.att.com>
-    @version
-    #$Id$# */
-//@{
-//@}
-
-#include "GException.h"
-#include "GSmartPointer.h"
-#include "GRect.h"
-#include "GPixmap.h"
-#include "GBitmap.h"
-#include "DjVuImage.h"
-#include "DjVuDocument.h"
-#include "DjVuPalette.h"
-#include "GOS.h"
-#include "ByteStream.h"
-#include "DjVuMessage.h"
-
-#include <locale.h>
-#include <stdio.h>
-#include <stdlib.h>
-
-static double flag_scale = -1;
-static int    flag_size = -1;
-static int    flag_aspect = -1;
-static int    flag_subsample = -1;
-static int    flag_segment = -1;
-static int    flag_verbose = 0;
-static int    flag_mode = 0;
-static bool   flag_rle = false;
-
-struct DDJVUGlobal 
+void
+handle(int wait)
 {
-  // Globals that need static initialization
-  // are grouped here to work around broken compilers.
-  GRect fullrect;
-  GRect segmentrect;
-};
-
-static DDJVUGlobal& g(void)
-{
-  static DDJVUGlobal g;
-  return g;
+  const ddjvu_message_t *msg;
+  if (!ctx)
+    return;
+  if (wait)
+    msg = ddjvu_message_wait(ctx);
+  while ((msg = ddjvu_message_peek(ctx)))
+    {
+      switch(msg->m_any.tag)
+        {
+        case DDJVU_ERROR:
+          fprintf(stderr,"ddjvu: %s\n", msg->m_error.message);
+          if (msg->m_error.function)
+            fprintf(stderr,"ddjvu:   in function '%s'\n", 
+                    msg->m_error.function);
+          if (msg->m_error.filename)
+            fprintf(stderr,"ddjvu:   in file '%s:%d'\n", 
+                    msg->m_error.filename, msg->m_error.lineno);
+          exit(10);
+        case DDJVU_INFO:
+          fprintf(stderr,"ddjvu info: %s\n", msg->m_info.message);
+          break;
+        default:
+          break;
+        }
+      ddjvu_message_pop(ctx);
+    }
 }
 
 
-static void
-convert(const GURL &from, const GURL &to, int page_num)
+
+void 
+die(const char *fmt, ...)
 {
-  unsigned long start, stop;
+  /* Handling message might give a better error message */
+  handle(FALSE);
+  /* Print */
+  va_list args;
+  fprintf(stderr,"ddjvu: ");
+  va_start(args, fmt);
+  vfprintf(stderr, fmt, args);
+  va_end(args);
+  fprintf(stderr,"\n");
+  /* Terminates */
+  exit(10);
+}
 
-  // Create DjVuDocument
-  GP<DjVuDocument> doc=DjVuDocument::create_wait(from);
-  if (! doc->wait_for_complete_init())
-    G_THROW( ERR_MSG("ddjvu.failed") );
+
+
+void
+inform(ddjvu_page_t *page, int pageno)
+{
+  if (flag_verbose > 0)
+    {
+      ddjvu_page_type_t type = ddjvu_page_get_type(page);
+      char *desctype = "a malformed DjVu image";
+      char *description = ddjvu_page_get_long_description(page);
+      fprintf(stderr,"-------- page %d -------\n", pageno);
+      if (type == DDJVU_PAGETYPE_BITONAL)
+        desctype = "a legal Bitonal DjVu image";
+      else if (type == DDJVU_PAGETYPE_PHOTO)
+        desctype = "a legal Photo DjVu image";
+      else if (type == DDJVU_PAGETYPE_COMPOUND)
+        desctype = "a legal Compound DjVu image";
+      fprintf(stderr,"This is %s.\n", desctype);
+      if (description)
+        fprintf(stderr,"%s\n\n", description);
+      if (description)
+        free(description);
+    }
+}
+
+
+
+void
+render(ddjvu_page_t *page)
+{
+  ddjvu_rect_t prect;
+  ddjvu_rect_t rrect;
+  ddjvu_format_style_t style;
+  ddjvu_render_mode_t mode;
+  ddjvu_format_t *fmt;
+  int iw = ddjvu_page_get_width(page);
+  int ih = ddjvu_page_get_height(page);
+  int dpi = ddjvu_page_get_resolution(page);
+  char *image = 0;
+  int rowsize;
   
-  // Create DjVuImage
-  start=GOS::ticks();
-  GP<DjVuImage> dimg=doc->get_page(page_num);
-  if (!dimg || ! dimg->wait_for_complete_decode() )
-    G_THROW( ERR_MSG("ddjvu.failed") );
-  stop=GOS::ticks();
-
-  // Verbose
-  if (flag_verbose)
+  /* Process size specification */
+  prect.x = 0;
+  prect.y = 0;
+  if (flag_size > 0)
     {
-      DjVuFormatErrorUTF8( "%s",(const char*)dimg->get_long_description() );
-      DjVuFormatErrorUTF8( "%s\t%lu", ERR_MSG("ddjvu.decode"), stop - start);
+      prect.w = info_size.w;
+      prect.h = info_size.h;
     }
-
-  // Check
-  DjVuInfo *info = dimg->get_info();
-  int colorp = dimg->is_legal_photo();
-  int blackp = dimg->is_legal_bilevel();
-  int compoundp = dimg->is_legal_compound();
-  if (flag_verbose)
+  else if (flag_subsample > 0)
     {
-      if (compoundp)
-        DjVuWriteError( ERR_MSG("ddjvu.compound") );
-      else if (colorp)
-        DjVuWriteError( ERR_MSG("ddjvu.photo") );
-      else if (blackp)
-        DjVuWriteError( ERR_MSG("ddjvu.bilevel") );
-      // Without included files
-      DjVuFormatErrorUTF8( "%s\t%4.1f", ERR_MSG("ddjvu.memory"), 
-              (double)(dimg->get_djvu_file()->get_memory_usage())/1024 );
-    }    
-  if (!compoundp && !colorp && !blackp)
-    { 
-      DjVuPrintErrorUTF8("%s","Warning: This is not a well formed DjVu image\n");
-      if (!info)
-        G_THROW( ERR_MSG("ddjvu.no_info") ); 
+      prect.w = (iw + flag_subsample - 1) / flag_subsample;
+      prect.h = (ih + flag_subsample - 1) / flag_subsample;
     }
-
-  // Setup rectangles
-  if (flag_size<0 && flag_scale<0 && flag_subsample<0)
-    flag_scale = 100;
-  if (flag_subsample>0)
-    flag_scale = (double) info->dpi / flag_subsample;
-  if (flag_scale>0)
+  else if (flag_scale > 0)
     {
-      int w = (int)(dimg->get_width() * flag_scale / info->dpi);
-      int h = (int)(dimg->get_height() * flag_scale / info->dpi);
-      if (w<1) w=1;
-      if (h<1) h=1;
-      g().fullrect = GRect(0,0, w, h);
+      prect.w = (unsigned int) (iw * flag_scale) / dpi;
+      prect.h = (unsigned int) (ih * flag_scale) / dpi;
     }
-  if (flag_aspect <= 0)
+  else if (flag_format)
     {
-      int w = g().fullrect.width();
-      int h = g().fullrect.height();
-      double dw = (double)dimg->get_width()/ w;
-      double dh = (double)dimg->get_height()/h;
-      if (dw > dh) 
-        h = (int)(dimg->get_height()/dw);
-      else
-        w = (int)(dimg->get_width()/dh);
-      g().fullrect = GRect(0,0, w, h);
-    }
-  if (flag_segment < 0)
-    g().segmentrect = g().fullrect;
-  
-  // Render
-  GP<GPixmap> pm;
-  GP<GBitmap> bm;
-  start = GOS::ticks();
-  switch(flag_mode)
-    {
-    case 's':
-      bm = dimg->get_bitmap(g().segmentrect, g().fullrect);
-      break;
-    case 'f':
-      pm = dimg->get_fg_pixmap(g().segmentrect, g().fullrect);
-      if (! pm)
-        bm = dimg->get_bitmap(g().segmentrect, g().fullrect);
-      break;
-    case 'b':
-      pm = dimg->get_bg_pixmap(g().segmentrect, g().fullrect);
-      break;
-    default:
-      pm = dimg->get_pixmap(g().segmentrect, g().fullrect);
-      if (! pm)
-        bm = dimg->get_bitmap(g().segmentrect, g().fullrect);
-      break;
-    }
-  stop = GOS::ticks();
-  if (flag_verbose)
-    {
-      DjVuFormatErrorUTF8( "%s\t%lu", ERR_MSG("ddjvu.render"), stop - start);
-    }
-
-  // Save image
-  if (pm) 
-    {
-      GP<ByteStream> out = ByteStream::create(to,"wb");
-      pm->save_ppm(*out);
-    }
-  else if (bm) 
-    {
-      GP<ByteStream> out=ByteStream::create(to,"wb");
-      if (bm->get_grays() > 2) {
-        bm->save_pgm(*out);
-      } else if (flag_rle) {
-        bm->save_rle(*out);
-      } else {
-        bm->save_pbm(*out);
-      }
+      prect.w = iw;
+      prect.h = ih;
     }
   else
-    G_THROW( ERR_MSG("ddjvu.cant_render") );
+    {
+      prect.w = (iw * 100) / dpi;
+      prect.h = (ih * 100) / dpi;
+    }
+  /* Process aspect ratio */
+  if (flag_aspect <= 0)
+    {
+      double dw = (double)iw / prect.w;
+      double dh = (double)ih / prect.h;
+      if (dw > dh) 
+        prect.h = (int)(ih / dw);
+      else
+        prect.w = (int)(iw / dh);
+    }
+
+  /* Process segment specification */
+  rrect = prect;
+  if (flag_segment > 0)
+    {
+      rrect = info_segment;
+      if (rrect.x < 0)
+        rrect.x = prect.w - rrect.w + rrect.x;
+      if (rrect.y < 0)
+        rrect.y = prect.h - rrect.h + rrect.y;
+    }
+
+  /* Process mode specification */
+  mode = DDJVU_RENDER_DEFAULT;
+  if (flag_mode == 'f')
+    mode = DDJVU_RENDER_FOREGROUND;
+  else if (flag_mode == 'b')
+    mode = DDJVU_RENDER_BACKGROUND;
+  else if (flag_mode == 'c')
+    mode = DDJVU_RENDER_DEFAULT;
+  else if (flag_mode == 'm')
+    mode = DDJVU_RENDER_MASK;
+  else if (flag_format == 'r' || flag_format == '4')
+    mode = DDJVU_RENDER_MASK;
+
+  /* Determine pixel format */
+  switch(flag_format)
+    {
+    case '4':
+      style = DDJVU_FORMAT_MSBTOLSB;
+      break;
+    case 'r':
+    case '5':
+      style = DDJVU_FORMAT_GREY8;
+      break;
+    case '6':
+      style = DDJVU_FORMAT_RGB24;
+      break;
+    default:
+      if (ddjvu_page_get_type(page) != DDJVU_PAGETYPE_BITONAL)
+        style = DDJVU_FORMAT_RGB24;
+      else if ((int)prect.w == iw && (int)prect.h == ih)
+        style = DDJVU_FORMAT_MSBTOLSB;
+      else
+        style = DDJVU_FORMAT_GREY8;
+      break;
+    }
+  if (! (fmt = ddjvu_format_create(style, 0, 0)))
+    die("Cannot determine pixel style");
+  ddjvu_format_set_row_order(fmt, 1);
+  /* Allocate buffer */
+  if (style == DDJVU_FORMAT_MSBTOLSB)
+    rowsize = (rrect.w + 7) / 8;
+  else if (style == DDJVU_FORMAT_GREY8)
+    rowsize = rrect.w;
+  else
+    rowsize = rrect.w * 3; 
+  if (! (image = (char*)malloc(rowsize * rrect.h)))
+    die("Cannot allocate image buffer");
+
+  /* Render */
+  if (! ddjvu_page_render(page, mode, &prect, &rrect, fmt, rowsize, image))
+    die("Cannot render image");
+
+  /* Output */
+  switch (flag_format)
+    {
+      /* -------------- PNM output */
+    default:
+    case '4':
+    case '5':
+    case '6':
+      {
+        int i;
+        char *s = image;
+        if (style == DDJVU_FORMAT_MSBTOLSB)
+          fprintf(fout,"P4\n%d %d\n", rrect.w, rrect.h);
+        else if (style == DDJVU_FORMAT_GREY8)
+          fprintf(fout,"P5\n%d %d\n255\n", rrect.w, rrect.h);
+        else
+          fprintf(fout,"P6\n%d %d\n255\n", rrect.w, rrect.h);
+        for (i=0; i<(int)rrect.h; i++,s+=rowsize)
+          if (fwrite(s, 1, rowsize, fout) < (size_t)rowsize)
+            die("writing pnm file: %s", strerror(errno));
+        break;
+      }
+      /* -------------- RLE output */
+    case 'r':
+      {
+        int i;
+        unsigned char *s = (unsigned char *)image;
+        fprintf(fout,"R4\n%d %d\n", rrect.w, rrect.h);
+        for (i=0; i<(int)rrect.h; i++,s+=rowsize)
+          {
+            int j = 0;
+            int c = 0xff;
+            while (j < (int)rrect.w)
+              {
+                int l = j;
+                while ((j<(int)rrect.w) && ((s[j]^c)<128))
+                  j += 1;
+                c = c ^ 0xff;
+                l = j - l;
+                while (l > 0x3fff) {
+                  putc( 0xff, fout);
+                  putc( 0xff, fout);
+                  putc( 0x00, fout);
+                  l -= 0x3fff;
+                }
+                if (l > 0xbf) {
+                  putc( (l >> 8) + 0xc0, fout);
+                  putc( (l & 0xff), fout);
+                } else {
+                  putc( l, fout);
+                }
+              }
+          }
+        break;
+      }
+      /* -------------- TIFF output */
+    case 't':
+      {
+#if HAVE_TIFF
+        die("TIFF output is not implemented");
+#else
+        die("TIFF output is not compiled");
+#endif
+      }
+    }
+
+  /* Free */
+  ddjvu_format_release(fmt);
+  free(image);
 }
+
+
+
+void
+dopage(int pageno)
+{
+  ddjvu_page_t *page;
+  /* Decode page */
+  if (! (page = ddjvu_page_create_by_pageno(doc, pageno-1)))
+    die("Cannot access page %d.", pageno);
+  while (! ddjvu_page_decoding_done(page))
+    handle(TRUE);
+  /* Open files */
+  if (flag_format == 't') 
+    {
+#if HAVE_TIFF
+      if (! tiff) 
+        {
+          if (! strcmp(outputfilename,"-"))
+            die("Tiff output requires a valid output file name.");
+          else if (! (tiff = TIFFOpen(outputfilename, "wb")))
+            die("Cannot open output tiff file '%s'.", outputfilename);
+        } 
+      else 
+        {
+          if (! TIFFWriteDirectory(tiff))
+            die("Problem writing TIFF directory.");
+        }
+#else
+      die("TIFF output is not compiled");
+#endif
+    } 
+  else if (! fout) 
+    {
+      if (! strcmp(outputfilename,"-")) {
+        fout = stdout;
+#if defined(WIN32)
+        _setmode(_fileno(fout), _O_BINARY);
+#elif defined(__CYGWIN32__)
+        setmode(fileno(fout), O_BINARY);
+#endif
+      } else if (! (fout = fopen(outputfilename, "wb")))
+        die("Cannot open output file '%s'.", outputfilename);
+    }
+  /* Render */
+  inform(page, pageno);
+  render(page);
+  ddjvu_page_release(page);
+}
+
+
+
+void
+parse_pagespec(const char *s, int max_page, void (*func)(int))
+{
+  static const char *err = "invalid page specification: %s";
+  int spec = 0;
+  int both = 1;
+  int start_page = 1;
+  int end_page = max_page;
+  int pageno;
+  char *p = (char*)s;
+
+  while (*p)
+    {
+      spec = 0;
+      while (*p==' ')
+        p += 1;
+      if (! *p)
+        break;
+      if (*p>='0' && *p<='9') {
+        end_page = strtol(p, &p, 10);
+        spec = 1;
+      } else if (*p=='$') {
+        spec = 1;
+        end_page = max_page;
+        p += 1;
+      } else if (both) {
+        end_page = 1;
+      } else {
+        end_page = max_page;
+      }
+      while (*p==' ')
+        p += 1;
+      if (both) {
+        start_page = end_page;
+        if (*p == '-') {
+          p += 1;
+          both = 0;
+          continue;
+        }
+      }
+      both = 1;
+      while (*p==' ')
+        p += 1;
+      if (*p && *p != ',')
+        die(err, s);
+      if (*p == ',')
+        p += 1;
+      if (! spec)
+        die(err, s);
+      if (end_page < 0)
+        end_page = 0;
+      if (start_page < 0)
+        start_page = 0;
+      if (end_page > max_page)
+        end_page = max_page;
+      if (start_page > max_page)
+        start_page = max_page;
+      if (start_page <= end_page)
+        for(pageno=start_page; pageno<=end_page; pageno++)
+          (*func)(pageno);
+      else
+        for(pageno=start_page; pageno>=end_page; pageno--)
+          (*func)(pageno);
+    }
+  if (! spec)
+    die(err, s);
+}
+
+
+
+void
+parse_geometry(const char *s, ddjvu_rect_t *r)
+{
+  static const char *fmt = "syntax error in geometry specification: %s";
+  char *curptr = (char*) s;
+  char *endptr;
+
+  r->w = strtol(curptr, &endptr, 10);
+  if (endptr<=curptr || r->w<=0 || *endptr!='x')
+    die(fmt, s);
+  curptr = endptr+1;
+  r->h = strtol(curptr, &endptr, 10);
+  if (endptr<=curptr || r->h<=0)
+    die(fmt, s);
+  curptr = endptr;
+  r->x = 0;
+  r->y = 0;
+  if (curptr[0])
+    {
+      if (curptr[0]=='+')
+        curptr++;
+      else if (curptr[0]!='-')
+        die(fmt, s);
+      r->x = strtol(curptr, &endptr, 10);
+      curptr = endptr;
+      if (curptr[0])
+        {
+          if (curptr[0]=='+')
+            curptr++;
+          else if (curptr[0]!='-')
+            die(fmt, s);
+          r->y = strtol(curptr, &endptr, 10);
+          if (endptr[0])
+            die(fmt, s);
+        }
+    }
+}
+
 
 
 void
 usage()
 {
-  DjVuPrintErrorUTF8("%s",
+  die("%s",
 #ifdef DJVULIBRE_VERSION
-          "DDJVU --- DjVuLibre-" DJVULIBRE_VERSION "\n"
+      "DDJVU --- DjVuLibre-" DJVULIBRE_VERSION "\n"
 #endif
-          "DjVu decompression utility\n\n"
-          "Usage: ddjvu [options] [<djvufile> [<pnmfile>]]\n\n"
-          "Options:\n"
-          "  -v                  Prints various informational messages.\n"
-          "  -scale N            Selects display scale (default: 100%).\n"
-          "  -size  WxH          Selects size of rendered image.\n"
-          "  -aspect             Preserve aspect ratio.\n"
-          "  -segment WxH+X+Y    Selects which segment of the rendered image\n"
-          "  -black              Only renders the stencil(s).\n"
-          "  -foreground         Only renders the foreground layer.\n"
-          "  -background         Only renders the background layer.\n"
-	  "  -page <page>        Decode page <page> (for multipage documents).\n"
-          "  -N                  Subsampling factor from full resolution.\n"
-	  "  -rle                Decode black stencil to RLE.\n"
-          "\n"
-          "The output will be a PBM, PGM or PPM file depending of its content.\n"
-          "If <pnmfile> is a single dash or omitted, the decompressed image\n"
-          "is sent to the standard output.  If <djvufile> is a single dash or\n"
-          "omitted, the djvu file is read from the standard input.\n\n");
+      "DjVu decompression utility\n\n"
+      "Usage: ddjvu [options] [<djvufile> [<outputfile>]]\n\n"
+      "Options:\n"
+      "  -verbose          Prints various informational messages.\n"
+      "  -format=FMT       Selects output format: pbm,pgm,ppm,pnm,rle,tiff.\n"
+      "  -scale=N          Selects display scale.\n"
+      "  -size=WxH         Selects size of rendered image.\n"
+      "  -subsample=N      Selects direct subsampling factor.\n"
+      "  -aspect=no        Authorizes aspect ratio changes\n"
+      "  -segment=WxH+X+Y  Selects which segment of the rendered image\n"
+      "  -mode=mask        Only renders the stencil(s).\n"
+      "  -mode=foreground  Only renders the foreground layer.\n"
+      "  -mode=background  Only renders the background layer.\n"
+      "  -page=PAGESPEC    Selects page(s) to be decoded.\n"
+      "  -tiffquality=<q>  Specifies jpeg quality for lossy tiff output.\n"
+      "\n"
+      "If <outputfile> is a single dash or omitted, the decompressed image\n"
+      "is sent to the standard output.  If <djvufile> is a single dash or\n"
+      "omitted, the djvu file is read from the standard input.\n\n");
   exit(1);
 }
 
-static inline void
-syntax_error(void)
-{
-  G_THROW( ERR_MSG("ddjvu.syntax"));
-}
 
-GRect
-geometry(const GUTF8String &s)
+
+int 
+parse_option(int argc, char **argv, int i)
 {
-  int pos;
-  const int w = s.toLong(0,pos);
-  if (pos < 0 || w<=0 || s[pos] !='x')
-    syntax_error();
-  const int h = s.toLong(pos+1,pos);
-  if((pos<0)||(h<=0))
-    syntax_error();
-  const int len=s.length();
-  int xmin=0;
-  int ymin=0;
-  if (pos<len)
-  {
-    if ((s[pos]!='+')&&(s[pos] !='-'))
-      syntax_error();
-    xmin = s.toLong(pos+1,pos);
-    if ((pos >= 0)&&(pos<len)) 
-    {
-      if ((s[pos]!='+')&&(s[pos] !='-'))
-        syntax_error();
-      ymin = s.toLong(pos+1,pos);
-      if ((pos >= 0)&&(pos<len)) 
-        syntax_error();
-    }
+  static const char *errarg = "option '-%s' needs no argument.";
+  static const char *errnoarg = "option '-%s' needs an argument.";
+  static const char *errbadarg = "valid arguments for option '-%s' %s.";
+  static const char *errdupl= "option '%s' specified multiple times.";
+  static const char *errconfl = "option '%s' conflicts with another option.";
+  
+  char buf[32];
+  const char *s = argv[i];
+  const char *opt = s;
+  const char *arg = strchr(opt, '=');
+  char *end;
+
+  /* Split argument */
+  if (*opt == '-')
+    opt += 1;
+  if (*opt == '-')
+    opt += 1;
+  if (arg) {
+    int l = arg - opt;
+    if (l > (int)sizeof(buf) - 1)
+      l = sizeof(buf) - 1;
+    strncpy(buf, opt, l);
+    buf[l] = 0;
+    opt = buf;
+    arg += 1;
   }
-  return GRect(xmin,ymin,w,h);
+
+  /* Legacy options */
+  if (!strcmp(opt, "black") ||
+      !strcmp(opt, "foreground") ||              
+      !strcmp(opt, "background") ) 
+    {
+      arg = opt;
+      opt = "mode";
+    } 
+  else if (!strcmp(opt,"rle"))
+    {
+      arg = opt;
+      opt = "format";
+    }
+  else if (!strcmp(opt,"segment") ||
+           !strcmp(opt,"scale") ||
+           !strcmp(opt,"size") ||
+           !strcmp(opt,"page") ) 
+    {
+      if (!arg && i<argc-1)
+        if (argv[i+1][0]>='0' && argv[i+1][0]<='9')
+          arg = argv[++i];
+    }
+  else if (strtol(opt,&end,10) && !*end)
+    {
+      arg = opt;
+      opt = "subsample";
+    }
+  
+  /* Parse options */
+  if (!strcmp(opt,"v") ||
+      !strcmp(opt,"verbose"))
+    {
+      if (arg) 
+        die(errarg, opt);
+      flag_verbose = 1;
+    }
+  else if (!strcmp(opt,"scale"))
+    {
+      if (!arg) 
+        die(errnoarg, opt);
+      if (flag_subsample>=0 || flag_scale>=0 || flag_size>=0)
+        die(errconfl, s);
+      flag_scale = strtol(arg, &end, 10);
+      if (*end == '%')
+        end++;
+      if (*end || flag_scale<1 || flag_scale>999)
+        die(errbadarg, opt, "range from 1% to 999%");
+    }
+  else if (!strcmp(opt,"aspect"))
+    {
+      if (flag_aspect >= 0)
+        die(errdupl, opt);
+      if (!arg || !strcmp(arg,"no"))
+        flag_aspect = 1;
+      else if (!strcmp(arg,"yes"))
+        flag_aspect = 0;
+      else
+        die(errbadarg, opt, "are 'yes' or 'no'");
+    }
+  else if (!strcmp(opt,"size"))
+    {
+      if (!arg) 
+        die(errnoarg, opt);
+      if (flag_subsample>=0 || flag_scale>=0 || flag_size>=0)
+        die(errconfl, s);
+      parse_geometry(arg, &info_size);
+      if (info_size.x || info_size.y)
+        die(errbadarg, opt, "have the form <width>x<height>");
+      flag_size = 1;
+    }
+  else if (!strcmp(opt,"subsample"))
+    {
+      if (!arg) 
+        die(errnoarg, opt);
+      if (flag_subsample>=0 || flag_scale>=0 || flag_size>=0)
+        die(errconfl, s);
+      flag_subsample = strtol(arg, &end, 10);
+      if (*end || flag_subsample<1)
+        die(errbadarg,opt,"are positive integers");
+    }
+  else if (!strcmp(opt,"segment"))
+    {
+      if (!arg) 
+        die(errnoarg, opt);
+      if (flag_segment)
+        die(errdupl, opt);
+      parse_geometry(arg, &info_segment);
+      flag_segment = 1;
+    }
+  else if (!strcmp(opt,"format"))
+    {
+      if (!arg) 
+        die(errnoarg, opt);
+      if (flag_format)
+        die(errdupl, opt);
+      if (!strcmp(arg,"pbm"))
+        flag_format='4';
+      else if (!strcmp(arg,"pgm"))
+        flag_format='5';
+      else if (!strcmp(arg,"ppm"))
+        flag_format='6';
+      else if (!strcmp(arg,"pnm"))
+        flag_format='p';
+      else if (!strcmp(arg,"rle"))
+        flag_format='r';
+      else if (!strcmp(arg,"tif") || 
+               !strcmp(arg,"tiff") )
+        flag_format='t';
+      else
+        die(errbadarg,opt,"are: pbm,pgm,ppm,pnm,rle,tiff");
+    }
+  else if (!strcmp(opt,"mode"))
+    {
+      if (!arg) 
+        die(errnoarg, opt);
+      if (flag_mode)
+        die(errdupl, opt);
+      if (!strcmp(arg,"c") || 
+          !strcmp(arg,"color") )
+        flag_mode = 'c';
+      else if (!strcmp(arg,"m") ||
+               !strcmp(arg,"mask") ||
+               !strcmp(arg,"black") ||
+               !strcmp(arg,"stencil") )
+        flag_mode = 'm';
+      else if (!strcmp(arg,"f") ||
+               !strcmp(arg,"fg") ||
+               !strcmp(arg,"foreground") )
+        flag_mode = 'f';
+      else if (!strcmp(arg,"b") ||
+               !strcmp(arg,"bg") ||
+               !strcmp(arg,"background") )
+        flag_mode = 'b';
+      else
+        die(errbadarg,opt,"are: color,mask,fg,bg");
+    }
+  else if (! strcmp(opt, "page") ||
+           ! strcmp(opt, "pages") )
+    {
+      if (!arg) 
+        die(errnoarg, opt);
+      if (flag_pagespec)
+        die(errdupl, opt);
+      flag_pagespec = arg;
+    }
+  else if (!strcmp(opt,"tiffquality"))
+    {
+      if (flag_tiffq >= 0)
+        die(errdupl, opt);
+      else if (!arg) 
+        flag_tiffq = 100;
+      else 
+        {
+          flag_tiffq = strtol(arg,&end,10);
+          if (*end || flag_tiffq<25 || flag_tiffq>150)
+            die(errbadarg,opt,"an integer between 25 and 150");
+        }
+    }
+  else if (! strcmp(opt, "help"))
+    {
+      usage();
+    }
+  else
+    {
+      die("Invalid option '%s'. Try 'ddjvu --help'.", s);
+    }
+  return i;
 }
-
-
 
 
 
 int
 main(int argc, char **argv)
 {
-  setlocale(LC_ALL,"");
-  djvu_programname(argv[0]);
-  GArray<GUTF8String> dargv(0,argc-1);
-  for(int i=0;i<argc;++i)
-    dargv[i]=GNativeString(argv[i]);
-   G_TRY
+  /* Parse options */
+  int i;
+  for (i=1; i<argc; i++)
     {
-      // Process options
-      int page_num=-1;
-      while (argc>1 && dargv[1][0]=='-' && dargv[1][1])
-        {
-          GUTF8String s(dargv[1]);
-          int pos;
-          int n=s.toLong(0,pos);
-          if (s == "-v" || s == "-verbose")
-            {
-              flag_verbose = 1;
-            }
-          else if (s == "-scale")
-            {
-              if (argc<=2)
-                G_THROW( ERR_MSG("ddjvu.no_scale") );
-              if (flag_subsample>=0 || flag_scale>=0 || flag_size>=0)
-                G_THROW( ERR_MSG("ddjvu.dupl_scale") );
-              argc -=1;
-              dargv.shift(-1);
-              s = dargv[1];
-              int pos;
-              flag_scale = s.toDouble(0,pos);
-              if((pos<0)||(pos == (int)s.length()))
-                G_THROW( ERR_MSG("ddjvu.bad_scale") );
-              if (s[pos] == '%') 
-              {
-                pos++;
-              }
-              if (pos < (int)s.length())
-                G_THROW( ERR_MSG("ddjvu.bad_scale"));
-            }
-          else if ( s == "-aspect")
-            {
-              flag_aspect = 1;
-            }
-          else if ( s == "-size")
-            {
-              if (argc<=2)
-                G_THROW( ERR_MSG("ddjvu.no_size") );
-              if (flag_subsample>=0 || flag_scale>=0 || flag_size>=0)
-                G_THROW( ERR_MSG("ddjvu.dupl_size"));
-              argc -=1; dargv.shift(-1); s = dargv[1];
-              g().fullrect = geometry(s);
-              flag_size = 1;
-              if (g().fullrect.xmin || g().fullrect.ymin)
-                G_THROW( ERR_MSG("ddjvu.bad_size"));
-            }
-          else if (s == "-segment")
-            {
-              if (argc<=2)
-                G_THROW( ERR_MSG("ddjvu.no_seg") );
-              if (flag_segment>=0)
-                G_THROW( ERR_MSG("ddjvu.dupl_seg") );
-              argc -=1; dargv.shift(-1); s = dargv[1];
-              g().segmentrect = geometry(s);
-              flag_segment = 1;
-            }
-          else if (s == "-black")
-            {
-              if (flag_mode)
-                G_THROW( ERR_MSG("ddjvu.dupl_render"));
-              flag_mode = 's';
-            }
-          else if (s == "-foreground")
-            {
-              if (flag_mode)
-                G_THROW( ERR_MSG("ddjvu.dupl_render"));
-              flag_mode = 'f';
-            }
-          else if (s == "-background")
-            {
-              if (flag_mode)
-                G_THROW( ERR_MSG("ddjvu.dupl_render"));
-              flag_mode = 'b';
-            }
-	  else if (s == "-page")
-	    {
-	      if (argc<=2)
-                G_THROW( ERR_MSG("ddjvu.no_page") );
-              if (page_num>=0)
-                G_THROW( ERR_MSG("ddjvu.dupl_page") );
-              argc -=1;
-              dargv.shift(-1);
-              s = dargv[1];
-              page_num=s.toInt(); // atoi(s);
-	      if (page_num<=0)
-                G_THROW( ERR_MSG("ddjvu.bad_page"));
-	      page_num--;
-	    }
-          else if (n < 0 && pos == (int)s.length())
-            {
-              if (flag_subsample>0 || flag_scale>=0 || flag_size>=0)
-                if (flag_subsample != -n)
-                  G_THROW( ERR_MSG("ddjvu.dupl_scale") );
-              flag_subsample=(-n);
-            }
-          else if (s == "-rle")
-            {
-              if (flag_mode)
-                G_THROW( ERR_MSG("ddjvu.dupl_render"));
-              if (flag_subsample>1 || flag_scale>=0 || flag_size>=0)
-                G_THROW( ERR_MSG("ddjvu.dupl_scale") );
-              flag_mode = 's';
-              flag_subsample = 1;
-              flag_rle = true;
-            }
-          else
-            {
-              usage();
-            }
-          argc -= 1;
-          dargv.shift(-1);
-        }
-      if (page_num<0) 
-        page_num=0;
-      // Process remaining arguments
-      if (argc == 3) 
-        convert(GURL::Filename::UTF8(dargv[1]),
-                GURL::Filename::UTF8(dargv[2]), page_num);
-      else if (argc == 2)
-        convert(GURL::Filename::UTF8(dargv[1]),
-                GURL::Filename::UTF8("-"), page_num);
-      else if (argc == 1)
-        convert(GURL::Filename::UTF8("-"),
-                GURL::Filename::UTF8("-"), page_num);
+      char *s = argv[i];
+      if (*s == '-')
+        i = parse_option(argc, argv, i);
+      else if (!inputfilename)
+        inputfilename = s;
+      else if (! outputfilename)
+        outputfilename = s;
       else
         usage();
     }
-  G_CATCH(ex)
-    {
-      ex.perror();
-      exit(1);
-    }
-  G_ENDCATCH;
+  
+  /* Defaults */
+  if (! inputfilename)
+    inputfilename = "-";
+  if (! outputfilename)
+    outputfilename = "-";
+  if (! flag_pagespec)
+    flag_pagespec = (flag_format) ? "1-$" : "1";
 
+  /* Create context and document */
+  if (! (ctx = ddjvu_context_create(argv[0])))
+    die("Cannot create djvu context.");
+  if (! (doc = ddjvu_document_create_by_filename(ctx, inputfilename, TRUE)))
+    die("Cannot open djvu document '%s'.", inputfilename);
+  while (! ddjvu_document_decoding_done(doc))
+    handle(TRUE);
+  
+  /* Process all pages */
+  i = ddjvu_document_get_pagenum(doc);
+  parse_pagespec(flag_pagespec, i, dopage);
+
+  /* Close */
+#if HAVE_TIFF
+  if (tiff)
+    {
+      if (! TIFFFlush(tiff))
+        die("Error while flushing tiff file.");
+      TIFFClose(tiff);
+      tiff = 0;
+    }
+#endif
+  if (fout)
+    {
+      if (fflush(fout) < 0)
+        die("Error while flushing output file: %s", strerror(errno));
+      fclose(fout);
+      fout = 0;
+    }
+  if (doc)
+    ddjvu_document_release(doc);
+  if (ctx)
+    ddjvu_context_release(ctx);
   return 0;
 }

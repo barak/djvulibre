@@ -47,11 +47,11 @@ THREAD_CFLAGS = @THREAD_CFLAGS@
 
 LIBDJVU = ${top_builddir}/libdjvu/libdjvulibre.la
 
-INCS = -I${top_builddir} -I${top_srcdir}/libdjvu -I${srcdir}
+INCS = -I${top_builddir} -I${top_srcdir} -I${top_srcdir}/libdjvu -I${srcdir}
 FLAGS = ${DEFS} ${INCS} ${OPTS} ${JPEG_CFLAGS} ${TIFF_CFLAGS} ${THREAD_CFLAGS}
 LIBS= @LDFLAGS@ ${JPEG_LIBS} ${THREAD_LIBS} @LIBS@
 MORELIBS= @LDFLAGS@ ${JPEG_LIBS} ${TIFF_LIBS} ${THREAD_LIBS} @LIBS@
-CFLAGS = @CPFLAGS@ @CFLAGS@ ${FLAGS}
+CFLAGS = @CPPFLAGS@ @CFLAGS@ ${FLAGS}
 CXXFLAGS = @CPPFLAGS@ @CXXFLAGS@ ${CXXRPOFLAGS} ${FLAGS}
 
 PROGRAMS = bzz c44 cjb2 cpaldjvu csepdjvu \
@@ -115,7 +115,7 @@ csepdjvu: csepdjvu.o ${JB2OBJS}
 
 ddjvu: ddjvu.o
 	${LIBTOOL} --mode=link \
-	  ${CXX} -o $@ ${CXXFLAGS} ddjvu.o ${LIBDJVU} ${LIBS}
+	  ${CXX} -o $@ ${CXXFLAGS} ddjvu.o ${LIBDJVU} ${MORELIBS}
 
 djvm: djvm.o
 	${LIBTOOL} --mode=link \

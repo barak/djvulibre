@@ -128,10 +128,11 @@ typedef struct ddjvu_format_s   ddjvu_format_t;
 
 
 /* ddjvu_context_create ---
-   Creates a <ddjvu_context_t> object. */
+   Creates a <ddjvu_context_t> object.
+   Argument <programname> is the name of the calling executable. */
 
 DDJVUAPI ddjvu_context_t *
-ddjvu_context_create(void);
+ddjvu_context_create(const char *programname);
 
 
 /* ddjvu_context_release ---
