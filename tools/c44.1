@@ -86,7 +86,7 @@ argument contain several numerical values (one per chunk) separated
 by either commas or pluses.
 
 .TP
-.BI "-slice " "n+...+n"
+.BI "-slice " "n" "+...+" "n"
 Specify the number of slices in each chunk.
 The option argument contains plus-separated numerical values (one per chunk)
 indicating the number of slices per chunk.  Option 
@@ -96,7 +96,7 @@ with three progressive refinements.  More quality and more refinements
 can be obtained with option
 .BR "-slice 72+11+10+10" .
 .TP
-.BI "-slice " "n,...,n"
+.BI "-slice " "n" ",...," "n"
 Specify the cumulative number of slices for each chunk.
 Since the final quality is determined by the total number of slices,
 it is often more convenient to use comma-separated values (one per chunk)
@@ -107,21 +107,21 @@ can also be expressed as
 and
 .BR "-slice 72,83,93,103".
 .TP
-.BI "-size " "n,...,n"
+.BI "-size " "n" ",...," "n"
 Specify size targets for each chunk expressed in bytes.
 The option argument can be either a plus-separated list specifying a size
 for each chunk, or a comma separated list specifying cumulative sizes
 for each chunk and all previous chunks.  Size targets are approximates.
 Slices will be added to each chunk until exceeding the specified target.
 .TP
-.BI "-bpp " "n,...,n"
+.BI "-bpp " "n" ",...," "n"
 Specify size targets for each chunk expressed in bits-per-pixel.
 Both comma-separated and plus-separated specifications are accepted.
 Option 
 .B -bpp 0.25,0.5,1
 usually provides good results.
 .TP
-.BI "-percent " "n,...,n"
+.BI "-percent " "n" ",...," "n"
 Specify size targets for each chunk expressed as a percentage of the
 input file size.  Both comma-separated and plus-separated specifications
 are accepted.  Results can be drastically different according to the
@@ -129,7 +129,7 @@ format of the input image (raw or
 .SM JPEG
 compressed).
 .TP
-.BI "-decibel " "n,...,n"
+.BI "-decibel " "n" ",...," "n"
 Specify quality targets for each chunk expressed as a comma-separated list of
 increasing decibel values.  Decibel values range from 16 (very low quality) to
 48 (very high quality).  This criterion should not be relied upon when
