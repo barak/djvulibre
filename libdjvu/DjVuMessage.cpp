@@ -311,11 +311,13 @@ DjVuMessage::GetProfilePaths(void)
     appendPath(RegOpenReadConfig(HKEY_LOCAL_MACHINE),pathsmap,paths);
 #else
     GUTF8String home=GOS::getenv("HOME");
+# if HAVE_GETPWUID
     if (! home.length()) {
       struct passwd *pw=0;
       if ((pw = getpwuid(getuid())))
         home=GNativeString(pw->pw_dir);
     }
+# endif
     if (home.length()) {
       GURL hpath = GURL::UTF8(LocalDjVuDir,GURL::Filename::UTF8(home));
       appendPath(hpath,pathsmap,paths);

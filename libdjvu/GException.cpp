@@ -271,7 +271,7 @@ static int (*old_handler)(size_t) = _set_new_handler(throw_memory_error);
 #else // !_MSC_VER
 // Standard C++
 static void throw_memory_error() { G_THROW(GException::outofmemory); }
-#if !defined(WIN32) && !defined(__CYGWIN32__)
+#if !defined(WIN32) && !defined(__CYGWIN32__) && !defined(OS2)
 #ifdef HAVE_STDINCLUDES
 static void (*old_handler)() = std::set_new_handler(throw_memory_error);
 #else

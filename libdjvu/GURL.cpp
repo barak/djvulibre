@@ -101,7 +101,7 @@
 # endif
 #endif
 
-#ifdef UNIX
+#if defined(UNIX) || defined(OS2)
 # include <unistd.h>
 # include <sys/types.h>
 # include <sys/stat.h>
@@ -186,7 +186,7 @@ static const char nillchar=0;
 #if defined(UNIX)
   static const char tilde='~';
   static const char root[] = "/";
-#elif defined(WIN32)
+#elif defined(WIN32) || defined(OS2)
   static const char root[] = "\\";
 #elif defined(macintosh)
   static char const * const root = &nillchar; 
@@ -293,7 +293,7 @@ GURL::beautify_path(GUTF8String xurl)
   // Convert /./ stuff into plain /
   for(;(ptr=strstr(start, "/./"));collapse(ptr, 2))
     EMPTY_LOOP;
-#ifdef WIN32
+#if defined(WIN32) || defined(OS2)
   if(!xurl.cmp(filespec,sizeof(filespec)-1))
   {
 	int offset=1;
@@ -443,7 +443,7 @@ GURL::GURL(const GUTF8String & url_in)
 GURL::GURL(const GNativeString & url_in)
   : url(url_in.getNative2UTF8()), validurl(false)
 {
-#ifdef WIN32
+#if defined(WIN32) || defined(OS2)
   if(is_valid() && is_local_file_url())
   {
     GURL::Filename::UTF8 xurl(UTF8Filename());
@@ -1077,7 +1077,7 @@ GURL::encode_reserved(const GUTF8String &gs)
   for (; *s; s++,d++)
   {
     // Convert directory separator to slashes
-#ifdef WIN32
+#if defined(WIN32) || defined(OS2)
     if (*s == backslash || *s== slash)
 #else
 #ifdef macintosh
@@ -1306,9 +1306,11 @@ GURL::UTF8Filename(void) const
       url_ptr++;
 #else
     // Remove possible localhost spec
-    if ( !GStringRep::cmp(localhostspec1, url_ptr, sizeof(localhostspec1)-1) )        // RFC 1738 local host form
+    if ( !GStringRep::cmp(localhostspec1, url_ptr, sizeof(localhostspec1)-1) )
+      // RFC 1738 local host form
       url_ptr += sizeof(localhostspec1)-1;
-    else if ( !GStringRep::cmp(localhostspec2, url_ptr, sizeof(localhostspec2)-1 ) )   // RFC 1738 local host form
+    else if ( !GStringRep::cmp(localhostspec2, url_ptr, sizeof(localhostspec2)-1 ) )
+      // RFC 1738 local host form
       url_ptr += sizeof(localhostspec2)-1;
     else if ( (strlen(url_ptr) > 4)   // "file://<letter>:/<path>"
         && (url_ptr[0] == slash)      // "file://<letter>|/<path>"
@@ -1341,19 +1343,15 @@ GURL::UTF8Filename(void) const
     retval = expand_name(url_ptr,root);
 #endif
     
-#ifdef WIN32
+#if defined(WIN32) || defined(OS2)
     if (url_ptr[0] && url_ptr[1]=='|' && url_ptr[2]== slash)
     {
       if ((url_ptr[0]>='a' && url_ptr[0]<='z') 
           || (url_ptr[0]>='A' && url_ptr[0]<='Z'))
       {
-//        if (!is_file()) 
-        {
-      // Search for a drive letter (encoded a la netscape)
-          GUTF8String drive;
-          drive.format("%c%c%c", url_ptr[0],colon,backslash);
-          retval = expand_name(url_ptr+3, drive);
-        }
+	GUTF8String drive;
+	drive.format("%c%c%c", url_ptr[0],colon,backslash);
+	retval = expand_name(url_ptr+3, drive);
       }
     }
 #endif
@@ -1368,7 +1366,7 @@ GURL::NativeFilename(void) const
   return UTF8Filename().getUTF82Native();
 }
 
-#if defined(UNIX) || defined(macintosh)
+#if defined(UNIX) || defined(macintosh) || defined(OS2)
 static int
 urlstat(const GURL &url,struct stat &buf)
 {
@@ -1384,7 +1382,7 @@ GURL::is_file(void) const
   bool retval=false;
   if(is_local_file_url())
   {
-#if defined(UNIX) || defined(macintosh)
+#if defined(UNIX) || defined(macintosh) || defined(OS2)
     struct stat buf;
     if (!urlstat(*this,buf))
     {
@@ -1427,7 +1425,7 @@ GURL::is_local_path(void) const
   bool retval=false;
   if(is_local_file_url())
   {
-#if defined(UNIX) || defined(macintosh)
+#if defined(UNIX) || defined(macintosh) || defined(OS2)
     struct stat buf;
     retval=!urlstat(*this,buf);
 #else
@@ -1468,7 +1466,7 @@ GURL::is_dir(void) const
   if(is_local_file_url())
   {
     // UNIX implementation
-#if defined(UNIX) || defined(macintosh)
+#if defined(UNIX) || defined(macintosh) || defined(OS2)
     struct stat buf;
     if (!urlstat(*this,buf))
     {
@@ -1587,7 +1585,7 @@ GURL::listdir(void) const
   GList<GURL> retval;
   if(is_dir())
   {
-#if defined(UNIX)
+#if defined(UNIX) || defined(OS2)
     DIR * dir=opendir(NativeFilename());//MBCS cvt
     for(dirent *de=readdir(dir);de;de=readdir(dir))
     {
@@ -1950,7 +1948,7 @@ GURL::expand_name(const GUTF8String &xfname, const char *from)
     EMPTY_LOOP;
   *s = 0;
   return ((string_buffer[0]==colon)?(string_buffer+1):string_buffer);
-#elif   defined(UNDER_CE) 
+#elif   defined(UNDER_CE) || defined(OS2)
   retval=fname;
 #else
 #error "Define something here for your operating system"

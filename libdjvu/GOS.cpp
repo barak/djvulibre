@@ -73,17 +73,19 @@
 #include <string.h>
 
 #ifdef WIN32
-#include <atlbase.h>
-#include <windows.h>
-
-#ifndef UNDER_CE
-#include <direct.h>
+# include <atlbase.h>
+# include <windows.h>
+# ifndef UNDER_CE
+#  include <direct.h>
+# endif
 #endif
-#endif   // end win32
 
+#ifdef OS2
+# define INCL_DOS
+# include <os2.h>
+#endif
 
-
-#ifdef UNIX
+#if defined(UNIX) || defined(OS2)
 # include <errno.h>
 # include <sys/types.h>
 # include <sys/stat.h>
@@ -95,9 +97,9 @@
 #endif
 
 #ifdef macintosh
-#include <unix.h>
-#include <errno.h>
-#include <unistd.h>
+# include <unix.h>
+# include <errno.h>
+# include <unistd.h>
 #endif
 
 // -- TRUE FALSE
@@ -108,18 +110,17 @@
 
 // -- MAXPATHLEN
 #ifndef MAXPATHLEN
-#ifdef _MAX_PATH
-#define MAXPATHLEN _MAX_PATH
+# ifdef _MAX_PATH
+#  define MAXPATHLEN _MAX_PATH
+# else
+#  define MAXPATHLEN 1024
+# endif
 #else
-#define MAXPATHLEN 1024
+# if ( MAXPATHLEN < 1024 )
+#  undef MAXPATHLEN
+#  define MAXPATHLEN 1024
+# endif
 #endif
-#else
-#if ( MAXPATHLEN < 1024 )
-#undef MAXPATHLEN
-#define MAXPATHLEN 1024
-#endif
-#endif
-
 
 #ifdef HAVE_NAMESPACES
 namespace DJVU {
@@ -128,13 +129,34 @@ namespace DJVU {
 #endif
 #endif
 
-// static const char filespecslashes[] = "file://";
+
+#if defined(AUTOCONF) && !defined(HAVE_STRERROR)
+# define NEED_STRERROR
+#elif defined(sun) && !defined(__svr4__)
+# define NEED_STRERROR
+#elif defined(REIMPLEMENT_STRERROR)
+# define NEED_STRERROR
+#endif
+#ifdef NEED_STRERROR
+char *
+strerror(int errno)
+{
+#ifndef UNDER_CE
+  extern int sys_nerr;
+  extern char *sys_errlist[];
+  if (errno>0 && errno<sys_nerr) 
+    return sys_errlist[errno];
+#endif
+  return "unknown stdio error";
+}
+#endif
+
+
 static const char slash='/';
 static const char percent='%';
 static const char localhostspec1[] = "//localhost/";
 static const char backslash='\\';
 static const char colon=':';
-
 static const char localhost[] = "localhost";
 static const char localhostspec2[] = "///";
 static const char filespec[] = "file:";
@@ -143,13 +165,15 @@ static const char nillchar=0;
 #if defined(UNIX)
   static const char tilde='~';
   static const char root[] = "/";
-#elif defined(WIN32)
+#elif defined(WIN32) || defined(OS2)
   static const char root[] = "\\";
 #elif defined(macintosh)
   static char const * const root = &nillchar; 
 #else
-#error "Define something here for your operating system"
+# error "Define something here for your operating system"
 #endif
+
+
 
 
 // -----------------------------------------
@@ -161,7 +185,7 @@ finddirsep(const GUTF8String &fname)
 {
 #if defined(UNIX)
   return fname.rsearch('/',0);
-#elif defined(WIN32)
+#elif defined(WIN32) || defined(OS2)
   return fname.rcontains("\\/",0);
 #elif defined(macintosh)
   return fname.rcontains(":/",0);
@@ -181,7 +205,7 @@ GOS::basename(const GUTF8String &gfname, const char *suffix)
     return gfname;
 
   const char *fname=gfname;
-#ifdef WIN32
+#if defined(WIN32) || defined(OS2)
   // Special cases
   if (fname[1] == colon)
   {
@@ -239,19 +263,8 @@ static GNativeString
 errmsg()
 {
   GNativeString buffer;
-#ifdef REIMPLEMENT_STRERROR
-  const char *errname = "Unknown libc error";
-  if (errno>0 && errno<sys_nerr)
-    errname = sys_errlist[errno];
-#else
-#ifndef UNDER_CE
   const char *errname = strerror(errno);
   buffer.format("%s (errno = %d)", errname, errno);
-#else
-  const char *errname = "Unknown error from GOS.cpp under Windows CE" ;
-  buffer.format("%s (errno = %d)", errname, -1);
-#endif
-#endif
   return buffer;
 }
 
@@ -267,23 +280,23 @@ errmsg()
 unsigned long 
 GOS::ticks()
 {
-#ifdef UNIX
+#if defined(UNIX)
   struct timeval tv;
   if (gettimeofday(&tv, NULL) < 0)
     G_THROW(errmsg());
   return (unsigned long)( ((tv.tv_sec & 0xfffff)*1000) 
                           + (tv.tv_usec/1000) );
-#else
-#ifdef WIN32
+#elif defined(WIN32)
   DWORD clk = GetTickCount();
   return (unsigned long)clk;
-#else
-#ifdef macintosh
+#elif defined(OS2)
+  ULONG clk = 0;
+  DosQuerySysInfo(QSV_MS_COUNT, QSV_MS_COUNT, (PVOID)&clk, sizeof(ULONG));
+  return clk;
+#elif defined(macintosh)
   return (unsigned long)((double)TickCount()*16.66);
 #else
-#error "Define something here for your operating system"
-#endif
-#endif  
+# error "Define something here for your operating system"
 #endif
 }
 
@@ -292,99 +305,34 @@ GOS::ticks()
 void 
 GOS::sleep(int milliseconds)
 {
-#ifdef UNIX
+#if defined(UNIX)
   struct timeval tv;
   tv.tv_sec = milliseconds / 1000;
   tv.tv_usec = (milliseconds - (tv.tv_sec * 1000)) * 1000;
-#if defined(THREADMODEL) && (THREADMODEL==COTHREADS)
+# if defined(THREADMODEL) && (THREADMODEL==COTHREADS)
   GThread::select(0, NULL, NULL, NULL, &tv);
-#else
+# else
   select(0, NULL, NULL, NULL, &tv);
-#endif
-#endif
-#ifdef WIN32
+# endif
+#elif defined(WIN32)
   Sleep(milliseconds);
-#endif
-#ifdef macintosh
-    unsigned long tick = ticks(), now;
-    while (1) {
-        now = ticks();
-        if ((tick+milliseconds) < now)
-            break;
-        GThread::yield();
-    }
+#elif defined(OS2)
+  DosSleep(milliseconds);
+#elif defined(macintosh)
+  unsigned long tick = ticks(), now;
+  while (1) {
+    now = ticks();
+    if ((tick+milliseconds) < now)
+      break;
+    GThread::yield();
+  }
 #endif
 }
 
-  
-
-#if 0
-/*MBCS*/
-GString
-GOS::encode_mbcs_reserved(const char * filename)
-      // Called from ByteStream to encode new OS-safe filenames
-{
-   const char *hex = "0123456789ABCDEF";
-   
-   GString res;
-
-   for(const char * ptr=filename;*ptr;ptr++)
-   {
-#ifdef WIN32
- 		if (IsDBCSLeadByte((BYTE)*ptr)) { //MBCS DBCS
-			// escape sequence
-			res+=hex[(*ptr >> 4) & 0xf];
-			res+=hex[(*ptr) & 0xf];
-			ptr++;
-			if (*ptr){
-				// escape sequence
-				res+=hex[(*ptr >> 4) & 0xf];
-				res+=hex[(*ptr) & 0xf];
-			}
-			continue;
-		}
-#endif
-     if ((*ptr>='a' && *ptr<='z')
-        || (*ptr>='A' && *ptr<='Z')
-        || (*ptr>='0' && *ptr<='9')
-        || (strchr("$-_.+!*'(),:;", *ptr))) // Added : because of windows!
-      {
-        res+=*ptr;
-      }else
-      {
-      // escape sequence
-        //res+=percent;
-        res+=hex[(*ptr >> 4) & 0xf];
-        res+=hex[(*ptr) & 0xf];
-      }
-   }
-   
-   return res;
-}
-/*MBCS*/
-#endif
 
 // -----------------------------------------
 // Testing
 // -----------------------------------------
-
-#if defined(AUTOCONF) && !defined(HAVE_STRERROR)
-#define NEED_STRERROR
-#elif defined(sun) && !defined(__svr4__)
-#define NEED_STRERROR
-#endif
-#ifdef NEED_STRERROR
-// strerror() is not defined under SunOS.
-char *
-strerror(int errno)
-{
-  extern int sys_nerr;
-  extern char *sys_errlist[];
-  if (errno>0 && errno<sys_nerr) 
-    return sys_errlist[errno];
-  return "unknown stdio error";
-}
-#endif
 
 // cwd([dirname])
 // -- changes directory to dirname (when specified).
@@ -392,7 +340,7 @@ strerror(int errno)
 GUTF8String 
 GOS::cwd(const GUTF8String &dirname)
 {
-#if defined(UNIX) || defined(macintosh) 
+#if defined(UNIX) || defined(macintosh) || defined(OS2)
   if (dirname.length() && chdir(dirname.getUTF82Native())==-1)//MBCS cvt
     G_THROW(errmsg());
   char *string_buffer;
