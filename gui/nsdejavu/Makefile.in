@@ -55,14 +55,24 @@ OBJS = nsdejavu.o
 
 LIBS = ${NSDEJAVU_LIBS}
 
-all: ${NSDEJAVU}
+all: ${NSDEJAVU} nsdejavu.1
 
 ${NSDEJAVU} : ${OBJS}
 	${NSDEJAVU_LINK}
 
-install: ${NSDEJAVU} FORCE
+nsdejavu.1: ${srcdir}/nsdejavu.1.in
+	sed < ${srcdir}/nsdejavu.1.in > nsdejavu.1 \
+	 -e 's,LIBDIR,${libdir},' -e 's,NSDEJAVU,${NSDEJAVU},'
+
+install: install-bin install-man
+
+install-bin: ${NSDEJAVU} FORCE
 	${INSTALL} -d ${plugindir}
-	${INSTALL} -m 0644 ${NSDEJAVU} ${plugindir}	
+	${INSTALL} -m 0644 ${NSDEJAVU} ${plugindir}
+
+install-man: nsdejavu.1 FORCE
+	${INSTALL} -d ${mandir}/man1
+	${INSTALL} -m 0644 nsdejavu.1 ${mandir}/man1
 
 depend: FORCE
 	${CC} -MM ${CFLAGS} ${srcdir}/nsdejavu.c > Makefile.dep

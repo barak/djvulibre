@@ -187,6 +187,7 @@ install-bin: ${PROGRAM} FORCE
 
 install-man: FORCE
 	${INSTALL} -d ${mandir}/man1
+	${INSTALL} -m 0644 ${srcdir}/djview.1 ${mandir}/man1
 
 depend: ${MOCINCS} FORCE
 	( for n in ${CPP_SOURCES} ; do \
