@@ -76,7 +76,7 @@ djvudigital: cannot locate file "ps2utf8.ps".
 +--------------------------------------------------------------------+
 | DjVuDigital relies on this file to extract text from postscript    |
 | and pdf files. Options --words or --lines cannot work without this |
-| file. Please visit http://djvu.sourceforge.net/gsdjvu.html.        |
+| file. Please visit http://djvulibre.djvuzone.org/gsdjvu.html.      |
 +--------------------------------------------------------------------+
 EOF
             exit 10
@@ -103,7 +103,7 @@ djvudigital: cannot locate suitable ghostscript executable.
 +--------------------------------------------------------------------+
 | DjVuDigital relies on a special ghostscript device driver, but     |
 | could not find a ghostscript executable that implement this driver.|
-| Please visit http://djvu.sourceforge.net/gsdjvu.html.              |
+| Please visit http://djvulibre.djvuzone.org/gsdjvu.html.            |
 +--------------------------------------------------------------------+
 EOF
     exit 10
