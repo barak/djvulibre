@@ -69,7 +69,10 @@
 #include <sys/stat.h>
 #include <time.h>
 #include <errno.h>
-
+#if defined(WIN32) || defined(__CYGWIN32__)
+#include <fcntl.h>
+#include <io.h>
+#endif
 
 
 bool cgi = false;
@@ -178,6 +181,11 @@ djvuserver_file(GURL pathurl)
     return;
   GP<ByteStream> in = ByteStream::create(pathurl,"rb");
   fprintf(stdout,"\n");
+#if defined(WIN32)
+  _setmode(_fileno(stdout), _O_BINARY);
+#elif defined(__CYGWIN32__)
+  setmode(fileno(stdout), O_BINARY);
+#endif
   GP<ByteStream> out = ByteStream::get_stdout();
   out->copy(*in);
 }
@@ -226,6 +234,11 @@ djvuserver_directory(GURL pathurl)
     return;
   bsdir->seek(0);
   fprintf(stdout,"\n");
+#if defined(WIN32)
+  _setmode(_fileno(stdout), _O_BINARY);
+#elif defined(__CYGWIN32__)
+  setmode(fileno(stdout), O_BINARY);
+#endif
   GP<ByteStream> out = ByteStream::get_stdout();
   out->copy(*bsdir);
 }
@@ -269,6 +282,11 @@ djvuserver_component(GURL pathurl, GUTF8String id)
   if (head) 
     return;
   fprintf(stdout,"\n");
+#if defined(WIN32)
+  _setmode(_fileno(stdout), _O_BINARY);
+#elif defined(__CYGWIN32__)
+  setmode(fileno(stdout), O_BINARY);
+#endif
   GP<ByteStream> out = ByteStream::get_stdout();
   out->writall("AT&T", 4);
   bsin->seek(frec->offset);

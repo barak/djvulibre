@@ -130,10 +130,6 @@
 //@}
 
 
-#ifdef WIN32
-#include <io.h>
-#include <fcntl.h>
-#endif
 #include "DjVuGlobal.h"
 #include "GException.h"
 #include "GSmartPointer.h"
@@ -152,6 +148,10 @@
 #include "DjVuMessage.h"
 #include <locale.h>
 #include <stdlib.h>
+#if defined(WIN32) || defined(__CYGWIN32__)
+#include <fcntl.h>
+#include <io.h>
+#endif
 
 #undef MIN
 #undef MAX
@@ -1295,9 +1295,12 @@ parse_slice(const char *q, csepdjvuopts &opts)
 int 
 main(int argc, const char **argv)
 {
-#ifdef WIN32
+#if defined(WIN32)
   _setmode(_fileno(stdin), _O_BINARY);
   _setmode(_fileno(stdout), _O_BINARY);
+#elif defined(__CYGWIN32__)
+  setmode(fileno(stdin), O_BINARY);
+  setmode(fileno(stdout), O_BINARY);
 #endif
   setlocale(LC_ALL,"");
   djvu_programname(argv[0]);
