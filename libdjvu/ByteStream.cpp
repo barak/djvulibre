@@ -76,44 +76,31 @@
 #include "DjVuMessage.h"
 #include <fcntl.h>
 #if defined(WIN32) || defined(__CYGWIN32__)
-#include <io.h>
+# include <io.h>
 #endif
 
 #ifdef UNIX
-#ifndef HAS_MEMMAP
-#define HAS_MEMMAP 1
-#endif
+# ifndef HAS_MEMMAP
+#  define HAS_MEMMAP 1
+# endif
 #endif
 
-#ifdef UNIX
-#include <sys/types.h>
-#include <sys/stat.h>
-#include <fcntl.h>
-#include <unistd.h>
-#ifdef HAS_MEMMAP
-#include <sys/mman.h>
-#endif
-#else
-#ifdef macintosh
-#include <unistd.h>
-
+#if defined(UNIX)
+# include <sys/types.h>
+# include <sys/stat.h>
+# include <unistd.h>
+# include <errno.h>
+# ifdef HAS_MEMMAP
+#  include <sys/mman.h>
+# endif
+#elif defined(macintosh)
+# include <unistd.h>
 _MSL_IMP_EXP_C int _dup(int);
 _MSL_IMP_EXP_C int _dup2(int,int);
 _MSL_IMP_EXP_C int _close(int);
-							
 __inline int dup(int _a ) { return _dup(_a);}
 __inline int dup2(int _a, int _b ) { return _dup2(_a, _b);}
-
-#else
-#ifndef UNDER_CE
-#include <io.h>
 #endif
-#endif
-#endif
-#ifndef UNDER_CE
-#include <errno.h>
-#endif
-
 
 #ifdef HAVE_NAMESPACES
 namespace DJVU {
@@ -452,11 +439,7 @@ ByteStream::readall(void *buffer, size_t size)
       // exception instead of continuing to loop is better.
       // - eaf
       if(nitems < 0) 
-#ifndef UNDER_CE
         G_THROW(strerror(errno));               //  (No error in the DjVuMessageFile)
-#else
-        G_THROW( ERR_MSG("ByteStream.read_error") );       //  readall, read error.
-#endif
       if (nitems == 0)
         break;
       total += nitems;
@@ -557,11 +540,7 @@ ByteStream::write8 (unsigned int card)
   unsigned char c[1];
   c[0] = (card) & 0xff;
   if (write((void*)c, sizeof(c)) != sizeof(c))
-#ifndef UNDER_CE
-        G_THROW(strerror(errno));                     //  (No error in the DjVuMessageFile)
-#else
-        G_THROW( ERR_MSG("ByteStream.write") "\t8");               //  write8, write error.
-#endif
+    G_THROW(strerror(errno));   //  (No error in the DjVuMessageFile)
 }
 
 void 
@@ -571,11 +550,7 @@ ByteStream::write16(unsigned int card)
   c[0] = (card>>8) & 0xff;
   c[1] = (card) & 0xff;
   if (writall((void*)c, sizeof(c)) != sizeof(c))
-#ifndef UNDER_CE
-        G_THROW(strerror(errno));                     //  (No error in the DjVuMessageFile)
-#else
-  G_THROW( ERR_MSG("ByteStream.write") "\t16");                    //  write16, write error.
-#endif
+    G_THROW(strerror(errno));   //  (No error in the DjVuMessageFile)
 }
 
 void 
@@ -586,11 +561,7 @@ ByteStream::write24(unsigned int card)
   c[1] = (card>>8) & 0xff;
   c[2] = (card) & 0xff;
   if (writall((void*)c, sizeof(c)) != sizeof(c))
-#ifndef UNDER_CE
-        G_THROW(strerror(errno));                     //  (No error in the DjVuMessageFile)
-#else
-        G_THROW( ERR_MSG("ByteStream.write") "\t24");              //  write24, write error.
-#endif
+    G_THROW(strerror(errno));   //  (No error in the DjVuMessageFile)
 }
 
 void 
@@ -602,11 +573,7 @@ ByteStream::write32(unsigned int card)
   c[2] = (card>>8) & 0xff;
   c[3] = (card) & 0xff;
   if (writall((void*)c, sizeof(c)) != sizeof(c))
-#ifndef UNDER_CE
-        G_THROW(strerror(errno));                     //  (No error in the DjVuMessageFile)
-#else
-        G_THROW( ERR_MSG("ByteStream.write") "\t32");              //  write32, write error.
-#endif
+    G_THROW(strerror(errno));   //  (No error in the DjVuMessageFile)
 }
 
 unsigned int 
@@ -690,10 +657,10 @@ ByteStream::Stdio::init(const char mode[])
     }
   }
   if(binary && fp) {
-#if defined(WIN32)
-    _setmode(_fileno(fp), _O_BINARY);
-#elif defined(__CYGWIN32__)
+#if defined(__CYGWIN32__)
     setmode(fileno(fp), O_BINARY);
+#elif defined(WIN32)
+    _setmode(_fileno(fp), _O_BINARY);
 #endif
   }
   GUTF8String retval;
@@ -753,48 +720,12 @@ ByteStream::Stdio::init(const GURL &url, const char mode[])
   GUTF8String retval;
   if (url.fname() != "-")
   {
-#ifdef macintosh
     fp = urlfopen(url,mode);
-#else
-    /* MBCS */
-    fp=urlfopen(url,mode);
-#if 0
     if (!fp)
     {
-      GString utf8Filename(GOS::expand_name(filename));
-      GString utf8Basename(GOS::basename(filename));
-      GString nativeBasename(GOS::encode_mbcs_reserved(utf8Basename.getUTF82Native()));
-      char *fpath;
-      const size_t fpath_length=1+utf8Filename.length()-utf8Basename.length();
-      GPBuffer<char> gfpath(fpath,fpath_length);
-      gfpath.clear();
-      strncpy(fpath,(char*)(const char*)utf8Filename, 
-              utf8Filename.length() - utf8Basename.length());
-      nativeFilename = GUTF8String(fpath).getUTF82Native();
-      nativeFilename+=nativeBasename;
-      fp = fopen((char*)(const char *)nativeFilename, mode);
-    }
-#endif
-#endif
-    if (!fp)
-    {
-#ifndef UNDER_CE
       //  Failed to open '%s': %s
-      G_THROW( ERR_MSG("ByteStream.open_fail") "\t"+url.name()+"\t"+GNativeString(strerror(errno)).getNative2UTF8());
-#else
-      G_THROW( ERR_MSG("ByteStream.open_fail2") ); //  StdioByteStream::StdioByteStream, failed to open file.
-#endif
-    }
-    /*MBCS*/
-    if (!fp)
-    {
-#ifndef UNDER_CE
-      retval=GUTF8String( ERR_MSG("ByteStream.open_fail") "\t")+url
-        +GNativeString(strerror(errno)).getNative2UTF8();
-      //  Failed to open '%s': %s
-#else
-      retval= ERR_MSG("ByteStream.open_fail2"); //  Stdio, failed to open file.
-#endif
+      G_THROW( ERR_MSG("ByteStream.open_fail") "\t" + url.name()
+               +"\t"+GNativeString(strerror(errno)).getNative2UTF8());
     }
   }
   return retval.length()?retval:init(mode);
@@ -804,7 +735,7 @@ size_t
 ByteStream::Stdio::read(void *buffer, size_t size)
 {
   if (!can_read)
-    G_THROW( ERR_MSG("ByteStream.no_read") );                    //  Stdio not opened for reading
+    G_THROW( ERR_MSG("ByteStream.no_read") ); //  Stdio not opened for reading
   size_t nitems;
   do
   {
@@ -815,16 +746,11 @@ ByteStream::Stdio::read(void *buffer, size_t size)
 #ifdef EINTR
       if (errno!=EINTR)
 #endif
-#ifndef UNDER_CE
-        G_THROW(strerror(errno));                     //  (No error in the DjVuMessageFile)
-#else
-        G_THROW( ERR_MSG("ByteStream.read_error2") );            //  read, read error.
-#endif
-    }else
-    {
-      break;
+        G_THROW(strerror(errno)); //  (No error in the DjVuMessageFile)
     }
-  }while(true);
+    else
+      break;
+  } while(true);
   pos += nitems;
   return nitems;
 }
@@ -833,7 +759,7 @@ size_t
 ByteStream::Stdio::write(const void *buffer, size_t size)
 {
   if (!can_write)
-    G_THROW( ERR_MSG("ByteStream.no_write") );                   //  Stdio not opened for writing
+    G_THROW( ERR_MSG("ByteStream.no_write") ); //  Stdio not opened for writing
   size_t nitems;
   do
   {
@@ -844,16 +770,11 @@ ByteStream::Stdio::write(const void *buffer, size_t size)
 #ifdef EINTR
       if (errno!=EINTR)
 #endif
-#ifndef UNDER_CE
-        G_THROW(strerror(errno));                     //  (No error in the DjVuMessageFile)
-#else
-        G_THROW( ERR_MSG("ByteStream.write_error2") );           //  write, write error.
-#endif
-    }else
-    {
-      break;
+        G_THROW(strerror(errno)); //  (No error in the DjVuMessageFile)
     }
-  }while(true);
+    else
+      break;
+  } while(true);
   pos += nitems;
   return nitems;
 }
@@ -862,11 +783,7 @@ void
 ByteStream::Stdio::flush()
 {
   if (fflush(fp) < 0)
-#ifndef UNDER_CE
-        G_THROW(strerror(errno));                     //  (No error in the DjVuMessageFile)
-#else
-        G_THROW( ERR_MSG("ByteStream.flush_error") );            //  flush, flush error.
-#endif
+    G_THROW(strerror(errno)); //  (No error in the DjVuMessageFile)
 }
 
 long 
@@ -892,14 +809,10 @@ ByteStream::Stdio::seek(long offset, int whence, bool nothrow)
   clearerr(fp);
   if (fseek(fp, offset, whence)) 
     {
-      if (nothrow) return -1;
-#ifndef UNDER_CE
-        G_THROW(strerror(errno));                     //  (No error in the DjVuMessageFile)
-#else
-        G_THROW( ERR_MSG("ByteStream.seek_error") );             //  seek, seek error.
-#endif
+      if (nothrow) 
+        return -1;
+      G_THROW(strerror(errno)); //  (No error in the DjVuMessageFile)
     }
-  
   return tell();
 }
 
@@ -1230,35 +1143,22 @@ ByteStream::create(const int fd,char const * const mode,const bool closeme)
       }
     else
       {
-#ifndef UNDER_CE
-        if(!closeme)
-          {
-            fd2 = dup(fd);
-          } 
-        f=fdopen(fd2,(char*)(mode?mode:default_mode));
-#else
-        if(!closeme)
-          {
-            fd2 = -1;
-          }
-#endif
+        if (! closeme)
+          fd2 = dup(fd);
+        f = fdopen(fd2,(char*)(mode?mode:default_mode));
       }
 
     if(!f)
       {
-#ifndef UNDER_CE
-        if(fd2>= 0)
+        if ( fd2 >= 0)
           close(fd2);
-#endif
         G_THROW( ERR_MSG("ByteStream.open_fail2") );
       }
     Stdio *sbs=new Stdio();
     retval=sbs;
     GUTF8String errmessage=sbs->init(f,mode?mode:default_mode,(fd2>=0));
     if(errmessage.length())
-      {
-        G_THROW(errmessage);
-      }
+      G_THROW(errmessage);
   }
   return retval;
 }
