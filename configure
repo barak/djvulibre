@@ -8846,7 +8846,17 @@ echo $ECHO_N "checking for Qt root directory... $ECHO_C" >&6
     # Unusual install
     if test "x$ac_has_qt" = xno ; then
       ac_qt_names="qt3 qt2 qt"
-      ac_qt_dirs="$QTDIR $prefix /sw /usr /usr/X11R6 /usr/local"
+      ac_qt_dirs="/usr /usr/X11R6 /usr/local"
+      case "$host" in
+      *-darwin* | *-macos10*)
+        if test -d /opt/local ; then
+          ac_qt_dirs="/opt/local $ac_qt_dirs"
+        elif test -d /sw ; then
+          ac_qt_dirs="/sw $ac_qt_dirs"
+	fi
+      ;;
+      esac
+      ac_qt_dirs="$QTDIR $prefix $ac_qt_dirs"
       for d in $ac_qt_dirs ; do
         for n in $ac_qt_names ; do
           if test -r $d/include/$n/qwidget.h ; then
