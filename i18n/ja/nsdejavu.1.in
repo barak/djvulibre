@@ -434,6 +434,8 @@ OpenMotif ライブラリをインストールしておく必要があります。
 Bill Riemers <docbill@sourceforge.net> および
 L\('eon Bottou <leonb@users.sourceforge.net>
 が改良しました。
+このプログラムおよび man page は Nobchika Morimoto <morimoto@lizardtech.com>
+が翻訳しました。
 
 .SH 参照
 .BR djvu (1)、

@@ -1040,7 +1040,7 @@ Are you sure you want to overwrite it?</source>
     </message>
     <message>
         <source>&lt;b&gt;Advanced booklet options:&lt;/b&gt;&lt;br&gt;Shifting rectos and versos is useful with poorly aligned duplex printers. The center margins determine how much space is left between the pages to fold the sheets. This space slowly increases from the inner sheet to the outer sheet.</source>
-        <translation type="unfinished"></translation>
+        <translation>&lt;b&gt;詳細ブックレットオプション:&lt;/b&gt;&lt;br&gt;左右のページを動かすとアラインメントが貧弱な両面プリンタでは便利です。中央のマージンは用紙を折り曲げるときのページとページの間の余白を設定します。この余白は内側の用紙から外側の用紙へ少しずつ増えていきます。</translation>
     </message>
 </context>
 <context>

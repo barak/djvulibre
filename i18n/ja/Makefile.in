@@ -50,6 +50,22 @@ all:
 @GUI_YES@install: install-qm
 install: install-man
 
+# Rules
+nsdejavu.1: ${srcdir}/nsdejavu.1.in
+	LC_CTYPE=ja_JP.eucjp \
+	  sed < ${srcdir}/nsdejavu.1.in > nsdejavu.1 \
+	  -e 's,LIBDIR,${libdir},' -e 's,NSDEJAVUSO,${NSDEJAVU},'
+
+djview.ts: ${srcdir}/djview.ts
+	cp ${srcdir}/djview.ts djview.ts
+djview.qm: djview.ts
+	echo TRANSLATIONS=djview.ts > tmp.pro && ${LRELEASE} tmp.pro
+
+qt.ts: ${srcdir}/qt.ts
+	cp ${srcdir}/djview.ts djview.ts
+qt.qm: qt.ts
+	echo TRANSLATIONS=qt.ts > tmp.pro && ${LRELEASE} tmp.pro
+
 # Install localized qm files.
 install-qm: ${QMFILES} FORCE
 	test ${LANG} != dummy
@@ -74,12 +90,6 @@ install-man: FORCE ${NSDEJAVU1}
 	   fi ; \
 	done
 
-# Generate nsdejavu page.
-nsdejavu.1: ${srcdir}/nsdejavu.1.in
-	LC_CTYPE=ja_JP.eucjp \
-	  sed < ${srcdir}/nsdejavu.1.in > nsdejavu.1 \
-	  -e 's,LIBDIR,${libdir},' -e 's,NSDEJAVUSO,${NSDEJAVU},'
-
 # Boilerplate
 clean: FORCE
 	-test ${LRELEASE} = ":" || ${RM} *.qm
@@ -87,14 +97,5 @@ clean: FORCE
 distclean: clean
 	-${RM} Makefile
 
-# Rules
-
 FORCE:
 .PHONY: FORCE
-.SUFFIXES: .ts .qm
-
-.ts.qm:
-	ts=`basename $<`; \
-	test ${srcdir} = "." || cp $< $$ts ; \
-	echo TRANSLATIONS="$$ts" > tmp.pro ; \
-	${LRELEASE} tmp.pro
