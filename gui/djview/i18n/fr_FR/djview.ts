@@ -15,7 +15,7 @@
     <message>
         <source>DjVu standalone viewer
 and browser plugin.</source>
-        <translation>Visualiseur DjVu
+        <translation>Visionneur DjVu
 et extension de butineur.</translation>
     </message>
     <message>
@@ -1485,7 +1485,7 @@ au Webmaistre qui utilise des outils obsolètes.</translation>
     </message>
     <message>
         <source>DjVu Standalone Viewer</source>
-        <translation>Visualiseur DjVu</translation>
+        <translation>Visionneur DjVu</translation>
     </message>
     <message>
         <source>&amp;Open</source>
@@ -1683,7 +1683,7 @@ au Webmaistre qui utilise des outils obsolètes.</translation>
     <name>QDWelcome</name>
     <message>
         <source>Welcome to the DjVu Plug-in</source>
-        <translation>Bienvenue dans le Visualiseur DjVu</translation>
+        <translation>Bienvenue dans le Visionneur DjVu</translation>
     </message>
     <message>
         <source>&amp;Preferences</source>
