@@ -71,9 +71,9 @@ make
 %install
 rm -rf $RPM_BUILD_ROOT
 install -d $RPM_BUILD_ROOT
-make prefix="$RPM_BUILD_ROOT"%{prefix} mandir="$RPM_BUILD_ROOT"%{mandir} install
-install -d $RPM_BUILD_ROOT%{prefix}/lib/mozilla/plugins
-cd $RPM_BUILD_ROOT%{prefix}/lib/mozilla/plugins && ln -s ../../netscape/plugins/nsdejavu.so .
+make prefix="$RPM_BUILD_ROOT"%{prefix} \
+     mandir="$RPM_BUILD_ROOT"%{mandir} \
+     install
 
 %clean
 rm -rf $RPM_BUILD_ROOT
@@ -81,22 +81,27 @@ rm -rf $RPM_BUILD_ROOT
 %post 
 /sbin/ldconfig
 # Create links to nsdejavu.so in mozilla dirs
-for n in %{prefix}/lib/mozilla* ; do \
- if test -d $n ; then \
-   test -d $n/plugins || mkdir $n/plugins ; \
-   ln -s %{prefix}/lib/netscape/plugins/nsdejavu.so $n/plugins ; \
- fi ; \
+for n in %{prefix}/lib/mozilla* 
+do
+ if [ -d $n ]
+ then 
+   test -d $n/plugins || mkdir $n/plugins 
+   ln -s %{prefix}/lib/netscape/plugins/nsdejavu.so $n/plugins
+ fi
 done
 
 %postun 
 /sbin/ldconfig
 # Remove links to nsdejavu.so in all mozilla dirs
-for n in %{prefix}/lib/mozilla* ; do \
- if test -h $n/plugins/nsdejavu.so ; then \
-   rm $n/plugins/nsdejavu.so ; \
-   rmdir $n/plugins 2>/dev/null ; \
- fi ; \
+for n in %{prefix}/lib/mozilla* 
+do
+ if [ -h $n/plugins/nsdejavu.so ]
+ then 
+   rm $n/plugins/nsdejavu.so 2>/dev/null  
+   rmdir $n/plugins 2>/dev/null
+ fi
 done
+
 
 %files
 %defattr(-, root, root)
