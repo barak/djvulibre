@@ -1,6 +1,7 @@
-%define prefix /usr
+%define release 2
 %define version 3.5.4
-%define release 1
+%define prefix %{?_prefix:%{_prefix}}%{!?_prefix:/usr}
+%define mandir %{?_mandir:%{_mandir}}%{!?_mandir:%{prefix}/man}
 
 Prefix: %{prefix}
 Summary: DjVu viewers, encoders and utilities.
@@ -23,11 +24,11 @@ LeCun, Patrick Haffner, and many others.  In March 2000, AT&T sold DjVu to
 LizardTech Inc. who now distributes Windows/Mac plug-ins, and commercial
 encoders (mostly on Windows)
 
-In an effort to promote DjVu as a Web standard, LizardTech's management was
+In an effort to promote DjVu as a Web standard, the LizardTech management was
 enlightened enough to release the reference implementation of DjVu under the
 GNU GPL in October 2000.  DjVuLibre (which means free DjVu), is an enhanced
 version of that code maintained by the original inventors of DjVu. It is
-compatible with version 3.5 of LizardTech's DjVu software suite.
+compatible with version 3.5 of the LizardTech DjVu software suite.
 
 DjVulibre-3.5 contains:
 - a standalone DjVu viewer based on the Qt library. 
@@ -40,22 +41,28 @@ DjVulibre-3.5 contains:
 - An up-to-date version of the C++ DjVu Reference Library.
 
 %changelog
+* Tue Jan 22 2002 Leon Bottou <leonb@users.sourceforge.net>
+    - bumped to version 3.5.4-1.
+    - fixed for properly locating the man directory.
+    - bumped to version 3.5.4-2.
+* Wed Jan 16 2002 Leon Bottou <leonb@users.sourceforge.net>
+    - bumped to version 3.5.3-1
 * Fri Dec  7 2001 Leon Bottou <leonb@users.sourceforge.net>
-- bumped to version 3.5.2
+    - bumped to version 3.5.2-1.
 * Wed Dec  5 2001 Leon Bottou <leonb@users.sourceforge.net>
-- created spec file for rh7.x
+    - created spec file for rh7.x.
 
 %prep
 %setup
 
 %build
-./configure --prefix=%{prefix}
+./configure --prefix=%{prefix} --mandir=%{mandir}
 make
 
 %install
 rm -rf $RPM_BUILD_ROOT
 install -d $RPM_BUILD_ROOT
-make prefix="$RPM_BUILD_ROOT"%{prefix} install
+make prefix="$RPM_BUILD_ROOT"%{prefix} mandir="$RPM_BUILD_ROOT"%{mandir} install
 install -d $RPM_BUILD_ROOT%{prefix}/lib/mozilla/plugins
 cd $RPM_BUILD_ROOT%{prefix}/lib/mozilla/plugins && ln -s ../../netscape/plugins/nsdejavu.so .
 
@@ -74,5 +81,5 @@ rm -rf $RPM_BUILD_ROOT
 %doc doc/*
 %{prefix}/bin
 %{prefix}/lib
-%{prefix}/man
-%{prefix}/share
+%{prefix}/share/djvu
+%{mandir}
