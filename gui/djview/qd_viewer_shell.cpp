@@ -307,7 +307,7 @@ QDViewerShell::slotMenuCB(int cmd)
 	 qeApp->killWidget(this);
       else if (cmd==IDC_OPEN)
       {
-	 static const char * filters[]={ "*.djvu", "*.djv", "*.iw44", "*.iw4", tr("All files (*)"), 0 };
+	 static const char * filters[]={ "*.djvu", "*.djv", "*.iw44", "*.iw4", "*", 0 };
 
 	 QeFileDialog dialog(QeFileDialog::lastLoadDir, filters[0],
 			     this, "file_dialog", TRUE);
