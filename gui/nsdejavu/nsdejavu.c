@@ -1536,7 +1536,7 @@ Resize(void * id)
      Dimension width, height;
      XtVaGetValues(inst->widget,
                    XtNwidth, &width,
-                   XtNheight, &height, 0);
+                   XtNheight, &height, NULL);
      if (! IsConnectionOK(TRUE))
        return -1;
      if ( (WriteInteger(pipe_write, CMD_RESIZE) <= 0) ||
@@ -1618,7 +1618,7 @@ Attach(Display * displ, Window window, void * id)
   while(!XtIsShell(shell)) 
     shell = XtParent(shell);
   XtVaGetValues(shell, XtNvisual, &visual, 
-                XtNcolormap, &cmap, XtNdepth, &depth, 0);
+                XtNcolormap, &cmap, XtNdepth, &depth, NULL);
   if (!visual) 
     visual = XDefaultVisualOfScreen(XtScreen(shell));
   /* Process colormap */
@@ -1636,7 +1636,7 @@ Attach(Display * displ, Window window, void * id)
   /* Get the background color for passing it to the application */
   back_color_str[0]=0;
   XtVaGetValues(widget, XtNwidth, &width, XtNheight, &height,
-                XtNbackground, &back_color, 0);
+                XtNbackground, &back_color, NULL);
   cell.flags=DoRed | DoGreen | DoBlue;
   cell.pixel=back_color;
   XQueryColor(displ, cmap, &cell);
@@ -1686,7 +1686,7 @@ Attach(Display * displ, Window window, void * id)
         font=fixed_font;
     }
   // Paint the drawing area and display "Stand by..." message
-  XtVaSetValues(widget, XtNforeground, black, XtNbackground, white, 0);
+  XtVaSetValues(widget, XtNforeground, black, XtNbackground, white, NULL);
   if (font && text_gc)
     {
       int text_width = XTextWidth(font, text, strlen(text));
@@ -1818,7 +1818,7 @@ StartProgram(void)
           if (mode & S_IROTH) mode|=S_IXOTH;
           chmod(path, mode);
         }
-      execl(path, path, "-netscape", 0);
+      execl(path, path, "-netscape", NULL);
       fprintf(stderr,"Failed to execute %s\n", path);
       fflush(stderr);
       _exit(1);
