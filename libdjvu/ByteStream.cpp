@@ -1137,63 +1137,56 @@ ByteStream::create(const int fd,char const * const mode,const bool closeme)
   if(!retval)
 #endif
   {
-    int fd2=fd;
-    FILE *f=0;
-    switch(fd)
-    {
-      case 0:
-        if(!closeme && !mode)
-        {
-          f=stdin;
-          fd2=(-1);
-          break;
-        }
-      case 1:
-        if(!closeme && (!mode || GUTF8String(mode) == "a"))
-        {
-          f=stdout;
-          default_mode="wb";
-          fd2=(-1);
-          break;
-        }
-      case 2:
-        if(!closeme && (!mode || GUTF8String(mode) == "a"))
-        {
-          default_mode="a";
-          f=stderr;
-          fd2=(-1);
-          break;
-        }
-      default:
+    int fd2 = fd;
+    FILE *f = 0;
+    if (fd == 0 && !closeme && !mode)
+      {
+        f=stdin;
+        fd2=(-1);
+      }
+    else if (fd == 1 && !closeme && (!mode || GUTF8String(mode) == "a"))
+      {
+        f=stdout;
+        default_mode="wb";
+        fd2 = -1;
+      }
+    else if (fd == 2 && !closeme && (!mode || GUTF8String(mode) == "a"))
+      {
+        default_mode="a";
+        f=stderr;
+        fd2 = -1;
+      }
+    else
+      {
 #ifndef UNDER_CE
         if(!closeme)
-        {
-          fd2=dup(fd);
-        } 
+          {
+            fd2 = dup(fd);
+          } 
         f=fdopen(fd2,(char*)(mode?mode:default_mode));
 #else
         if(!closeme)
-        {
-          fd2=(-1);
-        }
+          {
+            fd2 = -1;
+          }
 #endif
-        break;
-    }
+      }
+
     if(!f)
-    {
+      {
 #ifndef UNDER_CE
-      if(fd2>= 0)
-        close(fd2);
+        if(fd2>= 0)
+          close(fd2);
 #endif
-      G_THROW( ERR_MSG("ByteStream.open_fail2") );
-    }
+        G_THROW( ERR_MSG("ByteStream.open_fail2") );
+      }
     Stdio *sbs=new Stdio();
     retval=sbs;
     GUTF8String errmessage=sbs->init(f,mode?mode:default_mode,(fd2>=0));
     if(errmessage.length())
-    {
-      G_THROW(errmessage);
-    }
+      {
+        G_THROW(errmessage);
+      }
   }
   return retval;
 }
