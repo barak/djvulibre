@@ -991,7 +991,7 @@ DjVuANT::get_metadata(GLParser & parser)
                     }
                 }
             } 
-          G_CATCH(exc) { } G_ENDCATCH;
+          G_CATCH_ALL { } G_ENDCATCH;
         }
     }
   return mdata;
