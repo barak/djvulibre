@@ -704,3 +704,16 @@ createIcon(const GPixmap & gpix_in)
 
    return qpix;
 }
+
+void
+showOrHide(QWidget *w, bool b)
+{
+  if (w)
+    {
+      bool h = w->isHidden();
+      if (b && h)
+        w->show();
+      else if (!b && !h)
+        w->hide();
+    }
+}

@@ -105,13 +105,16 @@ QTBWidget::event(QEvent * ev)
 	    ++it;
 	    if (obj->isWidgetType())
 	    {
-	       QWidget * w=(QWidget *) obj;
-	       QSize ms=w->minimumSize();
-	       width+=ms.width()+margin;
-	       if (height<ms.height()) height=ms.height();
+              QWidget * w=(QWidget *) obj;
+              if (w->isHidden())
+                continue;
+              QSize ms=w->minimumSize();
+              width+=ms.width()+margin;
+              if (height<ms.height()) height=ms.height();
 	    }
 	 }
-	 setMinimumSize(width-margin, height);
+         width = (width>margin) ? width-margin : 0;
+	 setMinimumSize(width, height);
       }
    } 
    else if (ev->type()==QEvent::Resize)
@@ -130,6 +133,8 @@ QTBWidget::event(QEvent * ev)
 	    if (obj->isWidgetType())
 	    {
 	       QWidget * w=(QWidget *) obj;
+               if (w->isHidden())
+                 continue;
 	       int width=w->minimumSize().width();
 	       w->resize(width, height);
 	       w->move(x, 0);
@@ -197,6 +202,8 @@ QDToolBar::positionWidgets(int width, int rows, bool move, int * height_ptr)
    for(pos=left_list;pos;++pos)
    {
       QWidget * w=left_list[pos];
+      if (w->isHidden())
+        continue;
       int width=w->minimumSize().width();
       if (x+width+margin>crect.right())
       {
@@ -220,6 +227,8 @@ QDToolBar::positionWidgets(int width, int rows, bool move, int * height_ptr)
    for(pos=right_list;pos;++pos)
    {
       QWidget * w=right_list[pos];
+      if (w->isHidden())
+        continue;
       int width=w->minimumSize().width();
       if (x-width-margin<crect.left())
       {
@@ -366,9 +375,21 @@ QDToolBar::QDToolBar(QWidget * parent, const char * name) :
       QFrame(parent, name)
 {
    being_destroyed=false;
-   
    resize(0, 0);
    setFrameStyle(QFrame::Panel | QFrame::Raised);
+}
+
+void 
+QDToolBar::setOptions(int opts)
+{
+  for(GPosition pos=pieces;pos;++pos)
+    pieces[pos]->setOptions(opts);
+  adjustPositions();
+}
+
+void 
+QDTBarPiece::setOptions(int opts)
+{
 }
 
 #include "qd_toolbar_moc.inc"

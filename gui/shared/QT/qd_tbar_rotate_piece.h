@@ -79,7 +79,7 @@ private slots:
  
 public:
    virtual void	setEnabled(bool en);
-   
+   virtual void	setOptions(int opts);
    QDTBarRotatePiece(QDToolBar * toolbar);
 };
 

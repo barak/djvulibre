@@ -210,5 +210,6 @@ public:
 QPixmap createIcon(const GPixmap & gpix);
 void setItemsEnabled(QMenuData * menu, bool flag);
 bool setComboBoxCurrentItem(QComboBox *combo, QString item);
+void showOrHide(QWidget *w, bool show);
 
 #endif

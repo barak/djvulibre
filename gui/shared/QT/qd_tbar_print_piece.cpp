@@ -64,6 +64,7 @@
 #include "qd_tbar_print_piece.h"
 #include "debug.h"
 #include "qlib.h"
+#include "qd_base.h"
 #include "qd_toolbutt.h"
 #include "djvu_base_res.h"
 #include "cin_data.h"
@@ -84,13 +85,6 @@ QDTBarPrintPiece::setEnabled(bool en)
 
 QDTBarPrintPiece::QDTBarPrintPiece(QDToolBar * toolbar) : QDTBarPiece(toolbar)
 {
-   QFrame * frame;
-   
-   frame=new QFrame(toolbar, "separator");
-   frame->setFrameStyle(QFrame::VLine | QFrame::Sunken);
-   frame->setMinimumWidth(10);
-   toolbar->addLeftWidget(frame);
-   
    find_butt=new QDToolButton(*CINData::get("ppm_vfind"), true,
 			      IDC_SEARCH, toolbar, tr("Find"));
    connect(find_butt, SIGNAL(clicked(void)), this, SIGNAL(sigFind(void)));
@@ -108,4 +102,16 @@ QDTBarPrintPiece::QDTBarPrintPiece(QDToolBar * toolbar) : QDTBarPiece(toolbar)
    
    toolbar->addPiece(this);
    toolbar->adjustPositions();
+}
+
+void
+QDTBarPrintPiece::setOptions(int opts)
+{
+  bool b;
+  b = !(opts & QDBase::OverrideFlags::TOOLBAR_NO_PRINT);
+  showOrHide(print_butt, b);
+  b = !(opts & QDBase::OverrideFlags::TOOLBAR_NO_SAVE);
+  showOrHide(save_butt, b);
+  b = !(opts & QDBase::OverrideFlags::TOOLBAR_NO_SEARCH);
+  showOrHide(find_butt, b);
 }

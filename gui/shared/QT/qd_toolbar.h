@@ -95,6 +95,7 @@ public:
    void		addPiece(QDTBarPiece * piece);
    
    virtual void	setEnabled(bool en);
+   virtual void setOptions(int opts);
    
    QDToolBar(QWidget * parent=0, const char * name=0);
    ~QDToolBar(void) { being_destroyed=true; }
@@ -107,7 +108,7 @@ protected:
    QWidget	* toolbar;
 public:
    virtual void	setEnabled(bool on)=0;
-
+   virtual void setOptions(int opts);
    QDTBarPiece(QWidget * _toolbar) :
 	 QObject(_toolbar), toolbar(_toolbar) {}
 };

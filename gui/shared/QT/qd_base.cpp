@@ -108,7 +108,7 @@ int round(float v)
 QDBase::OverrideFlags::OverrideFlags(void)
 {
    toolbar=true;
-   toolbaropts = (TOOLBAR_OPTS)0;
+   toolbaropts = 0;
    scrollbars=true;
    menu=true;
    frame=true;
@@ -200,9 +200,6 @@ QDBase::QDBase(QWidget * parent, const char * name) : QWidget(parent, name)
    vscroll->resize(vscroll->sizeHint());
 
    createCursors();
-   // create toolbar only when needed in the viewer or editor/shop
-   //createToolBar();
-   
    setBackgroundColor(0xffffff, false);	// Don't redraw
    
       // Setting desired video modes
@@ -216,6 +213,7 @@ QDBase::QDBase(QWidget * parent, const char * name) : QWidget(parent, name)
 void
 QDBase::setOverrideFlags(const OverrideFlags & flags)
 {
+  bool do_layout=false;
   OverrideFlags old_flags=override_flags;
   override_flags=flags;
   
@@ -242,9 +240,14 @@ QDBase::setOverrideFlags(const OverrideFlags & flags)
     }
   if (old_flags.hor_align!=flags.hor_align ||
       old_flags.ver_align!=flags.ver_align)
+    do_layout = true;
+  if (toolbar && old_flags.toolbaropts != flags.toolbaropts)
     {
-      layout();
+      toolbar->setOptions(override_flags.toolbaropts);
+      do_layout = true;
     }
+  if (do_layout)
+    layout();
   setCursor();
 }
 
@@ -257,13 +260,14 @@ QDBase::setDjVuImage(const GP<DjVuImage> & _dimg, int do_redraw)
    anno=0;
    cmd_mode_force=-1;
    
-   if (dimg) rectDocument.clear();
+   if (dimg) 
+     rectDocument.clear();
    else
    {
-	 // Just in case if any derived class has already preset position of
-	 // the rectDocument (in accordance with the saved_data)
-      rectDocument.xmax=rectDocument.xmin;
-      rectDocument.ymax=rectDocument.ymin;
+     // Just in case if any derived class has already preset position of
+     // the rectDocument (in accordance with the saved_data)
+     rectDocument.xmax=rectDocument.xmin;
+     rectDocument.ymax=rectDocument.ymin;
    }
    
    dimg=_dimg;
@@ -1291,6 +1295,7 @@ QDBase::createToolBar(void)
    else 
      unStickToolBar();
    
+   toolbar->setOptions(override_flags.toolbaropts);
    updateToolBar();
 }
 
@@ -1298,20 +1303,26 @@ void
 QDBase::fillToolBar(QDToolBar * toolbar)
 {
    try
-   {
-      mode_tbar=new QDTBarModePiece(toolbar);
-      connect(&toolbar_timer, SIGNAL(timeout(void)), this, SLOT(slotToolBarTimeout(void)));
-      connect(mode_tbar, SIGNAL(sigSetZoom(int)), this, SLOT(slotSetZoom(int)));
-      connect(mode_tbar, SIGNAL(sigSetMode(int)), this, SLOT(slotSetMode(int)));
-      connect(mode_tbar, SIGNAL(sigStick(bool)), this, SLOT(slotStickToolBar(bool)));
-      connect(mode_tbar, SIGNAL(sigSetPaneMode(int)), this, SLOT(slotSetPaneMode(int)));
-      rotate_tbar = new QDTBarRotatePiece(toolbar);
-      connect(rotate_tbar, SIGNAL(sigRotate(int)), this, SLOT(slotSetRotate(int)));
-      
-   } catch(const GException & exc)
-   {
-      showError(this, tr("DjVu Error"), exc);
-   }
+     {
+       mode_tbar=new QDTBarModePiece(toolbar);
+       connect(&toolbar_timer, SIGNAL(timeout(void)), 
+               this, SLOT(slotToolBarTimeout(void)));
+       connect(mode_tbar, SIGNAL(sigSetZoom(int)),
+               this, SLOT(slotSetZoom(int)));
+       connect(mode_tbar, SIGNAL(sigSetMode(int)), 
+               this, SLOT(slotSetMode(int)));
+       connect(mode_tbar, SIGNAL(sigStick(bool)),
+               this, SLOT(slotStickToolBar(bool)));
+       connect(mode_tbar, SIGNAL(sigSetPaneMode(int)), 
+               this, SLOT(slotSetPaneMode(int)));
+       rotate_tbar = new QDTBarRotatePiece(toolbar);
+       connect(rotate_tbar, SIGNAL(sigRotate(int)), 
+               this, SLOT(slotSetRotate(int)));
+     } 
+   catch(const GException & exc)
+     {
+       showError(this, tr("DjVu Error"), exc);
+     }
 }
 
 void
@@ -1329,12 +1340,13 @@ QDBase::updateToolBar(void)
      }
    if (toolbar)
    {
-      if (!dimg) toolbar->setEnabled(FALSE);
+      if (!dimg) 
+        toolbar->setEnabled(FALSE);
       else if (!toolbar->isEnabled())
-      {
-	 toolbar->setEnabled(TRUE);
-	 updateToolBar();	// And do the update again
-      }
+        {
+          toolbar->setEnabled(TRUE);
+          updateToolBar();	// And do the update again
+        }
    }
 }
 

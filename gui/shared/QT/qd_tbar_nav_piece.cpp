@@ -65,6 +65,7 @@
 #include "qd_tbar_nav_piece.h"
 #include "debug.h"
 #include "qlib.h"
+#include "qd_base.h"
 #include "qd_toolbutt.h"
 #include "djvu_base_res.h"
 #include "cin_data.h"
@@ -133,30 +134,22 @@ const
 void
 QDTBarNavPiece::setEnabled(bool en)
 {
-   if (created)
-   {
-      page_menu->setEnabled(en);
-      npage_butt->setEnabled(en);
-      ppage_butt->setEnabled(en);
-      nnpage_butt->setEnabled(en);
-      pppage_butt->setEnabled(en);
-      fpage_butt->setEnabled(en);
-      lpage_butt->setEnabled(en);
-   }
+  page_menu->setEnabled(en);
+  npage_butt->setEnabled(en);
+  ppage_butt->setEnabled(en);
+  nnpage_butt->setEnabled(en);
+  pppage_butt->setEnabled(en);
+  fpage_butt->setEnabled(en);
+  lpage_butt->setEnabled(en);
 }
 
-void
-QDTBarNavPiece::create(void)
+QDTBarNavPiece::QDTBarNavPiece(QWidget * toolbar) : QDTBarPiece(toolbar)
 {
-   separator=new QFrame(toolbar, "separator");
-   separator->setFrameStyle(QFrame::VLine | QFrame::Sunken);
-   separator->setMinimumWidth(10);
-   if ( qdtoolbar_child ) 
-      ((QDToolBar *)toolbar)->addLeftWidget(separator);
-   
-   label=new QLabel(tr("Page"), toolbar, "page_label");
-   QToolTip::add(label, tr("Page"));
-   
+   if ( dynamic_cast<QDToolBar *>(toolbar) )
+     qdtoolbar_child=TRUE;
+   else
+     qdtoolbar_child=FALSE;
+      
    page_menu=new QComboBox(TRUE, toolbar, "page_menu");
    page_menu->setInsertionPolicy(QComboBox::NoInsertion);
    page_menu->setValidator(new QDValidator(page_menu));
@@ -164,8 +157,8 @@ QDTBarNavPiece::create(void)
 	   this, SLOT(slotPage(const QString &)));
    QToolTip::add(page_menu, tr("Page"));
    if ( qdtoolbar_child ) 
-      ((QDToolBar *)toolbar)->addLeftWidgets(label, page_menu);
-
+     ((QDToolBar *)toolbar)->addLeftWidget(page_menu);
+   
    fpage_butt=new QDToolButton(*CINData::get("ppm_vfpage"), true,
 			       IDC_NAV_FIRST_PAGE, toolbar, tr("First page"));
    connect(fpage_butt, SIGNAL(clicked(void)), this, SLOT(slotPage(void)));
@@ -181,123 +174,102 @@ QDTBarNavPiece::create(void)
    npage_butt=new QDToolButton(*CINData::get("ppm_vnpage"), true,
 			       IDC_NAV_NEXT_PAGE, toolbar, tr("Next Page"));
    connect(npage_butt, SIGNAL(clicked(void)), this, SLOT(slotPage(void)));
-
+   
    nnpage_butt=new QDToolButton(*CINData::get("ppm_vnnpage"), true,
 				IDC_NAV_NEXT_PAGE10, toolbar, tr("+10 pages"));
    connect(nnpage_butt, SIGNAL(clicked(void)), this, SLOT(slotPage(void)));
-
+   
    lpage_butt=new QDToolButton(*CINData::get("ppm_vlpage"), true,
 			       IDC_NAV_LAST_PAGE, toolbar, tr("Last page"));
    connect(lpage_butt, SIGNAL(clicked(void)), this, SLOT(slotPage(void)));
-
-   if ( qdtoolbar_child ) 
-      ((QDToolBar *)toolbar)->addLeftWidgets(fpage_butt, pppage_butt, ppage_butt,
-					     npage_butt, nnpage_butt, lpage_butt);
    
-   created=true;
+   if ( qdtoolbar_child ) 
+     ((QDToolBar *)toolbar)->addLeftWidgets(fpage_butt, pppage_butt, ppage_butt,
+                                            npage_butt, nnpage_butt, lpage_butt);
+   
+   options = 0;
+   active = false;
+   if ( qdtoolbar_child )
+      ((QDToolBar *)toolbar)->addPiece(this);
 }
 
 void
-QDTBarNavPiece::destroy(void)
+QDTBarNavPiece::setOptions(int opts)
 {
-   if (created)
-   {
-      delete separator; separator=0;
-      delete label; label=0;
-      delete page_menu; page_menu=0;
-      delete npage_butt; npage_butt=0;
-      delete ppage_butt; ppage_butt=0;
-      delete nnpage_butt; nnpage_butt=0;
-      delete pppage_butt; pppage_butt=0;
-      delete fpage_butt; fpage_butt=0;
-      delete lpage_butt; lpage_butt=0;
-      created=false;
-   }
-}
-
-QDTBarNavPiece::QDTBarNavPiece(QWidget * toolbar) : QDTBarPiece(toolbar)
-{
-   if ( dynamic_cast<QDToolBar *>(toolbar) )
-      qdtoolbar_child=TRUE;
-   else
-      qdtoolbar_child=FALSE;
-      
-   created=false;
-   separator=0;
-   label=0;
-   page_menu=0;
-   npage_butt=0;
-   ppage_butt=0;
-   nnpage_butt=0;
-   pppage_butt=0;
-   fpage_butt=0;
-   lpage_butt=0;
-
-   // if parent is not QDToolBar, then it is most likely a
-   // QToolBar. by convention QToolBar content should NOT
-   // change dynamically. so create toolbar at the beginning
-   if ( qdtoolbar_child )
-      ((QDToolBar *)toolbar)->addPiece(this);
-   else
-      create();
+  bool b;
+  options = opts;
+  b = active && !(opts & QDBase::OverrideFlags::TOOLBAR_NO_PAGECOMBO);
+  showOrHide(page_menu, b);
+  b = active && !(opts & QDBase::OverrideFlags::TOOLBAR_NO_FIRSTLAST);
+  showOrHide(fpage_butt, b);
+  showOrHide(lpage_butt, b);
+  b = active && !(opts & QDBase::OverrideFlags::TOOLBAR_NO_PREVNEXT);
+  showOrHide(pppage_butt, b);
+  showOrHide(ppage_butt, b);
+  showOrHide(npage_butt, b);
+  showOrHide(nnpage_butt, b);
 }
 
 void
 QDTBarNavPiece::update(int page_num, int pages_num)
 {
-   
-   if (!qdtoolbar_child || pages_num>1)
+  if (!qdtoolbar_child || pages_num>1)
    {
-      if (!created) create();
-      
-      if (page_menu->count()!=pages_num) page_menu->clear();
-      if (!page_menu->count())
-      {
+     if (! active)
+       {
+         active = true;
+         setOptions(options);
+       }
+     if (page_menu->count()!=pages_num) 
+       page_menu->clear();
+     if (!page_menu->count())
+       {
 	 for(int i=0;i<pages_num;i++)
-	 {
-	    char buffer[128];
-	    sprintf(buffer, "%d", i+1);
-	    page_menu->insertItem(buffer);
-	 }
-      }
-      page_menu->setCurrentItem(page_num);
-      page_menu->setEnabled(pages_num>1);
-      page_menu->setFixedSize(page_menu->sizeHint());
-
-      npage_butt->setEnabled(page_num+1<pages_num);
-      ppage_butt->setEnabled(page_num>0);
-      nnpage_butt->setEnabled(page_num+10<pages_num);
-      pppage_butt->setEnabled(page_num>=10);
-      fpage_butt->setEnabled(page_num>0);
-      lpage_butt->setEnabled(page_num+1<pages_num);
+           {
+             char buffer[128];
+             sprintf(buffer, "%d", i+1);
+             page_menu->insertItem(buffer);
+           }
+       }
+     page_menu->setCurrentItem(page_num);
+     page_menu->setEnabled(pages_num>1);
+     page_menu->setFixedSize(page_menu->sizeHint());
+     npage_butt->setEnabled(page_num+1<pages_num);
+     ppage_butt->setEnabled(page_num>0);
+     nnpage_butt->setEnabled(page_num+10<pages_num);
+     pppage_butt->setEnabled(page_num>=10);
+     fpage_butt->setEnabled(page_num>0);
+     lpage_butt->setEnabled(page_num+1<pages_num);
    }
-   else if ( qdtoolbar_child )
+   else
    {
-      destroy();
+     if (active)
+       {
+         active = false;
+         setOptions(options);
+       }
    }
-
-      // Keep everything disabled if the toolbar is disabled.
-   if (!toolbar->isEnabled()) setEnabled(false);
-   
+  // Keep everything disabled if the toolbar is disabled.
+  if (!toolbar->isEnabled()) 
+    setEnabled(false);
 }
 
 void
 QDTBarNavPiece::slotPage( const QString & qpage_str)
 {
-   const char * const page_str=qpage_str;
-      // Validator will make sure, that page_str is valid
-   emit sigGotoPage(atoi(page_str)-1);
+  const char * const page_str=qpage_str;
+  emit sigGotoPage(atoi(page_str)-1);
 }
 
 void
 QDTBarNavPiece::slotPage(void)
 {
-   const QObject * obj=sender();
-   if (obj && obj->isWidgetType() && obj->inherits("QDToolButton"))
-   {
-      const QDToolButton * butt=(QDToolButton *) obj;
-      emit sigDoCmd(butt->cmd);
-   }
+  const QObject * obj=sender();
+  if (obj && obj->isWidgetType() && obj->inherits("QDToolButton"))
+     {
+       const QDToolButton * butt=(QDToolButton *) obj;
+       emit sigDoCmd(butt->cmd);
+     }
 }
 
 // END OF FILE

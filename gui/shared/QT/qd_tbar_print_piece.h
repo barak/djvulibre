@@ -79,7 +79,7 @@ signals:
    void		sigSave(void);
 public:
    virtual void	setEnabled(bool en);
-   
+   virtual void	setOptions(int opts);
    QDTBarPrintPiece(QDToolBar * toolbar);
 };
 

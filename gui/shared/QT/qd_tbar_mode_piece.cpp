@@ -64,6 +64,7 @@
 #include "qd_tbar_mode_piece.h"
 #include "debug.h"
 #include "qlib.h"
+#include "qd_base.h"
 #include "qd_toolbutt.h"
 #include "djvu_base_res.h"
 #include "cin_data.h"
@@ -175,7 +176,8 @@ static const struct MenuItems {
   {QT_TRANSLATE_NOOP("QDTBarModePiece","Stretch"),IDC_ZOOM_STRETCH},
 };
 
-QDTBarModePiece::QDTBarModePiece(QWidget * toolbar) : QDTBarPiece(toolbar)
+QDTBarModePiece::QDTBarModePiece(QWidget * toolbar) 
+  : QDTBarPiece(toolbar)
 {
    if ( dynamic_cast<QDToolBar *>(toolbar) )
       qdtoolbar_child=TRUE;
@@ -193,16 +195,6 @@ QDTBarModePiece::QDTBarModePiece(QWidget * toolbar) : QDTBarPiece(toolbar)
    if ( qdtoolbar_child ) 
       ((QDToolBar *)toolbar)->addLeftWidget(mode_menu);
 
-#if 0
-   // disabled in order to save some space in the toolbar
-   QFrame * frame;
-   frame=new QFrame(toolbar, "separator");
-   frame->setFrameStyle(QFrame::VLine | QFrame::Sunken);
-   frame->setMinimumWidth(10);
-   if ( qdtoolbar_child ) 
-      ((QDToolBar *)toolbar)->addLeftWidget(frame);
-#endif
-   
    zoom_menu=new QComboBox(TRUE, toolbar, "zoom_menu");
    zoom_menu->setInsertionPolicy(QComboBox::NoInsertion);
    zoom_menu->setValidator(new QDZoomValidator(zoom_menu));
@@ -228,46 +220,68 @@ QDTBarModePiece::QDTBarModePiece(QWidget * toolbar) : QDTBarPiece(toolbar)
    if ( qdtoolbar_child ) 
       ((QDToolBar *)toolbar)->addLeftWidgets(zoom_in_butt, zoom_out_butt);
 
-   QFrame *frame2=new QFrame(toolbar, "separator");
-   frame2->setFrameStyle(QFrame::VLine | QFrame::Sunken);
-   frame2->setMinimumWidth(10);
-   if ( qdtoolbar_child ) 
-      ((QDToolBar *)toolbar)->addLeftWidget(frame2);
-   
    pane_butt=new QDToolButton(*CINData::get("ppm_hand1"), true,
 				  IDC_PANE, toolbar, tr("Pane Mode"));
    pane_butt->setToggleButton(TRUE);
-   connect(pane_butt, SIGNAL(clicked(void)), this, SLOT(slotPaneMode(void)));
+   connect(pane_butt, SIGNAL(clicked(void)), 
+           this, SLOT(slotPaneMode(void)));
 
    zoom_select_butt=new QDToolButton(*CINData::get("ppm_zoomselect"), true,
-				  IDC_ZOOM_SELECT, toolbar, tr("Zoom Selected Area"));
+                                     IDC_ZOOM_SELECT, toolbar,
+                                     tr("Zoom Selected Area"));
    zoom_select_butt->setToggleButton(TRUE);
-   connect(zoom_select_butt, SIGNAL(clicked(void)), this, SLOT(slotPaneMode(void)));
-
+   connect(zoom_select_butt, SIGNAL(clicked(void)), 
+           this, SLOT(slotPaneMode(void)));
+   
    text_select_butt=new QDToolButton(*CINData::get("ppm_textselect"), true,
-				  IDC_TEXT_SELECT, toolbar, tr("Select Text in Selected Area"));
+                                     IDC_TEXT_SELECT, toolbar, 
+                                     tr("Select Text in Selected Area"));
    text_select_butt->setToggleButton(TRUE);
-   connect(text_select_butt, SIGNAL(clicked(void)), this, SLOT(slotPaneMode(void)));
-
+   connect(text_select_butt, SIGNAL(clicked(void)), 
+           this, SLOT(slotPaneMode(void)));
+   
    if ( qdtoolbar_child ) 
-      ((QDToolBar *)toolbar)->addLeftWidgets(pane_butt, zoom_select_butt, text_select_butt);
-
+     ((QDToolBar *)toolbar)->addLeftWidgets(pane_butt, 
+                                            zoom_select_butt, 
+                                            text_select_butt);
+   
    if ( qdtoolbar_child )
-   {
-      pin_butt=new QDToolButton(*CINData::get("ppm_vpin_out"), false,
-				-1, toolbar, tr("Stick"));
-      pin_butt->setToggleButton(TRUE);
-      pin_butt->setOnPixmap(*CINData::get("ppm_vpin_in"));
-      connect(pin_butt, SIGNAL(toggled(bool)), this, SIGNAL(sigStick(bool)));
-      ((QDToolBar *)toolbar)->addRightWidget(pin_butt);
-
-      ((QDToolBar *)toolbar)->addPiece(this);
-   }
+     {
+       pin_butt=new QDToolButton(*CINData::get("ppm_vpin_out"), false,
+                                 -1, toolbar, tr("Stick"));
+       pin_butt->setToggleButton(TRUE);
+       pin_butt->setOnPixmap(*CINData::get("ppm_vpin_in"));
+       connect(pin_butt, SIGNAL(toggled(bool)), this, SIGNAL(sigStick(bool)));
+       ((QDToolBar *)toolbar)->addRightWidget(pin_butt);
+       
+       ((QDToolBar *)toolbar)->addPiece(this);
+     }
    else
-   {
-      pin_butt=NULL;
-   }
+     {
+       pin_butt=NULL;
+     }
 }
+
+
+void
+QDTBarModePiece::setOptions(int opts)
+{
+  bool b;
+  b = !(opts & QDBase::OverrideFlags::TOOLBAR_NO_RESCOMBO);
+  showOrHide(zoom_menu, b);
+  b = !(opts & QDBase::OverrideFlags::TOOLBAR_NO_DISPCOMBO);
+  showOrHide(mode_menu, b);
+  b = !(opts & QDBase::OverrideFlags::TOOLBAR_NO_ZOOM);
+  showOrHide(zoom_in_butt, b);
+  showOrHide(zoom_out_butt, b);
+  b = !(opts & QDBase::OverrideFlags::TOOLBAR_NO_PAN);
+  showOrHide(pane_butt, b);
+  b = !(opts & QDBase::OverrideFlags::TOOLBAR_NO_ZOOMSEL);
+  showOrHide(zoom_select_butt, b);
+  b = !(opts & QDBase::OverrideFlags::TOOLBAR_NO_TEXTSEL);
+  showOrHide(text_select_butt, b);
+}
+
 
 void
 QDTBarModePiece::update(int cmd_mode, bool mode_enabled, int cmd_zoom, int zoom,

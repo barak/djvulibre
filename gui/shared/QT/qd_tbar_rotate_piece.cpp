@@ -64,6 +64,7 @@
 #include "qd_tbar_rotate_piece.h"
 #include "debug.h"
 #include "qlib.h"
+#include "qd_base.h"
 #include "qd_toolbutt.h"
 #include "djvu_base_res.h"
 #include "cin_data.h"
@@ -81,25 +82,25 @@ QDTBarRotatePiece::setEnabled(bool en)
 
 QDTBarRotatePiece::QDTBarRotatePiece(QDToolBar * toolbar) : QDTBarPiece(toolbar)
 {
-   QFrame * frame;
-   
-   frame=new QFrame(toolbar, "separator");
-   frame->setFrameStyle(QFrame::VLine | QFrame::Sunken);
-   frame->setMinimumWidth(10);
-   toolbar->addLeftWidget(frame);
-   
    rotate90_butt=new QDToolButton(*CINData::get("ppm_rotate90"), true,
 				  IDC_ROTATE_RIGHT, toolbar, tr("Rotate +90"));
    connect(rotate90_butt, SIGNAL(clicked(void)), this, SLOT(slotRotate()));
    toolbar->addLeftWidget(rotate90_butt);
-
    rotate270_butt=new QDToolButton(*CINData::get("ppm_rotate270"), true,
 				   IDC_ROTATE_LEFT, toolbar, tr("Rotate -90"));
    connect(rotate270_butt, SIGNAL(clicked(void)), this, SLOT(slotRotate()));
    toolbar->addLeftWidget(rotate270_butt);
-   
    toolbar->addPiece(this);
    toolbar->adjustPositions();
+}
+
+void
+QDTBarRotatePiece::setOptions(int opts)
+{
+  bool b;
+  b = !(opts & QDBase::OverrideFlags::TOOLBAR_NO_ROTATE);
+  showOrHide(rotate90_butt, b);
+  showOrHide(rotate270_butt, b);
 }
 
 

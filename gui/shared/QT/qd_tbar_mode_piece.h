@@ -87,6 +87,7 @@ signals:
    void		sigSetPaneMode(int cmd_mode);
 public:
    virtual void	setEnabled(bool en);
+   virtual void setOptions(int opts);
    void		stick(bool en);
    bool		isStuck(void) const;
    void		update(int cmd_mode, bool mode_enabled,
