@@ -110,7 +110,6 @@
 #include "DjVuGlobal.h"
 #include "GContainer.h"
 
-//include <string.h>
 #include <stdlib.h>
 #include <stdarg.h>
 #ifdef WIN32
@@ -126,6 +125,8 @@
 #  include <wchar.h>
 # endif
 #endif
+
+#include "DjVu_begin.h"
 
 #if !HAS_MBSTATE
 # ifndef HAVE_MBSTATE_T
@@ -1027,9 +1028,8 @@ public:
   GNativeString operator+(const GBaseString &s2) const;
   GNativeString operator+(const GNativeString &s2) const;
   GUTF8String operator+(const GUTF8String &s2) const;
-  GNativeString operator+(const char    *s2) const;
-  friend GNativeString operator+(
-    const char    *s1, const GNativeString &s2);
+  GNativeString operator+(const char *s2) const;
+  friend GNativeString operator+(const char *s1, const GNativeString &s2);
 
   /** Initializes a string with a formatted string (as in #printf#).
       The string is re-initialized with the characters generated
@@ -1643,5 +1643,6 @@ operator<=(const char    s1, const GBaseString &s2)
 
 // ------------------- The end
 
+#include "DjVu_end.h"
 #endif
 

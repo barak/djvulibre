@@ -89,6 +89,8 @@
 #include "GString.h"
 #include "ByteStream.h"
 
+#include "DjVu_begin.h"
+
 
 
 /** ByteStream interface for an Unicode file. 
@@ -180,5 +182,6 @@ XMLByteStream::create(UnicodeByteStream &bs)
 
 //@}
 
+#include "DjVu_end.h"
 #endif
 

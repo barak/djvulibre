@@ -1,6 +1,8 @@
 // DjVuLibre-3.5
 
-END_NAMESPACE(DJVU)
+#ifdef HAVE_NAMESPACES
+} 
 #ifndef NOT_USING_DJVU_NAMESPACE
-USING_NAMESPACE(DJVU)
+using namespace DJVU;
+#endif
 #endif

@@ -80,6 +80,8 @@
 #include "GRect.h"
 #include "DjVuDocument.h"
 #include "DjVuText.h"
+#include "DjVu_begin.h"
+
 
 /** DjVuImage to PostScript converter.
     Use this class to print \Ref{DjVuImage}s and \Ref{DjVuDocument}s.
@@ -408,4 +410,5 @@ public:
 
 //@}
 // ------------
+#include "DjVu_end.h"
 #endif

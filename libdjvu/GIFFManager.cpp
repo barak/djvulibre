@@ -65,6 +65,9 @@
 #include "GException.h"
 #include "debug.h"
 
+#include "DjVu_begin.h"
+
+
 GIFFChunk::~GIFFChunk(void) {}
 
 GIFFManager::~GIFFManager(void) {}
@@ -643,4 +646,6 @@ GIFFManager::save_file(GP<ByteStream> str)
   GP<IFFByteStream> istr=IFFByteStream::create(str);
   top_level->save(*istr, 1);
 }
+
+#include "DjVu_end.h"
 

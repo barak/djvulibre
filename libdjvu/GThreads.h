@@ -199,6 +199,9 @@
 // ----------------------------------------
 // PORTABLE CLASSES
 
+#include "DjVu_begin.h"
+
+
 
 /** Thread class.  A multithreaded process is composed of a main execution
     thread and of several secondary threads.  Each secondary thread is
@@ -619,5 +622,6 @@ public:
 
 
 // ----------------------------------------
+#include "DjVu_end.h"
 #endif //_GTHREADS_H_
 

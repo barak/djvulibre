@@ -67,6 +67,7 @@
 // Almost equal to my initial code.
 
 #include "GContainer.h"
+#include "DjVu_begin.h"
 
 class ByteStream;
 
@@ -728,6 +729,7 @@ ZPCodec::IWencoder(const bool bit)
 //@}
 
 // ------------ THE END
+#include "DjVu_end.h"
 #endif
 
 

@@ -92,6 +92,9 @@
 #include <string.h>
 #include <math.h>
 
+#include "DjVu_begin.h"
+
+
 #define IWALLOCSIZE    4080
 #define IWCODEC_MAJOR     1
 #define IWCODEC_MINOR     2
@@ -1929,3 +1932,4 @@ IW44Image::Transform::Decode::YCbCr_to_RGB(GPixel *p, int w, int h, int rowsize)
     }
 }
 
+#include "DjVu_end.h"

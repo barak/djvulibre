@@ -70,6 +70,8 @@
 #include <windows.h> // OutputDebugString
 #endif 
 
+#include "DjVu_begin.h"
+
 /** @name debug.h
 
     Files #"debug.h"# and #"debug.cpp"# implement means to print debug
@@ -285,4 +287,5 @@ public:
 //@}
 
 // ------------ THE END
+#include "DjVu_end.h"
 #endif

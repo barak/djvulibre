@@ -150,6 +150,8 @@
 #include "GException.h"
 #include "ZPCodec.h"
 
+#include "DjVu_begin.h"
+
 
 /** Performs bzz compression/decompression.
     
@@ -257,4 +259,5 @@ private:
 
 //@}
 
+#include "DjVu_end.h"
 #endif

@@ -94,6 +94,8 @@
 
 #ifndef NEED_DECODER_ONLY
 
+#include "DjVu_begin.h"
+
 #define IWALLOCSIZE    4080
 #define IWCODEC_MAJOR     1
 #define IWCODEC_MINOR     2
@@ -1780,5 +1782,6 @@ IW44Image::Codec::Encode::code_slice(ZPCodec &zp)
 }
 
 
+#include "DjVu_end.h"
 #endif // NEED_DECODER_ONLY
 

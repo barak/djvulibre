@@ -167,6 +167,8 @@
 #include "GSmartPointer.h"
 #include "ZPCodec.h"
 
+#include "DjVu_begin.h"
+
 class GRect;
 class IFFByteStream;
 class ByteStream;
@@ -742,5 +744,6 @@ IW44Image::Block::set(int n, int val, IW44Image::Map *map)
 
 //@}
 
+#include "DjVu_end.h"
 #endif
 

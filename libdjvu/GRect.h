@@ -79,6 +79,8 @@
 //@{
 
 #include "DjVuGlobal.h"
+#include "DjVu_begin.h"
+
 
 
 /** @name Point Coordinates vs. Pixel Coordinates
@@ -389,4 +391,5 @@ operator!=(const GRect & r1, const GRect & r2)
 }
 
 // ---- THE END
+#include "DjVu_end.h"
 #endif

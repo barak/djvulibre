@@ -81,6 +81,7 @@
 
 
 #include "GSmartPointer.h"
+#include "DjVu_begin.h"
 
 class DataPool;
 class ByteStream;
@@ -109,4 +110,5 @@ public:
 //@}
 
 // ----- THE END
+#include "DjVu_end.h"
 #endif

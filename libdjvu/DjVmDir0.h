@@ -65,6 +65,7 @@
 
 
 #include "GString.h"
+#include "DjVu_begin.h"
 
 class ByteStream;
 
@@ -200,4 +201,5 @@ DjVmDir0::DjVmDir0(const DjVmDir0 & d) :
 
 //@}
 
+#include "DjVu_end.h"
 #endif

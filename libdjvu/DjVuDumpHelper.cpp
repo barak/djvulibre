@@ -67,6 +67,9 @@
 #include "DjVuInfo.h"
 #include "IFFByteStream.h"
 
+#include "DjVu_begin.h"
+
+
 #ifdef putchar
 #undef putchar
 #endif
@@ -335,3 +338,4 @@ DjVuDumpHelper::dump(GP<ByteStream> gstr)
    return out_str;
 }
 
+#include "DjVu_end.h"

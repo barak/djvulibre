@@ -75,6 +75,8 @@
 #endif
 #endif
 
+#include "DjVu_begin.h"
+
 const char * DataPool::Stop = ERR_MSG("STOP");
 
 static void
@@ -1824,3 +1826,4 @@ DataPool::Counter::dec(void)
    counter--;
 }
 
+#include "DjVu_end.h"

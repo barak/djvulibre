@@ -67,6 +67,8 @@
 
 #include "GScaler.h"
 
+#include "DjVu_begin.h"
+
 
 ////////////////////////////////////////
 // CONSTANTS
@@ -681,4 +683,6 @@ GPixmapScaler::scale( const GRect &provided_input, const GPixmap &input,
   glbuffer.resize(0,sizeof(GPixel));
 }
 
+
+#include "DjVu_end.h"
 

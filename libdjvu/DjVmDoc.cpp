@@ -67,6 +67,8 @@
 #include "GOS.h"
 #include "debug.h"
 
+#include "DjVu_begin.h"
+
 static const char octets[4]={0x41,0x54,0x26,0x54};
 
 // Save the file to disk, remapping INCL chunks while saving.
@@ -619,3 +621,4 @@ DjVmDoc::expand(const GURL &codebase, const GUTF8String &idx_name)
    }
 }
 
+#include "DjVu_end.h"

@@ -64,6 +64,8 @@
 #include "UnicodeByteStream.h"
 #include "ByteStream.h"
 
+#include "DjVu_begin.h"
+
 UnicodeByteStream::UnicodeByteStream(const UnicodeByteStream &uni)
 : bs(uni.bs), buffer(uni.buffer), bufferpos(uni.bufferpos), linesread(0)
 {
@@ -351,3 +353,4 @@ XMLByteStream::init(void)
 XMLByteStream::~XMLByteStream()
 {}
 
+#include "DjVu_end.h"

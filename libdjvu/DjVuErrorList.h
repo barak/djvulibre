@@ -65,6 +65,7 @@
 
 
 #include "DjVuPort.h"
+#include "DjVu_begin.h"
 
 class ByteStream;
 
@@ -177,4 +178,5 @@ inline bool
 DjVuErrorList::HasStatus(void) const
 { return !Status.isempty(); }
 
+#include "DjVu_end.h"
 #endif

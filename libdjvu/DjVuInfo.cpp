@@ -66,6 +66,8 @@
 #include "ByteStream.h"
 #include "GString.h"
 
+#include "DjVu_begin.h"
+
 // ----------------------------------------
 // CLASS DJVUINFO
 
@@ -184,3 +186,4 @@ DjVuInfo::writeParam(ByteStream &str_out) const
   str_out.writestring(get_paramtags());
 }
 
+#include "DjVu_end.h"

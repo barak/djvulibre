@@ -65,6 +65,7 @@
 
 
 #include "GSmartPointer.h"
+#include "DjVu_begin.h"
 
 class ByteStream;
 class JB2Image;
@@ -221,4 +222,5 @@ private:
 
 
 // -----------
+#include "DjVu_end.h"
 #endif

@@ -82,6 +82,9 @@
 #include <assert.h>
 #endif
 
+#include "DjVu_begin.h"
+
+
 
 //////////////////////////////////////////////////
 // ------- predefined colors
@@ -1660,4 +1663,6 @@ GP<GPixmap> GPixmap::rotate(int count)
   return newpixmap;
 }
 
+
+#include "DjVu_end.h"
 

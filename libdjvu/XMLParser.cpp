@@ -78,6 +78,8 @@
 #include <ctype.h>
 #include <stdlib.h>
 
+#include "DjVu_begin.h"
+
 static const char mimetype[]="image/x.djvu";
 static const char bodytag[]="BODY";
 static const char areatag[]="AREA";
@@ -1111,3 +1113,4 @@ lt_XMLParser::setOCRcallback(
   ::OCRcallback(arg,callback);
 }
 
+#include "DjVu_end.h"

@@ -68,6 +68,8 @@
 #ifndef NO_DEBUG
 #include "GException.h"
 #endif
+#include "DjVu_begin.h"
+
 
 class GRect;
 class GMonitor;
@@ -653,5 +655,7 @@ GBitmap::borrow_data(unsigned char &data,int w,int h)
   donate_data(&data,w,h);
   bytes_data=0;
 }
+
 // ---------------- THE END
+#include "DjVu_end.h"
 #endif

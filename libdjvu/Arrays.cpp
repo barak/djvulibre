@@ -64,6 +64,8 @@
 #include "Arrays.h"
 #include "GException.h"
 
+#include "DjVu_begin.h"
+
 ArrayRep::ArrayRep(int xelsize,
 		   void (* xdestroy)(void *, int, int),
 		   void (* xinit1)(void *, int, int),
@@ -243,6 +245,7 @@ ArrayRep::ins(int n, const void * what, unsigned int howmany)
 }
 
 
+#include "DjVu_end.h"
 
 
 // ---------------------------------------
@@ -253,6 +256,7 @@ ArrayRep::ins(int n, const void * what, unsigned int howmany)
 
 #ifndef DO_NOT_MOVE_GET_DATA_TO_ARRAYS_CPP
 #include "ByteStream.h"
+#include "DjVu_begin.h"
 TArray<char>
 ByteStream::get_data(void)
 {
@@ -268,6 +272,7 @@ ByteStream::get_data(void)
      return data;
    }
 }
+#include "DjVu_end.h"
 #endif
 
 // ---------------------------------------

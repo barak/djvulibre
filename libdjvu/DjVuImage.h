@@ -108,6 +108,7 @@
 #include "DjVuFile.h"
 #include "DjVuAnno.h"
 #include "GRect.h"
+#include "DjVu_begin.h"
 
 /* Obsolete class included for backward compatibility. */
 
@@ -430,9 +431,6 @@ DjVuImage::get_djvu_file(void) const
 
 
 
-
-
-
-
 // ----- THE END
+#include "DjVu_end.h"
 #endif

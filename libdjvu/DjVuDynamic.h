@@ -68,6 +68,7 @@
 
 
 #include "GString.h"
+#include "DjVu_begin.h"
 
 class GURL;
 class DjVuDynamicLib;
@@ -84,5 +85,6 @@ public:
   GUTF8String error;
 };
 
+#include "DjVu_end.h"
 #endif // _DJVUDYNAMIC_H_
 

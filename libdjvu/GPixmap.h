@@ -84,6 +84,8 @@
 
 
 #include "GSmartPointer.h"
+#include "DjVu_begin.h"
+
 
 class GBitmap;
 class GRect;
@@ -511,6 +513,7 @@ GPixmap::get_memory_usage() const
 }
 
 // ---------------------------------
+#include "DjVu_end.h"
 #endif
 
 

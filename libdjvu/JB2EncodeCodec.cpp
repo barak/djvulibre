@@ -71,6 +71,8 @@
 #include "GBitmap.h"
 #include <string.h>
 
+#include "DjVu_begin.h"
+
 ////////////////////////////////////////
 //// CLASS JB2Codec::Encode:  DECLARATION
 ////////////////////////////////////////
@@ -543,6 +545,8 @@ JB2Dict::JB2Codec::Encode::encode_libonly_shape(
 	}
     }
 }
+
+#include "DjVu_end.h"
 
 #endif /* NEED_DECODER_ONLY */
 

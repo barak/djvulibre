@@ -63,8 +63,6 @@
 
 // - Author: Leon Bottou, 07/1998
 
-
-
 #include <stdlib.h>
 #include <stdio.h>
 #include <string.h>
@@ -73,6 +71,8 @@
 #ifdef BSORT_TIMER
 #include "GOS.h"
 #endif
+
+#include "DjVu_begin.h"
 
 class BSByteStream::Decode : public BSByteStream
 {
@@ -450,3 +450,4 @@ BSByteStream::Decode::read(void *buffer, size_t sz)
   return copied;
 }
 
+#include "DjVu_end.h"

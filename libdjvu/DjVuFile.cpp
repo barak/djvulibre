@@ -80,6 +80,9 @@
 
 #include "debug.h"
 
+#include "DjVu_begin.h"
+
+
 #define STRINGIFY(x) STRINGIFY_(x)
 #define STRINGIFY_(x) #x
 
@@ -2803,18 +2806,14 @@ DjVuFile::change_meta(const GUTF8String &xmeta,const bool do_reset)
   {
     const GP<IFFByteStream> giff=IFFByteStream::create(meta);
     IFFByteStream &iff=*giff;
-#if 0
-    iff.put_chunk("METa");
-    iff.get_bytestream()->writestring(xmeta);
-#else
     iff.put_chunk("METz");
     {
       GP<ByteStream> gbsiff=BSByteStream::create(iff.get_bytestream(),50);
       gbsiff->writestring(xmeta);
     }
-#endif
     iff.close_chunk();
   }
 }
 #endif
 
+#include "DjVu_end.h"

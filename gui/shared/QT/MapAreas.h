@@ -63,14 +63,15 @@
 #pragma interface
 #endif
 
-
-
 #include "GMapAreas.h"
 #include "GContainer.h"
 #include "GString.h"
 #include "GRect.h"
 #include "GBitmap.h"
 #include "GPixmap.h"
+#include "DjVuImage.h"
+#include "DjVuDocEditor.h"
+
 #include "qd_painter.h"
 
 #include <qpixmap.h>
@@ -78,9 +79,6 @@
 #include <qcursor.h>
 #include "int_types.h"
 
-class GPQCursor;
-class DjVuDocEditor;
-class DjVuImage;
 
 class GPQCursor
 {

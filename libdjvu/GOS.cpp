@@ -120,6 +120,8 @@
 #endif
 #endif
 
+#include "DjVu_begin.h"
+
 // static const char filespecslashes[] = "file://";
 static const char slash='/';
 static const char percent='%';
@@ -427,72 +429,6 @@ GOS::getenv(const GUTF8String &name)
   return retval;
 }
 
-// -----------------------------------------
-// Testing
-// -----------------------------------------
 
-#ifdef TEST
-
-int main(int argc, char **argv)
-{
-
-   GArray<GString> dargv(0, argc-1);
-   for ( int i=0; i<argc; ++i)
-   {
-      GString g(argv[i]);
-      dargv[i]=g.getNative2UTF8();
-   }
-
-  GString op;
-  if (argc>1) 
-    op = dargv[1];
-  if (op == "is_file" && argc==3) {
-      DjVuPrintMessage("%d\n", GOS::is_file(dargv[2])?1:0);
-      return 0;
-  } else if (op =="is_dir" && argc==3) {
-    DjVuPrintMessage("%d\n", GOS::is_dir(dargv[2]));
-    return 0;
-  } else if (op == "dirname" && argc==3) {
-    DjVuPrintMessage("%s\n", (const char*)GOS::dirname(dargv[2]));
-    return 0;
-  } else if (op == "basename" && argc==3) {
-    DjVuPrintMessage("%s\n", (const char*)GOS::basename(dargv[2]));
-    return 0;
-  } else if (op == "basename" && argc==4) {
-    DjVuPrintMessage("%s\n", (const char*)GOS::basename(dargv[2], dargv[3]));
-    return 0;
-  } else if (op == "cwd" && argc==2) {
-    DjVuPrintMessage("%s\n", (const char*)GOS::cwd());
-    return 0;
-  } else if (op == "cwd" && argc==3) {
-    DjVuPrintMessage("%s\n", (const char*)GOS::cwd(dargv[2]));
-    return 0;
-  } else if (op == "cleardir" && argc==3) {
-    DjVuPrintMessage("%d\n", GOS::cleardir(dargv[2]));
-    return 0;
-  } else if (op == "expand_name" && argc==3) {
-    DjVuPrintMessage("%s\n", (const char*)GOS::expand_name(dargv[2]));
-    return 0;
-  } else if (op == "expand_name" && argc==4) {
-    DjVuPrintMessage("%s\n", (const char*)GOS::expand_name(dargv[2], dargv[3]));
-    return 0;
-  } else if (op == "ticks" && argc==2) {
-    DjVuPrintMessage("%lu\n", GOS::ticks());
-    return 0;
-  } else if (op == "sleep" && argc==3) {
-//    GOS::sleep(atoi(argv[2]));
-     GOS::sleep(dargv[2].toInt());
-    return 0;
-  } else if (op == "filename_to_url" && argc==3) {
-    DjVuPrintMessage("%s\n", (const char*)GOS::filename_to_url(dargv[2]));
-    return 0;
-  } else if (op == "url_to_filename" && argc==3) {
-    DjVuPrintMessage("%s\n", (const char*)GOS::url_to_filename(dargv[2]));
-    return 0;
-  }
-  DjVuPrintErrorUTF8("%s\n","syntax error");
-  return 10;
-}
-
-#endif
+#include "DjVu_end.h"
 

@@ -133,7 +133,7 @@
 #include "GString.h"
 #include "ByteStream.h"
 
-
+#include "DjVu_begin.h"
 
 /** ByteStream interface for an IFF file. 
 
@@ -296,4 +296,5 @@ private:
 //@}
 
 
+#include "DjVu_end.h"
 #endif

@@ -161,6 +161,9 @@
 #include <unistd.h>
 #endif
 
+#include "DjVu_begin.h"
+
+
 static const char djvuopts[]="DJVUOPTS";
 static const char localhost[]="file://localhost/";
 static const char fileproto[]="file:";
@@ -2040,3 +2043,4 @@ hash(const GURL & gurl)
   return retval;
 }
 
+#include "DjVu_end.h"

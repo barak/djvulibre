@@ -73,6 +73,8 @@
 #include "GSmartPointer.h"
 #include "GException.h"
 
+#include "DjVu_begin.h"
+
 
 // ------ STATIC CRITICAL SECTION
 
@@ -212,4 +214,6 @@ GPBufferBase::set(const size_t t,const char c)
     memset(ptr,c,num*t);
   }
 }
+
+#include "DjVu_end.h"
 

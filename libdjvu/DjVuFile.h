@@ -67,6 +67,7 @@
 #include "DjVuInfo.h"
 #include "DjVuPalette.h"
 #include "DjVuPort.h"
+#include "DjVu_begin.h"
 
 class DjVuTXT;
 class ByteStream;
@@ -831,4 +832,5 @@ DjVuFile::set_recover_errors
 
 //@}
 
+#include "DjVu_end.h"
 #endif

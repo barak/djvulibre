@@ -69,6 +69,9 @@
 #include "DataPool.h"
 #include <string.h>
 
+#include "DjVu_begin.h"
+
+
 DjVuErrorList::DjVuErrorList() {}
 
 GURL
@@ -156,3 +159,4 @@ DjVuErrorList::request_data(const DjVuPort * source, const GURL & url)
    return retval;
 }
  
+#include "DjVu_end.h"

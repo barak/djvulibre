@@ -120,6 +120,8 @@
 //@{
 
 #include "DjVuGlobal.h"
+#include "DjVu_begin.h"
+
 
 
 /** Exception class.  
@@ -338,4 +340,5 @@ G_EXTHROW
 #define G_THROW_OTHER(msg) G_THROW_TYPE(msg,GException::GOTHER)
 
 // -------------- THE END
+#include "DjVu_end.h"
 #endif

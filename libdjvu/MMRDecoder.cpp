@@ -66,6 +66,8 @@
 #include "ByteStream.h"
 #include "GBitmap.h"
 
+#include "DjVu_begin.h"
+
 
 // ----------------------------------------
 // MMR CODEBOOKS
@@ -944,3 +946,4 @@ MMRDecoder::decode(GP<ByteStream> gbs)
 }
 
 
+#include "DjVu_end.h"

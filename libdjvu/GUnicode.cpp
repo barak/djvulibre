@@ -66,6 +66,8 @@
 #include <iconv.h>
 #endif
 
+#include "DjVu_begin.h"
+
 static unsigned char nill=0;
 
 static void const * 
@@ -773,3 +775,4 @@ GUTF8String::create( void const * const buf,
   return retval;
 }
 
+#include "DjVu_end.h"

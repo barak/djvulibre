@@ -65,6 +65,8 @@
 #include "ByteStream.h"
 #include "debug.h"
 
+#include "DjVu_begin.h"
+
 int
 DjVmDir0::get_size(void) const
       // WARNING! make sure, that get_size(), encode() and decode() are in sync
@@ -151,3 +153,5 @@ DjVmDir0::add_file(
    num2file.resize(num2file.size());
    num2file[num2file.size()-1]=file;
 }
+
+#include "DjVu_end.h"

@@ -67,6 +67,8 @@
 #include "GException.h"
 #include "GSmartPointer.h"
 #include <string.h>
+#include "DjVu_begin.h"
+
 
 // Supports old iterators (first/last/next/prev) on lists and maps?
 #ifndef GCONTAINER_OLD_ITERATORS
@@ -1347,6 +1349,7 @@ hash(const double & x)
 
 // ------------ THE END
 
+#include "DjVu_end.h"
 #endif
 
 

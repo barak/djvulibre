@@ -100,6 +100,9 @@
 #endif
 #endif
 
+#include "DjVu_begin.h"
+
+
 GBaseString::~GBaseString() {}
 GNativeString::~GNativeString() {}
 GUTF8String::~GUTF8String() {}
@@ -2785,4 +2788,4 @@ GNativeString::setat(const int n, const char ch)
 
 #endif
 
-
+#include "DjVu_end.h"

@@ -68,6 +68,9 @@
 #include "DjVuMessageLite.h"
 #include "debug.h"
 
+#include "DjVu_begin.h"
+
+
 // - Author: Leon Bottou, 05/1997
 
 GException::GException() 
@@ -271,3 +274,6 @@ static void (*old_handler)() = set_new_handler(throw_memory_error);
 #endif // ! WIN32
 #endif // !_MSC_VER
 #endif // !NEED_DJVU_MEMORY
+
+#include "DjVu_end.h"
+

@@ -69,6 +69,7 @@
 
 // - Author: Leon Bottou, 04/1997
 
+#include "DjVuGlobal.h"
 #include "ByteStream.h"
 #include "GOS.h"
 #include "GURL.h"
@@ -96,14 +97,12 @@
 #ifdef macintosh
 #include <unistd.h>
 
-
 _MSL_IMP_EXP_C int _dup(int);
 _MSL_IMP_EXP_C int _dup2(int,int);
 _MSL_IMP_EXP_C int _close(int);
-
 							
-__inline int dup(int _a ) 			{ return _dup(_a);}
-__inline int dup2(int _a, int _b ) 	{ return _dup2(_a, _b);}
+__inline int dup(int _a ) { return _dup(_a);}
+__inline int dup2(int _a, int _b ) { return _dup2(_a, _b);}
 
 #else
 #ifndef UNDER_CE
@@ -114,6 +113,8 @@ __inline int dup2(int _a, int _b ) 	{ return _dup2(_a, _b);}
 #ifndef UNDER_CE
 #include <errno.h>
 #endif
+
+#include "DjVu_begin.h"
 
 const char *ByteStream::EndOfFile=ERR_MSG("EOF");
 
@@ -1401,6 +1402,64 @@ ByteStream::get_stderr(char const * const mode)
   return gp;
 }
 
+
+/** Looks up the message and writes it to the specified stream. */
+void ByteStream::formatmessage( const char *fmt, ... )
+{
+  va_list args;
+  va_start(args, fmt);
+  const GUTF8String message(fmt,args);
+  writemessage( message );
+}
+
+/** Looks up the message and writes it to the specified stream. */
+void ByteStream::writemessage( const char *message )
+{
+  writestring( DjVuMessage::LookUpUTF8( message ) );
+}
+
+static void 
+read_file(ByteStream &bs,char *&buffer,GPBuffer<char> &gbuffer)
+{
+  const int size=bs.size();
+  int pos=0;
+  if(size>0)
+  {
+    size_t readsize=size+1;
+    gbuffer.resize(readsize);
+    for(int i;readsize&&(i=bs.read(buffer+pos,readsize))>0;pos+=i,readsize-=i)
+      EMPTY_LOOP;
+  }else
+  {
+    const size_t readsize=32768;
+    gbuffer.resize(readsize);
+    for(int i;((i=bs.read(buffer+pos,readsize))>0);
+      gbuffer.resize((pos+=i)+readsize))
+      EMPTY_LOOP;
+  }
+  buffer[pos]=0;
+}
+
+GNativeString
+ByteStream::getAsNative(void)
+{
+  char *buffer;
+  GPBuffer<char> gbuffer(buffer);
+  read_file(*this,buffer,gbuffer);
+  return GNativeString(buffer);
+}
+
+GUTF8String
+ByteStream::getAsUTF8(void)
+{
+  char *buffer;
+  GPBuffer<char> gbuffer(buffer);
+  read_file(*this,buffer,gbuffer);
+  return GUTF8String(buffer);
+}
+
+#include "DjVu_end.h"
+
 void
 DjVuPrintErrorUTF8(const char *fmt, ... )
 {
@@ -1472,59 +1531,3 @@ DjVuPrintMessageNative(const char *fmt, ... )
     // called from an outer exception handler (with prejudice)
   } G_CATCH_ALL { } G_ENDCATCH;
 }
-
-/** Looks up the message and writes it to the specified stream. */
-void ByteStream::formatmessage( const char *fmt, ... )
-{
-  va_list args;
-  va_start(args, fmt);
-  const GUTF8String message(fmt,args);
-  writemessage( message );
-}
-
-/** Looks up the message and writes it to the specified stream. */
-void ByteStream::writemessage( const char *message )
-{
-  writestring( DjVuMessage::LookUpUTF8( message ) );
-}
-
-static void 
-read_file(ByteStream &bs,char *&buffer,GPBuffer<char> &gbuffer)
-{
-  const int size=bs.size();
-  int pos=0;
-  if(size>0)
-  {
-    size_t readsize=size+1;
-    gbuffer.resize(readsize);
-    for(int i;readsize&&(i=bs.read(buffer+pos,readsize))>0;pos+=i,readsize-=i)
-      EMPTY_LOOP;
-  }else
-  {
-    const size_t readsize=32768;
-    gbuffer.resize(readsize);
-    for(int i;((i=bs.read(buffer+pos,readsize))>0);
-      gbuffer.resize((pos+=i)+readsize))
-      EMPTY_LOOP;
-  }
-  buffer[pos]=0;
-}
-
-GNativeString
-ByteStream::getAsNative(void)
-{
-  char *buffer;
-  GPBuffer<char> gbuffer(buffer);
-  read_file(*this,buffer,gbuffer);
-  return GNativeString(buffer);
-}
-
-GUTF8String
-ByteStream::getAsUTF8(void)
-{
-  char *buffer;
-  GPBuffer<char> gbuffer(buffer);
-  read_file(*this,buffer,gbuffer);
-  return GUTF8String(buffer);
-}
-

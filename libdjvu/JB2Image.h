@@ -174,6 +174,8 @@
 #include "GString.h"
 #include "ZPCodec.h"
 
+#include "DjVu_begin.h"
+
 class JB2Dict;
 class JB2Image;
 class GRect;
@@ -786,5 +788,6 @@ JB2Dict::JB2Codec::shift_cross_context( const int context, const int n,
 }
 
 // ---------- THE END
+#include "DjVu_end.h"
 #endif
 

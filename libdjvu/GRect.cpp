@@ -68,6 +68,7 @@
 #include "GRect.h"
 #include "GException.h"
 
+#include "DjVu_begin.h"
 
 // -- Local utilities
 
@@ -442,3 +443,4 @@ GRectMapper::get_output()
     return rectTo;
 }
 
+#include "DjVu_end.h"

@@ -69,6 +69,8 @@
 #include "GString.h"
 #include "GRect.h"
 #include "GURL.h"
+#include "DjVu_begin.h"
+
 
 /** @name GMapAreas.h
 
@@ -547,4 +549,5 @@ GMapOval::get_shape_name(void) const { return OVAL_TAG; }
 
 //@}
 
+#include "DjVu_end.h"
 #endif

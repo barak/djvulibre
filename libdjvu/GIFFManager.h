@@ -69,6 +69,8 @@
 #include "Arrays.h"
 #include "GSmartPointer.h"
 #include "GString.h"
+#include "DjVu_begin.h"
+
 
 /** @name GIFFManager.h
 
@@ -376,4 +378,5 @@ GIFFManager::init(const GUTF8String &name)
   top_level=GIFFChunk::create(name);
 }
 
+#include "DjVu_end.h"
 #endif

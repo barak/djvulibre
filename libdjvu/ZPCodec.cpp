@@ -74,6 +74,8 @@
 #include <math.h>
 #include <stdio.h>
 
+#include "DjVu_begin.h"
+
 ////////////////////////////////////////////////////////////////
 // CODER SPECIFICATION
 ////////////////////////////////////////////////////////////////
@@ -1282,3 +1284,5 @@ ZPCodec::state(float prob1)
   float f2 = plps-p_to_plps(p[lo+2]);
   return (f1<f2) ? lo : lo+2;
 }
+
+#include "DjVu_end.h"

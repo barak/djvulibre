@@ -77,6 +77,9 @@
 #include <dlfcn.h>
 #endif
 
+#include "DjVu_begin.h"
+
+
 class DjVuDynamicLib : public GPEnabled
 {
 public:
@@ -224,3 +227,4 @@ DjVuDynamic::DjVuDynamic(void)
   error=ERR_MSG("DjVuDynamicLib.failed_open") "\t" "(null)";
 }
 
+#include "DjVu_end.h"

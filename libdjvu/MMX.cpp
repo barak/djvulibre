@@ -65,6 +65,8 @@
 #include <stdio.h>
 #include <stdlib.h>
 
+#include "DjVu_begin.h"
+
 
 // ----------------------------------------
 // PRINTING MMX REGISTERS (Debug)
@@ -192,3 +194,4 @@ MMXControl::enable_mmx()
 }
 
 
+#include "DjVu_end.h"

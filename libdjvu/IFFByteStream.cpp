@@ -73,6 +73,7 @@
 #endif
 #include "IFFByteStream.h"
 
+#include "DjVu_begin.h"
 
 
 // Constructor
@@ -548,3 +549,4 @@ IFFByteStream::compare(IFFByteStream &iff)
   return retval;
 }
 
+#include "DjVu_end.h"

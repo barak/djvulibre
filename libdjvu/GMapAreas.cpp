@@ -68,6 +68,9 @@
 #include <math.h>
 #include <stdio.h>
 
+#include "DjVu_begin.h"
+
+
 /****************************************************************************
 ***************************** GMapArea definition ***************************
 ****************************************************************************/
@@ -1046,4 +1049,6 @@ GMapPoly::get_xmltag(const int height) const
   }
   return retval;
 }
+
+#include "DjVu_end.h"
 

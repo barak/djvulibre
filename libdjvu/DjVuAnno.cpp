@@ -72,6 +72,9 @@
 
 #include <ctype.h>
 
+#include "DjVu_begin.h"
+
+
 // GLParser.h and GLParser.cpp used to be separate files capable to decode
 // that weird ANTa chunk format into C++ structures and lists. But since
 // its implementation is temporary and is used only in this file (DjVuAnno.cpp)
@@ -1496,3 +1499,4 @@ DjVuAnno::merge(const GP<DjVuAnno> & anno)
    }
 }
 
+#include "DjVu_end.h"

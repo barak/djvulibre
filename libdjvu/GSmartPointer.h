@@ -98,6 +98,8 @@
 #endif
 
 #include "DjVuGlobal.h"
+#include "DjVu_begin.h"
+
 
 
 /* What is this innovation ? 
@@ -496,4 +498,5 @@ GP<TYPE>::operator! () const
   return !ptr;
 }
 
+#include "DjVu_end.h"
 #endif

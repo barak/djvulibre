@@ -68,6 +68,8 @@
 #include <stdlib.h>
 #include <math.h>
 
+#include "DjVu_begin.h"
+
 
 #define CUBEBITS  4
 #define CUBESIDE  (1<<CUBEBITS)
@@ -567,41 +569,6 @@ DjVuPalette::decode(GP<ByteStream> gbs)
 }
 
 
-// -------- TEST
 
+#include "DjVu_end.h"
 
-#ifdef TEST
-int main(int argc, char **argv)
-{
-
-   GArray<GString> dargv(0,argc-1);
-   for( int i=0; i < argc; ++i)
-   {
-      GString g(argv[i]);
-      dargv[i]=g.getNative2UTF8();
-   }
-
-  G_TRY
-    {
-
-      if (argc!=4)
-        G_THROW( ERR_MSG("DjVuPalette.test_usage") );
-      int maxcolors = dargv[1].toInt(); //atoi(argv[1]);
-      int minboxsize = dargv[2].toInt(); //atoi(argv[2]);
-      GP<ByteStream> ibs=ByteStream::create(dargv[3],"rb");
-      GPixmap pm(*ibs);
-      DjVuPalette pal;
-      int ncolors = pal.compute_palette_and_quantize(pm, maxcolors, minboxsize);
-      DjVuPrintErrorUTF8("%d colors allocated\n", ncolors);
-      GP<ByteStream> obs=ByteStream::create(stdout,"wb",false);
-      pm.save_ppm(*obs);
-    }
-  G_CATCH(ex)
-    {
-      ex.perror();
-      exit(10);
-    }
-  G_ENDCATCH;
-  return 0;
-}
-#endif

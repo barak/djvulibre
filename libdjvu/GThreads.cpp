@@ -98,6 +98,18 @@
 #endif
 #endif
 
+#if THREADMODEL==WINTHREADS
+# include <process.h>
+#endif
+#if THREADMODEL==COTHREADS
+# include <setjmp.h>
+# include <string.h>
+# include <unistd.h>
+# include <sys/types.h>
+# include <sys/time.h>
+#endif
+
+#include "DjVu_begin.h"
 
 
 // ----------------------------------------
@@ -119,7 +131,6 @@ GThread::create( void (*entry)(void*), void *arg)
 // ----------------------------------------
 
 #if THREADMODEL==WINTHREADS
-#include <process.h>
 
 static unsigned __stdcall 
 start(void *arg)
@@ -883,13 +894,6 @@ GMonitor::wait(unsigned long timeout)
 #warning "You may have trouble with thread-unsafe exceptions..."
 #define NO_LIBGCC_HOOKS
 #endif
-
-#include <setjmp.h>
-#include <string.h>
-#include <unistd.h>
-#include <sys/types.h>
-#include <sys/time.h>
-
 
 // -------------------------------------- constants
 
@@ -1847,3 +1851,5 @@ GSafeFlags::wait_and_modify(long set_mask, long clr_mask,
    leave();
 }
 
+
+#include "DjVu_end.h"

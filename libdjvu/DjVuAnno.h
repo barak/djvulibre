@@ -90,6 +90,7 @@
 
 
 #include "GString.h"
+#include "DjVu_begin.h"
 
 class GMapArea;
 class ByteStream;
@@ -278,4 +279,5 @@ DjVuAnno::get_memory_usage() const
 }
 
 // ----- THE END
+#include "DjVu_end.h"
 #endif

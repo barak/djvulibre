@@ -69,6 +69,9 @@
 #include "DjVuMessageLite.h"
 #include "DataPool.h"
 
+#include "DjVu_begin.h"
+
+
 //****************************************************************************
 //******************************* Globals ************************************
 //****************************************************************************
@@ -690,3 +693,6 @@ DjVuMemoryPort::add_data(const GURL & url, const GP<DataPool> & pool)
    GCriticalSectionLock lk(&lock);
    map[url]=pool;
 }
+
+#include "DjVu_end.h"
+

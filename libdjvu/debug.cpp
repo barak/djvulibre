@@ -80,6 +80,8 @@
 #include <errno.h>
 #endif
 
+#include "DjVu_begin.h"
+
 
 #ifndef UNIX
 #ifndef WIN32
@@ -277,4 +279,5 @@ DjVuDebugIndent::~DjVuDebugIndent()
   dbg.unlock();
 }
 
+#include "DjVu_end.h"
 #endif

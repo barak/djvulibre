@@ -66,8 +66,7 @@
 
 #include "GThreads.h"
 #include "GURL.h"
-//include <stddef.h>
-//include <stdlib.h>
+#include "DjVu_begin.h"
 
 class DataPool;
 
@@ -503,4 +502,5 @@ DjVuMemoryPort::inherits(const GUTF8String &class_name) const
 
 //@}
 
+#include "DjVu_end.h"
 #endif

@@ -76,6 +76,9 @@
 #include <stdio.h>
 #include <string.h>
 
+#include "DjVu_begin.h"
+
+
 // ========================================
 // --- Assertion
 
@@ -992,3 +995,4 @@ BSByteStream::Encode::write(const void *buffer, size_t sz)
   return copied;
 }
 
+#include "DjVu_end.h"

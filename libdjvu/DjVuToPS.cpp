@@ -83,6 +83,9 @@
 #include <unistd.h>
 #endif
 
+#include "DjVu_begin.h"
+
+
 static const size_t ps_string_size=15000;
 
 // ***************************************************************************
@@ -2562,4 +2565,6 @@ print(ByteStream &str, GP<DjVuDocument> doc)
   print(str,doc,dummy);
 }
 
+
+#include "DjVu_end.h"
 

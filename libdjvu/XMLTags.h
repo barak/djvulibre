@@ -68,6 +68,7 @@
 
 #include "GContainer.h"
 #include "GString.h"
+#include "DjVu_begin.h"
 
 class lt_XMLContents;
 class DjVuFile;
@@ -223,6 +224,7 @@ lt_XMLTags::operator [] (const GPosition &pos) const
   return allTags[pos];
 }
 
+#include "DjVu_end.h"
 #endif /* _LT_XMLTAGS__ */
 
 

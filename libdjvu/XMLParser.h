@@ -68,6 +68,7 @@
 
 #include "GContainer.h"
 #include "GURL.h"
+#include "DjVu_begin.h"
 
 class ByteStream;
 class lt_XMLTags;
@@ -104,6 +105,7 @@ public:
     void * const arg,mapOCRcallback * const );
 };
 
+#include "DjVu_end.h"
 #endif /* _LT_XMLPARSER__ */
 
 

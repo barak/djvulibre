@@ -67,6 +67,7 @@
 #include "GString.h"
 #include "GThreads.h"
 #include "GURL.h"
+#include "DjVu_begin.h"
 
 class ByteStream;
 
@@ -175,4 +176,5 @@ public:
 
 //@}
 
+#include "DjVu_end.h"
 #endif

@@ -67,6 +67,11 @@
 #include "debug.h"
 #include <ctype.h>
 
+
+#include "DjVu_begin.h"
+
+
+
 #ifdef min
 #undef min
 #endif
@@ -1185,4 +1190,6 @@ DjVuText::get_xmlText(const int height) const
   }
   return retval;
 }
+
+#include "DjVu_end.h"
 

@@ -69,6 +69,11 @@
 #include "GURL.h"
 #include <ctype.h>
 
+
+#include "DjVu_begin.h"
+
+
+
 DjVuNavDir::DjVuNavDir(const GURL &dirURL)
 {
    if (!dirURL) G_THROW( ERR_MSG("DjVuNavDir.zero_dir") );
@@ -216,3 +221,5 @@ DjVuNavDir::delete_page(int page_num)
 }
 #endif
 
+
+#include "DjVu_end.h"

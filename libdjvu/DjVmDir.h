@@ -118,6 +118,7 @@
 
 #include "GString.h"
 #include "GThreads.h"
+#include "DjVu_begin.h"
 
 class ByteStream;
 
@@ -434,4 +435,5 @@ DjVmDir::is_indirect(void) const
 
 
 // ----- THE END
+#include "DjVu_end.h"
 #endif

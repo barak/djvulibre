@@ -67,6 +67,7 @@
 #include "GThreads.h"
 #include "GString.h"
 #include "GURL.h"
+#include "DjVu_begin.h"
 
 class ByteStream;
 
@@ -610,4 +611,5 @@ DataPool::is_connected(void) const
 
 //@}
 
+#include "DjVu_end.h"
 #endif

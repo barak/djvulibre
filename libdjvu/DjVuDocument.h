@@ -65,6 +65,7 @@
 
 
 #include "DjVuPort.h"
+#include "DjVu_begin.h"
 
 class DjVmDoc;
 class DjVmDir;
@@ -1036,4 +1037,5 @@ DjVuDocument::set_verbose_eof(bool verbose)
 
 //@}
 
+#include "DjVu_end.h"
 #endif

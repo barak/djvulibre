@@ -68,6 +68,9 @@
 
 #include <ctype.h>
 
+#include "DjVu_begin.h"
+
+
 GP<DjVmDir::File>
 DjVmDir::File::create(const GUTF8String &load_name,
   const GUTF8String &save_name, const GUTF8String &title,
@@ -821,3 +824,4 @@ DjVmDir::resolve_duplicates(const bool save_as_bundled)
   return files_list;
 }
 
+#include "DjVu_end.h"

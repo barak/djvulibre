@@ -70,6 +70,8 @@
 #include "GRect.h"
 #include "GBitmap.h"
 #include "GPixmap.h"
+#include "DjVu_begin.h"
+
 
 /** @name GScaler.h 
 
@@ -303,4 +305,5 @@ protected:
 
 
 // -------- END
+#include "DjVu_end.h"
 #endif

@@ -64,6 +64,7 @@
 #endif
 
 #include "DjVuGlobal.h"
+#include "DjVu_begin.h"
 
 
 /** @name MMX.h
@@ -177,4 +178,5 @@ class MMXControl
 #endif
 
 // -----------
+#include "DjVu_end.h"
 #endif

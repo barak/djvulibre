@@ -66,8 +66,10 @@
 
 #include "GContainer.h"
 #include "GPixmap.h"
-
 #include <string.h>
+
+#include "DjVu_begin.h"
+
 
 /** @name DjVuPalette.h
     Files #"DjVuPalette.h"# and #"DjVuPalette.cpp"# implement a single class
@@ -321,6 +323,7 @@ DjVuPalette::get_color(int nth, GPixel &p) const
 
 
 // ------------ THE END
+#include "DjVu_end.h"
 #endif
       
       

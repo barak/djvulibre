@@ -279,7 +279,6 @@ private:
   void signal(unsigned long curdate, unsigned long estdate);
 };
 
-
 #else  // ! NEED_DJVU_PROGRESS
 
 #define DJVU_PROGRESS_TASK(name,task,nsteps)
@@ -369,12 +368,11 @@ DJVUEXTERNCAPI(void DjVuMessageLookUpNative(
   char *msg_buffer, const unsigned int buffer_size, 
   const char *message ));
 
-/** This function sets the program name used when searching for language
-  files.
+/** This function sets the program name used when 
+    searching for language files.
 */
 DJVUEXTERNCAPI(const char *djvu_programname(const char *programname));
 
-DJVUEXTERNCAPI(void static_destruct(void));
 
 /** @name DjVu Names  
 

@@ -63,6 +63,9 @@
 
 #include "GContainer.h"
 
+#include "DjVu_begin.h"
+
+
 // ------------------------------------------------------------
 // DYNAMIC ARRAYS
 // ------------------------------------------------------------
@@ -782,3 +785,6 @@ GSetBase::empty()
 //  for (int i=0; i<nbuckets; i++)
 //    table[i] = 0;
 }
+
+#include "DjVu_end.h"
+

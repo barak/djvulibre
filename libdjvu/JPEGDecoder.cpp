@@ -85,6 +85,10 @@ extern "C" {
 #include "GString.h"
 #endif // LIBJPEGNAME
 
+
+#include "DjVu_begin.h"
+
+
 class JPEGDecoder::Impl : public JPEGDecoder
 {
 public:
@@ -390,6 +394,8 @@ JPEGDecoder::jpeg_start_decompress(j_decompress_ptr x)
 }
 
 #endif // LIBJPEGNAME
+
+#include "DjVu_end.h"
 
 #endif
 

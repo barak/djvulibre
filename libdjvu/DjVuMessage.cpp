@@ -89,6 +89,8 @@
 #include <locale.h>
 #endif
 
+#include "DjVu_begin.h"
+
 GUTF8String &
 DjVuMessage::programname(void)
 {
@@ -587,13 +589,6 @@ DjVuMessage::~DjVuMessage( )
 {
 }
 
-const char *
-djvu_programname(const char *xprogramname)
-{
-  if(xprogramname)
-    DjVuMessage::programname()=GNativeString(xprogramname);
-  return DjVuMessage::programname();
-}
 
 //  A C function to perform a message lookup. Arguments are a buffer to receiv
 //  translated message, a buffer size (bytes), and a message_list. The transla
@@ -625,6 +620,9 @@ DjVuMessageLookUpUTF8(
     strcpy( msg_buffer, converted );
 }
 
+
+#include "DjVu_end.h"
+
 void
 DjVuFormatErrorUTF8( const char *fmt, ... )
 {
@@ -643,3 +641,10 @@ DjVuFormatErrorNative( const char *fmt, ... )
   DjVuWriteError( message );
 }
 
+const char *
+djvu_programname(const char *xprogramname)
+{
+  if(xprogramname)
+    DjVuMessage::programname()=GNativeString(xprogramname);
+  return DjVuMessage::programname();
+}

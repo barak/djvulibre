@@ -66,6 +66,9 @@
 
 #include <stdlib.h>
 
+#include "DjVu_begin.h"
+
+
 DjVuFileCache::~DjVuFileCache(void) {}
 
 #ifndef UNDER_CE
@@ -256,3 +259,6 @@ void
 DjVuFileCache::file_cleared(const GP<DjVuFile> &) {}
 
 #endif
+
+#include "DjVu_end.h"
+

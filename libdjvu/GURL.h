@@ -68,6 +68,8 @@
 #include "Arrays.h"
 #include "GThreads.h"
 
+#include "DjVu_begin.h"
+
 /** @name GURL.h
     Files #"GURL.h"# and #"GURL.cpp"# contain the implementation of the
     \Ref{GURL} class used to store URLs in a system independent format.
@@ -428,4 +430,5 @@ GURL::is_valid(void) const
 
 //@}
 
+#include "DjVu_end.h"
 #endif

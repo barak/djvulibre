@@ -72,6 +72,7 @@
 // File "$Id$"
 // - Author: Leon Bottou, 05/1997
 
+#include "DjVu_begin.h"
 
 // ----- constructor and destructor
 
@@ -1640,4 +1641,6 @@ GBitmap::check_border() const
     }
 }
 #endif
+
+#include "DjVu_end.h"
 

@@ -63,15 +63,17 @@
 #pragma interface
 #endif
 
-#include "GSmartPointer.h"
-
-class ByteStream;
-class GPixmap;
-
 #ifdef NEED_JPEG_DECODER
 
 #include <string.h>
 #include <setjmp.h>
+
+#include "GSmartPointer.h"
+#include "DjVu_begin.h"
+
+class ByteStream;
+class GPixmap;
+
 
 /** @name JPEGDecoder.h
     Files #"JPEGDecoder.h"# and #"JPEGDecoder.cpp"# implement an
@@ -111,6 +113,8 @@ public:
 
 
 //@}
+
+#include "DjVu_end.h"
 
 #endif // NEED_JPEG_DECODER
 #endif // _JPEGDECODER_H_

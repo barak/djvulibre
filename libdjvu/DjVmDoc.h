@@ -65,6 +65,7 @@
 
 
 #include "DjVmDir.h"
+#include "DjVu_begin.h"
 
 class ByteStream;
 class DataPool;
@@ -251,4 +252,5 @@ DjVmDoc::get_djvm_dir(void)
 //@}
 
 
+#include "DjVu_end.h"
 #endif

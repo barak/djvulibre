@@ -89,6 +89,9 @@
 #endif
 #include <locale.h>
 
+#include "DjVu_begin.h"
+
+
 const DjVuMessageLite& (*DjVuMessageLite::create)(void) = 
   DjVuMessageLite::create_lite; 
 
@@ -431,6 +434,9 @@ DjVuMessageLite::AddByteStream(const GP<ByteStream> &bs)
   }
 }
 
+
+#include "DjVu_end.h"
+
 void
 DjVuWriteError( const char *message )
 {
@@ -460,5 +466,3 @@ DjVuWriteMessage( const char *message )
     // called from an outer exception handler (with prejudice)
   } G_CATCH_ALL { } G_ENDCATCH;
 }
-
-

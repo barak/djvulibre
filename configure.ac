@@ -361,17 +361,6 @@ AH_BOTTOM([
 #define false 0
 #endif
 
-/* - NAMESPACES */
-#if defined(HAVE_NAMESPACES)
-# define BEGIN_NAMESPACE(x)  namespace x { 
-# define END_NAMESPACE(x)    }
-# define USING_NAMESPACE(x)  using namespace x;
-#else
-# define BEGIN_NAMESPACE(x)  /**/
-# define END_NAMESPACE(x)    /**/
-# define USING_NAMESPACE(x)  /**/
-#endif
-
 /* - WCHAR etc.*/
 #if ! defined(HAVE_WCHAR_T)
 #define HAS_WCHAR 0

@@ -87,6 +87,8 @@
 
 
 #include "GMapAreas.h"
+#include "DjVu_begin.h"
+
 
 class ByteStream;
 
@@ -302,6 +304,7 @@ DjVuText::get_memory_usage() const
 
 
 // ----- THE END
+#include "DjVu_end.h"
 #endif
 
 

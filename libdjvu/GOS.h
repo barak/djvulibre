@@ -86,6 +86,8 @@
 
 #include "DjVuGlobal.h"
 #include "GString.h"
+#include "DjVu_begin.h"
+
 
 class GURL;
 
@@ -143,4 +145,5 @@ class GOS
 
 //@}
 // ------------
+#include "DjVu_end.h"
 #endif

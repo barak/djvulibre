@@ -103,8 +103,7 @@
 
 #include "Arrays.h"
 #include <stdio.h>
-//include <stdlib.h>
-//include <string.h>
+#include "DjVu_begin.h"
 
 class GURL;
 class GUTF8String;
@@ -400,5 +399,6 @@ public:
 //@}
 
 // ------------ THE END
+#include "DjVu_end.h"
 #endif
 

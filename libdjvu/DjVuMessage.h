@@ -71,6 +71,7 @@
 
 
 #include "DjVuMessageLite.h"
+#include "DjVu_begin.h"
 
 class GURL;
 
@@ -117,5 +118,6 @@ public:
 };
 
 
+#include "DjVu_end.h"
 #endif /* __DJVU_MESSAGE_H__ */
 

@@ -71,6 +71,8 @@
 #include "GBitmap.h"
 #include <string.h>
 
+#include "DjVu_begin.h"
+
 ////////////////////////////////////////
 //// CLASS JB2Codec::Decode:  DECLARATION
 ////////////////////////////////////////
@@ -1410,3 +1412,4 @@ JB2Dict::create(void)
   return new JB2Dict();
 }
 
+#include "DjVu_end.h"

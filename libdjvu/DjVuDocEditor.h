@@ -66,6 +66,7 @@
 
 #include "DjVuDocument.h"
 #include "DjVmDoc.h"
+#include "DjVu_begin.h"
 
 /** @name DjVuDocEditor.h
     Files #"DjVuDocEditor.h"# and #"DjVuDocEditor.cpp"# contain extension
@@ -439,5 +440,6 @@ private:
 
 //@}
 
+#include "DjVu_end.h"
 #endif
 

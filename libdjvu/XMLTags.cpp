@@ -71,6 +71,8 @@
 #include <wctype.h>
 #endif
 
+#include "DjVu_begin.h"
+
 lt_XMLContents::lt_XMLContents(void) {}
 
 lt_XMLContents::lt_XMLContents(GP<lt_XMLTags> t)
@@ -400,3 +402,4 @@ lt_XMLContents::write(ByteStream &bs) const
   } 
 }
 
+#include "DjVu_end.h"

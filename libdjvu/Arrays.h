@@ -66,7 +66,7 @@
 #include "GException.h"
 #include "GSmartPointer.h"
 #include <string.h>
-
+#include "DjVu_begin.h"
 
 
 
@@ -980,5 +980,6 @@ DPArray<TYPE>::operator= (const DPArray &ga)
 
 //@}
 
+#include "DjVu_end.h"
 #endif
 

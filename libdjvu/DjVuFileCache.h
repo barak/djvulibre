@@ -67,14 +67,15 @@
 #include "DjVuFile.h"
 
 #ifndef macintosh //MCW can't compile
-#ifndef UNDER_CE
-#include <sys/types.h>
-#include <time.h>
-#endif 
+# ifndef UNDER_CE
+#  include <sys/types.h>
+#  include <time.h>
+# endif 
 #else
-
-#include <time.h>
+# include <time.h>
 #endif
+
+#include "DjVu_begin.h"
 
 /** @name DjVuFileCache.h
     Files #"DjVuFileCache.h"# and #"DjVuFileCache.cpp"# implement a simple
@@ -275,4 +276,5 @@ DjVuFileCache::create(const int max_size)
   return new DjVuFileCache(max_size);
 }
 
+#include "DjVu_end.h"
 #endif

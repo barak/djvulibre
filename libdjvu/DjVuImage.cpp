@@ -78,6 +78,7 @@
 #include "debug.h"
 #include <stdarg.h>
 
+#include "DjVu_begin.h"
 
 
 
@@ -1466,3 +1467,4 @@ DjVuImage::get_XML(void) const
   return get_XML(GURL());
 }
 
+#include "DjVu_end.h"
