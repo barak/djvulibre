@@ -1535,9 +1535,19 @@ GThread::~GThread()
   }
 }
 
+#if __GNUC__ >= 3
+# if __GNUC_MINOR__ >= 4
+#  define noinline __attribute__((noinline,used))
+# elif __GNUC_MINOR >= 2
+#  define noinline __attribute__((noinline))
+# endif
+#endif
+#ifndef noinline
+# define noinline /**/
+#endif
 
-static void startone(void);
-static void starttwo(GThread *thr);
+static noinline void startone(void);
+static noinline void starttwo(GThread *thr);
 static GThread * volatile starter;
 
 static void
