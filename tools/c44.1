@@ -147,12 +147,11 @@ large white border).
 .PP
 Providing no quality specification options automatically selects a default
 quality specification
-.BR "-slice 74,87,97" .
+.BR "-slice 74,89,99" .
 Multiple quality specification options are allowed.  The program outputs a
 file whose total number of chunks is the largest number of chunks of all
 quality specifications.  Slices are added to each chunk until reaching any of
 the quality target for this chunk.
-
 
 .SH OTHER OPTIONS
 The following additional options are supported:
@@ -224,10 +223,17 @@ Disable the encoding of the chrominance.  Only the luminance information will
 be encoded. The resulting image will show in shades of gray.
 .PP
 
+.SH REMARKS
+The default quality setting of the DjVuLibre version of
+.B c44
+has been increased.  
+It produces larger files with a better quality.  
+Quality can be lowered using the quality selection options!.
+
 .SH BUGS
-The 
-.SM IW44 
-encoder requires more memory than necessary.
+The encoder requires more memory than necessary.
+.br
+The rechunking capability is currently broken.
 
 .SH CREDITS
 This program was written by L\('eon Bottou <leonb@users.sourceforge.net> and

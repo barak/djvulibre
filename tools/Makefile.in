@@ -56,7 +56,8 @@ CFLAGS = @CFLAGS@ ${FLAGS}
 CXXFLAGS = @CXXFLAGS@ ${CXXRPOFLAGS} ${FLAGS}
 
 PROGRAMS = bzz c44 cjb2 cpaldjvu csepdjvu \
-	   ddjvu djvudump djvuextract djvumake \
+	   ddjvu djvm djvmcvt djvudump \
+	   djvuextract djvumake \
 	   djvused djvutxt
 
 all: ${PROGRAMS}
@@ -105,6 +106,8 @@ cjb2: cjb2.o
 cpaldjvu: cpaldjvu.o
 csepdjvu: csepdjvu.o
 ddjvu: ddjvu.o
+djvm: djvm.o
+djvmcvt: djvmcvt.o
 djvudump: djvudump.o
 djvuextract: djvuextract.o
 djvumake: djvumake.o

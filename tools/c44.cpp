@@ -220,6 +220,7 @@ GUTF8String percent;
 int flag_mask = 0;
 int flag_bpp = 0;
 int flag_size = 0;
+int flag_percent = 0;
 int flag_slice = 0;
 int flag_decibel = 0;
 int flag_crcbdelay = -1;
@@ -250,18 +251,18 @@ usage()
          "Copyright (c) 1999-2000 LizardTech, Inc. All Rights Reserved.\n"
          "Usage: c44 [options] pnm-or-jpeg-file [djvufile]\n\n"
          "Options:\n"
-         "    -percent n,..,n  -- selects the percentage of original file size\n"
-         "                        for building progressive file.\n"
+         "    -slice n+...+n   -- select an increasing sequence of data slices\n"
+         "                        expressed as integers ranging from 1 to 140.\n"
          "    -bpp n,..,n      -- select a increasing sequence of bitrates\n"
          "                        for building progressive file (in bits per pixel).\n"
          "    -size n,..,n     -- select an increasing sequence of minimal sizes\n"
          "                        for building progressive files (expressed in bytes).\n"
+         "    -percent n,..,n  -- selects the percentage of original file size\n"
+         "                        for building progressive file.\n"
          "    -decibel n,..,n  -- select an increasing sequence of luminance error\n"
          "                        expressed as decibels (ranging from 16 to 50).\n"
-         "    -slice n+...+n   -- select an increasing sequence of data slices\n"
-         "                        expressed as integers ranging from 1 to 140.\n"
-         "    -dbfrac frac     -- restrict decibel estimation on the specified fraction\n"
-         "                        of the most misrepresented 32x32 blocks\n"
+         "    -dbfrac frac     -- restrict decibel estimation to a fraction of\n"
+         "                        the most misrepresented 32x32 blocks\n"
          "    -mask pbmfile    -- select bitmask specifying image zone to encode\n"
          "                        with minimal bitrate. (default none)\n"
          "    -dpi n           -- sets the image resolution\n"
@@ -308,7 +309,7 @@ parse_bpp(const char *q)
 
 
 void 
-parse_size(const char *q,const int size=0)
+parse_size(const char *q)
 {
   percent=GUTF8String();
   flag_size = 1;
@@ -328,7 +329,7 @@ parse_size(const char *q,const int size=0)
       if (*ptr && *ptr!='+' && *ptr!=',')
         G_THROW( ERR_MSG("c44.size_comma_expected") );
       q = (*ptr ? ptr+1 : ptr);
-      argv_size[argc_size++] = size?((x*size)/100):x;
+      argv_size[argc_size++] = x;
       if (argc_size>=MAXCHUNKS)
         G_THROW( ERR_MSG("c44.size_too_many") );
     }
@@ -430,8 +431,8 @@ resolve_quality(int npix)
       flag_slice = 1;
       argc_slice = 3;
       argv_slice[0]=74;
-      argv_slice[1]=87;
-      argv_slice[2]=97;
+      argv_slice[1]=89;
+      argv_slice[2]=99;
 #endif
     }
   // Complete short specifications
@@ -467,7 +468,8 @@ parse(GArray<GUTF8String> &argv)
                 G_THROW( ERR_MSG("c44.no_bpp_arg") );
               if (flag_bpp || flag_size)
                 G_THROW( ERR_MSG("c44.multiple_bitrate") );
-              percent=argv[i];
+              parse_size(argv[i]);
+              flag_percent = 1;
             }
           else if (argv[i] == "-bpp")
             {
@@ -670,15 +672,24 @@ main(int argc, char **argv)
       char prefix[16];
       if (ibs.readall((void*)prefix, sizeof(prefix)) != sizeof(prefix))
         G_THROW( ERR_MSG("c44.failed_pnm_header") );
-      if(percent.length())
+#ifdef DEFAULT_JPEG_TO_HALF_SIZE
+      // Default specification for jpeg files
+      // This is disabled because
+      // -1- jpeg detection is unreliable.
+      // -2- quality is very difficult to predict.
+      if(prefix[0]!='P' &&prefix[0]!='A' && prefix[0]!='F' && 
+	 !flag_mask && !flag_bpp && !flag_size && 
+	 !flag_slice && !flag_decibel)
         {
-          parse_size(percent,gibs->size());
+          parse_size("10,20,30,50");
+	  flag_size = flag_percent = 1;
         }
-      else if(prefix[0]!='P' &&prefix[0]!='A' && prefix[0]!='F' && 
-              !flag_mask && !flag_bpp && !flag_size && !flag_slice && !flag_decibel)
-        {
-          parse_size("10,20,30,50",gibs->size());
-        }
+#endif
+      // Change percent specification into size specification
+      if (flag_size && flag_percent)
+	for (int i=0; i<argc_size; i++)
+	  argv_size[i] = (argv_size[i]*gibs->size())/ 100;
+      flag_percent = 0;
       // Load images
       int w = 0;
       int h = 0;
@@ -694,7 +705,8 @@ main(int argc, char **argv)
           h = ibm.rows();
           iw = IW44Image::create_encode(ibm, getmask(w,h));
         }
-      else if (!GStringRep::cmp(prefix,"AT&TFORM",8) || !GStringRep::cmp(prefix,"FORM",4))
+      else if (!GStringRep::cmp(prefix,"AT&TFORM",8) || 
+	       !GStringRep::cmp(prefix,"FORM",4))
         {
           char *s = (prefix[0]=='F' ? prefix+8 : prefix+12);
           GP<IFFByteStream> giff=IFFByteStream::create(gibs);
@@ -729,7 +741,8 @@ main(int argc, char **argv)
       if (iw)
         {
           iw4url.deletefile();
-          GP<IFFByteStream> iff=IFFByteStream::create(ByteStream::create(iw4url,"wb"));
+          GP<IFFByteStream> iff =
+	    IFFByteStream::create(ByteStream::create(iw4url,"wb"));
           if (flag_crcbdelay >= 0)
             iw->parm_crcbdelay(flag_crcbdelay);
           if (flag_dbfrac > 0)
