@@ -169,7 +169,7 @@ makeadd: FORCE
 
 INCS = -I${top_builddir} -I${top_srcdir}/libdjvu ${SRCINCS} -I.
 
-FLAGS = ${DEFS} ${INCS} ${OPTS} -DDJVU_VIEWER \
+FLAGS = ${DEFS} ${INCS} ${OPTS} \
 	${JPEG_CFLAGS} ${THREAD_CFLAGS} ${QT_CFLAGS} ${X_CFLAGS}
 
 LIBS= ${QT_LIBS} ${X_LIBS} ${JPEG_LIBS} ${THREAD_LIBS} @LIBS@
