@@ -52,14 +52,10 @@
 #include "djvu_base_res.h"
 
 #include <qpopupmenu.h>
-#ifndef QT1
 #include <qtimer.h>
-#endif
+
 #include "qt_fix.h"
 
-#ifdef UNIX
-#include "rem_netscape.h"
-#endif
 
 
 // QDViewer defines popup menu (QDANTBAse doesn't have one since it's
@@ -121,16 +117,6 @@ private:
    GP<DjVuDocument>	djvu_doc;
    QDPort		page_port, doc_port;
    GP<DjVuImage>	predecode_dimg1, predecode_dimg2;
-
-#ifdef UNIX
-   // Platform dependent class used to issue remote commands to netscape
-   unsigned long getClientWindow();
-
-      // These pipe used to catch errors coming from a child process
-      // They're passed to children for substituting their stderr stream
-      // Make sure you close them in the ~QDViewer destructor
-   GList<int>	child_error_pipes;
-#endif
 
    void		createPopupMenu(void);
    void		runPopupMenu(QMouseEvent * ev);

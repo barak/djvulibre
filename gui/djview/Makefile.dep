@@ -567,10 +567,10 @@ netscape.o: ./netscape.cpp ../../config.h ../../libdjvu/ZPCodec.h \
   ../../gui/shared/res/saved_data.h ../../libdjvu/DjVuDocument.h \
   ../../gui/shared/QT/qd_port.h ../../gui/shared/QT/qd_messenger.h \
   ../../gui/shared/res/djvu_base_res.h \
-  ../../gui/indep/except/exc_msg.h ../../gui/shared/utils/io.h \
-  ../../gui/indep/except/exc_sys.h \
-  ../../gui/shared/QT/init_qt.h netscape_moc.inc \
-  
+  ../../gui/indep/except/exc_msg.h \
+  ../../gui/shared/utils/io.h ../../gui/indep/except/exc_sys.h \
+  ../../gui/shared/QT/init_qt.h \
+  netscape_moc.inc 
 dispatch.o: ./dispatch.cpp ../../config.h ../../libdjvu/DataPool.h \
   ../../libdjvu/GThreads.h ../../libdjvu/DjVuGlobal.h \
   ../../libdjvu/GException.h ../../libdjvu/GString.h \
@@ -593,11 +593,11 @@ dispatch.o: ./dispatch.cpp ../../config.h ../../libdjvu/DataPool.h \
   ../../gui/shared/res/saved_data.h \
   ../../libdjvu/DjVuDocument.h ../../gui/shared/QT/qd_port.h \
   ../../gui/shared/QT/qd_messenger.h ../../gui/shared/res/djvu_base_res.h \
-  netscape.h \
-  ../../gui/indep/except/exc_msg.h ../../gui/indep/except/exc_file.h \
-  ../../gui/indep/except/exc_res.h ../../gui/indep/QX/qx_imager.h \
-  ../../gui/indep/QT/qt_imager.h ../../gui/indep/QT/qlib.h mime_check.h \
-  dispatch_moc.inc 
+  netscape.h ../../gui/indep/except/exc_msg.h \
+  ../../gui/indep/except/exc_file.h ../../gui/indep/except/exc_res.h \
+  ../../gui/indep/QX/qx_imager.h ../../gui/indep/QT/qt_imager.h \
+  ../../gui/indep/QT/qlib.h mime_check.h dispatch_moc.inc \
+  
 mime_check.o: ./mime_check.cpp ../../config.h \
   ../../gui/shared/utils/prefs.h ../../libdjvu/GString.h \
   ../../libdjvu/DjVuGlobal.h ../../libdjvu/GContainer.h \
@@ -627,7 +627,7 @@ qd_viewer.o: ./qd_viewer.cpp ../../config.h qd_viewer.h \
   ../../gui/shared/res/saved_data.h \
   ../../libdjvu/DjVuDocument.h ../../gui/shared/QT/qd_port.h \
   ../../gui/shared/QT/qd_messenger.h ../../gui/shared/res/djvu_base_res.h \
-  ../../gui/indep/QT/qlib.h \
+  ../../gui/indep/QT/qlib.h ../../gui/indep/QX/qxlib.h \
   ../../gui/indep/QX/qx_imager.h ../../gui/indep/QT/qt_imager.h \
   ../../gui/shared/QT/qd_welcome.h ../../libdjvu/GOS.h \
   ../../gui/indep/except/exc_msg.h ../../gui/indep/except/exc_base.h \
@@ -665,13 +665,12 @@ qd_viewer_shell.o: ./qd_viewer_shell.cpp ../../config.h \
   ../../gui/shared/res/saved_data.h \
   ../../libdjvu/DjVuDocument.h ../../gui/shared/QT/qd_port.h \
   ../../gui/shared/QT/qd_messenger.h ../../gui/shared/res/djvu_base_res.h \
-  ../../gui/indep/utils/cin_data.h \
-  ../../libdjvu/ByteStream.h ../../gui/indep/QT/qlib.h \
-  ../../gui/shared/res/names.h ../../gui/indep/utils/execdir.h \
-  djvu_viewer_res.h ../../gui/indep/except/throw_error.h \
-  ../../gui/indep/except/exc_base.h ../../gui/shared/QT/qd_wpaper.h \
-  qd_about_dialog.h ../../gui/shared/res/version.h \
-  ../../gui/indep/except/exc_msg.h \
+  ../../gui/indep/utils/cin_data.h ../../libdjvu/ByteStream.h \
+  ../../gui/indep/QT/qlib.h ../../gui/shared/res/names.h \
+  ../../gui/indep/utils/execdir.h djvu_viewer_res.h \
+  ../../gui/indep/except/throw_error.h ../../gui/indep/except/exc_base.h \
+  ../../gui/shared/QT/qd_wpaper.h qd_about_dialog.h \
+  ../../gui/shared/res/version.h ../../gui/indep/except/exc_msg.h \
   
 qd_viewer_prefs.o: ./qd_viewer_prefs.cpp ../../config.h \
   ../../gui/shared/utils/djvu_file_cache.h ../../libdjvu/DjVuFileCache.h \
@@ -706,8 +705,7 @@ qd_viewer_menu.o: ./qd_viewer_menu.cpp ../../config.h qd_viewer_menu.h \
   ../../gui/shared/res/saved_data.h \
   ../../libdjvu/DjVuDocument.h ../../gui/shared/QT/qd_port.h \
   ../../gui/shared/QT/qd_messenger.h ../../gui/shared/res/djvu_base_res.h \
-  djvu_viewer_res.h \
-  ../../gui/shared/QT/qd_doc_info.h \
+  djvu_viewer_res.h ../../gui/shared/QT/qd_doc_info.h \
   ../../gui/shared/QT/qd_nav_goto_page.h \
   ../../gui/shared/QT/qd_set_zoom.h ../../gui/shared/QT/qd_thumb.h \
   ../../gui/indep/QT/qlib.h ../../libdjvu/DjVuMessage.h \
@@ -731,11 +729,11 @@ djvu_viewer.o: ./djvu_viewer.cpp ../../config.h djvu_viewer.h qd_viewer.h \
   ../../gui/shared/res/saved_data.h \
   ../../libdjvu/DjVuDocument.h ../../gui/shared/QT/qd_port.h \
   ../../gui/shared/QT/qd_messenger.h ../../gui/shared/res/djvu_base_res.h \
-  ../../gui/indep/except/exc_msg.h \
-  ../../gui/indep/except/exc_base.h ../../libdjvu/ByteStream.h \
-  ../../libdjvu/DataPool.h ../../libdjvu/DjVuMessage.h \
-  ../../libdjvu/DjVuMessageLite.h ../../gui/indep/QT/qlib.h \
-  ../../gui/shared/utils/djvu_file_cache.h ../../libdjvu/DjVuFileCache.h \
+  ../../gui/indep/except/exc_msg.h ../../gui/indep/except/exc_base.h \
+  ../../libdjvu/ByteStream.h ../../libdjvu/DataPool.h \
+  ../../libdjvu/DjVuMessage.h ../../libdjvu/DjVuMessageLite.h \
+  ../../gui/indep/QT/qlib.h ../../gui/shared/utils/djvu_file_cache.h \
+  ../../libdjvu/DjVuFileCache.h \
   
 qd_mime_dialog.o: ./qd_mime_dialog.cpp ../../config.h qd_mime_dialog.h \
   ../../gui/indep/QT/qt_fix.h ../../gui/shared/utils/prefs.h \
@@ -769,8 +767,8 @@ main.o: ./main.cpp ../../config.h ../../libdjvu/DjVuGlobal.h \
   ../../gui/shared/QT/qd_pane.h ../../libdjvu/DjVuText.h \
   ../../gui/shared/res/saved_data.h ../../libdjvu/DjVuDocument.h \
   ../../gui/shared/QT/qd_port.h ../../gui/shared/QT/qd_messenger.h \
-  ../../gui/shared/res/djvu_base_res.h \
-  ../../gui/indep/except/exc_msg.h ../../gui/indep/except/exc_base.h \
+  ../../gui/shared/res/djvu_base_res.h ../../gui/indep/except/exc_msg.h \
+  ../../gui/indep/except/exc_base.h \
   ../../gui/shared/utils/djvu_file_cache.h ../../libdjvu/DjVuFileCache.h \
   ../../gui/indep/QT/qlib.h ../../gui/indep/utils/execdir.h mime_check.h \
   ../../gui/shared/res/version.h

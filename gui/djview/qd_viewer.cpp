@@ -45,6 +45,7 @@
 #include "qd_viewer.h"
 #include "debug.h"
 #include "qlib.h"
+#include "qxlib.h"
 #include "qx_imager.h"
 #include "qd_welcome.h"
 #include "GURL.h"
@@ -353,58 +354,17 @@ QDViewer::QDViewer(int _in_netscape,
    pane->setFocus();
 }
 
-
-#ifdef UNIX
-unsigned long 
-QDViewer::getClientWindow()
-{
-  Window win = winId();
-  Display *dpy = x11Display();
-  Atom wm_state = XInternAtom(dpy, "WM_STATE", True);
-  if (wm_state)
-    {
-      while (win)
-        {
-          int format;
-          unsigned long nitems, after;
-          unsigned char *data;
-          Window root, parent;
-          Window *children;
-          unsigned int nchildren;
-          Atom type = None;
-          XGetWindowProperty(dpy, win, wm_state, 0, 0, False, AnyPropertyType,
-                             &type, &format, &nitems, &after, &data);
-          if (type)
-            return win;
-          if (!XQueryTree(dpy, win, &root, &parent, &children, &nchildren))
-            return 0;
-          if (children) 
-            XFree((char *)children);
-          win = parent;
-        }
-    }
-  return winId();
-}
-#endif
-
-
 QDViewer::~QDViewer(void)
 {
    DEBUG_MSG("QDViewer::~QDViewer(): destroying class...\n");
 #ifdef UNIX
-      // Destroy error pipes leading to child processes
-   GPosition pos;
-   int * item;
-   child_error_pipes.first(pos);
-   while((item=child_error_pipes.next(pos))) ::close(*item);
-
    Display * displ=x11Display();
    Atom atom_zoom=XInternAtom(displ, DJVU_ZOOM_PROP, False);
    Atom atom_time=XInternAtom(displ, DJVU_DETACH_TIME_PROP, False);
    if (plugin_data.full_mode && atom_zoom && atom_time)
    {
       DEBUG_MSG("saving current zoom into toplevel window properties\n");
-      Window shell_win = getClientWindow();
+      Window shell_win = x11GetTopLevelWindow(x11Display(), winId());
       if (shell_win)
       {
 	 char buffer[128];
@@ -1205,7 +1165,7 @@ QDViewer::checkWMProps(void)
    Atom atom_time=XInternAtom(displ, DJVU_DETACH_TIME_PROP, True);
    if (plugin_data.full_mode && !saved_data_known && atom_zoom && atom_time)
    {
-      Window shell_win=(Window) getClientWindow();
+      Window shell_win = x11GetTopLevelWindow(x11Display(), winId());
       DEBUG_MSG("shell_win=" << shell_win << "\n");
       if (shell_win)
       {

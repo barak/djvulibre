@@ -1,5 +1,9 @@
 #!/bin/sh
 
+# To regenerate the distributed dependency files:
+# % configure && make depend && etc/makefixdep `find . -name Makefile.dep -print` && make distclean
+
+
 # This script is used to cleanup the dependency 
 # files that come with the distribution.
 # It removes dependencies on system or 
