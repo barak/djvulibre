@@ -1707,33 +1707,35 @@ DjVuDocEditor::generate_thumbnails(int thumb_size, int page_num)
    {
       const GUTF8String id(page_to_id(page_num));
       if (!thumb_map.contains(id))
-      {
-         const GP<DjVuImage> dimg(get_page(page_num, true));
-
-         GRect rect(0, 0, thumb_size, dimg->get_height()*thumb_size/dimg->get_width());
-         GP<GPixmap> pm=dimg->get_pixmap(rect, rect, get_thumbnails_gamma());
-         if (!pm)
-         {
-            const GP<GBitmap> bm(dimg->get_bitmap(rect, rect, sizeof(int)));
-            pm=GPixmap::create(*bm);
-         }
-         if (!pm) G_THROW( ERR_MSG("DjVuDocEditor.render") "\t"+GUTF8String(page_num));
-
-            // Store and compress the pixmap
-         const GP<IW44Image> iwpix(IW44Image::create_encode(*pm));
-         const GP<ByteStream> gstr(ByteStream::create());
-         IWEncoderParms parms;
-         parms.slices=97;
-         parms.bytes=0;
-         parms.decibels=0;
-         iwpix->encode_chunk(gstr, parms);
-         gstr->seek(0L);
-         thumb_map[id]=DataPool::create(gstr);
-      }
+        {
+          const GP<DjVuImage> dimg(get_page(page_num, true));
+         
+          GRect rect(0, 0, thumb_size, dimg->get_height()*thumb_size/dimg->get_width());
+          GP<GPixmap> pm=dimg->get_pixmap(rect, rect, get_thumbnails_gamma());
+          if (!pm)
+            {
+              const GP<GBitmap> bm(dimg->get_bitmap(rect, rect, sizeof(int)));
+              if (bm) 
+                pm = GPixmap::create(*bm);
+              else
+                pm = GPixmap::create(rect.height(), rect.width(), &GPixel::WHITE);
+            }
+          // Store and compress the pixmap
+          const GP<IW44Image> iwpix(IW44Image::create_encode(*pm));
+          const GP<ByteStream> gstr(ByteStream::create());
+          IWEncoderParms parms;
+          parms.slices=97;
+          parms.bytes=0;
+          parms.decibels=0;
+          iwpix->encode_chunk(gstr, parms);
+          gstr->seek(0L);
+          thumb_map[id]=DataPool::create(gstr);
+        }
       ++page_num;
-   }else
+   }
+   else
    {
-      page_num=(-1);
+     page_num = -1;
    }
    return page_num;
 }

@@ -1083,7 +1083,8 @@ DjVuDocument::process_threqs(void)
           
           for(int i=0;i<req->thumb_chunk;i++)
           {
-            if (!iff.get_chunk(chkid)) G_THROW( ERR_MSG("DjVuDocument.bad_thumb") );
+            if (!iff.get_chunk(chkid)) 
+              G_THROW( ERR_MSG("DjVuDocument.bad_thumb") );
             iff.close_chunk();
           }
           if (!iff.get_chunk(chkid) || chkid!="TH44")
@@ -1147,9 +1148,12 @@ DjVuDocument::process_threqs(void)
                 GP<GBitmap> bm=dimg->get_bitmap(rect, rect, sizeof(int));
                 if(bm)
                   pm=GPixmap::create(*bm);
+                else
+                  pm = GPixmap::create(rect.height(), rect.width(), &GPixel::WHITE);
               }
               if (!pm) 
-                G_THROW( ERR_MSG("DjVuDocument.cant_render") "\t"+GUTF8String(req->page_num+1));
+                G_THROW( ERR_MSG("DjVuDocument.cant_render") "\t" 
+                         + GUTF8String(req->page_num+1));
               
               // Store and compress the pixmap
               GP<IW44Image> iwpix=IW44Image::create_encode(*pm);
