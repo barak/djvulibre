@@ -40,6 +40,8 @@ OPTS = @OPTS@
 CXXRPOFLAGS = @CXXRPOFLAGS@
 JPEG_LIBS=@JPEG_LIBS@
 JPEG_CFLAGS=@JPEG_CFLAGS@
+TIFF_LIBS=@TIFF_LIBS@
+TIFF_CFLAGS=@TIFF_CFLAGS@
 THREAD_LIBS = @THREAD_LIBS@
 THREAD_CFLAGS = @THREAD_CFLAGS@
 
@@ -50,8 +52,9 @@ LIBDJVU_SO = ${top_builddir}/libdjvu/libdjvulibre-${PACKAGE_VERSION}.so
 @SHARED_NO@LIBDJVU = ${LIBDJVU_A}
 
 INCS = -I${top_builddir} -I${top_srcdir}/libdjvu -I${srcdir}
-FLAGS = ${DEFS} ${INCS} ${OPTS} ${JPEG_CFLAGS} ${THREAD_CFLAGS}
+FLAGS = ${DEFS} ${INCS} ${OPTS} ${JPEG_CFLAGS} ${TIFF_CFLAGS} ${THREAD_CFLAGS}
 LIBS= @LDFLAGS@ ${JPEG_LIBS} ${THREAD_LIBS} @LIBS@
+MORELIBS= @LDFLAGS@ ${JPEG_LIBS} ${TIFF_LIBS} ${THREAD_LIBS} @LIBS@
 CFLAGS = @CPFLAGS@ @CFLAGS@ ${FLAGS}
 CXXFLAGS = @CPPFLAGS@ @CXXFLAGS@ ${CXXRPOFLAGS} ${FLAGS}
 
@@ -94,27 +97,55 @@ FORCE:
 .cpp.o:
 	${CXX} ${CXXFLAGS} -c $<
 
-.o:
-	${CXX} -o $@ ${CXXFLAGS} $< ${LIBDJVU} ${LIBS}
-
-# Dependencies
+# Link
 
 annotate: annotate.o
+	${CXX} -o $@ ${CXXFLAGS} annotate.o ${LIBDJVU} ${LIBS}
+
 bzz: bzz.o
+	${CXX} -o $@ ${CXXFLAGS} bzz.o ${LIBDJVU} ${LIBS}
+
 c44: c44.o
+	${CXX} -o $@ ${CXXFLAGS} c44.o ${LIBDJVU} ${LIBS}
+
 cjb2: cjb2.o
+	${CXX} -o $@ ${CXXFLAGS} cjb2.o ${LIBDJVU} ${MORELIBS}
+
 cpaldjvu: cpaldjvu.o
+	${CXX} -o $@ ${CXXFLAGS} cpaldjvu.o ${LIBDJVU} ${LIBS}
+
 csepdjvu: csepdjvu.o
+	${CXX} -o $@ ${CXXFLAGS} csepdjvu.o ${LIBDJVU} ${LIBS}
+
 ddjvu: ddjvu.o
+	${CXX} -o $@ ${CXXFLAGS} ddjvu.o ${LIBDJVU} ${LIBS}
+
 djvm: djvm.o
+	${CXX} -o $@ ${CXXFLAGS} djvm.o ${LIBDJVU} ${LIBS}
+
 djvmcvt: djvmcvt.o
+	${CXX} -o $@ ${CXXFLAGS} djvmcvt.o ${LIBDJVU} ${LIBS}
+
 djvudump: djvudump.o
+	${CXX} -o $@ ${CXXFLAGS} djvudump.o ${LIBDJVU} ${LIBS}
+
 djvups: djvups.o
+	${CXX} -o $@ ${CXXFLAGS} djvups.o ${LIBDJVU} ${LIBS}
+
 djvuextract: djvuextract.o
+	${CXX} -o $@ ${CXXFLAGS} djvuextract.o ${LIBDJVU} ${LIBS}
+
 djvumake: djvumake.o
+	${CXX} -o $@ ${CXXFLAGS} djvumake.o ${LIBDJVU} ${LIBS}
+
 djvused: djvused.o
+	${CXX} -o $@ ${CXXFLAGS} djvused.o ${LIBDJVU} ${LIBS}
+
 djvutxt: djvutxt.o
+	${CXX} -o $@ ${CXXFLAGS} djvutxt.o ${LIBDJVU} ${LIBS}
+
 djvuserve: djvuserve.o
+	${CXX} -o $@ ${CXXFLAGS} djvuserve.o ${LIBDJVU} ${LIBS}
 
 @SHARED_NO@${PROGRAMS}: ${LIBDJVU_A}
 

@@ -559,8 +559,7 @@ fi
 dnl ------------------------------------------------------------------
 dnl @synopsis AC_PATH_JPEG([ACTION-IF-FOUND[, ACTION-IF-NOT-FOUND]])
 dnl Process option --with-jpeg.
-dnl Search JPEG along the extra
-dnl Define HAVE_JPEG.
+dnl Search JPEG. Define HAVE_JPEG.
 dnl Set output variable JPEG_CFLAGS and JPEG_LIBS
 dnl ------------------------------------------------------------------
 
@@ -794,5 +793,66 @@ QTextStream ts(&qf); ts << QT_VERSION; return 0;
     AC_MSG_RESULT([setting QT_LIBS=$QT_LIBS])
     ifelse([$1],,:,[$1])        
   fi
+])
+
+
+dnl ------------------------------------------------------------------
+dnl @synopsis AC_PATH_TIFF([ACTION-IF-FOUND[, ACTION-IF-NOT-FOUND]])
+dnl Process option --with-tiff
+dnl Search LIBTIFF. Define HAVE_TIFF.
+dnl Set output variable TIFF_CFLAGS and TIFF_LIBS
+dnl ------------------------------------------------------------------
+
+AC_DEFUN([AC_PATH_TIFF],
+[
+  AC_ARG_VAR(TIFF_LIBS)
+  AC_ARG_VAR(TIFF_CFLAGS)
+  ac_tiff=no
+  AC_ARG_WITH(tiff,
+     AC_HELP_STRING([--with-tiff=DIR],
+                    [where libtiff is located]),
+     [ac_tiff=$withval], [ac_tiff=yes] )
+  # Process specification
+  if test x$ac_tiff = xyes ; then
+     test x${TIFF_LIBS+set} != xset && TIFF_LIBS="-ltiff"
+  elif test x$ac_tiff != xno ; then
+     test x${TIFF_LIBS+set} != xset && TIFF_LIBS="-L$ac_tiff -ltiff"
+     test x${TIFF_CFLAGS+set} != xset && TIFF_CFLAGS="-I$ac_tiff"
+  fi
+  # Try linking
+  if test x$ac_tiff != xno ; then
+     AC_MSG_CHECKING([for the libtiff library])
+     save_CFLAGS="$CFLAGS"
+     save_CXXFLAGS="$CXXFLAGS"
+     save_LIBS="$LIBS"
+     CFLAGS="$CFLAGS $TIFF_CFLAGS"
+     CXXFLAGS="$CXXFLAGS $TIFF_CFLAGS"
+     LIBS="$LIBS $TIFF_LIBS"
+     AC_TRY_LINK([
+#ifdef __cplusplus
+extern "C" {
+#endif
+#include <stdio.h> 
+#include <tiffio.h>
+#ifdef __cplusplus
+}
+#endif ],[
+TIFFOpen(0,0);],
+       [ac_tiff=yes], [ac_tiff=no] )
+     CFLAGS="$save_CFLAGS"
+     CXXFLAGS="$save_CXXFLAGS"
+     LIBS="$save_LIBS"
+     AC_MSG_RESULT($ac_tiff)
+   fi
+   # Finish
+   if test x$ac_tiff = xno; then
+      TIFF_CFLAGS= ; TIFF_LIBS=
+      ifelse([$2],,:,[$2])
+   else
+      AC_DEFINE(HAVE_TIFF,1,[Define if you have libtiff.])
+      AC_MSG_RESULT([setting TIFF_CFLAGS=$TIFF_CFLAGS])
+      AC_MSG_RESULT([setting TIFF_LIBS=$TIFF_LIBS])
+      ifelse([$1],,:,[$1])
+   fi
 ])
 

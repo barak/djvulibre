@@ -770,6 +770,14 @@ ac_env_JPEG_CFLAGS_set=${JPEG_CFLAGS+set}
 ac_env_JPEG_CFLAGS_value=$JPEG_CFLAGS
 ac_cv_env_JPEG_CFLAGS_set=${JPEG_CFLAGS+set}
 ac_cv_env_JPEG_CFLAGS_value=$JPEG_CFLAGS
+ac_env_TIFF_LIBS_set=${TIFF_LIBS+set}
+ac_env_TIFF_LIBS_value=$TIFF_LIBS
+ac_cv_env_TIFF_LIBS_set=${TIFF_LIBS+set}
+ac_cv_env_TIFF_LIBS_value=$TIFF_LIBS
+ac_env_TIFF_CFLAGS_set=${TIFF_CFLAGS+set}
+ac_env_TIFF_CFLAGS_value=$TIFF_CFLAGS
+ac_cv_env_TIFF_CFLAGS_set=${TIFF_CFLAGS+set}
+ac_cv_env_TIFF_CFLAGS_value=$TIFF_CFLAGS
 ac_env_PTHREAD_LIBS_set=${PTHREAD_LIBS+set}
 ac_env_PTHREAD_LIBS_value=$PTHREAD_LIBS
 ac_cv_env_PTHREAD_LIBS_set=${PTHREAD_LIBS+set}
@@ -894,6 +902,7 @@ Optional Packages:
   --with-extra-libraries=DIR
                           Define an additional directory for library files
   --with-jpeg=DIR         where the IJG jpeg library is located
+  --with-tiff=DIR         where libtiff is located
   --with-x                use the X Window System
   --with-qt=DIR           where the Qt root is installed.
 
@@ -909,6 +918,8 @@ Some influential environment variables:
   CXXCPP      C++ preprocessor
   JPEG_LIBS
   JPEG_CFLAGS
+  TIFF_LIBS
+  TIFF_CFLAGS
   PTHREAD_LIBS
               Flags for linking pthread programs.
   PTHREAD_CFLAGS
@@ -5856,6 +5867,108 @@ echo "${ECHO_T}setting JPEG_LIBS=$JPEG_LIBS" >&6
    fi
 
 
+# Search TIFF library
+
+
+
+  ac_tiff=no
+
+# Check whether --with-tiff or --without-tiff was given.
+if test "${with_tiff+set}" = set; then
+  withval="$with_tiff"
+  ac_tiff=$withval
+else
+  ac_tiff=yes
+fi;
+  # Process specification
+  if test x$ac_tiff = xyes ; then
+     test x${TIFF_LIBS+set} != xset && TIFF_LIBS="-ltiff"
+  elif test x$ac_tiff != xno ; then
+     test x${TIFF_LIBS+set} != xset && TIFF_LIBS="-L$ac_tiff -ltiff"
+     test x${TIFF_CFLAGS+set} != xset && TIFF_CFLAGS="-I$ac_tiff"
+  fi
+  # Try linking
+  if test x$ac_tiff != xno ; then
+     echo "$as_me:$LINENO: checking for the libtiff library" >&5
+echo $ECHO_N "checking for the libtiff library... $ECHO_C" >&6
+     save_CFLAGS="$CFLAGS"
+     save_CXXFLAGS="$CXXFLAGS"
+     save_LIBS="$LIBS"
+     CFLAGS="$CFLAGS $TIFF_CFLAGS"
+     CXXFLAGS="$CXXFLAGS $TIFF_CFLAGS"
+     LIBS="$LIBS $TIFF_LIBS"
+     cat >conftest.$ac_ext <<_ACEOF
+#line $LINENO "configure"
+#include "confdefs.h"
+
+#ifdef __cplusplus
+extern "C" {
+#endif
+#include <stdio.h>
+#include <tiffio.h>
+#ifdef __cplusplus
+}
+#endif
+#ifdef F77_DUMMY_MAIN
+#  ifdef __cplusplus
+     extern "C"
+#  endif
+   int F77_DUMMY_MAIN() { return 1; }
+#endif
+int
+main ()
+{
+
+TIFFOpen(0,0);
+  ;
+  return 0;
+}
+_ACEOF
+rm -f conftest.$ac_objext conftest$ac_exeext
+if { (eval echo "$as_me:$LINENO: \"$ac_link\"") >&5
+  (eval $ac_link) 2>&5
+  ac_status=$?
+  echo "$as_me:$LINENO: \$? = $ac_status" >&5
+  (exit $ac_status); } &&
+         { ac_try='test -s conftest$ac_exeext'
+  { (eval echo "$as_me:$LINENO: \"$ac_try\"") >&5
+  (eval $ac_try) 2>&5
+  ac_status=$?
+  echo "$as_me:$LINENO: \$? = $ac_status" >&5
+  (exit $ac_status); }; }; then
+  ac_tiff=yes
+else
+  echo "$as_me: failed program was:" >&5
+cat conftest.$ac_ext >&5
+ac_tiff=no
+fi
+rm -f conftest.$ac_objext conftest$ac_exeext conftest.$ac_ext
+     CFLAGS="$save_CFLAGS"
+     CXXFLAGS="$save_CXXFLAGS"
+     LIBS="$save_LIBS"
+     echo "$as_me:$LINENO: result: $ac_tiff" >&5
+echo "${ECHO_T}$ac_tiff" >&6
+   fi
+   # Finish
+   if test x$ac_tiff = xno; then
+      TIFF_CFLAGS= ; TIFF_LIBS=
+       no_tiff=yes
+  { echo "$as_me:$LINENO: WARNING: Tiff support is disabled" >&5
+echo "$as_me: WARNING: Tiff support is disabled" >&2;}
+   else
+
+cat >>confdefs.h <<\_ACEOF
+#define HAVE_TIFF 1
+_ACEOF
+
+      echo "$as_me:$LINENO: result: setting TIFF_CFLAGS=$TIFF_CFLAGS" >&5
+echo "${ECHO_T}setting TIFF_CFLAGS=$TIFF_CFLAGS" >&6
+      echo "$as_me:$LINENO: result: setting TIFF_LIBS=$TIFF_LIBS" >&5
+echo "${ECHO_T}setting TIFF_LIBS=$TIFF_LIBS" >&6
+      :
+   fi
+
+
 # Search MULTITHREADING library
 
 # Check whether --enable-threads or --disable-threads was given.
@@ -8901,6 +9014,8 @@ s,@RPO_NO@,$RPO_NO,;t t
 s,@CXXCPP@,$CXXCPP,;t t
 s,@JPEG_LIBS@,$JPEG_LIBS,;t t
 s,@JPEG_CFLAGS@,$JPEG_CFLAGS,;t t
+s,@TIFF_LIBS@,$TIFF_LIBS,;t t
+s,@TIFF_CFLAGS@,$TIFF_CFLAGS,;t t
 s,@PTHREAD_LIBS@,$PTHREAD_LIBS,;t t
 s,@PTHREAD_CFLAGS@,$PTHREAD_CFLAGS,;t t
 s,@THREAD_LIBS@,$THREAD_LIBS,;t t

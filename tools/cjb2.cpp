@@ -65,7 +65,7 @@
 
     {\bf Synopsis}
     \begin{verbatim}
-        cjb2 [options] <inputpbmfile>  <outputdjvufile>
+        cjb2 [options] <input-pbm-or-tiff>  <output-djvu>
     \end{verbatim}
 
     {\bf Description}
@@ -117,6 +117,10 @@
 #include "DjVuMessage.h"
 #include <locale.h>
 #include <stdlib.h>
+
+#if HAVE_TIFF
+#include <tiffio.h>
+#endif
 
 // --------------------------------------------------
 // UTILITIES
@@ -182,7 +186,8 @@ public:
   int largesize;         // CCs larger than that are special
   int smallsize;         // CCs smaller than that are special 
   int tinysize;          // CCs smaller than that may be removed 
-  CCImage(int width, int height, int dpi);
+  CCImage();
+  void init(int width, int height, int dpi);
   void add_single_run(int y, int x1, int x2, int ccid=0);
   void add_bitmap_runs(const GBitmap &bm, int offx=0, int offy=0, int ccid=0);
   GP<GBitmap> get_bitmap_for_cc(int ccid) const;
@@ -204,10 +209,19 @@ operator <= (const Run &a, const Run &b)
 
 
 // -- Constructs CCImage and provide defaults
-CCImage::CCImage(int width, int height, int dpi)
-  :height(height), width(width), nregularccs(0)
+CCImage::CCImage()
+  : height(0), width(0), nregularccs(0)
 {
-  // Compute cleaning constants
+}
+
+void
+CCImage::init(int w, int h, int dpi)
+{
+  runs.empty();
+  ccs.empty();
+  height = h;
+  width = w;
+  nregularccs = 0;
   dpi = MAX(200, MIN(900, dpi));
   largesize = MIN( 500, MAX(64, dpi));
   smallsize = MAX(2, dpi/150);
@@ -821,47 +835,174 @@ tune_jb2image(JB2Image *jimg,
 
 
 
-
-
 // --------------------------------------------------
 // COMPLETE COMPRESSION ROUTINE
 // --------------------------------------------------
 
 struct cjb2opts {
   int dpi;
+  int forcedpi;
   int substitute_threshold;
   bool clean; 
   bool verbose;
 };
 
+#if HAVE_TIFF
+
+static int 
+is_tiff(ByteStream *ref) 
+{
+  char magic[2];
+  magic[0] = magic[1] = 0;
+  ref->readall((void*)magic, sizeof(magic));
+  ref->seek(0);
+  if(magic[0] == 'I' && magic[1] == 'I')
+    return 1;
+  if(magic[0] == 'M' && magic[1] == 'M')
+    return 1;
+  return 0;
+}
+
+static tsize_t readproc(thandle_t h, tdata_t p, tsize_t s) { 
+  ByteStream *bs = (ByteStream*)h;
+  return (tsize_t) bs->readall((void*)p, (size_t)s);
+}
+
+static tsize_t writeproc(thandle_t, tdata_t, tsize_t) { 
+  return -1; 
+}
+
+static toff_t seekproc(thandle_t h, toff_t offset, int mode) { 
+  ByteStream *bs = (ByteStream*)h;
+  bs->seek((long)offset, mode);
+  return (toff_t)bs->tell(); 
+}
+
+static int closeproc(thandle_t) { 
+  return 0; 
+}
+
+static toff_t sizeproc(thandle_t h) { 
+  ByteStream *bs = (ByteStream*)h;
+  return (toff_t) bs->size(); 
+}
+
+static int mapproc(thandle_t, tdata_t*, toff_t*) { 
+  return -1; 
+}
+
+static void unmapproc(thandle_t, tdata_t, toff_t) { 
+}
+
+static void
+read_tiff(CCImage &rimg, ByteStream *bs, cjb2opts &opts)
+{
+  TIFF *tiff = TIFFClientOpen("libtiff", "rm", (thandle_t)bs,
+                              readproc, writeproc, seekproc,
+                              closeproc, sizeproc, 
+                              mapproc, unmapproc );
+  // bitonal
+  uint16 bps = 0, spp = 0;
+  TIFFGetFieldDefaulted(tiff, TIFFTAG_BITSPERSAMPLE, &bps);
+  TIFFGetFieldDefaulted(tiff, TIFFTAG_SAMPLESPERPIXEL, &spp);
+  if (bps != 1 || spp != 1)
+    G_THROW("Tiff image is not bitonal");
+  // photometric
+  uint photo = PHOTOMETRIC_MINISWHITE;
+  TIFFGetFieldDefaulted(tiff, TIFFTAG_PHOTOMETRIC, &photo);
+  // image size
+  uint32 w, h;
+  if (!TIFFGetFieldDefaulted(tiff, TIFFTAG_IMAGEWIDTH, &w) ||
+      !TIFFGetFieldDefaulted(tiff, TIFFTAG_IMAGELENGTH, &h) )
+    G_THROW("Tiff image size is not defined");
+  // resolution
+  float xres, yres;
+  if (TIFFGetFieldDefaulted(tiff, TIFFTAG_XRESOLUTION, &xres) &&
+      TIFFGetFieldDefaulted(tiff, TIFFTAG_YRESOLUTION, &yres) ) 
+    {
+      if (xres != yres)
+        DjVuPrintErrorUTF8( "cjb2: X- and Y-resolution do not match\n");
+      if (! opts.forcedpi)
+        opts.dpi = (int) (xres + yres) / 2;
+    }
+  // init rimg
+  rimg.init(w, h, opts.dpi);
+  // allocate scanline
+  tsize_t scanlinesize = TIFFScanlineSize(tiff);
+  scanlinesize = MAX(scanlinesize,1);
+  unsigned char *scanline = 0;
+  GPBuffer<unsigned char> gscanline(scanline, scanlinesize);
+  // iterate on rows
+  for (int y=0; y<(int)h; y++)
+    {
+      int yy = h - y - 1;
+      if (TIFFReadScanline(tiff, (tdata_t)scanline, y) < 0)
+        G_THROW("Tiff file is corrupted (TIFFReadScanline)");
+      if (photo != PHOTOMETRIC_MINISWHITE)
+        for (int i=0; i<(int)scanlinesize; i++)
+          scanline[i] ^= 0xff;
+      int lastx=0, off=0;
+      unsigned char mask=0, c=0, b=0;
+      for (int x=0; x<(int)w; x++)
+        {
+          if (! mask) 
+            {
+              b = scanline[off++];
+              mask = 0x80;
+            }
+          if ( (b ^ c) & mask ) 
+            {
+              c ^= 0xff;
+              if (c)
+                lastx = x;
+              else
+                rimg.add_single_run(yy, lastx, x-1);
+            }
+          mask >>= 1;
+        }
+      if (c)
+        rimg.add_single_run(yy, lastx, w-1);
+    }
+  // close
+  TIFFClose(tiff);
+}
+
+#endif // HAVE_TIFF
+
 
 void 
-cjb2(const GURL &urlin, const GURL &urlout, const cjb2opts &opts)
+cjb2(const GURL &urlin, const GURL &urlout, cjb2opts &opts)
 {
   GP<ByteStream> ibs=ByteStream::create(urlin, "rb");
-  GP<GBitmap> ginput=GBitmap::create(*ibs);
-  if (ginput->get_grays() != 2)
-    G_THROW("Expecting a bitonal PBM file");
+  CCImage rimg;
 
-  // Read input image
-  GBitmap &input=*ginput;
-  CCImage rimg(input.columns(), input.rows(), opts.dpi);
-  rimg.add_bitmap_runs(input);   // fill CCImage
-  input.init(0,0);               // save memory
+#if HAVE_TIFF
+  if (is_tiff(ibs))
+    read_tiff(rimg, ibs, opts);
+  else
+#endif
+    {
+      GP<GBitmap> input=GBitmap::create(*ibs);
+      rimg.init(input->columns(), input->rows(), opts.dpi);
+      rimg.add_bitmap_runs(*input); 
+    }
   if (opts.verbose)
-    DjVuFormatErrorUTF8( "%s\t%d", ERR_MSG("cjb2.runs"), rimg.runs.size() );
+    DjVuFormatErrorUTF8( "%s\t%d", ERR_MSG("cjb2.runs"), 
+                         rimg.runs.size() );
   
   // Component analysis
   rimg.make_ccids_by_analysis(); // obtain ccids
   rimg.make_ccs_from_ccids();    // compute cc descriptors
   if (opts.verbose)
-    DjVuFormatErrorUTF8( "%s\t%d", ERR_MSG("cjb2.ccs_before"), rimg.ccs.size());
+    DjVuFormatErrorUTF8( "%s\t%d", ERR_MSG("cjb2.ccs_before"), 
+                         rimg.ccs.size());
   if (opts.clean) 
     rimg.erase_tiny_ccs();       // clean
   rimg.merge_and_split_ccs();    // reorganize weird ccs
   rimg.sort_in_reading_order();  // sort cc descriptors
   if (opts.verbose)
-    DjVuFormatErrorUTF8( "%s\t%d", ERR_MSG("cjb2.ccs_after"), rimg.ccs.size());
+    DjVuFormatErrorUTF8( "%s\t%d", ERR_MSG("cjb2.ccs_after"), 
+                         rimg.ccs.size());
   
   // Pattern matching
   GP<JB2Image> jimg = rimg.get_jb2image();          // get ``raw'' jb2image
@@ -876,7 +1017,8 @@ cjb2(const GURL &urlin, const GURL &urlout, const cjb2opts &opts)
         if (jimg->get_shape(i).parent >= 0) nrefine++; 
         nshape++; 
       }
-      DjVuFormatErrorUTF8( "%s\t%d\t%d", ERR_MSG("cjb2.shapes"), nshape, nrefine);
+      DjVuFormatErrorUTF8( "%s\t%d\t%d", ERR_MSG("cjb2.shapes"), 
+                           nshape, nrefine);
     }
   
   // Code
@@ -920,13 +1062,14 @@ usage()
          "CJB2 --- DjVuLibre-" DJVULIBRE_VERSION "\n"
 #endif
          "Simple DjVuBitonal encoder\n\n"
-         "Usage: cjb2 [options] <inputpbmfile> <outputdjvufile>\n"
+         "Usage: cjb2 [options] <input-pbm-or-tiff> <output-djvu>\n"
          "Options are:\n"
-         "   -dpi [25-1200] Specify image resolution (default 300).\n"
-         "   -clean         Remove small flyspecs (lossy).\n"
-         "   -loose         Substitute patterns with small variations (lossy).\n"
-         "   -verbose       Displays additional messages.\n"
-         "Encoding is lossless unless one or several lossy options are selected.\n" );
+         "   -dpi <n> Specify image resolution (default 300).\n"
+         "   -clean   Remove small flyspecs (lossy).\n"
+         "   -loose   Substitute patterns with small variations (lossy).\n"
+         "   -verbose Displays additional messages.\n"
+         "Encoding is lossless unless one or several lossy options\n"
+         "are selected.\n" );
   exit(10);
 }
 
@@ -945,6 +1088,7 @@ main(int argc, const char **argv)
       GURL outputdjvuurl;
       cjb2opts opts;
       // Defaults
+      opts.forcedpi = 0;
       opts.dpi = 300;
       opts.substitute_threshold = 0;
       opts.clean = false;
@@ -956,7 +1100,7 @@ main(int argc, const char **argv)
           if (arg == "-dpi" && i+1<argc)
             {
               char *end;
-              opts.dpi = strtol(dargv[++i], &end, 10);
+              opts.dpi = opts.forcedpi = strtol(dargv[++i], &end, 10);
               if (*end || opts.dpi<25 || opts.dpi>1200)
                 usage();
             }

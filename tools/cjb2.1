@@ -24,15 +24,17 @@
 cjb2 \- Simple DjVuBitonal encoder.
 
 .SH SYNOPSIS
-.BI "cjb2  [" "options" "] " "inputpbmfile" " " "outputdjvufile"
+.BI "cjb2  [" "options" "] " "inputfile" " " "outputdjvufile"
 
 .SH DESCRIPTION
 This is a simple encoder for bitonal files.
 Argument 
-.I inputpbmfile
+.I inputfile
 is the name of a 
 .SM PBM
-file containing the black-and-white image of a document.
+or bitonal
+.SM TIFF
+file containing a single document image.
 This program produces a DjVuBitonal file named
 .IR outputdjvufile .
 
@@ -49,7 +51,12 @@ and/or option
 Specify the resolution information encoded into the output file expressed in
 dots per inch. The resolution information encoded in DjVu files determine how
 the decoder scales the image on a particular display.  Meaningful resolutions
-range from 25 to 1200.  The default value is 300 dpi.
+range from 25 to 1200.  The default resolution for 
+.SM TIFF
+files is the resolution is the resolution specified by the input file.
+The default resolution for
+.SM PBM
+files is 300 dpi.
 .TP
 .B "-clean"
 Remove flyspecks from the input image. 

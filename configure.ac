@@ -160,6 +160,11 @@ AC_PATH_JPEG(,
 [ no_jpeg=yes
   AC_MSG_WARN([JPEG support is disabled]) ])
 
+# Search TIFF library
+AC_PATH_TIFF(,
+[ no_tiff=yes
+  AC_MSG_WARN([Tiff support is disabled]) ])
+
 # Search MULTITHREADING library
 AC_PATH_THREADS(,
 [ no_threads=yes
