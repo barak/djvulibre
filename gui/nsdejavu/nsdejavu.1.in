@@ -312,7 +312,6 @@ The DjVu browser plugin is normally installed in directory
 This is sufficient to enable the DjVu browser plugin 
 because Netscape 4 always searches this directory for 
 plugins.
-.PP
 You might have to first remove previous version of the DjVu plugin.  
 Selecting menu 
 .B "Help->About Plugins" 
@@ -341,9 +340,7 @@ but create a symbolic link.  This is necessary
 because 
 .B NSDEJAVUSO 
 first locates its normal installation directory by following the symbolic
-link.  
-
-The Netscape plugin search rules are explained in the
+link.  The Netscape plugin search rules are explained in the
 .B README 
 file that comes with the Netscape distribution.  
 Also check option
@@ -369,9 +366,9 @@ The following commands should do the trick:
 The DjVu plugin works nicely with Mozilla 0.9.5 or better.
 You must establish a link from the Mozilla plugin directory.  
 Assuming that Mozilla is installed under 
-.IR /usr :
+.IR /usr/lib/mozilla-1.1 :
 .IP "" 2
-.BI "cd " "/usr" "/lib/mozilla/plugins"
+.BI "cd " "/usr/lib/mozilla-1.1" "/plugins"
 .br
 .B "ln -s LIBDIR/netscape/plugins/NSDEJAVUSO ."
 .PP
@@ -394,7 +391,6 @@ The DjVu plugin works with
 or better.
 Some problems have been reported with DjVu images
 embedded in web pages.
-.PP
 You must first make sure that 
 .B konqueror
 recognizes the DjVU plugin.
