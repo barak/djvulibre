@@ -93,7 +93,8 @@
     ranging from 16 (very low quality) to 48 (very high quality).  This
     criterion should not be used when recoding an image which was already
     compressed with a lossy compression scheme (such as Wavelets or JPEG)
-    because successive losses of quality accumulate.    \item[-slice n+...+n]
+    because successive losses of quality accumulate.    
+    \item[-slice n+...+n]
     Selects an increasing sequence of data slices expressed as integers 
     ranging from 1 to 140. 
     \end{description}
