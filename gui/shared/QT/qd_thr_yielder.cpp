@@ -84,14 +84,13 @@ private:
    GMap<int, void *>	read_sockets;	// GMap<int, QSocketNotifier *> in fact
    GMap<int, void *>	write_sockets;	// GMap<int, QSocketNotifier *> in fact
    GMap<int, void *>	except_sockets;	// GMap<int, QSocketNotifier *> in fact
-   
-   QTimer	timer;
+   QTimer timer;
 private slots:
-   void		slotTimeout(void);
-   void		slotSocketNotifier(int);
+   void	slotTimeout(void);
+   void	slotSocketNotifier(int);
 public:
-   void		setHooks(bool wait);
-   
+   void setHooks(bool wait);
+
    Helper(QObject * parent=0, const char * name=0);
    ~Helper(void);
 };
@@ -193,6 +192,8 @@ Helper::slotSocketNotifier(int)
 {
    setHooks(GThread::yield()!=0);
 }
+
+#include "qd_thr_yielder_moc.inc"
 
 //*****************************************************************************
 //****************************** QDThrYielder **********************************
