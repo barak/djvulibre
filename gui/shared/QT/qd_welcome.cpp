@@ -93,9 +93,10 @@ QDWelcome::QDWelcome(QWidget * parent, const char * name, bool modal) :
    label=new QLabel(tr("Credit and links"), start, "about_label");
    glay->addWidget(label, 2, 1);
 
-   QHBoxLayout * hlay=new QHBoxLayout(10);
-   glay->addMultiCellLayout(hlay, 3, 3, 0, 1);
-   label=new QLabel(start, "icon");
+   QWidget *message = new QWidget(start);
+   glay->addMultiCellWidget(message, 3, 3, 0, 1);
+   QHBoxLayout * hlay=new QHBoxLayout(message, 0, 10);
+   label=new QLabel(message, "icon");
 #if defined(QT1) || defined(QT2)
    QPixmap iconpm = QMessageBox::standardIcon(QMessageBox::Information,
 					      QApplication::style() );
@@ -106,7 +107,7 @@ QDWelcome::QDWelcome(QWidget * parent, const char * name, bool modal) :
    hlay->addWidget(label,0);
    label=new QLabel(tr("These functions and many others can be\n"
 			"accessed from within a DjVu document\n"
-			"by clicking the right mouse button."), start, "info");
+			"by clicking the right mouse button."), message, "info");
    label->setAlignment(AlignCenter);
    hlay->addWidget(label,1);
 
