@@ -45,7 +45,7 @@ DjVulibre-3.5 contains:
 %setup
 
 %build
-configure --prefix=%{prefix}
+./configure --prefix=%{prefix}
 make
 
 %install
