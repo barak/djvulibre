@@ -115,8 +115,10 @@ AC_DEFUN(AC_CXX_OPTIMIZE,[
      AC_CHECK_CXX_OPT([-Wall],[OPTS="$OPTS -Wall"])
    fi
    case x"$ac_debug" in
+changequote(<<, >>)dnl
      x[0-9])  OPTS="$OPTS -DDEBUGLVL=$ac_debug" ;;
      xr*)   OPTS="$OPTS -DRUNTIME_DEBUG_ONLY" ;;
+changequote([, ])dnl 
    esac
 ])
 
