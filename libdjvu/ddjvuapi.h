@@ -729,9 +729,9 @@ ddjvu_page_set_rotation(ddjvu_page_t *page,
 /* ddjvu_rect_t ---
    This structure specifies the location of a rectangle.
    Coordinates are always expressed in pixels relative to
-   the bottom left corner of an image.  Members <x> and <y>
+   the BOTTOM LEFT CORNER of an image.  Members <x> and <y>
    indicate the position of the bottom left corner of the
-   rectangle.  Members <w> and <h> indicate the width and
+   rectangle Members <w> and <h> indicate the width and
    height of the reactangle. */
 
 typedef struct ddjvu_rect_s {
@@ -740,33 +740,50 @@ typedef struct ddjvu_rect_s {
 } ddjvu_rect_t;
 
 
+/* ddjvu_render_mode_t ---
+   Various ways to render a page. */
+
+typedef enum {
+  DDJVU_RENDER_DEFAULT = 0,     /* color page or stencil */
+  DDJVU_RENDER_COLORONLY,       /* color page */
+  DDJVU_RENDER_BACKGROUND,      /* color background layer */
+  DDJVU_RENDER_FOREGROUND,      /* color foreground layer */
+  DDJVU_RENDER_MASK,            /* stencil */
+} ddjvu_render_mode_t;
+
+
+
 /* ddjvu_page_render --
    Renders a segment of a page with arbitrary scale.
+   Argument <mode> indicates what image layers 
+   should be rendered. 
+
    Conceptually this function renders the full page
    into a rectangle <pagerect> and copies the
    pixels specified by rectangle <renderrect>
    into the buffer starting at position <imagebuffer>.
    The actual code is much more efficient than that.
 
-   Argument <imageformat> indicates the expected pixel
-   format.  Argument <rowsize> indicates the number of bytes
-   from one row to the next.
-   
+   The final image is written into buffer <imagebuffer>.  
+   Argument <pixelformat> specifies the expected pixel format.  
+   Argument <rowsize> specifies the number of BYTES from 
+   one row to the next in the buffer. The buffer must be 
+   large enough to accomodate the desired image.
+
    This function makes a best effort to compute an image
    that reflects the most recently decoded data.  It might
    return <FALSE> to indicate that no image could be
    computed at this point, and that nothing was written into
-   <imagebuffer>.
-*/
+   the buffer. */
 
 DDJVUAPI int
 ddjvu_page_render(ddjvu_page_t *page,
-                  const ddjvu_format_t *imageformat,
+                  const ddjvu_render_mode_t mode,
                   const ddjvu_rect_t *pagerect,
                   const ddjvu_rect_t *renderrect,
-                  char *imagebuffer,
-                  unsigned long rowsize);
-
+                  const ddjvu_format_t *pixelformat,
+                  unsigned long rowsize,
+                  char *imagebuffer );
 
 
 /* -------------------------------------------------- */
@@ -774,66 +791,44 @@ ddjvu_page_render(ddjvu_page_t *page,
 /* -------------------------------------------------- */
 
 
-/* ddjvu_format_create_truecolor ---
-   Creates a <ddjvu_format_t> object describing a true color
-   pixel format.  Argument <pixelsize> indicates the pixel
-   size in bytes and can take values <2>, <3> or <4>.
-   Arguments <redmask>, <greenmask>, and <bluemask> are bit
-   masks indicating the pixel bits for each color component.
-   Argument <toptobottom> is <TRUE> when the image rows
-   must be stored from top to bottom, and <FALSE> when the
-   image rows must be stored from bottom to top. */
+/* ddjvu_format_style_t ---
+   Enumerated type for pixel formats. */
+
+typedef enum {
+  DDJVU_FORMAT_BGR24,           /* truecolor 24 bits in BGR order */
+  DDJVU_FORMAT_RGB24,           /* truecolor 24 bits in RGB order */
+  DDJVU_FORMAT_RGBMASK16,       /* truecolor 16 bits with masks */
+  DDJVU_FORMAT_RGBMASK32,       /* truecolor 32 bits with masks */
+  DDJVU_FORMAT_GREY8,           /* greylevel 8 bits */
+  DDJVU_FORMAT_PALETTE8,        /* paletized 8 bits (6x6x6 color cube) */
+} ddjvu_format_style_t;
+   
+
+/* ddjvu_format_create ---
+   Creates a <ddjvu_format_t> object describing a pixel format.
+   Argument <style> describes the generic pixel format.
+   Argument <args> is an array of <nargs> unsigned ints
+   providing additionnal information:
+   - When style is <RGBMASK*>, argument <nargs> must be <3>
+     and array <args> contains three contiguous bit masks for 
+     the red, green, and blue components of each pixel.
+   - When style is <PALETTE*>, argument <nargs> must ve <216>
+     and array <args> contains the 6*6*6 entries of a web
+     color cube.
+   - Otherwise <nargs> must be <0>. */
 
 DDJVUAPI ddjvu_format_t *
-ddjvu_format_create_truecolor(int pixelsize,
-                              unsigned long redmask,
-                              unsigned long greenmask,
-                              unsigned long bluemask,
-                              int toptobottom);
+ddjvu_format_create(ddjvu_format_style_t style, 
+                    int nargs, unsigned int *args);
 
-/* ddjvu_format_create_palette ---
-   Creates a <ddjvu_format_t> object describing a pixel
-   format based on a web palette. Argument <pixelsize>
-   indicates the pixel size in bytes and can take values
-   <1>, <2> or <4>.  Argument <palette> indicate the pixel
-   values for the 216 colors of a 6x6x6 web color cube.
-   Argument <toptobottom> is <TRUE> when the image rows
-   must be stored from top to bottom, and <FALSE> when the
-   image rows must be stored from bottom to top. */
-DDJVUAPI ddjvu_format_t *
-ddjvu_format_create_palette(int pixelsize,
-                            unsigned long palette[6*6*6],
-                            int toptobottom);
+/* ddjvu_format_set_top_to_bottom ---
+   Sets a flag indicating whether the rows in the pixel buffer
+   are stored starting from the top or the bottom of the image.
+   Default ordering start from the bottom of the image.
+   This is the opposite of X11 for instance. */
 
-
-/* ddjvu_format_create_graylevel ---
-   Creates a <ddjvu_format_t> object describing a gray level
-   pixel format. Argument <pixelsize> indicates the pixel
-   size in bytes and must be <1>. Arguments <pixelwhite> and
-   <pixelblack> give the pixel values for the pure white and
-   pure black colors.  Argument <toptobottom> is <TRUE>
-   when the image rows must be stored from top to bottom,
-   and <FALSE> when the image rows must be stored from
-   bottom to top. */
-DDJVUAPI ddjvu_format_t *
-ddjvu_format_create_graylevel(int pixelsize,
-                              int pixelwhite,
-                              int pixelblack,
-                              int toptobottom);
-
-
-/* ddjvu_format_create_bitonal ---
-   Creates a <ddjvu_format_t> object describing a bit packed
-   black&white pixel format. Argument <lsbtomsb> indicates
-   the pixel packing order.  Argument <toptobottom> is 
-   <TRUE> when the image rows must be stored from top 
-   to bottom, and <FALSE> when the image rows must 
-   be stored from bottom to top. */
-
-DDJVUAPI ddjvu_format_t *
-ddjvu_format_create_bitonal(int lsbtomsb,
-                            int toptobottom);
-
+DDJVUAPI void
+ddjvu_format_set_row_order(ddjvu_format_t *format, int top_to_bottom);
 
 /* ddjvu_format_set_gamma ---
    Sets the gamma of the display for which the pixels are
@@ -842,8 +837,7 @@ ddjvu_format_create_bitonal(int lsbtomsb,
    correction.  The default value is 2.2. */
 
 DDJVUAPI void
-ddjvu_format_set_gamma(ddjvu_format_t *format,
-                       double gamma);
+ddjvu_format_set_gamma(ddjvu_format_t *format, double gamma);
 
 
 /* ddjvu_format_release ---

@@ -19214,7 +19214,8 @@ done
 
 
 
-for ac_header in sys/ipc.h sys/shm.h
+
+for ac_header in stdint.h sys/ipc.h sys/shm.h
 do
 as_ac_Header=`echo "ac_cv_header_$ac_header" | $as_tr_sh`
 if eval "test \"\${$as_ac_Header+set}\" = set"; then

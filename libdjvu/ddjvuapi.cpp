@@ -64,6 +64,20 @@
 #include <stdlib.h>
 #include <string.h>
 
+#ifdef HAVE_NAMESPACES
+namespace DJVU {
+  struct ddjvu_context_s;
+  struct ddjvu_document_s;
+  struct ddjvu_page_s;
+  struct ddjvu_format_s;
+  struct ddjvu_message_p;
+}
+using namespace DJVU;
+# define DJVUNS DJVU::
+#else
+# define DJVUNS /**/
+#endif
+
 #include "ddjvuapi.h"
 
 #include "GException.h"
@@ -81,10 +95,18 @@
 #include "DjVuDocument.h"
 #include "DjVuMessageLite.h"
 
+#if HAVE_STDINT_H
+# include <stdint.h>
+#else
+typedef unsigned short uint16_t
+typedef unsigned int uint32_t
+#endif
+
 
 // ----------------------------------------
 
-struct ddjvu_message_p : public GPEnabled
+
+struct DJVUNS ddjvu_message_p : public GPEnabled
 {
   GNativeString tmp1;
   GNativeString tmp2;
@@ -96,7 +118,7 @@ struct ddjvu_message_p : public GPEnabled
 // ----------------------------------------
 
 
-struct ddjvu_context_s : public GPEnabled
+struct DJVUNS ddjvu_context_s : public GPEnabled
 {
   GMonitor monitor;
   GP<DjVuFileCache> cache;
@@ -104,7 +126,7 @@ struct ddjvu_context_s : public GPEnabled
   ddjvu_message_callback_t callback;
 };
 
-struct ddjvu_document_s : public DjVuPort
+struct DJVUNS ddjvu_document_s : public DjVuPort
 {
   GP<ddjvu_context_s> myctx;
   GP<DjVuDocument> doc;
@@ -123,7 +145,7 @@ struct ddjvu_document_s : public DjVuPort
   virtual GP<DataPool> request_data(const DjVuPort*, const GURL&);
 };
 
-struct ddjvu_page_s : public DjVuPort
+struct DJVUNS ddjvu_page_s : public DjVuPort
 {
   GP<ddjvu_document_s> mydoc;
   GP<DjVuImage> img;
@@ -144,7 +166,8 @@ struct ddjvu_page_s : public DjVuPort
 
 
 // Hack to increment counter
-static void ref(GPEnabled *p)
+static void 
+ref(GPEnabled *p)
 {
   GPBase n(p);
   char *gn = (char*)&n;
@@ -153,7 +176,8 @@ static void ref(GPEnabled *p)
 }
 
 // Hack to decrement counter
-static void unref(GPEnabled *p)
+static void 
+unref(GPEnabled *p)
 {
   GPBase n;
   char *gn = (char*)&n;
@@ -162,7 +186,8 @@ static void unref(GPEnabled *p)
 }
 
 // Allocate strings
-static char *xstr(const char *s)
+static char *
+xstr(const char *s)
 {
   int l = strlen(s);
   char *p = (char*)malloc(l + 1);
@@ -173,11 +198,17 @@ static char *xstr(const char *s)
     }
   return p;
 }
-static char *xstr(const GNativeString &n)
+
+// Allocate strings
+static char *
+xstr(const GNativeString &n)
 {
   return xstr( (const char*) n );
 }
-static char *xstr(const GUTF8String &u)
+
+// Allocate strings
+static char *
+xstr(const GUTF8String &u)
 {
   GNativeString n(u);
   return xstr( n );
@@ -264,7 +295,7 @@ msg_remove(ddjvu_context_t *ctx,
            ddjvu_message_tag_t tag,
            ddjvu_page_t *pag)
 {
-  ctx->monitor.enter();
+  GMonitorLock(&ctx->monitor);
   GPosition p = ctx->mlist;
   while (p)
     {
@@ -276,7 +307,6 @@ msg_remove(ddjvu_context_t *ctx,
         }
       ++p;
     }
-  ctx->monitor.leave();
 }
 
 // post a new message
@@ -287,12 +317,15 @@ msg_push(const ddjvu_message_any_t &head,
   ddjvu_context_t *ctx = head.context;
   if (! msg) msg = new ddjvu_message_p;
   msg->p.m_any = head;
-  ctx->monitor.enter();
-  ctx->mlist.append(msg);
-  ctx->monitor.broadcast();
-  ctx->monitor.leave();
-  if (ctx->callback)
-    (ctx->callback)(ctx, ctx->mlist.size());
+  int size = 0;
+  {
+    GMonitorLock lock(&ctx->monitor);
+    ctx->mlist.append(msg);
+    ctx->monitor.broadcast();
+    size = ctx->mlist.size();
+  }
+  if (ctx->callback) 
+    (ctx->callback)(ctx, size);
 }
 
 static void
@@ -548,18 +581,14 @@ ddjvu_document_s::request_data(const DjVuPort*p, const GURL &url)
   GP<DataPool> pool;
   if (doc && !fileflag)
     {
-      monitor.enter();
-      if (streamid < 0)
-        {
-          streamid = 0;
-          pool = streams[streamid];
-        }
-      else
-        {
-          streamid += 1;
-          pool = streams[streamid] = DataPool::create();
-        }
-      monitor.leave();
+      streamid += 1;
+      {
+        GMonitorLock lock(&monitor);        
+        if (streamid > 0)
+          streams[streamid] = pool = DataPool::create();
+        else
+          pool = streams[(streamid = 0)];
+      }
       // build message
       GP<ddjvu_message_p> p = new ddjvu_message_p;
       p->p.m_newstream.streamid = streamid;
@@ -702,9 +731,11 @@ ddjvu_stream_write(ddjvu_document_t *doc,
     {
       GPosition p = doc->streams.contains(streamid);
       if (!p) G_THROW("Unknown stream ID");
-      doc->monitor.enter();
-      GP<DataPool> pool = doc->streams[p];
-      doc->monitor.leave();
+      GP<DataPool> pool;
+      { 
+        GMonitorLock lock(&doc->monitor); 
+        pool = doc->streams[p];
+      }
       pool->add_data(data, datalen);
     }
   G_CATCH(ex)
@@ -723,9 +754,11 @@ ddjvu_stream_close(ddjvu_document_t *doc,
     {
       GPosition p = doc->streams.contains(streamid);
       if (!p) G_THROW("Unknown stream ID");
-      doc->monitor.enter();
-      GP<DataPool> pool = doc->streams[p];
-      doc->monitor.leave();
+      GP<DataPool> pool;
+      { 
+        GMonitorLock lock(&doc->monitor); 
+        pool = doc->streams[p];
+      }
       if (stop)
         pool->stop();
       else
@@ -1202,108 +1235,88 @@ ddjvu_page_set_rotation(ddjvu_page_t *page,
 // ----------------------------------------
 
 
-struct ddjvu_format_s
+struct DJVUNS ddjvu_format_s
 {
-  int rdata[256];
-  int gdata[256];
-  int bdata[256];
-  int palette[6*6*6];
-  int pixelsize;
+  ddjvu_format_style_t style;
+  uint32_t rgb[3][256];
+  uint32_t palette[6*6*6];
   bool toptobottom;
-  bool haspalette;
-  bool lsbtomsb;
-  bool msbtolsb;
   double gamma;
-  ddjvu_format_s() { 
-    memset(this, 0, sizeof(ddjvu_format_s)); 
-    gamma=2.2; 
-  }
 };
 
-ddjvu_format_t *
-ddjvu_format_create_truecolor(int pixelsize,
-                              unsigned long rmask,
-                              unsigned long gmask,
-                              unsigned long bmask,
-                              int toptobottom)
+static ddjvu_format_t *
+fmt_error(ddjvu_format_t *fmt)
 {
-  ddjvu_format_t *fmt = new ddjvu_format_s;
-  fmt->pixelsize = pixelsize;
-  fmt->toptobottom = !!toptobottom;
-  fmt->haspalette = false;
-  fmt->msbtolsb = false;
-  fmt->lsbtomsb = false;
-  for (int i=0; i<255; i++)
-    {
-      fmt->rdata[i] = rmask & (int)(( rmask * i + 127.0 ) / 255.0);
-      fmt->gdata[i] = gmask & (int)(( gmask * i + 127.0 ) / 255.0);
-      fmt->bdata[i] = bmask & (int)(( bmask * i + 127.0 ) / 255.0);
-    }
-  return fmt;
+  delete fmt;
+  return 0;
 }
 
 ddjvu_format_t *
-ddjvu_format_create_palette(int pixelsize,
-                            unsigned long palette[6*6*6],
-                            int toptobottom)
+ddjvu_format_create(ddjvu_format_style_t style,
+                    int nargs, unsigned int *args)
 {
   ddjvu_format_t *fmt = new ddjvu_format_s;
-  fmt->pixelsize = pixelsize;
-  fmt->toptobottom = !!toptobottom;
-  fmt->haspalette = true;
-  fmt->msbtolsb = false;
-  fmt->lsbtomsb = false;
-  for(int i=0; i<6; i++)
-    for(int j=0; j<(i+1)*0x33 && j<256; j++)
+  memset(fmt, 0, sizeof(ddjvu_format_t));
+  fmt->style = style;
+  fmt->toptobottom = false;
+  fmt->gamma = 2.2;
+  // Misc
+  switch(style)
+    {
+    case DDJVU_FORMAT_RGBMASK16:
+    case DDJVU_FORMAT_RGBMASK32: 
       {
-        fmt->rdata[j] = i * 6 * 6;
-        fmt->gdata[j] = i * 6;
-        fmt->bdata[j] = i;
+        if (sizeof(uint16_t)!=2 || sizeof(uint32_t)!=4)
+          return fmt_error(fmt);
+        if (nargs!=3 || !args)
+          return fmt_error(fmt);
+        for (int j=0; j<3; j++)
+          {
+            int shift = 0;
+            uint32_t mask = args[j];
+            for (shift=0; shift<32 && !(mask & 1); shift++)
+              mask >>= 1;
+            if ((shift>=32) || (mask&(mask+1)))
+              return fmt_error(fmt);
+            for (int i=0; i<256; i++)
+              fmt->rgb[j][i] = (mask & ((int)((i*mask+127.0)/255.0)))<<shift;
+          }
+        break;
+      }
+    case DDJVU_FORMAT_PALETTE8:
+      {
+        if (nargs!=6*6*6 || !args)
+          return fmt_error(fmt);
+        for (int k=0; k<6*6*6; k++)
+          fmt->palette[k] = args[k];
+        for(int i=0; i<6; i++)
+          for(int j=0; j<(i+1)*0x33 && j<256; j++)
+            {
+              fmt->rgb[0][j] = i * 6 * 6;
+              fmt->rgb[1][j] = i * 6;
+              fmt->rgb[2][j] = i;
+            }
+        break;
+      }
+    case DDJVU_FORMAT_RGB24:
+    case DDJVU_FORMAT_BGR24:
+    case DDJVU_FORMAT_GREY8:
+      if (! nargs) 
+        break;
+    default:
+      return fmt_error(fmt);
     }
-  for (int k=0; k<6*6*6; k++)
-    fmt->palette[k] = palette[k];
   return fmt;
-}
-
-ddjvu_format_t *
-ddjvu_format_create_graylevel(int pixelsize,
-                              int pixelwhite,
-                              int pixelblack,
-                              int toptobottom)
-{
-  ddjvu_format_t *fmt = new ddjvu_format_s;
-  fmt->pixelsize = pixelsize;
-  fmt->toptobottom = !!toptobottom;
-  fmt->haspalette = false;
-  fmt->msbtolsb = false;
-  fmt->lsbtomsb = false;
-  int r = pixelwhite - pixelblack;
-  for (int i=0; i<255; i++)
-    {
-      int g = pixelblack + (int)((r * i + 127.0) /  255.0);
-      fmt->rdata[i] = 5 * g / 16;
-      fmt->gdata[i] = 9 * g / 16;
-      fmt->bdata[i] = g - fmt->rdata[i] - fmt->gdata[i];
-    }
-  return 0;
-}
-
-ddjvu_format_t *
-ddjvu_format_create_bitonal(int lsbtomsb,
-                            int toptobottom)
-{
-  ddjvu_format_t *fmt = new ddjvu_format_s;
-  fmt->pixelsize = 0;
-  fmt->toptobottom = !!toptobottom;
-  fmt->haspalette = false;
-  fmt->msbtolsb = !lsbtomsb;
-  fmt->lsbtomsb = !!lsbtomsb;
-  return 0;
 }
 
 void
-ddjvu_format_set_gamma(ddjvu_format_t *format,
-                       double gamma)
+ddjvu_format_set_row_order(ddjvu_format_t *format, int top_to_bottom)
+{
+  format->toptobottom = !! top_to_bottom;
+}
+
+void
+ddjvu_format_set_gamma(ddjvu_format_t *format, double gamma)
 {
   if (gamma>=0.5 && gamma<=5.0)
     format->gamma = gamma;
@@ -1315,18 +1328,249 @@ ddjvu_format_release(ddjvu_format_t *format)
   delete format;
 }
 
+static void
+fmt_convert_row(const GPixel *p, int w, 
+                const ddjvu_format_t *fmt, char *buf)
+{
+  const uint32_t (*r)[256] = fmt->rgb;
+  switch(fmt->style)
+    {
+    case DDJVU_FORMAT_BGR24:    /* truecolor 24 bits in BGR order */
+      {
+        memcpy(buf, (const char*)p, 3*w);
+        break;
+      }
+    case DDJVU_FORMAT_RGB24:    /* truecolor 24 bits in RGB order */
+      { 
+        while (--w >= 0) { 
+          buf[0]=p->r; buf[1]=p->g; buf[2]=p->b; 
+          buf+=3; p+=1; 
+        }
+        break;
+      }
+    case DDJVU_FORMAT_RGBMASK16: /* truecolor 16 bits with masks */
+      {
+        uint16_t *b = (uint16_t*)buf;
+        while (--w >= 0) {
+          b[0]=(r[0][p->b]+r[1][p->b]+r[2][p->b]); 
+          b+=1; p+=1; 
+        }
+        break;
+      }
+    case DDJVU_FORMAT_RGBMASK32: /* truecolor 32 bits with masks */
+      {
+        uint32_t *b = (uint32_t*)buf;
+        while (--w >= 0) {
+          b[0]=(r[0][p->b]+r[1][p->b]+r[2][p->b]); 
+          b+=1; p+=1; 
+        }
+        break;
+      }
+    case DDJVU_FORMAT_GREY8:    /* greylevel 8 bits */
+      {
+        while (--w >= 0) { 
+          buf[0]=(5*p->b + 9*p->g + 2*p->b)>>4; 
+          buf+=1; p+=1; 
+        }
+        break;
+      }
+    case DDJVU_FORMAT_PALETTE8: /* paletized 8 bits (6x6x6 color cube) */
+      {
+        const uint32_t *u = fmt->palette;
+        while (--w >= 0) {
+          buf[0] = u[r[0][p->b]+r[1][p->b]+r[2][p->b]]; 
+          buf+=1; p+=1; 
+        }
+        break;
+      }
+    }
+}
+
+static void
+fmt_convert(GPixmap *pm, const ddjvu_format_t *fmt, char *buffer, int rowsize)
+{
+  int w = pm->columns();
+  int h = pm->rows();
+  // Loop on rows
+  if (fmt->toptobottom)
+    {
+      for(int r=h-1; r>=0; r--, buffer+=rowsize)
+        fmt_convert_row((*pm)[r], w, fmt, buffer);
+    }
+  else
+    {
+      for(int r=0; r<h; r++, buffer+=rowsize)
+        fmt_convert_row((*pm)[r], w, fmt, buffer);
+    }
+}
+
+static void
+fmt_convert_row(unsigned char *p, unsigned char *g, int w, 
+                const ddjvu_format_t *fmt, char *buf)
+{
+  const uint32_t (*r)[256] = fmt->rgb;
+  switch(fmt->style)
+    {
+    case DDJVU_FORMAT_BGR24:    /* truecolor 24 bits in BGR order */
+    case DDJVU_FORMAT_RGB24:    /* truecolor 24 bits in RGB order */
+      { 
+        while (--w >= 0) { 
+          buf[0]=buf[1]=buf[2]=g[*p];
+          buf+=3; p+=1; 
+        }
+        break;
+      }
+    case DDJVU_FORMAT_RGBMASK16: /* truecolor 16 bits with masks */
+      {
+        uint16_t *b = (uint16_t*)buf;
+        while (--w >= 0) {
+          unsigned char x = g[*p];
+          b[0]=(r[0][x]+r[1][x]+r[2][x]); 
+          b+=1; p+=1; 
+        }
+        break;
+      }
+    case DDJVU_FORMAT_RGBMASK32: /* truecolor 32 bits with masks */
+      {
+        uint32_t *b = (uint32_t*)buf;
+        while (--w >= 0) {
+          unsigned char x = g[*p];
+          b[0]=(r[0][x]+r[1][x]+r[2][x]); 
+          b+=1; p+=1; 
+        }
+        break;
+      }
+    case DDJVU_FORMAT_GREY8:    /* greylevel 8 bits */
+      {
+        while (--w >= 0) { 
+          buf[0]=g[*p];
+          buf+=1; p+=1; 
+        }
+        break;
+      }
+    case DDJVU_FORMAT_PALETTE8: /* paletized 8 bits (6x6x6 color cube) */
+      {
+        const uint32_t *u = fmt->palette;
+        while (--w >= 0) {
+          buf[0] = u[g[*p]*(1+6+36)];
+          buf+=1; p+=1; 
+        }
+        break;
+      }
+    }
+}
+
+static void
+fmt_convert(GBitmap *bm, const ddjvu_format_t *fmt, char *buffer, int rowsize)
+{
+  int w = bm->columns();
+  int h = bm->rows();
+  int m = bm->get_grays();
+  // Gray levels
+  int i;
+  unsigned char g[256];
+  for (i=0; i<m; i++)
+    g[i] = 255 - ( i * 255 + (m - 1)/2 ) / (m - 1);
+  for (i=m; i<256; i++)
+    g[i] = 0;
+  // Loop on rows
+  if (fmt->toptobottom)
+    {
+      for(int r=h-1; r>=0; r--, buffer+=rowsize)
+        fmt_convert_row((*bm)[r], g, w, fmt, buffer);
+    }
+  else
+    {
+      for(int r=0; r<h; r++, buffer+=rowsize)
+        fmt_convert_row((*bm)[r], g, w, fmt, buffer);
+    }
+}
+
+static void
+fmt_dither(GPixmap *pm, const ddjvu_format_t *fmt, int x, int y)
+{
+  switch (fmt->style)
+    {
+    case DDJVU_FORMAT_RGBMASK16:
+      pm->ordered_32k_dither(x, y);
+      break;
+    case DDJVU_FORMAT_PALETTE8:
+      pm->ordered_666_dither(x, y);
+      break;
+    default:
+      break;
+    }
+}
+
 
 // ----------------------------------------
 
+static void
+rect2rect(const ddjvu_rect_t *r, GRect &g)
+{
+  g.xmin = r->x;
+  g.xmax = g.xmin + r->w;
+  g.ymin = r->x;
+  g.ymax = g.ymin + r->h;
+}
 
 int
 ddjvu_page_render(ddjvu_page_t *page,
-                  const ddjvu_format_t *fmt,
-                  const ddjvu_rect_t *prect,
-                  const ddjvu_rect_t *rrect,
-                  char *img,
-                  unsigned long rowsize)
+                  const ddjvu_render_mode_t mode,
+                  const ddjvu_rect_t *pagerect,
+                  const ddjvu_rect_t *renderrect,
+                  const ddjvu_format_t *pixelformat,
+                  unsigned long rowsize,
+                  char *imagebuffer )
 {
+  G_TRY
+    {
+      GP<GPixmap> pm;
+      GP<GBitmap> bm;
+      GRect prect;
+      GRect rrect;
+      rect2rect(pagerect, prect);
+      rect2rect(renderrect, rrect);
+      DjVuImage *img = page->img;
+      if (img) 
+        {
+          switch (mode)
+            {
+            case DDJVU_RENDER_DEFAULT:
+              pm = img->get_pixmap(rrect, prect, pixelformat->gamma);
+              if (! pm) bm = img->get_bitmap(rrect, prect);
+              break;
+            case DDJVU_RENDER_COLORONLY:
+              pm = img->get_pixmap(rrect, prect, pixelformat->gamma);
+              break;
+            case DDJVU_RENDER_BACKGROUND:
+              pm = img->get_bg_pixmap(rrect, prect, pixelformat->gamma);
+              break;
+            case DDJVU_RENDER_FOREGROUND:
+              pm = img->get_fg_pixmap(rrect, prect, pixelformat->gamma);
+              break;
+            case DDJVU_RENDER_MASK:
+              bm = img->get_bitmap(rrect, prect);
+              break;
+            }
+        }
+      if (pm)
+        {
+          fmt_dither(pm, pixelformat, rrect.xmin, rrect.ymin);
+          fmt_convert(pm, pixelformat, imagebuffer, rowsize);
+          return 2;
+        }
+      else if (bm)
+        {
+          fmt_convert(bm, pixelformat, imagebuffer, rowsize);
+          return 1;
+        }
+    }
+  G_CATCH(ex)
+    {
+      ERROR(page, ex);
+    }
+  G_ENDCATCH;
   return 0;
 }
 
