@@ -3,7 +3,7 @@ NEW IN VERSION 3.5.3
 --------------------
 - Support for QT2 and QT3
 - Removed lots of QT1 specific hacks.
-- ...
+- Added command djvups.
 
 
 NEW IN VERSION 3.5.2
