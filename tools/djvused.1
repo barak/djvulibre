@@ -639,8 +639,15 @@ The destination string
 can be an arbitrary
 .SM URL
 or can be composed of the hash character ("#")
-followed by either a page number or a component file 
-identifier.
+followed by either a component file identifier
+or a page number.  Page numbers may be prefixed
+with an optional sign to represent a page displacement.  
+For instance the strings
+.B """#-1""" 
+and 
+.B """#+1"""
+can be used to access the previous page and 
+the next page.
 
 Argument 
 .I comment 
