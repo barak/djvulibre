@@ -90,7 +90,9 @@
 #endif
 
 #if !HAS_MBSTATE
+#ifndef HAVE_MBSTATE_T
 typedef int mbstate_t;
+#endif
 #endif
 
 // Internal string representation.

@@ -89,7 +89,7 @@ ${LIBDJVU_A} : ${OBJS} ${LIBDJVU_RPO}
 
 @RPO_YES@${LIBDJVU_RPO} : ${OBJS}
 @RPO_YES@	@echo "[ forcing repository closure ... ]"
-@RPO_YES@	-${CXX} -o $@ ${CXXRPOFLAGS} ${OBJS} ${LIBS}
+@RPO_YES@	-${CXX} -o $@ ${CXXFLAGS} ${OBJS} ${LIBS}
 @RPO_YES@	${TOUCH} $@
 
 @SHARED_YES@${LIBDJVU_SO} : ${OBJS}
