@@ -66,7 +66,7 @@ rm -rf $RPM_BUILD_ROOT
 
 %files
 %defattr(-, root, root)
-%doc README COPYRIGHT COPYING INSTALL TODO
+%doc README COPYRIGHT COPYING INSTALL NEWS TODO
 %doc doc/*
 %{prefix}/bin
 %{prefix}/lib
