@@ -112,18 +112,6 @@ AC_CXX_NAMESPACES
 AC_CXX_MEMBER_TEMPLATES
 AC_CXX_RPO
 
-dnl saved_CC="$CC"
-dnl CC="$CXX"
-dnl AC_LANG_PUSH(C)
-dnl AC_DISABLE_STATIC
-dnl AC_PROG_LIBTOOL
-dnl AC_LANG_POP(C)
-dnl CC="$saved_CC"
-dnl
-dnl This release does not use libtool because
-dnl - libtool documentation suggest that it is 
-dnl   not ready for general use with C++.
-
 # ----------------------------------------
 # Libraries
 # ----------------------------------------
