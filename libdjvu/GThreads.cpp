@@ -764,6 +764,8 @@ GThread::current()
 GMonitor::GMonitor()
   : ok(0), count(1), locker(0)
 {
+  memset(&mutex, 0, sizeof(mutex));
+  memset(&cond, 0, sizeof(cond));
   pthread_mutex_init(&mutex, pthread_mutexattr_default);
   pthread_cond_init(&cond, pthread_condattr_default); 
   locker = pthread_self();

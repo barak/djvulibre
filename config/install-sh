@@ -224,6 +224,7 @@ else
 	dsttmp=$dstdir/#inst.$$#
         if [ -r "$src.exe" ] ; then
           dsttmp=$dsttmp.exe
+          dstfile=$dstfile.exe
         fi
 
 # Move or copy the file name to the temp name
