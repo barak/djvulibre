@@ -284,26 +284,36 @@ The DjVu plugin then works okay.
 
 
 
-4- PORTABILITY NOTES
-====================
+4- PORTING NOTES
+================
 
 
 4.1- GNU/LINUX
 --------------
-Simply typing "configure ; make" should work on most recent distributions.
+Simply typing "configure ; make" should work on 
+most recent distributions.
 
 
 4.2- SGI IRIX 6.5
 -----------------
 
-Download gcc-3.0.2 and apply the thread patch
+Successful compilation using qt-2.3.0.  
+Compilation was made with gcc-3.0.2 with the thread patch discussed at
 <http://gcc.gnu.org/ml/gcc-patches/2001-08/msg00072.html>.
+The configure command line was:
+  $ configure --enable-rpo \
+        --with-qt=/home/leonb/djvulibre-3.5/BUILDI/qt-2.3.0 \
+        --with-jpeg=/home/leonb/djvulibre-3.5/BUILDI/libjpeg
 
 
+4.3- SUN SPARC SOLARIS 5.6
+--------------------------
 
+Successful compilation using qt-2.3.0.  
+Compilation was made with gcc-3.0.2 with option -fpermissive.
+The configure command line was:
+  $ configure --enable-rpo \
+        --with-qt=/home/leonb/djvulibre-3.5/BUILDS/qt-2.3.0 \
+        --with-jpeg=/home/leonb/djvulibre-3.5/BUILDS/libjpeg \
+        CXX='g++ -fpermissive'
 
-
-
-
-
-To be detailed.
