@@ -552,8 +552,11 @@ AC_DEFUN([AC_PATH_QT],
     else
        ac_has_qt=no    # check QTDIR
        ac_qt_dirs="/usr/lib/qt /usr/local /usr/X11R6 /usr"
+       for n in /usr/lib/qt-3.* ; do test -d $n && ac_qt_dirs="$n $ac_qt_dirs" ; done
+       test -d /usr/lib/qt3 && ac_qt_dirs="/usr/lib/qt3 $ac_qt_dirs"
        for n in /usr/lib/qt-2.* ; do test -d $n && ac_qt_dirs="$n $ac_qt_dirs" ; done
-       ac_qt_dirs="$QTDIR /usr/lib/qt2 $ac_qt_dirs"
+       test -d /usr/lib/qt2 && ac_qt_dirs="/usr/lib/qt2 $ac_qt_dirs"
+       test -d "$QTDIR" && ac_qt_dirs="$QTDIR $ac_qt2_dirs"
        for dir in $ac_qt_dirs ; do
           if test -r $dir/include/qwidget.h ; then
             ac_has_qt="$dir/include+$dir/lib"
@@ -564,7 +567,7 @@ AC_DEFUN([AC_PATH_QT],
     fi
     # Unusual install
     if test "x$ac_has_qt" = xno ; then
-      ac_qt_names="qt qt2"
+      ac_qt_names="qt qt2 qt3"
       ac_qt_dirs="$QTDIR /usr /usr/X11R6 /usr/local"
       for d in $ac_qt_dirs ; do
         for n in $ac_qt_names ; do
@@ -589,8 +592,8 @@ AC_DEFUN([AC_PATH_QT],
   if test "x$ac_has_qt" != xno ; then
     test x${QT_CFLAGS+set} != xset && QT_CFLAGS="-I$QTDIR/include"
     test x${QT_LIBS+set} != xset && QT_LIBS="-L$QTDIR/lib -lqt"
-    AC_PATH_PROGS(MOC, [moc moc2], [unknown], "$QTDIR/bin:$PATH")
-    AC_PATH_PROGS(UIC, [uic uic2], [unknown], "$QTDIR/bin:$PATH")
+    AC_PATH_PROGS(MOC, [moc moc2 moc3], [unknown], "$QTDIR/bin:$PATH")
+    AC_PATH_PROGS(UIC, [uic uic2 uic3], [unknown], "$QTDIR/bin:$PATH")
     if test -x "$MOC" ; then : ; else 
         AC_MSG_WARN([Cannot run the Qt Meta-Object compiler.])
         ac_has_qt=no
