@@ -155,9 +155,9 @@
 <MESSAGE name="ddjvu.syntax" number="17721"
   value="[1-%0!05u!] Syntax error in geometry specification." />
 <MESSAGE name="cjb2.ccs_after" number="17800"
-  value="cjb2: %1!d! ccs after preprocessing." />
+  value="cjb2: %1!d! ccs after merging/splitting." />
 <MESSAGE name="cjb2.ccs_before" number="17801"
-  value="cjb2: %1!d! ccs after  merging/splitting." />
+  value="cjb2: %1!d! ccs after preprocessing." />
 <MESSAGE name="cjb2.runs" number="17802"
   value="cjb2: %1!d! runs." />
 <MESSAGE name="cjb2.shapes" number="17803"
