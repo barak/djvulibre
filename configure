@@ -3408,7 +3408,7 @@ EOF
 
 fi
 
-for ac_header in wchar.h sys/mman.h dlfcn.h iconv.h
+for ac_header in wchar.h wctype.h sys/mman.h dlfcn.h iconv.h
 do
 as_ac_Header=`echo "ac_cv_header_$ac_header" | $as_tr_sh`
 echo "$as_me:3414: checking for $ac_header" >&5
@@ -4384,7 +4384,7 @@ EOF
 
 fi
 
-for ac_func in wcrtomb strerror vsnprintf
+for ac_func in wcrtomb iswspace strerror vsnprintf
 do
 as_ac_var=`echo "ac_cv_func_$ac_func" | $as_tr_sh`
 echo "$as_me:4390: checking for $ac_func" >&5
@@ -6124,12 +6124,12 @@ if test "${with_qt+set}" = set; then
   withval="$with_qt"
    test x$withval != xyes && QTDIR=$withval
 fi;
-  test x$no_x = yes && QTDIR=no
+  test x$no_x = xyes && QTDIR=no
   # Resolve variables
   if test x$QTDIR != xno ; then
     echo "$as_me:6130: checking for Qt root directory" >&5
 echo $ECHO_N "checking for Qt root directory... $ECHO_C" >&6
-    if test $x{QT_CFLAGS+set} != xset -a $x{QT_LIBS+set} != xset ; then
+    if test x${QT_CFLAGS+set} != xset -a x${QT_LIBS+set} != xset ; then
        ac_qt_dirs="/usr/lib/qt /usr/local /usr/X11R6 /usr"
        for n in /usr/lib/qt-2.* ; do test -d $n && ac_qt_dirs="$n $ac_qt_dirs" ; done
        ac_qt_dirs="$QTDIR /usr/lib/qt2 $ac_qt_dirs"
@@ -6146,8 +6146,8 @@ echo "${ECHO_T}$QTDIR" >&6
   fi
   # Programs
   if test x$QTDIR != xno ; then
-    test x{$QT_CFLAGS+set} != set && QT_CFLAGS="-I$QTDIR/include"
-    test x{$QT_LIBS+set} != set && QT_LIBS="-L$QTDIR/lib -lqt"
+    test x${QT_CFLAGS+set} != xset && QT_CFLAGS="-I$QTDIR/include"
+    test x${QT_LIBS+set} != xset && QT_LIBS="-L$QTDIR/lib -lqt"
     # Extract the first word of "moc", so it can be a program name with args.
 set dummy moc; ac_word=$2
 echo "$as_me:6153: checking for $ac_word" >&5
@@ -6477,15 +6477,14 @@ fi
 
 # Rules for building the netscape plugin.
 NSDEJAVU='nsdejavu.so'
-NSDEJAVU_FLAGS='-fpic -DPIC'
-NSDEJAVU_LIBS="-lXt -lX11"
-test -n "$x_libraries" && NSDEJAVU_LIBS="-L$x_libraries $NSDEJAVU_LIBS"
+NSDEJAVU_FLAGS="-fpic -DPIC $X_CFLAGS"
+NSDEJAVU_LIBS="$X_LIBS"
 NSDEJAVU_LINK='${CC} -shared -o ${NSDEJAVU} ${CFLAGS} -shared ${OBJS} ${LIBS}'
 case ${host_os} in
   hpux*) NSDEJAVU="nsdejavu.sl" ;;
 esac
 if test x${GXX} != xyes ; then
-    { echo "$as_me:6488: WARNING: Please verify that gui/nsdejavu/Makefile works with this compiler." >&5
+    { echo "$as_me:6487: WARNING: Please verify that gui/nsdejavu/Makefile works with this compiler." >&5
 echo "$as_me: WARNING: Please verify that gui/nsdejavu/Makefile works with this compiler." >&2;}
 fi
 
@@ -6632,7 +6631,7 @@ DEFS=-DHAVE_CONFIG_H
 : ${CONFIG_STATUS=./config.status}
 ac_clean_files_save=$ac_clean_files
 ac_clean_files="$ac_clean_files $CONFIG_STATUS"
-{ echo "$as_me:6635: creating $CONFIG_STATUS" >&5
+{ echo "$as_me:6634: creating $CONFIG_STATUS" >&5
 echo "$as_me: creating $CONFIG_STATUS" >&6;}
 cat >$CONFIG_STATUS <<_ACEOF
 #! $SHELL
@@ -6804,7 +6803,7 @@ cat >>$CONFIG_STATUS <<\EOF
     echo "$ac_cs_version"; exit 0 ;;
   --he | --h)
     # Conflict between --help and --header
-    { { echo "$as_me:6807: error: ambiguous option: $1
+    { { echo "$as_me:6806: error: ambiguous option: $1
 Try \`$0 --help' for more information." >&5
 echo "$as_me: error: ambiguous option: $1
 Try \`$0 --help' for more information." >&2;}
@@ -6823,7 +6822,7 @@ Try \`$0 --help' for more information." >&2;}
     ac_need_defaults=false;;
 
   # This is an error.
-  -*) { { echo "$as_me:6826: error: unrecognized option: $1
+  -*) { { echo "$as_me:6825: error: unrecognized option: $1
 Try \`$0 --help' for more information." >&5
 echo "$as_me: error: unrecognized option: $1
 Try \`$0 --help' for more information." >&2;}
@@ -6866,7 +6865,7 @@ do
   "gui/djview/Makefile" ) CONFIG_FILES="$CONFIG_FILES gui/djview/Makefile" ;;
   "gui/nsdejavu/Makefile" ) CONFIG_FILES="$CONFIG_FILES gui/nsdejavu/Makefile" ;;
   "config.h" ) CONFIG_HEADERS="$CONFIG_HEADERS config.h:config/config.h.in" ;;
-  *) { { echo "$as_me:6869: error: invalid argument: $ac_config_target" >&5
+  *) { { echo "$as_me:6868: error: invalid argument: $ac_config_target" >&5
 echo "$as_me: error: invalid argument: $ac_config_target" >&2;}
    { (exit 1); exit 1; }; };;
   esac
@@ -7110,7 +7109,7 @@ done; }
   esac
 
   if test x"$ac_file" != x-; then
-    { echo "$as_me:7113: creating $ac_file" >&5
+    { echo "$as_me:7112: creating $ac_file" >&5
 echo "$as_me: creating $ac_file" >&6;}
     rm -f "$ac_file"
   fi
@@ -7128,7 +7127,7 @@ echo "$as_me: creating $ac_file" >&6;}
       -) echo $tmp/stdin ;;
       [\\/$]*)
          # Absolute (can't be DOS-style, as IFS=:)
-         test -f "$f" || { { echo "$as_me:7131: error: cannot find input file: $f" >&5
+         test -f "$f" || { { echo "$as_me:7130: error: cannot find input file: $f" >&5
 echo "$as_me: error: cannot find input file: $f" >&2;}
    { (exit 1); exit 1; }; }
          echo $f;;
@@ -7141,7 +7140,7 @@ echo "$as_me: error: cannot find input file: $f" >&2;}
            echo $srcdir/$f
          else
            # /dev/null tree
-           { { echo "$as_me:7144: error: cannot find input file: $f" >&5
+           { { echo "$as_me:7143: error: cannot find input file: $f" >&5
 echo "$as_me: error: cannot find input file: $f" >&2;}
    { (exit 1); exit 1; }; }
          fi;;
@@ -7201,7 +7200,7 @@ for ac_file in : $CONFIG_HEADERS; do test "x$ac_file" = x: && continue
   * )   ac_file_in=$ac_file.in ;;
   esac
 
-  test x"$ac_file" != x- && { echo "$as_me:7204: creating $ac_file" >&5
+  test x"$ac_file" != x- && { echo "$as_me:7203: creating $ac_file" >&5
 echo "$as_me: creating $ac_file" >&6;}
 
   # First look for the input files in the build tree, otherwise in the
@@ -7212,7 +7211,7 @@ echo "$as_me: creating $ac_file" >&6;}
       -) echo $tmp/stdin ;;
       [\\/$]*)
          # Absolute (can't be DOS-style, as IFS=:)
-         test -f "$f" || { { echo "$as_me:7215: error: cannot find input file: $f" >&5
+         test -f "$f" || { { echo "$as_me:7214: error: cannot find input file: $f" >&5
 echo "$as_me: error: cannot find input file: $f" >&2;}
    { (exit 1); exit 1; }; }
          echo $f;;
@@ -7225,7 +7224,7 @@ echo "$as_me: error: cannot find input file: $f" >&2;}
            echo $srcdir/$f
          else
            # /dev/null tree
-           { { echo "$as_me:7228: error: cannot find input file: $f" >&5
+           { { echo "$as_me:7227: error: cannot find input file: $f" >&5
 echo "$as_me: error: cannot find input file: $f" >&2;}
    { (exit 1); exit 1; }; }
          fi;;
@@ -7342,7 +7341,7 @@ cat >>$CONFIG_STATUS <<\EOF
   rm -f $tmp/in
   if test x"$ac_file" != x-; then
     if cmp -s $ac_file $tmp/config.h 2>/dev/null; then
-      { echo "$as_me:7345: $ac_file is unchanged" >&5
+      { echo "$as_me:7344: $ac_file is unchanged" >&5
 echo "$as_me: $ac_file is unchanged" >&6;}
     else
       ac_dir=`$as_expr X"$ac_file" : 'X\(.*[^/]\)//*[^/][^/]*/*$' \| \

@@ -230,9 +230,12 @@ main(int argc, char ** argv)
       
       // We are ready to fly
       DjVuPrefs prefs;
-      get_file_cache()->set_max_size(prefs.pcacheSize*1024*1024);      
+      get_file_cache()->set_max_size(prefs.pcacheSize*1024*1024);
+#if defined(SIGCLD)
       signal(SIGCLD, SIG_IGN);
-
+#elif defined (SIGCHLD)
+      signal(SIGCHLD, SIG_IGN);
+#endif
       QDViewerShell * shell=new QDViewerShell(0, "main_window");
       qeApp->setWidgetGeometry(shell);
       shell->show();

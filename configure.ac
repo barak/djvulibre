@@ -70,7 +70,7 @@ AC_HEADER_STDC
 AC_HEADER_DIRENT
 AC_HEADER_TIME
 AC_HEADER_SYS_WAIT     
-AC_CHECK_HEADERS(wchar.h sys/mman.h dlfcn.h iconv.h)
+AC_CHECK_HEADERS(wchar.h wctype.h sys/mman.h dlfcn.h iconv.h)
 AC_CHECK_HEADERS(sys/ipc.h sys/shm.h)
 
 # ----------------------------------------
@@ -87,7 +87,7 @@ AC_CHECK_TYPES(mbstate_t,,,[#include "wchar.h"])
 
 AC_FUNC_MMAP
 AC_FUNC_FORK
-AC_CHECK_FUNCS(wcrtomb strerror vsnprintf)
+AC_CHECK_FUNCS(wcrtomb iswspace strerror vsnprintf)
 AC_CHECK_FUNCS(gethostname dlopen iconv)
 
 # ----------------------------------------
@@ -245,9 +245,8 @@ fi
 
 # Rules for building the netscape plugin.
 NSDEJAVU='nsdejavu.so'
-NSDEJAVU_FLAGS='-fpic -DPIC'
-NSDEJAVU_LIBS="-lXt -lX11"
-test -n "$x_libraries" && NSDEJAVU_LIBS="-L$x_libraries $NSDEJAVU_LIBS"
+NSDEJAVU_FLAGS="-fpic -DPIC $X_CFLAGS"
+NSDEJAVU_LIBS="$X_LIBS"
 NSDEJAVU_LINK='${CC} -shared -o ${NSDEJAVU} ${CFLAGS} -shared ${OBJS} ${LIBS}'
 case ${host_os} in 
   hpux*) NSDEJAVU="nsdejavu.sl" ;; 
@@ -315,9 +314,13 @@ AH_BOTTOM([
 /* - WCHAR etc.*/
 #if ! defined(HAVE_WCHAR_T)
 #define HAS_WCHAR 0
+#define HAS_WCTYPE 0
 #define HAS_MBSTATE 0
 #else
 #define HAS_WCHAR 1
+#if defined(HAVE_WCTYPE_H) && defined(HAVE_ISWSPACE)
+#define HAS_WCTYPE 1
+#endif
 #if defined(HAVE_MBSTATE_T) && defined(HAVE_WCRTOMB)
 #define HAS_MBSTATE 1
 #endif

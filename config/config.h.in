@@ -63,6 +63,9 @@
 /* Define if you have the <inttypes.h> header file. */
 #undef HAVE_INTTYPES_H
 
+/* Define if you have the `iswspace' function. */
+#undef HAVE_ISWSPACE
+
 /* Define if you have the IJG JPEG library. */
 #undef HAVE_JPEG
 
@@ -156,6 +159,9 @@
 /* Define if you have the `wcrtomb' function. */
 #undef HAVE_WCRTOMB
 
+/* Define if you have the <wctype.h> header file. */
+#undef HAVE_WCTYPE_H
+
 /* Define if `fork' works. */
 #undef HAVE_WORKING_FORK
 
@@ -190,9 +196,13 @@
 /* - WCHAR etc.*/
 #if ! defined(HAVE_WCHAR_T)
 #define HAS_WCHAR 0
+#define HAS_WCTYPE 0
 #define HAS_MBSTATE 0
 #else
 #define HAS_WCHAR 1
+#if defined(HAVE_WCTYPE_H) && defined(HAVE_ISWSPACE)
+#define HAS_WCTYPE 1
+#endif
 #if defined(HAVE_MBSTATE_T) && defined(HAVE_WCRTOMB)
 #define HAS_MBSTATE 1
 #endif

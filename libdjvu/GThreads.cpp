@@ -594,7 +594,7 @@ GMonitor::wait(unsigned long timeout)
 
 #if THREADMODEL==POSIXTHREADS
 
-#if defined(CMA_INCLUDE) || defined(pthread_attr_default)
+#if defined(CMA_INCLUDE)
 #define DCETHREADS
 #define pthread_key_create pthread_keycreate
 #else
@@ -674,7 +674,7 @@ GThread::create(void (*entry)(void*), void *arg)
 #ifdef DCETHREADS
   int ret = pthread_create(&hthr, pthread_attr_default, GThread::start, (void*)this);
   if (ret >= 0)
-    pthread_detach(&hthr);
+    pthread_detach(hthr);
 #else
   pthread_attr_t attr;
   pthread_attr_init(&attr);

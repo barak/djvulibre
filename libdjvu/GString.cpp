@@ -47,12 +47,14 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include <string.h>
-#include <ctype.h>
 #if HAS_WCHAR
-#include <wctype.h>
 #include <locale.h>
 #include <wchar.h>
 #endif
+#if HAS_WCTYPE
+#include <wctype.h>
+#endif
+#include <ctype.h>
 
 #ifndef DO_CHANGELOCALE
 #define DO_CHANGELOCALE 1
@@ -1246,7 +1248,7 @@ GStringRep::nextCharType(
 bool
 GStringRep::giswspace(const unsigned long w)
 {
-#if HAS_WCHAR
+#if HAS_WCTYPE
   return 
     ((sizeof(wchar_t) == 2)&&(w&~0xffff))
     ||((unsigned long)iswspace((wchar_t)w))
@@ -1260,7 +1262,7 @@ GStringRep::giswspace(const unsigned long w)
 bool
 GStringRep::giswupper(const unsigned long w)
 {
-#if HAS_WCHAR
+#if HAS_WCTYPE
   return ((sizeof(wchar_t) == 2)&&(w&~0xffff))
     ?(true):((unsigned long)iswupper((wchar_t)w)?true:false);
 #else
@@ -1271,7 +1273,7 @@ GStringRep::giswupper(const unsigned long w)
 bool
 GStringRep::giswlower(const unsigned long w)
 {
-#if HAS_WCHAR
+#if HAS_WCTYPE
   return ((sizeof(wchar_t) == 2)&&(w&~0xffff))
     ?(true):((unsigned long)iswlower((wchar_t)w)?true:false);
 #else
@@ -1282,7 +1284,7 @@ GStringRep::giswlower(const unsigned long w)
 unsigned long
 GStringRep::gtowupper(const unsigned long w)
 {
-#if HAS_WCHAR
+#if HAS_WCTYPE
   return ((sizeof(wchar_t) == 2)&&(w&~0xffff))
     ?w:((unsigned long)towupper((wchar_t)w));
 #else
@@ -1293,7 +1295,7 @@ GStringRep::gtowupper(const unsigned long w)
 unsigned long
 GStringRep::gtowlower(const unsigned long w)
 {
-#if HAS_WCHAR
+#if HAS_WCTYPE
   return ((sizeof(wchar_t) == 2)&&(w&~0xffff))
     ?w:((unsigned long)towlower((wchar_t)w));
 #else

@@ -57,6 +57,14 @@ configuration script will auto-detect the available threading model and suggest
 applying the GCC patch when it is needed.
 
 
+1.5 - MAKE
+----------
+
+There are various kind of "make" programs around with various capabilities.  
+We have only one recommendation: use gnu-make !
+
+
+
 
 
 
@@ -302,7 +310,7 @@ Successful compilation using qt-2.3.0.
 Compilation was made with gcc-3.0.2 with the thread patch discussed at
 <http://gcc.gnu.org/ml/gcc-patches/2001-08/msg00072.html>.
 The configure command line was:
-  $ configure --enable-rpo \
+  $ ./configure --enable-rpo \
         --with-qt=/home/leonb/djvulibre-3.5/BUILDI/qt-2.3.0 \
         --with-jpeg=/home/leonb/djvulibre-3.5/BUILDI/libjpeg
 
@@ -313,8 +321,21 @@ The configure command line was:
 Successful compilation using qt-2.3.0.  
 Compilation was made with gcc-3.0.2 with option -fpermissive.
 The configure command line was:
-  $ configure --enable-rpo \
+  $ ./configure --enable-rpo \
         --with-qt=/home/leonb/djvulibre-3.5/BUILDS/qt-2.3.0 \
         --with-jpeg=/home/leonb/djvulibre-3.5/BUILDS/libjpeg \
         CXX='g++ -fpermissive'
+
+
+4.4- FREEBSD-4.4
+----------------
+
+Successful compilation using gnu-make, qt-2.3.1 and gcc-2.95.3.
+The configure command line was:
+  $ ./configure \
+        JPEG_LIBS='/usr/local/lib/libjpeg.a' \
+        JPEG_CFLAGS='-I/usr/local/include' \
+        QT_CFLAGS='-I/usr/X11R6/include/qt2' \
+        QT_LIBS='-lqt2' \
+        MOC=/usr/X11R6/bin/moc2
 
