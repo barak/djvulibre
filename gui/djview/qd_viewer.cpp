@@ -165,10 +165,11 @@ QDViewer::PluginData::parsePair(const GUTF8String &qname_in,
       while (npos < (int)str.length())
         {
           pos = str.nextNonSpace(npos);
-          npos = str.contains(",+-", pos);
+          npos = str.contains(" [],+-", pos);
           if (npos < 0)
             npos = str.length();
           GUTF8String key = str.substr(pos, npos-pos);
+          npos = str.nextNonSpace(npos);
           if (key=="no" || key=="false")
             toolbar = minus;
           if (key=="yes" || key=="true")
@@ -180,6 +181,8 @@ QDViewer::PluginData::parsePair(const GUTF8String &qname_in,
           else if (key == "auto" && !plus && !minus)
             toolbaropts |= OverrideFlags::TOOLBAR_AUTO;
           else if (key == "always" && !plus && !minus)
+            toolbaropts |= OverrideFlags::TOOLBAR_ALWAYS;
+          else if (key == "fixed" && !plus && !minus)
             toolbaropts |= OverrideFlags::TOOLBAR_ALWAYS;
           else if (key=="fore" || key=="back" || 
                    key=="color" || key=="bw" ||
