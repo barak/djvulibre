@@ -96,6 +96,7 @@ using namespace DJVU;
 #include "DjVuFileCache.h"
 #include "DjVuDocument.h"
 #include "DjVuMessageLite.h"
+#include "DjVuMessage.h"
 
 #if HAVE_STDINT_H
 # include <stdint.h>
@@ -260,11 +261,10 @@ ddjvu_context_create(const char *programname)
 {
   G_TRY
     {
+      setlocale(LC_ALL,"");
+      DjVuMessage::use_language();
       if (programname)
-        {
-          setlocale(LC_ALL,"");
-          djvu_programname(programname);
-        }
+        djvu_programname(programname);
       ddjvu_context_t *ctx = new ddjvu_context_s;
       ctx->cache = DjVuFileCache::create();
       ctx->callback = 0;
@@ -1592,6 +1592,14 @@ ddjvu_page_render(ddjvu_page_t *page,
               if (! pm) 
                 bm = img->get_bitmap(rrect, prect);
               break;
+            case DDJVU_RENDER_MASK:
+              bm = img->get_bitmap(rrect, prect);
+              if (! bm)
+                pm = img->get_pixmap(rrect, prect, pixelformat->gamma);
+              break;
+            case DDJVU_RENDER_MASKONLY:
+              bm = img->get_bitmap(rrect, prect);
+              break;
             case DDJVU_RENDER_COLORONLY:
               pm = img->get_pixmap(rrect, prect, pixelformat->gamma);
               break;
@@ -1600,9 +1608,6 @@ ddjvu_page_render(ddjvu_page_t *page,
               break;
             case DDJVU_RENDER_FOREGROUND:
               pm = img->get_fg_pixmap(rrect, prect, pixelformat->gamma);
-              break;
-            case DDJVU_RENDER_MASK:
-              bm = img->get_bitmap(rrect, prect);
               break;
             }
         }

@@ -79,6 +79,15 @@
 #endif
 #if HAVE_TIFF
 # include <tiffio.h>
+# ifndef COMPRESSION_CCITT_T6
+#  define COMPRESSION_CCITT_T6 4
+# endif
+# ifndef COMPRESSION_JPEG
+#  define COMPRESSION_JPEG 7
+# endif
+# ifndef COMPRESSION_PACKBITS
+#  define COMPRESSION_PACKBITS 32771
+# endif
 #endif
 
 
@@ -93,7 +102,7 @@ int          flag_segment = 0;
 int          flag_verbose = 0;
 char         flag_mode = 0;     /* 'f','b','m' or 'c' */
 char         flag_format = 0;   /* '4','5','6','p','r','t' */
-int          flag_tiffq = -1;
+int          flag_quality = -1;
 const char  *flag_pagespec = 0; 
 ddjvu_rect_t info_size;
 ddjvu_rect_t info_segment;
@@ -160,12 +169,12 @@ die(const char *fmt, ...)
 void
 inform(ddjvu_page_t *page, int pageno)
 {
-  if (flag_verbose > 0)
+  if (flag_verbose)
     {
       ddjvu_page_type_t type = ddjvu_page_get_type(page);
       char *desctype = "a malformed DjVu image";
       char *description = ddjvu_page_get_long_description(page);
-      fprintf(stderr,"-------- page %d -------\n", pageno);
+      fprintf(stderr,"\n-------- page %d -------\n", pageno);
       if (type == DDJVU_PAGETYPE_BITONAL)
         desctype = "a legal Bitonal DjVu image";
       else if (type == DDJVU_PAGETYPE_PHOTO)
@@ -174,7 +183,7 @@ inform(ddjvu_page_t *page, int pageno)
         desctype = "a legal Compound DjVu image";
       fprintf(stderr,"This is %s.\n", desctype);
       if (description)
-        fprintf(stderr,"%s\n\n", description);
+        fprintf(stderr,"%s\n", description);
       if (description)
         free(description);
     }
@@ -193,8 +202,10 @@ render(ddjvu_page_t *page)
   int iw = ddjvu_page_get_width(page);
   int ih = ddjvu_page_get_height(page);
   int dpi = ddjvu_page_get_resolution(page);
+  ddjvu_page_type_t type = ddjvu_page_get_type(page);
   char *image = 0;
   int rowsize;
+  int compression;
   
   /* Process size specification */
   prect.x = 0;
@@ -256,29 +267,45 @@ render(ddjvu_page_t *page)
     mode = DDJVU_RENDER_DEFAULT;
   else if (flag_mode == 'm')
     mode = DDJVU_RENDER_MASK;
+  else if (flag_mode == 's')
+    mode = DDJVU_RENDER_MASKONLY;
   else if (flag_format == 'r' || flag_format == '4')
     mode = DDJVU_RENDER_MASK;
 
-  /* Determine pixel format */
+  /* Determine output pixel format */
+  style = DDJVU_FORMAT_RGB24;
+  if ((mode==DDJVU_RENDER_MASK) ||
+      (mode==DDJVU_RENDER_DEFAULT) && (type==DDJVU_PAGETYPE_BITONAL))
+    {
+      style = DDJVU_FORMAT_GREY8;
+      if ((int)prect.w == iw && (int)prect.h == ih)
+        style = DDJVU_FORMAT_MSBTOLSB;
+    }
   switch(flag_format)
     {
-    case '4':
-      style = DDJVU_FORMAT_MSBTOLSB;
+    case 't':
+#if HAVE_TIFF
+      compression = COMPRESSION_NONE;
+      if (style==DDJVU_FORMAT_MSBTOLSB && TIFFFindCODEC(COMPRESSION_CCITT_T6))
+        compression = COMPRESSION_CCITT_T6;
+      else if (flag_quality>0 && TIFFFindCODEC(COMPRESSION_JPEG)) {
+        compression = COMPRESSION_JPEG;
+        style = DDJVU_FORMAT_RGB24;
+      } else if (TIFFFindCODEC(COMPRESSION_PACKBITS))
+        compression = COMPRESSION_PACKBITS;
       break;
-    case 'r':
+#endif      
+    case '4':
+      style = DDJVU_FORMAT_MSBTOLSB; 
+      break;
+    case 'r': 
     case '5':
-      style = DDJVU_FORMAT_GREY8;
+      style = DDJVU_FORMAT_GREY8;    
       break;
     case '6':
-      style = DDJVU_FORMAT_RGB24;
+      style = DDJVU_FORMAT_RGB24;   
       break;
     default:
-      if (ddjvu_page_get_type(page) != DDJVU_PAGETYPE_BITONAL)
-        style = DDJVU_FORMAT_RGB24;
-      else if ((int)prect.w == iw && (int)prect.h == ih)
-        style = DDJVU_FORMAT_MSBTOLSB;
-      else
-        style = DDJVU_FORMAT_GREY8;
       break;
     }
   if (! (fmt = ddjvu_format_create(style, 0, 0)))
@@ -309,12 +336,19 @@ render(ddjvu_page_t *page)
       {
         int i;
         char *s = image;
-        if (style == DDJVU_FORMAT_MSBTOLSB)
+        if (style == DDJVU_FORMAT_MSBTOLSB) {
+          if (flag_verbose) 
+            fprintf(stderr,"Producing PBM file.\n");
           fprintf(fout,"P4\n%d %d\n", rrect.w, rrect.h);
-        else if (style == DDJVU_FORMAT_GREY8)
+        } else if (style == DDJVU_FORMAT_GREY8) {
+          if (flag_verbose) 
+            fprintf(stderr,"Producing PGM file.\n");
           fprintf(fout,"P5\n%d %d\n255\n", rrect.w, rrect.h);
-        else
+        } else {
+          if (flag_verbose) 
+            fprintf(stderr,"Producing PPM file.\n");
           fprintf(fout,"P6\n%d %d\n255\n", rrect.w, rrect.h);
+        }
         for (i=0; i<(int)rrect.h; i++,s+=rowsize)
           if (fwrite(s, 1, rowsize, fout) < (size_t)rowsize)
             die("writing pnm file: %s", strerror(errno));
@@ -325,6 +359,8 @@ render(ddjvu_page_t *page)
       {
         int i;
         unsigned char *s = (unsigned char *)image;
+        if (flag_verbose)
+          fprintf(stderr,"Producing RLE file.\n");
         fprintf(fout,"R4\n%d %d\n", rrect.w, rrect.h);
         for (i=0; i<(int)rrect.h; i++,s+=rowsize)
           {
@@ -357,7 +393,52 @@ render(ddjvu_page_t *page)
     case 't':
       {
 #if HAVE_TIFF
-        die("TIFF output is not implemented");
+        int i;
+        char *s = image;
+        TIFFSetField(tiff, TIFFTAG_IMAGEWIDTH, (uint32)rrect.w);
+        TIFFSetField(tiff, TIFFTAG_IMAGELENGTH, (uint32)rrect.h);
+        TIFFSetField(tiff, TIFFTAG_XRESOLUTION, (float)((dpi*rrect.w+iw/2)/iw));
+        TIFFSetField(tiff, TIFFTAG_YRESOLUTION, (float)((dpi*rrect.h+ih/2)/ih));
+        TIFFSetField(tiff, TIFFTAG_PLANARCONFIG, PLANARCONFIG_CONTIG);
+        TIFFSetField(tiff, TIFFTAG_ORIENTATION, ORIENTATION_TOPLEFT);
+        TIFFSetField(tiff, TIFFTAG_ROWSPERSTRIP, (uint32)64);
+        if (style == DDJVU_FORMAT_MSBTOLSB) {
+          TIFFSetField(tiff, TIFFTAG_BITSPERSAMPLE, (uint16)1);
+          TIFFSetField(tiff, TIFFTAG_SAMPLESPERPIXEL, (uint16)1);
+          TIFFSetField(tiff, TIFFTAG_COMPRESSION, compression);
+          TIFFSetField(tiff, TIFFTAG_FILLORDER, FILLORDER_MSB2LSB);
+          TIFFSetField(tiff, TIFFTAG_PHOTOMETRIC, PHOTOMETRIC_MINISWHITE);
+        } else {
+          TIFFSetField(tiff, TIFFTAG_BITSPERSAMPLE, (uint16)8);
+          if (style == DDJVU_FORMAT_GREY8) {
+            TIFFSetField(tiff, TIFFTAG_SAMPLESPERPIXEL, (uint16)1);
+            TIFFSetField(tiff, TIFFTAG_COMPRESSION, compression);
+            TIFFSetField(tiff, TIFFTAG_PHOTOMETRIC, PHOTOMETRIC_MINISBLACK);
+          } else {
+            TIFFSetField(tiff, TIFFTAG_SAMPLESPERPIXEL, (uint16)3);
+            TIFFSetField(tiff, TIFFTAG_COMPRESSION, compression);
+            if (compression == COMPRESSION_JPEG) {
+              TIFFSetField(tiff, TIFFTAG_PHOTOMETRIC, PHOTOMETRIC_YCBCR);
+              TIFFSetField(tiff, TIFFTAG_JPEGCOLORMODE, JPEGCOLORMODE_RGB);
+              TIFFSetField(tiff, TIFFTAG_JPEGQUALITY, flag_quality);
+            } else 
+              TIFFSetField(tiff, TIFFTAG_PHOTOMETRIC, PHOTOMETRIC_RGB);
+          }
+        }
+        if (flag_verbose) {
+          if (compression == COMPRESSION_CCITT_T6)
+            fprintf(stderr,"Producing TIFF/G4 file.\n");
+          else if (compression == COMPRESSION_JPEG)
+            fprintf(stderr,"Producing TIFF/JPEG file.\n");
+          else if (compression == COMPRESSION_PACKBITS)
+            fprintf(stderr,"Producing TIFF/PACKBITS file.\n");
+          else
+            fprintf(stderr,"Producing TIFF file.\n");
+        }
+        if (rowsize != TIFFScanlineSize(tiff))
+          die("internal error (%d!=%d)", rowsize, (int)TIFFScanlineSize(tiff));
+        for (i=0; i<(int)rrect.h; i++,s+=rowsize)
+          TIFFWriteScanline(tiff, s, i, 0);
 #else
         die("TIFF output is not compiled");
 #endif
@@ -551,7 +632,7 @@ usage()
       "  -mode=foreground  Only renders the foreground layer.\n"
       "  -mode=background  Only renders the background layer.\n"
       "  -page=PAGESPEC    Selects page(s) to be decoded.\n"
-      "  -tiffquality=<q>  Specifies jpeg quality for lossy tiff output.\n"
+      "  -quality=QUAKITY  Specifies jpeg quality for lossy tiff output.\n"
       "\n"
       "If <outputfile> is a single dash or omitted, the decompressed image\n"
       "is sent to the standard output.  If <djvufile> is a single dash or\n"
@@ -711,17 +792,15 @@ parse_option(int argc, char **argv, int i)
       if (!strcmp(arg,"c") || 
           !strcmp(arg,"color") )
         flag_mode = 'c';
-      else if (!strcmp(arg,"m") ||
-               !strcmp(arg,"mask") ||
-               !strcmp(arg,"black") ||
-               !strcmp(arg,"stencil") )
+      else if (!strcmp(arg,"black"))
         flag_mode = 'm';
-      else if (!strcmp(arg,"f") ||
-               !strcmp(arg,"fg") ||
+      else if (!strcmp(arg,"mask") ||
+               !strcmp(arg,"stencil") )
+        flag_mode = 's';
+      else if (!strcmp(arg,"fg") ||
                !strcmp(arg,"foreground") )
         flag_mode = 'f';
-      else if (!strcmp(arg,"b") ||
-               !strcmp(arg,"bg") ||
+      else if (!strcmp(arg,"bg") ||
                !strcmp(arg,"background") )
         flag_mode = 'b';
       else
@@ -736,16 +815,17 @@ parse_option(int argc, char **argv, int i)
         die(errdupl, opt);
       flag_pagespec = arg;
     }
-  else if (!strcmp(opt,"tiffquality"))
+  else if (!strcmp(opt,"quality") ||
+           !strcmp(opt,"jpeg") )
     {
-      if (flag_tiffq >= 0)
+      if (flag_quality >= 0)
         die(errdupl, opt);
       else if (!arg) 
-        flag_tiffq = 100;
+        flag_quality = 100;
       else 
         {
-          flag_tiffq = strtol(arg,&end,10);
-          if (*end || flag_tiffq<25 || flag_tiffq>150)
+          flag_quality = strtol(arg,&end,10);
+          if (*end || flag_quality<25 || flag_quality>150)
             die(errbadarg,opt,"an integer between 25 and 150");
         }
     }
@@ -770,7 +850,7 @@ main(int argc, char **argv)
   for (i=1; i<argc; i++)
     {
       char *s = argv[i];
-      if (*s == '-')
+      if (s[0] == '-' && s[1] != 0)
         i = parse_option(argc, argv, i);
       else if (!inputfilename)
         inputfilename = s;

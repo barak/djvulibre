@@ -1,4 +1,4 @@
-bin2cpp.o: bin2cpp.cpp ../../config.h ../../libdjvu/GURL.h \
+bin2cpp.o: ./bin2cpp.cpp ../../config.h ../../libdjvu/GURL.h \
   ../../libdjvu/GString.h ../../libdjvu/DjVuGlobal.h \
   ../../libdjvu/GContainer.h ../../libdjvu/GException.h \
   ../../libdjvu/GSmartPointer.h ../../libdjvu/Arrays.h \

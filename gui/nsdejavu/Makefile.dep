@@ -1,17 +1,5 @@
-nsdejavu.o: nsdejavu.c ../../config.h ../../gui/shared/res/names.h \
+nsdejavu.o: ./nsdejavu.c ../../config.h ../../gui/shared/res/names.h \
   ../../gui/shared/res/version.h ../../gui/npsdk/npapi.h \
   ../../gui/npsdk/jri.h ../../gui/npsdk/jritypes.h \
-  ../../gui/npsdk/jri_md.h /usr/X11R6/include/X11/Xlib.h \
-  /usr/X11R6/include/X11/X.h /usr/X11R6/include/X11/Xfuncproto.h \
-  /usr/X11R6/include/X11/Xosdefs.h /usr/X11R6/include/X11/Intrinsic.h \
-  /usr/X11R6/include/X11/Xutil.h /usr/X11R6/include/X11/Xresource.h \
-  /usr/X11R6/include/X11/Core.h /usr/X11R6/include/X11/Composite.h \
-  /usr/X11R6/include/X11/Constraint.h /usr/X11R6/include/X11/Object.h \
-  /usr/X11R6/include/X11/RectObj.h /usr/X11R6/include/X11/IntrinsicP.h \
-  /usr/X11R6/include/X11/CoreP.h /usr/X11R6/include/X11/CompositeP.h \
-  /usr/X11R6/include/X11/ConstrainP.h /usr/X11R6/include/X11/ObjectP.h \
-  /usr/X11R6/include/X11/RectObjP.h /usr/X11R6/include/X11/StringDefs.h \
-  /usr/X11R6/include/X11/Shell.h /usr/X11R6/include/X11/SM/SMlib.h \
-  /usr/X11R6/include/X11/SM/SM.h /usr/X11R6/include/X11/ICE/ICElib.h \
-  /usr/X11R6/include/X11/ICE/ICE.h ../../gui/npsdk/npunix.c \
+  ../../gui/npsdk/jri_md.h ../../gui/npsdk/npunix.c \
   ../../gui/npsdk/npupp.h

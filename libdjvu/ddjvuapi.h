@@ -749,10 +749,11 @@ typedef struct ddjvu_rect_s {
 
 typedef enum {
   DDJVU_RENDER_DEFAULT = 0,     /* color page or stencil */
-  DDJVU_RENDER_COLORONLY,       /* color page */
+  DDJVU_RENDER_MASK,            /* stencil or color page */
+  DDJVU_RENDER_COLORONLY,       /* color page or fail */
+  DDJVU_RENDER_MASKONLY,        /* stencil or fail */
   DDJVU_RENDER_BACKGROUND,      /* color background layer */
   DDJVU_RENDER_FOREGROUND,      /* color foreground layer */
-  DDJVU_RENDER_MASK,            /* stencil */
 } ddjvu_render_mode_t;
 
 
