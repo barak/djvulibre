@@ -8024,9 +8024,16 @@ fi
 NSDEJAVU='nsdejavu.so'
 NSDEJAVU_FLAGS="-fpic -DPIC $X_CFLAGS"
 NSDEJAVU_LIBS="$X_LIBS"
-NSDEJAVU_LINK='${CC} -shared -o ${NSDEJAVU} ${CFLAGS} -shared ${OBJS} ${LIBS}'
+NSDEJAVU_LINK='${CC} -shared -o ${NSDEJAVU} ${CFLAGS} ${OBJS} ${LIBS}'
 case ${host_os} in
-  hpux*) NSDEJAVU="nsdejavu.sl" ;;
+  hpux*)
+	NSDEJAVU="nsdejavu.sl"
+	;;
+  darwin*|macos10*)
+	NSDEJAVU_FLAGS="$X_CFLAGS -fno-common"
+	NSDEJAVU_LINK='${CC} -bundle -flat_namespace -undefined suppress'
+	NSDEJAVU_LINK="$NSDEJAVU_LINK"' -o ${NSDEJAVU} ${CFLAGS} ${OBJS} ${LIBS}'
+	;;
 esac
 if test x${GXX} != xyes ; then
     { echo "$as_me:$LINENO: WARNING: Please verify that gui/nsdejavu/Makefile works with this compiler." >&5
