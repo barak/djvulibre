@@ -294,10 +294,8 @@ DjVuToPS::store_doc_prolog(ByteStream &str, int pages, int dpi, const GRect &gre
   write(str, "%%%%LanguageLevel: %d\n", options.get_level());
   if (options.get_level()<2 && options.get_color())
     write(str, "%%%%Extensions: CMYK\n");
-  if (options.get_level()>=2)
-    write(str,
-          "%%%%DocumentNeededFonts: Helvetica\n"
-          "%%%%DocumentFonts: Helvetica\n");
+  if (options.get_copies()>1)
+    write(str, "%%%%Requirements: numcopies(%d)\n", options.get_copies());
   write(str,
         "%%%%EndComments\n"
         "%%%%EndProlog\n"
@@ -312,89 +310,52 @@ DjVuToPS::store_doc_setup(ByteStream &str)
      the PostScript interpreter environment before displaying images. */
   DEBUG_MSG("DjVuToPS::store_doc_setup(): storing the document setup\n");
   DEBUG_MAKE_INDENT(3);
-  write(str,
-        "%%%%BeginSetup\n"
-        "%% Change this number if you want more than one copy\n"
-        "/#copies %d def\n"
-        "%% Remember the original state\n"
-        "/doc-origstate save def\n"
-        "\n", options.get_copies());
   write(str, 
-        "%% rectstroke & rectfill emulation (in case if we have level 1)\n"
-        "/level 1 def\n"
-        "/languagelevel where { pop /level languagelevel def} if\n"
-        "level 2 lt {\n"
-        "   /rectfill %% stack : x y width height => None\n"
-        "   { newpath 4 2 roll moveto 1 index 0 rlineto\n"
-        "   0 exch rlineto neg 0 rlineto closepath fill\n"
-        "   } bind def\n"
-        "   /rectstroke  %% stack : x y width height => None\n"
-        "   { newpath 4 2 roll moveto 1 index 0 rlineto\n"
-        "   0 exch rlineto neg 0 rlineto closepath stroke\n"
-        "   } bind def\n"
-        "} if\n");
+        "%%%%BeginSetup\n"
+        "%% Remember the original state\n"
+        "/doc-origstate save def\n");
+  if (options.get_copies()>1)
+    write(str,
+          "%% Number of copies\n"
+          "/#copies %d def\n", 
+          options.get_copies());
+  if (options.get_copies()>1 && options.get_level()>=2)
+    write(str,
+          "<< /NumCopies #copies >> setpagedevice\n");
   
   if (options.get_level()>=2)
     {
-      write(str,
-            "%% Define function for displaying error messages\n"
-            "/msg_y 0 def\n"
-            "/E { msg_y 0 eq {\n"
-            "      /Helvetica findfont 12 scalefont setfont\n"
-            "      /msg_y page-y page-height 2 div add def\n"
-            "   } if\n"
-            "   dup stringwidth pop\n"
-            "   page-x page-width 2 div add exch 2 div sub\n"
-            "   msg_y moveto show\n"
-            "   /msg_y msg_y 15 sub def\n"
-            "} bind def\n"
-            "%% Determine if the interpreter supports filters\n"
-            "systemdict /resourcestatus known {\n"
-            "   (ASCII85Decode) /Filter resourcestatus {\n"
-            "      pop pop\n"
-            "      (RunLengthDecode) /Filter resourcestatus {\n"
-            "         pop pop\n"
-            "      } {\n"
-            "         (Sorry, but the image can not be printed.) E\n"
-            "              (This PostScript interpreter does not support RunLengthDecode filter.) E\n"
-            "              showpage stop\n"
-            "      } ifelse\n"
-            "   } {\n"
-            "      (Sorry, but the image can not be printed.) E\n"
-            "      (This PostScript interpreter does not support ASCII85Decode filter.) E\n"
-            "      showpage stop\n"
-            "   } ifelse\n"
-            "} if\n");
       if (options.get_color())
-        write(str, 
-              "%% Define procedures for reading color image\n"
-              "/readR () def\n"
-              "/readG () def\n"
-              "/readB () def\n"
-              "/ReadData {\n"
-              "   currentfile /ASCII85Decode filter dup /RunLengthDecode filter\n"
-              "   bufferR readstring pop /readR exch def\n"
-              "   dup status { flushfile } { pop } ifelse\n"
-              "   currentfile /ASCII85Decode filter dup /RunLengthDecode filter\n"
-              "   bufferG readstring pop /readG exch def\n"
-              "   dup status { flushfile } { pop } ifelse\n"
-              "   currentfile /ASCII85Decode filter dup /RunLengthDecode filter\n"
-              "   bufferB readstring pop /readB exch def\n"
-              "   dup status { flushfile } { pop } ifelse\n"
-              "} bind def\n"
-              "/ReadR {\n"
-              "   readR length 0 eq { ReadData } if\n"
-              "   readR /readR () def\n"
-              "} bind def\n"
-              "/ReadG {\n"
-              "   readG length 0 eq { ReadData } if\n"
-              "   readG /readG () def\n"
-              "} bind def\n"
-              "/ReadB {\n"
-              "   readB length 0 eq { ReadData } if\n"
-              "   readB /readB () def\n"
-              "} bind def\n");
-      
+        {
+          write(str, 
+                "%% Define procedures for reading color image\n"
+                "/readR () def\n"
+                "/readG () def\n"
+                "/readB () def\n"
+                "/ReadData {\n"
+                "   currentfile /ASCII85Decode filter dup /RunLengthDecode filter\n"
+                "   bufferR readstring pop /readR exch def\n"
+                "   dup status { flushfile } { pop } ifelse\n"
+                "   currentfile /ASCII85Decode filter dup /RunLengthDecode filter\n"
+                "   bufferG readstring pop /readG exch def\n"
+                "   dup status { flushfile } { pop } ifelse\n"
+                "   currentfile /ASCII85Decode filter dup /RunLengthDecode filter\n"
+                "   bufferB readstring pop /readB exch def\n"
+                "   dup status { flushfile } { pop } ifelse\n"
+                "} bind def\n"
+                "/ReadR {\n"
+                "   readR length 0 eq { ReadData } if\n"
+                "   readR /readR () def\n"
+                "} bind def\n"
+                "/ReadG {\n"
+                "   readG length 0 eq { ReadData } if\n"
+                "   readG /readG () def\n"
+                "} bind def\n"
+                "/ReadB {\n"
+                "   readB length 0 eq { ReadData } if\n"
+                "   readB /readB () def\n"
+                "} bind def\n");
+        }
       if (options.get_sRGB())
         {
           write(str,
@@ -409,9 +370,7 @@ DjVuToPS::store_doc_setup(ByteStream &str)
                 "      0.180437 0.072175 0.950301 ]\n"
                 "   /WhitePoint [ 0.9505 1 1.0890 ] %% D65 \n"
                 "   /BlackPoint[0 0 0] >> ] def\n",
-                (options.get_color()) 
-                ? "/CIEBasedABC" 
-                : "/CIEBasedA" );
+                (options.get_color()) ? "/CIEBasedABC" : "/CIEBasedA" );
         }
       else if (options.get_color())
         {
@@ -421,17 +380,34 @@ DjVuToPS::store_doc_setup(ByteStream &str)
         {
           write(str,"/DjVuColorSpace /DeviceGray def\n");
         }
+      write(str,
+            "%% Define useful functions\n"
+            "/g {gsave 0 0 0 0 5 index 5 index setcachedevice\n"
+            "    true [1 0 0 1 0 0] 5 4 roll imagemask grestore } bind def\n"
+            "/gn {gsave 0 0 0 0 6 index 6 index setcachedevice\n"
+            "    true [1 0 0 1 0 0] 3 2 roll 5 1 roll \n"
+            "    { 1 sub 0 index 2 add 1 index  1 add roll} imagemask grestore pop} bind def\n"
+            "/c {setcolor rmoveto glyphshow} bind def\n"
+            "/s {rmoveto glyphshow} bind def\n"
+            "/S {rmoveto gsave show grestore} bind def\n" );
     } 
   else 
     {
       // level<2
+      write(str, 
+            "%% Provide rectstroke emulation\n"
+            "systemdict /rectstroke known not {\n"
+            "  /rectstroke  %% stack : x y width height \n"
+            "  { newpath 4 2 roll moveto 1 index 0 rlineto\n"
+            "    0 exch rlineto neg 0 rlineto closepath stroke\n"
+            "  } bind def } if\n" );
       if (options.get_color())
         {
           write(str, 
-                "%% Declare buffers for reading image (level1)\n"
+                "%% Declare buffers for reading image\n"
                 "/buffer8 () def\n"
                 "/buffer24 () def\n"
-                "%% Provide emulation for colorimage (level1)\n"
+                "%% Provide colorimage emulation\n"
                 "systemdict /colorimage known {\n"
                 "   /ColorProc {\n"
                 "      currentfile buffer24 readhexstring pop\n"
@@ -459,18 +435,7 @@ DjVuToPS::store_doc_setup(ByteStream &str)
                 "} ifelse\n");
         } // color
     } // level<2
-  write(str, 
-        "%% Useful functions\n"
-        "/g {gsave 0 0 0 0 5 index 5 index setcachedevice\n"
-        "    true [1 0 0 1 0 0] 5 4 roll imagemask grestore } bind def\n"
-        "/gn {gsave 0 0 0 0 6 index 6 index setcachedevice\n"
-        "    true [1 0 0 1 0 0] 3 2 roll 5 1 roll \n"
-        "    { 1 sub 0 index 2 add 1 index  1 add roll} imagemask grestore pop} bind def\n"
-        "/c {setcolor rmoveto glyphshow} bind def\n"
-        "/s {rmoveto glyphshow} bind def\n"
-        "/S {rmoveto gsave show grestore} bind def\n"
-        "/F {/Helvetica findfont 2 1 roll  scalefont setfont } bind def\n"
-        "%%%%EndSetup\n\n");
+  write(str, "%%%%EndSetup\n\n");
 }
 
 void
@@ -596,17 +561,16 @@ DjVuToPS::store_page_setup(ByteStream &str, int page_num,
   /* Will store PostScript code necessary to prepare page for
      the coming \Ref{DjVuImage}. This is basically a scaling
      code plus initialization of some buffers. */
-  write(str,
-        "%%%%Page: %d %d\n"
-        "%%%%BeginPageSetup\n"
-        "/page-origstate save def\n"
-        "%% Coordinate system positioning\n", 
+  write(str, "%%%%Page: %d %d\n", 
         page_num+1, page_num+1);
   if (options.get_format()==Options::EPS)
     write(str, 
+          "%%%%BeginPageSetup\n"
+          "/page-origstate save def\n"
+          "%% Coordinate system positioning\n", 
           "/image-dpi %d def\n"
-          "/image-x %d def\n"
-          "/image-y %d def\n"
+          "/image-x 0 def\n"
+          "/image-y 0 def\n"
           "/image-width  %d def\n"
           "/image-height %d def\n\n"
           "/coeff 100 image-dpi div def\n"
@@ -615,11 +579,16 @@ DjVuToPS::store_page_setup(ByteStream &str, int page_num,
           "/a13 0 def\n"
           "/a21 0 def\n"
           "/a22 coeff def\n"
-          "/a23 0 def\n",
-          dpi, 0, 0, grect.width(), grect.height() );
+          "/a23 0 def\n"
+          "[a11 a21 a12 a22 a13 a23] concat\n"
+          "0 0 image-width image-height rectclip\n"
+          "%%%%EndPageSetup\n\n",
+          dpi, grect.width(), grect.height() );
   else
     {
       write(str, 
+            "%%%%BeginPageSetup\n"
+            "/page-origstate save def\n"
             "/portrait %s def    %% Specifies image orientation\n"
             "/fit-page %s def    %% Scale image to fit page?\n"
             "/zoom %d def        %% Zoom factor in percents\n"
@@ -627,34 +596,34 @@ DjVuToPS::store_page_setup(ByteStream &str, int page_num,
             "clippath pathbbox\n"
             "2 index sub exch\n"
             "3 index sub\n"
-            "/page-width  exch def\n"
+            "/page-width exch def\n"
             "/page-height exch def\n"
             "/page-y exch def\n"
             "/page-x exch def\n"
-            "/image-x %d def\n"
-            "/image-y %d def\n"
+            "/image-x 0 def\n"
+            "/image-y 0 def\n"
             "/image-width  %d def\n"
             "/image-height %d def\n\n",
             (options.get_orientation() == Options::PORTRAIT) ? "true" : "false",
             (options.get_zoom() == Options::FIT_PAGE) ? "true" : "false",
-            options.get_zoom(), dpi, 0, 0, grect.width(), grect.height());
+            options.get_zoom(), dpi, grect.width(), grect.height() );
       write(str, 
             "portrait {\n"
             "  fit-page {\n"
             "    image-height page-height div\n"
             "    image-width page-width div\n"
             "    gt {\n"
-            "           page-height image-height div /coeff exch def\n"
+            "      page-height image-height div /coeff exch def\n"
             "    } {\n"
-            "           page-width image-width div /coeff exch def\n"
+            "      page-width image-width div /coeff exch def\n"
             "    } ifelse\n"
             "  } {\n"
             "    /coeff 72 image-dpi div zoom mul 100 div def\n"
             "  } ifelse\n"
             "  /start-x page-x page-width image-width\n"
-            "      coeff mul sub 2 div add def\n"
+            "    coeff mul sub 2 div add def\n"
             "  /start-y page-y page-height image-height\n"
-            "      coeff mul sub 2 div add def\n"
+            "    coeff mul sub 2 div add def\n"
             "  /a11 coeff def\n"
             "  /a12 0 def\n"
             "  /a13 start-x def\n"
@@ -666,36 +635,36 @@ DjVuToPS::store_page_setup(ByteStream &str, int page_num,
             "    image-height page-width div\n"
             "    image-width page-height div\n"
             "    gt {\n"
-            "           page-width image-height div /coeff exch def\n"
+            "      page-width image-height div /coeff exch def\n"
             "    } {\n"
-            "           page-height image-width div /coeff exch def\n"
+            "      page-height image-width div /coeff exch def\n"
             "    } ifelse\n"
             "  } {\n"
             "    /coeff 72 image-dpi div zoom mul 100 div def\n"
             "  } ifelse\n"
             "  /start-x page-x page-width add page-width image-height\n"
-            "      coeff mul sub 2 div sub def\n"
+            "    coeff mul sub 2 div sub def\n"
             "  /start-y page-y page-height image-width\n"
-            "      coeff mul sub 2 div add def\n"
+            "    coeff mul sub 2 div add def\n"
             "  /a11 0 def\n"
             "  /a12 coeff neg def\n"
             "  /a13 start-x image-y coeff neg mul sub def\n"
             "  /a21 coeff def\n"
             "  /a22 0 def\n"
             "  /a23 start-y image-x coeff mul add def \n"
-            "} ifelse\n");
+            "} ifelse\n"
+            "[a11 a21 a12 a22 a13 a23] concat\n"
+            "systemdict /rectclip known {\n"
+            "  0 0 image-width image-height rectclip } if\n"
+            "%%%%EndPageSetup\n\n");
     }
-  write(str, 
-        "[a11 a21 a12 a22 a13 a23] concat 0 0 %d %d rectclip\n"
-        "%%%%EndPageSetup\n\n", grect.width(), grect.height());
 }
 
 void
 DjVuToPS::store_page_trailer(ByteStream &str)
 {
-  /* Will output #showpage# command, and restore PostScript state. */
-  write(str,
-        "%%%%PageTrailer\n"
+  write(str, 
+        "%%%%PageTrailer\n" 
         "page-origstate restore\n"
         "showpage\n\n");
 }
@@ -2112,8 +2081,10 @@ DjVuToPS::print(ByteStream &str, const GP<DjVuDocument> &doc,
                 "/" << pages_todo.size() << ")\n");
       port->decode_event_received=false;
       port->decode_done=0;
-      GP<DjVuFile> djvu_file=doc->get_djvu_file(page_num);
+      GP<DjVuFile> djvu_file;
       GP<DjVuImage> dimg;
+      if (page_num < doc_pages)
+        djvu_file=doc->get_djvu_file(page_num);
       if (djvu_file && !djvu_file->is_decode_ok())
         {
           // This is the best place to call info_cb(). Note, that
@@ -2124,7 +2095,7 @@ DjVuToPS::print(ByteStream &str, const GP<DjVuDocument> &doc,
           if (info_cb)
             info_cb(page_num, page_cnt, pages_todo.size(),
                     DECODING, info_cl_data);
-          // Do NOT decode the page syncronously here!!!
+          // Do NOT decode the page synchronously here!!!
           // The plugin will deadlock otherwise.
           dimg=doc->get_page(page_num, false);
           djvu_file=dimg->get_djvu_file();
@@ -2154,8 +2125,6 @@ DjVuToPS::print(ByteStream &str, const GP<DjVuDocument> &doc,
             }
         } else 
           dimg=doc->get_page(page_num, false);
-      if (!dimg)
-        G_THROW((ERR_MSG("DjVuToPS.no_image") "\t")+GUTF8String(page_num));
       if (info_cb)
         info_cb(page_num, page_cnt, pages_todo.size(),
                 PRINTING, info_cl_data);
@@ -2166,21 +2135,33 @@ DjVuToPS::print(ByteStream &str, const GP<DjVuDocument> &doc,
                            GRect(0, 0, dimg->get_width(), dimg->get_height()));
           store_doc_setup(str);
         }
-      // Setup the page
-      int image_dpi=dimg->get_dpi();
-      if (image_dpi<=0) image_dpi=300;
-      GRect img_rect(0, 0, dimg->get_width(), dimg->get_height());
-      store_page_setup(str, page_cnt, image_dpi, img_rect);
-      //get the text
-      GP<DjVuTXT>  txt=0;
-
-      if (options.get_text())
-          txt = get_text(djvu_file);
-
-      // Draw the image
-      print_image(str, dimg, img_rect,txt);
-      // Close the page
-      store_page_trailer(str);
+      if (!dimg)
+        {
+          // Make an empty page
+          write(str,
+                "%%%%Page: %d %d\n"
+                "%%%%BeginPageSetup\n"
+                "/page-origstate save def\n"
+                "%%%%EndPageSetup\n",
+                page_cnt, page_cnt);
+          store_page_trailer(str);
+        }
+      else
+        {
+          // Setup the page
+          int image_dpi=dimg->get_dpi();
+          if (image_dpi<=0) image_dpi=300;
+          GRect img_rect(0, 0, dimg->get_width(), dimg->get_height());
+          store_page_setup(str, page_cnt, image_dpi, img_rect);
+          //get the text
+          GP<DjVuTXT>  txt=0;
+          if (options.get_text())
+            txt = get_text(djvu_file);
+          // Draw the image
+          print_image(str, dimg, img_rect,txt);
+          // Close the page
+          store_page_trailer(str);
+        }
     }
   // Close the PostScript document.
   store_doc_trailer(str);

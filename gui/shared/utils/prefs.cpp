@@ -173,7 +173,7 @@ DjVuPrefs::load(void)
 		  "ToolBarOn:		1\n"
 		  "ToolBarDelay:	500\n"
 	  	  "ToolBarAlwaysVisible: 0\n"
-	  	  "FastZoom:		1\n"
+	  	  "FastZoom:		0\n"
 		  "OptimizeLCD:		0\n"
 	  	  "FastThumb:		1\n"
 	  	  "MimeDontAsk:		0\n"
@@ -249,6 +249,8 @@ DjVuPrefs::load(void)
   strTemp=getString("Beginner");
   if (strTemp==__DATE__ " " __TIME__)
     bBeginner=0;
+  if (bBeginner)
+    fastZoom=0;
 }
 
 void

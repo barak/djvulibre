@@ -299,7 +299,7 @@ main(int argc, char **argv)
       
       // Issue warnings
       if ( options.get_sRGB() && options.get_level() < 2)
-        DjVuPrintErrorUTF8("Color matching reuires PostScript level 2.\n");
+        DjVuPrintErrorUTF8("Color matching requires PostScript level 2 or greater.\n");
 
       // Open document
       GP<DjVuDocument> doc = DjVuDocument::create_wait(docname);
