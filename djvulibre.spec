@@ -1,4 +1,4 @@
-%define release 2
+%define release 3
 %define version 3.5.13
 %define prefix %{?_prefix:%{_prefix}}%{!?_prefix:/usr}
 %define mandir %{?_mandir:%{_mandir}}%{!?_mandir:%{prefix}/man}
@@ -115,6 +115,8 @@ if test -x /usr/bin/update-menus; then /usr/bin/update-menus; fi
 %lang(de) %{_mandir}/de*
 
 %changelog
+* Mon May 31 2004 Leon Bottou <leon@bottou.org> 3.5.13-3
+- use libtool
 * Wed May  5 2004 Leon Bottou <leon@bottou.org> 3.5.13-2
 - own all directories
 * Fri Apr  9 2004 Leon Bottou <leon@bottou.org> 3.5.13-1
