@@ -770,7 +770,7 @@ ddjvu_document_s::request_data(const DjVuPort*p, const GURL &url)
           p->tmp2 = (const char*)url.get_string();
           p->p.m_newstream.url = (const char*)(p->tmp2);
         }
-        }
+    }
   return pool;
 }
 
@@ -876,13 +876,14 @@ ddjvu_stream_write(ddjvu_document_t *doc,
 {
   G_TRY
     {
-      GPosition p = doc->streams.contains(streamid);
-      if (!p) G_THROW("Unknown stream ID");
       GP<DataPool> pool;
       { 
         GMonitorLock lock(&doc->monitor); 
-        pool = doc->streams[p];
+        GPosition p = doc->streams.contains(streamid);
+        if (p) pool = doc->streams[p];
       }
+      if (! pool)
+        G_THROW("Unknown stream ID");
       pool->add_data(data, datalen);
     }
   G_CATCH(ex)
@@ -899,14 +900,14 @@ ddjvu_stream_close(ddjvu_document_t *doc,
 {
   G_TRY
     {
-      GPosition p = doc->streams.contains(streamid);
-      if (!p) G_THROW("Unknown stream ID");
       GP<DataPool> pool;
       { 
         GMonitorLock lock(&doc->monitor); 
-        pool = doc->streams[p];
-        doc->streams.del(p);
+        GPosition p = doc->streams.contains(streamid);
+        if (p) pool = doc->streams[p];
       }
+      if (! pool)
+        G_THROW("Unknown stream ID");
       if (stop)
         pool->stop();
       else
@@ -1766,7 +1767,7 @@ ddjvu_thumbnail_p::callback(void *cldata)
               GP<ddjvu_message_p> p = new ddjvu_message_p;
               p->p.m_thumbnail.pagenum = thumb->pagenum;
               msg_push(xhead(DDJVU_THUMBNAIL, thumb->document), p);
-            }      
+            } 
         }
     }
 }

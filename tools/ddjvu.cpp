@@ -153,7 +153,7 @@ handle(int wait)
 void 
 die(const char *fmt, ...)
 {
-  /* Handling message might give a better error message */
+  /* Handling messages might give a better error message */
   handle(FALSE);
   /* Print */
   va_list args;

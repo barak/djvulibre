@@ -90,7 +90,7 @@ extern "C" {
 
 typedef struct ddjvu_context_s  ddjvu_context_t;
 typedef union  ddjvu_message_s  ddjvu_message_t;
-typedef struct ddjvu_job_s  ddjvu_job_t;
+typedef struct ddjvu_job_s      ddjvu_job_t;
 typedef struct ddjvu_document_s ddjvu_document_t;
 typedef struct ddjvu_page_s     ddjvu_page_t;
 typedef struct ddjvu_format_s   ddjvu_format_t;
@@ -326,9 +326,9 @@ typedef enum {
 /* ddjvu_message_t::m_any ---
    This structure is a member of the union <djvu_message_t>.
    It represents the information common to all kinds of
-   messages.  Member <kind> indicates the kind of message.
-   Members <context>, <document>, and <page> indicate the
-   origin of the message.  These fields contain null
+   messages.  Member <tag> indicates the kind of message.
+   Members <context>, <document>, <page>, and <job> indicate 
+   the origin of the message.  These fields contain null
    pointers when they are not relevant. */
 
 typedef struct ddjvu_message_any_s {
@@ -801,7 +801,7 @@ ddjvu_page_set_rotation(ddjvu_page_t *page,
    the BOTTOM LEFT CORNER of an image.  Members <x> and <y>
    indicate the position of the bottom left corner of the
    rectangle Members <w> and <h> indicate the width and
-   height of the reactangle. */
+   height of the rectangle. */
 
 typedef struct ddjvu_rect_s {
   int x, y;
