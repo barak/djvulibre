@@ -2763,7 +2763,7 @@ echo "${ECHO_T}$ac_cv_cxx_bool" >&6
 if test "$ac_cv_cxx_bool" = yes; then
 
 cat >>confdefs.h <<\_ACEOF
-#define HAVE_BOOL
+#define HAVE_BOOL 1
 _ACEOF
 
 fi
@@ -2831,7 +2831,7 @@ echo "${ECHO_T}$ac_cv_cxx_exceptions" >&6
 if test "$ac_cv_cxx_exceptions" = yes; then
 
 cat >>confdefs.h <<\_ACEOF
-#define HAVE_EXCEPTIONS
+#define HAVE_EXCEPTIONS 1
 _ACEOF
 
 fi
@@ -2899,7 +2899,7 @@ echo "${ECHO_T}$ac_cv_cxx_typename" >&6
 if test "$ac_cv_cxx_typename" = yes; then
 
 cat >>confdefs.h <<\_ACEOF
-#define HAVE_TYPENAME
+#define HAVE_TYPENAME 1
 _ACEOF
 
 fi
@@ -2969,7 +2969,7 @@ echo "${ECHO_T}$ac_cv_cxx_stdincludes" >&6
 if test "$ac_cv_cxx_stdincludes" = yes; then
 
 cat >>confdefs.h <<\_ACEOF
-#define HAVE_STDINCLUDES
+#define HAVE_STDINCLUDES 1
 _ACEOF
 
 fi
@@ -3041,7 +3041,7 @@ echo "${ECHO_T}$ac_cv_cxx_member_templates" >&6
 if test "$ac_cv_cxx_member_templates" = yes; then
 
 cat >>confdefs.h <<\_ACEOF
-#define HAVE_MEMBER_TEMPLATES
+#define HAVE_MEMBER_TEMPLATES 1
 _ACEOF
 
 fi

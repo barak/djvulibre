@@ -134,7 +134,7 @@ template<class T, int N> class A
  AC_LANG_RESTORE
 ])
 if test "$ac_cv_cxx_member_templates" = yes; then
-  AC_DEFINE(HAVE_MEMBER_TEMPLATES,,
+  AC_DEFINE(HAVE_MEMBER_TEMPLATES,1,
         [define if the compiler supports member templates])
 fi
 ])
@@ -157,7 +157,7 @@ ac_cv_cxx_typename,
  AC_LANG_RESTORE
 ])
 if test "$ac_cv_cxx_typename" = yes; then
-  AC_DEFINE(HAVE_TYPENAME,,[define if the compiler recognizes typename])
+  AC_DEFINE(HAVE_TYPENAME,1,[define if the compiler recognizes typename])
 fi
 ])
 
@@ -179,7 +179,7 @@ X* foo(void *x) { return new(x) X(2); } ],[],
  AC_LANG_RESTORE
 ])
 if test "$ac_cv_cxx_stdincludes" = yes; then
-  AC_DEFINE(HAVE_STDINCLUDES,,
+  AC_DEFINE(HAVE_STDINCLUDES,1,
     [define if the compiler comes with standard includes])
 fi
 ])
@@ -206,7 +206,7 @@ int f(bool x){return 1;}
  AC_LANG_RESTORE
 ])
 if test "$ac_cv_cxx_bool" = yes; then
-  AC_DEFINE(HAVE_BOOL,,[define if bool is a built-in type])
+  AC_DEFINE(HAVE_BOOL,1,[define if bool is a built-in type])
 fi
 ])
 
@@ -225,7 +225,7 @@ ac_cv_cxx_exceptions,
  AC_LANG_RESTORE
 ])
 if test "$ac_cv_cxx_exceptions" = yes; then
-  AC_DEFINE(HAVE_EXCEPTIONS,,[define if the compiler supports exceptions])
+  AC_DEFINE(HAVE_EXCEPTIONS,1,[define if the compiler supports exceptions])
 fi
 ])
 
