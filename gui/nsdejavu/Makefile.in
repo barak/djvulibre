@@ -62,7 +62,7 @@ ${NSDEJAVU} : ${OBJS}
 
 nsdejavu.1: ${srcdir}/nsdejavu.1.in
 	sed < ${srcdir}/nsdejavu.1.in > nsdejavu.1 \
-	 -e 's,LIBDIR,${libdir},' -e 's,NSDEJAVU,${NSDEJAVU},'
+	 -e 's,LIBDIR,${libdir},' -e 's,NSDEJAVUSO,${NSDEJAVU},'
 
 install: install-bin install-man
 

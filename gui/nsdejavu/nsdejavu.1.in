@@ -27,7 +27,7 @@
 nsdejavu \- DjVU browser plugin
 
 .SH SYNOPSIS
-.B LIBDIR/netscape/plugins/NSDEJAVU
+.B LIBDIR/netscape/plugins/NSDEJAVUSO
 
 .SH DESCRIPTION
 To be written...
@@ -56,24 +56,24 @@ displays the current list of plugins.
 Previous versions of the plugin might be installed in one of 
 the following locations:
 .IP "" 2
-.B "$HOME/.netscape/plugins/NSDEJAVU"
+.B "$HOME/.netscape/plugins/NSDEJAVUSO"
 .br
-.B "/usr/lib/netscape/plugins/NSDEJAVU"
+.B "/usr/lib/netscape/plugins/NSDEJAVUSO"
 .br
-.B "/opt/netscape/plugins/NSDEJAVU"
+.B "/opt/netscape/plugins/NSDEJAVUSO"
 .PP
 More complicated cases can be solved by creating a symbolic 
 link into your personal plugin directory:
 .IP "" 2
 .B "cd $HOME/.netscape/plugins"
 .br
-.B "ln -s LIBDIR/netscape/plugins/NSDEJAVU ."
+.B "ln -s LIBDIR/netscape/plugins/NSDEJAVUSO ."
 .PP
 You must not copy 
-.B NSDEJAVU 
+.B NSDEJAVUSO 
 but create a symbolic link.  This is necessary
 because 
-.B NSDEJAVU 
+.B NSDEJAVUSO 
 first locates its normal installation directory by following the symbolic
 link.  
 
@@ -96,7 +96,7 @@ The following commands should do the trick:
 .IP "" 2
 .B "cd /usr/local/netscape6/plugins"
 .br
-.B "ln -s LIBDIR/netscape/plugins/NSDEJAVU ."
+.B "ln -s LIBDIR/netscape/plugins/NSDEJAVUSO ."
 .PP
 .SS Mozilla
 .PP
@@ -107,7 +107,7 @@ Assuming that Mozilla is installed under
 .IP "" 2
 .B "cd /usr/lib/mozilla/plugins"
 .br
-.B "ln -s LIBDIR/netscape/plugins/NSDEJAVU ."
+.B "ln -s LIBDIR/netscape/plugins/NSDEJAVUSO ."
 .PP
 You can then restart
 .B mozilla
@@ -145,7 +145,7 @@ Clicking the
 .B "Plugins" 
 tab button should display a list of recognized plugins.  
 Check that 
-.B "NSDEJAVU" 
+.B "NSDEJAVUSO" 
 appears there.  
 
 .SH CREDITS
