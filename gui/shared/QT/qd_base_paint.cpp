@@ -83,14 +83,11 @@ QDBase::redraw(const GRect * grect)
       // Sending Event_Paint using QApplication::postEvent() doesn't help
       // because QT doesn't optimize events sent in this way
       //
-      // So, what I do here - I just send the X11 expose event manually :(
+      // Therefore we send the X11 expose event manually :(
 
-   QPaintEvent * ev=new QPaintEvent(qrect);
-   QApplication::postEvent(pane, ev);
 #ifdef UNIX
    x11Redraw(pane, &qrect);
 #else
-   ::showWarning(0, "DjVu", "Have a look at QDBase::redraw().");
    QPaintEvent * ev=new QPaintEvent(qrect);
    QApplication::postEvent(pane, ev);
 #endif
