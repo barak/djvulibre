@@ -18,9 +18,7 @@
 //C- the GPL granted by any of Bill C. Riemers, Leon Bottou, 
 //C- Yann Le Cun, or the Free Source Foundation.
 //C-
-//C- As derived work,  the following LizardTech, Inc. copyright 
-//C- notice applies to this code.
-//C-  ------------------------------------------------------------------
+//C- ------------------------------------------------------------------
 //C- DjVuLibre-3.5 is derived from the DjVu(r) Reference Library
 //C- distributed by Lizardtech Software.  On July 19th 2002, Lizardtech 
 //C- Software authorized us to replace the original DjVu(r) Reference 

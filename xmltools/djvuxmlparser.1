@@ -24,9 +24,7 @@
 .\" the GPL granted by any of Bill C. Riemers, Leon Bottou, 
 .\" Yann Le Cun, or the Free Source Foundation.
 .\"
-.\" As derived work,  the following LizardTech, Inc. copyright 
-.\" notice applies to this code.
-.\"  ------------------------------------------------------------------
+.\" ------------------------------------------------------------------
 .\" DjVuLibre-3.5 is derived from the DjVu(r) Reference Library
 .\" distributed by Lizardtech Software.  On July 19th 2002, Lizardtech 
 .\" Software authorized us to replace the original DjVu(r) Reference 
@@ -63,12 +61,13 @@
 .\" | TO ANY WARRANTY OF NON-INFRINGEMENT, OR ANY IMPLIED WARRANTY OF
 .\" | MERCHANTABILITY OR FITNESS FOR A PARTICULAR PURPOSE.
 .\" +------------------------------------------------------------------
-.TH DJVUPARSEXML 1 "11/15/2002" "DjVuLibre-3.5" "DjVuLibre-3.5"
+.TH DJVUPARSEXML 1 "11/15/2002" "DjVuLibre XML Tools" "DjVuLibre XML Tools"
 .de SS
 .SH \\0\\0\\0\\$*
 ..
 .SH NAME
-djvuxmlparser \- Parses an Extensible Markup Language (XML) file using the DjVuXML-s.dtd and modifies the metadata of the referenced DjVu files.
+djvuxmlparser \- Parses an Extensible Markup Language (XML) file 
+using the DjVuXML-s.dtd and modifies the metadata of the referenced DjVu files.
 
 .SH SYNOPSIS
 .BI "djvuxmlparser [" inputxmlfile "]"
@@ -82,7 +81,9 @@ and modifies the metadata of the DjVu files reference by the
 .I OBJECT 
 elements.
 
-DjVuLibre contains a non-compliant XML parser, designed to read in an XML file specified by the DjVuXML-s.dtd.  This file should contain within the 
+DjVuLibre contains a non-compliant XML parser, designed to read in an 
+XML file specified by the DjVuXML-s.dtd.  This file should contain 
+within the 
 .I BODY
 element a series of 
 .I OBJECT
@@ -92,7 +93,8 @@ element may contain a
 .I HIDDENTEXT
 element.  If a
 .I HIDDENTEXT 
-element exists, the contents will be used to replace the existing HIDDENTEXT for the specified DjVu page.  Each 
+element exists, the contents will be used to replace the existing 
+HIDDENTEXT for the specified DjVu page.  Each 
 .I OBJECT
 may also reference a 
 .I MAP
@@ -101,7 +103,9 @@ element.  If such a
 element exists, the contents will be used to replace the existing
 hyperlinks and highlight areas.
 
-The precise format of the XML output is defined in the pubtext/DjVuXML-s.dtd file.  See 
+The precise format of the XML output is defined in the 
+pubtext/DjVuXML-s.dtd 
+file.  See 
 .I djvuxml-s (3)
 for more details.
 

@@ -157,10 +157,6 @@
 #include "DjVuMessage.h"
 #include <locale.h>
 #include <stdlib.h>
-#if defined(WIN32) || defined(__CYGWIN32__)
-#include <fcntl.h>
-#include <io.h>
-#endif
 
 #undef MIN
 #undef MAX

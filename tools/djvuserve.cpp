@@ -78,10 +78,6 @@
 #include <sys/stat.h>
 #include <time.h>
 #include <errno.h>
-#if defined(WIN32) || defined(__CYGWIN32__)
-#include <fcntl.h>
-#include <io.h>
-#endif
 
 
 static bool cgi = false;
@@ -250,7 +246,7 @@ djvuserver_directory(GURL pathurl)
     return;
   bsdir->seek(0);
   fprintf(stdout,"\n");
-  GP<ByteStream> out = ByteStream::get_stdout("wab");
+  GP<ByteStream> out = ByteStream::get_stdout("ab");
   out->copy(*bsdir);
 }
 
@@ -293,7 +289,7 @@ djvuserver_component(GURL pathurl, GUTF8String id)
   if (head) 
     return;
   fprintf(stdout,"\n");
-  GP<ByteStream> out = ByteStream::get_stdout("wab");
+  GP<ByteStream> out = ByteStream::get_stdout("ab");
   out->writall("AT&T", 4);
   bsin->seek(frec->offset);
   out->copy(*bsin, frec->size);

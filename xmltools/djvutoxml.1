@@ -24,9 +24,7 @@
 .\" the GPL granted by any of Bill C. Riemers, Leon Bottou, 
 .\" Yann Le Cun, or the Free Source Foundation.
 .\"
-.\" As derived work,  the following LizardTech, Inc. copyright 
-.\" notice applies to this code.
-.\"  ------------------------------------------------------------------
+.\" ------------------------------------------------------------------
 .\" DjVuLibre-3.5 is derived from the DjVu(r) Reference Library
 .\" distributed by Lizardtech Software.  On July 19th 2002, Lizardtech 
 .\" Software authorized us to replace the original DjVu(r) Reference 
@@ -63,12 +61,13 @@
 .\" | TO ANY WARRANTY OF NON-INFRINGEMENT, OR ANY IMPLIED WARRANTY OF
 .\" | MERCHANTABILITY OR FITNESS FOR A PARTICULAR PURPOSE.
 .\" +------------------------------------------------------------------
-.TH DJVUTOXML 1 "11/15/2002" "DjVuLibre-3.5" "DjVuLibre-3.5"
+.TH DJVUTOXML 1 "11/15/2002"  "DjVuLibre XML Tools" "DjVuLibre XML Tools"
 .de SS
 .SH \\0\\0\\0\\$*
 ..
 .SH NAME
-djvutoxml \- Extract the hidden text and annotations from DjVu documents in Extensible Markup Language (XML).
+djvutoxml \- Extract the hidden text and annotations from DjVu documents 
+in Extensible Markup Language (XML).
 
 .SH SYNOPSIS
 .BI "djvutoxml [--page " "pagenum" "] [--with-text|--without-text] [-with-anno|--without-anno]  " "inputdjvufile" " [" outputxmlfile "]"
@@ -86,9 +85,13 @@ file
 .I outputxmlfile 
 or the standard output into file 
 .I outputxmlfile
-or the standard output.   The hidden text layer is usually generated with the help of optical character recognition software, and the annotation layer is usually created with a commercial visual editor.
+or the standard output.   The hidden text layer is usually generated 
+with the help of optical character recognition software, and the 
+annotation layer is usually created with a commercial visual editor.
 
-The precise format of the XML output is defined in the pubtext/DjVuXML-s.dtd file.  See 
+The precise format of the XML output is defined in the 
+pubtext/DjVuXML-s.dtd file.  
+See 
 .I djvuxml-s (3)
 for more details.
 
@@ -106,10 +109,11 @@ corresponding to all pages of the document.
 .BI "--with-text"
 Specifies the 
 .SM HIDDENTEXT 
-element for each page should be included in the output.  If specified without the
-.I –with-anno
+element for each page should be included in the output.  
+If specified without the
+.I --with-anno
 flag then the
-.I –without-anno 
+.I --without-anno 
 is implied.  If none of the  
 .I --with-text, 
 .I --without-text, 
@@ -127,29 +131,31 @@ flags are implied.
 Specifies not to output the 
 .SM HIDDENTEXT 
 element for each page.  If specified without the 
-.I –without-anno 
+.I --without-anno 
 flag then the 
-.I –with-anno 
+.I --with-anno 
 flag is implied.
 
 .TP
 .BI "--with-anno"
 Specifies the area 
 .SM MAP 
-element for each page should be included in the output.  If specified without the
-.I –with-text 
+element for each page should be included in the output.  
+If specified without the
+.I --with-text 
 flag then the
-.I –without-text 
+.I --without-text 
 flag is implied.
 
 .TP
 .BI "--without-anno"
 Specifies the area 
 .SM MAP 
-element for each page should not be included in the output.  If specified without the
-.I –without-text 
+element for each page should not be included in the output.  
+If specified without the
+.I --without-text 
 flag then the
-.I –with-text 
+.I --with-text 
 flag is implied.
 
 .SH REMARKS
@@ -158,7 +164,8 @@ Use with
 to modify the contents of a DjVu file.
 
 .SH CREDITS
-This program was written by Bill C. Riemers <docbill@sourceforge.net>.
+This program was written by 
+Bill C. Riemers <docbill@sourceforge.net>.
 
 .SH SEE ALSO
 .BR djvu (1),

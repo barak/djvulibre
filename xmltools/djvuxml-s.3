@@ -24,9 +24,7 @@
 .\" the GPL granted by any of Bill C. Riemers, Leon Bottou, 
 .\" Yann Le Cun, or the Free Source Foundation.
 .\"
-.\" As derived work,  the following LizardTech, Inc. copyright 
-.\" notice applies to this code.
-.\"  ------------------------------------------------------------------
+.\" ------------------------------------------------------------------
 .\" DjVuLibre-3.5 is derived from the DjVu(r) Reference Library
 .\" distributed by Lizardtech Software.  On July 19th 2002, Lizardtech 
 .\" Software authorized us to replace the original DjVu(r) Reference 
@@ -63,25 +61,29 @@
 .\" | TO ANY WARRANTY OF NON-INFRINGEMENT, OR ANY IMPLIED WARRANTY OF
 .\" | MERCHANTABILITY OR FITNESS FOR A PARTICULAR PURPOSE.
 .\" +------------------------------------------------------------------
-.TH DJVUXML-S 3 "11/15/2002" "DjVuLibre-3.5" "DjVuLibre-3.5"
+.TH DJVUXML-S 3 "11/15/2002" "DjVuLibre XML Tools" "DjVuLibre XML Tools"
 .de SS
 .SH \\0\\0\\0\\$*
 ..
 .SH NAME
-DjVuXML-s \- The Document Type Definition (DTD) use by DjVu Extensible Markup Language (XML) tools.
+DjVuXML-s \- The Document Type Definition (DTD) use 
+by DjVu Extensible Markup Language (XML) tools.
 
 .SH DESCRIPTION
 The document type definition 
 .SM (DTD) 
 .I DjVuXML-s.dtd
-defines the input and output of DjVu Extensible Markup (XML) tools to describe all the metadata associated with a DjVu document.  The DjVuXML-s 
+defines the input and output of DjVu Extensible Markup (XML) tools 
+to describe all the metadata associated with a DjVu document.  
+The DjVuXML-s 
 .SM DTD 
 is a simplification of the 
 .SM HTML DTD: 
 
 http://www.w3c.org/TR/1998/REC-html40-19980424/sgml/dtd.html
  
-with a few new attributes added specific to DjVu.  Each of the specified pages of a DjVu document are represented as 
+with a few new attributes added specific to DjVu.  Each of the 
+specified pages of a DjVu document are represented as 
 .I OBJECT 
 elements within the 
 .I BODY 
@@ -91,18 +93,20 @@ file. Each
 .I OBJECT
 element may contain multiple 
 .I PARAM 
-elements to specify attributes like page name (PAGE), resolution (DPI), and
-gamma factor (GAMMA).  Each 
+elements to specify attributes like page name (PAGE), 
+resolution (DPI), and gamma factor (GAMMA).  Each 
 .I OBJECT
 element may also contain one
 .I HIDDENTTEXT
-element to specify the hidden text (usually generated with an OCR engine) within the DjVu page.  In addition each 
+element to specify the hidden text (usually generated with an OCR engine) 
+within the DjVu page.  In addition each 
 .I OBJECT
 element may reference a single area 
 .I MAP
 element which contains multiple
 .I AREA
-elements to represent all the hyperlink and highlight areas within the DjVu document.
+elements to represent all the hyperlink and highlight areas within 
+the DjVu document.
 
 .SH PARAM Elements
 Legal 
@@ -127,17 +131,22 @@ elements consists of nested elements of
 .I LINE,
 and
 .I WORD.
-The most deeply nested element specified, should specify the bounding coordinates of the element in top-down orientation.  The body of the most deeply nested elelement should contain the text.  Most DjVu documents use either 
+The most deeply nested element specified, should specify the bounding 
+coordinates of the element in top-down orientation.  The body of the 
+most deeply nested elelement should contain the text.  Most DjVu 
+documents use either 
 .I LINE 
 or 
 .I WORD 
-as the lowest level element, but any element is legal as the lowest level element.  A white space is always added between 
+as the lowest level element, but any element is legal as the lowest 
+level element.  A white space is always added between 
 .I
 WORD
 elements and a line feed is always added between
 .I
 LINE
-elements.  Since languages such as Japanese do not use spaces between words, it is quite common for Asian OCR engines to use
+elements.  Since languages such as Japanese do not use spaces between 
+words, it is quite common for Asian OCR engines to use
 .I
 WORD
 as characters instead.
@@ -157,19 +166,23 @@ the attributes
 .I border,
 and 
 .I highlight
-have been added to specify border type, border color, border width, and highlight colors respectively.  Legal values for each of these attributes are listed in the 
+have been added to specify border type, border color, border width, and 
+highlight colors respectively.  Legal values for each of these attributes 
+are listed in the 
 .I DjVuXML-s
 .SM DTD.
 In addition, the shape
 .I oval
-has been added to the legal list of shapes.  An oval uses a rectangular bounding box.
+has been added to the legal list of shapes.  An oval uses a rectangular 
+bounding box.
 
 .SH REMARKS
 Used by
 .BR djvuxmlparser (1)
 and
 .BR djvutoxml (1).
-Perhaps it would have been better to use CC2 style sheets with standard HTML elements instead of defining the 
+Perhaps it would have been better to use CC2 style sheets with standard HTML 
+elements instead of defining the 
 .I HIDDENTEXT 
 element.
 

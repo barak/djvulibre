@@ -24,9 +24,7 @@
 .\" the GPL granted by any of Bill C. Riemers, Leon Bottou, 
 .\" Yann Le Cun, or the Free Source Foundation.
 .\"
-.\" As derived work,  the following LizardTech, Inc. copyright 
-.\" notice applies to this code.
-.\"  ------------------------------------------------------------------
+.\" ------------------------------------------------------------------
 .\" DjVuLibre-3.5 is derived from the DjVu(r) Reference Library
 .\" distributed by Lizardtech Software.  On July 19th 2002, Lizardtech 
 .\" Software authorized us to replace the original DjVu(r) Reference 
@@ -63,12 +61,13 @@
 .\" | TO ANY WARRANTY OF NON-INFRINGEMENT, OR ANY IMPLIED WARRANTY OF
 .\" | MERCHANTABILITY OR FITNESS FOR A PARTICULAR PURPOSE.
 .\" +------------------------------------------------------------------
-.TH XML2NATIVE 1 "11/15/2002" "DjVuLibre-3.5" "DjVuLibre-3.5"
+.TH XML2NATIVE 1 "11/15/2002"  "DjVuLibre XML Tools" "DjVuLibre XML Tools"
 .de SS
 .SH \\0\\0\\0\\$*
 ..
 .SH NAME
-xml2native \- Converts a Extensible Markup Language (XML) document to the current locale Multi Byte Encoding.
+xml2native \- Converts a Extensible Markup Language (XML) document to the 
+current locale Multi Byte Encoding.
 
 .SH SYNOPSIS
 .BI "xml2native " "inputxmlfile" " " "outputxmlfile" " "
@@ -76,14 +75,14 @@ xml2native \- Converts a Extensible Markup Language (XML) document to the curren
 .SH DESCRIPTION
 Program 
 .B xml2native
-converts an Extensible Markup Language (XML) file to the current locale Multi Byte Encoding.  This is usefull if your operating system can not display 
+converts an Extensible Markup Language (XML) file to the current locale Multi
+Byte Encoding.  This is usefull if your operating system can not display 
 .SM UTF8
 encoded pages.
-.SM XML
-parsing routines.
 
 .SH REMARKS
-Since the locale name is not easily mapped into the character set name, the resultant 
+Since the locale name is not easily mapped into the character set name, 
+the resultant 
 .SM XML
 file is nolonger legally encoded for use with a compliant 
 .SM XML
