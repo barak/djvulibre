@@ -134,25 +134,41 @@ class QDBase : public QWidget, public GPEnabled
    Q_OBJECT
    friend class QDTBHider;
 public:
-   enum MODE_SOURCE	{ MODE_SOURCE_MAX=5, SRC_MANUAL=4, SRC_SAVED=3,
-			  SRC_TAGS=2, SRC_ANT=1, SRC_DEFAULT=0 };
-   class OverrideFlags
+   enum MODE_SOURCE { 
+     MODE_SOURCE_MAX=5, SRC_MANUAL=4, SRC_SAVED=3,
+     SRC_TAGS=2, SRC_ANT=1, SRC_DEFAULT=0 
+   };
+  class OverrideFlags
    {
    public:
-      enum THUMB_POS    { THUMB_TOP=4, THUMB_BOTTOM=3, THUMB_LEFT=2,
-			  THUMB_RIGHT=1, THUMB_HIDE=0 };
-      THUMB_POS thumbnails;
-      bool      toolbar, toolbarauto, toolbaralways;
-      bool      scrollbars, menu, frame, links, logo, keyboard;
-      bool	print;
-      int	cmd_zoom;
-      int       cmd_rotate;
-      int	cmd_mode;
-      int	hor_align;	// See DjVuANT class for possible values
-      int	ver_align;	// or hor_align and ver_align flags
-      GPList<GMapRect>	hilite_rects;
-      GURL	url;
-      OverrideFlags(void);
+     enum THUMB_POS { 
+       THUMB_TOP=4, THUMB_BOTTOM=3, THUMB_LEFT=2,
+       THUMB_RIGHT=1, THUMB_HIDE=0 
+     };
+     enum TOOLBAR_OPTS {
+       TOOLBAR_AUTO=0x1, TOOLBAR_ALWAYS=0x2,
+       TOOLBAR_TOP=0x4, TOOLBAR_BOTTOM=0x8,
+       TOOLBAR_NO_DISPCOMBO=0x10, TOOLBAR_NO_RESCOMBO=0x20,
+       TOOLBAR_NO_ZOOM=0x40, TOOLBAR_NO_PAN=0x80,
+       TOOLBAR_NO_ZOOMSEL=0x100, TOOLBAR_NO_TEXTSEL=0x200,
+       TOOLBAR_NO_PRINT=0x400, TOOLBAR_NO_SAVE=0x800,
+       TOOLBAR_NO_BACKFORW=0x1000, TOOLBAR_NO_FIRSTLAST=0x2000,
+       TOOLBAR_NO_PREVNEXT=0x4000, TOOLBAR_NO_ROTATE=0x8000,
+       TOOLBAR_NO_BUTTONS=0xFFF
+     };
+     THUMB_POS thumbnails;
+     int toolbaropts;
+     bool toolbar, scrollbars, menu;
+     bool frame, links, logo, keyboard;
+     bool print;
+     int cmd_zoom;
+     int cmd_rotate;
+     int cmd_mode;
+     int hor_align;	// See DjVuANT class for possible values
+     int ver_align;	// or hor_align and ver_align flags
+     GPList<GMapRect> hilite_rects;
+     GURL url;
+     OverrideFlags(void);
    };
 
 private:

@@ -110,12 +110,19 @@ bool QDViewer::once_welcomed=false;
 
 bool
 QDViewer::PluginData::parseBool(const GUTF8String &qvalue_in)
-  // Will return FALSE if value_in is "false" or "no".
-  // TRUE in all other cases (including empty value_in)
 {
   DEBUG_MSG("QDViewer::PluginData::parseBool()\n");
   GUTF8String value=qvalue_in.downcase();
   return !(value=="false" || value=="no");
+}
+
+static inline int 
+set_reset(int &x, bool set, int y)
+{
+  if (set)
+    x |= y;
+  else
+    x &= ~y;
 }
 
 void
@@ -149,16 +156,64 @@ QDViewer::PluginData::parsePair(const GUTF8String &qname_in, const GUTF8String &
     }
   else if (name=="toolbar") 
     {
+      toolbar = true;
+      bool minus = false;
+      int pos = 0;
+      int npos = pos;
       GUTF8String str=qvalue.downcase();
-      toolbar = toolbaralways = toolbarauto = false;
-      if (str == "bottom" || str == "top") 
-        toolbar = toolbaralways = true;
-      else if (str == "auto")
-        toolbar = toolbarauto = true;
-      else if (str == "false" || str=="no")
-        toolbar = false;
-      else
-        toolbar = true;
+      while (npos < str.length())
+        {
+          pos = str.nextNonSpace(npos);
+          npos = str.contains(",+-", pos);
+          if (npos < 0)
+            npos = str.length();
+          GUTF8String key = str.substr(pos, npos-pos);
+          if (key=="no" || key=="false")
+            toolbar = minus;
+          if (key=="yes" || key=="true")
+            toolbar = !minus;
+          else if (key=="bottom")
+            toolbaropts |= OverrideFlags::TOOLBAR_BOTTOM;
+          else if (key == "top")
+            toolbaropts |= OverrideFlags::TOOLBAR_TOP;
+          else if (key == "auto")
+            toolbaropts |= OverrideFlags::TOOLBAR_AUTO;
+          else if (key == "always")
+            toolbaropts |= OverrideFlags::TOOLBAR_ALWAYS;
+          else if (key=="fore" || key=="back" || key=="color" || key=="bw")
+            set_reset(toolbaropts, minus, OverrideFlags::TOOLBAR_NO_DISPCOMBO);
+          else if (key=="zoom")
+            set_reset(toolbaropts, minus, OverrideFlags::TOOLBAR_NO_ZOOM);
+          else if (key=="pan")
+            set_reset(toolbaropts, minus, OverrideFlags::TOOLBAR_NO_PAN);
+          else if (key=="zoomsel")
+            set_reset(toolbaropts, minus, OverrideFlags::TOOLBAR_NO_ZOOMSEL);
+          else if (key=="textsel")
+            set_reset(toolbaropts, minus, OverrideFlags::TOOLBAR_NO_TEXTSEL);
+          else if (key=="rotate")
+            set_reset(toolbaropts, minus, OverrideFlags::TOOLBAR_NO_ROTATE);
+          else if (key=="print")
+            set_reset(toolbaropts, minus, OverrideFlags::TOOLBAR_NO_PRINT);
+          else if (key=="save")
+            set_reset(toolbaropts, minus, OverrideFlags::TOOLBAR_NO_SAVE);
+          else if (key=="backforw")
+            set_reset(toolbaropts, minus, OverrideFlags::TOOLBAR_NO_BACKFORW);
+          else if (key=="firstlast")
+            set_reset(toolbaropts, minus, OverrideFlags::TOOLBAR_NO_FIRSTLAST);
+          else if (key=="prevnext")
+            set_reset(toolbaropts, minus, OverrideFlags::TOOLBAR_NO_PREVNEXT);
+          if (npos < str.length())
+            {
+              if (str[npos] == '-')
+                minus = true;
+              else if (str[npos] == '+')
+                {
+                  minus = false;
+                  toolbaropts |= OverrideFlags::TOOLBAR_NO_BUTTONS;
+                }
+              npos += 1;
+            }
+        }
     }
   else if (name=="notoolbar") 
     toolbar=false;

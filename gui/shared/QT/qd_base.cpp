@@ -108,8 +108,7 @@ int round(float v)
 QDBase::OverrideFlags::OverrideFlags(void)
 {
    toolbar=true;
-   toolbarauto=false;
-   toolbaralways=false;
+   toolbaropts = (TOOLBAR_OPTS)0;
    scrollbars=true;
    menu=true;
    frame=true;
@@ -222,9 +221,9 @@ QDBase::setOverrideFlags(const OverrideFlags & flags)
   
   if (old_flags.toolbar != flags.toolbar)
     enableToolBar(flags.toolbar && prefs.toolBarOn);
-  if (flags.toolbaralways)
+  if (flags.toolbaropts & OverrideFlags::TOOLBAR_ALWAYS)
     stickToolBar();
-  else if (flags.toolbarauto)
+  else if (flags.toolbaropts & OverrideFlags::TOOLBAR_AUTO)
     unStickToolBar();
   else if (prefs.toolBarAlwaysVisible)
     stickToolBar();
@@ -1283,9 +1282,9 @@ QDBase::createToolBar(void)
 
    enableToolBar(override_flags.toolbar && prefs.toolBarOn);
 
-   if (override_flags.toolbaralways)
+   if (override_flags.toolbaropts & OverrideFlags::TOOLBAR_ALWAYS)
      stickToolBar();
-   else if (override_flags.toolbarauto)
+   else if (override_flags.toolbaropts & OverrideFlags::TOOLBAR_AUTO)
      unStickToolBar();
    else if (prefs.toolBarAlwaysVisible)
      stickToolBar();
