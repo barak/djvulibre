@@ -302,11 +302,11 @@ ParsingByteStream::get_native_token(bool skipseparator, bool compat)
 // --------------------------------------------------
 
 
-void
+static void
 vprint(const char *fmt, ... )
 #ifdef __GNUC__
   __attribute__ ((format (printf, 1, 2)));
-void
+static void
 vprint(const char *fmt, ... )
 #endif
 {
@@ -320,11 +320,11 @@ vprint(const char *fmt, ... )
     }
 }
 
-void
+static void
 verror(const char *fmt, ... )
 #ifdef __GNUC__
   __attribute__ ((format (printf, 1, 2)));
-void
+static void
 verror(const char *fmt, ... )
 #endif
 {
@@ -335,7 +335,7 @@ verror(const char *fmt, ... )
   G_THROW((const char*)msg);
 }
 
-void
+static void
 get_data_from_file(const char *cmd, ParsingByteStream &pbs, ByteStream &out)
 {
   GUTF8String fname = pbs.get_native_token();
@@ -380,15 +380,28 @@ get_data_from_file(const char *cmd, ParsingByteStream &pbs, ByteStream &out)
     }
 }
 
-void
-print_c_string(const char *data, int length, ByteStream &out)
+static bool
+char_unquoted(unsigned char c, bool eightbit)
+{
+  if (eightbit && c>=0x80)
+    return true;
+  if (c==0x7f || c=='\"' || c=='\\')
+    return false;
+  if (c>=0x20 && c<0x7f)
+    return true;
+  return false;
+}
+
+static void
+print_c_string(const char *data, int length, 
+               ByteStream &out, 
+               bool eightbit=false)
 {
   out.write("\"",1);
   while (*data && length>0) 
     {
       int span = 0;
-      while (span<length && (unsigned char)(data[span])>=0x20 && 
-             data[span]!=0x7f && data[span]!='"' && data[span]!='\\' )
+      while (span<length && char_unquoted(data[span],eightbit))
         span++;
       if (span > 0) 
         {
@@ -470,7 +483,7 @@ command_dump(ParsingByteStream &)
   obs->copy(*bs);
 }
 
-void
+static void
 print_size(const GP<DjVuFile> &file)
 {
   const GP<ByteStream> pbs(file->get_djvu_bytestream(false, false));
@@ -652,11 +665,14 @@ command_showsel(ParsingByteStream &)
     fprintf(stdout,"     T %8s  %s\n", "", "<thumbnails>");
 }
 
+#define DELMETA     1
+#define CHKCOMPAT   2
+#define EIGHTBIT    4
+
 static bool
 filter_ant(GP<ByteStream> in, 
            GP<ByteStream> out, 
-	   bool excludemeta=false, 
-           bool checkcompat=false)
+           int flags)
 {
   int c;
   int plevel = 0;
@@ -666,7 +682,7 @@ filter_ant(GP<ByteStream> in,
   GP<ByteStream> mem;
   GP<ParsingByteStream> inp;
 
-  if (checkcompat)
+  if (flags & CHKCOMPAT)
     {
       mem = ByteStream::create();
       mem->copy(*in);
@@ -686,7 +702,7 @@ filter_ant(GP<ByteStream> in,
                   state = 0;
                 else if (c == '\\')
                   state = '\\';
-                else if ((unsigned char)c<=0x20 || c==0x7f)
+                else if ((unsigned char)c<0x20 || c==0x7f)
                   compat = true;
                 break;
               case '\\':
@@ -718,7 +734,8 @@ filter_ant(GP<ByteStream> in,
           inp->unget(c);
           GUTF8String token = inp->get_utf8_token(false, compat);
           if (copy)
-	    print_c_string(token, token.length(), *out);
+	    print_c_string(token, token.length(), *out, 
+                           (flags & EIGHTBIT) ? true : false );
           if (compat)
             unchanged = false;
         }
@@ -728,7 +745,7 @@ filter_ant(GP<ByteStream> in,
             if (c!=' ' && c!='\t' && c!='\r' && c!='\n')
               break;
           inp->unget(c);
-          if (excludemeta && plevel==0 && c=='m')
+          if ((flags & DELMETA) && plevel==0 && c=='m')
             {
               GUTF8String token = inp->get_utf8_token();
               if (token == "metadata")
@@ -755,24 +772,28 @@ filter_ant(GP<ByteStream> in,
   return !unchanged;
 }
 
-void
-print_ant(GP<IFFByteStream> iff, GP<ByteStream> out)
+static bool
+print_ant(GP<IFFByteStream> iff, 
+          GP<ByteStream> out, 
+          int flags=CHKCOMPAT)
 {
   GUTF8String chkid;
+  bool changed = false;
   while (iff->get_chunk(chkid))
     {
       if (chkid == "ANTa") 
         {
-          filter_ant(iff->get_bytestream(), out, false, true);
+          changed = filter_ant(iff->get_bytestream(), out, flags);
         }
       else if (chkid == "ANTz") 
         {
           GP<ByteStream> bsiff = 
 	    BSByteStream::create(iff->get_bytestream());
-          filter_ant(bsiff, out, false, true);
+          changed = filter_ant(bsiff, out, flags);
         }
       iff->close_chunk();
     }
+  return changed;
 }
 
 void
@@ -854,14 +875,14 @@ command_set_ant(ParsingByteStream &pbs)
     get_data_from_file("set-ant", pbs, *dsedant);
     dsedant->seek(0);
     GP<ByteStream> bsant = BSByteStream::create(ant,100);
-    filter_ant(dsedant, bsant);
+    filter_ant(dsedant, bsant, EIGHTBIT);
     bsant = 0;
   }
   modify_ant(g().file, "ANTz", ant);
   vprint("set-ant: modified \"%s\"", (const char*)(GNativeString)g().fileid);
 }
 
-void
+static void
 print_meta(IFFByteStream &iff, ByteStream &out)
 {
   GUTF8String chkid;  
@@ -923,7 +944,8 @@ modify_meta(const GP<DjVuFile> &f,
           newant->write("\n\t(",3);
           newant->writestring(key);
           newant->write(" ",1);
-          print_c_string((const char*)val, val.length(), *newant);
+          print_c_string((const char*)val, val.length(),
+                         *newant, true);
           newant->write(")",1);
         }
       newant->write(" )\n",3);
@@ -933,10 +955,7 @@ modify_meta(const GP<DjVuFile> &f,
   if (anno && anno->size()) 
     {
       GP<IFFByteStream> iff=IFFByteStream::create(anno);
-      GP<ByteStream> oldant = ByteStream::create();
-      print_ant(iff, oldant);
-      oldant->seek(0);
-      if (filter_ant(oldant, newant, true, true))
+      if (print_ant(iff, newant, DELMETA|CHKCOMPAT|EIGHTBIT))
         changed = true;
     }
   const GP<ByteStream> newantz=ByteStream::create();

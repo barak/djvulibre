@@ -581,7 +581,7 @@ GLParser::check_compat(const char *s)
             state = 0;
           else if (*s == '\\')
             state = '\\';
-          else if ((unsigned char)(*s)<=0x20 || *s==0x7f)
+          else if ((unsigned char)(*s)<0x20 || *s==0x7f)
             compat = true;
           break;
         case '\\':
