@@ -4,7 +4,8 @@ By order of importance:
 - INSTALL instructions
 - README file
 - manual pages
-- plugin help paths
+- plugin help paths & about boxes
+- fix_mime_type
 - compilation check on sgi, solaris
 - djvups executable
 - rpm packages for linux (rh6, rh7)
