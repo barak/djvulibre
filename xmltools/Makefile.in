@@ -68,7 +68,7 @@ install-bin: ${PROGRAMS} FORCE
 	  ${INSTALL} -s -m 0755 $$n ${DESTDIR}${bindir} || exit ; done
 
 install-data: FORCE
-	${INSTALL} -d ${datadir}/djvu
+	${INSTALL} -d ${DESTDIR}${datadir}/djvu
 	for n in `cd ${top_srcdir}/share \
 	          && find djvu -name '*.dtd' -print` ; do \
 	  src="${top_srcdir}/share/$$n" ; \
