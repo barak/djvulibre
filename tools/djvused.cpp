@@ -579,7 +579,6 @@ filter_ant(GP<ByteStream> in, GP<ByteStream> out,
           inp->unget(c);
           if (excludemeta && plevel==0 && c=='m')
             {
-              inp->unget(c);
               GUTF8String token = inp->get_utf8_token();
               if (token == "metadata")
                 copy = unchanged = false;
@@ -589,7 +588,7 @@ filter_ant(GP<ByteStream> in, GP<ByteStream> out,
               }
             }
           else if (copy) 
-            out->write8(c);
+            out->write8('(');
           plevel += 1;
         }
       else if (c == ')')
@@ -614,14 +613,12 @@ print_ant(GP<IFFByteStream> iff, GP<ByteStream> out)
       if (chkid == "ANTa") 
         {
           filter_ant(iff->get_bytestream(), out);
-	  out->write8('\n');
         }
       else if (chkid == "ANTz") 
         {
           GP<ByteStream> bsiff = 
 	    BSByteStream::create(iff->get_bytestream());
           filter_ant(bsiff, out);
-          out->write8('\n');
         }
       iff->close_chunk();
     }
@@ -637,6 +634,7 @@ command_print_ant(ParsingByteStream &)
   if (! (anno && anno->size())) return;
   GP<IFFByteStream> iff=IFFByteStream::create(anno);
   print_ant(iff, out);
+  out->write8('\n');
 }
 
 void
@@ -649,6 +647,7 @@ command_print_merged_ant(ParsingByteStream &)
   if (! (anno && anno->size())) return;
   GP<IFFByteStream> iff=IFFByteStream::create(anno);
   print_ant(iff, out);
+  out->write8('\n');
 }
 
 
