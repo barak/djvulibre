@@ -90,7 +90,7 @@ static const size_t ps_string_size=15000;
 // ***************************************************************************
 
 DjVuToPS::Options::Options(void)
-: format(PS), level(2), orientation(PORTRAIT), mode(COLOR), zoom(FIT_PAGE),
+: format(PS), level(2), orientation(AUTO), mode(COLOR), zoom(FIT_PAGE),
   color(true), calibrate(true), text(false),
   gamma((double)2.2), copies(1), frame(false)
 {}
@@ -98,19 +98,9 @@ DjVuToPS::Options::Options(void)
 void
 DjVuToPS::Options::set_format(const Format xformat)
 {
-  switch(xformat)
-  {
-  case EPS:
-	orientation=PORTRAIT;
-	copies=1;
-	// fall through
-  case PS:
-	format=xformat;
-	break;
-  default:
+  if (xformat != EPS && xformat != PS)
     G_THROW(ERR_MSG("DjVuToPS.bad_format"));
-    break;
-  }
+  format=xformat;
 }
 
 void
@@ -124,10 +114,10 @@ DjVuToPS::Options::set_level(const int xlevel)
 void
 DjVuToPS::Options::set_orientation(const Orientation xorientation)
 {
-  if (xorientation!=PORTRAIT && xorientation!=LANDSCAPE)
+  if (xorientation!=PORTRAIT && 
+      xorientation!=LANDSCAPE &&
+      xorientation!=AUTO )
     G_THROW(ERR_MSG("DjVuToPS.bad_orient"));
-  if (format==EPS && xorientation==LANDSCAPE)
-    G_THROW(ERR_MSG("DjVuToPS.no_landscape"));  
   orientation=xorientation;
 }
 
@@ -172,8 +162,6 @@ DjVuToPS::Options::set_copies(int xcopies)
 {
   if (xcopies<=0)
     G_THROW(ERR_MSG("DjVuToPS.bad_number"));
-  if (format==EPS && xcopies!=1)
-    G_THROW(ERR_MSG("DjVuToPS.bad_EPS_num"));
   copies=xcopies;
 }
 
@@ -233,7 +221,8 @@ DjVuToPS::write(ByteStream &str, const char *format, ...)
 // ************************* DOCUMENT LEVEL *********************************
 
 void
-DjVuToPS::store_doc_prolog(ByteStream &str, int pages, int dpi, const GRect &grect)
+DjVuToPS::store_doc_prolog(ByteStream &str, int pages, int dpi, 
+                           const GRect &grect)
 {
   /* Will store the {\em document prolog}, which is basically a
      block of document-level comments in PS DSC 3.0 format.
@@ -275,20 +264,19 @@ DjVuToPS::store_doc_prolog(ByteStream &str, int pages, int dpi, const GRect &gre
         "%%%%Title: DjVu PostScript document\n"
         "%%%%Copyright: Copyright (c) 1998-1999 AT&T\n"
         "%%%%Creator: DjVu (code by Andrei Erofeev)\n"
-#ifdef UNIX
-        "%%%%For: %s (%s.%s)\n"
-#endif
-        "%%%%CreationDate: %s"
-        "%%%%Pages: %d\n"
-        "%%%%PageOrder: Ascend\n"
         "%%%%DocumentData: Clean7Bit\n"
-        "%%%%Orientation: %s\n", 
+        "%%%%CreationDate: %s"
+        "%%%%Pages: %d\n",
+        ctime(&time_), pages );
 #ifdef UNIX
-        gecos, u_name, g_name, 
+  write(str,
+        "%%%%For: %s (%s.%s)\n",
+        gecos, u_name, g_name );
 #endif
-        ctime(&time_), pages,
-        options.get_orientation()==Options::PORTRAIT ?
-        "Portrait" : "Landscape" );
+  if (options.get_orientation() != Options::AUTO)
+    write(str, "%%%%Orientation: %s\n", 
+          options.get_orientation()==Options::PORTRAIT ?
+          "Portrait" : "Landscape" );
   if (options.get_color())
     write(str, "%%%%Requirements: color\n");
   write(str, "%%%%LanguageLevel: %d\n", options.get_level());
@@ -314,15 +302,16 @@ DjVuToPS::store_doc_setup(ByteStream &str)
         "%%%%BeginSetup\n"
         "%% Remember the original state\n"
         "/doc-origstate save def\n");
-  if (options.get_copies()>1)
-    write(str,
-          "%% Number of copies\n"
-          "/#copies %d def\n", 
-          options.get_copies());
-  if (options.get_copies()>1 && options.get_level()>=2)
-    write(str,
-          "<< /NumCopies #copies >> setpagedevice\n");
-  
+  if (options.get_copies()>1 && options.get_format()==Options::PS)
+    {
+      write(str,
+            "%% Number of copies\n"
+            "/#copies %d def\n", 
+            options.get_copies());
+      if (options.get_level()>=2)
+        write(str,
+              "<< /NumCopies #copies >> setpagedevice\n");
+    }
   if (options.get_level()>=2)
     {
       if (options.get_color())
@@ -589,6 +578,7 @@ DjVuToPS::store_page_setup(ByteStream &str, int page_num,
       write(str, 
             "%%%%BeginPageSetup\n"
             "/page-origstate save def\n"
+            "/auto-orient %s def\n"
             "/portrait %s def    %% Specifies image orientation\n"
             "/fit-page %s def    %% Scale image to fit page?\n"
             "/zoom %d def        %% Zoom factor in percents\n"
@@ -604,10 +594,20 @@ DjVuToPS::store_page_setup(ByteStream &str, int page_num,
             "/image-y 0 def\n"
             "/image-width  %d def\n"
             "/image-height %d def\n\n",
-            (options.get_orientation() == Options::PORTRAIT) ? "true" : "false",
-            (options.get_zoom() == Options::FIT_PAGE) ? "true" : "false",
-            options.get_zoom(), dpi, grect.width(), grect.height() );
+            (options.get_orientation()==Options::AUTO) ? "true" : "false",
+            (options.get_orientation()==Options::PORTRAIT) ? "true" : "false",
+            (options.get_zoom()==Options::FIT_PAGE) ? "true" : "false",
+            options.get_zoom(), 
+            dpi, 
+            grect.width(), 
+            grect.height() );
+
       write(str, 
+            "auto-orient {\n"
+            "  image-height image-width sub\n"
+            "  page-height page-width sub\n"
+            "  mul 0 ge /portrait exch def\n" 
+            "} if\n"
             "portrait {\n"
             "  fit-page {\n"
             "    image-height page-height div\n"

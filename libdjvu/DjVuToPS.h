@@ -152,7 +152,7 @@ public:
         {\bf Encapsulated PostScript}) */
     enum Format { PS, EPS };
     /** Specifies the orientation of the output image */
-    enum Orientation { PORTRAIT, LANDSCAPE };
+    enum Orientation { PORTRAIT, LANDSCAPE, AUTO };
   private:
     Format format;
     int level;

@@ -1,11 +1,12 @@
-NEW IN VERSION 3.5.X
+NEW IN VERSION 3.5.10
 --------------------
 - Added support for mouse wheel
 - Added support for LT toolbar control args
 - Incremented djvuversion to 23 (why did they do this?)
 - Modified key bindings (space does continuous reading)
 - Fixed thumbnail generation on empty pages.
-
+- Improved csepdjvu option -bgwhite.
+- Improved djvu printing.
 
 NEW IN VERSION 3.5.9
 --------------------

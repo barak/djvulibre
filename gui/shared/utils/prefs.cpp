@@ -157,6 +157,7 @@ DjVuPrefs::load(void)
 		  "PrinterGamma:	0.0\n"
 		  "Beginner:		dummy\n"
 		  "PrintColor:		1\n"
+		  "PrintAutoOrient:	1\n"
 		  "PrintPortrait:	1\n"
 	  	  "PrintToFile:		0\n"
 		  "PrintPS:		1\n"
@@ -204,14 +205,14 @@ DjVuPrefs::load(void)
 	 i==legal_mag_scale_num)
 	break;
   magnifierScale=legal_mag_scale[i];
-
   strTemp=getString("MagnifierHotKey");
   magnifierHotKey=(MagButtType) 0;
   for(int i=0;i<MAG_ITEMS;i++)
-     if (strTemp==mag_names[i])
-     {
-	magnifierHotKey=(MagButtType) i; break;
-     }
+    if (strTemp==mag_names[i])
+      {
+	magnifierHotKey=(MagButtType) i;
+        break;
+      }
 
   strTemp=getString("ScreenGamma");
   dScreenGamma=atof((const char*)strTemp);
@@ -220,6 +221,7 @@ DjVuPrefs::load(void)
   dPrinterGamma=atof((const char*)strTemp);
   if (dPrinterGamma<0.1 || dPrinterGamma>10.0) dPrinterGamma=0.0;
   printColor=getInt("PrintColor");
+  printAutoOrient=getInt("PrintAutoOrient");
   printPortrait=getInt("PrintPortrait");
   printToFile=getInt("PrintToFile");
   printPS=getInt("PrintPS");
@@ -269,6 +271,7 @@ DjVuPrefs::save()
   strTemp.format("%1.2f", dPrinterGamma);
   setString("PrinterGamma", strTemp);
   setInt("PrintColor", printColor);
+  setInt("PrintAutoOrient", printAutoOrient);
   setInt("PrintPortrait", printPortrait);
   setInt("PrintToFile", printToFile);
   setInt("PrintPS", printPS);

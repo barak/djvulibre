@@ -95,6 +95,7 @@ public:
    double	dScreenGamma;
    double	dPrinterGamma;
    bool		printColor;
+   bool 	printAutoOrient;
    bool		printPortrait;
    bool		printToFile;
    bool		printPS;

@@ -94,7 +94,7 @@ usage(void)
           "  -page=<pagelists>                   (default: print all pages)\n"
           "  -format=<ps|eps>                    (default: ps)\n"
           "  -level=<1|2|3>                      (default: 2)\n"
-          "  -orientation=<portrait|landscape>   (default: portrait)\n"
+          "  -orient=<auto|portrait|landscape>   (default: auto)\n"
           "  -mode=<color|bw|fore|back>          (default: color)\n"
           "  -zoom=<auto|25...2400)              (default: auto)\n"
           "  -color=<yes|no>                     (default: yes)\n"
@@ -156,7 +156,7 @@ main(int argc, char **argv)
           GUTF8String arg( s2[0] && s2[1] ? s2+1 : "" );
 
           // rumble!
-          if (s == "pages")
+          if (s == "page" || s == "pages")
             {
               if (pages.length())
                 pages = pages + ",";
@@ -179,14 +179,17 @@ main(int argc, char **argv)
                 complain(dargv[1],"Invalid Postscript language level.");
               options.set_level(lvl);
             }
-          else if (s == "orientation")
+          else if (s == "orient" || s == "orientation")
             {
+              if (arg == "a" || arg == "auto" )
+                options.set_orientation(DjVuToPS::Options::AUTO);
               if (arg == "l" || arg == "landscape" )
                 options.set_orientation(DjVuToPS::Options::LANDSCAPE);
-              else if (arg == "eps")
+              if (arg == "p" || arg == "portrait" )
                 options.set_orientation(DjVuToPS::Options::PORTRAIT);
               else
-                complain(dargv[1],"Invalid orientation. Use \"landscape\" or \"portrait\".");
+                complain(dargv[1],"Invalid orientation. Use \"auto\", "
+                         "\"landscape\" or \"portrait\".");
             }
           else if (s == "mode")
             {
@@ -246,7 +249,8 @@ main(int argc, char **argv)
               int endpos;
               double g = arg.toDouble(0,endpos);
               if (endpos != (int)arg.length() || g < 0.3 || g > 5.0)
-                complain(dargv[1],"Invalid gamma factor. Use a number in range 0.3 ... 5.0.");
+                complain(dargv[1],"Invalid gamma factor. Use a number "
+                         "in range 0.3 ... 5.0.");
               options.set_gamma(g);
             }
           else if (s == "copies")
@@ -281,7 +285,8 @@ main(int argc, char **argv)
             }
           else
             {
-              DjVuPrintErrorUTF8("djvups: Unrecognized option \"%s\"\n",(const char*)dargv[1]);
+              DjVuPrintErrorUTF8("djvups: Unrecognized option "
+                                 "\"%s\"\n",(const char*)dargv[1]);
               usage();
             }
           // Next option
@@ -299,7 +304,8 @@ main(int argc, char **argv)
       
       // Issue warnings
       if ( options.get_sRGB() && options.get_level() < 2)
-        DjVuPrintErrorUTF8("Color matching requires PostScript level 2 or greater.\n");
+        DjVuPrintErrorUTF8("Color matching requires PostScript "
+                           "level 2 or greater.\n");
 
       // Open document
       GP<DjVuDocument> doc = DjVuDocument::create_wait(docname);
