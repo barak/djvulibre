@@ -764,8 +764,15 @@ GThread::current()
 GMonitor::GMonitor()
   : ok(0), count(1), locker(0)
 {
+  // none of this should be necessary ... in theory.
+#ifdef __CYGWIN32__
+  mutex=PTHREAD_MUTEX_INITIALIZER;  // yuk!
+  cond=PTHREAD_COND_INITIALIZER;    // yuk!
+#else
   memset(&mutex, 0, sizeof(mutex));
   memset(&cond, 0, sizeof(cond));
+#endif
+  // standard
   pthread_mutex_init(&mutex, pthread_mutexattr_default);
   pthread_cond_init(&cond, pthread_condattr_default); 
   locker = pthread_self();
