@@ -48,14 +48,14 @@ menus=applnk
 dryrun=no
 
 # Autodetect
-if [ -n "${XDG_CONFIG_DIRS}" ] ; then
+if [ -d /etc/menu-methods ] ; then
+    menus=debian
+elif [ -n "${XDG_CONFIG_DIRS}" ] ; then
     menus=xdg
 elif [ -r /etc/xdg/menus/applications.menu ] ; then
     menus=xdg
 elif [ -r /etc/X11/desktop-menus/applications.menu ] ; then
     menus=xdg-old # redhat8 and redhat9 style. 
-elif [ -d /etc/menu-methods ] ; then
-    menus=debian
 fi
 
 kdeconfig=`which kde-config 2>/dev/null`
@@ -192,13 +192,6 @@ if [ "$mimelnk" != no ] ; then
 fi
 
 case "$menus" in
-    # Freedesktop compliant menus
-    xdg*)
-	if [ "$applications" != no ] ; then
-	  makedir $DESTDIR$applications
-	  install djview.desktop $DESTDIR$applications/djview.desktop
-	fi
-	;;
     # Debian menu system (tentative)
     debian)
         if [ -d /usr/lib/menu ] ; then
@@ -209,7 +202,14 @@ case "$menus" in
 EOF
             run install djview.menu $DESTDIR/usr/lib/menu/djview
         fi
-        ;;
+        ;; 
+   # Freedesktop compliant menus
+    xdg*)
+	if [ "$applications" != no ] ; then
+	  makedir $DESTDIR$applications
+	  install djview.desktop $DESTDIR$applications/djview.desktop
+	fi
+	;;
     # KDE menu system
     applnk)
 	if [ "$applnk" != no ] ; then
