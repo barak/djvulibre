@@ -6222,7 +6222,7 @@ else
 echo "${ECHO_T}no" >&6
 fi
 
-    if ! test -x "$MOC" ; then
+    if test -x "$MOC" ; then : ; else
         { echo "$as_me:6226: WARNING: Cannot run the Qt Meta-Object compiler." >&5
 echo "$as_me: WARNING: Cannot run the Qt Meta-Object compiler." >&2;}
         QTDIR=no

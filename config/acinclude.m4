@@ -564,7 +564,7 @@ AC_DEFUN([AC_PATH_QT],
     test x{$QT_LIBS+set} != set && QT_LIBS="-L$QTDIR/lib -lqt"
     AC_PATH_PROG(MOC, moc, [unknown], "$QTDIR/bin:$PATH")
     AC_PATH_PROG(UIC, uic, [unknown], "$QTDIR/bin:$PATH")
-    if ! test -x "$MOC" ; then
+    if test -x "$MOC" ; then : ; else 
         AC_MSG_WARN([Cannot run the Qt Meta-Object compiler.])
         QTDIR=no
     fi
