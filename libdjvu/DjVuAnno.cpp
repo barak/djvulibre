@@ -150,13 +150,16 @@ public:
 private:
    GPList<GLObject>	list;
 
+   bool   	compat;
    void		skip_white_space(const char * & start);
+   void 	check_compat(const char *str);
    GLToken	get_token(const char * & start);
    void		parse(const char * cur_name, GPList<GLObject> & list,
 		      const char * & start);
 };
 
 GLParser::GLParser(void) 
+  : compat(false)
 {
 }
 
@@ -171,6 +174,7 @@ GLParser::get_list(void)
 }
 
 GLParser::GLParser(const char * str) 
+  : compat(false)
 {
   parse(str); 
 }
@@ -198,11 +202,10 @@ GLObject::GLObject(const char * xname, const GPList<GLObject> & xlist) :
 void
 GLObject::print(ByteStream & str, int compact, int indent, int * cur_pos) const
 {
-  int aldel_cur_pos=0;
-  if (!cur_pos) { cur_pos=new int; *cur_pos=0; aldel_cur_pos=1; }
+  int local_cur_pos = 0;
+  if (!cur_pos) { cur_pos = &local_cur_pos; }
   
   GUTF8String buffer;
-  GTArray<char> buffer_str;
   const char * to_print=0;
   switch(type)
   {
@@ -211,18 +214,39 @@ GLObject::print(ByteStream & str, int compact, int indent, int * cur_pos) const
     break;
   case STRING:
     {
-      int src=0, dst=0;
-      buffer_str.resize(5+string.length()*2);
-      buffer_str[dst++]='"';
-      for(src=0;src<(int)string.length();src++)
-      {
-	       char ch=string[src];
-         if (ch=='"') buffer_str[dst++]='\\';
-         buffer_str[dst++]=ch;
-      }
-      buffer_str[dst++]='"';
-      buffer_str[dst++]=0;
-      to_print=buffer_str;
+       int length = string.length();
+       const char *data = (const char*)string;
+       buffer = GUTF8String("\"");
+       while (*data && length>0) 
+         {
+           int span = 0;
+           while (span<length && (unsigned char)(data[span])>=0x20 && 
+                  data[span]!=0x7f && data[span]!='"' && data[span]!='\\' )
+             span++;
+           if (span > 0) 
+             {  
+               buffer = buffer + GUTF8String(data, span);
+               data += span;
+               length -= span;
+             }  
+           else 
+             {
+               char buf[8];
+               static char *tr1 = "\"\\tnrbf";
+               static char *tr2 = "\"\\\t\n\r\b\f";
+               sprintf(buf,"\\%03o", (int)(((unsigned char*)data)[span]));
+               for (int i=0; tr2[i]; i++)
+                 if (data[span] == tr2[i])
+                   buf[1] = tr1[i];
+               if (buf[1]<'0' || buf[1]>'3')
+                 buf[2] = 0;
+               buffer = buffer + GUTF8String(buf);
+               data += 1;
+               length -= 1;
+             }
+         }
+       buffer = buffer + GUTF8String("\"");
+       to_print = buffer;
     }
     break;
   case SYMBOL:
@@ -254,8 +278,6 @@ GLObject::print(ByteStream & str, int compact, int indent, int * cur_pos) const
     str.write(") ", 2);
     *cur_pos+=2;
   }
-  
-  if (aldel_cur_pos) delete cur_pos;
 }
 
 //  This function constructs message names for external lookup.
@@ -399,17 +421,64 @@ GLParser::get_token(const char * & start)
        start++;
        while(1)
 	 {
-           char ch=*start++;
-           if (!ch)
-             G_THROW( ByteStream::EndOfFile );
-           if (ch=='"')
+           int span = 0;
+           while (start[span] && start[span]!='\\' && start[span]!='\"')
+             span++;
+           if (span > 0)
              {
-	       if (str.length()>0 && str[(int)str.length()-1]=='\\')
-                 str.setat(str.length()-1, '"');
-	       else break;
-             } else str+=ch;
-	 }
-	 return GLToken(GLToken::OBJECT, new GLObject(GLObject::STRING, str));
+               str = str + GUTF8String(start,span);
+               start += span;
+             }
+           else if (start[0]=='\"')
+             {
+               start += 1;
+               break;
+             }
+           else if (start[0]=='\\' && compat)
+             {
+               char c = start[1];
+               if (c == '\"')
+                 {
+                   start += 2;
+                   str += '\"';
+                 }
+               else
+                 {
+                   start += 1;
+                   str += '\\';
+                 }
+             }
+           else if (start[0]=='\\' && start[1])
+             {
+               char c = *++start;
+               if (c>='0' && c<='7')
+                 {
+                   int x = 0;
+                   for (int i=0; i<3 && c>='0' && c<='7'; i++) 
+                     {
+                       x = x * 8 + c - '0';
+                       c = *++start;
+                     }
+                   str += (char)(x & 0xff);
+                 }
+               else
+                 {
+                   static char *tr1 = "tnrbfva";
+                   static char *tr2 = "\t\n\r\b\f\013\007";
+                   for (int i=0; tr1[i]; i++)
+                     if (c == tr1[i])
+                       c = tr2[i];
+                   start += 1;
+                   str += c;
+                 }
+             }
+           else 
+             {
+               G_THROW( ByteStream::EndOfFile );
+             }
+         }
+       return GLToken(GLToken::OBJECT, 
+                      new GLObject(GLObject::STRING, str));
      }
    else
      {
@@ -495,6 +564,36 @@ GLParser::parse(const char * cur_name, GPList<GLObject> & list,
   }
 }
 
+void 
+GLParser::check_compat(const char *s)
+{
+  int state = 0;
+  while (s && *s && !compat)
+    {
+      switch(state)
+        {
+        case 0:
+          if (*s == '\"')
+            state = '\"';
+          break;
+        case '\"':
+          if (*s == '\"')
+            state = 0;
+          else if (*s == '\\')
+            state = '\\';
+          else if ((unsigned char)(*s)<=0x20 || *s==0x7f)
+            compat = true;
+          break;
+        case '\\':
+          if (!strchr("01234567tnrbfva\"\\",*s))
+            compat = true;
+          state = '\"';
+          break;
+        }
+      s += 1;
+    }
+}
+
 void
 GLParser::parse(const char * str)
 {
@@ -503,6 +602,7 @@ GLParser::parse(const char * str)
    
    G_TRY
    {
+      check_compat(str);
       parse("toplevel", list, str);
    } G_CATCH(exc)
    {

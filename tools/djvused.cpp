@@ -135,8 +135,8 @@ public:
   int unget(int c);
   inline int get();
   int get_spaces(bool skipseparator=false);
-  GUTF8String get_utf8_token(bool skipseparator=false);
-  GUTF8String get_native_token(bool skipseparator=false);
+  GUTF8String get_utf8_token(bool skipseparator=false, bool compat=false);
+  GUTF8String get_native_token(bool skipseparator=false, bool compat=false);
 };
 
 ParsingByteStream::ParsingByteStream(const GP<ByteStream> &xgbs)
@@ -224,7 +224,7 @@ ParsingByteStream::get_spaces(bool skipseparator)
 }
   
 GUTF8String
-ParsingByteStream::get_utf8_token(bool skipseparator)
+ParsingByteStream::get_utf8_token(bool skipseparator, bool compat)
 {
   GUTF8String str;
   int c = get_spaces(skipseparator);
@@ -256,7 +256,11 @@ ParsingByteStream::get_utf8_token(bool skipseparator)
           if (c == '\\') 
             {
               c = get();
-              if (c>='0' && c<='7')
+              if (compat && c!='\"')
+                {
+                  str += '\\';
+                }
+              else if (c>='0' && c<='7')
                 {
                   int x = 0;
                   for (int i=0; i<3 && c>='0' && c<='7'; i++) 
@@ -285,9 +289,9 @@ ParsingByteStream::get_utf8_token(bool skipseparator)
 }
 
 GUTF8String
-ParsingByteStream::get_native_token(bool skipseparator)
+ParsingByteStream::get_native_token(bool skipseparator, bool compat)
 {
-  GUTF8String fake = get_utf8_token(skipseparator);
+  GUTF8String fake = get_utf8_token(skipseparator, compat);
   GNativeString nat((const char*)fake);
   return GUTF8String(nat);
 }
@@ -377,19 +381,14 @@ get_data_from_file(const char *cmd, ParsingByteStream &pbs, ByteStream &out)
 }
 
 void
-print_c_string(const char *data, int length, ByteStream &out, 
-	       bool rawstrings=false)
-  // Option rawstrings is necessary because the libdjvu annotation 
-  // parser does not recognize c string escapes in strings (other than \"). 
-  // Djvused now translates them into raw data before writing annotation chunk,
-  // and performs the reverse translation when extracting annotation chunks.
+print_c_string(const char *data, int length, ByteStream &out)
 {
   out.write("\"",1);
   while (*data && length>0) 
     {
       int span = 0;
-      while (span<length && data[span]>=0x20 && 
-             data[span]<0x7f && data[span]!='"' && data[span]!='\\' )
+      while (span<length && (unsigned char)(data[span])>=0x20 && 
+             data[span]!=0x7f && data[span]!='"' && data[span]!='\\' )
         span++;
       if (span > 0) 
         {
@@ -397,20 +396,18 @@ print_c_string(const char *data, int length, ByteStream &out,
           data += span;
           length -= span;
         }
-      else if (rawstrings)
-	{
-	  if (data[span]=='\"')
-	    out.write("\\\"",2);
-	  else
-	    out.write(&data[span],1);
-          data += 1;
-          length -= 1;
-	}
       else
         {
-          char buffer[5];
-          sprintf(buffer,"\\%03o", (int)*(unsigned char*)data);
-          out.write(buffer,4);
+          char buf[5];
+          static char *tr1 = "\"\\tnrbf";
+          static char *tr2 = "\"\\\t\n\r\b\f";
+          sprintf(buf,"\\%03o", (int)(((unsigned char*)data)[0]));
+          for (int i=0; tr2[i]; i++)
+            if (*(char*)data == tr2[i])
+              buf[1] = tr1[i];
+          if (buf[1]<'0' || buf[1]>'3')
+            buf[2] = 0;
+          out.write(buf, ((buf[2]) ? 4 : 2));
           data += 1;
           length -= 1;
         }
@@ -656,14 +653,57 @@ command_showsel(ParsingByteStream &)
 }
 
 static bool
-filter_ant(GP<ByteStream> in, GP<ByteStream> out, 
-	   bool excludemeta=false, bool rawstrings=false)
+filter_ant(GP<ByteStream> in, 
+           GP<ByteStream> out, 
+	   bool excludemeta=false, 
+           bool checkcompat=false)
 {
   int c;
   int plevel = 0;
   bool copy = true;
   bool unchanged = true;
-  GP<ParsingByteStream> inp = ParsingByteStream::create(in);
+  bool compat = false;
+  GP<ByteStream> mem;
+  GP<ParsingByteStream> inp;
+
+  if (checkcompat)
+    {
+      mem = ByteStream::create();
+      mem->copy(*in);
+      mem->seek(0);
+      char c;
+      int state = 0;
+      while (!compat && mem->read(&c,1)>0)
+          {
+            switch(state)
+              {
+              case 0:
+                if (c == '\"')
+                  state = '\"';
+                break;
+              case '\"':
+                if (c == '\"')
+                  state = 0;
+                else if (c == '\\')
+                  state = '\\';
+                else if ((unsigned char)c<=0x20 || c==0x7f)
+                  compat = true;
+                break;
+              case '\\':
+                if (!strchr("01234567tnrbfva\"\\",c))
+                  compat = true;
+                state = '\"';
+                break;
+              }
+          }
+      mem->seek(0);
+      inp = ParsingByteStream::create(mem);
+    }
+  else
+    {
+      inp = ParsingByteStream::create(in);
+    }
+  
   while ((c = inp->get()) != EOF)
     if (c!=' ' && c!='\t' && c!='\r' && c!='\n')
       break;
@@ -676,9 +716,11 @@ filter_ant(GP<ByteStream> in, GP<ByteStream> out,
       if (c == '\"')
         {
           inp->unget(c);
-          GUTF8String token = inp->get_utf8_token();
+          GUTF8String token = inp->get_utf8_token(false, compat);
           if (copy)
-	    print_c_string(token, token.length(), *out, rawstrings);
+	    print_c_string(token, token.length(), *out);
+          if (compat)
+            unchanged = false;
         }
       else if (c == '(')
         {
@@ -721,13 +763,13 @@ print_ant(GP<IFFByteStream> iff, GP<ByteStream> out)
     {
       if (chkid == "ANTa") 
         {
-          filter_ant(iff->get_bytestream(), out);
+          filter_ant(iff->get_bytestream(), out, false, true);
         }
       else if (chkid == "ANTz") 
         {
           GP<ByteStream> bsiff = 
 	    BSByteStream::create(iff->get_bytestream());
-          filter_ant(bsiff, out);
+          filter_ant(bsiff, out, false, true);
         }
       iff->close_chunk();
     }
@@ -812,7 +854,7 @@ command_set_ant(ParsingByteStream &pbs)
     get_data_from_file("set-ant", pbs, *dsedant);
     dsedant->seek(0);
     GP<ByteStream> bsant = BSByteStream::create(ant,100);
-    filter_ant(dsedant, bsant, false, true);
+    filter_ant(dsedant, bsant);
     bsant = 0;
   }
   modify_ant(g().file, "ANTz", ant);
@@ -881,7 +923,7 @@ modify_meta(const GP<DjVuFile> &f,
           newant->write("\n\t(",3);
           newant->writestring(key);
           newant->write(" ",1);
-          print_c_string((const char*)val, val.length(), *newant, true);
+          print_c_string((const char*)val, val.length(), *newant);
           newant->write(")",1);
         }
       newant->write(" )\n",3);
@@ -901,7 +943,11 @@ modify_meta(const GP<DjVuFile> &f,
   if (changed)
     {
       newant->seek(0);
-      { GP<ByteStream> bzz = BSByteStream::create(newantz,100); bzz->copy(*newant); }
+      { 
+        GP<ByteStream> bzz = BSByteStream::create(newantz,100); 
+        bzz->copy(*newant); 
+        bzz = 0;
+      }
       newantz->seek(0);
       modify_ant(f, "ANTz", newantz);
     }
