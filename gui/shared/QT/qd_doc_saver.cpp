@@ -92,7 +92,7 @@ protected slots:
    void		slotBrowse(void);
 public:
    GUTF8String	docName(void) const { return GStringFromQString(text->text()); }
-   QDDocNameDialog(GUTF8String message, GUTF8String doc_name,
+   QDDocNameDialog(QString message, GUTF8String doc_name,
 		   QWidget * parent=0, const char * name=0);
    ~QDDocNameDialog(void) {};
 };
@@ -157,7 +157,7 @@ QDDocNameDialog::done(int rc)
    QeDialog::done(rc);
 }
 
-QDDocNameDialog::QDDocNameDialog(GUTF8String message, GUTF8String doc_name,
+QDDocNameDialog::QDDocNameDialog(QString message, GUTF8String doc_name,
 				 QWidget * parent, const char * name) :
       QeDialog(parent, name, TRUE)
 {
@@ -167,7 +167,7 @@ QDDocNameDialog::QDDocNameDialog(GUTF8String message, GUTF8String doc_name,
 
    QVBoxLayout * vlay=new QVBoxLayout(start, 10, 5, "vlay");
 
-   QLabel * label=new QLabel( QStringFromGString(message), start, "message_label");
+   QLabel * label=new QLabel( message, start, "message_label");
    vlay->addWidget(label);
    label->setMaximumHeight(label->sizeHint().height());
 
@@ -384,7 +384,7 @@ QDDocSaver::save(void)
       }
       doc_full_name=GURL::expand_name(doc_name, GStringFromQString(doc_dir));
 
-      GUTF8String message;
+      QString message;
       if (saveas_bundled) 
         message=tr("Please enter the document file name.");
       else 
