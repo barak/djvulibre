@@ -19,4 +19,8 @@ If you use CVS, be sure to use "cvs admin -ko" for all files outside
 the debian/ subdir to preserve upstream keywords, and "cvs admin -kb"
 on *.djvu and *.cin because they are binary images.
 
- -- Barak A. Pearlmutter <bap@debian.org>, Sun May 16 14:34:43 2004
+The Debian CVS repository is now shared with upstream.  This makes the
+appropriate build command something like:
+ cvs-buildpackage -U debian_version_3_5_13_pre14-4 -M djvulibre-3.5 -F
+
+ -- Barak A. Pearlmutter <bap@debian.org>, Thu Jul  8 20:24:31 2004
