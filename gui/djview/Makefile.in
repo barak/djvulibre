@@ -210,3 +210,10 @@ Makefile.dep: ${srcdir}/Makefile.dep
 	cp ${srcdir}/$@ $@
 
 include Makefile.dep
+
+# This one is often missing from distributed Makefile.dep
+# because it depends on unusual compilation flags.
+qd_thr_yielder.o: qd_thr_yielder_moc.inc
+
+
+
