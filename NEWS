@@ -45,7 +45,6 @@ NEW IN VERSION 3.5.5
 - Added the lizardtech XML tools (use --enable-xmltools to compile).
 - Fixed show stopper in djvused.
 
-
 NEW IN VERSION 3.5.4
 --------------------
 - Fixed bug in djview print dialog.
@@ -58,13 +57,11 @@ NEW IN VERSION 3.5.3
 - Removed lots of QT1 specific hacks.
 - Added command djvups.
 
-
 NEW IN VERSION 3.5.2
 --------------------
 - Added support for image/vnd.djvu mime type.
 - Configure changes for FreeBSD.
 - Bug fixes in djvused.
-
 
 NEW IN VERSION 3.5.1
 --------------------
