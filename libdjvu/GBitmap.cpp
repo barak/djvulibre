@@ -282,6 +282,8 @@ GBitmap::init(ByteStream &ref, int aborder)
           return;
         case '2':
           grays = 1 + read_integer(lookahead, ref);
+          if (grays > 256)
+            G_THROW("Cannot read PGM with depth greater than 8 bits.");
           read_pgm_text(ref); 
           return;
         case '4':
@@ -290,6 +292,8 @@ GBitmap::init(ByteStream &ref, int aborder)
           return;
         case '5':
           grays = 1 + read_integer(lookahead, ref);
+          if (grays > 256)
+            grays = 256;
           read_pgm_raw(ref); 
           return;
         }

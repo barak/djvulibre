@@ -458,6 +458,8 @@ GPixmap::init(ByteStream &bs)
   int acolumns = read_integer(lookahead, bs);
   int arows = read_integer(lookahead, bs);
   int maxval = read_integer(lookahead, bs);
+  if (maxval > 255)
+    G_THROW("Cannot read PPM with depth greater than 24 bits.");
   init(arows, acolumns, 0);
   // Read image data
   if (raw)
