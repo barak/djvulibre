@@ -700,8 +700,10 @@ tune_jb2image(JB2Image *jimg, int refine_threshold=21)
           if (abs (cross_rows - rows) > 2) continue;
           if (abs (cross_columns - columns) > 2) continue;
           // Compute alignment (these are always +1, 0 or -1)
-          int cross_column_adjust = (cross_columns  - cross_columns/2) - (columns - columns/2);
-          int cross_row_adjust = (cross_rows  - cross_rows/2) - (rows - rows/2);
+          int cross_column_adjust = (cross_columns  - cross_columns/2) 
+            - (columns - columns/2);
+          int cross_row_adjust = (cross_rows  - cross_rows/2) 
+            - (rows - rows/2);
           // Ensure adequate borders
           cross_bitmap->minborder (2-cross_column_adjust);
           cross_bitmap->minborder (2+columns-cross_columns+cross_column_adjust);
@@ -712,7 +714,8 @@ tune_jb2image(JB2Image *jimg, int refine_threshold=21)
           for (row = -1; row <= rows; row++) 
             {
               p_row = (*bitmap) [row];
-              p_cross_row  = (*cross_bitmap)[row+cross_row_adjust] + cross_column_adjust;
+              p_cross_row  = (*cross_bitmap)[row+cross_row_adjust] 
+                + cross_column_adjust;
               for (column = -1; column <= columns; column++) 
                 if (p_row [column] != p_cross_row [column])
                   score ++;
