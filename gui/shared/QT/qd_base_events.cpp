@@ -603,7 +603,7 @@ QDBase::eventFilter(QObject *obj, QEvent *e)
 
 			   if ( new_zoom_cmd < IDC_ZOOM_MAX )
 			   {
-			      setZoom(new_zoom_cmd, true, ZOOM_MANUAL);
+			      setZoom(new_zoom_cmd, true, SRC_MANUAL);
 
 			      // centering the new zoomed area 
 			      int dx = (zoom_rect.xmax+zoom_rect.xmin-rectVisible.xmax-rectVisible.xmin)/2;
@@ -797,33 +797,33 @@ QDBase::eventFilter(QObject *obj, QEvent *e)
 			break;
 	       
 		     case Key_W:
-			setZoom(IDC_ZOOM_WIDTH, 1, ZOOM_MANUAL);
+			setZoom(IDC_ZOOM_WIDTH, 1, SRC_MANUAL);
 			break;
 
 		     case Key_P:
-			setZoom(IDC_ZOOM_PAGE, 1, ZOOM_MANUAL);
+			setZoom(IDC_ZOOM_PAGE, 1, SRC_MANUAL);
 			break;
 
 		     case Key_1:
-			setZoom(IDC_ZOOM_MIN+100, 1, ZOOM_MANUAL);
+			setZoom(IDC_ZOOM_MIN+100, 1, SRC_MANUAL);
 			break;
 
 		     case Key_2:
-			setZoom(IDC_ZOOM_MIN+200, 1, ZOOM_MANUAL);
+			setZoom(IDC_ZOOM_MIN+200, 1, SRC_MANUAL);
 			break;
 
 		     case Key_3:
-			setZoom(IDC_ZOOM_MIN+300, 1, ZOOM_MANUAL);
+			setZoom(IDC_ZOOM_MIN+300, 1, SRC_MANUAL);
 			break;
 
 		     case Key_Equal:
 		     case Key_Plus:
-			setZoom(IDC_ZOOM_ZOOMIN, 1, ZOOM_MANUAL);
+			setZoom(IDC_ZOOM_ZOOMIN, 1, SRC_MANUAL);
 			break;
 
 		     case Key_Minus:
 		     case Key_F24:	// Thanks to Solaris
-			setZoom(IDC_ZOOM_ZOOMOUT, 1, ZOOM_MANUAL);
+			setZoom(IDC_ZOOM_ZOOMOUT, 1, SRC_MANUAL);
 			break;
 			
 		     case Key_Escape:

@@ -66,16 +66,20 @@
 
 struct SavedData
 {
-   int  cmd_mode;
-   int  cmd_zoom;
-   int  imgx;
-   int  imgy;
-
-   int		isEmpty(void) const
-   {
-      return cmd_mode==0 && cmd_zoom==0 && imgx==0 && imgy==0;
-   };
-   SavedData(void) : cmd_mode(0), cmd_zoom(0), imgx(0), imgy(0) {};
+  int  cmd_mode;
+  int  cmd_zoom;
+  int  cmd_rotate;
+  int  imgx;
+  int  imgy;
+  
+  SavedData(void) 
+    : cmd_mode(0), cmd_zoom(0), cmd_rotate(0), imgx(0), imgy(0) 
+  { 
+  }
+  int isEmpty(void) const
+  { 
+    return cmd_mode==0 && cmd_zoom==0 && cmd_rotate==0 && imgx==0 && imgy==0; 
+  }
 };
 
 #endif

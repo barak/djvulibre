@@ -110,123 +110,182 @@ bool QDViewer::once_welcomed=false;
 
 bool
 QDViewer::PluginData::parseBool(const GUTF8String &qvalue_in)
-      // Will return FALSE if value_in is "false" or "no".
-      // TRUE in all other cases (including empty value_in)
+  // Will return FALSE if value_in is "false" or "no".
+  // TRUE in all other cases (including empty value_in)
 {
-   DEBUG_MSG("QDViewer::PluginData::parseBool()\n");
-
-   GUTF8String value=qvalue_in.downcase();
-   return !(value=="false" || value=="no");
+  DEBUG_MSG("QDViewer::PluginData::parseBool()\n");
+  GUTF8String value=qvalue_in.downcase();
+  return !(value=="false" || value=="no");
 }
 
 void
 QDViewer::PluginData::parsePair(const GUTF8String &qname_in, const GUTF8String &qvalue)
 {
-   DEBUG_MSG("QDViewer::PluginData::parsePair()\n");
-   DEBUG_MAKE_INDENT(3);
+  DEBUG_MSG("QDViewer::PluginData::parsePair()\n");
+  DEBUG_MAKE_INDENT(3);
+  DEBUG_MSG("name=" << qname_in << "; " << "value=" << qvalue << "\n");
+  GUTF8String name=qname_in.downcase();
 
-   DEBUG_MSG("name=" << qname_in << "; " << "value=" << qvalue << "\n");
-   
-   GUTF8String name=qname_in.downcase();
-
-   if (name=="passive" || name=="passivestretch")
-   {
+  if (name=="passive" || name=="passivestretch")
+    {
       toolbar=scrollbars=menu=keyboard=false;
       thumbnails=THUMB_HIDE;
-      if (name=="passivestretch") cmd_zoom=IDC_ZOOM_STRETCH;
-      else cmd_zoom=IDC_ZOOM_PAGE;
-   } else if (name=="toolbar") toolbar=parseBool(qvalue);
-   else if (name=="notoolbar") toolbar=false;
-   else if (name=="scrollbars") scrollbars=parseBool(qvalue);
-   else if (name=="noscrollbars") scrollbars=false;
-   else if (name=="menu") menu=parseBool(qvalue);
-   else if (name=="nomenu") menu=false;
-   else if (name=="frame") frame=parseBool(qvalue);
-   else if (name=="links") links=parseBool(qvalue);
-   else if (name=="logo") logo=parseBool(qvalue);
-   else if (name=="keyboard") keyboard=parseBool(qvalue);
-   else if (name=="cache") cache=parseBool(qvalue) ? CACHE_ON : CACHE_OFF;
-   else if (name=="print") print=parseBool(qvalue);
-   else if (name=="thumbnails")
-   {
+      if (name=="passivestretch") 
+        cmd_zoom=IDC_ZOOM_STRETCH;
+      else 
+        cmd_zoom=IDC_ZOOM_PAGE;
+    } 
+  else if (name=="rotate") 
+    {
       GUTF8String str=qvalue.downcase();
-      if (str=="top") thumbnails=THUMB_TOP;
-      else if (str=="bottom") thumbnails=THUMB_BOTTOM;
-      else if (str=="left" || str=="yes" || str=="true") thumbnails=THUMB_LEFT;
-      else if (str=="right") thumbnails=THUMB_RIGHT;
-      else
-	 thumbnails=THUMB_HIDE;
-   } 
-   else if (name=="zoom")
-   {
+      if (str=="0")
+        cmd_rotate = IDC_ROTATE_0;
+      else if (str=="90")
+        cmd_rotate = IDC_ROTATE_90;
+      else if (str=="180")
+        cmd_rotate = IDC_ROTATE_180;
+      else if (str=="270")
+        cmd_rotate = IDC_ROTATE_270;
+    }
+  else if (name=="toolbar") 
+    {
       GUTF8String str=qvalue.downcase();
-      if (str=="one2one") cmd_zoom=IDC_ZOOM_ONE2ONE;
-      else if (str=="width") cmd_zoom=IDC_ZOOM_WIDTH;
-      else if (str=="page") cmd_zoom=IDC_ZOOM_PAGE;
-      else if (str=="stretch") cmd_zoom=IDC_ZOOM_STRETCH;
+      toolbar = toolbaralways = toolbarauto = false;
+      if (str == "bottom" || str == "top") 
+        toolbar = toolbaralways = true;
+      else if (str == "auto")
+        toolbar = toolbarauto = true;
+      else if (str == "false" || str=="no")
+        toolbar = false;
       else
-      {
-	 const char * ptr=str;
-	 int num=strtol(ptr, (char **) &ptr, 10);
-	 if (!*ptr && num>=5 && num<=999)
+        toolbar = true;
+    }
+  else if (name=="notoolbar") 
+    toolbar=false;
+  else if (name=="scrollbars") 
+    scrollbars=parseBool(qvalue);
+  else if (name=="noscrollbars")
+    scrollbars=false;
+  else if (name=="menu")
+    menu=parseBool(qvalue);
+  else if (name=="nomenu") 
+    menu=false;
+  else if (name=="frame")
+    frame=parseBool(qvalue);
+  else if (name=="links")
+    links=parseBool(qvalue);
+  else if (name=="logo")
+    logo=parseBool(qvalue);
+  else if (name=="keyboard") 
+    keyboard=parseBool(qvalue);
+  else if (name=="cache")
+    cache=parseBool(qvalue) ? CACHE_ON : CACHE_OFF;
+  else if (name=="print") 
+    print=parseBool(qvalue);
+  else if (name=="thumbnails")
+    {
+      GUTF8String str=qvalue.downcase();
+      if (str=="top") 
+        thumbnails=THUMB_TOP;
+      else if (str=="bottom") 
+        thumbnails=THUMB_BOTTOM;
+      else if (str=="left" || str=="yes" || str=="true") 
+        thumbnails=THUMB_LEFT;
+      else if (str=="right") 
+        thumbnails=THUMB_RIGHT;
+      else
+        thumbnails=THUMB_HIDE;
+    } 
+  else if (name=="zoom")
+    {
+      GUTF8String str=qvalue.downcase();
+      if (str=="one2one") 
+        cmd_zoom=IDC_ZOOM_ONE2ONE;
+      else if (str=="width") 
+        cmd_zoom=IDC_ZOOM_WIDTH;
+      else if (str=="page") 
+        cmd_zoom=IDC_ZOOM_PAGE;
+      else if (str=="stretch") 
+        cmd_zoom=IDC_ZOOM_STRETCH;
+      else
+        {
+          const char * ptr=str;
+          int num=strtol(ptr, (char **) &ptr, 10);
+          if (!*ptr && num>=5 && num<=999)
 	    cmd_zoom=IDC_ZOOM_MIN+num;
-      }
-   } else if (name=="mode")
-   {
+        }
+    } 
+  else if (name=="mode")
+    {
       GUTF8String str=qvalue.downcase();
-      if (str=="color") cmd_mode=IDC_DISPLAY_COLOR;
-      else if (str=="bw") cmd_mode=IDC_DISPLAY_BLACKWHITE;
-      else if (str=="fore") cmd_mode=IDC_DISPLAY_FOREGROUND;
-      else if (str=="back") cmd_mode=IDC_DISPLAY_BACKGROUND;
-   } else if (name=="url") rel_url=qvalue;
-   else if (name=="page") page_id=qvalue;
-   else if (name=="highlight")
-   {
+      if (str=="color") 
+        cmd_mode=IDC_DISPLAY_COLOR;
+      else if (str=="bw") 
+        cmd_mode=IDC_DISPLAY_BLACKWHITE;
+      else if (str=="fore") 
+        cmd_mode=IDC_DISPLAY_FOREGROUND;
+      else if (str=="back") 
+        cmd_mode=IDC_DISPLAY_BACKGROUND;
+   } 
+  else if (name=="url") 
+    rel_url=qvalue;
+  else if (name=="page") 
+    page_id=qvalue;
+  else if (name=="highlight")
+    {
       int x=-1, y=-1, w=-1, h=-1;
       char color_str[1024]; color_str[0]=0;
       const char * const value=qvalue;
       sscanf(value, "%d,%d,%d,%d,%s", &x, &y, &w, &h, color_str);
       color_str[1023]=0;
       GRect rect(x, y, w, h);
-      if (rect.xmin<0) rect.xmin=0;
-      if (rect.ymin<0) rect.ymin=0;
+      if (rect.xmin<0) 
+        rect.xmin=0;
+      if (rect.ymin<0) 
+        rect.ymin=0;
       if (rect.width()>0 && rect.height()>0)
-      {
-	 u_int32 color=GMapArea::XOR_HILITE;
-	 if (strlen(color_str))
-	    color=DjVuANT::cvt_color(GUTF8String("#")+color_str,
-				     GMapArea::XOR_HILITE);
-	 GP<GMapRect> gmap_rect=GMapRect::create(rect);
-	 gmap_rect->border_type=GMapArea::NO_BORDER;
-	 gmap_rect->hilite_color=color;
-	 hilite_rects.append(gmap_rect);
-      }
-   } else if (name=="hor_align")
-   {
+        {
+          u_int32 color=GMapArea::XOR_HILITE;
+          if (strlen(color_str))
+	    color=DjVuANT::cvt_color(GUTF8String("#")+color_str,GMapArea::XOR_HILITE);
+          GP<GMapRect> gmap_rect=GMapRect::create(rect);
+          gmap_rect->border_type=GMapArea::NO_BORDER;
+          gmap_rect->hilite_color=color;
+          hilite_rects.append(gmap_rect);
+        }
+    } 
+  else if (name=="hor_align")
+    {
       GUTF8String val=qvalue.downcase();
-      
-      if (val=="left") hor_align=DjVuANT::ALIGN_LEFT;
-      else if (val=="right") hor_align=DjVuANT::ALIGN_RIGHT;
-      else if (val=="center") hor_align=DjVuANT::ALIGN_CENTER;
-   } else if (name=="ver_align")
-   {
+      if (val=="left")
+        hor_align=DjVuANT::ALIGN_LEFT;
+      else if (val=="right")
+        hor_align=DjVuANT::ALIGN_RIGHT;
+      else if (val=="center")
+        hor_align=DjVuANT::ALIGN_CENTER;
+    } 
+  else if (name=="ver_align")
+    {
       GUTF8String val=qvalue.downcase();
-      
-      if (val=="bottom") ver_align=DjVuANT::ALIGN_BOTTOM;
-      else if (val=="top") ver_align=DjVuANT::ALIGN_TOP;
-      else if (val=="center") ver_align=DjVuANT::ALIGN_CENTER;
-   }
+      if (val=="bottom") 
+        ver_align=DjVuANT::ALIGN_BOTTOM;
+      else if (val=="top")
+        ver_align=DjVuANT::ALIGN_TOP;
+      else if (val=="center") 
+        ver_align=DjVuANT::ALIGN_CENTER;
+    }
 }
 
 GUTF8String
 QDViewer::PluginData::getQuotedString(const char * & ptr)
 {
    DEBUG_MSG("QDViewer::PluginData::getQuotedString()\n");
-
    GUTF8String val;
    for(ptr++;*ptr;ptr++)
-      if (*ptr=='\'') { ptr++; break; }
-      else val+=*ptr;
+     if (*ptr=='\'') 
+       { ptr++; break; }
+     else 
+       { val+=*ptr; }
    return val;
 }
 
@@ -236,63 +295,64 @@ QDViewer::PluginData::parse(const DArray<GUTF8String> & argn,
 {
    DEBUG_MSG("QDViewer::PluginData::parse()\n");
    DEBUG_MAKE_INDENT(3);
-
+   
    for(int i=0;i<argn.size();i++)
-      if (argn[i].length())
-      {
+     if (argn[i].length())
+       {
 	 GUTF8String name=argn[i].downcase();
 	 GUTF8String value;
-
 	 if (i<argv.size())
-         {
 	   value=argv[i];
-         }
 	 if (name!="flags")
-         {
-           parsePair(name, value);
-         }else
-	 {
-	    const char * ptr=value;
-	    while(*ptr)
-	    {
-	       GUTF8String xname, xvalue;
-	       while(true)
-	       {
-		  while(*ptr && isspace(*ptr)) ptr++;
-		  if (*ptr=='\'') xname+=getQuotedString(ptr);
-		  else if (!*ptr || *ptr=='=' || isspace(*ptr)) break;
-		  else xname+=*ptr++;
-	       }
-
-	       while(*ptr && *ptr=='=') ptr++;
-
-	       while(true)
-	       {
-		  if (*ptr=='\'') xvalue+=getQuotedString(ptr);
-		  else if (!*ptr || isspace(*ptr)) break;
-		  else xvalue+=*ptr++;
-	       }
-
-	       parsePair(xname, xvalue);
-	    }
-	 }
-      }
+           {
+             parsePair(name, value);
+           }
+         else
+           {
+             const char * ptr=value;
+             while(*ptr)
+               {
+                 GUTF8String xname, xvalue;
+                 while(true)
+                   {
+                     while(*ptr && isspace(*ptr)) 
+                       ptr++;
+                     if (*ptr=='\'') 
+                       xname+=getQuotedString(ptr);
+                     else if (!*ptr || *ptr=='=' || isspace(*ptr)) 
+                       break;
+                     else 
+                       xname+=*ptr++;
+                   }
+                 while(*ptr && *ptr=='=') 
+                   ptr++;
+                 while(true)
+                   {
+                     if (*ptr=='\'') 
+                       xvalue += getQuotedString(ptr);
+                     else if (!*ptr || isspace(*ptr)) 
+                       break;
+                     else 
+                       xvalue+=*ptr++;
+                   }
+                 parsePair(xname, xvalue);
+               }
+           }
+       }
 }
 
 QDViewer::PluginData::PluginData(const DArray<GUTF8String> & argn,
 				 const DArray<GUTF8String> & argv)
 {
-   full_mode=true;
-   cache=CACHE_UNSPEC;
-   //page_id="-1";
-   parse(argn, argv);
+  full_mode=true;
+  cache=CACHE_UNSPEC;
+  parse(argn, argv);
 }
 
 QDViewer::PluginData::PluginData(void)
 {
    full_mode=true;
    cache=CACHE_UNSPEC;
-   //page_id="-1";
 }
 
 SavedData
@@ -301,6 +361,7 @@ QDViewer::getSavedData(void) const
    SavedData data;
    data.cmd_mode=getMode(true);	// Disregard mode forced by image structure
    data.cmd_zoom=getCMDZoom();
+   data.cmd_rotate=getRotate();
    data.imgx=rectDocument.xmin;
    data.imgy=rectDocument.ymin;
    return data;
@@ -351,23 +412,30 @@ QDViewer::QDViewer(int _in_netscape,
       DEBUG_MSG("imgx=" << plugin_data.saved.imgx << "\n");
       DEBUG_MSG("imgy=" << plugin_data.saved.imgy << "\n");
    
-      setMode(plugin_data.saved.cmd_mode, 0, MODE_SAVED);	// Don't redraw
-      setZoom(plugin_data.saved.cmd_zoom, 0, ZOOM_SAVED);	// Don't layout
+      setRotate(plugin_data.saved.cmd_rotate, 0, SRC_SAVED);	// Don't redraw or layout
+      setZoom(plugin_data.saved.cmd_zoom, 0, SRC_SAVED);	// Don't layout
+      setMode(plugin_data.saved.cmd_mode, 0, SRC_SAVED);	// Don't redraw
       layout(0);				// Don't redraw
       rectDocument.xmax=rectDocument.xmin=plugin_data.saved.imgx;
       rectDocument.ymax=rectDocument.ymin=plugin_data.saved.imgy;
       saved_data_known=1;
       ignore_ant_mode_zoom=1;
    } else saved_data_known=0;
-
+   
    if (!saved_data_known)
-   {
-	 // Process the zoom and mode specified in the EMBED flags
-      if (plugin_data.cmd_zoom<=0) setZoom(IDC_ZOOM_WIDTH, 1, ZOOM_DEFAULT);
-      else setZoom(plugin_data.cmd_zoom, true, ZOOM_TAGS);
-      if (plugin_data.cmd_mode<=0) setMode(IDC_DISPLAY_COLOR, 1, MODE_DEFAULT);
-      else setMode(plugin_data.cmd_mode, true, MODE_TAGS);
-   }
+     {
+       // Process the zoom and mode specified in the EMBED flags
+       if (plugin_data.cmd_rotate>0)
+         setRotate(plugin_data.cmd_rotate, true, SRC_TAGS);
+       if (plugin_data.cmd_zoom<=0)
+         setZoom(IDC_ZOOM_WIDTH, true, SRC_DEFAULT);
+       else 
+         setZoom(plugin_data.cmd_zoom, true, SRC_TAGS);
+       if (plugin_data.cmd_mode<=0) 
+         setMode(IDC_DISPLAY_COLOR, true, SRC_DEFAULT);
+       else 
+         setMode(plugin_data.cmd_mode, true, SRC_TAGS);
+     }
    pane->setFocus();
 }
 
@@ -1198,7 +1266,7 @@ QDViewer::checkWMProps(void)
 	       time_t dtime=(time_t) atol((char *) prop);
 	       XFree(prop);
 	       DEBUG_MSG("elapsed " << (time(0)-dtime) << " seconds since last detach.\n");
-	       if (time(0)-dtime<10 && zoom>0) setZoom(zoom, 1, ZOOM_DEFAULT);
+	       if (time(0)-dtime<10 && zoom>0) setZoom(zoom, 1, SRC_DEFAULT);
 	    } else DEBUG_MSG("oops. It's not there.\n");
 	 } else
 	 {
@@ -1260,10 +1328,14 @@ QDViewer::slotShowPrefs(void)
            qxImager->setOptimizeLCD(prefs.optimizeLCD);
 	 setBackgroundColor(getBackgroundColor(), false);
 	 
-	 if (prefs.toolBarOn) enableToolBar(true);
-	 else enableToolBar(false);
-	 if (prefs.toolBarAlwaysVisible) stickToolBar();
-	 else unStickToolBar();
+	 if (prefs.toolBarOn) 
+           enableToolBar(true);
+	 else 
+           enableToolBar(false);
+         if (prefs.toolBarAlwaysVisible) 
+           stickToolBar();
+	 else 
+           unStickToolBar();
 
 	 if (hlinksBorder!=prefs.hlinksBorder)
 	 {
@@ -1283,9 +1355,12 @@ QDViewer::slotShowPrefs(void)
 	    thumbnails->setFastMode(prefs.fastThumb);
 	 
 	 qeApp->gamma=prefs.dScreenGamma;
-	 if (do_layout) layout();
-	 else if (do_redraw) redraw();
-	 if (repaint_thumb && thumbnails) thumbnails->rereadGamma();
+	 if (do_layout) 
+           layout();
+	 else if (do_redraw) 
+           redraw();
+	 if (repaint_thumb && thumbnails) 
+           thumbnails->rereadGamma();
       }
    } catch(const GException & exc)
    {

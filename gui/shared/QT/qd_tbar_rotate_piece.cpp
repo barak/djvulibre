@@ -89,12 +89,12 @@ QDTBarRotatePiece::QDTBarRotatePiece(QDToolBar * toolbar) : QDTBarPiece(toolbar)
    toolbar->addLeftWidget(frame);
    
    rotate90_butt=new QDToolButton(*CINData::get("ppm_rotate90"), true,
-				  IDC_ROTATE_90, toolbar, tr("Rotate +90"));
+				  IDC_ROTATE_RIGHT, toolbar, tr("Rotate +90"));
    connect(rotate90_butt, SIGNAL(clicked(void)), this, SLOT(slotRotate()));
    toolbar->addLeftWidget(rotate90_butt);
 
    rotate270_butt=new QDToolButton(*CINData::get("ppm_rotate270"), true,
-				   IDC_ROTATE_270, toolbar, tr("Rotate -90"));
+				   IDC_ROTATE_LEFT, toolbar, tr("Rotate -90"));
    connect(rotate270_butt, SIGNAL(clicked(void)), this, SLOT(slotRotate()));
    toolbar->addLeftWidget(rotate270_butt);
    

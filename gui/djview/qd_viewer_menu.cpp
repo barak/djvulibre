@@ -291,7 +291,7 @@ QDViewer::processCommand(int cmd)
 	 case IDC_DISPLAY_BLACKWHITE:
 	 case IDC_DISPLAY_FOREGROUND:
 	 case IDC_DISPLAY_BACKGROUND:
-	    setMode(cmd, true, MODE_MANUAL);
+	    setMode(cmd, true, SRC_MANUAL);
 	    break;
 
 	 case IDC_ZOOM_25:
@@ -306,14 +306,14 @@ QDViewer::processCommand(int cmd)
 	 case IDC_ZOOM_PAGE:
 	 case IDC_ZOOM_ZOOMIN:
 	 case IDC_ZOOM_ZOOMOUT:
-	    setZoom(cmd, true, ZOOM_MANUAL);
+	    setZoom(cmd, true, SRC_MANUAL);
 	    break;
 
 	 case IDC_ZOOM_CUSTOM:
 	 {
 	    QDSetZoom zoom_d(getZoom(), this, "qd_set_zoom");
 	    if (zoom_d.exec()==QDialog::Accepted)
-	       setZoom(zoom_d.getZoom()+IDC_ZOOM_MIN, 1, ZOOM_MANUAL);
+	       setZoom(zoom_d.getZoom()+IDC_ZOOM_MIN, 1, SRC_MANUAL);
 	    break;
 	 }
 

@@ -107,17 +107,24 @@ int round(float v)
 
 QDBase::OverrideFlags::OverrideFlags(void)
 {
-   toolbar=scrollbars=menu=frame=links=logo=keyboard=true;
+   toolbar=true;
+   toolbarauto=false;
+   toolbaralways=false;
+   scrollbars=true;
+   menu=true;
+   frame=true;
+   links=true;
+   logo=true;
+   keyboard=true;
    print=true;
    thumbnails=THUMB_HIDE;
-
    hor_align=ver_align=DjVuANT::ALIGN_UNSPEC;
    
-   cmd_mode=-1;	// Meaning "not specified". In EMBED mode, if zoom
-   cmd_zoom=-1;	// is not specified, we will use IDC_ZOOM_PAGE
-		// with priority ZOOM_DEFAULT to allow ANTa
-		// override this. Otherwise we will use this value
-		// with priority ZOOM_TAGS
+   cmd_mode=-1;	    // Meaning "not specified". In EMBED mode, if zoom
+   cmd_zoom=-1;	    // is not specified, we will use IDC_ZOOM_PAGE
+   cmd_rotate=-1;   // with priority SRC_DEFAULT to allow ANTa
+		    // override this. Otherwise we will use this value
+		    // with priority SRC_TAGS
 }
 
 QDBase::QDBase(QWidget * parent, const char * name) : QWidget(parent, name)
@@ -142,15 +149,16 @@ QDBase::QDBase(QWidget * parent, const char * name) : QWidget(parent, name)
    main_widget=0;
    thumb_widget=0;
    cmd_mode=cmd_mode_force=cmd_zoom=-1;
-   zoom_src=ZOOM_DEFAULT;
-   mode_src=MODE_DEFAULT;
+   zoom_src=SRC_DEFAULT;
+   mode_src=SRC_DEFAULT;
+   rotate_src=SRC_DEFAULT;
    in_hand_scroll=in_paint=in_layout=in_zoom_select=0;
    lastrect=0;
    acc_scroll_dh=acc_scroll_dv=0;
    left_butt_down=0;
    ignore_ant_mode_zoom=0;
-   for(int i=0;i<ZOOM_SRC_MAX;i++) zoom_prio[i]=i;
-   for(int i=0;i<MODE_SRC_MAX;i++) mode_prio[i]=i;
+   for(int i=0;i<MODE_SOURCE_MAX;i++) 
+     mode_prio[i]=i;
 
    pane_mode=IDC_PANE;
    
@@ -163,7 +171,7 @@ QDBase::QDBase(QWidget * parent, const char * name) : QWidget(parent, name)
    // Get the display resolution
    QPaintDeviceMetrics m(QApplication::desktop());
    displ_dpi=(int) (m.width()*25.4/m.widthMM());
-   displ_dpi=100;	// Override displ_dpi as Leon demands
+   displ_dpi=100;  // Override displ_dpi as Leon demands
    DEBUG_MSG("display dpi=" << displ_dpi << "\n");
 
       // Adjusting margin caches
@@ -199,8 +207,9 @@ QDBase::QDBase(QWidget * parent, const char * name) : QWidget(parent, name)
    setBackgroundColor(0xffffff, false);	// Don't redraw
    
       // Setting desired video modes
-   setMode(IDC_DISPLAY_COLOR, 0, MODE_DEFAULT);		// Don't redraw
-   setZoom(prefs.nDefaultZoom, 0, ZOOM_DEFAULT);	// Don't relayout
+   setMode(IDC_DISPLAY_COLOR, 0, SRC_DEFAULT);	// Don't redraw
+   setZoom(prefs.nDefaultZoom, 0, SRC_DEFAULT);	// Don't relayout
+   setRotate(IDC_ROTATE_0, 0, SRC_DEFAULT);	// Don't relayout
 
    layout(0);			// Disallow redraw
 }
@@ -208,28 +217,36 @@ QDBase::QDBase(QWidget * parent, const char * name) : QWidget(parent, name)
 void
 QDBase::setOverrideFlags(const OverrideFlags & flags)
 {
-   OverrideFlags old_flags=override_flags;
-   override_flags=flags;
+  OverrideFlags old_flags=override_flags;
+  override_flags=flags;
+  
+  if (old_flags.toolbar != flags.toolbar)
+    enableToolBar(flags.toolbar && prefs.toolBarOn);
+  if (flags.toolbaralways)
+    stickToolBar();
+  else if (flags.toolbarauto)
+    unStickToolBar();
+  else if (prefs.toolBarAlwaysVisible)
+    stickToolBar();
+  else 
+    unStickToolBar();
+  
+  if (flags.thumbnails)
+    showThumbnails();
+  else
+    hideThumbnails();
 
-   if (old_flags.toolbar!=flags.toolbar)
-      enableToolBar(flags.toolbar && prefs.toolBarOn);
-
-   if (flags.thumbnails)
-   {
-     showThumbnails();
-   }else
-   {
-     hideThumbnails();
-   }
-
-   if (old_flags.hilite_rects.size()!=flags.hilite_rects.size() ||
-       old_flags.url!=flags.url) createMapAreas(true);
-
-   if (old_flags.hor_align!=flags.hor_align ||
-       old_flags.ver_align!=flags.ver_align)
+  if (old_flags.hilite_rects.size()!=flags.hilite_rects.size() ||
+      old_flags.url!=flags.url) 
+    {
+      createMapAreas(true);
+    }
+  if (old_flags.hor_align!=flags.hor_align ||
+      old_flags.ver_align!=flags.ver_align)
+    {
       layout();
-
-   setCursor();
+    }
+  setCursor();
 }
 
 void
@@ -257,13 +274,18 @@ QDBase::setDjVuImage(const GP<DjVuImage> & _dimg, int do_redraw)
    QDBase::imageUpdated();
 
       // If the current resolution is due to ANTa chunk only, reset it
-   if (zoom_src==ZOOM_ANT) setZoom(prefs.nDefaultZoom, 0, ZOOM_ANT);
-   if (mode_src==MODE_ANT) setMode(IDC_DISPLAY_COLOR, 0, MODE_ANT);
+   if (zoom_src==SRC_ANT) 
+     setZoom(prefs.nDefaultZoom, 0, SRC_ANT);
+   if (mode_src==SRC_ANT) 
+     setMode(IDC_DISPLAY_COLOR, 0, SRC_ANT);
+   if (rotate_src==SRC_ANT) 
+     setMode(IDC_ROTATE_0, 0, SRC_ANT);
+
    decodeAnno(false);	// No redraw
-
    layout(0);		// Disallow redraw
-
-   if (do_redraw) redraw();
+   setRotate(cmd_rotate, 0, rotate_src); // perform rotation
+   if (do_redraw) 
+     redraw();
 }
 
 void
@@ -745,7 +767,7 @@ QDBase::setZoom(int cmd, bool do_layout, int src)
    DEBUG_MSG("QDBase::setZoom(): setting zoom " << cmd << "\n");
    DEBUG_MAKE_INDENT(3);
 
-   if (zoom_prio[zoom_src]>zoom_prio[src]) return;
+   if (mode_prio[zoom_src]>mode_prio[src]) return;
    zoom_src=src;
 
    if (!dimg)
@@ -810,49 +832,66 @@ QDBase::setZoom(int cmd, bool do_layout, int src)
    }
 }
 
-void
-QDBase::setRotate(int cmd)
+int
+QDBase::getRotate(void) const
 {
-   if ( !dimg ) return;
-   
-   int rotate = dimg->get_rotate();
-   int rotate_cur = rotate;
-   switch ( cmd )
-   {
-   case IDC_ROTATE_90:
-      rotate = (rotate+1)%4;
-      break;
-   case IDC_ROTATE_270:
-      rotate = (rotate+3)%4;
-      break;
-   }
-   
-   if( rotate == rotate_cur )
-      return;
+  return cmd_rotate;
+}
 
-   for (GPosition pos=map_areas; pos; ++pos)
-   {
-      MapArea *ma=map_areas[pos];
-      GRect rect=ma->get_bound_rect();
-      dimg->map(rect);
-      if ( ma->getComment()==search_results_name )
-	 ma->gmap_area->transform(rect);
-   }
+void
+QDBase::setRotate(int cmd, bool do_redraw, int src)
+{
+  if (mode_prio[rotate_src]>mode_prio[src]) return;
+  rotate_src=src;
+  
+  static int rots[] = { 
+    IDC_ROTATE_0, IDC_ROTATE_90, IDC_ROTATE_180, 
+    IDC_ROTATE_270, IDC_ROTATE_0 };
+  int i;
+  if (cmd == IDC_ROTATE_RIGHT)
+    for (i=0; i<4; i++)
+      if (cmd_rotate == rots[i])
+        cmd = rots[i+1];
+  if (cmd == IDC_ROTATE_LEFT)
+    for (i=1; i<5; i++)
+      if (cmd_rotate == rots[i])
+        cmd = rots[i-1];
+  if (cmd >= IDC_ROTATE_0 && cmd <= IDC_ROTATE_270)
+    cmd_rotate = cmd;
 
-   dimg->set_rotate(rotate);
-   decodeAnno(false);
-   layout(0);
-
-   for (GPosition pos=map_areas; pos; ++pos)
-   {
-      MapArea *ma=map_areas[pos];
-      GRect rect=ma->get_bound_rect();
-      dimg->unmap(rect);
-      if ( ma->getComment()==search_results_name )
-	 ma->gmap_area->transform(rect);
-   }
-
-   redraw();
+  if (dimg)
+    {
+      int drot = dimg->get_rotate();
+      int crot = 0;
+      for (crot=0; crot<4; crot++)
+        if (cmd_rotate == rots[crot])
+          break;
+      if (crot>=4 || crot==drot)
+        return;
+      
+      // Update annots
+      for (GPosition pos=map_areas; pos; ++pos)
+        {
+          MapArea *ma=map_areas[pos];
+          GRect rect=ma->get_bound_rect();
+          dimg->map(rect);
+          if ( ma->getComment()==search_results_name )
+            ma->gmap_area->transform(rect);
+        }
+      dimg->set_rotate(crot);
+      decodeAnno(false);
+      for (GPosition pos=map_areas; pos; ++pos)
+        {
+          MapArea *ma=map_areas[pos];
+          GRect rect=ma->get_bound_rect();
+          dimg->unmap(rect);
+          if ( ma->getComment()==search_results_name )
+            ma->gmap_area->transform(rect);
+        }
+      layout(0);
+      if (do_redraw)
+        redraw();
+    }
 }
 
 void
@@ -1244,9 +1283,15 @@ QDBase::createToolBar(void)
 
    enableToolBar(override_flags.toolbar && prefs.toolBarOn);
 
-   if (prefs.toolBarAlwaysVisible) stickToolBar();
-   else unStickToolBar();
-
+   if (override_flags.toolbaralways)
+     stickToolBar();
+   else if (override_flags.toolbarauto)
+     unStickToolBar();
+   else if (prefs.toolBarAlwaysVisible)
+     stickToolBar();
+   else 
+     unStickToolBar();
+   
    updateToolBar();
 }
 
@@ -1501,14 +1546,15 @@ QDBase::slotToolBarTimeout(void)
 void
 QDBase::slotSetRotate(int cmd_rotate)
 {
-  setRotate(cmd_rotate);
+  if (getRotate() != cmd_rotate)
+    setRotate(cmd_rotate,1,SRC_MANUAL);
 }
 
 void
 QDBase::slotSetZoom(int cmd_zoom)
 {
   if (getCMDZoom()!=cmd_zoom)
-    setZoom(cmd_zoom, true, ZOOM_MANUAL);
+    setZoom(cmd_zoom, true, SRC_MANUAL);
 }
 
 void
@@ -1522,7 +1568,7 @@ void
 QDBase::slotSetMode(int cmd_mode)
 {
    if (getMode(true)!=cmd_mode)
-      setMode(cmd_mode, true, MODE_MANUAL);
+      setMode(cmd_mode, true, SRC_MANUAL);
 }
 
 void

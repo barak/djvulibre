@@ -273,13 +273,13 @@ QDBase::processAnno(bool allow_redraw)
 	 switch(ant->mode)
 	 {
 	    case DjVuANT::MODE_COLOR:
-	       setMode(IDC_DISPLAY_COLOR, 0, MODE_ANT); do_redraw=1; break;
+	       setMode(IDC_DISPLAY_COLOR, 0, SRC_ANT); do_redraw=1; break;
 	    case DjVuANT::MODE_FORE:
-	       setMode(IDC_DISPLAY_FOREGROUND, 0, MODE_ANT); do_redraw=1; break;
+	       setMode(IDC_DISPLAY_FOREGROUND, 0, SRC_ANT); do_redraw=1; break;
 	    case DjVuANT::MODE_BACK:
-	       setMode(IDC_DISPLAY_BACKGROUND, 0, MODE_ANT); do_redraw=1; break;
+	       setMode(IDC_DISPLAY_BACKGROUND, 0, SRC_ANT); do_redraw=1; break;
 	    case DjVuANT::MODE_BW:
-	       setMode(IDC_DISPLAY_BLACKWHITE, 0, MODE_ANT); do_redraw=1; break;
+	       setMode(IDC_DISPLAY_BLACKWHITE, 0, SRC_ANT); do_redraw=1; break;
 	    default:
 	       break;
 	 }
@@ -287,17 +287,17 @@ QDBase::processAnno(bool allow_redraw)
 	 switch(ant->zoom)
 	 {
 	    case DjVuANT::ZOOM_STRETCH:
-	       setZoom(IDC_ZOOM_STRETCH, 0, ZOOM_ANT); do_layout=1; break;
+	       setZoom(IDC_ZOOM_STRETCH, 0, SRC_ANT); do_layout=1; break;
 	    case DjVuANT::ZOOM_ONE2ONE:
-	       setZoom(IDC_ZOOM_ONE2ONE, 0, ZOOM_ANT); do_layout=1; break;
+	       setZoom(IDC_ZOOM_ONE2ONE, 0, SRC_ANT); do_layout=1; break;
 	    case DjVuANT::ZOOM_WIDTH:
-	       setZoom(IDC_ZOOM_WIDTH, 0, ZOOM_ANT); do_layout=1; break;
+	       setZoom(IDC_ZOOM_WIDTH, 0, SRC_ANT); do_layout=1; break;
 	    case DjVuANT::ZOOM_PAGE:
-	       setZoom(IDC_ZOOM_PAGE, 0, ZOOM_ANT); do_layout=1; break;
+	       setZoom(IDC_ZOOM_PAGE, 0, SRC_ANT); do_layout=1; break;
 	    default:
 	       if (ant->zoom!=DjVuANT::ZOOM_UNSPEC)
 	       {
-		  setZoom(IDC_ZOOM_MIN+ant->zoom, 0, ZOOM_ANT); do_layout=1;
+		  setZoom(IDC_ZOOM_MIN+ant->zoom, 0, SRC_ANT); do_layout=1;
 	       }
 	 }
       }
@@ -339,8 +339,10 @@ QDBase::cleanAnno(bool allow_redraw)
       setBackgroundColor(0xffffff, false);
 
       // Switch zoom and mode back, if necessary
-   if (zoom_src==ZOOM_ANT) setZoom(prefs.nDefaultZoom, 0, ZOOM_ANT);
-   if (mode_src==MODE_ANT) setMode(IDC_DISPLAY_COLOR, 0, MODE_ANT);
+   if (zoom_src==SRC_ANT) 
+     setZoom(prefs.nDefaultZoom, 0, SRC_ANT);
+   if (mode_src==SRC_ANT) 
+     setMode(IDC_DISPLAY_COLOR, 0, SRC_ANT);
 
       // Alignment will be picked up by layout() automatically.
    

@@ -89,22 +89,23 @@ class QDViewer : public QDBase
 public:
    class PluginData : public OverrideFlags
    {
-   private:
-      void	parsePair(const GUTF8String &name, const GUTF8String &value);
-      
-      static bool	parseBool(const GUTF8String &value);
-      static GUTF8String getQuotedString(const char *& ptr);
    public:
-      enum CACHE { CACHE_UNSPEC=-1, CACHE_OFF=0, CACHE_ON=1 };
-      SavedData	saved;
-      bool	full_mode;
-      int	cache;
-      GUTF8String rel_url;
-      GUTF8String page_id;
-      void	parse(const DArray<GUTF8String> & argn, const DArray<GUTF8String> & argv);
-      PluginData(void);
-      PluginData(const DArray<GUTF8String> & argn, const DArray<GUTF8String> & argv);
+     enum CACHE { CACHE_UNSPEC=-1, CACHE_OFF=0, CACHE_ON=1 };
+     SavedData	saved;
+     bool	full_mode;
+     int	cache;
+     GUTF8String rel_url;
+     GUTF8String page_id;
+     // helpers
+     void parse(const DArray<GUTF8String> & argn, const DArray<GUTF8String> & argv);
+     PluginData(void);
+     PluginData(const DArray<GUTF8String> & argn, const DArray<GUTF8String> & argv);
+   private:
+     void parsePair(const GUTF8String &name, const GUTF8String &value);
+     static bool parseBool(const GUTF8String &value);
+     static GUTF8String getQuotedString(const char *& ptr);
    };
+
 private:
      // Operation modes
    int		saved_data_known;

@@ -134,20 +134,19 @@ class QDBase : public QWidget, public GPEnabled
    Q_OBJECT
    friend class QDTBHider;
 public:
-   enum ZOOM_SOURCE	{ ZOOM_SRC_MAX=5, ZOOM_MANUAL=4, ZOOM_SAVED=3,
-			  ZOOM_TAGS=2, ZOOM_ANT=1, ZOOM_DEFAULT=0 };
-   enum MODE_SOURCE	{ MODE_SRC_MAX=5, MODE_MANUAL=4, MODE_SAVED=3,
-			  MODE_TAGS=2, MODE_ANT=1, MODE_DEFAULT=0 };
+   enum MODE_SOURCE	{ MODE_SOURCE_MAX=5, SRC_MANUAL=4, SRC_SAVED=3,
+			  SRC_TAGS=2, SRC_ANT=1, SRC_DEFAULT=0 };
    class OverrideFlags
    {
    public:
       enum THUMB_POS    { THUMB_TOP=4, THUMB_BOTTOM=3, THUMB_LEFT=2,
 			  THUMB_RIGHT=1, THUMB_HIDE=0 };
       THUMB_POS thumbnails;
-      bool      toolbar, scrollbars;
-      bool	menu, frame, links, logo, keyboard;
+      bool      toolbar, toolbarauto, toolbaralways;
+      bool      scrollbars, menu, frame, links, logo, keyboard;
       bool	print;
       int	cmd_zoom;
+      int       cmd_rotate;
       int	cmd_mode;
       int	hor_align;	// See DjVuANT class for possible values
       int	ver_align;	// or hor_align and ver_align flags
@@ -178,7 +177,7 @@ private:
    QPixmap	back_pixmap;
 
    int		displ_dpi;
-   int		zoom_prio[ZOOM_SRC_MAX], mode_prio[MODE_SRC_MAX];
+   int		mode_prio[MODE_SOURCE_MAX];
    int		left_butt_down;
    int		in_hand_scroll, in_paint, in_layout, in_zoom_select;
    OverrideFlags override_flags;
@@ -228,8 +227,8 @@ protected:
    class QDToolBar	* toolbar;
 
    bool		ignore_ant_mode_zoom;
-   int		zoom_src, mode_src;
-   int		cmd_zoom, cmd_mode, cmd_mode_force;
+   int		zoom_src, mode_src, rotate_src;
+   int		cmd_zoom, cmd_mode, cmd_mode_force, cmd_rotate;
    int          pane_mode;
 
    GPQCursor	cur_last;
@@ -313,14 +312,16 @@ public:
 
    void		exportToPNM(void);
    
-   void		setMode(int cmd_mode, bool do_redraw=1,
-			int mode_src=MODE_DEFAULT);
+   void		setMode(int cmd_mode, bool do_redraw=1,	
+                        int mode_src=SRC_DEFAULT);
    int		getMode(bool disregard_force=false) const;
    void		setZoom(int cmd_zoom, bool do_layout=1,
-			int zoom_src=ZOOM_DEFAULT);
-   void		setRotate(int cmd_rotate);
+                        int zoom_src=SRC_DEFAULT);
    int		getCMDZoom(void) const { return cmd_zoom; }
    int		getZoom(void) const;
+   void		setRotate(int cmd_rotate, bool do_redraw=1, 
+                          int rotate_src=SRC_DEFAULT);
+   int          getRotate(void) const;
    void		setBackgroundColor(u_int32 color, int do_redraw);
    u_int32	getBackgroundColor(void) const { return back_color; }
    void		setOverrideFlags(const OverrideFlags & flag);
