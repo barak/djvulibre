@@ -35,8 +35,7 @@ clean:
 distclean:
 
 install: FORCE
-	${SHELL} ${srcdir}/installer.sh \
-	   --destdir=${DESTDIR} --srcdir=${srcdir}
+	${SHELL} ${srcdir}/installer.sh --destdir=${DESTDIR} --srcdir=${srcdir}
 
 
 FORCE:
