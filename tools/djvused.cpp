@@ -318,6 +318,8 @@ get_data_from_file(const char *cmd, ParsingByteStream &pbs, ByteStream &out)
       while (state < 3) 
         {
           c = pbs.get();
+          if (c == EOF)
+            break;
           if ( c == term[state] )
             {
               state += 1;
@@ -335,7 +337,7 @@ get_data_from_file(const char *cmd, ParsingByteStream &pbs, ByteStream &out)
                 out.write8(c);
             }
         }
-      pbs.unget('\n');
+      pbs.unget(c);
     }
   else
     {
@@ -550,7 +552,7 @@ command_select(ParsingByteStream &pbs)
   if (pagid.is_int())
     {
       int pageno = atoi(pagid);
-      GP<DjVmDir::File> frec = doc->get_djvm_dir()->page_to_file(pageno);
+      GP<DjVmDir::File> frec = doc->get_djvm_dir()->page_to_file(pageno-1);
       if (!frec)
         verror("page \"%d\" not found", pageno);
       select_clear();
@@ -1267,13 +1269,13 @@ output(const GP<DjVuFile> &f, const GP<ByteStream> &out,
         {
           out->write("set-ant\n", 8);
           out->copy(*ant);
-          out->write(".\n", 2);
+          out->write("\n.\n", 3);
         }
       if (txt->size()) 
         {
           out->write("set-txt\n", 8);
           out->copy(*txt);
-          out->write(".\n", 2);
+          out->write("\n.\n", 3);
         }
     }
 }
