@@ -21,6 +21,7 @@
 
 DESTDIR=
 srcdir=.
+bindir=/usr/bin
 datadir=/usr/share
 for arg ; do
   case "$arg" in
@@ -53,6 +54,8 @@ elif [ -r /etc/xdg/menus/applications.menu ] ; then
     menus=xdg
 elif [ -r /etc/X11/desktop-menus/applications.menu ] ; then
     menus=xdg-old # redhat8 and redhat9 style. 
+elif [ -d /etc/menu-methods ] ; then
+    menus=debian
 fi
 
 kdeconfig=`which kde-config 2>/dev/null`
@@ -81,6 +84,8 @@ for arg ; do
 	  DESTDIR=`echo "$arg" | sed -e 's/^[^=]*=//'` ;;
       --srcdir=*)
 	  srcdir=`echo "$arg" | sed -e 's/^[^=]*=//'` ;;
+      --bindir=*)
+	  bindir=`echo "$arg" | sed -e 's/^[^=]*=//'` ;;
       --datadir=*)
 	  datadir=`echo "$arg" | sed -e 's/^[^=]*=//'` ;;
       --applications=*)
@@ -105,8 +110,9 @@ for arg ; do
 cat >&2 <<EOF
 Usage: installer.sh [..options..]
 Valid options are:
-    --destdir=DIR              (/)
-    --srcdir=DIR               (.)
+    --destdir=DIR              ($DESTDIR)
+    --srcdir=DIR               ($srcdir)
+    --bindir=DIR               ($bindir)
     --datadir=DIR              ($datadir)
     --applications=DIR         ($applications)
     --icons=DIR                ($icons)
@@ -166,6 +172,7 @@ fi
 if [ "$pixmaps" != no ] ; then
   makedir $DESTDIR$pixmaps
   install hi48-mimetype-djvu.png $DESTDIR$pixmaps/djvu.png
+  install djvu.xpm $DESTDIR$pixmaps/djvu.xpm
 fi
 
 if [ "$mime_info" != no ] ; then
@@ -185,13 +192,25 @@ if [ "$mimelnk" != no ] ; then
 fi
 
 case "$menus" in
+    # Freedesktop compliant menus
     xdg*)
 	if [ "$applications" != no ] ; then
 	  makedir $DESTDIR$applications
 	  install djview.desktop $DESTDIR$applications/djview.desktop
 	fi
 	;;
-    *)
+    # Debian menu system (tentative)
+    debian)
+        if [ -d /usr/lib/menu ] ; then
+            cat > $DESTDIR/usr/lib/menu/djview <<EOF
+?package(djview):needs=X11 section="Apps/Graphics" \
+    title="DjView" command="$bindir/djview" \
+    icon="$pixmaps/djvu.xpm"
+EOF
+        fi
+        ;;
+    # KDE menu system
+    applnk)
 	if [ "$applnk" != no ] ; then
 	  makedir $DESTDIR$applnk/Graphics
 	  install djview.desktop $DESTDIR$applnk/Graphics/djview.desktop
