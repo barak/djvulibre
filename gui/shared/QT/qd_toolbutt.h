@@ -50,7 +50,7 @@
 #include <qtoolbutton.h>
 #include <qiconset.h>
 
-#include "qt_fix.h"
+
 
 // Makes QToolButton accept icons in my format (PPM), also since PPM doesn't
 // contain transparent background, it makes some pixels transparent at the

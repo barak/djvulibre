@@ -54,9 +54,6 @@
 #include <qpopupmenu.h>
 #include <qtimer.h>
 
-#include "qt_fix.h"
-
-
 
 // QDViewer defines popup menu (QDANTBAse doesn't have one since it's
 // inherited by both QDViewer and QDEditor which may override it) and

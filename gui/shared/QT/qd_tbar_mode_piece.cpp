@@ -55,8 +55,6 @@
 #include <qvalidator.h>
 #include <qcheckbox.h>
 
-#include "qt_fix.h"
-
 #include <ctype.h>
 #include <stdlib.h>
 #include <stdio.h>

@@ -54,7 +54,7 @@
 #include <qlistview.h>
 #include <qtabdialog.h>
 
-#include "qt_fix.h"
+
 
 class QDDocInfo : public QTabDialog
 {

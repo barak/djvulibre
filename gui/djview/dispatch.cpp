@@ -67,8 +67,6 @@
 #include <sys/time.h>
 #include <qapplication.h>
 
-#include "qt_fix.h"
-
 #include <X11/Xlib.h>
 #include <X11/Xutil.h>
 

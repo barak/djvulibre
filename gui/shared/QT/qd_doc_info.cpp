@@ -60,7 +60,7 @@
 #include <qtabdialog.h>
 #include <qapplication.h>
 
-#include "qt_fix.h"
+
 
 #define PAGE_PAGE_COL 0
 #define PAGE_FILE_COL 1
@@ -596,7 +596,7 @@ QDDocInfo::slotRightButtonPressed(QListViewItem * item,
    {
       page_list->setSelected(item, TRUE);
 
-      QPopupMenu popup_menu(0, "doc_info_popup_menu");
+      QPopupMenu popup_menu;
       popup_menu.insertItem(tr("Page &Info"), (int) 0);
       popup_menu.insertItem(tr("&Goto to page"), (int) 1);
 

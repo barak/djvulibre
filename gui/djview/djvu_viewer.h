@@ -49,8 +49,6 @@
 #include "qd_messenger.h"
 #include "DjVuDocument.h"
 
-#include "qt_fix.h"
-
 // It's the file providing the decoding on the fily using or not using
 // threads. It has an interface reminding that in Netscape's plugins:
 // attach(), detach(), newStream(), etc.

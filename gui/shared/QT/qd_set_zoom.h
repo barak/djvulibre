@@ -44,11 +44,11 @@
 #pragma interface
 #endif
 
+#include "qlib.h"
 
 #include <qdialog.h>
 #include <qspinbox.h>
 
-#include "qt_fix.h"
 
 // Dialog for entering the exact zoom factor to use
 class QDSetZoom : public QeDialog

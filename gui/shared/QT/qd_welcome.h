@@ -45,11 +45,12 @@
 #endif
 
 
+#include "qlib.h"
+
 #include <qdialog.h>
 #include <qcheckbox.h>
 #include <qpushbutton.h>
 
-#include "qt_fix.h"
 
 // That "Welcome" dialog appearing once for every new plugin version.
 // Connect the slots to smth useful if you want the "Help", "Preferences"

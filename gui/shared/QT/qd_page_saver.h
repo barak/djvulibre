@@ -50,7 +50,6 @@
 
 #include <qdialog.h>
 
-#include "qt_fix.h"
 
 class QDPageSaver: public QObject
 {

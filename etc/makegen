@@ -72,11 +72,6 @@ do
                   echo "	\${CXX} \${CXXFLAGS} -c ${base}_moc.cpp"
                   echo "${base}_moc.cpp : ${xdir}$base.h"
                   echo "	\${MOC} ${xdir}$base.h -o ${base}_moc.cpp"
-                  if test $base = qt_fix ; then
-                    echo "	mv ${base}_moc.cpp temp && \\"
-                    echo "	  echo '#define QT_FIX_DO_ALL 1' > ${base}_moc.cpp && \\"
-                    echo "	  cat temp >> ${base}_moc.cpp && \${RM} temp "
-                  fi
                   objs="$objs ${base}_moc.o"
                 fi
                 ;;

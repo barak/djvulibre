@@ -51,7 +51,7 @@
 
 #include <qapplication.h>
 
-#include "qt_fix.h"
+
 
 //***************************** Decoder callbacks **************************
 

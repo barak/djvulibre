@@ -52,7 +52,7 @@
 #include <qregion.h>
 #include <qtimer.h>
 
-#include "qt_fix.h"
+
 
 // The purpose of this class it to do the following things:
 //    1. Override some virtual functions, which cause repaint when I don't

@@ -59,7 +59,7 @@
 #include <qscrollbar.h>
 #include <qtimer.h>
 #include <qtooltip.h>
-#include "qt_fix.h"
+
 
 // QDBase is different from DjVuBase - base of the Motif plugin.
 // It doesn't know anything about possible communications with Netscape,

@@ -59,9 +59,10 @@ QDViewer::createPopupMenu(void)
    DEBUG_MSG("QDViewer::createPopupMenu(): doing the stuff\n");
    DEBUG_MAKE_INDENT(3);
    
-   popup_menu=new QPopupMenu(0, "djvu_popup_menu");
+   popup_menu=new QPopupMenu(this, "djvu_popup_menu");
    connect(popup_menu, SIGNAL(activated(int)), this, SLOT(slotPopupCB(int)));
-   QPopupMenu * displ_pane=new QPopupMenu(0, "displ_pane");
+
+   QPopupMenu * displ_pane=new QPopupMenu(this, "displ_pane");
    connect(displ_pane, SIGNAL(activated(int)), popup_menu, SIGNAL(activated(int)));
    displ_pane->setCheckable(TRUE);
    displ_pane->insertItem(tr("&Color"), IDC_DISPLAY_COLOR);
@@ -76,7 +77,7 @@ QDViewer::createPopupMenu(void)
 #endif
    popup_menu->insertItem(tr("&Display"), displ_pane, IDC_DISPLAY);
 
-   QPopupMenu * zoom_pane=new QPopupMenu(0, "zoom_pane");
+   QPopupMenu * zoom_pane=new QPopupMenu(this, "zoom_pane");
    connect(zoom_pane, SIGNAL(activated(int)), popup_menu, SIGNAL(activated(int)));
    zoom_pane->setCheckable(TRUE);
    zoom_pane->insertItem("&300 %", IDC_ZOOM_300);
@@ -96,7 +97,7 @@ QDViewer::createPopupMenu(void)
    zoom_pane->insertItem(tr("Zoom &Out"), IDC_ZOOM_ZOOMOUT);
    popup_menu->insertItem(tr("&Zoom"), zoom_pane, IDC_ZOOM);
 
-   QPopupMenu * nav_pane=new QPopupMenu(0, "nav_pane");
+   QPopupMenu * nav_pane=new QPopupMenu(this, "nav_pane");
    connect(nav_pane, SIGNAL(activated(int)), popup_menu, SIGNAL(activated(int)));
    nav_pane->insertItem(tr("&Next Page"), IDC_NAV_NEXT_PAGE);
    nav_pane->insertItem(tr("&Previous Page"), IDC_NAV_PREV_PAGE);

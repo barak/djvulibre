@@ -52,9 +52,16 @@
 
 // Sends Expose event thru X11 system. Helps to take advantage of QT
 // event compression, which works only for X11 events.
-void	x11Redraw(QWidget * w, const QRect * grect=0);
+void x11Redraw(QWidget * w, const QRect * grect=0);
 
-// Actual prorotype is 'Window x11GetTopLevelWindow(Display * displ, Window start)'
-u_long	x11GetTopLevelWindow(void * displ, u_long start);
+// Returns the X11 client window containing the specified X11 window.
+unsigned long x11GetTopLevelWindow(void * displ, unsigned long start);
+
+// Same with a widget
+unsigned long x11GetTopLevelWindow(QWidget *w);
+
+// Makes widget w a transient widget of the client window of fw
+void x11MakeTransient(QWidget *w, QWidget *fw);
+
 
 #endif

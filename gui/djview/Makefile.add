@@ -25,15 +25,6 @@ qx_imager_moc.inc : ${top_srcdir}/gui/indep/QX/qx_imager.cpp
 	${MOC} ${top_srcdir}/gui/indep/QX/qx_imager.cpp -o qx_imager_moc.inc
 qxlib.o : ${top_srcdir}/gui/indep/QX/qxlib.cpp
 	${CXX} ${CXXFLAGS} -c ${top_srcdir}/gui/indep/QX/qxlib.cpp
-qt_fix.o : ${top_srcdir}/gui/indep/QT/qt_fix.cpp
-	${CXX} ${CXXFLAGS} -c ${top_srcdir}/gui/indep/QT/qt_fix.cpp
-qt_fix_moc.o : qt_fix_moc.cpp
-	${CXX} ${CXXFLAGS} -c qt_fix_moc.cpp
-qt_fix_moc.cpp : ${top_srcdir}/gui/indep/QT/qt_fix.h
-	${MOC} ${top_srcdir}/gui/indep/QT/qt_fix.h -o qt_fix_moc.cpp
-	mv qt_fix_moc.cpp temp && \
-	  echo '#define QT_FIX_DO_ALL 1' > qt_fix_moc.cpp && \
-	  cat temp >> qt_fix_moc.cpp && ${RM} temp 
 qt_imager.o : ${top_srcdir}/gui/indep/QT/qt_imager.cpp
 	${CXX} ${CXXFLAGS} -c ${top_srcdir}/gui/indep/QT/qt_imager.cpp
 qt_painter.o : ${top_srcdir}/gui/indep/QT/qt_painter.cpp
@@ -385,8 +376,6 @@ OBJS = \
  throw_error.o \
  qx_imager.o \
  qxlib.o \
- qt_fix.o \
- qt_fix_moc.o \
  qt_imager.o \
  qt_painter.o \
  qlib.o \

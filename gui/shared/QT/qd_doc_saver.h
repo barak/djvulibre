@@ -49,13 +49,13 @@
 #include "DjVmDir.h"
 #include "qd_port.h"
 #include "qd_messenger.h"
+#include "qlib.h"
 
 #include <qdialog.h>
 #include <qpushbutton.h>
 #include <qlabel.h>
 #include <qprogressdialog.h>
 
-#include "qt_fix.h"
 
 class QDDocSaver : public QObject
 {

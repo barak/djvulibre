@@ -49,8 +49,6 @@
 
 #include <qframe.h>
 
-#include "qt_fix.h"
-
 class QDToolBar : public QFrame
 {
    Q_OBJECT

@@ -55,9 +55,6 @@
 #include <qpushbutton.h>
 
 
-#include "qt_fix.h"
-
-
 QDAboutDialog::QDAboutDialog(QWidget *parent, const char *name, bool modal)
   : QeDialog(parent, name, modal)
 {

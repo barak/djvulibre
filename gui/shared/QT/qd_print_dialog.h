@@ -50,13 +50,15 @@
 #include "DjVuToPS.h"
 #include "GRect.h"
 
+#include "qlib.h"
+
 #include <qdialog.h>
 #include <qstring.h>
 #include <qwidgetstack.h>
 #include <sys/types.h>
 
 #include "prefs.h"
-#include "qt_fix.h"
+
 
 class QDPrintDialog : public QeDialog
 {

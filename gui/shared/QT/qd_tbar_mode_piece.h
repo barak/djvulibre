@@ -46,7 +46,7 @@
 
 
 #include "qd_toolbar.h"
-#include "qt_fix.h"
+
 
 class QDTBarModePiece : public QDTBarPiece
 {

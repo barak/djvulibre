@@ -50,7 +50,7 @@
 #include "DjVuFile.h"
 #include "DjVuDocument.h"
 #include "qd_messenger.h"
-#include "qt_fix.h"
+
 
 #include <qobject.h>
 

@@ -58,7 +58,7 @@
 #include <qradiobutton.h>
 #include <qbuttongroup.h>
 
-#include "qt_fix.h"
+
 
 //***************************************************************************
 //*************************** QDPageNameDialog dialog ***********************
@@ -125,7 +125,6 @@ QDPageNameDialog::QDPageNameDialog(const char * message, const char * page_name,
    QWidget * start=startWidget();
 
    setCaption(tr("Page file name"));
-   setResizable(true, false);
 
    QVBoxLayout * vlay=new QVBoxLayout(start, 10, 5, "vlay");
 

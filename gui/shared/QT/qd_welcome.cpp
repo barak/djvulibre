@@ -52,7 +52,7 @@
 #include <qapplication.h>
 #include <qpixmap.h>
 
-#include "qt_fix.h"
+
 
 void	
 QDWelcome::done(int rc)

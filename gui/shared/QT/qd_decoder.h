@@ -52,7 +52,7 @@
 #include <qprogressdialog.h>
 #include <qlabel.h>
 
-#include "qt_fix.h"
+
 
 // QDDecoder: class for decoding DjVuDocuments in the QT environment.
 // Blocks execution until the image is completely ready.

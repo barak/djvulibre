@@ -60,8 +60,6 @@
 #include <qmessagebox.h>
 #include <qapplication.h>
 
-#include "qt_fix.h"
-
 bool	QDSearchDialog::all_pages=true;
 bool	QDSearchDialog::case_sensitive=false;
 bool	QDSearchDialog::whole_word=false;
@@ -303,7 +301,6 @@ QDSearchDialog::QDSearchDialog(int page_num_, const GP<DjVuDocument> & doc_,
    in_search=false;
    
    setCaption(tr("DjVu: Find"));
-   setResizable(true, false);
    
    QWidget * start=startWidget();
    QLabel * label;

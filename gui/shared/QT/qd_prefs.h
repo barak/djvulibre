@@ -49,7 +49,7 @@
 #include <qgroupbox.h>
 
 #include "prefs.h"
-#include "qt_fix.h"
+
 
 // These are components, which will be used by QDViewerPrefs or
 // QDEditorPrefs in their "Preferences" dialogs. It's up to these two

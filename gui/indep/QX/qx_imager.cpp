@@ -56,7 +56,6 @@
 #include <qapplication.h>
 #include <qwidget.h>
 #include "qlib.h"
-#include "qt_fix.h"
 
 #include <X11/Xlib.h>
 #include <X11/Xutil.h>

@@ -48,7 +48,8 @@
 
 #include <X11/Xlib.h>
 
-void x11Redraw(QWidget * w, const QRect * rect=0)
+void 
+x11Redraw(QWidget * w, const QRect * rect=0)
 {
    QRect qrect;
    if (rect) qrect=*rect;
@@ -67,7 +68,8 @@ void x11Redraw(QWidget * w, const QRect * rect=0)
    XSendEvent(w->x11Display(), (Window) w->handle(), False, ExposureMask, &event);
 }
 
-u_long x11GetTopLevelWindow(void * _displ, u_long _start)
+unsigned long 
+x11GetTopLevelWindow(void * _displ, unsigned long _start)
 {
    DEBUG_MSG("x11GetTopLevelWindow(): traversing the tree up to reach the shell...\n");
    DEBUG_MAKE_INDENT(3);
@@ -119,4 +121,23 @@ u_long x11GetTopLevelWindow(void * _displ, u_long _start)
    }
    DEBUG_MSG("got window=" << shell_win << "\n");
    return shell_win;
+}
+
+
+unsigned long 
+x11GetTopLevelWindow(QWidget *w)
+{
+  return x11GetTopLevelWindow(w->x11Display(), w->winId());
+}
+
+
+void 
+x11MakeTransient(QWidget *w, QWidget *fw)
+{
+  if (fw) 
+    {
+      unsigned long xfw = x11GetTopLevelWindow(fw);
+      if (w && xfw)
+        XSetTransientForHint(w->x11Display(), w->winId(), xfw);
+    }
 }

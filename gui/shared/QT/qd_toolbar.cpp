@@ -49,7 +49,7 @@
 #include <qapplication.h>
 #include <qobjectlist.h>
 
-#include "qt_fix.h"
+
 
 #define margin 2
 
@@ -93,12 +93,9 @@ QTBWidget::event(QEvent * ev)
 	    }
 	 }
 	 setMinimumSize(width-margin, height);
-      } else
-      {
-	    // No children? Oops :( Commit suicide
-	 qeApp->killWidget(this);
       }
-   } else if (ev->type()==QEvent::Resize)
+   } 
+   else if (ev->type()==QEvent::Resize)
    {
       const QObjectList * childList=children();
       if (childList)
@@ -284,10 +281,13 @@ QDToolBar::addLeftWidget(QWidget * widget)
 void
 QDToolBar::addLeftWidgets(const GList<QWidget *> & list)
 {
-   QTBWidget * widget=new QTBWidget(this);
-   for(GPosition pos=list;pos;++pos)
-      list[pos]->recreate(widget, 0, QPoint(0, 0), TRUE);
-   addLeftWidget(widget);
+   if (list.size()) 
+     {
+       QTBWidget * widget=new QTBWidget(this);
+       for(GPosition pos=list;pos;++pos)
+         list[pos]->reparent(widget, 0, QPoint(0, 0), TRUE);
+       addLeftWidget(widget);
+     }
 }
 
 void
@@ -301,7 +301,7 @@ QDToolBar::addLeftWidgets(QWidget * w1, QWidget * w2, QWidget * w3,
    if (w4) list.append(w4);
    if (w5) list.append(w5);
    if (w6) list.append(w6);
-   if (list.size()) addLeftWidgets(list);
+   addLeftWidgets(list);
 }
 
 void

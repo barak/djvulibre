@@ -75,8 +75,6 @@
 #include <qmessagebox.h>
 #include <ctype.h>
 
-#include "qt_fix.h"
-
 #ifdef UNIX
 #include <X11/Xlib.h>
 #include <X11/Xatom.h>
@@ -380,18 +378,8 @@ QDViewer::~QDViewer(void)
    ::showInfo(this, "DjVu Info",
 	      "Do smth with the Netscape's properties in QDViewer::~QDViewer\n");
 #endif
-
       // Don't wait. There were some deadlocks.
    if (dimg) dimg->get_djvu_file()->stop_decode(false);
-   
-      // Since popup menu has parent NULL, I have to destroy it manually
-   qeApp->killWidget(popup_menu); popup_menu=0;
-      // QDWelcome is also non-modal dialog, which is not destroyed automatically
-   qeApp->killWidget(welcome); welcome=0;
-   qeApp->killWidget(about); about=0;
-      // QDPrintDialog is created here as a non-modal dialog, and thus
-      // it's not destroyed automatically.
-   qeApp->killWidget(print_win); print_win=0;
 }
 
 void

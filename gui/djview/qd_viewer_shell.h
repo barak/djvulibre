@@ -56,8 +56,6 @@
 #include "prefs.h"
 #include "djvu_viewer.h"
 
-#include "qt_fix.h"
-
 // Use this class if you want to create a standalone viewer. It creates
 // menu system, wallpaper, DjVuViewer, opens a file - does everything 
 // needed to open and display DjVu document without your concern.

@@ -57,7 +57,7 @@
 #include <qlabel.h>
 #include <qapplication.h>
 
-#include "qt_fix.h"
+
 
 QDToolButton::QDToolButton(ByteStream & str, bool _shadow, int _cmd,
 			   QWidget * parent, const QString & name) :

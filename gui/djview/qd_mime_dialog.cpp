@@ -53,8 +53,6 @@
 #include <qbuttongroup.h>
 #include <qradiobutton.h>
 
-#include "qt_fix.h"
-
 bool
 QDMimeDialog::dontAsk(void) const
 {

@@ -46,10 +46,12 @@
 
 
 #include "DjVuDocument.h"
+
+#include "qlib.h"
+
 #include <qdialog.h>
 #include <qcombobox.h>
 
-#include "qt_fix.h"
 
 // Dialog for entering the exact page number to go to
 class QDNavGotoPage : public QeDialog

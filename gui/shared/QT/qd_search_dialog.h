@@ -48,9 +48,10 @@
 #include "DjVuDocument.h"
 #include "DjVuText.h"
 
+#include "qlib.h"
+
 #include <qdialog.h>
 
-#include "qt_fix.h"
 
 class QDSearchDialog : public QeDialog
 {

@@ -45,9 +45,9 @@
 #endif
 
 
-#include <qdialog.h>
+#include "qlib.h"
 
-#include "qt_fix.h"
+#include <qdialog.h>
 
 class QDAboutDialog : public QeDialog
 {

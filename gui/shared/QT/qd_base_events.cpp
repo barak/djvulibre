@@ -53,8 +53,6 @@
 #include <qsplitter.h>
 #include <qapplication.h>
 
-#include "qt_fix.h"
-
 #include "debug.h"
 
 void

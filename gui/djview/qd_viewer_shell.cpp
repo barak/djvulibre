@@ -71,8 +71,6 @@
 
 #include <time.h>
 
-#include "qt_fix.h"
-
 #define START_STATUS QT_TRANSLATE_NOOP("QDViewerShell","Select \"File\" and then \"Open\" to load a DjVu file")
 
 void
@@ -256,7 +254,8 @@ QDViewerShell::slotMenuCB(int cmd)
 {
    try
    {
-      if (cmd==IDC_EXIT) qApp->quit();
+      if (cmd==IDC_EXIT) 
+         qApp->quit();
       else if (cmd==IDC_CLOSE)
 	 qeApp->killWidget(this);
       else if (cmd==IDC_OPEN)
@@ -442,7 +441,7 @@ QDViewerShell::QDViewerShell(QWidget * parent, const char * name)
 #endif
    connect(menu, SIGNAL(activated(int)), this, SLOT(slotMenuCB(int)));
    
-   QPopupMenu * file_pane=new QPopupMenu();
+   QPopupMenu * file_pane=new QPopupMenu(this);
    file_pane->insertItem(tr("&Open"), IDC_OPEN);
    file_pane->insertItem(tr("&New Window"), IDC_NEW_WINDOW);
    file_pane->insertSeparator();
@@ -461,7 +460,7 @@ QDViewerShell::QDViewerShell(QWidget * parent, const char * name)
    connect(file_pane, SIGNAL(aboutToShow(void)), this, SLOT(slotAboutToShowMenu(void)));
    menu->insertItem(tr("&File"), file_pane, IDC_FILE);
 
-   QPopupMenu * mode_pane=new QPopupMenu();
+   QPopupMenu * mode_pane=new QPopupMenu(this);
    mode_pane->setCheckable(TRUE);
    mode_pane->insertItem(tr("&Color"), IDC_DISPLAY_COLOR);
    mode_pane->insertItem(tr("Black and &White"), IDC_DISPLAY_BLACKWHITE);
@@ -474,7 +473,7 @@ QDViewerShell::QDViewerShell(QWidget * parent, const char * name)
    connect(mode_pane, SIGNAL(aboutToShow(void)), this, SLOT(slotAboutToShowMenu(void)));
    menu->insertItem(tr("&Display"), mode_pane, IDC_MODE);
 
-   QPopupMenu * zoom_pane=new QPopupMenu();
+   QPopupMenu * zoom_pane=new QPopupMenu(this);
    zoom_pane->setCheckable(TRUE);
    zoom_pane->insertItem("&300 %", IDC_ZOOM_300);
    zoom_pane->insertItem("15&0 %", IDC_ZOOM_150);
@@ -494,7 +493,7 @@ QDViewerShell::QDViewerShell(QWidget * parent, const char * name)
    connect(zoom_pane, SIGNAL(aboutToShow(void)), this, SLOT(slotAboutToShowMenu(void)));
    menu->insertItem(tr("&Zoom"), zoom_pane, IDC_ZOOM);
 
-   QPopupMenu * nav_pane=new QPopupMenu();
+   QPopupMenu * nav_pane=new QPopupMenu(this);
    nav_pane->insertItem(tr("&Next Page"), IDC_NAV_NEXT_PAGE);
    nav_pane->insertItem(tr("&Previous Page"), IDC_NAV_PREV_PAGE);
    nav_pane->insertItem(tr("&+10 Pages"), IDC_NAV_NEXT_PAGE10);
@@ -505,7 +504,7 @@ QDViewerShell::QDViewerShell(QWidget * parent, const char * name)
    connect(nav_pane, SIGNAL(aboutToShow(void)), this, SLOT(slotAboutToShowMenu(void)));
    menu->insertItem(tr("&Navigate"), nav_pane, IDC_NAVIGATE);
 
-   QPopupMenu * info_pane=new QPopupMenu();
+   QPopupMenu * info_pane=new QPopupMenu(this);
    info_pane->insertItem(tr("&Page Information"), IDC_ABOUT_PAGE);
    info_pane->insertItem(tr("&Document Information"), IDC_ABOUT_DOC);
    info_pane->insertItem(tr("Show &Thumbnails"), IDC_THUMB_SHOW);
@@ -513,7 +512,7 @@ QDViewerShell::QDViewerShell(QWidget * parent, const char * name)
    menu->insertItem(tr("&Info"), info_pane, IDC_INFO);
 
    menu->insertSeparator();
-   QPopupMenu * help_pane=new QPopupMenu();
+   QPopupMenu * help_pane=new QPopupMenu(this);
    help_pane->insertItem(tr("&About"), IDC_ABOUT_DEJAVU);
    GURL helpurl = getDjVuDataFile(DJVIEW_HELP_DJVU);
    if (! helpurl.is_empty() )

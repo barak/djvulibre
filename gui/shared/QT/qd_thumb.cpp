@@ -61,7 +61,6 @@
 #include <qsplitter.h>
 #include <qvaluelist.h>
 
-#include "qt_fix.h"
 
 #define MIN_ITEM_WIDTH	64
 #define MAX_ITEM_WIDTH	256
@@ -790,7 +789,7 @@ QDThumbnails::QDThumbnails(QWidget * parent, const char * name, bool _rowMajor) 
    }
 
       // Create the popup menu
-   popup_menu=new QPopupMenu(0, "qd_thumb_menu");
+   popup_menu=new QPopupMenu(this, "qd_thumb_menu");
    connect(popup_menu, SIGNAL(activated(int)), this, SLOT(slotPopup(int)));
    popup_menu->insertItem(tr("&Close thumbnails"), IDC_TH_CLOSE);
    

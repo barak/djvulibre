@@ -70,7 +70,7 @@
 #include <qcombobox.h>
 #include <qobjectlist.h>
 
-#include "qt_fix.h"
+
 
 #include <unistd.h>
 #include <errno.h>

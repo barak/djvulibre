@@ -56,7 +56,7 @@
 #include <qlistbox.h>
 #include <qlineedit.h>
 
-#include "qt_fix.h"
+
 
 //***************************************************************************
 //*************************** QDDocNameDialog dialog ************************
@@ -141,7 +141,6 @@ QDDocNameDialog::QDDocNameDialog(const char * message, const char * doc_name,
    QWidget * start=startWidget();
 
    setCaption("Document file name");
-   setResizable(true, false);
 
    QVBoxLayout * vlay=new QVBoxLayout(start, 10, 5, "vlay");
 

@@ -72,7 +72,7 @@
 #include <qprogressdialog.h>
 #include <qfiledialog.h>
 
-#include "qt_fix.h"
+
 
 const char *
 QDBase::search_results_name="Search results";

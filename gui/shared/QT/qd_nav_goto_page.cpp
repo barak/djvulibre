@@ -54,7 +54,7 @@
 #include <qlayout.h>
 #include <qpushbutton.h>
 
-#include "qt_fix.h"
+
 
 class QDPageNumVal : public QValidator
 {

@@ -52,7 +52,7 @@
 #include <qpushbutton.h>
 #include <qkeycode.h>
 
-#include "qt_fix.h"
+
 
 class QDSetZoomVal : public QValidator
 {

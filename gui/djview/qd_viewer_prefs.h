@@ -45,11 +45,11 @@
 #endif
 
 
+#include "qlib.h"
 #include "qd_prefs.h"
 
 #include <qdialog.h>
 
-#include "qt_fix.h"
 
 // "Hyperlink Preferences box"
 class QDHlinkPrefs : public QWidget

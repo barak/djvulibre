@@ -94,7 +94,6 @@ CPP_SOURCES = \
  ${top_srcdir}/gui/indep/except/throw_error.cpp \
  ${top_srcdir}/gui/indep/QX/qx_imager.cpp \
  ${top_srcdir}/gui/indep/QX/qxlib.cpp \
- ${top_srcdir}/gui/indep/QT/qt_fix.cpp \
  ${top_srcdir}/gui/indep/QT/qt_imager.cpp \
  ${top_srcdir}/gui/indep/QT/qt_painter.cpp \
  ${top_srcdir}/gui/indep/QT/qlib.cpp \

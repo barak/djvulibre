@@ -66,7 +66,6 @@
 #include <qsocketnotifier.h>
 #include <qapplication.h>
 
-#include "qt_fix.h"
 #include "init_qt.h"
 
 // This object is here just to provide a way to connect to socket notifiers

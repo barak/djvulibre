@@ -64,13 +64,308 @@
 #include <qpainter.h>
 #include <qpopupmenu.h>
 #include <qmenubar.h>
+#include <qwidgetlist.h>
 
 #include <stdio.h>
 #include <stdlib.h>
 #include <ctype.h>
 #include "DjVuMessage.h"
 
-#include "qt_fix.h"
+#ifdef UNIX
+#include "qxlib.h"
+#include <sys/stat.h>
+#include <unistd.h>
+#include <fcntl.h>
+#include <errno.h>
+#include <X11/X.h>
+#include <X11/Xlib.h>
+#include <X11/Xutil.h>
+#endif
+
+
+//****************************************************************************
+//********************************* QeApplication ****************************
+//****************************************************************************
+
+
+QeApplication *qeApp;
+
+QeApplication::QeApplication(int &argc, char **argv) 
+  : QApplication(argc, argv)
+{
+  gamma = 2.2;
+  qeApp = this;
+  connect(&kill_timer, SIGNAL(timeout(void)), this, SLOT(killTimeout(void)));
+}
+
+QeApplication::~QeApplication()
+{
+  if (qeApp == this)
+    qeApp = 0;
+}
+
+void
+QeApplication::killWidget(QWidget * widget)
+{
+  if (widget && !widgetsToKill.contains(widget))
+    {
+      widgetsToKill.append(widget);
+      connect(widget, SIGNAL(destroyed(void)), this, SLOT(killDestroy(void)));
+      if (! kill_timer.isActive()) 
+        kill_timer.start(0, TRUE);
+    }
+}
+
+void
+QeApplication::killDestroy(void)
+{
+  const QObject *s = sender();
+  if (s->isWidgetType())
+    widgetsToKill.removeRef((QWidget*)s);
+}
+
+
+void
+QeApplication::killTimeout(void)
+{
+  QList<QWidget> newWidgetsToKill;
+  QList<QWidget> widgetsToClose;
+  
+  
+  while(widgetsToKill.count())
+    {
+      QWidget * w = widgetsToKill.first();
+      widgetsToKill.remove((uint)0);
+      // The deletion might result in closing a modal dialog being exec'ed.
+      // This would cause big trouble in the local loop.
+      // Therefore we scan all the toplevel widgets and 
+      // inspect all visible modal or popup objects.
+      bool okayToKill = TRUE;
+      QWidgetList *tops = QApplication::topLevelWidgets();
+      QWidgetListIt it(*tops);
+      QWidget *top;
+      while(( top = it.current() ))
+        {
+          ++it;
+          if (top->isVisible() && (top->isModal() || top->isPopup()))
+            {
+              QWidget *parent = top;
+              while (parent && parent!=w)
+                parent = parent->parentWidget();
+              if (parent == w)
+                {
+                  okayToKill = FALSE;
+                  widgetsToClose.append(top);
+                }
+            }
+        }
+      delete tops;
+      if (okayToKill)
+        w->close(TRUE);
+      else
+        newWidgetsToKill.append(w);
+    }
+  
+  // Now proceed
+  while (widgetsToClose.count())
+    {
+      QWidget * w = widgetsToClose.first();
+      widgetsToClose.remove((uint)0);
+      try { w->close(); } catch(...) { };
+    }
+  while (widgetsToKill.count())
+    {
+      QWidget * w = widgetsToKill.first();
+      widgetsToKill.remove((uint)0);
+      try { w->close(TRUE); } catch(...) { };
+    }
+  while (newWidgetsToKill.count())
+    {
+      QWidget * w = newWidgetsToKill.first();
+      newWidgetsToKill.remove((uint)0);
+      killWidget(w);
+    }
+}
+
+#ifdef UNIX
+bool
+QeApplication::x11EventFilter(XEvent * ev)
+{
+  if (ev->type==KeyPress &&
+      XKeycodeToKeysym(ev->xkey.display, ev->xkey.keycode, 0)==0)
+    return TRUE;	// Avoid stupid QT warning due to unassigned keysym
+  
+  x11EventResult=0;
+  emit gotX11Event(ev);
+   return x11EventResult;
+}
+#endif
+
+void
+QeApplication::setWidgetGeometry(QWidget * widget)
+{
+#ifdef UNIX
+  if (widget && geometry.length())
+   {
+      int x, y;
+      int w, h;
+      int m=XParseGeometry(geometry, &x, &y, (u_int *) &w, (u_int *) &h);
+      QSize minSize=widget->minimumSize();
+      QSize maxSize=widget->maximumSize();
+      if ((m & XValue)==0) x=widget->geometry().x();
+      if ((m & YValue)==0) y=widget->geometry().y();
+      if ((m & WidthValue)==0) w=widget->width();
+      if ((m & HeightValue)==0) h=widget->height();
+      w=QMIN(w, maxSize.width());
+      h=QMIN(h, maxSize.height());
+      w=QMAX(w, minSize.width());
+      h=QMAX(h, minSize.height());
+      if ((m & XNegative)) x=desktop()->width()+x-w;
+      if ((m & YNegative)) y=desktop()->height()+y-h;
+      widget->setGeometry(x, y, w, h);
+      // Next widget has same size but different location
+      if ((m & WidthValue) && (m & HeightValue))
+        geometry = QString("%1x%2").arg(w).arg(h);
+      else
+        geometry = QString();
+   }
+#endif
+}
+
+
+
+//****************************************************************************
+//********************************* QeDialog  ********************************
+//****************************************************************************
+
+
+QeDialog::QeDialog(QWidget * parent=0, const char * name=0, bool modal=FALSE, WFlags f=0)
+  : QDialog(parent,name,modal,f)
+{
+  // This is the only reason to have class QeDialog.
+  makeTransient(this,parent);
+}
+
+void
+QeDialog::makeTransient(QWidget *w, QWidget *fw)
+{
+#ifdef UNIX
+  x11MakeTransient(w, fw);
+#endif
+}
+
+
+//****************************************************************************
+//********************************* QeFileDialog  ****************************
+//****************************************************************************
+
+
+QString	QeFileDialog::lastSaveDir;
+QString QeFileDialog::lastLoadDir;
+
+void
+QeFileDialog::done(int rc)
+{
+  // Check the existance of the file and ask for overwriting...
+  if (rc==Rejected || mode()==Directory)
+    {
+      QFileDialog::done(rc);
+      return;
+    }
+
+  QString fileName=selectedFile();
+#ifdef UNIX
+  struct stat st;
+  if (::stat(fileName, &st)>=0)
+    {
+      if (S_ISFIFO(st.st_mode) || S_ISCHR(st.st_mode) ||
+	  S_ISBLK(st.st_mode) || S_ISSOCK(st.st_mode))
+        {
+          QMessageBox::critical(this, "DjVu",
+                                tr("You should select a regular file,\n"
+                                   "not a pipe, socket or device file."));
+          return;
+        }
+      if (!forWriting)
+        {
+          int fd=::open(fileName, O_RDONLY);
+          if (fd<0)
+            {
+              QMessageBox::critical(this, "DjVu",
+                                    tr("Failed to open file")+" '"+fileName+"' "+
+                                    tr("for reading:\n")+strerror(errno));
+              return;
+            } 
+          ::close(fd);
+        } 
+      else
+        {
+          if (QMessageBox::warning(this, "DjVu",
+                                   tr("File")+" '"+fileName+"' "+tr(" already exists.\n") +
+                                   tr("Are you sure you want to overwrite it?"),
+                                   "&Yes", "&No", 0, 0, 1))
+            return;
+          int fd=::open(fileName, O_WRONLY);
+          if (fd<0)
+            {
+              QMessageBox::critical(this, "DjVu",
+                                    tr("Failed to open file")+" '"+fileName+"' "+
+                                    tr("for writing:\n")+strerror(errno));
+              return;
+            }
+          ::close(fd);
+        }
+    } 
+  else if (!forWriting)
+    {
+      QMessageBox::critical(this, "DjVu", tr("Failed to stat file")+" '"+fileName+"'.");
+      return;
+    }
+#endif
+  // Update lastSaveDir and lastLoadDir
+  if (rc==Accepted)
+    {
+      QFileInfo fi = QFileInfo(selectedFile());
+      if (fi.isDir())
+        if (forWriting) 
+          lastSaveDir=fi.dirPath();
+        else 
+          lastLoadDir=fi.dirPath();
+    }
+  QFileDialog::done(rc);
+}
+
+void	
+QeFileDialog::setForWriting(bool fwr)
+{
+  forWriting=fwr;
+  setMode(fwr ? QFileDialog::AnyFile : QFileDialog::ExistingFile);
+}
+
+
+QeFileDialog::QeFileDialog(const QString & dirName, const char * filter,
+			   QWidget * parent, const char * name, bool modal) 
+  : QFileDialog(".", filter, parent, name, modal), forWriting(false)
+{
+  setForWriting(true);
+  if (modal) 
+    QeDialog::makeTransient(this, parent);
+  if ( dirName.isNull() || dirName.isEmpty() || !QFileInfo(dirName).isDir())
+    setDir(lastSaveDir);
+  else 
+    setDir(dirName);
+}
+
+QeFileDialog::QeFileDialog(QWidget * parent, const char * name, bool modal) 
+  : QFileDialog(parent, name, modal), forWriting(false)
+{
+  setForWriting(true);
+  if (modal) 
+    QeDialog::makeTransient(this, parent);
+  setDir(lastSaveDir);
+}
+
+
 
 //****************************************************************************
 //******************************** QeExcMessage ******************************
@@ -315,6 +610,15 @@ showMessage(QWidget * parent, const QString &qtitle, const QString &qmessage,
    dialog->exec();
    
 }
+
+
+
+//****************************************************************************
+//************************* QT helper functions ******************************
+//****************************************************************************
+
+
+
 
 void
 setItemsEnabled(QMenuData * menu, bool flag)

@@ -51,7 +51,7 @@
 #include <qlistbox.h>
 #include <qcursor.h>
 
-#include "qt_fix.h"
+
 
 class QDThumbnails : public QListBox
 {

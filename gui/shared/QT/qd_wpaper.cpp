@@ -47,8 +47,6 @@
 #include "qd_painter.h"
 #include "qlib.h"
 
-#include "qt_fix.h"
-
 void QDWPaper::paintEvent(QPaintEvent * ev)
 {
    try

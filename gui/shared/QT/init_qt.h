@@ -49,7 +49,7 @@
 // of TrueColor define.
 
 #include <qapplication.h>
-#include "qt_fix.h"
+
 
 void InitializeQT(int &argc, char ** argv);
 void CleanupQT(void);
