@@ -59,8 +59,8 @@
 #ifdef HAVE_CONFIG_H
 #include "config.h"
 #endif
-#ifdef __GNUG__
-#pragma interface
+#if NEED_GNUG_PRAGMAS
+# pragma interface
 #endif
 
 /** @name GOS.h

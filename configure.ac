@@ -281,6 +281,18 @@ changequote([, ])dnl
             ;;
         esac
   esac
+  # Do we want the pragmas interface/implementation
+  case "$cxxver" in
+changequote(<<, >>)dnl
+    2*) cxxpragmas=yes ;;
+    3.0*) cxxpragmas=yes ;;
+    *) cxxpragmas=no ;;
+changequote([, ])dnl
+  esac
+  if test x$cxxpragmas = xyes ; then 
+    AC_DEFINE(NEED_GNUG_PRAGMAS,1,
+             [Define to use g++ pragmas interface/implementation])
+  fi
 fi
 
 # What version of QT are we using

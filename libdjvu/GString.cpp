@@ -63,11 +63,11 @@
 // attempt to use the type system to enforce coding policies.
 // This could be fixed.  But there are better things to do in djvulibre.
 
-#ifdef __GNUG__
-#pragma implementation
-#endif
 #ifdef HAVE_CONFIG_H
-#include "config.h"
+# include "config.h"
+#endif
+#if NEED_GNUG_PRAGMAS
+# pragma implementation
 #endif
 
 #include "GString.h"

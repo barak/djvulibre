@@ -8530,6 +8530,19 @@ echo "$as_me: WARNING: Your c++ compiler ($cxxver) has known problems.
             ;;
         esac
   esac
+  # Do we want the pragmas interface/implementation
+  case "$cxxver" in
+    2*) cxxpragmas=yes ;;
+    3.0*) cxxpragmas=yes ;;
+    *) cxxpragmas=no ;;
+  esac
+  if test x$cxxpragmas = xyes ; then
+
+cat >>confdefs.h <<\_ACEOF
+#define NEED_GNUG_PRAGMAS 1
+_ACEOF
+
+  fi
 fi
 
 # What version of QT are we using

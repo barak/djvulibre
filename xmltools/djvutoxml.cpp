@@ -59,11 +59,11 @@
 // $Id$
 // $Name$
 
-#ifdef __GNUG__
-#pragma implementation
-#endif
 #ifdef HAVE_CONFIG_H
-#include "config.h"
+# include "config.h"
+#endif
+#if NEED_GNUG_PRAGMAS
+# pragma implementation
 #endif
 
 #include "DjVuDocument.h"

@@ -186,6 +186,9 @@
 /* Define to 1 if you have the <X11/extensions/Xext.h> header file. */
 #undef HAVE_X11_EXTENSIONS_XEXT_H
 
+/* Define to use g++ pragmas interface/implementation */
+#undef NEED_GNUG_PRAGMAS
+
 /* Define to the address where bug reports for this package should be sent. */
 #undef PACKAGE_BUGREPORT
 
