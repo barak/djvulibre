@@ -105,7 +105,7 @@ SHELL=${CONFIG_SHELL-/bin/sh}
 # only ac_max_sed_lines should be used.
 : ${ac_max_here_lines=38}
 
-ac_unique_file="README.djvu"
+ac_unique_file="INSTALL"
 ac_default_prefix=/usr/local
 # Factoring default headers for most tests.
 ac_includes_default="\
