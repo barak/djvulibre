@@ -191,7 +191,7 @@ DjVuDocument::~DjVuDocument(void)
       for(GPosition pos=ufiles_list;pos;++pos)
       {
           GP<DjVuFile> file=ufiles_list[pos]->file;
-          file->stop_decode(true);
+          file->stop_decode(false);
           file->stop(false);	// Disable any access to data
       }
       ufiles_list.empty();
@@ -204,7 +204,7 @@ DjVuDocument::~DjVuDocument(void)
      if (port->inherits("DjVuFile"))
      {
        DjVuFile * file=(DjVuFile *) (DjVuPort *) port;
-       file->stop_decode(true);
+       file->stop_decode(false);
        file->stop(false);	// Disable any access to data
      }
    }
@@ -576,45 +576,42 @@ DjVuDocument::check_unnamed_files(void)
      }
      
      if (ufile && !new_url.is_empty())
-     {
-	      DEBUG_MSG("Fixing file: '" << ufile->url << "'=>'" << new_url << "'\n");
-        // Now, once we know its real URL we can request a real DataPool and
-        // can connect the DataPool owned by DjVuFile to that real one
-        // Note, that now request_data() will not play fool because
-        // we have enough information
-        
-        G_TRY
-        {
-          
-          if (ufile->data_pool)
-	         {
-            GP<DataPool> new_pool=pcaster->request_data(ufile->file, new_url);
-            if(!new_pool)
-            {
-              G_THROW( ERR_MSG("DjVuDocument.fail_URL") "\t"+new_url.get_string());
-            }
-            ufile->data_pool->connect(new_pool);
-	         }
-   	      ufile->file->set_name(new_url.fname());
-	         ufile->file->move(new_url.base());
-           set_file_aliases(ufile->file);
-        }
-        G_CATCH(exc)
-        {
-	         pcaster->notify_error(this, exc.get_cause());
-        }   
-        G_ENDCATCH;
-     }
+       {
+         DEBUG_MSG("Fixing file: '" << ufile->url << "'=>'" << new_url << "'\n");
+         // Now, once we know its real URL we can request a real DataPool and
+         // can connect the DataPool owned by DjVuFile to that real one
+         // Note, that now request_data() will not play fool because
+         // we have enough information
+         
+         G_TRY
+           {
+             if (ufile->data_pool)
+               {
+                 GP<DataPool> new_pool=pcaster->request_data(ufile->file, new_url);
+                 if(!new_pool)
+                   G_THROW( ERR_MSG("DjVuDocument.fail_URL") "\t"+new_url.get_string());
+                 ufile->data_pool->connect(new_pool);
+               }
+             ufile->file->set_name(new_url.fname());
+             ufile->file->move(new_url.base());
+             set_file_aliases(ufile->file);
+           }
+         G_CATCH(exc)
+           {
+             pcaster->notify_error(this, exc.get_cause());
+           }   
+         G_ENDCATCH;
+       }
      else
        break;
      
      // Remove the 'ufile' from the list
      for(pos=ufiles_list;pos;++pos)
-   	   if (ufiles_list[pos]==ufile)
-	      {
-         ufiles_list.del(pos);
-         break;
-	      }
+       if (ufiles_list[pos]==ufile)
+         {
+           ufiles_list.del(pos);
+           break;
+         }
   } // while(1)
 }
 
