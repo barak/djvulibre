@@ -74,7 +74,12 @@ GPQCursor::GQCursor::GQCursor(QCursor *newptr)
 
 GPQCursor::GQCursor::~GQCursor()
 {
-  delete ptr;
+  if (qApp)
+    {
+      // The QApplication destructor deletes a number of cursors (but not all of them).
+      // Chances are that ptr is a dangling pointer in this case
+      delete ptr;
+    }
 }
 
 GPQCursor::GPQCursor(void)
