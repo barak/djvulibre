@@ -60,9 +60,11 @@ fi
 kdeconfig=`which kde-config 2>/dev/null`
 if [ -x "$kdeconfig" ] ; then
     d=`$kdeconfig --path mime | sed -e 's/^.*://g'`
-    test -d "$d" && dir_mimelnk="$d"
+    test -d "$d" && mimelnk="$d"
     d=`$kdeconfig --path apps | sed -e 's/^.*://g'`
-    test -d "$d" && dir_applnk="$d"
+    test -d "$d" && applnk="$d"
+    d=`$kdeconfig --path icon | sed -e 's/^.*://g'`
+    test -d "$d" && icons="$d"
 fi
 
 test -d "$applications"         || applications=no
