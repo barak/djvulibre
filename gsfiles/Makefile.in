@@ -27,6 +27,8 @@ libdir = @libdir@
 mandir = @mandir@
 
 INSTALL = @INSTALL@
+INSTALL_PROGRAM = @INSTALL_PROGRAM@
+INSTALL_DATA = @INSTALL_DATA@
 
 all:
 
@@ -40,11 +42,11 @@ install: install-bin install-man
 
 install-bin: djvudigital FORCE
 	${INSTALL} -d ${DESTDIR}${bindir}
-	${INSTALL} -m 0755 ${srcdir}/djvudigital ${DESTDIR}${bindir}
+	${INSTALL_PROGRAM} -m 0755 ${srcdir}/djvudigital ${DESTDIR}${bindir}
 
 install-man: FORCE
 	${INSTALL} -d ${DESTDIR}${mandir}/man1
-	${INSTALL} -m 0755 ${srcdir}/djvudigital.1 ${DESTDIR}${mandir}/man1
+	${INSTALL_DATA} ${srcdir}/djvudigital.1 ${DESTDIR}${mandir}/man1
 
 FORCE:
 .PHONY: FORCE

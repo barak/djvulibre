@@ -88,17 +88,9 @@ AC_PATH_PROG(AR, ar)
 AC_PATH_PROG(TOUCH, touch)
 AC_PATH_PROG(MKDIR, mkdir)
 AC_PROG_INSTALL
-dnl INSTALL='${top_srcdir}/config/install-sh -c' 
-dnl AC_SUBST(INSTALL)
 
 # Libtool & Compilers
 AC_DISABLE_STATIC
-dnl case "$host" in
-dnl *-cygwin* | *-mingw*)
-dnl    enable_shared=no
-dnl    enable_static=yes
-dnl    ;;
-dnl esac
 AC_PROG_LIBTOOL
 AC_PROG_CC
 AC_PROG_CXX
@@ -268,8 +260,12 @@ fi
 
 
 # ----------------------------------------
-# Nsdejavu stuff
+# Extra
 # ----------------------------------------
+
+
+# -----------
+# What flags should be used to compile nsdejavu.so
 
 NSDEJAVU_CFLAGS=
 NSDEJAVU_LIBS=
@@ -286,11 +282,19 @@ fi
 AC_SUBST(NSDEJAVU_CFLAGS)
 AC_SUBST(NSDEJAVU_LIBS)
 
+# -----------
+# How to install shared libraries
+if test -z "$INSTALL_SHLIB" ; then
+  INSTALL_SHLIB="${INSTALL_DATA}"
+  case "$host" in
+    *-cygwin* | *-mingw*)
+        INSTALL_SHLIB="cp"
+        ;;
+  esac
+fi
+AC_SUBST(INSTALL_SHLIB)
 
-# ----------------------------------------
-# Extra
-# ----------------------------------------
-
+# -----------
 # Work around broken compilers with the famous LPR0 bug
 if test x$ac_shared_libdjvu != xno && test x$GXX = xyes; then
     AC_MSG_CHECKING([if $CXX has the LPR0 bug])
@@ -305,6 +309,7 @@ if test x$ac_shared_libdjvu != xno && test x$GXX = xyes; then
     fi
 fi
 
+# -----------
 # What compiler are we using ?
 if test x$GXX != xyes ; then
   AC_MSG_WARN([The recommended c++ compiler is g++.])
@@ -381,6 +386,7 @@ changequote([, ])dnl
   fi
 fi
 
+# -----------
 # What version of QT are we using
 if test x${qt_version+set} = xset ; then
   if test "$qt_version" -lt 200 ; then

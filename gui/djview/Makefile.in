@@ -33,6 +33,8 @@ AR = @AR@
 LN_S = @LN_S@
 TOUCH = @TOUCH@
 INSTALL = @INSTALL@
+INSTALL_PROGRAM = @INSTALL_PROGRAM@
+INSTALL_DATA = @INSTALL_DATA@
 MKDIR = @MKDIR@
 LIBTOOL = @LIBTOOL@
 BIN2CPP = ${top_builddir}/gui/bin2cpp/bin2cpp
@@ -172,11 +174,11 @@ install: install-bin install-man install-data
 install-bin: ${PROGRAM} FORCE
 	${INSTALL} -d ${DESTDIR}${bindir}
 	${LIBTOOL} --mode=install \
-	  ${INSTALL} -s -m 0755 ${PROGRAM} ${DESTDIR}${bindir}
+	  ${INSTALL_PROGRAM} -s ${PROGRAM} ${DESTDIR}${bindir}
 
 install-man: FORCE
 	${INSTALL} -d ${DESTDIR}${mandir}/man1
-	${INSTALL} -m 0644 ${srcdir}/djview.1 ${DESTDIR}${mandir}/man1
+	${INSTALL_DATA} ${srcdir}/djview.1 ${DESTDIR}${mandir}/man1
 
 install-data: FORCE
 	${INSTALL} -d ${DESTDIR}${datadir}/djvu/osi
@@ -184,14 +186,14 @@ install-data: FORCE
 	  ${INSTALL} -d ${DESTDIR}${datadir}/djvu/osi/$$l ;\
 	  for p in ${LANGFILES} ; do \
 	    test -r i18n/$$l/$$p.qm && \
-	     ${INSTALL} -m 0644 i18n/$$l/$$p.qm \
+	     ${INSTALL_DATA} i18n/$$l/$$p.qm \
 	       ${DESTDIR}${datadir}/djvu/osi/$$l ;\
 	done ; done
 	-test -r ${srcdir}/djview_help.djvu && \
-	  ${INSTALL} -m 0644 ${srcdir}/djview_help.djvu \
+	  ${INSTALL_DATA} ${srcdir}/djview_help.djvu \
 	    ${DESTDIR}${datadir}/djvu/osi
 	-test -r ${srcdir}/djview_help.html && \
-	  ${INSTALL} -m 0644 ${srcdir}/djview_help.html \
+	  ${INSTALL_DATA} ${srcdir}/djview_help.html \
 	    ${DESTDIR}${datadir}/djvu/osi
 
 depend: ${MOCINCS} FORCE

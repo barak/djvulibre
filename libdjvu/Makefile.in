@@ -34,6 +34,9 @@ AR = @AR@
 LN_S = @LN_S@
 TOUCH = @TOUCH@
 INSTALL = @INSTALL@
+INSTALL_PROGRAM = @INSTALL_PROGRAM@
+INSTALL_DATA = @INSTALL_DATA@
+INSTALL_SHLIB = @INSTALL_SHLIB@
 LIBTOOL = @LIBTOOL@
 
 DEFS = @DEFS@
@@ -91,15 +94,16 @@ install-data: FORCE
 	  src="${top_srcdir}/share/$$n" ; \
 	  dir="`dirname ${datadir}/$$n`" ;\
 	  test -d ${DESTDIR}$$dir || ${INSTALL} -d ${DESTDIR}$$dir ; \
-	  ${INSTALL} -m 0644 $$src ${DESTDIR}$$dir || exit ; done
+	  ${INSTALL_DATA} $$src ${DESTDIR}$$dir || exit ; done
 
 install-lib: ${LIBDJVU_LA} FORCE
 	${INSTALL} -d ${DESTDIR}${libdir}
-	${LIBTOOL} --mode=install cp ${LIBDJVU_LA} ${DESTDIR}${libdir}
+	${LIBTOOL} --mode=install \
+	  ${INSTALL_SHLIB} ${LIBDJVU_LA} ${DESTDIR}${libdir}
 
 install-include: FORCE
 	${INSTALL} -d ${DESTDIR}${includedir}/libdjvu
-	${INSTALL} -m 0644 ${srcdir}/ddjvuapi.h ${DESTDIR}${includedir}/libdjvu
+	${INSTALL_DATA} ${srcdir}/ddjvuapi.h ${DESTDIR}${includedir}/libdjvu
 
 depend: FORCE
 	for n in ${srcdir}/*.cpp ; do \

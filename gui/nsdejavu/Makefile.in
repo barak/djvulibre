@@ -34,6 +34,9 @@ AR = @AR@
 LN_S = @LN_S@
 TOUCH = @TOUCH@
 INSTALL = @INSTALL@
+INSTALL_PROGRAM = @INSTALL_PROGRAM@
+INSTALL_DATA = @INSTALL_DATA@
+INSTALL_SHLIB = @INSTALL_SHLIB@
 LIBTOOL = @LIBTOOL@ --tag=disable-static
 DEFS = @DEFS@ 
 OPTS = @OPTS@
@@ -60,7 +63,7 @@ nsdejavu.la: nsdejavu.lo
 
 nsdejavu.x: nsdejavu.la FORCE
 	eval `grep '^dlname=' nsdejavu.la` && \
-	  echo $${dlname} | sed -e 's/\(\.[0-9][0-9]*\)*//g' > $@ 
+	  echo $${dlname} | sed -e 's/\([-.][0-9][0-9]*\)*//g' > $@ 
 	-@if test -z "`cat nsdejavu.x`" ; then \
 	   echo "-----------------------------------------------";\
 	   echo "*** Libtool cannot build the plugin 'nsdejavu'.";\
@@ -79,11 +82,11 @@ install-bin: nsdejavu.la FORCE
 	${INSTALL} -d ${DESTDIR}${plugindir}	
 	eval "nsdejavu=`cat nsdejavu.x`" && \
 	  eval `grep '^dlname=' nsdejavu.la` && \
-	    cp .libs/$$dlname ${DESTDIR}${plugindir}/$$nsdejavu
+	    ${INSTALL_SHLIB} .libs/$$dlname ${DESTDIR}${plugindir}/$$nsdejavu
 
 install-man: nsdejavu.1 FORCE
 	${INSTALL} -d ${DESTDIR}${mandir}/man1
-	${INSTALL} -m 0644 nsdejavu.1 ${DESTDIR}${mandir}/man1
+	${INSTALL_DATA} nsdejavu.1 ${DESTDIR}${mandir}/man1
 
 depend: FORCE
 	${CC} -MM ${CFLAGS} ${srcdir}/nsdejavu.c > Makefile.dep
