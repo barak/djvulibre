@@ -1,13 +1,15 @@
 %define prefix /usr
+%define version 3.5.2
+%define release 1
 
 Prefix: %{prefix}
 Summary: DjVu viewers, encoders and utilities.
 Name: djvulibre
-Version: 3.5.2
-Release: 1
+Version: %{version}
+Release: %{release}
 Copyright: GPL
 Group: Applications/Graphics
-Source: http://prdownloads.sourceforge.net/djvu/djvulibre-3.5.1.tar.gz
+Source: http://prdownloads.sourceforge.net/djvu/djvulibre-%{version}.tar.gz
 BuildRoot: /var/tmp/djvulibre-root
 URL: http://djvu.sourceforge.net
 
@@ -40,6 +42,8 @@ DjVulibre-3.5 contains:
 %changelog
 * Wed Dec  5 2001 Leon Bottou <leonb@users.sourceforge.net>
 - created spec file for rh7.x
+* Fri Dec  7 2001 Leon Bottou <leonb@users.sourceforge.net>
+- bumped to version 3.5.2
 
 %prep
 %setup
