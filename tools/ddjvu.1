@@ -74,20 +74,19 @@ of the output image expressed in dot per inch.
 .TP
 .BI "-size " "w" "x" "h"
 Specify the size of the full output image.
-Rendering the full DjVu image would create an output image 
-whose width and height are given by arguments
+Rendering the full DjVu image would create an 
+output image whose width and height would not exceed
 .I w
 and 
 .IR h .
-This option provides full control on the resolution
-and the aspect ratio of the output image.
+To change the aspect ratio, you must also use option
+.BR -aspect .
 .TP
 .BI "-aspect"
-Preserve aspect ratio.
-This option can be used in combination with option
-.B "-size" 
-to produce a thumbnail image whose size does not 
-exceed the specified dimensions.
+This option, 
+when used in combination with option
+.BR -size ,
+authorizes changes in the aspect ratio.
 
 .SH RENDERING MODE OPTIONS
 The default rendering mode merges all the layers of the DjVu image 

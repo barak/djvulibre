@@ -244,7 +244,7 @@ convert(const GURL &from, const GURL &to, int page_num)
       if (h<1) h=1;
       g().fullrect = GRect(0,0, w, h);
     }
-  if (flag_aspect>0)
+  if (flag_aspect <= 0)
     {
       int w = g().fullrect.width();
       int h = g().fullrect.height();
