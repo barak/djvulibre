@@ -1,3 +1,13 @@
+djvulibre (3.5.13.pre14-5) unstable; urgency=low
+
+  * resolve mime types image/x-djvu vs image/x.djvu vs image/vnd.djvu:
+    handle all, serve image/vnd.djvu, request other germane packages to
+    switch, document in djvu(1) and nsdejavu(1) (closes: #257020)
+  * upstream CVS fix for djview "find text" bug (closes: #257662)
+  * flush private CVS repository; share with upstream on djvu.sourceforge.net
+
+ -- Barak A. Pearlmutter <bap@debian.org>  Thu,  8 Jul 2004 19:09:02 +0100
+
 djvulibre (3.5.13.pre14-4) unstable; urgency=low
 
   * thumbnails in djview no longer all black (closes: #251647)
