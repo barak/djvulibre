@@ -83,6 +83,7 @@ private slots:
 protected:
    virtual void	done(int);
 signals:
+   void		sigDone(void);
    void		sigDisplaySearchResults(int page_num, const GList<DjVuTXT::Zone *> & zone_list);
 public slots:
    void		slotSetPageNum(int page_num);

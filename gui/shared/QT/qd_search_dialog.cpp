@@ -290,7 +290,8 @@ QDSearchDialog::done(int rc)
    case_sensitive=case_butt->isChecked();
    whole_word=whole_word_butt->isChecked();
    search_backwards=back_butt->isChecked();
-   QeDialog::done(rc);
+   emit sigDone();
+   QDialog::done(rc);
 }
 
 QDSearchDialog::QDSearchDialog(int page_num_, const GP<DjVuDocument> & doc_,

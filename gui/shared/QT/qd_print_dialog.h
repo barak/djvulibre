@@ -119,6 +119,8 @@ private slots:
    void		slotZoomChanged(const QString & text);
 protected slots:
    virtual void	done(int);
+signals:
+   void		sigDone(void);
 public:
    virtual bool	eventFilter(QObject * obj, QEvent * ev);
    

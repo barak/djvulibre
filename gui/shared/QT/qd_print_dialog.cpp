@@ -556,8 +556,10 @@ QDPrintDialog::done(int rc)
      if (printing) {
        DEBUG_MSG("interrupting printing\n");
        interrupt_printing=1;
-     } else 
-       QeDialog::done(rc);
+     } else {
+       emit sigDone();
+       QDialog::done(rc);
+     }
    }
 }
 

@@ -54,6 +54,14 @@
 
 #include "qt_fix.h"
 
+void	
+QDWelcome::done(int rc)
+{
+  emit closed();
+  QDialog::done(rc);
+}
+
+
 QDWelcome::QDWelcome(QWidget * parent, const char * name, bool modal) :
       QeDialog(parent, name, modal)
 {
@@ -116,7 +124,4 @@ QDWelcome::QDWelcome(QWidget * parent, const char * name, bool modal) :
    connect(prefs_butt, SIGNAL(clicked(void)), this, SIGNAL(preferences(void)));
    connect(help_butt, SIGNAL(clicked(void)), this, SIGNAL(help(void)));
    connect(about_butt, SIGNAL(clicked(void)), this, SIGNAL(about(void)));
-
-   connect(this, SIGNAL(sigCancelled(void)), this, SIGNAL(closed(void)));
-   connect(this, SIGNAL(sigClosed(void)), this, SIGNAL(closed(void)));
 }

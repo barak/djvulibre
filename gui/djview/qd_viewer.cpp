@@ -801,9 +801,7 @@ QDViewer::print(int what)
 				what==IDC_PRINT_CUSTOM ? QDPrintDialog::PRINT_CUSTOM :
 				what==IDC_PRINT_DOC ? QDPrintDialog::PRINT_DOC :
 				QDPrintDialog::PRINT_PAGE);
-	    connect(print_win, SIGNAL(sigClosed(void)),
-		    this, SLOT(slotPrintClosed(void)));
-	    connect(print_win, SIGNAL(sigCancelled(void)),
+	    connect(print_win, SIGNAL(sigDone(void)),
 		    this, SLOT(slotPrintClosed(void)));
 	    print_win->show();
 	 }
@@ -1450,11 +1448,12 @@ QDViewer::search(void)
    QDSearchDialog * d;
    d=new QDSearchDialog(djvu_doc->url_to_page(dimg->get_djvu_file()->get_url()),
 			djvu_doc, this, "search", FALSE);
-   connect(d, SIGNAL(sigClosed(void)), this, SLOT(slotSearchClosed(void)));
-   connect(d, SIGNAL(sigCancelled(void)), this, SLOT(slotSearchClosed(void)));
+   connect(d, SIGNAL(sigDone(void)), 
+           this, SLOT(slotSearchClosed(void)));
    connect(d, SIGNAL(sigDisplaySearchResults(int, const GList<DjVuTXT::Zone *> &)),
 	   this, SLOT(slotDisplaySearchResults(int, const GList<DjVuTXT::Zone *> &)));
-   connect(this, SIGNAL(sigPageChanged(int)), d, SLOT(slotSetPageNum(int)));
+   connect(this, SIGNAL(sigPageChanged(int)), 
+           d, SLOT(slotSetPageNum(int)));
    d->show();
 }
 

@@ -68,7 +68,9 @@ signals:
    void		about(void);
 public:
    int		neverShowAgain(void) const { return never_butt->isChecked(); };
-   
+protected slots:
+   virtual void	done(int rc);
+public:   
    QDWelcome(QWidget * parent=0, const char * name=0, bool modal=FALSE);
    ~QDWelcome(void) {};
 };
