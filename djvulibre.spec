@@ -79,13 +79,14 @@ rm -rf %{buildroot}
   if [ -d $n ] ; then \
    test -d $n/plugins || mkdir $n/plugins ; \
    test -h $n/plugins/nsdjvu.so && rm $n/plugins/nsdjvu.so ; \
+   test -h $n/plugins/nsdejavu.so && rm $n/plugins/nsdejavu.so ; \
    ln -s ../../netscape/plugins/nsdejavu.so $n/plugins/nsdejavu.so ; \
  fi ; done ) 2>/dev/null || true
 
 %postun 
 /sbin/ldconfig
 # HACK: Remove links to nsdejavu.so in all mozilla dirs
-( if ! [ -r %{prefix}/lib/netscape/plugins/nsdejavu.so ] ; then \
+( if [ ! -r %{prefix}/lib/netscape/plugins/nsdejavu.so ] ; then \
    for n in %{prefix}/lib/mozilla* ; do \
     if [ -h $n/plugins/nsdejavu.so ] ; then \
      rm $n/plugins/nsdejavu.so ; \
