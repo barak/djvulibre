@@ -457,6 +457,7 @@ store_doc_setup(ByteStream &str)
             "/c {setcolor rmoveto glyphshow} bind def\n"
             "/s {rmoveto glyphshow} bind def\n"
             "/S {rmoveto gsave show grestore} bind def\n" 
+            "/F {(Helvetica) findfont exch scalefont setfont} bind def\n"
             "%% -- emulations\n"
             "systemdict /rectstroke known not {\n"
             "  /rectstroke  %% stack : x y width height \n"
@@ -1929,6 +1930,8 @@ print_txt_sub(DjVuTXT &txt, DjVuTXT::Zone &zone,
       separator = DjVuTXT::end_of_line; break;
     case DjVuTXT::WORD: 
       separator = ' '; break;
+    default:
+      separator = 0; break;
     }
   // Zone children
   if (zone.children.isempty()) 
