@@ -11,13 +11,13 @@ You can also download and compile them if you wish.
 1.1 - C++ COMPILER
 ------------------
 
-We strongly suggest to use the well known g++ compiler on all platforms.  
-You need at least version gcc-2.91.66 (also known as egcs-1.1.2).  
-Development was achieved using gcc-2.95.3, gcc-2.96-85 and gcc-3.02.
+We strongly suggest to use the well known g++ compiler on all platforms.  You
+need at least version gcc-2.91.66 (also known as egcs-1.1.2).  Development was
+achieved using gcc-2.95.3, gcc-2.96-85, gcc-3.02, and gcc-3.2.2.
 
-RedHat 7.x users should make sure they have the latest redhat updates 
-of the compiler.  Early versions of gcc-2.96 have serious bugs.  
-See <http://www.redhat.com/support/errata/RHBA-2001-082.html>.
+RedHat 7.x users should make sure they have the latest redhat updates of the
+compiler.  Early versions of gcc-2.96 have serious bugs.  See
+<http://www.redhat.com/support/errata/RHBA-2001-082.html>.
 
 
 1.2 - LIBJPEG
@@ -40,7 +40,7 @@ The source code of the Qt library can be downloaded from
 <ftp://ftp.trolltech.com/qt/source/qt-x11-2.3.1.tar.gz>.
 
 Avoid versions earlier than 2.2.0.
-Suggested versions are 2.3.1 and 3.0.1.
+Suggested versions are 2.3.1 and 3.1.1
 
 
 1.4 - THREADS

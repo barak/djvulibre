@@ -1,5 +1,5 @@
-%define release 90
-%define version 3.5.10
+%define release 1
+%define version 3.5.11
 %define prefix %{?_prefix:%{_prefix}}%{!?_prefix:/usr}
 %define mandir %{?_mandir:%{_mandir}}%{!?_mandir:%{prefix}/man}
 
@@ -93,6 +93,8 @@ rm -rf %{buildroot}
 %{_mandir}/man?/*
 
 %changelog
+* Thu Apr 24 2003 Leon Bottou <leon@bottou.org> 3.5.11-1
+- version 3.5.11-1
 * Thu Feb  6 2003 Leon Bottou <leon@bottou.org> 3.5.10-2
 - version 3.5.10-2
 * Fri Jan 24 2003 Leon Bottou <leon@bottou.org> 3.5.10-1
