@@ -113,8 +113,6 @@ private:
 
    QTimer	hlinks_timer, welcome_timer;
 
-   GUTF8String	djvu_dir;	// Path to DjVu directory
-
       // The number of the first page viewed in this class. Initially
       // ZERO. Is set to smth real after document init is over.
    int		start_page_num;
@@ -184,7 +182,6 @@ public:
    SavedData	getSavedData(void) const;
    void		gotoStdPage(const GUTF8String &file_name, bool bypass_local=false);
    void		gotoPage(int page_num);
-   void		setDjVuDir(const GUTF8String &dir) { djvu_dir=dir; };
    void		print(void);
    void		savePageAs(void);
    void		saveDocumentAs(void);

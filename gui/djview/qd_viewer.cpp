@@ -991,6 +991,7 @@ QDViewer::gotoStdPage(const GUTF8String &file_name, bool bypass_local)
    
    GURL url;
 
+#if 0
    if (!bypass_local)
    {
       GUTF8String full_name=GURL::expand_name(file_name, (const char *)djvu_dir);
@@ -1003,6 +1004,7 @@ QDViewer::gotoStdPage(const GUTF8String &file_name, bool bypass_local)
 	 return;
       }
    }
+#endif
    url=GURL::UTF8(GUTF8String(DJVU_URL)+file_name);
    getURL(url.get_string(), "_blank");
 }

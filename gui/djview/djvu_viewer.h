@@ -87,7 +87,6 @@ private:
       // I need to keep copy of the following items here in case
       // if netscape requests detach/attach of the window
    GUTF8String	page_key;
-   GUTF8String	djvu_dir;
 
    GP<DjVuViewerPort>	port;
    QDViewer	* viewer;
@@ -123,22 +122,11 @@ public:
    QDViewer *	getQDViewer(void) const { return viewer; }
    GP<DjVuDocument> getDjVuDocument(void) const { return document; };
 
-   void		setDjVuDir(const GUTF8String &dir);
-
    void		setRequestDataCB(GP<DataPool> (*)(const GURL &, void *), void *);
    
    DjVuViewer(int in_netscape, const QDViewer::PluginData & pdata);
    ~DjVuViewer(void);
 };
-
-inline void
-DjVuViewer::setDjVuDir(const GUTF8String &qdir)
-{
-//     const char * const dir=qdir;
-//     djvu_dir=dir;
-   djvu_dir=qdir;
-   if (viewer) viewer->setDjVuDir(qdir);
-}
 
 inline void
 DjVuViewer::setRequestDataCB(GP<DataPool> (* cb)(const GURL &, void *), void * data)

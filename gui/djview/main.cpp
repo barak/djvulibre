@@ -235,7 +235,6 @@ main(int argc, char ** argv)
 
       QDViewerShell * shell=new QDViewerShell(0, "main_window");
       qeApp->setWidgetGeometry(shell);
-      shell->setDjVuDir(GStringFromQString(getExecDir(argv[0])));
       shell->show();
       
       if (file_name.length())

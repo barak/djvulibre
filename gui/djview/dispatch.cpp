@@ -292,7 +292,7 @@ New(void)
       try
       {
 	 bool full_mode=ReadInteger(pipe_read);
-	 GUTF8String djvu_dir=ReadString(pipe_read);
+	 ReadString(pipe_read); // djvu_dir (now useless)
 	 int argc=ReadInteger(pipe_read);
 	 DArray<GUTF8String> argn(argc-1), argv(argc-1);
 	 for(int i=0;i<argc;i++)
@@ -321,7 +321,6 @@ New(void)
 			  d_obj, SLOT(slotGetURL(const GURL &, const GUTF8String &)));
 
 	 djvu->setRequestDataCB(request_data, djvu);
-	 djvu->setDjVuDir(djvu_dir);
 
 	 instance[(u_long) (void *) djvu]=PluginInstance(djvu);
 	 

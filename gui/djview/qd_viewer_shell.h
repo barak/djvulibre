@@ -81,8 +81,6 @@ private:
    GURL		gu_url;
    GUTF8String	gu_target;
 
-   GUTF8String	djvu_dir;
-
    bool         fullscreen;
    
    void		getURL(const GURL & url, const GUTF8String &target);
@@ -113,7 +111,6 @@ public:
       // Opens the specified URL in the current window.
       // Empty URL means to read stdin
    void		openURL(const GURL & url);
-   void		setDjVuDir(const GUTF8String &dir);
 
       // Handle full screen mode
    bool         isFullScreen() const;

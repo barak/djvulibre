@@ -74,15 +74,6 @@
 #define START_STATUS QT_TRANSLATE_NOOP("QDViewerShell","Select \"File\" and then \"Open\" to load a DjVu file")
 
 void
-QDViewerShell::setDjVuDir(const GUTF8String &qdir)
-{
-//     const char * const dir=qdir;
-//     djvu_dir=dir;
-   djvu_dir=qdir;
-   if (djvu) djvu->setDjVuDir(qdir);
-}
-
-void
 QDViewerShell::openFile(const QString &qfname, const QString &qid)
 {
    const char * const fname=qfname;
@@ -157,7 +148,6 @@ QDViewerShell::openURL(const GURL & url)
       connect(djvu, SIGNAL(sigGetURL(const GURL &, const GUTF8String &)),
 	      this, SLOT(slotGetURL(const GURL &, const GUTF8String &)));
 
-      djvu->setDjVuDir(djvu_dir);
       djvu->attach(vparent);
       main->setActiveWidget(vparent);
 
@@ -195,7 +185,6 @@ QDViewerShell::createNewShell(const GURL & url) const
 {
    QDViewerShell * v=new QDViewerShell(0, "qd_viewer_shell");
    qeApp->setWidgetGeometry(v->topLevelWidget());
-   v->setDjVuDir(djvu_dir);
    v->show();
    if (!url.is_empty()) v->openURL(url);
    return v;
@@ -212,6 +201,7 @@ QDViewerShell::about(void)
 void
 QDViewerShell::help(void)
 {
+#if 0
    GUTF8String fname=GURL::expand_name("help.djvu", djvu_dir);
    if (QFileInfo(QStringFromGString(fname)).isFile())
    {
@@ -221,6 +211,7 @@ QDViewerShell::help(void)
      QString mesg=tr("Failed to open file '")+QStringFromGString(fname)+"'";
      showError(this, tr("DjVu Error"), mesg);
    }
+#endif
 }
 
 bool

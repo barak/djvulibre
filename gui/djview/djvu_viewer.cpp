@@ -235,7 +235,6 @@ DjVuViewer::attach(QWidget * parent)
       parent->installEventFilter(this);
 
 	 // What if we're being reattached by Netscape? Set DjVuImage immediately.
-      viewer->setDjVuDir(djvu_dir);
       if (document)
         viewer->setDjVuDocument(document, plugin_data.page_id);
    }
