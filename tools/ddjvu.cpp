@@ -150,6 +150,7 @@
 #include "GBitmap.h"
 #include "DjVuImage.h"
 #include "DjVuDocument.h"
+#include "DjVuPalette.h"
 #include "GOS.h"
 #include "ByteStream.h"
 #include "DjVuMessage.h"
@@ -158,19 +159,14 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-#ifdef UNDER_CE
-#include <windows.h>
-// This captures stderr to a file for this compilation unit.
-FILE * logfile = _wfreopen( TEXT("\\temp\\ddjvu_log.txt"), TEXT("a"), stderr );
-#endif
-
 static double flag_scale = -1;
 static int    flag_size = -1;
+static int    flag_aspect = -1;
 static int    flag_subsample = -1;
 static int    flag_segment = -1;
 static int    flag_verbose = 0;
 static int    flag_mode = 0;
-static bool   use_rle=false;
+static bool   flag_rle = false;
 
 struct DDJVUGlobal 
 {
@@ -248,9 +244,21 @@ convert(const GURL &from, const GURL &to, int page_num)
       if (h<1) h=1;
       g().fullrect = GRect(0,0, w, h);
     }
+  if (flag_aspect>0)
+    {
+      int w = g().fullrect.width();
+      int h = g().fullrect.height();
+      double dw = (double)dimg->get_width()/ w;
+      double dh = (double)dimg->get_height()/h;
+      if (dw > dh) 
+        h = (int)(dimg->get_height()/dw);
+      else
+        w = (int)(dimg->get_width()/dh);
+      g().fullrect = GRect(0,0, w, h);
+    }
   if (flag_segment < 0)
     g().segmentrect = g().fullrect;
-
+  
   // Render
   GP<GPixmap> pm;
   GP<GBitmap> bm;
@@ -262,6 +270,8 @@ convert(const GURL &from, const GURL &to, int page_num)
       break;
     case 'f':
       pm = dimg->get_fg_pixmap(g().segmentrect, g().fullrect);
+      if (! pm)
+        bm = dimg->get_bitmap(g().segmentrect, g().fullrect);
       break;
     case 'b':
       pm = dimg->get_bg_pixmap(g().segmentrect, g().fullrect);
@@ -281,7 +291,7 @@ convert(const GURL &from, const GURL &to, int page_num)
   // Save image
   if (pm) 
     {
-      GP<ByteStream> out=ByteStream::create(to,"wb");
+      GP<ByteStream> out = ByteStream::create(to,"wb");
       pm->save_ppm(*out);
     }
   else if (bm) 
@@ -289,16 +299,14 @@ convert(const GURL &from, const GURL &to, int page_num)
       GP<ByteStream> out=ByteStream::create(to,"wb");
       if (bm->get_grays() > 2) {
         bm->save_pgm(*out);
-      } else if(use_rle) {
+      } else if (flag_rle) {
         bm->save_rle(*out);
       } else {
         bm->save_pbm(*out);
       }
     }
-  else 
-    {
-      G_THROW( ERR_MSG("ddjvu.cant_render") );
-    }
+  else
+    G_THROW( ERR_MSG("ddjvu.cant_render") );
 }
 
 
@@ -315,12 +323,13 @@ usage()
           "  -v                  Prints various informational messages.\n"
           "  -scale N            Selects display scale (default: 100%).\n"
           "  -size  WxH          Selects size of rendered image.\n"
+          "  -aspect             Preserve aspect ratio.\n"
           "  -segment WxH+X+Y    Selects which segment of the rendered image\n"
           "  -black              Only renders the stencil(s).\n"
           "  -foreground         Only renders the foreground layer.\n"
           "  -background         Only renders the background layer.\n"
-          "  -N                  Subsampling factor from full resolution.\n"
 	  "  -page <page>        Decode page <page> (for multipage documents).\n"
+          "  -N                  Subsampling factor from full resolution.\n"
 	  "  -rle                Decode black stencil to RLE.\n"
           "\n"
           "The output will be a PBM, PGM or PPM file depending of its content.\n"
@@ -369,30 +378,10 @@ geometry(const GUTF8String &s)
 
 
 
-#ifdef UNDER_CE
-int
-oldmain(int argc, char **argv)
-{
-	flag_scale = -1;
-	flag_size = -1;
-	flag_subsample = -1;
-	flag_segment = -1;
-	flag_verbose = 0;
-	flag_mode = 0;
 
-	// Output command arguments that oldmain receives to logfile.
-	fprintf( logfile, "Command arguments: " );
-	for ( int i = 0; i < argc; i++ )
-	{
-		fprintf( logfile, "%s ", argv[i] );
-	}
-	fprintf( logfile, "\n\n" );
-#else
-#include <locale.h>
 int
 main(int argc, char **argv)
 {
-#endif
   setlocale(LC_ALL,"");
   djvu_programname(argv[0]);
   GArray<GUTF8String> dargv(0,argc-1);
@@ -431,6 +420,10 @@ main(int argc, char **argv)
               if (pos < (int)s.length())
                 G_THROW( ERR_MSG("ddjvu.bad_scale"));
             }
+          else if ( s == "-aspect")
+            {
+              flag_aspect = 1;
+            }
           else if ( s == "-size")
             {
               if (argc<=2)
@@ -452,13 +445,6 @@ main(int argc, char **argv)
               argc -=1; dargv.shift(-1); s = dargv[1];
               g().segmentrect = geometry(s);
               flag_segment = 1;
-            }
-          else if (s == "-rle")
-            {
-              if (flag_mode)
-                G_THROW( ERR_MSG("ddjvu.dupl_render"));
-              flag_mode = 's';
-              use_rle=true;
             }
           else if (s == "-black")
             {
@@ -494,7 +480,20 @@ main(int argc, char **argv)
 	    }
           else if (n < 0 && pos == (int)s.length())
             {
+              if (flag_subsample>0 || flag_scale>=0 || flag_size>=0)
+                if (flag_subsample != -n)
+                  G_THROW( ERR_MSG("ddjvu.dupl_scale") );
               flag_subsample=(-n);
+            }
+          else if (s == "-rle")
+            {
+              if (flag_mode)
+                G_THROW( ERR_MSG("ddjvu.dupl_render"));
+              if (flag_subsample>1 || flag_scale>=0 || flag_size>=0)
+                G_THROW( ERR_MSG("ddjvu.dupl_scale") );
+              flag_mode = 's';
+              flag_subsample = 1;
+              flag_rle = true;
             }
           else
             {
@@ -503,14 +502,18 @@ main(int argc, char **argv)
           argc -= 1;
           dargv.shift(-1);
         }
-      if (page_num<0) page_num=0;
+      if (page_num<0) 
+        page_num=0;
       // Process remaining arguments
       if (argc == 3) 
-        convert(GURL::Filename::UTF8(dargv[1]),GURL::Filename::UTF8(dargv[2]), page_num);
+        convert(GURL::Filename::UTF8(dargv[1]),
+                GURL::Filename::UTF8(dargv[2]), page_num);
       else if (argc == 2)
-        convert(GURL::Filename::UTF8(dargv[1]),GURL::Filename::UTF8("-"), page_num);
+        convert(GURL::Filename::UTF8(dargv[1]),
+                GURL::Filename::UTF8("-"), page_num);
       else if (argc == 1)
-        convert(GURL::Filename::UTF8("-"),GURL::Filename::UTF8("-"), page_num);
+        convert(GURL::Filename::UTF8("-"),
+                GURL::Filename::UTF8("-"), page_num);
       else
         usage();
     }
@@ -523,146 +526,3 @@ main(int argc, char **argv)
 
   return 0;
 }
-
-
-#ifdef UNDER_CE
-#define SEPCHARS TEXT( " " )
-#define TIME_BUFSIZE 20
-#define ARG_BUFSIZE 20
-int WINAPI WinMain (HINSTANCE hInstance,
-		             HINSTANCE hPrevInstance,
-                     LPTSTR lpCmdLine,
-                     int nCmdShow)
-{
-	int argc = 1, i = 0;
-	char *argv[20];
-	TCHAR *arg;
-	TCHAR timestamp[TIME_BUFSIZE];
-
-	GetTimeFormat( LOCALE_SYSTEM_DEFAULT, 0, NULL, NULL, 
-		timestamp, TIME_BUFSIZE );
-	
-	// Ouput header to ddjvuce log file with timestamp
-	fwprintf( logfile, TEXT("\n--------------------------------\n") );
-	fwprintf( logfile, TEXT("ddjvuce log file:  ") );
-	fwprintf( logfile, timestamp );
-	fwprintf( logfile, TEXT("\n--------------------------------\n") );
-	fwprintf( logfile, TEXT("\n") );
-
-	// Use wcstok to get arguments from lpCmdLine, then convert them
-	// to chars for oldmain().
-	argv[0]="ddjvu";
-	arg = wcstok( lpCmdLine, SEPCHARS );
-	while( arg != NULL )
-	{
-		argv[argc] = (char*) malloc( wcslen( arg ) + 1 );
-		for ( i = 0; i < wcslen( arg); i++ )
-		{
-			argv[argc][i] = arg[i];
-		}
-		argv[argc][i] = '\0';
-		arg = wcstok( NULL, SEPCHARS );
-		argc++;
-	}
-	
-	oldmain( argc, argv );
-	
-	for( i = 0; i < argc; i++ )
-		free( argv[argc] );
-	
-	fclose( logfile );
-	/*
-   argv[1]="-v" ;
-   // Vanilla flavored conversion
-   argv[2]="\\\\temp\\input.djvu" ;
-   argv[3]="\\\\temp\\output_default.pnm" ;
-   oldmain(4, argv);
-
-   // Scale at 50%
-   argv[2]="-scale";
-   argv[3]="50" ;
-   argv[4]="\\\\My Documents\\input.djvu" ;
-   argv[5]="\\\\My Documents\\output_scale50.pnm" ;
-   oldmain (6, argv) ;
- 
-   // Scale at 150%
-   argv[2]="-scale";
-   argv[3]="150" ;
-   argv[4]="\\\\My Documents\\input.djvu" ;
-   argv[5]="\\\\My Documents\\output_scale150.pnm" ;
-   oldmain (6, argv) ;
- 
-   // Size at 100x100
-   argv[2]="-size";
-   argv[3]="100x100" ;
-   argv[4]="\\\\My Documents\\input.djvu" ;
-   argv[5]="\\\\My Documents\\output_size100x100.pnm" ;
-   oldmain (6, argv) ;
-
-   // Segment 100x100+20+20
-   argv[2]="-segment";
-   argv[3]="100x100+20+20" ;
-   argv[4]="\\\\My Documents\\input.djvu" ;
-   argv[5]="\\\\My Documents\\output_segment100x100p20p20.pnm" ;
-   oldmain (6, argv) ;
-
-   // Mask only
-   argv[2]="-black";
-   argv[3]="\\\\My Documents\\input.djvu" ;
-   argv[4]="\\\\My Documents\\output_mask.pnm" ;
-   oldmain (5, argv) ;
-
-   // FG only
-   argv[2]="-foreground";
-   argv[3]="\\\\My Documents\\input.djvu" ;
-   argv[4]="\\\\My Documents\\output_fg.pnm" ;
-   oldmain (5, argv) ;
-
-   // BG only
-   argv[2]="-background";
-   argv[3]="\\\\My Documents\\input.djvu" ;
-   argv[4]="\\\\My Documents\\output_bg.pnm" ;
-   oldmain (5, argv) ;
-
-   // Subsampling
-   argv[2]="-2";
-   argv[3]="\\\\My Documents\\input.djvu" ;
-   argv[4]="\\\\My Documents\\output_subsample2.pnm" ;
-   oldmain (5, argv) ;
-
-   // Get Page 2 of the multipage document
-   argv[2]="-page";
-   argv[3]="2" ;
-   argv[4]="\\\\My Documents\\input.djvu" ;
-   argv[5]="\\\\My Documents\\output_page2.pnm" ;
-   oldmain (6, argv) ;
-
-   // Get the mask of Page 2 of the multipage document
-   argv[2]="-page";
-   argv[3]="2" ;
-   argv[4]="-black" ;
-   argv[5]="\\\\My Documents\\input.djvu" ;
-   argv[6]="\\\\My Documents\\output_page2_mask.pnm" ;
-   oldmain (7, argv) ; */
-
-/* 
-
-   "DDJVU -- DjVu decompression utility\n"
-          "  Copyright (c) AT&T 1999.  All rights reserved\n"
-          "Usage: ddjvu [options] [<djvufile> [<pnmfile>]]\n\n"
-          "Options:\n"
-          "  -v                  Prints various informational messages.\n"
-          "  -scale N            Selects display scale (default: 100%%).\n"
-          "  -size  WxH          Selects size of rendered image.\n"
-          "  -segment WxH+X-Y    Selects which segment of the rendered image\n"
-          "  -black              Only renders the stencil(s).\n"
-          "  -foreground         Only renders the foreground layer.\n"
-          "  -background         Only renders the background layer.\n"
-          "  -N                  Subsampling factor from full resolution.\n"
-	  "  -page <page>        Decode page <page> (for multipage documents).\n"
-          "\n"
-     
-*/
-   return 0 ;
-}
-#endif

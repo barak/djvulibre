@@ -81,6 +81,13 @@ and
 .IR h .
 This option provides full control on the resolution
 and the aspect ratio of the output image.
+.TP
+.BI "-aspect"
+Preserve aspect ratio.
+This option can be used in combination with option
+.B "-size" 
+to produce a thumbnail image whose size does not 
+exceed the specified dimensions.
 
 .SH RENDERING MODE OPTIONS
 The default rendering mode merges all the layers of the DjVu image 
@@ -154,6 +161,14 @@ sub-image is much faster than rendering the complete image.
 The output file will always have size
 .IR w x h 
 when this option is specified.
+.TP
+.BI "-rle"
+Outputs the foreground layer mask in bitonal rle format.
+See 
+.BR csepdjvu (1)
+for information about the bitonal rle format.
+This option implicitly sets options
+.BR -1 and -black .
 
 .SH CREDITS
 This program was written by L\('eon Bottou <leonb@users.sourceforge.net> and
