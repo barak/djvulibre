@@ -262,17 +262,18 @@ should display a list of recognized plug-ins.  Check that "nsdejavu.so" appears
 there.  You should now be able to use DjVu with Konqueror.
 
 
-3.4- MOZILLA-0.9.5
-------------------
+3.4- MOZILLA
+------------
 
 You must establish a link from the mozilla plugin directory.  Let us assume
-that mozilla is installed under /usr and that the DjVu plug-in is installed in
-/usr/local/lib/netscape/plugins.
+that mozilla is installed under /usr/lib/mozilla-1.1 and that the DjVu plug-in 
+is installed in /usr/local/lib/netscape/plugins.
 
-    $ cd /usr/lib/mozilla/plugins
+    $ cd /usr/lib/mozilla-1.1/plugins
     $ ln -s /usr/local/lib/netscape/plugins/nsdejavu.so nsdejavu.so
 
 Works nicely.
+
 
 
 3.5- GALEON
