@@ -936,7 +936,7 @@ main(int argc, const char **argv)
             opts.substitute_threshold = 6;
           else if (arg == "-verbose")
             opts.verbose = true;
-          else if (arg[0] == '-')
+          else if (arg[0] == '-' && arg[1])
             usage();
           else if (inputpbmurl.is_empty())
             inputpbmurl = GURL::Filename::UTF8(arg);
