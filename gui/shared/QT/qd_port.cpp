@@ -139,6 +139,7 @@ QDPort::QDPort(bool _watch_errors, bool _watch_status,
    sig_decode_progress_on=0;
 
    port=new Port(this);
+   messenger.setLookAhead(1);
    
    connect(&messenger, SIGNAL(sigGeneralMsg(const GUTF8String &)),
 	   this, SLOT(slotGeneralMsg(const GUTF8String &)));
