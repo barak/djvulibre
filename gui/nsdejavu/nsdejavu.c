@@ -547,6 +547,14 @@ get_plugin_path(strpool *pool)
 {
   const char *env;
   const char *dir;
+  // MOZ_PLUGIN_PATH
+  if ((env = getenv("MOZ_PLUGIN_PATH"))) {
+    while ((dir = pathelem(pool, &env))) {
+      const char *lib = strconcat(pool, dir, "/", LIBRARY_NAME, 0);
+      if (is_file(lib))
+        return lib;
+    }
+  }
   // NPX_PLUGIN_PATH
   if ((env = getenv("NPX_PLUGIN_PATH"))) {
     while ((dir = pathelem(pool, &env))) {
@@ -555,9 +563,13 @@ get_plugin_path(strpool *pool)
         return lib;
     }
   }
-  // HOME
+  // $HOME/.{mozilla,netscape}/plugins
   if ((env = getenv("HOME"))) {
-    const char *lib = strconcat(pool, env, "/.netscape/plugins/", LIBRARY_NAME, 0);
+    const char *lib;
+    lib = strconcat(pool, env, "/.mozilla/plugins/", LIBRARY_NAME, 0);
+    if (is_file(lib))
+      return lib;
+    lib = strconcat(pool, env, "/.netscape/plugins/", LIBRARY_NAME, 0);
     if (is_file(lib))
       return lib;
   }
