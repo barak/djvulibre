@@ -302,7 +302,8 @@ if test x$GXX != xyes ; then
     AC_MSG_ERROR([Exception support in c++ compiler is mandatory.]) 
   fi
 else
-  cxxver="`$CXX --version | sed -e 's/^gcc-//' -e 's/^egcs-//'`"
+  cxxver="`$CXX --version | head -1 | 
+             sed -e 's/^.*[ -]\([2-4]\.[0-9.]*\).*$/\1/'`"
   # BUG: The line above does not work with gcc greater than 3...
   action=none
   case "$cxxver" in
