@@ -759,7 +759,7 @@ map_reorganize(Map *m)
 }
 
 static int
-map_lookup(Map *m, void *key, void **pval)
+map_lookup(Map *m, void *key, void *pval)
 {
   int h;
   struct map_entry_s *q;
@@ -768,7 +768,7 @@ map_lookup(Map *m, void *key, void **pval)
     for (q=m->buckets[h]; q; q=q->next)
       if (q->key == key) {
         if (pval)
-          *pval = q->val;
+          *(void**)pval = q->val;
         return 1;
       }
   }
@@ -1110,12 +1110,12 @@ Delay_cb(XtPointer ptr, int * fd, XtInputId *xid)
       switch(reqp->req_num)
         {
         case CMD_SHOW_STATUS:
-          if (map_lookup(&instance, reqp->id, (void**)&inst) >= 0)
+          if (map_lookup(&instance, reqp->id, &inst) >= 0)
             if (inst->widget) 
               NPN_Status(inst->np_instance, reqp->status);
           break;
         case CMD_GET_URL:
-          if (map_lookup(&instance, reqp->id, (void**)&inst) >= 0)
+          if (map_lookup(&instance, reqp->id, &inst) >= 0)
             {
               const char *target = (reqp->target && reqp->target[0]) 
                 ? reqp->target : 0;
@@ -1123,7 +1123,7 @@ Delay_cb(XtPointer ptr, int * fd, XtInputId *xid)
             }
           break;
         case CMD_GET_URL_NOTIFY:
-          if (map_lookup(&instance, reqp->id, (void**)&inst) >= 0)
+          if (map_lookup(&instance, reqp->id, &inst) >= 0)
             {
               const char *target = (reqp->target && reqp->target[0]) 
                 ? reqp->target : 0;
@@ -1240,7 +1240,7 @@ Resize_hnd(Widget w, XtPointer cl_data, XEvent * event, Boolean * cont)
     {
       Instance *inst;
       void *id = (void*)cl_data;
-      if (map_lookup(&instance, id, (void**)&inst) >= 0)
+      if (map_lookup(&instance, id, &inst) >= 0)
         if (Resize(id) <= 0)
           ProgramDied();
     }
@@ -1516,7 +1516,7 @@ Resize(void * id)
      resizeCallback here and send the appropriate request to the
      application */
   Instance *inst;
-  if (map_lookup(&instance, id, (void**)&inst) < 0)
+  if (map_lookup(&instance, id, &inst) < 0)
     return 1;
   if (inst->widget)
    {
@@ -1540,7 +1540,7 @@ static int
 Detach(void * id)
 {
   Instance *inst;
-  if (map_lookup(&instance, id, (void**)&inst) < 0)
+  if (map_lookup(&instance, id, &inst) < 0)
     return 1;
   if (inst->widget)
     {
@@ -1579,7 +1579,7 @@ Attach(Display * displ, Window window, void * id)
   XColor cell;
   
   XSync(displ, False);
-  if (map_lookup(&instance, id, (void**)&inst) < 0)
+  if (map_lookup(&instance, id, &inst) < 0)
     return 1;
 
   widget = XtWindowToWidget(displ, window);
@@ -1912,7 +1912,7 @@ NPP_New(NPMIMEType mime, NPP np_inst, uint16 np_mode, int16 argc,
     goto problem;
   if (ReadPointer(pipe_read, &id, 0, 0) <= 0)
     goto problem;
-  if (map_lookup(&instance, id, (void**)&inst) >= 0)
+  if (map_lookup(&instance, id, &inst) >= 0)
     /* This can happen because we do not clear
        the instance array when restarting djview.
        We just undo it... */
@@ -1932,7 +1932,7 @@ NPP_Destroy(NPP np_inst, NPSavedData ** save)
   void * id = np_inst->pdata;
   SavedData saved_data;
   
-  if (map_lookup(&instance, id, (void**)&inst) < 0)
+  if (map_lookup(&instance, id, &inst) < 0)
     return NPERR_INVALID_INSTANCE_ERROR;
   // Detach the main window, if not already detached
   NPP_SetWindow(np_inst, 0);
@@ -1979,7 +1979,7 @@ NPP_SetWindow(NPP np_inst, NPWindow * win_str)
   void * id = np_inst->pdata;
   Window cur_window, new_window;
 
-  if (map_lookup(&instance, id, (void**)&inst) < 0)
+  if (map_lookup(&instance, id, &inst) < 0)
     return NPERR_INVALID_INSTANCE_ERROR;
   cur_window = inst->window;
   new_window = (win_str) ? (Window) win_str->window : 0;
@@ -2019,7 +2019,7 @@ NPP_Print(NPP np_inst, NPPrint* printInfo)
   Instance *inst = 0;
   void * id = np_inst->pdata;
 
-  if (map_lookup(&instance, id, (void**)&inst) > 0)
+  if (map_lookup(&instance, id, &inst) > 0)
     if (inst->widget)
       {
         if (printInfo && printInfo->mode==NP_FULL)
@@ -2047,7 +2047,7 @@ NPP_NewStream(NPP np_inst, NPMIMEType type, NPStream *stream,
   void * id = np_inst->pdata;
   void * sid = 0;
   
-  if (map_lookup(&instance, id, (void**)&inst) < 0)
+  if (map_lookup(&instance, id, &inst) < 0)
     return NPERR_INVALID_INSTANCE_ERROR;
   
   if ( (WriteInteger(pipe_write, CMD_NEW_STREAM) <= 0) ||
