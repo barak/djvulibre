@@ -28,6 +28,9 @@ SUBDIRS_STD = libdjvu tools
 
 SUBDIRS = ${SUBDIRS_STD} ${SUBDIRS_GUI}
 
+world: all
+	@echo "Congratulations: the compilation was successful!"
+
 all install depend clean: FORCE
 	for d in ${SUBDIRS} ; \
 	  do ( cd $$d && ${MAKE} $@ ) || exit ; done
