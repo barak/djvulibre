@@ -26311,6 +26311,8 @@ _ACEOF
 
           ac_config_files="$ac_config_files tools/Makefile"
 
+          ac_config_files="$ac_config_files tools/jb2cmp/Makefile"
+
           ac_config_files="$ac_config_files xmltools/Makefile"
 
           ac_config_files="$ac_config_files gui/Makefile"
@@ -26862,6 +26864,7 @@ do
   "Makefile" ) CONFIG_FILES="$CONFIG_FILES Makefile" ;;
   "libdjvu/Makefile" ) CONFIG_FILES="$CONFIG_FILES libdjvu/Makefile" ;;
   "tools/Makefile" ) CONFIG_FILES="$CONFIG_FILES tools/Makefile" ;;
+  "tools/jb2cmp/Makefile" ) CONFIG_FILES="$CONFIG_FILES tools/jb2cmp/Makefile" ;;
   "xmltools/Makefile" ) CONFIG_FILES="$CONFIG_FILES xmltools/Makefile" ;;
   "gui/Makefile" ) CONFIG_FILES="$CONFIG_FILES gui/Makefile" ;;
   "gui/desktop/Makefile" ) CONFIG_FILES="$CONFIG_FILES gui/desktop/Makefile" ;;

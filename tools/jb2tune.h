@@ -65,7 +65,7 @@
 #include "GBitmap.h"
 #include "JB2Image.h"
 
-extern void tune_jb2image_lossy(JB2Image *jimg);
+extern void tune_jb2image_lossy(JB2Image *jimg, int dpi, int aggression);
 extern void tune_jb2image_lossless(JB2Image *jimg);
 
 // Values for userdata in JB2Shape

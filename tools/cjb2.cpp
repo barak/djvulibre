@@ -77,10 +77,11 @@
 
     Options are:
     \begin{description}
-    \item[-dpi xxx]  Specify image resolution (default 300).
-    \item[-clean]    Clean small flyspecs (lossy).
-    \item[-lossy]    Lossy compression (implies -clean as well)
-    \item[-verbose]  Displays additional messages.
+    \item[-dpi xxx]     Specify image resolution (default 300).
+    \item[-clean]       Clean small flyspecs (lossy).
+    \item[-lossy]       Lossy compression (implies -clean as well)
+    \item[-losslevel n] Set loss level (implies -lossy, default 100)
+    \item[-verbose]     Displays additional messages.
     \end{description}
     Encoding is lossless unless one or several lossy options are selected.
     The #dpi# argument mostly affects the cleaning thresholds.
@@ -95,7 +96,8 @@
     @author
     L\'eon Bottou <leonb@research.att.com>\\
     Paul Howard <pgh@research.att.com>\\
-    Pascal Vincent <vincentp@iro.umontreal.ca>
+    Pascal Vincent <vincentp@iro.umontreal.ca>\\
+    Ilya Mezhirov <ilya@mezhirov.mccme.ru>
     @version
     $Id$ */
 //@{
@@ -688,6 +690,7 @@ CCImage::get_jb2image() const
 struct cjb2opts {
   int dpi;
   int forcedpi;
+  int losslevel;
   bool lossy;
   bool clean; 
   bool verbose;
@@ -854,8 +857,8 @@ cjb2(const GURL &urlin, const GURL &urlout, cjb2opts &opts)
   GP<JB2Image> jimg = rimg.get_jb2image();          // get ``raw'' jb2image
   rimg.runs.empty();                                // save memory
   rimg.ccs.empty();                                 // save memory
-  if (opts.lossy)
-    tune_jb2image_lossy(jimg);
+  if (opts.lossy && opts.losslevel>0)
+    tune_jb2image_lossy(jimg, opts.dpi, opts.losslevel);
   else
     tune_jb2image_lossless(jimg);
   if (opts.verbose)
@@ -913,12 +916,12 @@ usage()
          "Simple DjVuBitonal encoder\n\n"
          "Usage: cjb2 [options] <input-pbm-or-tiff> <output-djvu>\n"
          "Options are:\n"
-         "   -dpi <n> Specify image resolution (default 300).\n"
-         "   -clean   Cleanup image by remove small flyspecs.\n"
-         "   -lossy   Lossy compression (implies -clean as well)\n"
-         "   -verbose Displays additional messages.\n"
-         "Encoding is lossless unless one or several lossy options\n"
-         "are selected.\n" );
+         " -verbose        Displays additional messages.\n"
+         " -dpi <n>        Specify image resolution (default 300).\n"
+         " -clean          Cleanup image by remove small flyspecs.\n"
+         " -lossy          Lossy compression (implies -clean as well)\n"
+         " -losslevel <n>  Loss factor (implies -lossy, default 100)\n"
+         "Encoding is lossless unless a lossy options is selected.\n" );
   exit(10);
 }
 
@@ -939,6 +942,7 @@ main(int argc, const char **argv)
       // Defaults
       opts.forcedpi = 0;
       opts.dpi = 300;
+      opts.losslevel = 100;
       opts.lossy = false;
       opts.clean = false;
       opts.verbose = false;
@@ -957,10 +961,18 @@ main(int argc, const char **argv)
             opts.clean = true;
           else if (arg == "-lossy")
             opts.clean = opts.lossy = true;
+          else if (arg == "-losslevel")
+            {
+              char *end;
+              opts.clean = opts.lossy = true;
+              opts.losslevel = strtol(dargv[++i], &end, 10);
+              if (*end || opts.losslevel<0 || opts.losslevel>200)
+                usage();
+            }
           else if (arg == "-loose")
             {
               DjVuPrintErrorUTF8("cjb2: option -loose is deprecated. use -lossy.");
-              opts.lossy = true;
+              opts.losslevel = 100;
             }
           else if (arg == "-verbose" || arg == "-v")
             opts.verbose = true;

@@ -69,7 +69,10 @@
 #include "JB2Image.h"
 
 #include "jb2tune.h"
-#include "jb2cmp.h"
+
+#include "jb2cmp/minidjvu.h"
+#include "jb2cmp/patterns.h"
+#include "jb2cmp/classify.h"
 
 #include <math.h>
 
@@ -164,25 +167,26 @@ compute_matchdata_lossless(JB2Image *jimg, MatchData *lib)
 
 
 // Interface with Ilya's data structures.
-static ComparableImage 
+static mdjvu_pattern_t 
 compute_comparable_image(GBitmap *bits)
 {
   int w = bits->columns();
   int h = bits->rows();
   GTArray<unsigned char*> p(h);
   for (int i=0; i<h; i++) p[h-i-1] = (*bits)[i];
-  return prepare_comparable_image(p, w, h);  
+  return mdjvu_pattern_create_from_array(p, w, h);  
 }
 
 
 // Compute MatchData array for lossy compression.
 static void
-compute_matchdata_lossy(JB2Image *jimg, MatchData *lib)
+compute_matchdata_lossy(JB2Image *jimg, MatchData *lib,
+                        int dpi, mdjvu_matcher_options_t options)
 {
   int i;
   int nshapes = jimg->get_shape_count();
   // Prepare MatchData
-  GTArray<ComparableImage> handles(nshapes);
+  GTArray<mdjvu_pattern_t> handles(nshapes);
   for (i=0; i<nshapes; i++)
     {
       JB2Shape &jshp = jimg->get_shape(i);
@@ -197,8 +201,8 @@ compute_matchdata_lossy(JB2Image *jimg, MatchData *lib)
       handles[i] = compute_comparable_image(jshp.bits);
     }
   // Run Ilya's pattern matcher.
-  GTArray<unsigned int> tags(nshapes);  
-  int maxtag = classify_images(handles, tags, nshapes);
+  GTArray<int> tags(nshapes);  
+  int maxtag = mdjvu_classify_patterns(handles, tags, nshapes, dpi, options);
   // Extract substitutions
   GTArray<int> reps(maxtag);
   for (i=0; i<=maxtag; i++)
@@ -214,7 +218,7 @@ compute_matchdata_lossy(JB2Image *jimg, MatchData *lib)
   // Free Ilya's data structures.
   for (i=0; i<nshapes; i++)
     if (handles[i])
-      free_comparable_image(handles[i]);
+      mdjvu_pattern_destroy(handles[i]);
 }
 
 
@@ -378,13 +382,16 @@ tune_jb2image_lossless(JB2Image *jimg)
 // LOSSY COMPRESSION
 // Thanks to Ilya Mezhirov.
 
-
 void 
-tune_jb2image_lossy(JB2Image *jimg)
+tune_jb2image_lossy(JB2Image *jimg, int dpi, int aggression)
 {
   int nshapes = jimg->get_shape_count();
   GTArray<MatchData> lib(nshapes);
-  compute_matchdata_lossy(jimg, lib);
+
+  mdjvu_matcher_options_t options = mdjvu_matcher_options_create();
+  mdjvu_set_aggression(options, aggression);
+  compute_matchdata_lossy(jimg, lib, dpi, options);
+  mdjvu_matcher_options_destroy(options);
+
   tune_jb2image(jimg, lib, true);
 }
-

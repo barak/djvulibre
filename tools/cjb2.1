@@ -41,8 +41,9 @@ This program produces a DjVuBitonal file named
 The default compression process is lossless: decoding the DjVuBitonal file at
 full resolution will produce an image exactly identical to the input file.
 Lossy compression is enabled by selecting option
-.B -lossy 
-or option
+.BR -lossy ,
+.BR -losslevel ,
+or
 .BR -clean .
 
 .SH OPTIONS
@@ -70,8 +71,19 @@ specified with option
 Substitute patterns with small variations.
 This option enables a heuristic algorithm that encodes certain characters
 by simply replicating the shape of a previously encoded character.
-This option implies
+This option automatically selects option
 .BR --clean .
+.TP
+.BI "-losslevel " "x"
+Specify the aggressivity of the lossy compression.
+Its argument ranges from 0 to 200. 
+Higher values generate smaller files 
+with more potential distorsions.
+The default value is 100.
+This option automatically selects options
+.BR --lossy
+and
+.BR --clean.
 .TP
 .B "-verbose"
 Display informational messages while running.
@@ -79,11 +91,16 @@ Display informational messages while running.
 .SH REMARKS
 Lossless encoding is competitive with that of the 
 Lizardtech commercial encoders. 
-The performance of the lossy encoding mode
-was much improved by the new pattern matching code 
-contributed by Ilya Mezhirov.  However it still
-lags behind the performance of commercial encoders.
-Two notable features are missing:
+.PP
+Lossy encoding is making much progress thanks
+to Ilya Mezhirov from the minidjvu project.
+This also means that the lossy encoding performance
+can change from version to version.
+When lossy compression yields inadequate results,
+simply revert to only using option
+.BR -clean .
+.PP
+Two features are still missing:
 .IP "*" 3
 Half-tone detection. Collecting small marks belonging 
 to half-tone patterns would improve compression speed.
@@ -93,8 +110,8 @@ would improve the compression ratios for multi-page documents.
 
 .SH CREDITS
 This program was initially written by L\('eon Bottou
-<leonb@users.sourceforge.net> and was improved by Bill Riemers
-<docbill@sourceforge.net> and many others.
+<leonb@users.sourceforge.net> and was improved 
+by Bill Riemers <docbill@sourceforge.net> and many others.
 The pattern matching algorithm for lossy compression
 was contributed by Ilya Mezhirov <ilya@mezhirov.mccme.ru>.
 TIFF input routines are inspired by the ones contributed by 

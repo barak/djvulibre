@@ -56,6 +56,8 @@ MORELIBS= @LDFLAGS@ ${JPEG_LIBS} ${TIFF_LIBS} ${THREAD_LIBS} @LIBS@
 CFLAGS = @CPPFLAGS@ @CFLAGS@ ${FLAGS}
 CXXFLAGS = @CPPFLAGS@ @CXXFLAGS@ ${CXXRPOFLAGS} ${FLAGS}
 
+SUBDIRS = jb2cmp
+
 PROGRAMS = bzz c44 cjb2 cpaldjvu csepdjvu \
 	   ddjvu djvm djvmcvt djvudump \
 	   djvups djvuextract djvumake \
@@ -78,18 +80,24 @@ install-man: FORCE
 	  ${INSTALL_DATA} $$n ${DESTDIR}${mandir}/man1 || exit ; done 
 
 depend: FORCE
+	for d in ${SUBDIRS}; do ( cd $$d && ${MAKE} $@ ); done
 	${CXX} -MM ${CXXFLAGS} ${srcdir}/*.cpp > Makefile.dep
 
 clean: FORCE
+	for d in ${SUBDIRS}; do ( cd $$d && ${MAKE} $@ ); done
 	-${LIBTOOL} --mode=clean ${RM} 2>/dev/null ${PROGRAMS}
 	-${RM} 2>/dev/null *.o *.a *.so *.stamp
 
 distclean: clean 
+	for d in ${SUBDIRS}; do ( cd $$d && ${MAKE} $@ ); done
 	-${RM} -r 2>/dev/null Makefile *.rpo ii_files
 
 # Link
 
-JB2OBJS= jb2cmp.o jb2tune.o
+JB2OBJS= jb2tune.o jb2cmp/libjb2cmp.a
+
+jb2cmp/libjb2cmp.a: FORCE
+	cd jb2cmp && ${MAKE}
 
 annotate: annotate.o
 	${LIBTOOL} --mode=link \

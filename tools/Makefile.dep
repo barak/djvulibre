@@ -19,7 +19,7 @@ cjb2.o: ./cjb2.cpp ../config.h ../libdjvu/DjVuGlobal.h \
   ../libdjvu/GBitmap.h ../libdjvu/JB2Image.h ../libdjvu/ZPCodec.h \
   ../libdjvu/DjVuInfo.h ../libdjvu/GOS.h ../libdjvu/GURL.h \
   ../libdjvu/GThreads.h ../libdjvu/DjVuMessage.h \
-  ../libdjvu/DjVuMessageLite.h jb2tune.h 
+  ../libdjvu/DjVuMessageLite.h jb2tune.h /usr/include/tiffvers.h
 cpaldjvu.o: ./cpaldjvu.cpp ../config.h ../libdjvu/DjVuGlobal.h \
   ../libdjvu/GException.h ../libdjvu/GSmartPointer.h \
   ../libdjvu/GContainer.h ../libdjvu/ByteStream.h ../libdjvu/Arrays.h \
@@ -39,7 +39,7 @@ csepdjvu.o: ./csepdjvu.cpp ../config.h ../libdjvu/DjVuGlobal.h \
   ../libdjvu/GThreads.h ../libdjvu/GOS.h ../libdjvu/GURL.h \
   ../libdjvu/DjVuMessage.h ../libdjvu/DjVuMessageLite.h jb2tune.h
 ddjvu.o: ./ddjvu.cpp ../config.h ../libdjvu/ddjvuapi.h \
-  
+  /usr/include/tiffvers.h
 djvm.o: ./djvm.cpp ../config.h ../libdjvu/GException.h \
   ../libdjvu/DjVuGlobal.h ../libdjvu/DjVuDocEditor.h \
   ../libdjvu/DjVuDocument.h ../libdjvu/DjVuPort.h ../libdjvu/GThreads.h \
@@ -117,9 +117,8 @@ djvutxt.o: ./djvutxt.cpp ../config.h ../libdjvu/DjVuDocument.h \
   ../libdjvu/DjVuInfo.h ../libdjvu/DjVuPalette.h ../libdjvu/GPixmap.h \
   ../libdjvu/DjVuAnno.h ../libdjvu/GOS.h ../libdjvu/DjVuMessage.h \
   ../libdjvu/DjVuMessageLite.h
-jb2cmp.o: ./jb2cmp.cpp ../config.h jb2cmp.h
 jb2tune.o: ./jb2tune.cpp ../config.h ../libdjvu/DjVuGlobal.h \
   ../libdjvu/GException.h ../libdjvu/GSmartPointer.h \
   ../libdjvu/GContainer.h ../libdjvu/GRect.h ../libdjvu/GBitmap.h \
   ../libdjvu/JB2Image.h ../libdjvu/GString.h ../libdjvu/ZPCodec.h \
-  jb2tune.h jb2cmp.h
+  jb2tune.h jb2cmp/minidjvu.h jb2cmp/patterns.h jb2cmp/classify.h
