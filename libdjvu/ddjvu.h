@@ -871,7 +871,7 @@ ddjvu_format_release(ddjvu_format_t *format);
 
 /* We can now define the djvu_message_t union */
 
-union djvu_message_s {
+union ddjvu_message_s {
   struct ddjvu_message_any_s        m_any;
   struct ddjvu_message_error_s      m_error;
   struct ddjvu_message_status_s     m_status;
@@ -882,8 +882,6 @@ union djvu_message_s {
   struct ddjvu_message_relayout_s   m_relayout;
   struct ddjvu_message_redisplay_s  m_redisplay;
 };
-
-
 
 
 

@@ -3,6 +3,7 @@ NEW IN VERSION 3.5.14
 - Fixes for compilation with GCC-3.4.
 - Cjb2 lossy mode vastly improved (thanks to Ilya Mezhirov)
 - Revamped install for desktop information files
+- Compilation uses libtool and makes shared libs on more platforms.
 
 NEW IN VERSION 3.5.13
 ---------------------
