@@ -65,90 +65,6 @@
 #include "version.h"
 
 
-/******************************************************************************
-*************** Override memory operators to make them thread safe ************
-******************************************************************************/
-#if THREADMODEL!=COTHREADS
-
-#ifdef NEED_DJVU_MEMORY
-#error "NEED_DJVU_MEMORY conflicts with plugin's memory management."
-#endif
-
-// It's meaningless and dangerous to use GCriticalSections in the case
-// of cothreads. Dangerous - because every usage of "new" even in QT library
-// will result in a context switch. The worst thing is when it happens
-// inside the QT library
-
-static GCriticalSection * mem_lock;
-void * operator new(size_t size)
-{
-   if (!mem_lock)
-   {
-      mem_lock=(GCriticalSection *) malloc(sizeof(GCriticalSection));
-      new ((void *) mem_lock) GCriticalSection;
-   }
-   GCriticalSectionLock glock(mem_lock);
-   return malloc(size+4);
-}
-
-void * operator new[](size_t size)
-{
-   if (!mem_lock)
-   {
-      mem_lock=(GCriticalSection *) malloc(sizeof(GCriticalSection));
-      new ((void *) mem_lock) GCriticalSection;
-   }
-   GCriticalSectionLock glock(mem_lock);
-   return malloc(size+4);
-}
-
-void operator delete(void * addr)
-{
-  G_TRY
-   {
-      if (addr)
-      {
-	 if (!mem_lock)
-	 {
-	    mem_lock=(GCriticalSection *) malloc(sizeof(GCriticalSection));
-	    new ((void *) mem_lock) GCriticalSection;
-	 }
-	 GCriticalSectionLock glock(mem_lock);
-	 free(addr);
-      }
-   } 
-  G_CATCH(ex)
-   {
-     ex.perror();
-   }
-  G_ENDCATCH;
-}
-   
-void operator delete[](void * addr)
-{
-  G_TRY
-   {
-      if (addr)
-      {
-	 if (!mem_lock)
-	 {
-	    mem_lock=(GCriticalSection *) malloc(sizeof(GCriticalSection));
-	    new ((void *) mem_lock) GCriticalSection;
-	 }
-	 GCriticalSectionLock glock(mem_lock);
-	 free(addr);
-      }
-   } 
-  G_CATCH(ex)
-    {
-     ex.perror();
-   }
-  G_ENDCATCH;
-}
-#endif
-
-
-
 static void 
 ShowUsage(void)
 {
@@ -182,9 +98,6 @@ ShowUsage(void)
           );
 }
       
-/******************************************************************************
-***************************** main() function *********************************
-******************************************************************************/
 
 int
 main(int argc, char ** argv)
