@@ -340,7 +340,8 @@ get_data_from_file(const char *cmd, ParsingByteStream &pbs, ByteStream &out)
 }
 
 void
-print_c_string(const char *data, int length, ByteStream &out)
+print_c_string(const char *data, int length, ByteStream &out, 
+	       bool rawstrings=false)
 {
   out.write("\"",1);
   while (*data && length>0) 
@@ -355,6 +356,13 @@ print_c_string(const char *data, int length, ByteStream &out)
           data += span;
           length -= span;
         }
+      else if (rawstrings)
+	{
+	  if (data[span]=='\"')
+	    out.write("\\\"",2);
+	  else
+	    out.write(&data[span],1);
+	}
       else
         {
           char buffer[5];
@@ -468,7 +476,8 @@ command_size(ParsingByteStream &)
         {
           if (lst[p]->is_page())
             {
-              const GP<DjVuFile> f(doc->get_djvu_file(doc->page_to_id(lst[p]->get_page_num())));
+	      GUTF8String fileid = doc->page_to_id(lst[p]->get_page_num());
+              const GP<DjVuFile> f = doc->get_djvu_file(fileid);
               print_size(f);
             }
         }
@@ -531,24 +540,80 @@ command_create_shared_ant(ParsingByteStream &)
   vprint("create-shared-ant: selecting shared annotation");
 }
 
+static bool
+filter_ant(GP<ByteStream> in, GP<ByteStream> out, 
+	   bool excludemeta=false, bool rawstrings=false)
+{
+  int c;
+  int plevel = 0;
+  bool copy = true;
+  bool unchanged = true;
+  GP<ParsingByteStream> inp = ParsingByteStream::create(in);
+  while ((c = inp->get()) != EOF)
+    if (c!=' ' && c!='\t' && c!='\r' && c!='\n')
+      break;
+  inp->unget(c);
+  while ((c = inp->get()) != EOF)
+    {
+      if (plevel == 0)
+        if (c !=' ' && c!='\t' && c!='\r' && c!='\n')
+          copy = true;
+      if (c == '\"')
+        {
+          inp->unget(c);
+          GUTF8String token = inp->get_utf8_token();
+          if (copy)
+	    print_c_string(token, token.length(), *out, rawstrings);
+        }
+      else if (c == '(')
+        {
+          if (plevel == 0)
+            {
+              GUTF8String token = inp->get_utf8_token();
+              if (excludemeta)
+		if (token == "metadata")
+		  copy = unchanged = false;
+              if (copy) {
+                out->write8('(');
+                out->write((const char*)token, token.length());
+              }
+            }
+          else if (copy) 
+            out->write8(c);
+          plevel += 1;
+        }
+      else if (c == ')')
+        {
+          if (copy) 
+            out->write8(c);
+          if ( --plevel < 0)
+            plevel = 0;
+        }
+      else if (copy)
+        out->write8(c);
+    }
+  return !unchanged;
+}
+
 void
-print_ant(IFFByteStream &iff, ByteStream &out)
+print_ant(GP<IFFByteStream> iff, GP<ByteStream> out)
 {
   GUTF8String chkid;
-  while (iff.get_chunk(chkid))
+  while (iff->get_chunk(chkid))
     {
       if (chkid == "ANTa") 
         {
-          out.copy(*iff.get_bytestream());
-          out.write8('\n');
+          filter_ant(iff->get_bytestream(), out);
+	  out->write8('\n');
         }
       else if (chkid == "ANTz") 
         {
-          GP<ByteStream> bsiff=BSByteStream::create(iff.get_bytestream());
-          out.copy(*bsiff);
-          out.write8('\n');
+          GP<ByteStream> bsiff = 
+	    BSByteStream::create(iff->get_bytestream());
+          filter_ant(bsiff, out);
+          out->write8('\n');
         }
-      iff.close_chunk();
+      iff->close_chunk();
     }
 }
 
@@ -561,7 +626,7 @@ command_print_ant(ParsingByteStream &)
   GP<ByteStream> anno = file->get_anno();
   if (! (anno && anno->size())) return;
   GP<IFFByteStream> iff=IFFByteStream::create(anno);
-  print_ant(*iff, *out);
+  print_ant(iff, out);
 }
 
 void
@@ -573,7 +638,7 @@ command_print_merged_ant(ParsingByteStream &)
   GP<ByteStream> anno = file->get_merged_anno();
   if (! (anno && anno->size())) return;
   GP<IFFByteStream> iff=IFFByteStream::create(anno);
-  print_ant(*iff, *out);
+  print_ant(iff, out);
 }
 
 
@@ -630,10 +695,12 @@ command_set_ant(ParsingByteStream &pbs)
 {
   if (! file)
     verror("must select a page first");
-  const GP<ByteStream> ant=ByteStream::create();
-  { 
-    GP<ByteStream> bsant=BSByteStream::create(ant,100);
-    get_data_from_file("set-ant", pbs, *bsant);
+  const GP<ByteStream> ant = ByteStream::create();
+  {
+    const GP<ByteStream> dsedant = ByteStream::create();
+    get_data_from_file("set-ant", pbs, *dsedant);
+    GP<ByteStream> bsant = BSByteStream::create(ant,100);
+    filter_ant(dsedant, bsant, false, true);
   }
   modify_ant(file, "ANTz", ant);
   vprint("set-ant: modified \"%s\"", (const char*)(GNativeString)fileid);
@@ -684,66 +751,6 @@ command_print_meta(ParsingByteStream &)
   print_meta(*iff,*out);
 }
 
-static bool
-filter_meta_out(GP<ByteStream> in, GP<ByteStream> out)
-{
-  int c;
-  int plevel = 0;
-  bool copy = true;
-  bool unchanged = true;
-  GP<ParsingByteStream> inp = ParsingByteStream::create(in);
-  while ((c = inp->get()) != EOF)
-    if (c!=' ' && c!='\t' && c!='\r' && c!='\n')
-      break;
-  inp->unget(c);
-  while ((c = inp->get()) != EOF)
-    {
-      if (plevel == 0)
-        if (c !=' ' && c!='\t' && c!='\r' && c!='\n')
-          copy = true;
-      if (c == '#')
-        {
-          while (c!=EOF && c!='\n' && c!='\r') {
-            if (copy) 
-              out->write8(c);
-            c = inp->get();
-          }
-        }
-      else if (c == '\"')
-        {
-          inp->unget(c);
-          GUTF8String token = inp->get_utf8_token();
-          if (copy)
-            print_c_string(token, token.length(), *out);
-        }
-      else if (c == '(')
-        {
-          if (plevel == 0)
-            {
-              GUTF8String token = inp->get_utf8_token();
-              if (token == "metadata")
-                copy = unchanged = false;
-              if (copy) {
-                out->write8('(');
-                out->write((const char*)token, token.length());
-              }
-            }
-          else if (copy) 
-            out->write8(c);
-          plevel += 1;
-        }
-      else if (c == ')')
-        {
-          if (copy) 
-            out->write8(c);
-          if ( --plevel < 0)
-            plevel = 0;
-        }
-      else if (copy)
-        out->write8(c);
-    }
-  return !unchanged;
-}
 
 static bool
 modify_meta(const GP<DjVuFile> &f,
@@ -761,7 +768,7 @@ modify_meta(const GP<DjVuFile> &f,
           newant->write("\n\t(",3);
           newant->writestring(key);
           newant->write(" ",1);
-          print_c_string((const char*)val, val.length(), *newant);
+          print_c_string((const char*)val, val.length(), *newant, true);
           newant->write(")",1);
         }
       newant->write(" )\n",3);
@@ -772,9 +779,9 @@ modify_meta(const GP<DjVuFile> &f,
     {
       GP<IFFByteStream> iff=IFFByteStream::create(anno);
       GP<ByteStream> oldant = ByteStream::create();
-      print_ant(*iff,*oldant);
+      print_ant(iff, oldant);
       oldant->seek(0);
-      if (filter_meta_out(oldant, newant))
+      if (filter_ant(oldant, newant, true, true))
         changed = true;
     }
   const GP<ByteStream> newantz=ByteStream::create();
@@ -900,16 +907,17 @@ get_text(const GP<DjVuFile> &file)
 }
 
 void
-print_txt_sub(const GP<DjVuTXT> &txt, DjVuTXT::Zone &zone, ByteStream &out, int indent)
+print_txt_sub(const GP<DjVuTXT> &txt, DjVuTXT::Zone &zone, 
+	      const GP<ByteStream> &out, int indent)
 {
   // Indentation
   if (indent)
     {
-      out.write("\n",1);
+      out->write("\n",1);
       static const char spaces[] = "                        ";
       if (indent > (int)sizeof(spaces))
         indent = sizeof(spaces);
-      out.write(spaces, indent);
+      out->write(spaces, indent);
     }
   // Zone header
   int zinfo;
@@ -921,7 +929,7 @@ print_txt_sub(const GP<DjVuTXT> &txt, DjVuTXT::Zone &zone, ByteStream &out, int 
     message.format("(%s %d %d %d %d", zone_names[zinfo].name,
                    zone.rect.xmin, zone.rect.ymin, 
                    zone.rect.xmax, zone.rect.ymax);
-  out.write((const char*)message, message.length());
+  out->write((const char*)message, message.length());
   // Zone children
   if (zone.children.isempty()) 
     {
@@ -929,8 +937,8 @@ print_txt_sub(const GP<DjVuTXT> &txt, DjVuTXT::Zone &zone, ByteStream &out, int 
       int length = zone.text_length;
       if (data[length-1] == zone_names[zinfo].separator)
         length -= 1;
-      out.write(" ",1);
-      print_c_string(data, length, out);
+      out->write(" ",1);
+      print_c_string(data, length, *out);
     }
   else
     {
@@ -938,13 +946,13 @@ print_txt_sub(const GP<DjVuTXT> &txt, DjVuTXT::Zone &zone, ByteStream &out, int 
         print_txt_sub(txt, zone.children[pos], out, indent + 1);
     }
   // Finish
-  out.write(")",1);
+  out->write(")",1);
   if (!indent)
-    out.write("\n", 1);
+    out->write("\n", 1);
 }
 
 void
-print_txt(const GP<DjVuTXT> &txt, ByteStream &out)
+print_txt(const GP<DjVuTXT> &txt, const GP<ByteStream> &out)
 {
   if (txt)
     print_txt_sub(txt, txt->page_zone, out, 0);
@@ -953,10 +961,10 @@ print_txt(const GP<DjVuTXT> &txt, ByteStream &out)
 void
 command_print_txt(ParsingByteStream &)
 {
-  const GP<ByteStream> out(ByteStream::create("w"));
+  const GP<ByteStream> out = ByteStream::create("w");
   if (file)
     {
-      print_txt(get_text(file), *out);
+      print_txt(get_text(file), out);
     }
   else
     {
@@ -965,7 +973,7 @@ command_print_txt(ParsingByteStream &)
         {
           GUTF8String id = lst[p]->get_load_name();
           const GP<DjVuFile> f(doc->get_djvu_file(id));
-          print_txt(get_text(f), *out);
+          print_txt(get_text(f), out);
         }
     }
 }
@@ -973,7 +981,7 @@ command_print_txt(ParsingByteStream &)
 void
 command_print_pure_txt(ParsingByteStream &)
 {
-  const GP<ByteStream> out(ByteStream::create("w"));
+  const GP<ByteStream> out = ByteStream::create("w");
   GP<DjVuTXT> txt;
   if (file)
     {
@@ -1170,7 +1178,8 @@ command_set_txt(ParsingByteStream &pbs)
 }
 
 void
-output(const GP<DjVuFile> &f, ByteStream &out, int flag, const char *id=0)
+output(const GP<DjVuFile> &f, const GP<ByteStream> &out, 
+       int flag, const char *id=0)
 {
   if (f)
     {
@@ -1182,13 +1191,13 @@ output(const GP<DjVuFile> &f, ByteStream &out, int flag, const char *id=0)
           if (anno && anno->size()) 
             {
               const GP<IFFByteStream> iff(IFFByteStream::create(anno)); 
-              print_ant(*iff,*ant); 
+              print_ant(iff, ant); 
               ant->seek(0); 
             }
         }
       if (flag & 2)
         { 
-          print_txt(get_text(f),*txt); 
+          print_txt(get_text(f),txt); 
           txt->seek(0); 
         }
       if (id && ant->size() + txt->size())
@@ -1196,19 +1205,19 @@ output(const GP<DjVuFile> &f, ByteStream &out, int flag, const char *id=0)
           GUTF8String msg;
           msg.format("# -------------------------------------\n"
                      "select '%s'\n", id);
-          out.write((const char*)msg, msg.length());
+          out->write((const char*)msg, msg.length());
         }
       if (ant->size()) 
         {
-          out.write("set-ant\n", 8);
-          out.copy(*ant);
-          out.write(".\n", 2);
+          out->write("set-ant\n", 8);
+          out->copy(*ant);
+          out->write(".\n", 2);
         }
       if (txt->size()) 
         {
-          out.write("set-txt\n", 8);
-          out.copy(*txt);
-          out.write(".\n", 2);
+          out->write("set-txt\n", 8);
+          out->copy(*txt);
+          out->write(".\n", 2);
         }
     }
 }
@@ -1216,10 +1225,10 @@ output(const GP<DjVuFile> &f, ByteStream &out, int flag, const char *id=0)
 void
 command_output_ant(ParsingByteStream &)
 {
-  const GP<ByteStream> out(ByteStream::create("w"));
+  const GP<ByteStream> out = ByteStream::create("w");
   if (file) 
     {
-      output(file, *out, 1);
+      output(file, out, 1);
     }
   else 
     {
@@ -1230,7 +1239,7 @@ command_output_ant(ParsingByteStream &)
         {
           GUTF8String id = lst[p]->get_load_name();
           const GP<DjVuFile> f(doc->get_djvu_file(id));
-          output(f, *out, 1, id);
+          output(f, out, 1, id);
         }
     }
 }
@@ -1238,10 +1247,10 @@ command_output_ant(ParsingByteStream &)
 void
 command_output_txt(ParsingByteStream &)
 {
-  const GP<ByteStream> out(ByteStream::create("w"));
+  const GP<ByteStream> out = ByteStream::create("w");
   if (file) 
     {
-      output(file, *out, 2);
+      output(file, out, 2);
     }
   else 
     {
@@ -1252,7 +1261,7 @@ command_output_txt(ParsingByteStream &)
         {
           GUTF8String id = lst[p]->get_load_name();
           const GP<DjVuFile> f(doc->get_djvu_file(id));
-          output(f, *out, 2, id);
+          output(f, out, 2, id);
         }
     }
 }
@@ -1260,10 +1269,10 @@ command_output_txt(ParsingByteStream &)
 void
 command_output_all(ParsingByteStream &)
 {
-  const GP<ByteStream> out(ByteStream::create("w"));
+  const GP<ByteStream> out = ByteStream::create("w");
   if (file) 
     {
-      output(file, *out, 3);
+      output(file, out, 3);
     }
   else 
     {
@@ -1274,7 +1283,7 @@ command_output_all(ParsingByteStream &)
         {
           GUTF8String id = lst[p]->get_load_name();
           const GP<DjVuFile> f(doc->get_djvu_file(id));
-          output(f, *out, 3, id);
+          output(f, out, 3, id);
         }
     }
 }

@@ -6,7 +6,7 @@ RELEASE 1
 
 RELEASE 2
 - rechunking feature in c44
-- support for non-ascii strings in annotation layer
+- rewrite parser for annotation layer
 - djvups executable
 - ht:/dig plugin
 

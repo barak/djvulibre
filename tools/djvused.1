@@ -335,7 +335,7 @@ with option
 .BR -f .
 .TP
 .BI "print-ant"
-Prints the annotations for the selected component file.
+Prints the annotations of the selected component file.
 The annotation data is represented using a simple syntax
 described later in this document.
 .TP
@@ -353,6 +353,7 @@ For instance, executing commands
 removes all annotation information from the DjVu document.
 .TP
 .BI "set-ant [" "djvusedantfile" "]"
+Set the annotations of the selected component file.
 The optional argument
 .I djvusedantfile
 names a file containing the annotation data.
@@ -364,7 +365,7 @@ program reads the annotation data from the djvused script itself
 until reaching an end-of-file or a line containing a single period.
 .TP
 .BI "output-ant"
-Prints a djvused script that reconstructs the annotation
+Print a djvused script that reconstructs the annotation
 information for the selected pages.  This script can later
 be edited and executed by invoking program
 .B djvused
@@ -372,13 +373,32 @@ with option
 .BR -f .
 .TP
 .BI "print-meta"
-blabla
+Print the meta-data part of the annotations for the selected component file.
+This command displays a subset of the information printed by command
+.B print-ant
+using a different syntax.  Metadata are organized as key\-value pairs.
+Each printed line contains the key name such as
+.BR "author" ", " "title" ",etc.,"
+followed by a tab character ("\\t") and
+a double-quoted string representing the 
+.SM UTF-8
+encoded metadata value.
 .TP
 .BI "set-meta " "djvusedmetafile"
-blabla
+Set the meta-data part of the annotations of the selected component file.
+The remaining part of the annotations is left unchanged
+The optional argument
+.I djvusedmetafile
+names a file containing the meta-data.
+This file must contain data similar to what is produced
+by command
+.BR print-meta . 
+When the optional argument is omitted, the
+program reads the annotation data from the djvused script itself
+until reaching an end-of-file or a line containing a single period.
 .TP
 .BI "output-all"
-Prints a djvused script that reconstructs both the hidden text and the
+Print a djvused script that reconstructs both the hidden text and the
 annotation information for the selected pages.  This script can later
 be edited and executed by invoking program
 .B djvused
@@ -402,43 +422,92 @@ New thumbnails can then be computed using command
 .BR set-thumbnails .
 
 .SS Save comands
+The above commands only modify the memory image of the DjVu document.
+The following commands provide means to save the modified data
+into the file system.
 .TP
 .BI "save"
-blabla
+Save the modified DjVu document back into the input file
+.I djvufile
+specified by the arguments of the program 
+.BR djvused .
+Nothing is done if the DjVu file was not modified.
+Passing option
+.B -s
+program
+.B djvused 
+is equivalent to executing command
+.B save
+before exiting the program.
 .TP
 .BI "save-bundled " "filename"
+Save the current DjVu document as a bundled 
+multi-page DjVu document named 
+.IR filename .
 A similar capability is offered by program
 .BR djvmcvt .
 .TP
 .BI "save-indirect " "filename"
+Save the current DjVu document as an indirect
+multi-page DjVu document.  The index file of the
+indirect document will be named 
+.BR filename .
+All other files composing the indirect document
+will be saved into the same directory as the
+index file.
 A similar capability is offered by program
 .BR djvmcvt .
 .TP
 .BI "save-page " "filename"
-blabla
+Save the selected component file into DjVu file
+.IR filename .
+The selected component file might import data from 
+another component file using the so-called inclusion (
+.SM INCL
+) chunks.  This command then produces a file with unresolved
+references to imported data.  Such a file should then be made part of
+a multi-page document containing the required data in other component
+files.
 .TP
 .BI "save-page-with " "filename"
-blabla
+Save the selected component file into DjVu file
+.IR filename .
+All data imported from other component files is copied into the output
+file as well.  This command always produces a viewable DjVu file.  On
+the other hand, collecting several such files into a multipage
+document might lead to useless data replication.
 
 
 .SH DJVUSED FILE FORMATS
 
-.SS Hidden text data syntax
+Djvused uses a simple parenthesized syntax to represent
+both annotations and hidden text.
+.IP "*" 3
+This syntax is the native syntax used by DjVu for storing annotations.
+Program
+.B djvused
+simply compresses the annotation data using the
+.BR bzz (1)
+algorithm.
+.IP "*" 3
+This syntax differs from the native syntax used by DjVu for
+storing the hidden text.  Program 
+.B djvused
+performs the translations between the compact binary representation
+used by DjVu and the easily modifiable parenthesized syntax.
+.PP
+.SS General syntax
 
-.SS Annotation data syntax
+.SS Hidden text syntax
 
-.SS Metadata syntax
+.SS Annotation syntax
 
 .SH LIMITATIONS
-.IP "*" 3
 The current version of program 
 .B djvused
 only supports selecting one component file
 or all component files.  There is no way to
 select only a few component files.
-.IP "*" 3
-The DjVu decoder does not properly handle
-non-ascii characters in the annotation string layers.
 
 .SH CREDITS
 This program was initially written by L\('eon Bottou
@@ -448,7 +517,7 @@ This program was initially written by L\('eon Bottou
 
 .SH SEE ALSO
 .BR djvu (1),
-.BR djvm (1),
 .BR djvutxt (1),
 .BR djvmcvt (1),
-.BR djvudump (1)
+.BR djvudump (1),
+.BR bzz (1)
