@@ -1,4 +1,4 @@
-%define release 1
+%define release 2
 %define version 3.5.9
 %define prefix %{?_prefix:%{_prefix}}%{!?_prefix:/usr}
 %define mandir %{?_mandir:%{_mandir}}%{!?_mandir:%{prefix}/man}
@@ -95,11 +95,12 @@ rm -rf $RPM_BUILD_ROOT
 %postun 
 /sbin/ldconfig
 # Remove links to nsdejavu.so in all mozilla dirs
-( for n in %{prefix}/lib/mozilla* ; do \
-  if [ -h $n/plugins/nsdejavu.so ] ; then \
-   rm $n/plugins/nsdejavu.so ; \
-   rmdir $n/plugins ; \
- fi ; done ) 2>/dev/null || true
+( if ! [ -r %{prefix}/lib/netscape/plugins/nsdejavu.so ] ; then \
+   for n in %{prefix}/lib/mozilla* ; do \
+    if [ -h $n/plugins/nsdejavu.so ] ; then \
+     rm $n/plugins/nsdejavu.so ; \
+     rmdir $n/plugins ; \
+  fi ; done ; fi ) 2>/dev/null || true
 
 %files
 %defattr(-, root, root)
