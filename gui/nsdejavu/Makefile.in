@@ -54,7 +54,7 @@ nsdejavu.lo: nsdejavu.c
 
 nsdejavu.la: nsdejavu.lo
 	${LIBTOOL} --mode=link ${CC} ${CFLAGS} nsdejavu.lo ${LIBS} \
-	  -rpath ${plugindir} -module -o $@
+	  -no-undefined -rpath ${plugindir} -module -o $@
 
 nsdejavu.x: nsdejavu.la
 	eval `grep '^dlname=' nsdejavu.la` && \
