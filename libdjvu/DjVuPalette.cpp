@@ -212,9 +212,13 @@ DjVuPalette::compute_palette(int maxcolors, int minboxsize)
         pdata.touch(ncolors);
         PData &data = pdata[ncolors++];
         PHist &hist = hcube[i];
-        data.p[0] = (unsigned char) fmin(255, static_cast<float>(hist.p[0]/hist.w));
-        data.p[1] = (unsigned char) fmin(255, static_cast<float>(hist.p[1]/hist.w));
-        data.p[2] = (unsigned char) fmin(255, static_cast<float>(hist.p[2]/hist.w));
+	// [LB] -- I restored the (float)(p)/w over the broken
+	// static_cast<float>(p/w).  The first form forces a floating
+	// point division. I could also write (float)((p+w/2)/w) to
+	// obtain the proper rounding.
+        data.p[0] = (unsigned char) fmin(255, (float)(hist.p[0])/hist.w);
+        data.p[1] = (unsigned char) fmin(255, (float)(hist.p[1])/hist.w);
+        data.p[2] = (unsigned char) fmin(255, (float)(hist.p[2])/hist.w);
         data.w = hist.w;
         sum += data.w;
       }

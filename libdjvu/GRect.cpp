@@ -231,11 +231,10 @@ GRectMapper::GRatio::GRatio(int p, int q)
 inline int 
 operator*(int n, GRectMapper::GRatio r )
 { 
-  /* This computation is carried out with integers
-     and rational numbers because it must be exact. 
-     Someone changed it to double and this is wrong.
-     Maybe they had an overflow problem. 
-     Lets use long long ints. */
+  /* [LB] -- This computation is carried out with integers and
+     rational numbers because it must be exact.  Some lizard changed
+     it to double and this is wrong.  I suspect they did so because
+     they encountered overflow issues.  Let's use long long ints. */
   llint_t x = (llint_t) n * (llint_t) r.p;
   if (x >= 0)
     return   ((r.q/2 + x) / r.q);
@@ -246,11 +245,7 @@ operator*(int n, GRectMapper::GRatio r )
 inline int 
 operator/(int n, GRectMapper::GRatio r )
 { 
-  /* This computation is carried out with integers
-     and rational numbers because it must be exact. 
-     Someone changed it to double and this is wrong.
-     Maybe they had an overflow problem. 
-     Lets use long long ints. */
+  /* [LB] -- See comment in operator*() above. */
   llint_t x = (llint_t) n * (llint_t) r.q;
   if (x >= 0)
     return   ((r.p/2 + x) / r.p);
