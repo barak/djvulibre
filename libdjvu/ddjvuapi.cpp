@@ -1484,7 +1484,7 @@ fmt_convert_row(const GPixel *p, int w,
       {
         uint16_t *b = (uint16_t*)buf;
         while (--w >= 0) {
-          b[0]=(r[0][p->b]+r[1][p->b]+r[2][p->b]); 
+          b[0]=(r[0][p->r]+r[1][p->g]+r[2][p->b]); 
           b+=1; p+=1; 
         }
         break;
@@ -1493,7 +1493,7 @@ fmt_convert_row(const GPixel *p, int w,
       {
         uint32_t *b = (uint32_t*)buf;
         while (--w >= 0) {
-          b[0]=(r[0][p->b]+r[1][p->b]+r[2][p->b]); 
+          b[0]=(r[0][p->r]+r[1][p->g]+r[2][p->b]); 
           b+=1; p+=1; 
         }
         break;
@@ -1501,7 +1501,7 @@ fmt_convert_row(const GPixel *p, int w,
     case DDJVU_FORMAT_GREY8:    /* greylevel 8 bits */
       {
         while (--w >= 0) { 
-          buf[0]=(5*p->b + 9*p->g + 2*p->b)>>4; 
+          buf[0]=(5*p->r + 9*p->g + 2*p->b)>>4; 
           buf+=1; p+=1; 
         }
         break;
@@ -1510,7 +1510,7 @@ fmt_convert_row(const GPixel *p, int w,
       {
         const uint32_t *u = fmt->palette;
         while (--w >= 0) {
-          buf[0] = u[r[0][p->b]+r[1][p->b]+r[2][p->b]]; 
+          buf[0] = u[r[0][p->r]+r[1][p->g]+r[2][p->b]]; 
           buf+=1; p+=1; 
         }
         break;
@@ -1519,7 +1519,7 @@ fmt_convert_row(const GPixel *p, int w,
       {
         unsigned char s=0, m=0x80;
         while (--w >= 0) {
-          if ( 5*p->b + 9*p->g + 2*p->b < 0xc00 ) { s |= m; }
+          if ( 5*p->r + 9*p->g + 2*p->b < 0xc00 ) { s |= m; }
           if (! (m >>= 1)) { *buf++ = s; s=0; m=0x80; }
           p += 1;
         }
@@ -1530,7 +1530,7 @@ fmt_convert_row(const GPixel *p, int w,
       {
         unsigned char s=0, m=0x1;
         while (--w >= 0) {
-          if ( 5*p->b + 9*p->g + 2*p->b < 0xc00 ) { s |= m; }
+          if ( 5*p->r + 9*p->g + 2*p->b < 0xc00 ) { s |= m; }
           if (! (m <<= 1)) { *buf++ = s; s=0; m=0x1; }
           p += 1;
         }
