@@ -37,6 +37,8 @@ INSTALL = @INSTALL@
 LIBTOOL = @LIBTOOL@ --tag=disable-static
 DEFS = @DEFS@ 
 OPTS = @OPTS@
+NSDEJAVU_LIBS = @NSDEJAVU_LIBS@
+NSDEJAVU_CFLAGS = @NSDEJAVU_CFLAGS@
 
 INCS = \
  -I${srcdir} \
@@ -44,9 +46,9 @@ INCS = \
  -I${top_srcdir}/gui/shared/res \
  -I${top_srcdir}/gui/npsdk 
 
-CFLAGS = @CPPFLAGS@ ${DEFS} ${OPTS} ${INCS} ${X_CFLAGS} 
+CFLAGS = @CPPFLAGS@ ${DEFS} ${OPTS} ${INCS} ${NSDEJAVU_CFLAGS} 
 
-LIBS = @LDFLAGS@ ${NSDEJAVU_LIBS} ${X_LIBS}
+LIBS = @LDFLAGS@ ${NSDEJAVU_LIBS} 
 
 all: nsdejavu.la nsdejavu.x nsdejavu.1
 
@@ -54,7 +56,7 @@ nsdejavu.lo: nsdejavu.c
 
 nsdejavu.la: nsdejavu.lo
 	${LIBTOOL} --mode=link ${CC} ${CFLAGS} nsdejavu.lo ${LIBS} \
-	  -no-undefined -rpath ${plugindir} -module -o $@
+	  -rpath ${plugindir} -module -o $@
 
 nsdejavu.x: nsdejavu.la FORCE
 	eval `grep '^dlname=' nsdejavu.la` && \

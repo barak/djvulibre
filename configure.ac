@@ -267,6 +267,25 @@ then
 fi
 
 
+# ----------------------------------------
+# Nsdejavu stuff
+# ----------------------------------------
+
+NSDEJAVU_CFLAGS=
+NSDEJAVU_LIBS=
+if test x$ac_enable_djview != xno 
+then
+ NSDEJAVU_CFLAGS=${X_CFLAGS}
+ case "$host" in
+ *-cygwin* | *-mingw*)
+   NSDEJAVU_LIBS="`echo ${X_LIBS} | sed -e 's/-lXext/-lXt -lXext/'`"
+   NSDEJAVU_LIBS="-no-undefined $NSDEJAVU_LIBS"
+   ;;
+ esac
+fi
+AC_SUBST(NSDEJAVU_CFLAGS)
+AC_SUBST(NSDEJAVU_LIBS)
+
 
 # ----------------------------------------
 # Extra
@@ -421,9 +440,12 @@ AH_TOP([
 
 # L18N Macros
 AH_BOTTOM([
+
 /* - Miscellaneous */
 #define AUTOCONF 1
-#define UNIX 1
+#if defined(__CYGWIN32__) || !defined(WIN32)
+# define UNIX 1
+#endif
 
 /* - BOOL */
 #if !defined(HAVE_BOOL) && !defined(bool)
