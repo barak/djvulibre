@@ -45,7 +45,7 @@ all: ${ALLTARGETS}
 
 djview.menu: Makefile
 	( echo '?package(djview):needs="X11" '\\;\
-	  echo '    section="Apps/Graphics" '\\;\
+	  echo '    section="Apps/Viewers" '\\;\
 	  echo '    title="DjView" command="${bindir}/djview" '\\;\
 	  echo '    icon="${dtop_pixmaps}/djvu.xpm"';\
 	) > djview.menu
