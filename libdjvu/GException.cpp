@@ -219,11 +219,7 @@ GExceptionHandler::emthrow(const GException &gex)
     {
       DjVuPrintErrorUTF8("\n*** Unhandled exception");
       gex.perror();
-#ifndef UNDER_CE
       abort();
-#else
-      exit(EXIT_FAILURE);
-#endif
     }
 }
 
@@ -261,24 +257,21 @@ GExceptionHandler::rethrow(void)
 // This is not activated when C++ memory management
 // is overidden.  The overriding functions handle
 // memory exceptions by themselves.
-#if defined(_MSC_VER)
+# if defined(_MSC_VER)
 // Microsoft is different!
 static int throw_memory_error(size_t) { G_THROW(GException::outofmemory); return 0; }
-#ifndef UNDER_CE
-// Does not exist under CE, check for null and throw an exception instead.
 static int (*old_handler)(size_t) = _set_new_handler(throw_memory_error);
-#endif
-#else // !_MSC_VER
+# else // !_MSC_VER
 // Standard C++
 static void throw_memory_error() { G_THROW(GException::outofmemory); }
-#if !defined(WIN32) && !defined(__CYGWIN32__) && !defined(OS2)
-#ifdef HAVE_STDINCLUDES
+#  if !defined(WIN32) && !defined(__CYGWIN32__) && !defined(OS2)
+#   ifdef HAVE_STDINCLUDES
 static void (*old_handler)() = std::set_new_handler(throw_memory_error);
-#else
+#   else
 static void (*old_handler)() = set_new_handler(throw_memory_error);
-#endif // HAVE_STDINCLUDES
-#endif // ! WIN32
-#endif // !_MSC_VER
+#   endif // HAVE_STDINCLUDES
+#  endif // ! WIN32
+# endif // !_MSC_VER
 #endif // !NEED_DJVU_MEMORY
 
 

@@ -77,7 +77,6 @@ namespace DJVU {
 
 DjVuFileCache::~DjVuFileCache(void) {}
 
-#ifndef UNDER_CE
 int
 DjVuFileCache::Item::qsort_func(const void * el1, const void * el2)
 {
@@ -263,9 +262,6 @@ DjVuFileCache::file_deleted(const GP<DjVuFile> &) {}
 
 void
 DjVuFileCache::file_cleared(const GP<DjVuFile> &) {}
-
-#endif
-
 
 #ifdef HAVE_NAMESPACES
 }

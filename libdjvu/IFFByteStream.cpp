@@ -68,9 +68,7 @@
 // This has been changed by Lizardtech to fit better 
 // with their re-implementation of ByteStreams.
 
-#ifndef UNDER_CE
 #include <assert.h>
-#endif
 #include "IFFByteStream.h"
 
 
@@ -317,9 +315,7 @@ IFFByteStream::put_chunk(const char *chkid, int insert_magic)
     G_THROW( ERR_MSG("IFFByteStream.bad_chunk") );
 
   // Write padding byte
-#ifndef UNDER_CE
   assert(seekto <= offset);
-#endif
   memset((void*)buffer, 0, 8);
   if (offset & 1)
     offset += bs->write((void*)&buffer[4], 1);
@@ -405,9 +401,7 @@ IFFByteStream::close_chunk()
   // Remove ctx record
   IFFContext *octx = ctx;
   ctx = octx->next;
-#ifndef UNDER_CE
   assert(ctx==0 || ctx->bComposite);
-#endif
   delete octx;
 }
 

@@ -80,11 +80,9 @@
 #include <string.h>
 
 #ifdef WIN32
-#include <atlbase.h>
-#include <windows.h>
-#ifndef UNDER_CE
-#include <direct.h>
-#endif /* UNDER CE */
+# include <atlbase.h>
+# include <windows.h>
+# include <direct.h>
 #endif /* WIN32 */
 
 // -- MAXPATHLEN
@@ -235,13 +233,11 @@ void
 GURL::convert_slashes(void)
 {
    GUTF8String xurl(get_string());
-#ifndef UNIX
+#if defined(WIN32)
    const int protocol_length=protocol(xurl).length();
    for(char *ptr=(xurl.getbuf()+protocol_length);*ptr;ptr++)
-   {
      if(*ptr == backslash)
        *ptr=slash;
-   }
    url=xurl;
 #endif
 }
@@ -1134,7 +1130,8 @@ url_from_UTF8filename(const GUTF8String &gfilename)
   } 
   const char *filename=gfilename;
   if(filename && (unsigned char)filename[0] == (unsigned char)0xEF
-     && (unsigned char)filename[1] == (unsigned char)0xBB && (unsigned char)filename[2] == (unsigned char)0xBF)
+     && (unsigned char)filename[1] == (unsigned char)0xBB 
+     && (unsigned char)filename[2] == (unsigned char)0xBF)
   {
     filename+=3;
   }
@@ -1238,7 +1235,8 @@ GURL::GURL(const GNativeString &xurl,const GURL &codebase)
   GURL retval(xurl.getNative2UTF8(),codebase);
   if(retval.is_valid())
   {
-#ifdef WIN32 // Hack for IE to change \\ to /
+#if defined(WIN32)
+    // Hack for IE to change \\ to /
     if(retval.is_local_file_url())
     {
       GURL::Filename::UTF8 retval2(retval.UTF8Filename());
@@ -1295,7 +1293,7 @@ GURL::UTF8Filename(void) const
       return GOS::basename(url_ptr);
     url_ptr += sizeof(filespec)-1;
   
-#ifdef macintosh
+#if defined(macintosh)
     //remove all leading slashes
     for(;*url_ptr==slash;url_ptr++)
       EMPTY_LOOP;
@@ -1327,7 +1325,7 @@ GURL::UTF8Filename(void) const
 #endif
 
     // Check if we are finished
-#ifdef macintosh
+#if defined(macintosh)
     {
       char *l_url;
       GPBuffer<char> gl_url(l_url,strlen(url_ptr)+1);
@@ -1390,31 +1388,28 @@ GURL::is_file(void) const
       retval=!(buf.st_mode & S_IFDIR);
     }
 #elif defined(WIN32)
-	GUTF8String filename(UTF8Filename());
-	if(filename.length() >= MAX_PATH)
-	{
-	  if(!filename.cmp("\\\\",2))
-	  {
-	    filename="\\\\?\\UNC"+filename.substr(1,-1);
-	  }else
-	  {
-        filename="\\\\?\\"+filename;
-	  }
-	}
-	wchar_t *wfilename;
-	const size_t wfilename_size=filename.length()+1;
-	GPBuffer<wchar_t> gwfilename(wfilename,wfilename_size);
-	filename.ncopy(wfilename,wfilename_size);
+    GUTF8String filename(UTF8Filename());
+    if(filename.length() >= MAX_PATH)
+      {
+        if(!filename.cmp("\\\\",2))
+          filename="\\\\?\\UNC"+filename.substr(1,-1);
+        else
+          filename="\\\\?\\"+filename;
+      }
+    wchar_t *wfilename;
+    const size_t wfilename_size=filename.length()+1;
+    GPBuffer<wchar_t> gwfilename(wfilename,wfilename_size);
+    filename.ncopy(wfilename,wfilename_size);
     DWORD dwAttrib;
-	dwAttrib = GetFileAttributesW(wfilename);
-	if((dwAttrib|1) == 0xFFFFFFFF)
-	{
-      USES_CONVERSION ;
-	  dwAttrib = GetFileAttributes(A2CT(NativeFilename())) ;//MBCS cvt
-    }
+    dwAttrib = GetFileAttributesW(wfilename);
+    if((dwAttrib|1) == 0xFFFFFFFF)
+      {
+        USES_CONVERSION ;
+        dwAttrib = GetFileAttributes(A2CT(NativeFilename())) ;//MBCS cvt
+      }
     retval=!( dwAttrib & FILE_ATTRIBUTE_DIRECTORY );
 #else
-#error "Define something here for your operating system"
+# error "Define something here for your operating system"
 #endif
   }
   return retval;
@@ -1430,28 +1425,25 @@ GURL::is_local_path(void) const
     struct stat buf;
     retval=!urlstat(*this,buf);
 #else
-	GUTF8String filename(UTF8Filename());
-	if(filename.length() >= MAX_PATH)
-	{
-	  if(!filename.cmp("\\\\",2))
-	  {
-	    filename="\\\\?\\UNC"+filename.substr(1,-1);
-	  }else
-	  {
-        filename="\\\\?\\"+filename;
-	  }
-	}
-	wchar_t *wfilename;
-	const size_t wfilename_size=filename.length()+1;
-	GPBuffer<wchar_t> gwfilename(wfilename,wfilename_size);
-	filename.ncopy(wfilename,wfilename_size);
+    GUTF8String filename(UTF8Filename());
+    if(filename.length() >= MAX_PATH)
+      {
+        if(!filename.cmp("\\\\",2))
+          filename="\\\\?\\UNC"+filename.substr(1,-1);
+        else
+          filename="\\\\?\\"+filename;
+      }
+    wchar_t *wfilename;
+    const size_t wfilename_size=filename.length()+1;
+    GPBuffer<wchar_t> gwfilename(wfilename,wfilename_size);
+    filename.ncopy(wfilename,wfilename_size);
     DWORD dwAttrib;
-	dwAttrib = GetFileAttributesW(wfilename);
-	if((dwAttrib|1) == 0xFFFFFFFF)
-	{
-      USES_CONVERSION ;
-	  dwAttrib = GetFileAttributes(A2CT(NativeFilename())) ;//MBCS cvt
-    }
+    dwAttrib = GetFileAttributesW(wfilename);
+    if((dwAttrib|1) == 0xFFFFFFFF)
+      {
+        USES_CONVERSION ;
+        dwAttrib = GetFileAttributes(A2CT(NativeFilename())) ;//MBCS cvt
+      }
     retval=( (dwAttrib|1) != 0xFFFFFFFF);
 #endif
   }
@@ -1474,32 +1466,28 @@ GURL::is_dir(void) const
       retval=(buf.st_mode & S_IFDIR);
     }
 #elif defined(WIN32)   // (either Windows or WCE)
-	GUTF8String filename(UTF8Filename());
-	if(filename.length() >= MAX_PATH)
-	{
-	  if(!filename.cmp("\\\\",2))
-	  {
-	    filename="\\\\?\\UNC"+filename.substr(1,-1);
-	  }else
-	  {
-        filename="\\\\?\\"+filename;
-	  }
-	}
-
-	wchar_t *wfilename;
-	const size_t wfilename_size=filename.length()+1;
-	GPBuffer<wchar_t> gwfilename(wfilename,wfilename_size);
-	filename.ncopy(wfilename,wfilename_size);
+    GUTF8String filename(UTF8Filename());
+    if(filename.length() >= MAX_PATH)
+      {
+        if(!filename.cmp("\\\\",2))
+          filename="\\\\?\\UNC"+filename.substr(1,-1);
+        else
+          filename="\\\\?\\"+filename;
+      }
+    wchar_t *wfilename;
+    const size_t wfilename_size=filename.length()+1;
+    GPBuffer<wchar_t> gwfilename(wfilename,wfilename_size);
+    filename.ncopy(wfilename,wfilename_size);
     DWORD dwAttrib;
-	dwAttrib = GetFileAttributesW(wfilename);
-	if((dwAttrib|1) == 0xFFFFFFFF)
-	{
-      USES_CONVERSION ;
-	  dwAttrib = GetFileAttributes(A2CT(NativeFilename())) ;//MBCS cvt
-    }
+    dwAttrib = GetFileAttributesW(wfilename);
+    if((dwAttrib|1) == 0xFFFFFFFF)
+      {
+        USES_CONVERSION ;
+        dwAttrib = GetFileAttributes(A2CT(NativeFilename())) ;//MBCS cvt
+      }
     retval=((dwAttrib != 0xFFFFFFFF)&&( dwAttrib & FILE_ATTRIBUTE_DIRECTORY ));
 #else
-#error "Define something here for your operating system"
+# error "Define something here for your operating system"
 #endif
   }
   return retval;
@@ -1531,29 +1519,29 @@ GURL::follow_symlinks(void) const
 int
 GURL::mkdir() const
 {
-  int retval;
-  if(!is_local_file_url())
-  {
-    retval=(-1);
-  }else
-  {
-    retval=0;
-    const GURL baseURL=base();
-    if(baseURL.get_string() != url && !baseURL.is_dir())
+  if(! is_local_file_url())
+    return -1;
+  int retval=0;
+  const GURL baseURL=base();
+  if (baseURL.get_string() != url && !baseURL.is_dir())
+    retval = baseURL.mkdir();
+  if(!retval)
     {
-      retval=baseURL.mkdir();
-    }
-    if(!retval)
-    {
-      retval=is_dir();
-#ifdef WIN32
+#if defined(UNIX)
+      if (is_dir())
+        retval = 0;
+      else 
+        retval = ::mkdir(NativeFilename(), 0755);
+#elif defined(WIN32)
       USES_CONVERSION;
-      retval =(is_dir()?0:CreateDirectory(A2CT(NativeFilename()), NULL));//MBCS cvt
+      if (is_dir())
+        retval = 0;
+      else 
+        retval = CreateDirectory(A2CT(NativeFilename()), NULL);
 #else
-      retval=(is_dir()?0:(::mkdir(NativeFilename(), 0755)));//MBCS cvt
+# error "Define something here for your operating system"
 #endif
     }
-  }
   return retval;
 }
 
@@ -1563,18 +1551,22 @@ GURL::mkdir() const
 int
 GURL::deletefile(void) const
 {
-  int retval=(-1);
+  int retval = -1;
   if(is_local_file_url())
-  {
-#ifdef WIN32
-    USES_CONVERSION;
-    retval=is_dir()
-      ?RemoveDirectory(A2CT(NativeFilename()))
-      :DeleteFile(A2CT(NativeFilename())); //MBCS cvt
+    {
+#if defined(UNIX)
+      if (is_dir())
+        retval = ::rmdir(NativeFilename());
+      else
+        retval = ::unlink(NativeFilename());
+#elif defined(WIN32)
+      USES_CONVERSION;
+      if (is_dir())
+        retval = ::RemoveDirectory(A2CT(NativeFilename()));
+      else
+        retval = ::DeleteFile(A2CT(NativeFilename()));
 #else
-    retval=is_dir()
-      ?rmdir(NativeFilename())
-      :unlink(NativeFilename());//MBCS cvt
+# error "Define something here for your operating system"
 #endif
   }
   return retval;
@@ -1598,7 +1590,7 @@ GURL::listdir(void) const
       retval.append(GURL::Native(de->d_name,*this));
     }
     closedir(dir);
-#elif defined (WIN32) && !defined (UNDER_CE)
+#elif defined (WIN32)
     GURL::UTF8 wildcard("*.*",*this);
     WIN32_FIND_DATA finddata;
     HANDLE handle = FindFirstFile(wildcard.NativeFilename(), &finddata);//MBCS cvt
@@ -1617,8 +1609,7 @@ GURL::listdir(void) const
       FindClose(handle);
     }
 #else
-    // WCE and MAC is missing
-    G_THROW( ERR_MSG("GURL.listdir") );
+# error "Define something here for your operating system"
 #endif
   }
   return retval;
@@ -1655,14 +1646,9 @@ GURL::cleardir(const int timeout) const
 int
 GURL::renameto(const GURL &newurl) const
 {
-#ifndef UNDER_CE
-  return (is_local_file_url() && newurl.is_local_file_url())
-    ?rename(NativeFilename(),newurl.NativeFilename())
-    :(-1);
-#else
-  G_THROW(ERR_MSG("GURL.no_rename"));
-  return 0;   // logically unnecessary, but the MS compiler needs it
-#endif
+  if (is_local_file_url() && newurl.is_local_file_url())
+    return rename(NativeFilename(),newurl.NativeFilename());
+  return -1;
 }
 
 // expand_name(filename[, fromdirname])
@@ -1677,7 +1663,7 @@ GURL::expand_name(const GUTF8String &xfname, const char *from)
   const size_t maxlen=xfname.length()*9+MAXPATHLEN+10;
   char * const string_buffer = retval.getbuf(maxlen);
   // UNIX implementation
-#ifdef UNIX
+#if defined(UNIX)
   // Perform tilde expansion
   GUTF8String senv;
   if (fname && fname[0]==tilde)
@@ -1770,7 +1756,7 @@ GURL::expand_name(const GUTF8String &xfname, const char *from)
       EMPTY_LOOP;
     *s = 0;
   }
-#elif defined (WIN32) && !defined (UNDER_CE) // WIN32 implementation
+#elif defined (WIN32) // WIN32 implementation
   // Handle base
   strcpy(string_buffer, (char const *)(from ? expand_name(from) : GOS::cwd()));
   //  GNativeString native;
@@ -1860,8 +1846,8 @@ GURL::expand_name(const GUTF8String &xfname, const char *from)
         for(;*s;s++) 
           EMPTY_LOOP;
         char* back = _tcsrchr(s2,backslash);//MBCS DBCS
-        if ((s>string_buffer)&&(*(s-1)!= slash)&&(back == NULL || (back!=NULL && s-1 != back) ))//MBCS DBCS
-          //if ((s>string_buffer)&&(*(s-1)!= slash)&&(*(s-1)!= backslash))
+        if ((s>string_buffer)&&(*(s-1)!= slash)&&
+            (back == NULL || (back!=NULL && s-1 != back) ))//MBCS DBCS
         {
           *s = backslash;
           s++;
@@ -1878,8 +1864,8 @@ GURL::expand_name(const GUTF8String &xfname, const char *from)
       for(;*s;s++) 
         EMPTY_LOOP;
       char* back = _tcsrchr(s2,backslash);//MBCS DBCS
-      if ((s>string_buffer)&&(*(s-1)!= slash)&&(back == NULL || (back!=NULL && s-1 != back) ))//MBCS DBCS
-        //if ((s == string_buffer)||((*(s-1)!= slash) && (*(s-1)!=backslash)))
+      if ((s>string_buffer)&&(*(s-1)!= slash)
+          &&(back == NULL || (back!=NULL && s-1 != back) ))//MBCS DBCS
       {
         *s = backslash;
         s++;
@@ -1949,10 +1935,8 @@ GURL::expand_name(const GUTF8String &xfname, const char *from)
     EMPTY_LOOP;
   *s = 0;
   return ((string_buffer[0]==colon)?(string_buffer+1):string_buffer);
-#elif   defined(UNDER_CE) || defined(OS2)
-  retval=fname;
 #else
-#error "Define something here for your operating system"
+# error "Define something here for your operating system"
 #endif  
   return retval;
 }

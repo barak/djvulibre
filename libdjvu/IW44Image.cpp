@@ -86,9 +86,7 @@
 #include "GOS.h"
 #endif
 
-#ifndef UNDER_CE
 #include <assert.h>
-#endif
 #include <string.h>
 #include <math.h>
 
@@ -1514,20 +1512,14 @@ IWBitmap::decode_chunk(GP<ByteStream> gbs)
       // Create ymap and ycodec
       int w = (tertiary.xhi << 8) | tertiary.xlo;
       int h = (tertiary.yhi << 8) | tertiary.ylo;
-#ifndef UNDER_CE
       assert(! ymap);
-#endif
       ymap = new Map(w, h);
-#ifndef UNDER_CE
       assert(! ycodec);
-#endif
       ycodec = new Codec::Decode(*ymap);
     }
   // Read data
-#ifndef UNDER_CE
   assert(ymap);
   assert(ycodec);
-#endif
   GP<ZPCodec> gzp=ZPCodec::create(gbs, false, true);
   ZPCodec &zp=*gzp;
   int flag = 1;
@@ -1766,10 +1758,8 @@ IWPixmap::decode_chunk(GP<ByteStream> gbs)
       if (secondary.major & 0x80)
         crcb_delay = -1;
       // Create ymap and ycodec    
-#ifndef UNDER_CE      
       assert(! ymap);
       assert(! ycodec);
-#endif
       ymap = new Map(w, h);
       ycodec = new Codec::Decode(*ymap);
       if (crcb_delay >= 0)
@@ -1781,10 +1771,8 @@ IWPixmap::decode_chunk(GP<ByteStream> gbs)
         }
     }
   // Read data
-#ifndef UNDER_CE      
   assert(ymap);
   assert(ycodec);
-#endif
   GP<ZPCodec> gzp=ZPCodec::create(gbs, false, true);
   ZPCodec &zp=*gzp;
   int flag = 1;

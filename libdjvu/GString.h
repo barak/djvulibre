@@ -114,10 +114,8 @@
 #include <stdarg.h>
 #ifdef WIN32
 # include <windows.h>
-# ifndef UNDER_CE
-#  define HAS_WCHAR 1
-#  define HAS_MBSTATE 1
-# endif
+# define HAS_WCHAR 1
+# define HAS_MBSTATE 1
 #endif
 
 #if HAS_WCHAR

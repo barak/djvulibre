@@ -72,10 +72,7 @@
 #include "GContainer.h"
 #include <stdarg.h>
 #include <stdio.h>
-#ifndef UNDER_CE
 #include <errno.h>
-#endif
-
 
 #ifdef HAVE_NAMESPACES
 namespace DJVU {

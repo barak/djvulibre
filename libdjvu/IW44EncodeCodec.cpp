@@ -86,9 +86,7 @@
 #include "GOS.h"
 #endif
 
-#ifndef UNDER_CE
 #include <assert.h>
-#endif
 #include <string.h>
 #include <math.h>
 

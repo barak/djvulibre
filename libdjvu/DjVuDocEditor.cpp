@@ -191,11 +191,7 @@ DjVuDocEditor::init(const GURL &url)
    {
          // Suxx. I need to convert it NOW.
          // We will unlink this file in the destructor
-#ifndef UNDER_CE
       tmp_doc_url=GURL::Filename::Native(tmpnam(0));
-#else
-      tmp_doc_url=GURL::Filename::UTF8("tempFileForDjVu");
-#endif
       const GP<ByteStream> gstr(ByteStream::create(tmp_doc_url, "wb"));
       tmp_doc->write(gstr, true);        // Force DJVM format
       gstr->flush();

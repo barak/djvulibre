@@ -78,9 +78,7 @@
 #include "JPEGDecoder.h"
 #include <stdlib.h>
 #include <math.h>
-#ifndef UNDER_CE
 #include <assert.h>
-#endif
 
 
 #ifdef HAVE_NAMESPACES
@@ -733,9 +731,7 @@ GPixmap::ordered_666_dither(int xmin, int ymin)
     for (i=0x19; i<256; i+=0x33)
       while (j <= i)
         quant[j++] = i-0x19;
-#ifndef UNDER_CE
     assert(i-0x19 == 0xff);
-#endif
     while (j< 256+0x33)
       quant[j++] = i-0x19;
     dither_ok = 1;

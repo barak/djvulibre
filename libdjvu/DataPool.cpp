@@ -68,13 +68,9 @@
 #include "GURL.h"
 #include "debug.h"
 
-#if defined(macintosh) //MCW can't compile
-#else
-#ifndef UNDER_CE 
-#include <sys/types.h>
+#ifndef macintosh
+# include <sys/types.h>
 #endif
-#endif
-
 
 #ifdef HAVE_NAMESPACES
 namespace DJVU {

@@ -75,9 +75,7 @@
 #ifdef WIN32
 # include <atlbase.h>
 # include <windows.h>
-# ifndef UNDER_CE
-#  include <direct.h>
-# endif
+# include <direct.h>
 #endif
 
 #ifdef OS2
@@ -141,12 +139,10 @@ namespace DJVU {
 char *
 strerror(int errno)
 {
-#ifndef UNDER_CE
   extern int sys_nerr;
   extern char *sys_errlist[];
   if (errno>0 && errno<sys_nerr) 
     return sys_errlist[errno];
-#endif
   return "unknown stdio error";
 }
 #endif
@@ -349,8 +345,6 @@ GOS::cwd(const GUTF8String &dirname)
   if (!result)
     G_THROW(errmsg());
   return GNativeString(result).getNative2UTF8();//MBCS cvt
-#elif defined(UNDER_CE)
-  return GUTF8String(dot) ;
 #elif defined (WIN32)
   char drv[2];
   if (dirname.length() && _chdir(dirname.getUTF82Native())==-1)//MBCS cvt
@@ -370,7 +364,6 @@ GUTF8String
 GOS::getenv(const GUTF8String &name)
 {
   GUTF8String retval;
-#ifndef UNDER_CE
   if(name.length())
   {
     const char *env=::getenv(name.getUTF82Native());
@@ -379,7 +372,6 @@ GOS::getenv(const GUTF8String &name)
       retval=GNativeString(env);
     }
   }
-#endif
   return retval;
 }
 

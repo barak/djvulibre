@@ -495,10 +495,10 @@ dopage(int pageno)
     {
       if (! strcmp(outputfilename,"-")) {
         fout = stdout;
-#if defined(WIN32)
-        _setmode(_fileno(fout), _O_BINARY);
-#elif defined(__CYGWIN32__)
+#if defined(__CYGWIN32__)
         setmode(fileno(fout), O_BINARY);
+#elif defined(WIN32)
+        _setmode(_fileno(fout), _O_BINARY);
 #endif
       } else if (! (fout = fopen(outputfilename, "wb")))
         die(i18n("Cannot open output file '%s'."), outputfilename);

@@ -84,9 +84,7 @@
 # include <pwd.h>
 # include <sys/types.h>
 #endif
-#ifndef UNDER_CE
-# include <locale.h>
-#endif
+#include <locale.h>
 #ifndef LC_MESSAGES
 # define LC_MESSAGES LC_ALL
 #endif
@@ -286,11 +284,9 @@ DjVuMessage::GetProfilePaths(void)
     GMap<GUTF8String,void *> pathsmap;
     GList<GURL> paths;
     GURL path;
-#if !defined(UNDER_CE)
     const GUTF8String envp(GOS::getenv(DjVuEnv));
     if(envp.length())
       appendPath(GURL::Filename::UTF8(envp),pathsmap,paths);
-#endif
 #if defined(WIN32) || defined(UNIX)
     GURL mpath(GetModulePath());
     if(!mpath.is_empty() && mpath.is_dir())
@@ -333,7 +329,6 @@ DjVuMessage::GetProfilePaths(void)
     pathsmap.empty();
 
     GPosition pos;
-#ifndef UNDER_CE
     GList< GMap<GUTF8String,GP<lt_XMLTags> > > localemaps;
     for(pos=paths;pos;++pos)
     {
@@ -433,13 +428,10 @@ DjVuMessage::GetProfilePaths(void)
     }
     for(pos=localepaths;pos;++pos)
       appendPath(localepaths[pos],pathsmap,realpaths);
-#endif
     for(pos=paths;pos;++pos)
       appendPath(paths[pos],pathsmap,realpaths);
-#ifndef UNDER_CE
     for(pos=osilocalepaths;pos;++pos)
       appendPath(osilocalepaths[pos],pathsmap,realpaths);
-#endif
     for(pos=paths;pos;++pos)
       {
         path=GURL::UTF8(opensourcedir,paths[pos]);
