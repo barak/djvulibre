@@ -75,7 +75,7 @@ OBJS = \
 	DjVmDir.o DjVmDoc.o DjVmDir0.o DjVuNavDir.o DjVuErrorList.o \
 	DjVuDocEditor.o DjVuToPS.o DjVuDumpHelper.o \
 	DjVuMessageLite.o DjVuMessage.o GUnicode.o UnicodeByteStream.o \
-	XMLParser.o XMLTags.o
+	XMLParser.o XMLTags.o ddjvuapi.o
 
 ${LIBDJVU_A} : ${OBJS}
 	@echo "[ generating $@ ... ]"

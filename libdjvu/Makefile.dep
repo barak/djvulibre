@@ -160,3 +160,4 @@ XMLTags.o: XMLTags.cpp ../config.h XMLTags.h GContainer.h GException.h \
   Arrays.h
 ZPCodec.o: ZPCodec.cpp ../config.h ZPCodec.h GContainer.h GException.h \
   DjVuGlobal.h GSmartPointer.h ByteStream.h Arrays.h
+ddjvuapi.o: ddjvuapi.cpp ../config.h ddjvu.h

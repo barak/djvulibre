@@ -54,5 +54,12 @@
 
 /* $Id$ */
 
+#ifdef HAVE_CONFIG_H
+# include "config.h"
+#endif
+#if NEED_GNUG_PRAGMAS
+# pragma implementation "ddjvu.h"
+#endif
+
 #include "ddjvu.h"
 
