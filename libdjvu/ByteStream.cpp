@@ -1081,35 +1081,52 @@ ByteStream::create(void const * const buffer, const size_t size)
 }
 
 GP<ByteStream>
-ByteStream::create(const GURL &url,char const * const mode)
+ByteStream::create(const GURL &url,char const * const xmode)
 {
   GP<ByteStream> retval;
-#if HAS_MEMMAP
-  if (!mode || (GUTF8String("rb") == mode))
-  {
-    const int fd=urlopen(url,O_RDONLY,0777);
-    if(fd>=0)
+  const char *mode = ((xmode) ? xmode : "rb");
+#ifdef UNIX
+  if (!strcmp(mode,"rb")) 
     {
-      MemoryMapByteStream *rb=new MemoryMapByteStream();
-      retval=rb;
-      GUTF8String errmessage=rb->init(fd,true);
-      if(errmessage.length())
-      {
-        retval=0;
-      }
-    }
-  }
-  if(!retval)
+      int fd = urlopen(url,O_RDONLY,0777);
+      if (fd >= 0)
+        {
+#if HAS_MEMMAP && defined(S_IFREG)
+          struct stat buf;
+          if ( (fstat(fd, &buf) >= 0) && (buf.st_mode & S_IFREG) )
+            {
+              MemoryMapByteStream *rb = new MemoryMapByteStream();
+              retval = rb;
+              GUTF8String errmessage = rb->init(fd,true);
+              if(errmessage.length())
+                retval=0;
+            }
 #endif
-  {
-    Stdio *sbs=new Stdio();
-    retval=sbs;
-    GUTF8String errmessage=sbs->init(url,mode?mode:"rb");
-    if(errmessage.length())
-    {
-      G_THROW(errmessage);
+          if (! retval)
+            {
+              FILE *f = fdopen(fd, mode);
+              if (f) 
+                {
+                  Stdio *sbs=new Stdio();
+                  retval=sbs;
+                  GUTF8String errmessage=sbs->init(f, mode, true);
+                  if(errmessage.length())
+                    retval=0;
+                }
+            }
+          if (! retval)
+            close(fd);
+        }     
     }
-  }
+#endif
+  if (! retval)
+    {
+      Stdio *sbs=new Stdio();
+      retval=sbs;
+      GUTF8String errmessage=sbs->init(url, mode);
+      if(errmessage.length())
+        G_THROW(errmessage);
+    }
   return retval;
 }
 
