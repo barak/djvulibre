@@ -62,7 +62,7 @@
 
 bool cgi = false;
 bool head = false;
-bool autoindirect = true;
+GUTF8String pathinfo;
 GUTF8String pathtranslated;
 GUTF8String requestmethod;
 GUTF8String querystring;
@@ -113,6 +113,34 @@ headers(const struct stat *statbuf)
   fprintdate(stdout, "Expires: %s\n", &tim);
 }
 
+bool
+is_djvu_file_bundled(GURL &pathurl)
+{
+  GP<ByteStream> in = ByteStream::create(pathurl,"rb");
+  GP<IFFByteStream> iff = IFFByteStream::create(in);
+  GUTF8String chkid;
+  iff->get_chunk(chkid);
+  // Make sure that this is a DjVu file.
+  if (chkid != "FORM:DJVU" &&
+      chkid != "FORM:DJVM" &&
+      chkid != "FORM:PM44" &&
+      chkid != "FORM:BM44"   )
+    G_THROW("Corrupted DjVu file");
+  // Test if it is bundled
+  if (chkid == "FORM:DJVM")
+    {
+      while (iff->get_chunk(chkid) && chkid!="DIRM")
+        iff->close_chunk();
+      if (chkid == "DIRM")
+        {
+          GP<ByteStream> dirm = iff->get_bytestream();
+          if (dirm->read8() & 0x80)
+            return true;
+        }
+    }
+  return false;
+}
+
 void 
 djvuserver_file(GURL pathurl)
 {
@@ -120,36 +148,19 @@ djvuserver_file(GURL pathurl)
   struct stat statbuf;
   if (stat((const char *)fname, &statbuf) < 0)
     G_THROW(strerror(errno));
-
-  // Automatically redirect as an indirect file
-  if (autoindirect)
+  
+  // Is this a bundled file?
+  if (is_djvu_file_bundled(pathurl))
     {
-      // Is this a bundled file?
-      GP<ByteStream> in = ByteStream::create(pathurl,"rb");
-      GP<IFFByteStream> iff = IFFByteStream::create(in);
-      GUTF8String chkid;
-      iff->get_chunk(chkid);
-      if (chkid == "FORM:DJVM")
-        {
-          while (iff->get_chunk(chkid) && chkid!="DIRM")
-            iff->close_chunk();
-          if (chkid == "DIRM")
-            {
-              GP<ByteStream> dirm = iff->get_bytestream();
-              if (dirm->read8() & 0x80)
-                {
-                  // It is bundled
-                  GUTF8String id = pathurl.name();
-                  fprintf(stdout,"Location: %s/index", (const char*)id);
-                  if (querystring.length())
-                    fprintf(stdout,"?%s", (const char*)querystring);
-                  fprintf(stdout,"\n\n");
-                  return;
-                }
-            }
-        }
+      // It is bundled
+      GUTF8String id = pathurl.name();
+      fprintf(stdout,"Location: %s/index", (const char*)id);
+      if (querystring.length())
+        fprintf(stdout,"?%s", (const char*)querystring);
+      fprintf(stdout,"\n\n");
+      return;
     }
-  // Simply push the file
+  // Push the file
   headers(&statbuf);
   if (head) 
     return;
@@ -264,9 +275,12 @@ main(int argc, char ** argv)
       if (argc == 1)
         {
           cgi = true;
+          pathinfo = GNativeString(getenv("PATH_INFO"));
           pathtranslated = GNativeString(getenv("PATH_TRANSLATED"));
-          if (! pathtranslated)
+          if (! pathinfo)
             usage();
+          if (! pathtranslated)
+            G_THROW("No path information");
           requestmethod = GNativeString(getenv("REQUEST_METHOD"));
           querystring = GUTF8String(getenv("QUERY_STRING"));
         }
@@ -305,12 +319,17 @@ main(int argc, char ** argv)
     {
       if (cgi)
         {
+          GUTF8String cause = DjVuMessageLite::LookUpUTF8(ex.get_cause());
+          fprintf(stdout,"Status: 400 %s\n", (const char*)cause);
           fprintf(stdout,"Content-Type: text/html\n\n");
-          fprintf(stdout,"<html><body><h2>Error executing djvuserve</h2><p><hr><pre>\n");
-          fprintf(stdout,"*** %s\n",(const char *)DjVuMessageLite::LookUpUTF8(ex.get_cause()));
-          fprintf(stdout,"*** REQUEST_METHOD=%s\n",(const char*)requestmethod);
-          fprintf(stdout,"*** PATH_TRANSLATED=%s\n",(const char*)pathtranslated);
-          fprintf(stdout,"</pre><hr></body></html>\n");
+          fprintf(stdout,
+                  "<!DOCTYPE HTML PUBLIC \"-//IETF//DTD HTML 2.0//EN\">\n"
+                  "<HTML><HEAD><TITLE>400 Error</TITLE></HEAD><BODY>\n"
+                  "<H1>%s</H1>The requested URL '%s' cannot be processed.<P>\n"
+                  "<HR><ADDRESS>djvuserve/DjVuLibre-" DJVULIBRE_VERSION "</ADDRESS>\n"
+                  "</BODY></HTML>\n",
+                  (const char *) cause,
+                  (const char *) pathinfo );
         }
       else
         {
