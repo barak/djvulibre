@@ -1067,15 +1067,9 @@ QDViewer::getURL(const GUTF8String &url_in, const GUTF8String &target)
       }
    } else
    {
-      // url protocol testing fails for the relative 
-	 // See if it's relative
-//        try
-//        {
-//  	     url=GURL::UTF8(url_in);
-//        } catch(...) {}
-
-//        if (url.is_empty())
-      url=GURL::UTF8(url_in,dimg->get_djvu_file()->get_url().base());
+     GURL base = dimg->get_djvu_file()->get_url().base();
+     base.clear_all_arguments();
+     url=GURL::UTF8(url_in,base);
    }
 
    if (!url.is_empty())
