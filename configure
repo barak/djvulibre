@@ -6126,10 +6126,11 @@ if test "${with_qt+set}" = set; then
 fi;
   test x$no_x = xyes && QTDIR=no
   # Resolve variables
+  ac_has_qt=no
   if test x$QTDIR != xno ; then
-    echo "$as_me:6130: checking for Qt root directory" >&5
+    echo "$as_me:6131: checking for Qt root directory" >&5
 echo $ECHO_N "checking for Qt root directory... $ECHO_C" >&6
-    if test x${QT_CFLAGS+set} = xset -o x${QT_LIBS+set} = xset ; then
+    if test x${QT_CFLAGS+set} = xset || test x${QT_LIBS+set} = xset ; then
        ac_has_qt=yes   # no questions asked
     else
        ac_has_qt=no    # check QTDIR
@@ -6138,44 +6139,45 @@ echo $ECHO_N "checking for Qt root directory... $ECHO_C" >&6
        ac_qt_dirs="$QTDIR /usr/lib/qt2 $ac_qt_dirs"
        for dir in $ac_qt_dirs ; do
           if test -r $dir/include/qwidget.h ; then
-            ac_has_qt="$dir"'/{lib,include}'
+            ac_has_qt="$dir/include+$dir/lib"
             QTDIR=$dir
             break
           fi
        done
     fi
-  fi
-  # Unusual install
-  if test x$ac_has_qt = xno -a x$QTDIR != xno ; then
-     ac_qt_names="qt qt2"
-     ac_qt_dirs="$QTDIR /usr /usr/X11R6 /usr/local"
-     for d in $ac_qt_dirs ; do
-       for n in $ac_qt_names ; do
-         if test -r $d/include/$n/qwidget.h ; then
-           for l in lib$n.so lib$n.a ; do
-             if test -r $d/include/$n/qwidget.h ; then
-               QT_CFLAGS="-I$d/include/$n"
-               QT_LIBS="-L$d -l$n"
-               QTDIR=$d
-               ac_has_qt="$d"'/{lib,include/'"$n"'}'
-               break 3
-             fi
-           done
-         fi
-       done
-     done
-  fi
-  echo "$as_me:6168: result: $ac_has_qt" >&5
+    # Unusual install
+    if test "x$ac_has_qt" = xno ; then
+      ac_qt_names="qt qt2"
+      ac_qt_dirs="$QTDIR /usr /usr/X11R6 /usr/local"
+      for d in $ac_qt_dirs ; do
+        for n in $ac_qt_names ; do
+          if test -r $d/include/$n/qwidget.h ; then
+            for l in lib$n.so lib$n.a ; do
+              if test -r $d/include/$n/qwidget.h ; then
+                QT_CFLAGS="-I$d/include/$n"
+                QT_LIBS="-L$d -l$n"
+                QTDIR=$d
+                ac_has_qt="$d/include/$n+$d/lib"
+                break 3
+              fi
+            done
+          fi
+        done
+      done
+    fi
+    # Print result
+    echo "$as_me:6169: result: $ac_has_qt" >&5
 echo "${ECHO_T}$ac_has_qt" >&6
+  fi
   # Programs
-  if test x$QTDIR != xno ; then
+  if test "x$ac_has_qt" != xno ; then
     test x${QT_CFLAGS+set} != xset && QT_CFLAGS="-I$QTDIR/include"
     test x${QT_LIBS+set} != xset && QT_LIBS="-L$QTDIR/lib -lqt"
     for ac_prog in moc moc2
 do
   # Extract the first word of "$ac_prog", so it can be a program name with args.
 set dummy $ac_prog; ac_word=$2
-echo "$as_me:6178: checking for $ac_word" >&5
+echo "$as_me:6180: checking for $ac_word" >&5
 echo $ECHO_N "checking for $ac_word... $ECHO_C" >&6
 if test "${ac_cv_path_MOC+set}" = set; then
   echo $ECHO_N "(cached) $ECHO_C" >&6
@@ -6192,7 +6194,7 @@ for ac_dir in $ac_dummy; do
   test -z "$ac_dir" && ac_dir=.
   if $as_executable_p "$ac_dir/$ac_word"; then
    ac_cv_path_MOC="$ac_dir/$ac_word"
-   echo "$as_me:6195: found $ac_dir/$ac_word" >&5
+   echo "$as_me:6197: found $ac_dir/$ac_word" >&5
    break
 fi
 done
@@ -6203,10 +6205,10 @@ fi
 MOC=$ac_cv_path_MOC
 
 if test -n "$MOC"; then
-  echo "$as_me:6206: result: $MOC" >&5
+  echo "$as_me:6208: result: $MOC" >&5
 echo "${ECHO_T}$MOC" >&6
 else
-  echo "$as_me:6209: result: no" >&5
+  echo "$as_me:6211: result: no" >&5
 echo "${ECHO_T}no" >&6
 fi
 
@@ -6218,7 +6220,7 @@ test -n "$MOC" || MOC="unknown"
 do
   # Extract the first word of "$ac_prog", so it can be a program name with args.
 set dummy $ac_prog; ac_word=$2
-echo "$as_me:6221: checking for $ac_word" >&5
+echo "$as_me:6223: checking for $ac_word" >&5
 echo $ECHO_N "checking for $ac_word... $ECHO_C" >&6
 if test "${ac_cv_path_UIC+set}" = set; then
   echo $ECHO_N "(cached) $ECHO_C" >&6
@@ -6235,7 +6237,7 @@ for ac_dir in $ac_dummy; do
   test -z "$ac_dir" && ac_dir=.
   if $as_executable_p "$ac_dir/$ac_word"; then
    ac_cv_path_UIC="$ac_dir/$ac_word"
-   echo "$as_me:6238: found $ac_dir/$ac_word" >&5
+   echo "$as_me:6240: found $ac_dir/$ac_word" >&5
    break
 fi
 done
@@ -6246,10 +6248,10 @@ fi
 UIC=$ac_cv_path_UIC
 
 if test -n "$UIC"; then
-  echo "$as_me:6249: result: $UIC" >&5
+  echo "$as_me:6251: result: $UIC" >&5
 echo "${ECHO_T}$UIC" >&6
 else
-  echo "$as_me:6252: result: no" >&5
+  echo "$as_me:6254: result: no" >&5
 echo "${ECHO_T}no" >&6
 fi
 
@@ -6258,14 +6260,15 @@ done
 test -n "$UIC" || UIC="unknown"
 
     if test -x "$MOC" ; then : ; else
-        { echo "$as_me:6261: WARNING: Cannot run the Qt Meta-Object compiler." >&5
+        { echo "$as_me:6263: WARNING: Cannot run the Qt Meta-Object compiler." >&5
 echo "$as_me: WARNING: Cannot run the Qt Meta-Object compiler." >&2;}
+        ac_has_qt=no
         QTDIR=no
     fi
   fi
   # Execute
-  if test x$QTDIR != xno ; then
-    echo "$as_me:6268: checking if a small Qt program runs" >&5
+  if test "x$ac_has_qt" != xno ; then
+    echo "$as_me:6271: checking if a small Qt program runs" >&5
 echo $ECHO_N "checking if a small Qt program runs... $ECHO_C" >&6
     ac_ext=cc
 ac_cpp='$CXXCPP $CPPFLAGS'
@@ -6278,12 +6281,12 @@ ac_compiler_gnu=$ac_cv_cxx_compiler_gnu
     CXXFLAGS="$CXXFLAGS $CFLAGS $QT_CFLAGS $X_CFLAGS"
     LIBS="$QT_LIBS $X_LIBS $LIBS"
     if test "$cross_compiling" = yes; then
-  { { echo "$as_me:6281: error: cannot run test program while cross compiling" >&5
+  { { echo "$as_me:6284: error: cannot run test program while cross compiling" >&5
 echo "$as_me: error: cannot run test program while cross compiling" >&2;}
    { (exit 1); exit 1; }; }
 else
   cat >conftest.$ac_ext <<_ACEOF
-#line 6286 "configure"
+#line 6289 "configure"
 #include "confdefs.h"
 
 #include <qfile.h>
@@ -6295,15 +6298,15 @@ QTextStream ts(&qf); ts << QT_VERSION; return 0;
 }
 _ACEOF
 rm -f conftest$ac_exeext
-if { (eval echo "$as_me:6298: \"$ac_link\"") >&5
+if { (eval echo "$as_me:6301: \"$ac_link\"") >&5
   (eval $ac_link) 2>&5
   ac_status=$?
-  echo "$as_me:6301: \$? = $ac_status" >&5
+  echo "$as_me:6304: \$? = $ac_status" >&5
   (exit $ac_status); } && { ac_try='./conftest$ac_exeext'
-  { (eval echo "$as_me:6303: \"$ac_try\"") >&5
+  { (eval echo "$as_me:6306: \"$ac_try\"") >&5
   (eval $ac_try) 2>&5
   ac_status=$?
-  echo "$as_me:6306: \$? = $ac_status" >&5
+  echo "$as_me:6309: \$? = $ac_status" >&5
   (exit $ac_status); }; }; then
   okay=yes
 else
@@ -6322,15 +6325,15 @@ ac_compile='$CXX -c $CXXFLAGS $CPPFLAGS conftest.$ac_ext >&5'
 ac_link='$CXX -o conftest$ac_exeext $CXXFLAGS $CPPFLAGS $LDFLAGS conftest.$ac_ext $LIBS >&5'
 ac_compiler_gnu=$ac_cv_cxx_compiler_gnu
 
-    echo "$as_me:6325: result: $okay" >&5
+    echo "$as_me:6328: result: $okay" >&5
 echo "${ECHO_T}$okay" >&6
   fi
   # Version
-  if test x$QTDIR != xno ; then
-     echo "$as_me:6330: checking Qt version" >&5
+  if test "x$ac_has_qt" != xno ; then
+     echo "$as_me:6333: checking Qt version" >&5
 echo $ECHO_N "checking Qt version... $ECHO_C" >&6
      qt_version=`cat < confout`
-     echo "$as_me:6333: result: $qt_version" >&5
+     echo "$as_me:6336: result: $qt_version" >&5
 echo "${ECHO_T}$qt_version" >&6
 
 cat >>confdefs.h <<EOF
@@ -6340,10 +6343,10 @@ EOF
      rm confout 2>/dev/null
   fi
   # Execute
-  if test x$QTDIR = xno ; then
+  if test "x$ac_has_qt" = xno ; then
     QT_CFLAGS= ; QT_LIBS= ; QTDIR= ; MOC=moc ;
      no_qt=yes
-  { echo "$as_me:6346: WARNING: Qt support is disabled" >&5
+  { echo "$as_me:6349: WARNING: Qt support is disabled" >&5
 echo "$as_me: WARNING: Qt support is disabled" >&2;}
   else
     :
@@ -6363,7 +6366,7 @@ else
 fi;
 if test x$no_threads = xyes ||
    test x$no_qt = xyes ; then
-   { echo "$as_me:6366: WARNING: Disabling compilation of djview.
+   { echo "$as_me:6369: WARNING: Disabling compilation of djview.
 --------------------------------------------------------
 *** The GUI portion of this package will not be compiled.
 *** This is probably not what you want.  Chech the output
@@ -6410,14 +6413,14 @@ fi
 
 # Work around broken compilers with the famous LPR0 bug
 if test x$ac_shared_libdjvu != xno && test x$GXX = xyes; then
-    echo "$as_me:6413: checking if $CXX has the LPR0 bug" >&5
+    echo "$as_me:6416: checking if $CXX has the LPR0 bug" >&5
 echo $ECHO_N "checking if $CXX has the LPR0 bug... $ECHO_C" >&6
     echo 'extern "C" { inline int sqr(int x) throw() { return x * x ; } } int main() {} ' > conftest.cc
     if ${CXX} -fPIC ${OPTS} conftest.cc -o conftest >/dev/null 2>/dev/null ; then
-        echo "$as_me:6417: result: no" >&5
+        echo "$as_me:6420: result: no" >&5
 echo "${ECHO_T}no" >&6
     else
-        echo "$as_me:6420: result: yes" >&5
+        echo "$as_me:6423: result: yes" >&5
 echo "${ECHO_T}yes" >&6
         OPTS=`echo $OPTS | sed -e 's/-mcpu=i686/-mpentium/'`
     fi
@@ -6425,10 +6428,10 @@ fi
 
 # What compiler are we using ?
 if test x$GXX != xyes ; then
-  { echo "$as_me:6428: WARNING: The recommended c++ compiler is g++." >&5
+  { echo "$as_me:6431: WARNING: The recommended c++ compiler is g++." >&5
 echo "$as_me: WARNING: The recommended c++ compiler is g++." >&2;}
   if test $ac_cv_cxx_exceptions = no ; then
-    { { echo "$as_me:6431: error: Exception support in c++ compiler is mandatory." >&5
+    { { echo "$as_me:6434: error: Exception support in c++ compiler is mandatory." >&5
 echo "$as_me: error: Exception support in c++ compiler is mandatory." >&2;}
    { (exit 1); exit 1; }; }
   fi
@@ -6447,12 +6450,12 @@ else
   esac
   case $action in
     error)
-        { { echo "$as_me:6450: error: Your c++ compiler ($cxxver) is outdated. Read the INSTALL file." >&5
+        { { echo "$as_me:6453: error: Your c++ compiler ($cxxver) is outdated. Read the INSTALL file." >&5
 echo "$as_me: error: Your c++ compiler ($cxxver) is outdated. Read the INSTALL file." >&2;}
    { (exit 1); exit 1; }; }
         ;;
     warn2)
-        { echo "$as_me:6455: WARNING: Your c++ compiler ($cxxver) has known problems.
+        { echo "$as_me:6458: WARNING: Your c++ compiler ($cxxver) has known problems.
 -------------------------------------------
 *** Please upgrade to gcc-2.95.3 or better.
 -------------------------------------------" >&5
@@ -6462,7 +6465,7 @@ echo "$as_me: WARNING: Your c++ compiler ($cxxver) has known problems.
 -------------------------------------------" >&2;}
         ;;
     warn3)
-        { echo "$as_me:6465: WARNING: Your c++ compiler ($cxxver) has known problems.
+        { echo "$as_me:6468: WARNING: Your c++ compiler ($cxxver) has known problems.
 -------------------------------------------
 *** Please upgrade to gcc-3.0.2 or better.
 -------------------------------------------" >&5
@@ -6478,7 +6481,7 @@ echo "$as_me: WARNING: Your c++ compiler ($cxxver) has known problems.
           2.96-8[5-9]*) ;;
           2.96-9*) ;;
           *)
-             { echo "$as_me:6481: WARNING: Your c++ compiler ($cxxver) has known problems.
+             { echo "$as_me:6484: WARNING: Your c++ compiler ($cxxver) has known problems.
 -------------------------------------------------------
 *** You have an early version of the gcc-2.96 compiler.
 *** The good news is that the new version works nicely.
@@ -6500,10 +6503,10 @@ fi
 # What version of QT are we using
 if test x${qt_version+set} = xset ; then
   if test "$qt_version" -lt 220 ; then
-     { echo "$as_me:6503: WARNING: We suggest using QT-2.2.0 or better." >&5
+     { echo "$as_me:6506: WARNING: We suggest using QT-2.2.0 or better." >&5
 echo "$as_me: WARNING: We suggest using QT-2.2.0 or better." >&2;}
   elif test "$qt_version" -ge 300 ; then
-     { echo "$as_me:6506: WARNING: We do not yet support QT-3.x." >&5
+     { echo "$as_me:6509: WARNING: We do not yet support QT-3.x." >&5
 echo "$as_me: WARNING: We do not yet support QT-3.x." >&2;}
   fi
 fi
@@ -6517,7 +6520,7 @@ case ${host_os} in
   hpux*) NSDEJAVU="nsdejavu.sl" ;;
 esac
 if test x${GXX} != xyes ; then
-    { echo "$as_me:6520: WARNING: Please verify that gui/nsdejavu/Makefile works with this compiler." >&5
+    { echo "$as_me:6523: WARNING: Please verify that gui/nsdejavu/Makefile works with this compiler." >&5
 echo "$as_me: WARNING: Please verify that gui/nsdejavu/Makefile works with this compiler." >&2;}
 fi
 
@@ -6664,7 +6667,7 @@ DEFS=-DHAVE_CONFIG_H
 : ${CONFIG_STATUS=./config.status}
 ac_clean_files_save=$ac_clean_files
 ac_clean_files="$ac_clean_files $CONFIG_STATUS"
-{ echo "$as_me:6667: creating $CONFIG_STATUS" >&5
+{ echo "$as_me:6670: creating $CONFIG_STATUS" >&5
 echo "$as_me: creating $CONFIG_STATUS" >&6;}
 cat >$CONFIG_STATUS <<_ACEOF
 #! $SHELL
@@ -6836,7 +6839,7 @@ cat >>$CONFIG_STATUS <<\EOF
     echo "$ac_cs_version"; exit 0 ;;
   --he | --h)
     # Conflict between --help and --header
-    { { echo "$as_me:6839: error: ambiguous option: $1
+    { { echo "$as_me:6842: error: ambiguous option: $1
 Try \`$0 --help' for more information." >&5
 echo "$as_me: error: ambiguous option: $1
 Try \`$0 --help' for more information." >&2;}
@@ -6855,7 +6858,7 @@ Try \`$0 --help' for more information." >&2;}
     ac_need_defaults=false;;
 
   # This is an error.
-  -*) { { echo "$as_me:6858: error: unrecognized option: $1
+  -*) { { echo "$as_me:6861: error: unrecognized option: $1
 Try \`$0 --help' for more information." >&5
 echo "$as_me: error: unrecognized option: $1
 Try \`$0 --help' for more information." >&2;}
@@ -6898,7 +6901,7 @@ do
   "gui/djview/Makefile" ) CONFIG_FILES="$CONFIG_FILES gui/djview/Makefile" ;;
   "gui/nsdejavu/Makefile" ) CONFIG_FILES="$CONFIG_FILES gui/nsdejavu/Makefile" ;;
   "config.h" ) CONFIG_HEADERS="$CONFIG_HEADERS config.h:config/config.h.in" ;;
-  *) { { echo "$as_me:6901: error: invalid argument: $ac_config_target" >&5
+  *) { { echo "$as_me:6904: error: invalid argument: $ac_config_target" >&5
 echo "$as_me: error: invalid argument: $ac_config_target" >&2;}
    { (exit 1); exit 1; }; };;
   esac
@@ -7142,7 +7145,7 @@ done; }
   esac
 
   if test x"$ac_file" != x-; then
-    { echo "$as_me:7145: creating $ac_file" >&5
+    { echo "$as_me:7148: creating $ac_file" >&5
 echo "$as_me: creating $ac_file" >&6;}
     rm -f "$ac_file"
   fi
@@ -7160,7 +7163,7 @@ echo "$as_me: creating $ac_file" >&6;}
       -) echo $tmp/stdin ;;
       [\\/$]*)
          # Absolute (can't be DOS-style, as IFS=:)
-         test -f "$f" || { { echo "$as_me:7163: error: cannot find input file: $f" >&5
+         test -f "$f" || { { echo "$as_me:7166: error: cannot find input file: $f" >&5
 echo "$as_me: error: cannot find input file: $f" >&2;}
    { (exit 1); exit 1; }; }
          echo $f;;
@@ -7173,7 +7176,7 @@ echo "$as_me: error: cannot find input file: $f" >&2;}
            echo $srcdir/$f
          else
            # /dev/null tree
-           { { echo "$as_me:7176: error: cannot find input file: $f" >&5
+           { { echo "$as_me:7179: error: cannot find input file: $f" >&5
 echo "$as_me: error: cannot find input file: $f" >&2;}
    { (exit 1); exit 1; }; }
          fi;;
@@ -7233,7 +7236,7 @@ for ac_file in : $CONFIG_HEADERS; do test "x$ac_file" = x: && continue
   * )   ac_file_in=$ac_file.in ;;
   esac
 
-  test x"$ac_file" != x- && { echo "$as_me:7236: creating $ac_file" >&5
+  test x"$ac_file" != x- && { echo "$as_me:7239: creating $ac_file" >&5
 echo "$as_me: creating $ac_file" >&6;}
 
   # First look for the input files in the build tree, otherwise in the
@@ -7244,7 +7247,7 @@ echo "$as_me: creating $ac_file" >&6;}
       -) echo $tmp/stdin ;;
       [\\/$]*)
          # Absolute (can't be DOS-style, as IFS=:)
-         test -f "$f" || { { echo "$as_me:7247: error: cannot find input file: $f" >&5
+         test -f "$f" || { { echo "$as_me:7250: error: cannot find input file: $f" >&5
 echo "$as_me: error: cannot find input file: $f" >&2;}
    { (exit 1); exit 1; }; }
          echo $f;;
@@ -7257,7 +7260,7 @@ echo "$as_me: error: cannot find input file: $f" >&2;}
            echo $srcdir/$f
          else
            # /dev/null tree
-           { { echo "$as_me:7260: error: cannot find input file: $f" >&5
+           { { echo "$as_me:7263: error: cannot find input file: $f" >&5
 echo "$as_me: error: cannot find input file: $f" >&2;}
    { (exit 1); exit 1; }; }
          fi;;
@@ -7374,7 +7377,7 @@ cat >>$CONFIG_STATUS <<\EOF
   rm -f $tmp/in
   if test x"$ac_file" != x-; then
     if cmp -s $ac_file $tmp/config.h 2>/dev/null; then
-      { echo "$as_me:7377: $ac_file is unchanged" >&5
+      { echo "$as_me:7380: $ac_file is unchanged" >&5
 echo "$as_me: $ac_file is unchanged" >&6;}
     else
       ac_dir=`$as_expr X"$ac_file" : 'X\(.*[^/]\)//*[^/][^/]*/*$' \| \

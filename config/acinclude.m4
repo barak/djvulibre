@@ -544,9 +544,10 @@ AC_DEFUN([AC_PATH_QT],
       [ test x$withval != xyes && QTDIR=$withval ])
   test x$no_x = xyes && QTDIR=no
   # Resolve variables
+  ac_has_qt=no
   if test x$QTDIR != xno ; then
     AC_MSG_CHECKING([for Qt root directory])
-    if test x${QT_CFLAGS+set} = xset -o x${QT_LIBS+set} = xset ; then
+    if test x${QT_CFLAGS+set} = xset || test x${QT_LIBS+set} = xset ; then
        ac_has_qt=yes   # no questions asked
     else
        ac_has_qt=no    # check QTDIR
@@ -555,47 +556,49 @@ AC_DEFUN([AC_PATH_QT],
        ac_qt_dirs="$QTDIR /usr/lib/qt2 $ac_qt_dirs"
        for dir in $ac_qt_dirs ; do
           if test -r $dir/include/qwidget.h ; then
-            ac_has_qt="$dir"'/{lib,include}'
+            ac_has_qt="$dir/include+$dir/lib"
             QTDIR=$dir
             break
           fi
        done
     fi
+    # Unusual install
+    if test "x$ac_has_qt" = xno ; then
+      ac_qt_names="qt qt2"
+      ac_qt_dirs="$QTDIR /usr /usr/X11R6 /usr/local"
+      for d in $ac_qt_dirs ; do
+        for n in $ac_qt_names ; do
+          if test -r $d/include/$n/qwidget.h ; then
+            for l in lib$n.so lib$n.a ; do
+              if test -r $d/include/$n/qwidget.h ; then
+                QT_CFLAGS="-I$d/include/$n"
+                QT_LIBS="-L$d -l$n"
+                QTDIR=$d
+                ac_has_qt="$d/include/$n+$d/lib"
+                break 3
+              fi
+            done
+          fi
+        done
+      done
+    fi
+    # Print result
+    AC_MSG_RESULT($ac_has_qt)
   fi
-  # Unusual install
-  if test x$ac_has_qt = xno -a x$QTDIR != xno ; then
-     ac_qt_names="qt qt2"
-     ac_qt_dirs="$QTDIR /usr /usr/X11R6 /usr/local"
-     for d in $ac_qt_dirs ; do
-       for n in $ac_qt_names ; do
-         if test -r $d/include/$n/qwidget.h ; then
-           for l in lib$n.so lib$n.a ; do
-             if test -r $d/include/$n/qwidget.h ; then
-               QT_CFLAGS="-I$d/include/$n"
-               QT_LIBS="-L$d -l$n"
-               QTDIR=$d
-               ac_has_qt="$d"'/{lib,include/'"$n"'}'
-               break 3
-             fi
-           done
-         fi
-       done
-     done
-  fi
-  AC_MSG_RESULT($ac_has_qt)
   # Programs
-  if test x$QTDIR != xno ; then
+  if test "x$ac_has_qt" != xno ; then
     test x${QT_CFLAGS+set} != xset && QT_CFLAGS="-I$QTDIR/include"
     test x${QT_LIBS+set} != xset && QT_LIBS="-L$QTDIR/lib -lqt"
     AC_PATH_PROGS(MOC, [moc moc2], [unknown], "$QTDIR/bin:$PATH")
     AC_PATH_PROGS(UIC, [uic uic2], [unknown], "$QTDIR/bin:$PATH")
     if test -x "$MOC" ; then : ; else 
         AC_MSG_WARN([Cannot run the Qt Meta-Object compiler.])
+        ac_has_qt=no
         QTDIR=no
     fi
   fi
   # Execute
-  if test x$QTDIR != xno ; then
+  if test "x$ac_has_qt" != xno ; then
     AC_MSG_CHECKING([if a small Qt program runs])
     AC_LANG_PUSH(C++)
     save_CXXFLAGS="$CXXFLAGS"
@@ -616,7 +619,7 @@ QTextStream ts(&qf); ts << QT_VERSION; return 0;
     AC_MSG_RESULT($okay)
   fi
   # Version
-  if test x$QTDIR != xno ; then
+  if test "x$ac_has_qt" != xno ; then
      AC_MSG_CHECKING([Qt version])
      qt_version=`cat < confout`
      AC_MSG_RESULT($qt_version)
@@ -625,7 +628,7 @@ QTextStream ts(&qf); ts << QT_VERSION; return 0;
      rm confout 2>/dev/null
   fi
   # Execute
-  if test x$QTDIR = xno ; then
+  if test "x$ac_has_qt" = xno ; then
     QT_CFLAGS= ; QT_LIBS= ; QTDIR= ; MOC=moc ;
     ifelse([$2],,:,[$2])        
   else
