@@ -52,7 +52,7 @@ distclean: FORCE
 	for d in ${SUBDIRS}; do ( cd $$d && ${MAKE} $@ ); done
 	-find . -name Makefile -exec ${RM} {} \;
 	-${RM} config.h config.log config.status
-	-${RM} Makefile libtool
+	-${RM} libtool
 
 install-desktop-files: FORCE
 	@echo "*** No need to do 'make install-desktop-files'."

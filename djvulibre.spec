@@ -1,16 +1,13 @@
 %define release 4
 %define version 3.5.13
-%define prefix %{?_prefix:%{_prefix}}%{!?_prefix:/usr}
-%define mandir %{?_mandir:%{_mandir}}%{!?_mandir:%{prefix}/man}
 
-Prefix: %{prefix}
 Summary: DjVu viewers, encoders and utilities.
 Name: djvulibre
 Version: %{version}
 Release: %{release}
 License: GPL
 Group: Applications/Publishing
-Source: http://prdownloads.sourceforge.net/djvu/djvulibre-%{version}.tar.gz
+Source: djvulibre-%{version}.tar.gz
 BuildRoot: %{_tmppath}/%{name}-root
 URL: http://djvu.sourceforge.net
 
@@ -65,11 +62,11 @@ find %{buildroot}%{_libdir} -name "*.so*" -exec chmod 755 {} \;
 rm -rf doc/CVS 2>/dev/null || :
 
 # Compute file list
-find %{buildroot} -print | \
- sed -e 's:^%{buildroot}::'                \
-     -e 's:^%{_mandir}/.*$:#&:'            \
-     -e 's:^%{_datadir}/djvu/osi/.*$:#&:'  \
-      > files.list
+find %{buildroot} -type f \
+| sed -e 's:^%{buildroot}::' \
+| grep -v '^%{_mandir}/' \
+| grep -v '^%{_datadir}/djvu/osi/' \
+> files.list
 
 %clean
 rm -rf %{buildroot}
@@ -80,7 +77,7 @@ rm -rf %{buildroot}
 # MENU: For debian-style menu systems
 if test -x /usr/bin/update-menus; then /usr/bin/update-menus; fi
 # HACK: Create links to nsdejavu.so in mozilla dirs
-( for n in %{prefix}/lib/mozilla*  ; do \
+( for n in %{_prefix}/lib/mozilla*  ; do \
   if [ -d $n ] ; then \
    test -d $n/plugins || mkdir $n/plugins ; \
    test -h $n/plugins/nsdjvu.so && rm $n/plugins/nsdjvu.so ; \
@@ -90,8 +87,8 @@ if test -x /usr/bin/update-menus; then /usr/bin/update-menus; fi
 
 %postun 
 # HACK: Remove links to nsdejavu.so in all mozilla dirs
-( if [ ! -r %{prefix}/lib/netscape/plugins/nsdejavu.so ] ; then \
-   for n in %{prefix}/lib/mozilla* ; do \
+( if [ ! -r %{_prefix}/lib/netscape/plugins/nsdejavu.so ] ; then \
+   for n in %{_prefix}/lib/mozilla* ; do \
     if [ -h $n/plugins/nsdejavu.so ] ; then \
      rm $n/plugins/nsdejavu.so ; \
      rmdir $n/plugins ; \
@@ -104,58 +101,51 @@ if test -x /usr/bin/update-menus; then /usr/bin/update-menus; fi
 %files -f files.list
 %defattr(-, root, root)
 %doc README COPYRIGHT COPYING INSTALL NEWS TODO doc
-%{_mandir}/man?
+%dir %{_libdir}/netscape
+%dir %{_includedir}/libdjvu
+%dir %{_datadir}/djvu
+%dir %{_datadir}/djvu/osi
+%dir %{_datadir}/djvu/pubtext
 %{_datadir}/djvu/osi/en
 %lang(ja) %{_datadir}/djvu/osi/ja*
 %lang(fr) %{_datadir}/djvu/osi/fr*
 %lang(de) %{_datadir}/djvu/osi/de*
 %lang(zh) %{_datadir}/djvu/osi/zh*
+%{_mandir}/man?
 %lang(ja) %{_mandir}/ja*
 %lang(fr) %{_mandir}/fr*
 %lang(de) %{_mandir}/de*
 
 %changelog
+* Thu Jun 17 2004 Leon Bottou <leon@bottou.org> 3.5.13-4
+- changed runtime generation of file list.
 * Mon May 31 2004 Leon Bottou <leon@bottou.org> 3.5.13-3
-- use libtool
+- removed 'make install-desktop-files'
 * Wed May  5 2004 Leon Bottou <leon@bottou.org> 3.5.13-2
-- own all directories
 * Fri Apr  9 2004 Leon Bottou <leon@bottou.org> 3.5.13-1
-- release 3.5.13
-* Thu Apr  8 2004 Leon Bottou <leon@bottou.org> 3.5.13.0.4
-- runtime generation of file list.
-* Fri Apr  2 2004 Leon Bottou <leon@bottou.org> 3.5.13.0.3
-- use DESTDIR instead of %makeinstall
-- make install-desktop-files.
-* Tue Nov 18 2003 Leon Bottou <leon@bottou.org> 3.5.13-0.1
-- new version
+- added runtime generation of file list.
+- using DESTDIR instead of %makeinstall.
+- added 'make install-desktop-files'
 * Wed Nov  5 2003 Leon Bottou <leon@bottou.org> 3.5.12-3
-- support for i18n
-- rename symlink in mozilla plugin dirs.
+- added support for i18n
+- renamed symlink in mozilla plugin dirs.
 * Mon Jul  7 2003 Leon Bottou <leon@bottou.org> 3.5.12-1
-- new version
 * Thu Apr 24 2003 Leon Bottou <leon@bottou.org> 3.5.11-1
-- new version
 * Thu Feb  6 2003 Leon Bottou <leon@bottou.org> 3.5.10-2
-- new version
 * Fri Jan 24 2003 Leon Bottou <leon@bottou.org> 3.5.10-1
-- new version
 * Wed Oct  9 2002 Leon Bottou <leonb@users.sourceforge.net> 3.5.9-2
 - fixed logic for uninstalling nsdejavu links.
-- copy stuff from the freshrpms spec file.
+- learned a few tricks from the freshrpms spec file.
 * Sun Oct  6 2002 Leon Bottou <leonb@users.sourceforge.net> 3.5.9-1
 - added logic to install nsdejavu for mozilla.
 * Wed May 29 2002 Leon Bottou <leonb@users.sourceforge.net> 3.5.6-1
-- new version
 * Mon Apr 1 2002  Leon Bottou <leonb@users.sourceforge.net> 3.5.5-2
-- changed group to Applications/Publishing
+- changed group to Applications/Publishing.
 * Tue Mar 25 2002 Leon Bottou <leonb@users.sourceforge.net> 3.5.5-2
-- new version
 * Tue Jan 22 2002 Leon Bottou <leonb@users.sourceforge.net> 3.5.4-2
-- fixed for properly locating the man directory.
+- added macros to locate man directory.
 * Wed Jan 16 2002 Leon Bottou <leonb@users.sourceforge.net> 3.5.3-1
-- new version
 * Fri Dec  7 2001 Leon Bottou <leonb@users.sourceforge.net> 3.5.2-1
-- new version
 * Wed Dec  5 2001 Leon Bottou <leonb@users.sourceforge.net> 3.5.1-1
-- created spec file for rh7.x.
+- created initial file.
 

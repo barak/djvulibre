@@ -320,10 +320,10 @@ struct ddjvu_message_info_s {   /* ddjvu_message_t::m_info */
    The URL follows the usual syntax (<"protocol://machine/path">). 
    It only serves two purposes:
    - The URL is used as a key for the cache of decoded pages.
-   - The URL is not used used to document <m_newstream> messages.
+   - The URL is used to document <m_newstream> messages.
 
    Setting argument <cache> to <TRUE> indicates that decoded pages
-   should be caches when possible.  This only works when
+   should be cached when possible.  This only works when
    argument <url> is not the null pointer.
 
    It is important to understand that the URL is not used to
@@ -401,14 +401,14 @@ ddjvu_document_get_user_data(ddjvu_document_t *document);
 
    Further <m_newstream> messages are generated to access
    the auxilliary files of indirect or indexed DjVu
-   documents.  Argument <name> then provides the basename of
+   documents.  Member <name> then provides the basename of
    the auxilliary file.
 
    Member <url> is set according to the url argument
    provided to function <ddjvu_document_create>.  The first
    newstream message always contain the url passed to
    <ddjvu_document_create>.  Subsequent newstream messages
-   contain the url of the auxilliary files of indirect or
+   contain the url of the auxilliary files for indirect or
    indexed DjVu documents. */
    
 struct ddjvu_message_newstream_s { /* ddjvu_message_t::m_newstream */
@@ -433,7 +433,7 @@ ddjvu_stream_write(ddjvu_document_t *document,
 
 /* ddjvu_stream_close ---
    Indicates that no more data will be provided on a
-   particular stream.  Argument <stop> should most likely be
+   particular stream.  Argument <stop> most likely should be
    set to <FALSE>. Setting argument <stop> to <TRUE>
    indicates that the user has interrupted the data transfer
    (for instance by pressing the stop button of a browser)
@@ -465,11 +465,11 @@ struct ddjvu_message_docinfo_s {
    decoding process. */
    
 typedef enum {
-  DDJVU_OPERATION_NOTSTARTED, /* decoding was not even started */
-  DDJVU_OPERATION_STARTED,    /* decoding is in progress */
-  DDJVU_OPERATION_OK,         /* decoding terminated successfully */
-  DDJVU_OPERATION_FAILED,     /* decoding failed because of an error */
-  DDJVU_OPERATION_STOPPED     /* decoding interrupted by user */
+  DDJVU_OPERATION_NOTSTARTED, /* operation was not even started */
+  DDJVU_OPERATION_STARTED,    /* operation is in progress */
+  DDJVU_OPERATION_OK,         /* operation terminated successfully */
+  DDJVU_OPERATION_FAILED,     /* operation failed because of an error */
+  DDJVU_OPERATION_STOPPED     /* operation was interrupted by user */
 } ddjvu_status_t;
 
 DDJVUAPI ddjvu_status_t
@@ -527,7 +527,7 @@ ddjvu_document_get_pagenum(ddjvu_document_t *document);
 
 DDJVUAPI ddjvu_page_t *
 ddjvu_page_create_by_pageno(ddjvu_document_t *document,
-                             int pageno);
+                            int pageno);
 
 /* ddjvu_page_create_by_pageid ---
    This function is similar to <ddjvu_page_create_by_pageno>
@@ -570,7 +570,7 @@ ddjvu_page_get_user_data(ddjvu_page_t *page);
 
 /* ddjvu_message_t::m_pageinfo ---
    This message is generated when the basic 
-   information about a page becomes available. */
+   information about a page is available. */
 
 struct ddjvu_message_pageinfo_s {  /* ddjvu_message_t::m_pageinfo */
   ddjvu_message_any_t  any;
@@ -591,8 +591,8 @@ struct ddjvu_message_relayout_s {  /* ddjvu_message_t::m_relayout */
 /* ddjvu_message_t::m_redisplay ---
    This message is generated when a DjVu viewer
    should call <ddjvu_page_render> and redisplay
-   the page because newly decoded DjVu data
-   provides more information. */
+   the page. This happens, for instance, when newly 
+   decoded DjVu data provides a better image. */
 
 struct ddjvu_message_redisplay_s { /* ddjvu_message_t::m_redisplay */
   ddjvu_message_any_t  any;
@@ -882,11 +882,11 @@ ddjvu_thumbnail_status(ddjvu_document_t *document, int pagenum, int start);
 
 
 /* ddjvu_message_t::m_thumbnail ---
-   This message is sent when additional thumbnails are available. */
+   This message is sent when additional thumbnails 
+   are available. */
 
 struct ddjvu_message_thumbnail_s { /* ddjvu_message_t::m_thumbnail */
   ddjvu_message_any_t  any;
-  int pagenum;
 }; 
 
 
@@ -910,18 +910,28 @@ ddjvu_thumbnail_render(ddjvu_document_t *document, int pagenum,
 
 
 /* -------------------------------------------------- */
-/* MORE                                               */
+/* PRINTING                                           */
 /* -------------------------------------------------- */
 
+/* To be defined ... */
 
+/* -------------------------------------------------- */
+/* SAVING                                             */
+/* -------------------------------------------------- */
 
-/* More should be defined here:
-   - access to annotations, hyperlinks, etc.
-   - access to text layer
-   - printing
-*/
-   
+/* To be defined ... */
 
+/* -------------------------------------------------- */
+/* ANNOTATIONS                                        */
+/* -------------------------------------------------- */
+
+/* To be defined ... */
+
+/* -------------------------------------------------- */
+/* HIDDEN TEXT                                        */
+/* -------------------------------------------------- */
+
+/* To be defined ... */
 
 /* -------------------------------------------------- */
 /* DJVU_MESSAGE_T                                     */

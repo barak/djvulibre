@@ -106,7 +106,9 @@ install-include: FORCE
 	${INSTALL} -m 0644 ${srcdir}/ddjvuapi.h ${DESTDIR}${includedir}/libdjvu
 
 depend: FORCE
-	${CXX} -MM ${CXXFLAGS} ${srcdir}/*.cpp > Makefile.dep
+	for n in ${srcdir}/*.cpp ; do \
+	  ${CXX} -MM ${CXXFLAGS} $$n -o `basename $$n .cpp`.lo ; \
+	done > Makefile.dep
 
 clean: FORCE
 	-${LIBTOOL} --mode=clean ${RM} 2>/dev/null *.lo *.la 
