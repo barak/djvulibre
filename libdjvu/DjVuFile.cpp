@@ -624,8 +624,7 @@ DjVuFile::process_incl_chunk(ByteStream & str, int file_num)
 
 
 void
-DjVuFile::report_error
-(const GException &ex,bool throw_errors)
+DjVuFile::report_error(const GException &ex,bool throw_errors)
 {
   data_pool->clear_stream();
   if((!verbose_eof)|| (ex.cmp_cause(ByteStream::EndOfFile)))

@@ -83,23 +83,24 @@ call_callback(void (* callback)(void *), void *cl_data)
     doesn't exceed MAX_OPEN_FILES. When it does, it looks for the oldest
     file, closes it and asks all DataPools working with it to ZERO
     their GP<> pointers. */
-   class DataPool::OpenFiles_File : public GPEnabled
-   {
-   public:
-      GURL			url;
-      GP<ByteStream>	        stream;		// Stream connected to 'url'
-      GCriticalSection		stream_lock;
-      GPList<DataPool>		pools_list;	// List of pools using this stream
-      GCriticalSection		pools_lock;
-      unsigned long		open_time;	// Time when stream was open
+class DataPool::OpenFiles_File : public GPEnabled
+{
+public:
+  GURL			url;
+  GP<ByteStream>	        stream;		// Stream connected to 'url'
+  GCriticalSection		stream_lock;
+  GPList<DataPool>		pools_list;	// List of pools using this stream
+  GCriticalSection		pools_lock;
+  unsigned long		open_time;	// Time when stream was open
+  
+  int	add_pool(GP<DataPool> &pool);
+  int	del_pool(GP<DataPool> &pool);
+  
+  OpenFiles_File(const GURL &url, GP<DataPool> &pool);
+  virtual ~OpenFiles_File(void);
+  void clear_stream(void);
+};
 
-      int	add_pool(GP<DataPool> &pool);
-      int	del_pool(GP<DataPool> &pool);
-      
-      OpenFiles_File(const GURL &url, GP<DataPool> &pool);
-      virtual ~OpenFiles_File(void);
-	  void clear_stream(void);
-   };
 class DataPool::OpenFiles : public GPEnabled
 {
 private:
@@ -142,26 +143,17 @@ DataPool::OpenFiles_File::~OpenFiles_File(void)
 {
    DEBUG_MSG("DataPool::OpenFiles_File::~OpenFiles_File(): Closing file '" << url << "'\n");
    DEBUG_MAKE_INDENT(3);
-
-      // Make all DataPools using this stream release it (so that
-      // the stream can actually be closed)
-   GCriticalSectionLock lock(&pools_lock);
-   for(GPosition pos=pools_list;pos;++pos)
-      pools_list[pos]->clear_stream();
+   clear_stream();
 }
 
 void
 DataPool::OpenFiles_File::clear_stream(void)
 {
-   GCriticalSectionLock lock(&pools_lock);
-   for(GPosition pos=pools_list;pos;++pos)
-   {
-	 if(pools_list[pos])
-	 {
-       pools_list[pos]->clear_stream();
-	 }
-   }
-   pools_list.empty();
+  GCriticalSectionLock lock(&pools_lock);
+  for(GPosition pos=pools_list;pos;++pos)
+    if(pools_list[pos])
+      pools_list[pos]->clear_stream(false);
+  pools_list.empty();
 }
 
 int
@@ -203,21 +195,21 @@ DataPool::OpenFiles::prune(void)
   DEBUG_MSG("DataPool::OpenFiles::prune(void): "<<files_list.size()<< "\n");
   DEBUG_MAKE_INDENT(3);
   while(files_list.size()>MAX_OPEN_FILES)
-  {
-    // Too many open files (streams). Get rid of the oldest one.
-    unsigned long oldest_time=GOS::ticks();
-    GPosition oldest_pos=files_list;
-    for(GPosition pos=files_list;pos;++pos)
     {
-      if (files_list[pos]->open_time<oldest_time)
-      {
-        oldest_time=files_list[pos]->open_time;
-        oldest_pos=pos;
-      }
+      // Too many open files (streams). Get rid of the oldest one.
+      unsigned long oldest_time=GOS::ticks();
+      GPosition oldest_pos=files_list;
+      for(GPosition pos=files_list;pos;++pos)
+        {
+          if (files_list[pos]->open_time<oldest_time)
+            {
+              oldest_time=files_list[pos]->open_time;
+              oldest_pos=pos;
+            }
+        }
+      files_list[oldest_pos]->clear_stream();
+      files_list.del(oldest_pos);
     }
-	files_list[oldest_pos]->clear_stream();
-    files_list.del(oldest_pos);
-  }
 }
 
 //			  GP<ByteStream> & stream,
@@ -259,18 +251,18 @@ DataPool::OpenFiles::request_stream(const GURL &url, GP<DataPool> pool)
 void
 DataPool::OpenFiles::stream_released(GP<ByteStream> &stream, GP<DataPool> pool)
 {
-   DEBUG_MSG("DataPool::OpenFiles::stream_release: stream=" << (void *)stream << " pool=" << (void *)pool << "\n");
+   DEBUG_MSG("DataPool::OpenFiles::stream_release: stream=" 
+             << (void *)stream << " pool=" << (void *)pool << "\n");
    DEBUG_MAKE_INDENT(3);
    GCriticalSectionLock lock(&files_lock);
    for(GPosition pos=files_list;pos;)
    {
-      GP<DataPool::OpenFiles_File> f=files_list[pos];
-      if ((ByteStream *)(f->stream)==(ByteStream *)stream && f->del_pool(pool)==0)
-      {
-	 GPosition this_pos=pos;
-	 ++pos;
-	 files_list.del(this_pos);
-      } else ++pos;
+     GPosition dpos = pos;
+     ++pos;
+     GP<DataPool::OpenFiles_File> f=files_list[dpos];
+     if ((ByteStream *)(f->stream) == (ByteStream *)stream)
+       if (f->del_pool(pool)==0)
+         files_list.del(dpos);
    }
 }
 
@@ -1107,146 +1099,154 @@ DataPool::get_data(void * buffer, int offset, int sz, int level)
    
    if (sz < 0)
      G_THROW( ERR_MSG("DataPool.bad_size") );
-
+   
    if (! sz)
      return 0;
-
-   if (pool)
-   {
-      DEBUG_MSG("DataPool::get_data(): from pool\n");
-      DEBUG_MAKE_INDENT(3);
-      int retval=0;
-      if (length>0 && offset+sz>length)
-        sz=length-offset;
-      if (sz<0)
-        sz=0;
-      for(;;)
-      {
-	    // Ask the underlying (master) DataPool for data. Note, that
-	    // master DataPool may throw the "DATA_POOL_REENTER" exception
-	    // demanding all readers to restart. This happens when
-	    // a DataPool in the chain of DataPools stops. All readers
-	    // should return to the most upper level and then reenter the
-	    // DataPools hierarchy. Some of them will be stopped by
-            // DataPool::Stop exception.
-	 G_TRY
-         {
-	    if(stop_flag||stop_blocked_flag&&!is_eof()&&!has_data(offset, sz))
-              G_THROW( DataPool::Stop );
-	    retval=pool->get_data(buffer, start+offset, sz, level+1);
-	 } G_CATCH(exc) {
-            pool->clear_stream();
-//            if (strcmp(exc.get_cause(), "DataPool.reenter") || level)
-            if ((exc.get_cause() != GUTF8String( ERR_MSG("DataPool.reenter") ) ) || level)
-	      G_RETHROW;
-	 } G_ENDCATCH;
-         pool->clear_stream();
-         return retval;
-      }
-   }else if(data && data->is_static() && eof_flag)
-   { 
-      DEBUG_MSG("DataPool::get_data(): static\n");
-      DEBUG_MAKE_INDENT(3);
-	 // We're not connected to anybody => handle the data
-      int size=block_list->get_range(offset, sz);
-      if (size>0)
-      {
-	    // Hooray! Some data is there
-	 GCriticalSectionLock lock(&data_lock);
-	 data->seek(offset, SEEK_SET);
-	 return data->readall(buffer, size);
-      }
-      return 0;
-   } else if (furl.is_local_file_url())
-   {
-      DEBUG_MSG("DataPool::get_data(): from file\n");
-      DEBUG_MAKE_INDENT(3);
-      if (length>0 && offset+sz>length)
-        sz=length-offset;
-      if (sz<0)
-        sz=0;
-      
-      GP<OpenFiles_File> f=fstream;
-      if (!f)
-      {
-        GCriticalSectionLock lock(&class_stream_lock);
-        f=fstream;
-        if(!f)
-        {
-          fstream=f=OpenFiles::get()->request_stream(furl, this);
-        }
-      }
-      GCriticalSectionLock lock2(&(f->stream_lock));
-      f->stream->seek(start+offset, SEEK_SET); 
-      return f->stream->readall(buffer, sz);
-   } 
-   else
-   {
-      DEBUG_MSG("DataPool::get_data(): direct\n");
-      DEBUG_MAKE_INDENT(3);
-	 // We're not connected to anybody => handle the data
-      int size=block_list->get_range(offset, sz);
-      if (size>0)
-      {
-	    // Hooray! Some data is there
-	 GCriticalSectionLock lock(&data_lock);
-	 data->seek(offset, SEEK_SET);
-	 return data->readall(buffer, size);
-      }
-
-	 // No data available.
-
-	 // If there is no data and nothing else is expected, we can do
-	 // two things: throw ByteStream::EndOfFile exception or return ZERO bytes.
-	 // The exception is for the cases when the data flow has been
-	 // terminated in the middle. ZERO bytes is for regular read() beyond
-	 // the boundaries of legal data. The problem is to distinguish
-	 // these two cases. We do it here with the help of analysis of the
-	 // IFF structure of the data (which sets the 'length' variable).
-	 // If we attempt to read beyond the [0, length[, ZERO bytes will be
-	 // returned. Otherwise an ByteStream::EndOfFile exception will be thrown.
-      if (eof_flag)
-      {
-	 if (length>0 && offset<length) 
-         {
-           G_THROW( ByteStream::EndOfFile );
-	 }else 
-         {
-           return 0;
-         }
-      } 
-	 // Some data is still expected => add this reader to the
-	 // list of readers and call virtual wait_for_data()
-      DEBUG_MSG("DataPool::get_data(): There is no data in the pool.\n");
-      DEBUG_MSG("offset=" << offset << ", size=" << sz <<
-		", data_size=" << data->size() << "\n");
-      GP<Reader> reader=new Reader(offset, sz);
-      G_TRY {
-	       {
-	          GCriticalSectionLock slock(&readers_lock);
-	          readers_list.append(reader);
-	       }
-	       wait_for_data(reader);
-      } G_CATCH_ALL {
-	       {
-	          GCriticalSectionLock slock(&readers_lock);
-	          GPosition pos;
-	          if (readers_list.search(reader, pos)) readers_list.del(pos);
-	       }
-	       G_RETHROW;
-      } G_ENDCATCH;
    
-      {
-	       GCriticalSectionLock slock(&readers_lock);
-	       GPosition pos;
-	       if (readers_list.search(reader, pos)) readers_list.del(pos);
-      }
-
-	 // This call to get_data() should return immediately as there MUST
-	 // be data in the buffer after wait_for_data(reader) returns
-	 // or eof_flag should be TRUE
-      return get_data(buffer, reader->offset, reader->size, level);
-   }
+   if (pool)
+     {
+       DEBUG_MSG("DataPool::get_data(): from pool\n");
+       DEBUG_MAKE_INDENT(3);
+       int retval=0;
+       if (length>0 && offset+sz>length)
+         sz=length-offset;
+       if (sz<0)
+        sz=0;
+       for(;;)
+         {
+           // Ask the underlying (master) DataPool for data. Note, that
+           // master DataPool may throw the "DATA_POOL_REENTER" exception
+           // demanding all readers to restart. This happens when
+           // a DataPool in the chain of DataPools stops. All readers
+           // should return to the most upper level and then reenter the
+           // DataPools hierarchy. Some of them will be stopped by
+           // DataPool::Stop exception.
+           G_TRY
+             {
+               if(stop_flag||stop_blocked_flag&&!is_eof()&&!has_data(offset, sz))
+                 G_THROW( DataPool::Stop );
+               retval=pool->get_data(buffer, start+offset, sz, level+1);
+             } 
+           G_CATCH(exc) 
+             {
+               pool->clear_stream(true);
+               if ((exc.get_cause() != GUTF8String( ERR_MSG("DataPool.reenter") ) ) || level)
+                 G_RETHROW;
+             } G_ENDCATCH;
+           pool->clear_stream(true);
+           return retval;
+         }
+     }
+   else if(data && data->is_static() && eof_flag)
+     { 
+       DEBUG_MSG("DataPool::get_data(): static\n");
+       DEBUG_MAKE_INDENT(3);
+       // We're not connected to anybody => handle the data
+       int size=block_list->get_range(offset, sz);
+       if (size>0)
+         {
+           // Hooray! Some data is there
+           GCriticalSectionLock lock(&data_lock);
+           data->seek(offset, SEEK_SET);
+           return data->readall(buffer, size);
+         }
+       return 0;
+     } 
+   else if (furl.is_local_file_url())
+     {
+       DEBUG_MSG("DataPool::get_data(): from file\n");
+       DEBUG_MAKE_INDENT(3);
+       if (length>0 && offset+sz>length)
+         sz=length-offset;
+       if (sz<0)
+         sz=0;
+       
+       GP<OpenFiles_File> f=fstream;
+       if (!f)
+         {
+           GCriticalSectionLock lock(&class_stream_lock);
+           f=fstream;
+           if(!f)
+             {
+               fstream=f=OpenFiles::get()->request_stream(furl, this);
+             }
+         }
+       GCriticalSectionLock lock2(&(f->stream_lock));
+       f->stream->seek(start+offset, SEEK_SET); 
+       return f->stream->readall(buffer, sz);
+     } 
+   else
+     {
+       DEBUG_MSG("DataPool::get_data(): direct\n");
+       DEBUG_MAKE_INDENT(3);
+       // We're not connected to anybody => handle the data
+       int size=block_list->get_range(offset, sz);
+       if (size>0)
+         {
+           // Hooray! Some data is there
+           GCriticalSectionLock lock(&data_lock);
+           data->seek(offset, SEEK_SET);
+           return data->readall(buffer, size);
+         }
+       
+       // No data available.
+       
+       // If there is no data and nothing else is expected, we can do
+       // two things: throw ByteStream::EndOfFile exception or return ZERO bytes.
+       // The exception is for the cases when the data flow has been
+       // terminated in the middle. ZERO bytes is for regular read() beyond
+       // the boundaries of legal data. The problem is to distinguish
+       // these two cases. We do it here with the help of analysis of the
+       // IFF structure of the data (which sets the 'length' variable).
+       // If we attempt to read beyond the [0, length[, ZERO bytes will be
+       // returned. Otherwise an ByteStream::EndOfFile exception will be thrown.
+       if (eof_flag)
+         {
+           if (length>0 && offset<length) 
+             {
+               G_THROW( ByteStream::EndOfFile );
+             }
+           else 
+             {
+               return 0;
+             }
+         } 
+       // Some data is still expected => add this reader to the
+       // list of readers and call virtual wait_for_data()
+       DEBUG_MSG("DataPool::get_data(): There is no data in the pool.\n");
+       DEBUG_MSG("offset=" << offset << ", size=" << sz <<
+                 ", data_size=" << data->size() << "\n");
+       GP<Reader> reader=new Reader(offset, sz);
+       G_TRY 
+         {
+           {
+             GCriticalSectionLock slock(&readers_lock);
+             readers_list.append(reader);
+           }
+           wait_for_data(reader);
+         } 
+       G_CATCH_ALL 
+         {
+           {
+             GCriticalSectionLock slock(&readers_lock);
+             GPosition pos;
+             if (readers_list.search(reader, pos)) readers_list.del(pos);
+           }
+           G_RETHROW;
+         } 
+       G_ENDCATCH;
+       
+       {
+         GCriticalSectionLock slock(&readers_lock);
+         GPosition pos;
+         if (readers_list.search(reader, pos)) readers_list.del(pos);
+       }
+       
+       // This call to get_data() should return immediately as there MUST
+       // be data in the buffer after wait_for_data(reader) returns
+       // or eof_flag should be TRUE
+       return get_data(buffer, reader->offset, reader->size, level);
+     }
    return 0;
 }
 
@@ -1780,13 +1780,6 @@ DataPool::get_stream(void)
   }
 }
 
-#if 0
-void
-DataPool::clear_stream(void)
-{
-  fstream=0;
-}
-#endif
 
 inline
 DataPool::Counter::operator int(void) const

@@ -521,7 +521,7 @@ public:
    static void	close_all(void);
 
       // Internal. Used by 'OpenFiles'
-   void		clear_stream(const bool release=false);
+   void		clear_stream(const bool release = true);
 
       /** Useful in comparing data pools.  Returns true if dirived from
           same URL or bytestream. */
