@@ -1,5 +1,6 @@
-djvulibre (3.5.13.pre14-5) unstable; urgency=low
+djvulibre (3.5.13.pre14-5) unstable; urgency=medium
 
+  * debnonmoduluarstupidity: rebuild with libtiff4 (closes: #262848)
   * resolve mime types image/x-djvu vs image/x.djvu vs image/vnd.djvu:
     handle all, serve image/vnd.djvu, request other germane packages to
     switch, document in djvu(1) and nsdejavu(1) (closes: #257020)
