@@ -185,7 +185,7 @@ compute_line(GBitmap *bits)
   int h = bits->rows();
   int w = bits->columns();
   GTArray<int> mass(h);
-  int i, j, m;
+  int i, j, m, tm=0;
   for (i=0; i<h; i++)
     {
       unsigned char *row = (*bits)[i];
@@ -196,6 +196,7 @@ compute_line(GBitmap *bits)
         if (row[j+m-1])
           break;
       mass[i] = m;
+      tm += m;
     }
   i = -1;
   j = h;
