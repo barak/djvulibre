@@ -348,8 +348,8 @@ QDViewer::processCommand(int cmd)
 	 case IDC_ABOUT_PAGE:
 	    if (dimg && dimg->get_width() && dimg->get_height())
 	    {
-	       GNativeString desc=DjVuMessageLite::LookUpNative(dimg->get_long_description());
-	       showMessage(this, tr("DjVu: Page Information"), QString((const char *)desc), 1, 1);
+	       GUTF8String desc=DjVuMessageLite::LookUpUTF8(dimg->get_long_description());
+	       showMessage(this, tr("DjVu: Page Information"), QStringFromGString(desc), 1, 1);
 	    }
 	    break;
 
