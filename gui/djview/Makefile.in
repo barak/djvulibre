@@ -180,7 +180,7 @@ CXXFLAGS = @CXXFLAGS@ ${CXXRPOFLAGS} ${FLAGS}
 djview: ${OBJS}
 	${CXX} -o $@ ${CXXFLAGS} ${OBJS} ${LIBDJVU} ${LIBS}
 
-install: install-bin install-man
+install: install-bin install-man install-data
 
 install-bin: ${PROGRAM} FORCE
 	${INSTALL} -d ${bindir}
@@ -189,6 +189,14 @@ install-bin: ${PROGRAM} FORCE
 install-man: FORCE
 	${INSTALL} -d ${mandir}/man1
 	${INSTALL} -m 0644 ${srcdir}/djview.1 ${mandir}/man1
+
+install-data: FORCE
+	${INSTALL} -d ${datadir}/djvu/osi
+	test -r ${srcdir}/djview_help.djvu && \
+	  ${INSTALL} -m 0644 ${srcdir}/djview_help.djvu ${datadir}/djvu/osi
+	test -r ${srcdir}/djview_help.html && \
+	  ${INSTALL} -m 0644 ${srcdir}/djview_help.html ${datadir}/djvu/osi
+
 
 depend: ${MOCINCS} FORCE
 	( for n in ${CPP_SOURCES} ; do \

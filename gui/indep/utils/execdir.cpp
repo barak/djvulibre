@@ -42,51 +42,86 @@
 #include "config.h"
 #endif
 
-#include <qfileinfo.h>
-#include <qdir.h>
+#include "DjVuMessageLite.h"
+#include "DjVuMessage.h"
 
 #include "execdir.h"
 
-QString
-getExecDir(QString argv0)
+
+static GList<GURL>
+parsePATH(void)
 {
-   QString dir;
-
-   const char *progname=argv0;
-
-   if (progname && progname[0])
-   {
-      // find out if the progname exists in the path 
-      if (progname[0]!='.' && progname[0]!='/')
+  GList<GURL> retval;
+  const char *path=getenv("PATH");
+  if(path)
+  {
+    GNativeString p(path);
+    int from=0;
+    for(int to;(to=p.search(':',from))>0;from=to+1)
+    {
+      if(to > from)
       {
-	 char * path=getenv("PATH");
-	 if (path)
-	 {
-	    char * start=path;
-	    char * end;
-	    do
-	    {
-	       for(end=start;*end && *end!=':';end++);
-	       if (end>start)
-	       {
-		  // +1 for '\0' required by QCString
-		  QString pdir=QCString(start, end-start+1);
-		  QFileInfo fi=QFileInfo(QDir(pdir), progname);
-		  if (fi.isFile())
-		     return dir=fi.dirPath();
-	       }
-	       start=end+1;
-	    } while(*end);
-	 }
+        retval.append(GURL::Filename::Native(p.substr(from,to-from)));
       }
-
-      // it may be given as absolute/relative path 
-      QFileInfo fi=QFileInfo(progname);
-      if (fi.isFile())
-	 dir=fi.dirPath();
-      
-   }
-   return dir;
+    }
+    if((from+1)<(int)p.length())
+    {
+      retval.append(GURL::Filename::Native(p.substr(from,-1)));
+    }
+  }
+  return retval;
 }
 
-// end execdir.cpp
+GURL 
+getExecDir(void)
+{
+  // This is the same as GetModulePath in DjVuMessage.cpp
+ GURL retval;
+ GUTF8String &xprogramname=DjVuMessage::programname();
+ if(xprogramname.length())
+ {
+   if(xprogramname[1]=='/'
+     ||!xprogramname.cmp("../",3)
+     ||!xprogramname.cmp("./",2))
+   {
+     retval=GURL::Filename::UTF8(xprogramname);
+   }
+   if(retval.is_empty() || !retval.is_file())
+   {
+     GList<GURL> paths(parsePATH());
+     GMap<GUTF8String,void *> pathMAP;
+     for(GPosition pos=paths;pos;++pos)
+     {
+       retval=GURL::UTF8(xprogramname,paths[pos]);
+       const GUTF8String path(retval.get_string());
+       if(!pathMAP.contains(path))
+       {
+         if(retval.is_file())
+           break;
+         pathMAP[path]=0;
+       }
+     }
+   }
+   if (! retval.is_empty() )
+     retval = retval.follow_symlinks();
+   if (! retval.is_empty() )
+     retval = retval.base();
+ }
+ return retval;
+}
+
+GURL 
+getDjVuDataFile(const char *fname)
+{
+  GList<GURL> paths = DjVuMessage::GetProfilePaths();
+  GUTF8String file = fname;
+  for (GPosition pos=paths; pos; ++pos)
+    {
+      GURL url = GURL(file, paths[pos]);
+      if(url.is_file())
+        return url;
+    }
+  return GURL();
+}
+
+

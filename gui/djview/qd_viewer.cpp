@@ -50,6 +50,7 @@
 #include "GURL.h"
 #include "GOS.h"
 #include "exc_msg.h"
+#include "execdir.h"
 #include "names.h"
 #include "throw_error.h"
 #include "DjVuFileCache.h"
@@ -666,7 +667,7 @@ QDViewer::eventFilter(QObject *obj, QEvent *e)
 		     break;
 
 		  case '?':
-		     if (in_netscape) gotoStdPage("help.html");
+		     if (in_netscape) slotHelp();
 		     break;
 
                   default:
@@ -828,16 +829,16 @@ QDViewer::showUpgradeDialog(void)
 {
    if (in_netscape)
    {
-      if (!QMessageBox::information(this, tr("Upgrade DjVu now!"),
-				    tr("You are using an obsolete version of the\nDjVu plugin. ")+
-				    tr("To install the newest\nversion click \"Download\" and ")+
-				    tr("follow the\ninstructions.\n"),
-				    tr("&Download"), tr("&Ignore"), 0, 0, 1))
-	 gotoStdPage("download.html", true);
+     if (!QMessageBox::information(this, tr("Upgrade DjVu now!"),
+                                   tr("You are using an obsolete version of the\nDjVu plugin. "
+                                      "To install the newest\nversion click \"Download\" and "
+                                      "follow the\ninstructions.\n"),
+                                   tr("&Download"), tr("&Ignore"), 0, 0, 1))
+       getURL(DJVIEW_DOWNLOAD_URL, "_blank");
    } else
-      ::showError(this, tr("Upgrade DjVu now!"),
-		  tr("You are using an obsolete version of the\nDjVu plugin. ")+
-		  tr("Please upgrade the viewer to\nview this document.\n"));
+     ::showError(this, tr("Upgrade DjVu now!"),
+                 tr("You are using an obsolete version of the\nDjVu plugin. "
+                    "Please upgrade the viewer to\nview this document.\n"));
 }
 
 //************************** QDPort slots ************************************
@@ -977,38 +978,6 @@ QDViewer::slotNotifyDocFlagsChanged(const GP<DjVuDocument> & source, long set_ma
 }
 
 //***************************** GoTo stuff ***********************************
-void
-QDViewer::gotoStdPage(const GUTF8String &file_name, bool bypass_local)
-{
-   DEBUG_MSG("QDViewer::gotoStdPage(): moving to page \"" << file_name << "\"\n");
-   DEBUG_MAKE_INDENT(3);
-   
-   if (!in_netscape)
-   {
-      DEBUG_MSG("but we're not in netscape => do nothing.\n");
-      return;
-   }
-   
-   GURL url;
-
-#if 0
-   if (!bypass_local)
-   {
-      GUTF8String full_name=GURL::expand_name(file_name, (const char *)djvu_dir);
-      FILE * f=fopen(full_name, "r");
-      if (f)
-      {
-	 fclose(f);
-	 url=GURL::Filename::UTF8(full_name);
-	 getURL(url.get_string(), "_blank");
-	 return;
-      }
-   }
-#endif
-   url=GURL::UTF8(GUTF8String(DJVU_URL)+file_name);
-   getURL(url.get_string(), "_blank");
-}
-
 void
 QDViewer::gotoPage(int new_page)
 {
@@ -1332,13 +1301,24 @@ void
 QDViewer::slotHelp(void)
 {
    DEBUG_MSG("QDViewer::slotHelp(): showing help\n");
-   try
-   {
-      gotoStdPage("help.html");
-   } catch(const GException & exc)
-   {
-      showError(this, tr("DjVu Error"), exc);
-   }
+   if (in_netscape)
+     {
+       try
+         {
+           GURL helpurl;
+           helpurl = getDjVuDataFile(DJVIEW_HELP_DJVU);
+           if ( helpurl.is_empty() )
+             helpurl = getDjVuDataFile(DJVIEW_HELP_HTML);
+           if ( helpurl.is_empty() )
+             helpurl = GURL::UTF8(GUTF8String(DJVIEW_HELP_URL));
+           
+           getURL(helpurl.get_string(), "_blank");
+         } 
+       catch(const GException & exc)
+         {
+           showError(this, tr("DjVu Error"), exc);
+         }
+     }
 }
 
 void

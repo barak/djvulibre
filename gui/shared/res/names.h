@@ -51,9 +51,12 @@
 #else
 #define LIBRARY_NAME	"nsdejavu.so"
 #endif
-#define DJVIEW_NAME	"djview"
-#define DJEDIT_NAME	"djedit"
-#define DEJAVU_DIR	"DjVu/"
-#define DJVU_URL	"http://www.lizardtech.com/pluginfiles/unix/3.5/"
-#define DOWNLOAD_URL    "http://www.lizardtech.com/download.html"
+#define DJVIEW_NAME	    "djview"
+#define DJEDIT_NAME	    "djedit"
+
+#define DJVIEW_DOWNLOAD_URL   "http://www.djvuzone.org/download.html"
+#define DJVIEW_HELP_URL       "http://www.djvuzone.org/pluginfiles/unix/3.5/"
+#define DJVIEW_HELP_HTML      "djview_help.html"
+#define DJVIEW_HELP_DJVU      "djview_help.djvu"
+
 #endif

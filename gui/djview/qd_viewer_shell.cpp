@@ -49,6 +49,8 @@
 #include "cin_data.h"
 
 #include "qlib.h"
+#include "names.h"
+#include "execdir.h"
 #include "djvu_viewer_res.h"
 #include "throw_error.h"
 #include "DjVuDocument.h"
@@ -201,17 +203,16 @@ QDViewerShell::about(void)
 void
 QDViewerShell::help(void)
 {
-#if 0
-   GUTF8String fname=GURL::expand_name("help.djvu", djvu_dir);
-   if (QFileInfo(QStringFromGString(fname)).isFile())
-   {
-      createNewShell(GURL::Filename::UTF8(fname));
-   } else
-   {
-     QString mesg=tr("Failed to open file '")+QStringFromGString(fname)+"'";
-     showError(this, tr("DjVu Error"), mesg);
-   }
-#endif
+  GURL helpurl = getDjVuDataFile(DJVIEW_HELP_DJVU);
+  if (helpurl.is_empty() )
+    {
+      QString mesg=tr("Failed to locate file '")+DJVIEW_HELP_DJVU+"'";
+      showError(this, tr("DjVu Error"), mesg);
+    }
+  else
+    {
+      createNewShell(helpurl);
+    }
 }
 
 bool
@@ -509,7 +510,9 @@ QDViewerShell::QDViewerShell(QWidget * parent, const char * name)
    menu->insertSeparator();
    QPopupMenu * help_pane=new QPopupMenu();
    help_pane->insertItem(tr("&About"), IDC_ABOUT_DEJAVU);
-      //help_pane->insertItem("&Help", IDC_HELP_DEJAVU);
+   GURL helpurl = getDjVuDataFile(DJVIEW_HELP_DJVU);
+   if (! helpurl.is_empty() )
+     help_pane->insertItem("&Help", IDC_HELP_DEJAVU);
    connect(help_pane, SIGNAL(aboutToShow(void)), this, SLOT(slotAboutToShowMenu(void)));
    menu->insertItem(tr("&Help"), help_pane);
 

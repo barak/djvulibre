@@ -180,7 +180,6 @@ signals:
    void         sigToggleFullScreen(void);
 public:
    SavedData	getSavedData(void) const;
-   void		gotoStdPage(const GUTF8String &file_name, bool bypass_local=false);
    void		gotoPage(int page_num);
    void		print(void);
    void		savePageAs(void);

@@ -46,8 +46,9 @@
 
 
 #include "GString.h"
+#include "GURL.h"
 
-QString
-getExecDir(QString argv0);
+GURL getExecDir(void);
+GURL getDjVuDataFile(const char *fname);
 
 #endif
