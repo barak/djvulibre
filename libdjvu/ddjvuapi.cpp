@@ -1403,7 +1403,7 @@ fmt_convert_row(const GPixel *p, int w,
           if (! (m >>= 1)) { *buf++ = s; s=0; m=0x80; }
           p += 1;
         }
-        if (s < 0x80) { *buf++ = s; }
+        if (m < 0x80) { *buf++ = s; }
         break;
       }
     case DDJVU_FORMAT_LSBTOMSB: /* packed bits, lsb on the left */
@@ -1414,7 +1414,7 @@ fmt_convert_row(const GPixel *p, int w,
           if (! (m <<= 1)) { *buf++ = s; s=0; m=0x1; }
           p += 1;
         }
-        if (s > 0x1) { *buf++ = s; }
+        if (m > 0x1) { *buf++ = s; }
         break;
       }
     }
@@ -1499,7 +1499,7 @@ fmt_convert_row(unsigned char *p, unsigned char *g, int w,
           if (! (m >>= 1)) { *buf++ = s; s=0; m=0x80; }
           p += 1;
         }
-        if (s < 0x80) { *buf++ = s; }
+        if (m < 0x80) { *buf++ = s; }
         break;
       }
     case DDJVU_FORMAT_LSBTOMSB: /* packed bits, lsb on the left */
@@ -1510,7 +1510,7 @@ fmt_convert_row(unsigned char *p, unsigned char *g, int w,
           if (! (m <<= 1)) { *buf++ = s; s=0; m=0x1; }
           p += 1;
         }
-        if (s > 0x1) { *buf++ = s; }
+        if (m > 0x1) { *buf++ = s; }
         break;
       }
     }
