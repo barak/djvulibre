@@ -209,7 +209,7 @@ main(int argc, char ** argv)
 	    DEBUG_SET_LEVEL(level);
 	 }
 
-         FILE *fd=fopen("/dev/tty", "a");
+         FILE *fd=fopen("/tmp/djview.log", "w");
          if (fd) DjVuDebug::set_debug_file(fd);
       }
 #endif
