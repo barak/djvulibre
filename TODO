@@ -2,7 +2,7 @@
 By order of importance:
 
 - README file
-- manual pages
+- man page for djvused
 - change QDViewer::gotoStdPage
 - djvups executable
 - rpm packages for linux (rh6, rh7)
