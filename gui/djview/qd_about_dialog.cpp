@@ -69,7 +69,7 @@ QDAboutDialog::QDAboutDialog(QWidget *parent, const char *name, bool modal)
       frame->setFrameStyle(QFrame::Box | QFrame::Sunken);
       vlay->addWidget(frame);
       QVBoxLayout * frame_vlay=new QVBoxLayout(frame, 20, 10);
-      label=new QeLabel(tr("DjVu(tm) standalone viewer"), frame);
+      label=new QeLabel(tr("DjVu standalone viewer\nand browser plugin."), frame);
       QFont font=label->font();
       font.setBold(TRUE);
       font.setPointSize(font.pointSize()+3);
