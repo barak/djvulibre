@@ -57,14 +57,14 @@
 #ifndef _DJVUGLOBAL_H
 #define _DJVUGLOBAL_H
 #ifdef HAVE_CONFIG_H
-#include "config.h"
+# include "config.h"
 #endif
 #if NEED_GNUG_PRAGMAS
 # pragma interface
 #endif
 
 #if defined(UNDER_CE)
-# ifndef __WCEALT_H__	// Placement new also defined in wcealt.h
+# ifndef __WCEALT_H__
 inline void * operator new(size_t, void * ptr) { return ptr; }
 # endif
 #elif defined(AUTOCONF) && defined(HAVE_STDINCLUDES)
@@ -73,18 +73,18 @@ inline void * operator new(size_t, void * ptr) { return ptr; }
 # include <new.h>
 #endif
 
-#ifndef DJVU_STATIC_LIBRARY
-#ifdef WIN32 
-#define DLLIMPORT __declspec(dllimport)
-#define DLLEXPORT __declspec(dllexport)
-#else
-#define DLLIMPORT /**/
-#define DLLEXPORT /**/
+#ifdef WIN32
+# ifdef DLL_EXPORT
+#  define DJVUAPI __declspec(dllexport)
+# else
+#  ifdef LIBDJVU_DLL_IMPORT 
+#   define DJVUAPI __declspec(dllimport)
+#  endif
+# endif
 #endif
-#else /* DJVU_STATIC_LIBRARY */
-#define DLLIMPORT /**/
-#define DLLEXPORT /**/
-#endif /* DJVU_STATIC_LIBRARY */
+#ifndef DJVUAPI
+# define DJVUAPI
+#endif
 
 
 /** @name DjVuGlobal.h 
@@ -120,7 +120,7 @@ inline void * operator new(size_t, void * ptr) { return ptr; }
 
 #ifdef NEED_DJVU_MEMORY
 
-#include "DjVu.h"
+# include "DjVu.h"
 
 // These define the two callbacks needed for C++
 typedef void djvu_delete_callback(void *);
@@ -133,39 +133,39 @@ int djvu_memoryArray_callback ( djvu_delete_callback*, djvu_new_callback*);
 // We need to use this inline function in all modules, but we never want it to
 // appear in the symbol table.  It seems different compilers need different
 // directives to do this...
-#ifndef STATIC_INLINE
-#ifdef __GNUC__
-#define STATIC_INLINE extern inline
-#else /* !__GNUC__ */
-#define STATIC_INLINE static inline
-#endif /* __GNUC__ */
-#endif /* STATIC_INLINE */
+# ifndef STATIC_INLINE
+#  ifdef __GNUC__
+#   define STATIC_INLINE extern inline
+#  else /* !__GNUC__ */
+#   define STATIC_INLINE static inline
+#  endif /* __GNUC__ */
+# endif /* STATIC_INLINE */
 
 // This clause is used when overriding operator new
 // because the standard has slightly changed.
-#if defined( __GNUC__ ) && ( __GNUC__*1000 + __GNUC_MINOR__ >= 2091 )
-#ifndef new_throw_spec
-#define new_throw_spec throw(std::bad_alloc)
-#endif /* new_throw_spec */
-#ifndef delete_throw_spec
-#define delete_throw_spec throw()
-#endif /* delete_throw_spec */
-#endif /* __GNUC__ ... */
+# if defined( __GNUC__ ) && ( __GNUC__*1000 + __GNUC_MINOR__ >= 2091 )
+#  ifndef new_throw_spec
+#   define new_throw_spec throw(std::bad_alloc)
+#  endif /* new_throw_spec */
+#  ifndef delete_throw_spec
+#   define delete_throw_spec throw()
+#  endif /* delete_throw_spec */
+# endif /* __GNUC__ ... */
 // Old style
-#ifndef new_throw_spec
-#define new_throw_spec
-#endif /* new_throw_spec */
-#ifndef delete_throw_spec
-#define delete_throw_spec
-#endif  /* delete_throw_spec */
+# ifndef new_throw_spec
+#  define new_throw_spec
+# endif /* new_throw_spec */
+# ifndef delete_throw_spec
+#  define delete_throw_spec
+# endif  /* delete_throw_spec */
 
-#ifdef UNIX
+# ifdef UNIX
 extern djvu_new_callback *_djvu_new_ptr;
 extern djvu_new_callback *_djvu_newArray_ptr;
 extern djvu_delete_callback *_djvu_delete_ptr;
 extern djvu_delete_callback *_djvu_deleteArray_ptr;
 
-#ifndef NEED_DJVU_MEMORY_IMPLEMENTATION
+#  ifndef NEED_DJVU_MEMORY_IMPLEMENTATION
 void *operator new (size_t) new_throw_spec;
 void *operator new[] (size_t) new_throw_spec;
 void operator delete (void *) delete_throw_spec;
@@ -183,11 +183,11 @@ operator new [] (size_t sz) new_throw_spec
 STATIC_INLINE void
 operator delete [] (void *addr) delete_throw_spec
 { return (*_djvu_deleteArray_ptr)(addr); }
-#endif /* NEED_DJVU_MEMORY_IMPLEMENTATION */
+#  endif /* NEED_DJVU_MEMORY_IMPLEMENTATION */
 
-#else /* UNIX */
+# else /* UNIX */
 
-#ifndef NEED_DJVU_MEMORY_IMPLEMENTATION
+#  ifndef NEED_DJVU_MEMORY_IMPLEMENTATION
 STATIC_INLINE void *
 operator new(size_t sz) new_throw_spec
 { return _djvu_new(sz); }
@@ -200,16 +200,16 @@ operator new [] (size_t sz) new_throw_spec
 inline_as_macro void
 operator delete [] (void *addr) delete_throw_spec
 { _djvu_deleteArray(addr); }
-#endif /* !NEED_DJVU_MEMORY_IMPLEMENTATION */
+#  endif /* !NEED_DJVU_MEMORY_IMPLEMENTATION */
 
-#endif /* UNIX */
+# endif /* UNIX */
 
 #else
 
-#define _djvu_free(ptr) free((ptr))
-#define _djvu_malloc(siz) malloc((siz))
-#define _djvu_realloc(ptr,siz) realloc((ptr),(siz))
-#define _djvu_calloc(siz,items) calloc((siz),(items))
+# define _djvu_free(ptr) free((ptr))
+# define _djvu_malloc(siz) malloc((siz))
+# define _djvu_realloc(ptr,siz) realloc((ptr),(siz))
+# define _djvu_calloc(siz,items) calloc((siz),(items))
 
 #endif /* NEED_DJVU_MEMORY */
 
@@ -248,15 +248,15 @@ operator delete [] (void *addr) delete_throw_spec
 //@{
 
 #ifndef HAS_DJVU_PROGRESS_CALLBACKS
-#define HAS_DJVU_PROGRESS_CALLBACKS
+# define HAS_DJVU_PROGRESS_CALLBACKS
 
-#ifdef NEED_DJVU_PROGRESS
-#include "DjVu.h"
+# ifdef NEED_DJVU_PROGRESS
+#  include "DjVu.h"
 
 extern djvu_progress_callback *_djvu_progress_ptr;
 
-#define DJVU_PROGRESS_TASK(name,task,nsteps)  DjVuProgressTask task_##name(task,nsteps)
-#define DJVU_PROGRESS_RUN(name,tostep)   { task_##name.run(tostep); }
+#  define DJVU_PROGRESS_TASK(name,task,nsteps)  DjVuProgressTask task_##name(task,nsteps)
+#  define DJVU_PROGRESS_RUN(name,tostep)   { task_##name.run(tostep); }
 
 class DjVuProgressTask
 {
@@ -279,12 +279,12 @@ private:
   void signal(unsigned long curdate, unsigned long estdate);
 };
 
-#else  // ! NEED_DJVU_PROGRESS
+# else  // ! NEED_DJVU_PROGRESS
 
-#define DJVU_PROGRESS_TASK(name,task,nsteps)
-#define DJVU_PROGRESS_RUN(name,step)
+#  define DJVU_PROGRESS_TASK(name,task,nsteps)
+#  define DJVU_PROGRESS_RUN(name,step)
 
-#endif // ! NEED_DJVU_PROGRESS
+# endif // ! NEED_DJVU_PROGRESS
 #endif // HAS_DJVU_PROGRESS_CALLBACKS
 //@}
 
@@ -295,38 +295,10 @@ private:
     system calls without any other header file dependancies.
  */
 
-#ifndef DJVUAPI
-#if 0
-class dummy /* This makes doc++ ignore this block */
-{
-  private:
-#endif
-#ifndef DJVU_STATIC_LIBRARY
-#ifdef WIN32
-#define DLLIMPORT __declspec(dllimport)
-#define DLLEXPORT __declspec(dllexport)
-#else
-#define DLLIMPORT /* */
-#define DLLEXPORT /* */
-#endif
-#else /* DJVU_STATIC_LIBRARY */
-#define DLLIMPORT /* */
-#define DLLEXPORT /* */
-#endif /* DJVU_STATIC_LIBRARY */
-#ifdef BUILD_LIB
-#define DJVUAPI DLLEXPORT
-#else
-#define DJVUAPI DLLIMPORT
-#endif  /*BUILD_LIB*/
-#if 0
-};
-#endif
-#endif /*DJVUAPI*/ 
-
 #ifdef __cplusplus
-#define DJVUEXTERNCAPI(x) extern "C" DJVUAPI x
+# define DJVUEXTERNCAPI(x) extern "C" DJVUAPI x;
 #else
-#define DJVUEXTERNCAPI(x) DJVUAPI x
+# define DJVUEXTERNCAPI(x) extern DJVUAPI x
 #endif
 
 /** This replaces fprintf(stderr,...), but with UTF8 encoded strings. */
@@ -395,9 +367,9 @@ DJVUEXTERNCAPI(const char *djvu_programname(const char *programname));
 //@}
 
 #if defined(macintosh)
-#define EMPTY_LOOP continue
+# define EMPTY_LOOP continue
 #else
-#define EMPTY_LOOP /* nop */
+# define EMPTY_LOOP /* nop */
 #endif
 
 //  The ERR_MSG(x) macro is intended to permit automated checking of the
@@ -406,19 +378,19 @@ DJVUEXTERNCAPI(const char *djvu_programname(const char *programname));
 //  message name that will need to be looked up in the external message
 //  files. In particular, it should use on all strings passed to G_THROW.
 #ifndef HAS_CTRL_C_IN_ERR_MSG
-#define HAS_CTRL_C_IN_ERR_MSG 1
+# define HAS_CTRL_C_IN_ERR_MSG 1
 #endif
 #ifndef ERR_MSG
-#if HAS_CTRL_C_IN_ERR_MSG
+# if HAS_CTRL_C_IN_ERR_MSG
 // This hack allows for the coexistence of internationalized
 // and non-internationalized code.  All internationalized error
 // message names are prefixed with a ctrl-c.  Only these will
 // be looked for in the message files.  Messages that do no 
 // start with a ctrl-c will remain untranslated.
-#define ERR_MSG(x) "\003" x
-#else
-#define ERR_MSG(x) x
-#endif
+#  define ERR_MSG(x) "\003" x
+# else
+#  define ERR_MSG(x) x
+# endif
 #endif
 
 #endif /* _DJVUGLOBAL_H_ */
