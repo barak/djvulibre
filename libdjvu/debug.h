@@ -48,7 +48,6 @@
 #include <atlbase.h> // USES_CONVERSION, A2CT macro
 #include <windows.h> // OutputDebugString
 #endif 
-class GURL;
 
 /** @name debug.h
 
