@@ -66,6 +66,14 @@ clean: FORCE
 distclean: clean 
 	-${RM} -r 2>/dev/null Makefile *.rpo ii_files
 
+bin2cpp: bin2cpp.o 
+	${LIBTOOL} --mode=link \
+	  ${CXX} -o $@ ${CXXFLAGS} bin2cpp.o ${LIBDJVU} ${LIBS}
+
+${PROGRAMS}: ${LIBDJVU}
+
+# Rules
+
 FORCE:
 .PHONY: FORCE
 .SUFFIXES: .c .cpp .o
@@ -76,16 +84,19 @@ FORCE:
 .cpp.o:
 	${CXX} ${CXXFLAGS} -c $<
 
-bin2cpp: bin2cpp.o 
-	${LIBTOOL} --mode=link \
-	  ${CXX} -o $@ ${CXXFLAGS} bin2cpp.o ${LIBDJVU} ${LIBS}
+.c.lo:
+	${LIBTOOL} --mode=compile ${CC} ${CFLAGS} -c $<
 
-${PROGRAMS}: ${LIBDJVU}
+.cpp.lo:
+	${LIBTOOL} --mode=compile ${CXX} ${CXXFLAGS} -c $<
+
+# Dependencies
 
 Makefile.dep: ${srcdir}/Makefile.dep
 	cp ${srcdir}/Makefile.dep $@
 
 include Makefile.dep
+
 
 
 

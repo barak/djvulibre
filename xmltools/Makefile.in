@@ -93,6 +93,18 @@ djvuxml.1: ${srcdir}/djvuxml.1.in
 	sed < ${srcdir}/djvuxml.1.in > djvuxml.1 \
 	 -e 's,DATADIR,${datadir},'
 
+djvutoxml: djvutoxml.o
+	${LIBTOOL} --mode=link \
+	  ${CXX} -o $@ ${CXXFLAGS} djvutoxml.o ${LIBDJVU} ${LIBS}
+
+djvuxmlparser: djvuxmlparser.o
+	${LIBTOOL} --mode=link \
+	  ${CXX} -o $@ ${CXXFLAGS} djvuxmlparser.o ${LIBDJVU} ${LIBS}
+
+${PROGRAMS}: ${LIBDJVU}
+
+# Rules
+
 FORCE:
 .PHONY: FORCE
 .SUFFIXES: .c .cpp .o
@@ -103,15 +115,14 @@ FORCE:
 .cpp.o:
 	${CXX} ${CXXFLAGS} -c $<
 
-djvutoxml: djvutoxml.o
-	${LIBTOOL} --mode=link \
-	  ${CXX} -o $@ ${CXXFLAGS} djvutoxml.o ${LIBDJVU} ${LIBS}
+.c.lo:
+	${LIBTOOL} --mode=compile ${CC} ${CFLAGS} -c $<
 
-djvuxmlparser: djvuxmlparser.o
-	${LIBTOOL} --mode=link \
-	  ${CXX} -o $@ ${CXXFLAGS} djvuxmlparser.o ${LIBDJVU} ${LIBS}
+.cpp.lo:
+	${LIBTOOL} --mode=compile ${CXX} ${CXXFLAGS} -c $<
 
-${PROGRAMS}: ${LIBDJVU}
+
+# Dependencies
 
 Makefile.dep: ${srcdir}/Makefile.dep
 	cp ${srcdir}/Makefile.dep $@

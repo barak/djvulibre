@@ -85,16 +85,6 @@ clean: FORCE
 distclean: clean 
 	-${RM} -r 2>/dev/null Makefile *.rpo ii_files
 
-FORCE:
-.PHONY: FORCE
-.SUFFIXES: .c .cpp .o
-
-.c.o:
-	${CC} ${CFLAGS} -c $<
-
-.cpp.o:
-	${CXX} ${CXXFLAGS} -c $<
-
 # Link
 
 JB2OBJS= jb2cmp.o jb2tune.o
@@ -164,6 +154,26 @@ djvuserve: djvuserve.o
 	  ${CXX} -o $@ ${CXXFLAGS} djvuserve.o ${LIBDJVU} ${LIBS}
 
 ${PROGRAMS}: ${LIBDJVU}
+
+# Rules
+
+FORCE:
+.PHONY: FORCE
+.SUFFIXES: .c .cpp .o
+
+.c.o:
+	${CC} ${CFLAGS} -c $<
+
+.cpp.o:
+	${CXX} ${CXXFLAGS} -c $<
+
+.c.lo:
+	${LIBTOOL} --mode=compile ${CC} ${CFLAGS} -c $<
+
+.cpp.lo:
+	${LIBTOOL} --mode=compile ${CXX} ${CXXFLAGS} -c $<
+
+# Dependencies
 
 Makefile.dep: ${srcdir}/Makefile.dep
 	cp ${srcdir}/Makefile.dep $@

@@ -112,7 +112,13 @@ distclean: clean
 
 FORCE:
 .PHONY: FORCE
-.SUFFIXES: .c .cpp .lo
+.SUFFIXES: .c .cpp .lo .o
+
+.c.o:
+	${CC} ${CFLAGS} -c $<
+
+.cpp.o:
+	${CXX} ${CXXFLAGS} -c $<
 
 .c.lo:
 	${LIBTOOL} --mode=compile ${CC} ${CFLAGS} -c $<
