@@ -2,6 +2,8 @@ NEW IN VERSION 3.5.11
 ---------------------
 - All private symbols in DJVU namespace
 - Fixed keyboard focus in kde-3.1.1
+- Fixed toolbar control arguments.
+- Incremented djvuversion to 24 (LT again)
 - Fixed djvm.
 
 NEW IN VERSION 3.5.10
