@@ -96,6 +96,14 @@
 #endif
 #endif
 
+// Define typename when needed
+#ifndef GCONTAINER_NO_TYPENAME
+#define GCONTAINER_NO_TYPENAME 0
+#endif
+#if GCONTAINER_NO_TYPENAME
+#define typename /**/
+#endif
+
 
 /** @name GContainer.h
 

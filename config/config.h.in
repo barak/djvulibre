@@ -36,64 +36,68 @@
 /* Define if libgcc contains the cothread patch. */
 #undef HAVE_COTHREAD_PATCH
 
-/* Define if you have the <dirent.h> header file, and it defines `DIR'. */
+/* Define to 1 if you have the <dirent.h> header file, and it defines `DIR'.
+   */
 #undef HAVE_DIRENT_H
 
-/* Define if you have the <dlfcn.h> header file. */
+/* Define to 1 if you have the <dlfcn.h> header file. */
 #undef HAVE_DLFCN_H
 
-/* Define if you have the `dlopen' function. */
+/* Define to 1 if you have the `dlopen' function. */
 #undef HAVE_DLOPEN
 
 /* define if the compiler supports exceptions */
 #undef HAVE_EXCEPTIONS
 
-/* Define if you have the `fork' function. */
+/* Define to 1 if you have the `fork' function. */
 #undef HAVE_FORK
 
-/* Define if you have the `gethostname' function. */
+/* Define to 1 if you have the `gethostname' function. */
 #undef HAVE_GETHOSTNAME
 
-/* Define if you have the `getpagesize' function. */
+/* Define to 1 if you have the `getpagesize' function. */
 #undef HAVE_GETPAGESIZE
 
-/* Define if you have the `iconv' function. */
+/* Define to 1 if you have the `iconv' function. */
 #undef HAVE_ICONV
 
-/* Define if you have the <iconv.h> header file. */
+/* Define to 1 if you have the <iconv.h> header file. */
 #undef HAVE_ICONV_H
 
-/* Define if you have the <inttypes.h> header file. */
+/* Define to 1 if you have the <inttypes.h> header file. */
 #undef HAVE_INTTYPES_H
 
-/* Define if you have the `iswspace' function. */
+/* Define to 1 if you have the `iswspace' function. */
 #undef HAVE_ISWSPACE
 
 /* Define if you have the IJG JPEG library. */
 #undef HAVE_JPEG
 
-/* Define if you have the `dl' library (-ldl). */
+/* Define to 1 if you have the `dl' library (-ldl). */
 #undef HAVE_LIBDL
 
-/* Define if you have the `m' library (-lm). */
+/* Define to 1 if you have the `iconv' library (-liconv). */
+#undef HAVE_LIBICONV
+
+/* Define to 1 if you have the `m' library (-lm). */
 #undef HAVE_LIBM
 
-/* Define if the system has the type `long long int'. */
+/* Define to 1 if the system has the type `long long int'. */
 #undef HAVE_LONG_LONG_INT
 
-/* Define if the system has the type `mbstate_t'. */
+/* Define to 1 if the system has the type `mbstate_t'. */
 #undef HAVE_MBSTATE_T
 
 /* define if the compiler supports member templates */
 #undef HAVE_MEMBER_TEMPLATES
 
-/* Define if you have the <memory.h> header file. */
+/* Define to 1 if you have the <memory.h> header file. */
 #undef HAVE_MEMORY_H
 
-/* Define if you have a working `mmap' system call. */
+/* Define to 1 if you have a working `mmap' system call. */
 #undef HAVE_MMAP
 
-/* Define if you have the <ndir.h> header file, and it defines `DIR'. */
+/* Define to 1 if you have the <ndir.h> header file, and it defines `DIR'. */
 #undef HAVE_NDIR_H
 
 /* Define if pthreads are available */
@@ -102,88 +106,111 @@
 /* Define to Qt version if available */
 #undef HAVE_QT
 
-/* Define if you have the <stdint.h> header file. */
+/* define if the compiler comes with standard includes */
+#undef HAVE_STDINCLUDES
+
+/* Define to 1 if you have the <stdint.h> header file. */
 #undef HAVE_STDINT_H
 
-/* Define if you have the <stdlib.h> header file. */
+/* Define to 1 if you have the <stdlib.h> header file. */
 #undef HAVE_STDLIB_H
 
-/* Define if you have the `strerror' function. */
+/* Define to 1 if you have the `strerror' function. */
 #undef HAVE_STRERROR
 
-/* Define if you have the `strftime' function. */
+/* Define to 1 if you have the `strftime' function. */
 #undef HAVE_STRFTIME
 
-/* Define if you have the <strings.h> header file. */
+/* Define to 1 if you have the <strings.h> header file. */
 #undef HAVE_STRINGS_H
 
-/* Define if you have the <string.h> header file. */
+/* Define to 1 if you have the <string.h> header file. */
 #undef HAVE_STRING_H
 
-/* Define if you have the <sys/dir.h> header file, and it defines `DIR'. */
+/* Define to 1 if you have the <sys/dir.h> header file, and it defines `DIR'.
+   */
 #undef HAVE_SYS_DIR_H
 
-/* Define if you have the <sys/ipc.h> header file. */
+/* Define to 1 if you have the <sys/ipc.h> header file. */
 #undef HAVE_SYS_IPC_H
 
-/* Define if you have the <sys/mman.h> header file. */
+/* Define to 1 if you have the <sys/mman.h> header file. */
 #undef HAVE_SYS_MMAN_H
 
-/* Define if you have the <sys/ndir.h> header file, and it defines `DIR'. */
+/* Define to 1 if you have the <sys/ndir.h> header file, and it defines `DIR'.
+   */
 #undef HAVE_SYS_NDIR_H
 
-/* Define if you have the <sys/shm.h> header file. */
+/* Define to 1 if you have the <sys/shm.h> header file. */
 #undef HAVE_SYS_SHM_H
 
-/* Define if you have the <sys/stat.h> header file. */
+/* Define to 1 if you have the <sys/stat.h> header file. */
 #undef HAVE_SYS_STAT_H
 
-/* Define if you have the <sys/types.h> header file. */
+/* Define to 1 if you have the <sys/types.h> header file. */
 #undef HAVE_SYS_TYPES_H
 
-/* Define if you have <sys/wait.h> that is POSIX.1 compatible. */
+/* Define to 1 if you have <sys/wait.h> that is POSIX.1 compatible. */
 #undef HAVE_SYS_WAIT_H
 
-/* Define if you have the <unistd.h> header file. */
+/* define if the compiler recognizes typename */
+#undef HAVE_TYPENAME
+
+/* Define to 1 if you have the <unistd.h> header file. */
 #undef HAVE_UNISTD_H
 
-/* Define if you have the `vfork' function. */
+/* Define to 1 if you have the `vfork' function. */
 #undef HAVE_VFORK
 
-/* Define if you have the <vfork.h> header file. */
+/* Define to 1 if you have the <vfork.h> header file. */
 #undef HAVE_VFORK_H
 
-/* Define if you have the `vsnprintf' function. */
+/* Define to 1 if you have the `vsnprintf' function. */
 #undef HAVE_VSNPRINTF
 
-/* Define if you have the <wchar.h> header file. */
+/* Define to 1 if you have the <wchar.h> header file. */
 #undef HAVE_WCHAR_H
 
-/* Define if the system has the type `wchar_t'. */
+/* Define to 1 if the system has the type `wchar_t'. */
 #undef HAVE_WCHAR_T
 
-/* Define if you have the `wcrtomb' function. */
+/* Define to 1 if you have the `wcrtomb' function. */
 #undef HAVE_WCRTOMB
 
-/* Define if you have the <wctype.h> header file. */
+/* Define to 1 if you have the <wctype.h> header file. */
 #undef HAVE_WCTYPE_H
 
-/* Define if `fork' works. */
+/* Define to 1 if `fork' works. */
 #undef HAVE_WORKING_FORK
 
-/* Define if `vfork' works. */
+/* Define to 1 if `vfork' works. */
 #undef HAVE_WORKING_VFORK
 
-/* Define if you have the <X11/extensions/Xext.h> header file. */
+/* Define to 1 if you have the <X11/extensions/Xext.h> header file. */
 #undef HAVE_X11_EXTENSIONS_XEXT_H
 
-/* Define if you have the ANSI C header files. */
+/* Define to the address where bug reports for this package should be sent. */
+#undef PACKAGE_BUGREPORT
+
+/* Define to the full name of this package. */
+#undef PACKAGE_NAME
+
+/* Define to the full name and version of this package. */
+#undef PACKAGE_STRING
+
+/* Define to the one symbol short name of this package. */
+#undef PACKAGE_TARNAME
+
+/* Define to the version of this package. */
+#undef PACKAGE_VERSION
+
+/* Define to 1 if you have the ANSI C header files. */
 #undef STDC_HEADERS
 
-/* Define if you can safely include both <sys/time.h> and <time.h>. */
+/* Define to 1 if you can safely include both <sys/time.h> and <time.h>. */
 #undef TIME_WITH_SYS_TIME
 
-/* Define if the X Window System is missing or not being used. */
+/* Define to 1 if the X Window System is missing or not being used. */
 #undef X_DISPLAY_MISSING
 
 /* Define to `int' if <sys/types.h> does not define. */
@@ -228,6 +255,9 @@
 /* - CONTAINERS */
 #ifndef HAVE_MEMBER_TEMPLATES
 #define GCONTAINER_NO_MEMBER_TEMPLATES
+#endif
+#ifndef HAVE_TYPENAME
+#define GCONTAINER_NO_TYPENAME
 #endif
 
 /* - COTHREAD */

@@ -1,22 +1,25 @@
-dnl DjVuLibre-3.5
 dnl Copyright (c) 2002  Leon Bottou and Yann Le Cun.
 dnl Copyright (c) 2001  AT&T
 dnl
-dnl This software is subject to, and may be distributed under, the
-dnl GNU General Public License, Version 2. The license should have
-dnl accompanied the software or you may obtain a copy of the license
-dnl from the Free Software Foundation at http://www.fsf.org .
+dnl Most of these macros are derived from macros listed
+dnl at the GNU Autoconf Macro Archive
+dnl http://www.gnu.org/software/ac-archive/
+dnl
+dnl This program is free software; you can redistribute it and/or modify
+dnl it under the terms of the GNU General Public License as published by
+dnl the Free Software Foundation; either version 2 of the License, or
+dnl (at your option) any later version.
 dnl
 dnl This program is distributed in the hope that it will be useful,
 dnl but WITHOUT ANY WARRANTY; without even the implied warranty of
 dnl MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 dnl GNU General Public License for more details.
-dnl 
-dnl DjVuLibre-3.5 is derived from the DjVu(r) Reference Library
-dnl distribued by Lizardtech Software.  On July 19th 2002, Lizardtech 
-dnl Software authorized us to replace the original DjVu(r) Reference 
-dnl Library by the following notice (see etc/PATENT.djvu):
 dnl
+dnl You should have received a copy of the GNU General Public License
+dnl along with this program; if not, write to the Free Software
+dnl Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA02111 USA
+dnl
+
 dnl -------------------------------------------------------
 dnl @synopsis AC_DEFINE_INSTALL_PATHS
 dnl Define various installation paths
@@ -135,6 +138,52 @@ if test "$ac_cv_cxx_member_templates" = yes; then
         [define if the compiler supports member templates])
 fi
 ])
+
+
+
+dnl -------------------------------------------------------
+dnl @synopsis AC_CXX_TYPENAME
+dnl Define HAVE_TYPENAME if the compiler recognizes 
+dnl keyword typename.
+dnl -------------------------------------------------------
+AC_DEFUN([AC_CXX_TYPENAME],
+[AC_CACHE_CHECK(whether the compiler recognizes typename,
+ac_cv_cxx_typename,
+[AC_LANG_SAVE
+ AC_LANG_CPLUSPLUS
+ AC_TRY_COMPILE([template<typename T>class X {public:X(){}};],
+[X<float> z; return 0;],
+ ac_cv_cxx_typename=yes, ac_cv_cxx_typename=no)
+ AC_LANG_RESTORE
+])
+if test "$ac_cv_cxx_typename" = yes; then
+  AC_DEFINE(HAVE_TYPENAME,,[define if the compiler recognizes typename])
+fi
+])
+
+
+dnl -------------------------------------------------------
+dnl @synopsis AC_CXX_STDINCLUDES
+dnl Define HAVE_STDINCLUDES if the compiler has the
+dnl new style include files (without the .h)
+dnl -------------------------------------------------------
+AC_DEFUN([AC_CXX_STDINCLUDES],
+[AC_CACHE_CHECK(whether the compiler comes with standard includes,
+ac_cv_cxx_stdincludes,
+[AC_LANG_SAVE
+ AC_LANG_CPLUSPLUS
+ AC_TRY_COMPILE([#include <new>
+struct X { int a; X(int a):a(a){}; };
+X* foo(void *x) { return new(x) X(2); } ],[],
+ ac_cv_cxx_stdincludes=yes, ac_cv_cxx_stdincludes=no)
+ AC_LANG_RESTORE
+])
+if test "$ac_cv_cxx_stdincludes" = yes; then
+  AC_DEFINE(HAVE_STDINCLUDES,,
+    [define if the compiler comes with standard includes])
+fi
+])
+
 
 dnl -------------------------------------------------------
 dnl @synopsis AC_CXX_BOOL

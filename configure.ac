@@ -56,6 +56,8 @@ AC_PROG_CXX
 AC_LANG(C++)
 AC_CXX_BOOL
 AC_CXX_EXCEPTIONS
+AC_CXX_TYPENAME
+AC_CXX_STDINCLUDES
 AC_CXX_MEMBER_TEMPLATES
 AC_CXX_OPTIMIZE
 AC_CXX_RPO
@@ -81,6 +83,7 @@ dnl   with compilers other than g++ >= 2.95
 
 AC_CHECK_LIB(m,sqrt)
 AC_CHECK_LIB(dl,dlopen)
+AC_CHECK_LIB(iconv,libconv)
 
 # ----------------------------------------
 # Header Files
@@ -93,8 +96,6 @@ AC_HEADER_SYS_WAIT
 AC_CHECK_HEADERS(wchar.h wctype.h sys/mman.h dlfcn.h iconv.h)
 AC_CHECK_HEADERS(sys/ipc.h sys/shm.h)
 AC_CHECK_HEADERS(X11/extensions/Xext.h,,,[#include <X11/Xlib.h>])
-
-
 
 # ----------------------------------------
 # Types
@@ -384,6 +385,9 @@ AH_BOTTOM([
 /* - CONTAINERS */
 #ifndef HAVE_MEMBER_TEMPLATES
 #define GCONTAINER_NO_MEMBER_TEMPLATES
+#endif
+#ifndef HAVE_TYPENAME
+#define GCONTAINER_NO_TYPENAME
 #endif
 
 /* - COTHREAD */

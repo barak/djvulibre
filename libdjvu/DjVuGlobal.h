@@ -63,21 +63,15 @@
 #pragma interface
 #endif
 
-//Placement new support.
-//There is no new.h for WinCE, so we define a placement new here.
-// (lifted from wcealt.h which can not be included in the library header files
-//	but which must be included with an ActiveX control based on MFC)
-#ifdef UNDER_CE
-	#ifndef __WCEALT_H__	// Placement new also defined in wcealt.h
-		inline void * operator new(size_t, void * ptr) 
-		{ 
-			return ptr; 
-		}
-	#endif
-#else	// Non-CE platforms support this in a sensible fashion.
-	#include <new.h>
+#if defined(UNDER_CE)
+# ifndef __WCEALT_H__	// Placement new also defined in wcealt.h
+inline void * operator new(size_t, void * ptr) { return ptr; }
+# endif
+#elif defined(AUTOCONF) && defined(HAVE_STDINCLUDES)
+# include <new>
+#else
+# include <new.h>
 #endif
-
 
 #ifndef DJVU_STATIC_LIBRARY
 #ifdef WIN32 
