@@ -573,12 +573,16 @@ filter_ant(GP<ByteStream> in, GP<ByteStream> out,
         }
       else if (c == '(')
         {
-          if (plevel == 0)
+          while ((c = inp->get()) != EOF)
+            if (c!=' ' && c!='\t' && c!='\r' && c!='\n')
+              break;
+          inp->unget(c);
+          if (excludemeta && plevel==0 && c=='m')
             {
+              inp->unget(c);
               GUTF8String token = inp->get_utf8_token();
-              if (excludemeta)
-		if (token == "metadata")
-		  copy = unchanged = false;
+              if (token == "metadata")
+                copy = unchanged = false;
               if (copy) {
                 out->write8('(');
                 out->write((const char*)token, token.length());
