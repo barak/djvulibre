@@ -101,7 +101,10 @@ AC_DEFUN(AC_CXX_OPTIMIZE,[
      AC_CHECK_CXX_OPT([-Wall],[OPTS="$OPTS -Wall"])
      AC_CHECK_CXX_OPT([-O3],[OPTS="$OPTS -O3"],
         [ AC_CHECK_CXX_OPT([-O2], [OPTS="$OPTS -O2"] ) ] )
-     AC_CHECK_CXX_OPT([-funroll-loops], [OPTS="$OPTS -funroll-loops"])
+     dnl This triggers compiler bugs with gcc-3.2.2
+     dnl AC_CHECK_CXX_OPT([-funroll-loops], [OPTS="$OPTS -funroll-loops"])
+     cpu=`uname -m 2>/dev/null`
+     test -z "$cpu" && cpu=${host_cpu}
      case "${host_cpu}" in
         i?86)
            opt="-mcpu=${host_cpu}"

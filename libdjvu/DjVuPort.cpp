@@ -429,7 +429,7 @@ DjVuPortcaster::add_to_closure(GMap<const void *, void *> & set,
 {
   // Assuming that the map's already locked
   // GCriticalSectionLock lock(&map_lock);
-  set[dst]=(void *) distance;
+  set[dst]= (void*) (unsigned long) distance;
   if (route_map.contains(dst))
     {
       GList<void *> & list=*(GList<void *> *) route_map[dst];
@@ -465,11 +465,11 @@ DjVuPortcaster::compute_closure(const DjVuPort * src, GPList<DjVuPort> &list, bo
        // Sort in depth order
        int max_dist=0;
        for(pos=set;pos;++pos)
-         if (max_dist < (int) set[pos])
-           max_dist = (int) set[pos];
+         if (max_dist < (long) set[pos])
+           max_dist = (long) set[pos];
        GArray<GList<const void*> > lists(0,max_dist);
        for(pos=set;pos;++pos)
-         lists[(int) set[pos]].append(set.key(pos));
+         lists[(long)set[pos]].append(set.key(pos));
        for(int dist=0;dist<=max_dist;dist++)
          for(pos=lists[dist];pos;++pos)
            {

@@ -1319,7 +1319,7 @@ hash(void * const & x)
 static inline unsigned int 
 hash(const void * const & x) 
 { 
-  return (unsigned int) x; 
+  return (unsigned long) x; 
 }
 
 /** Hashing function (float). */
