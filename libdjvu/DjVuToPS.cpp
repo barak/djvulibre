@@ -221,8 +221,8 @@ DjVuToPS::write(ByteStream &str, const char *format, ...)
 // ************************* DOCUMENT LEVEL *********************************
 
 void
-DjVuToPS::store_doc_prolog(ByteStream &str, int pages, int dpi, 
-                           const GRect &grect)
+DjVuToPS::store_doc_prolog(ByteStream &str, int pages, 
+                           int dpi, const GRect &grect)
 {
   /* Will store the {\em document prolog}, which is basically a
      block of document-level comments in PS DSC 3.0 format.
@@ -234,56 +234,58 @@ DjVuToPS::store_doc_prolog(ByteStream &str, int pages, int dpi,
   DEBUG_MAKE_INDENT(3);
   if (options.get_format()==Options::EPS)
     write(str,
-          "%%!PS-Adobe-3.0 EPSF-3.0\n"
+          "%%!PS-Adobe-3.0 EPSF 3.0\n"
           "%%%%BoundingBox: 0 0 %d %d\n",
           (grect.width()*100+dpi-1)/dpi, 
           (grect.height()*100+dpi-1)/dpi );
   else
     write(str, "%%!PS-Adobe-3.0\n");
-  time_t time_=time(0);
-#ifdef UNIX
-  passwd * pswd;
-  group  * grp;
-  const char * gecos="Name unknown", * u_name="unknown", * g_name="unknown";
-  pswd=getpwuid(getuid());
-  if (pswd)
-    {
-      char * ptr;
-      for(ptr=pswd->pw_gecos;*ptr!=0;ptr++)
-        if (*ptr==',') { *ptr=0;break; }
-      if (pswd->pw_name && strlen(pswd->pw_name))
-        u_name=pswd->pw_name;
-      if (pswd->pw_gecos && strlen(pswd->pw_gecos))
-        gecos=pswd->pw_gecos;
-    }
-  grp=getgrgid(getgid());
-  if (grp && grp->gr_name && strlen(grp->gr_name))
-    g_name=grp->gr_name;
-#endif
   write(str,
         "%%%%Title: DjVu PostScript document\n"
         "%%%%Copyright: Copyright (c) 1998-1999 AT&T\n"
         "%%%%Creator: DjVu (code by Andrei Erofeev)\n"
-        "%%%%DocumentData: Clean7Bit\n"
-        "%%%%CreationDate: %s"
-        "%%%%Pages: %d\n",
-        ctime(&time_), pages );
+        "%%%%DocumentData: Clean7Bit\n");
+  // Date
+  time_t tm=time(0);
+  write(str, "%%%%CreationDate: %s", ctime(&tm));
+  // For
 #ifdef UNIX
-  write(str,
-        "%%%%For: %s (%s.%s)\n",
-        gecos, u_name, g_name );
+  passwd *pswd = getpwuid(getuid());
+  if (pswd)
+    {
+      char *s = strchr(pswd->pw_gecos, ',');
+      if (s) 
+        *s = 0;
+      s = 0;
+      if (pswd->pw_gecos && strlen(pswd->pw_gecos))
+        s = pswd->pw_gecos;
+      else if (pswd->pw_name && strlen(pswd->pw_name))
+        s = pswd->pw_name;
+      if (s)
+        write(str, "%%%%For: %s\n", s);
+    }
 #endif
+  // Language
+  write(str, "%%%%LanguageLevel: %d\n", options.get_level());
+  if (options.get_level()<2 && options.get_color())
+    write(str, "%%%%Extensions: CMYK\n");
+  // Pages
+  write(str, "%%%%Pages: %d\n",pages );
+  ///////// TODO: write(str, "%%%%PageOrder: Special\n");
+  // Requirements
+  write(str, "%%%%Requirements:");
+  if (options.get_color())
+    write(str, " color");
+  if (options.get_copies()>1)
+    write(str, " numcopies(%d)", options.get_copies());
+  ///////// TODO: duplex fold(saddle)
+  write(str, "\n");
+  // Orientation
   if (options.get_orientation() != Options::AUTO)
     write(str, "%%%%Orientation: %s\n", 
           options.get_orientation()==Options::PORTRAIT ?
           "Portrait" : "Landscape" );
-  if (options.get_color())
-    write(str, "%%%%Requirements: color\n");
-  write(str, "%%%%LanguageLevel: %d\n", options.get_level());
-  if (options.get_level()<2 && options.get_color())
-    write(str, "%%%%Extensions: CMYK\n");
-  if (options.get_copies()>1)
-    write(str, "%%%%Requirements: numcopies(%d)\n", options.get_copies());
+  // End
   write(str,
         "%%%%EndComments\n"
         "%%%%EndProlog\n"
@@ -296,28 +298,21 @@ DjVuToPS::store_doc_setup(ByteStream &str)
   /* Will store the {\em document setup}, which is a set of
      PostScript commands and functions used to inspect and prepare
      the PostScript interpreter environment before displaying images. */
-  DEBUG_MSG("DjVuToPS::store_doc_setup(): storing the document setup\n");
-  DEBUG_MAKE_INDENT(3);
   write(str, 
         "%%%%BeginSetup\n"
-        "%% Remember the original state\n"
         "/doc-origstate save def\n");
   if (options.get_copies()>1 && options.get_format()==Options::PS)
     {
-      write(str,
-            "%% Number of copies\n"
-            "/#copies %d def\n", 
-            options.get_copies());
+      write(str,"/#copies %d def\n", options.get_copies());
       if (options.get_level()>=2)
-        write(str,
-              "<< /NumCopies #copies >> setpagedevice\n");
+        write(str, "<< /NumCopies #copies >> setpagedevice\n");
     }
   if (options.get_level()>=2)
     {
       if (options.get_color())
         {
           write(str, 
-                "%% Define procedures for reading color image\n"
+                "%% -- procs for reading color image\n"
                 "/readR () def\n"
                 "/readG () def\n"
                 "/readB () def\n"
@@ -345,10 +340,20 @@ DjVuToPS::store_doc_setup(ByteStream &str)
                 "   readB /readB () def\n"
                 "} bind def\n");
         }
+      write(str,
+            "%% -- procs for foreground layer\n"
+            "/g {gsave 0 0 0 0 5 index 5 index setcachedevice\n"
+            "    true [1 0 0 1 0 0] 5 4 roll imagemask grestore } bind def\n"
+            "/gn {gsave 0 0 0 0 6 index 6 index setcachedevice\n"
+            "    true [1 0 0 1 0 0] 3 2 roll 5 1 roll \n"
+            "    { 1 sub 0 index 2 add 1 index  1 add roll} imagemask grestore pop} bind def\n"
+            "/c {setcolor rmoveto glyphshow} bind def\n"
+            "/s {rmoveto glyphshow} bind def\n"
+            "/S {rmoveto gsave show grestore} bind def\n" 
+            "%% -- color space\n" );
       if (options.get_sRGB())
         {
           write(str,
-                "%% See www.srgb.org\n"
                 "/DjVuColorSpace [ %s\n"
                 "<< /DecodeLMN [\n"
                 "      {dup 0.03928 le {12.92321 div}{0.055 add 1.055 div 2.4 exp}ifelse}\n"
@@ -369,22 +374,12 @@ DjVuToPS::store_doc_setup(ByteStream &str)
         {
           write(str,"/DjVuColorSpace /DeviceGray def\n");
         }
-      write(str,
-            "%% Define useful functions\n"
-            "/g {gsave 0 0 0 0 5 index 5 index setcachedevice\n"
-            "    true [1 0 0 1 0 0] 5 4 roll imagemask grestore } bind def\n"
-            "/gn {gsave 0 0 0 0 6 index 6 index setcachedevice\n"
-            "    true [1 0 0 1 0 0] 3 2 roll 5 1 roll \n"
-            "    { 1 sub 0 index 2 add 1 index  1 add roll} imagemask grestore pop} bind def\n"
-            "/c {setcolor rmoveto glyphshow} bind def\n"
-            "/s {rmoveto glyphshow} bind def\n"
-            "/S {rmoveto gsave show grestore} bind def\n" );
     } 
   else 
     {
       // level<2
       write(str, 
-            "%% Provide rectstroke emulation\n"
+            "%% -- rectstroke emulation\n"
             "systemdict /rectstroke known not {\n"
             "  /rectstroke  %% stack : x y width height \n"
             "  { newpath 4 2 roll moveto 1 index 0 rlineto\n"
@@ -393,10 +388,10 @@ DjVuToPS::store_doc_setup(ByteStream &str)
       if (options.get_color())
         {
           write(str, 
-                "%% Declare buffers for reading image\n"
+                "%% -- buffers for reading image\n"
                 "/buffer8 () def\n"
                 "/buffer24 () def\n"
-                "%% Provide colorimage emulation\n"
+                "%% -- colorimage emulation\n"
                 "systemdict /colorimage known {\n"
                 "   /ColorProc {\n"
                 "      currentfile buffer24 readhexstring pop\n"
@@ -433,7 +428,6 @@ DjVuToPS::store_doc_trailer(ByteStream &str)
   /* Will store the {\em document trailer}, which is a clean-up code
      used to return the PostScript interpeter back to the state, in which
      it was before displaying this document. */
-  DEBUG_MSG("DjVuToPS::store_doc_trailer(): Storing document trailer\n");
   write(str, 
         "%%%%Trailer\n"
         "doc-origstate restore\n"
@@ -544,17 +538,15 @@ DjVuToPS::RLE_encode(unsigned char * dst,
 #define COLOR_TO_GRAY(r, g, b) (((r)*20+(g)*32+(b)*12)/64)
 
 void
-DjVuToPS::store_page_setup(ByteStream &str, int page_num,
-                           int dpi, const GRect &grect)
+DjVuToPS::store_page_setup(ByteStream &str, 
+                           int dpi, const GRect &grect, 
+                           int align)
 {
   /* Will store PostScript code necessary to prepare page for
      the coming \Ref{DjVuImage}. This is basically a scaling
      code plus initialization of some buffers. */
-  write(str, "%%%%Page: %d %d\n", 
-        page_num+1, page_num+1);
   if (options.get_format()==Options::EPS)
     write(str, 
-          "%%%%BeginPageSetup\n"
           "/page-origstate save def\n"
           "%% Coordinate system positioning\n", 
           "/image-dpi %d def\n"
@@ -571,12 +563,11 @@ DjVuToPS::store_page_setup(ByteStream &str, int page_num,
           "/a23 0 def\n"
           "[a11 a21 a12 a22 a13 a23] concat\n"
           "0 0 image-width image-height rectclip\n"
-          "%%%%EndPageSetup\n\n",
+          "%% -- begin print\n",
           dpi, grect.width(), grect.height() );
   else
     {
       write(str, 
-            "%%%%BeginPageSetup\n"
             "/page-origstate save def\n"
             "/auto-orient %s def\n"
             "/portrait %s def    %% Specifies image orientation\n"
@@ -593,16 +584,19 @@ DjVuToPS::store_page_setup(ByteStream &str, int page_num,
             "/image-x 0 def\n"
             "/image-y 0 def\n"
             "/image-width  %d def\n"
-            "/image-height %d def\n\n",
+            "/image-height %d def\n"
+            "/halign %d def\n",
+            "/valign 0 def\n",
             (options.get_orientation()==Options::AUTO) ? "true" : "false",
             (options.get_orientation()==Options::PORTRAIT) ? "true" : "false",
             (options.get_zoom()==Options::FIT_PAGE) ? "true" : "false",
             options.get_zoom(), 
             dpi, 
             grect.width(), 
-            grect.height() );
-
+            grect.height(),
+            align );
       write(str, 
+            "%% -- position page\n"
             "auto-orient {\n"
             "  image-height image-width sub\n"
             "  page-height page-width sub\n"
@@ -621,9 +615,9 @@ DjVuToPS::store_page_setup(ByteStream &str, int page_num,
             "    /coeff 72 image-dpi div zoom mul 100 div def\n"
             "  } ifelse\n"
             "  /start-x page-x page-width image-width\n"
-            "    coeff mul sub 2 div add def\n"
+            "    coeff mul sub 2 div halign 1 add mul add def\n"
             "  /start-y page-y page-height image-height\n"
-            "    coeff mul sub 2 div add def\n"
+            "    coeff mul sub 2 div valign 1 add mul add def\n"
             "  /a11 coeff def\n"
             "  /a12 0 def\n"
             "  /a13 start-x def\n"
@@ -643,9 +637,9 @@ DjVuToPS::store_page_setup(ByteStream &str, int page_num,
             "    /coeff 72 image-dpi div zoom mul 100 div def\n"
             "  } ifelse\n"
             "  /start-x page-x page-width add page-width image-height\n"
-            "    coeff mul sub 2 div sub def\n"
+            "    coeff mul sub 2 div valign 1 add mul sub def\n"
             "  /start-y page-y page-height image-width\n"
-            "    coeff mul sub 2 div add def\n"
+            "    coeff mul sub 2 div halign 1 add mul add def\n"
             "  /a11 0 def\n"
             "  /a12 coeff neg def\n"
             "  /a13 start-x image-y coeff neg mul sub def\n"
@@ -656,7 +650,7 @@ DjVuToPS::store_page_setup(ByteStream &str, int page_num,
             "[a11 a21 a12 a22 a13 a23] concat\n"
             "systemdict /rectclip known {\n"
             "  0 0 image-width image-height rectclip } if\n"
-            "%%%%EndPageSetup\n\n");
+            "%% -- begin print\n");
     }
 }
 
@@ -664,9 +658,8 @@ void
 DjVuToPS::store_page_trailer(ByteStream &str)
 {
   write(str, 
-        "%%%%PageTrailer\n" 
-        "page-origstate restore\n"
-        "showpage\n\n");
+        "%% -- end print\n" 
+        "page-origstate restore\n");
 }
 
 static int
@@ -975,7 +968,7 @@ DjVuToPS::print_fg(ByteStream &str, const GP<DjVuImage> &dimg,
     }
   }
   write(str,
-    "%% Printing Foreground\n"
+    "%% --- now doing the foreground\n"
     "gsave DjVuColorSpace setcolorspace\n" );
       // Define font
   write(str,
@@ -1091,7 +1084,7 @@ DjVuToPS::print_bg(ByteStream &str, const GP<DjVuImage> &dimg,
   GRect prn_rect;
   double print_done = 0;
   int red = 0;
-  write(str, "%% Printing background\n");
+  write(str, "%% --- now doing the background\n");
   if (! (red = get_bg_red(dimg)))
     return;
   write(str, 
@@ -1300,7 +1293,7 @@ DjVuToPS::print_image_lev1(ByteStream &str, const GP<DjVuImage> &dimg,
   if (! pm && ! bm)
     return;
   write(str,
-        "%% Printing image (level=1)\n"
+        "%% --- now doing a level 1 image\n"
         "gsave\n");
   // Display image
   int band_bytes=125000;
@@ -1481,7 +1474,7 @@ DjVuToPS::print_image_lev2(ByteStream &str, const GP<DjVuImage> &dimg,
   if (! pm)
     return;
   write(str,
-        "%% Printing image (level=2)\n"
+        "%% --- now doing a level 2 image\n"
         "gsave\n");
   // Display image
   int band_bytes=125000;
@@ -1815,12 +1808,15 @@ print_txt(const GP<DjVuTXT> &txt, ByteStream &out)
 {
   if (txt)
     {
-      GUTF8String message("gsave -1 -1 0 0 clip 0 0 moveto\n");
-      out.write((const char*)message,message.length());
       int lastx=0;
       int lasty=0;
+      GUTF8String message = 
+        "%% -- now doing hidden text\n"
+        "gsave -1 -1 0 0 clip 0 0 moveto\n";
+      out.write((const char*)message,message.length());
       print_txt_sub(*txt, txt->page_zone, out,lastx,lasty);
-      message="grestore \n";
+      message = 
+        "grestore \n";
       out.write((const char*)message,message.length());
     }
 }
@@ -1829,7 +1825,7 @@ void
 DjVuToPS::print_image(ByteStream &str, const GP<DjVuImage> &dimg,
                       const GRect &prn_rect, const GP<DjVuTXT> &txt)
 {
-  /* Just outputs the specifies image. The function assumes, that
+  /* Just outputs the specified image. The function assumes, that
      all add-ons (like {\em document setup}, {\em page setup}) are
      already there. It will just output the image. Since
      output of this function will generate PostScript errors when
@@ -1895,13 +1891,27 @@ DjVuToPS::print_image(ByteStream &str, const GP<DjVuImage> &dimg,
             prn_rect.width(), prn_rect.height());
     }
 
+  /////// TODO: crop marks
+  
   if (prn_progress_cb)
     prn_progress_cb(1, prn_progress_cl_data);
 }
 
+
+
+
+// ***********************************************************************
+// ******* PUBLIC FUNCTION FOR PRINTING A SINGLE PAGE ********************
+// ***********************************************************************
+
+
+
+
 void
-DjVuToPS::print(ByteStream &str, const GP<DjVuImage> &dimg,
-                const GRect &prn_rect_in, const GRect &img_rect,
+DjVuToPS::print(ByteStream &str, 
+                const GP<DjVuImage> &dimg,
+                const GRect &prn_rect_in, 
+                const GRect &img_rect,
                 int override_dpi)
 {
   DEBUG_MSG("DjVuToPS::print(): Printing DjVu page to a stream\n");
@@ -1930,24 +1940,34 @@ DjVuToPS::print(ByteStream &str, const GP<DjVuImage> &dimg,
     image_dpi = 300;
   store_doc_prolog(str, 1, (int)(image_dpi), prn_rect);
   store_doc_setup(str);
-  store_page_setup(str, 0, (int)(image_dpi), prn_rect);
-  print_image(str, dimg, prn_rect,0);
+  write(str,"%%%%Page: 1 1\n");
+  store_page_setup(str, (int)(image_dpi), prn_rect);
+  print_image(str, dimg, prn_rect, 0);
   store_page_trailer(str);
+  write(str,"showpage\n");
   store_doc_trailer(str);
 }
+
+
 
 
 // ***********************************************************************
 // *************************** DOCUMENT LEVEL ****************************
 // ***********************************************************************
 
-class DjVuToPS::DecodePort : public DjVuPort
+
+////// TODO: reorganize.
+////// TODO: decodepage
+////// TODO: printpage
+
+
+class DjVuToPS::DecodePort 
+  : public DjVuPort
 {
 protected:
   DecodePort(void);
 public:
-  static inline GP<DecodePort> create(void) {return new DecodePort; }
-
+  static GP<DecodePort> create(void);
   GEvent decode_event;
   bool decode_event_received;
   double decode_done;
@@ -1959,14 +1979,25 @@ public:
 };
 
 DjVuToPS::DecodePort::DecodePort(void)
-: decode_event_received(false), decode_done((double)0) {}
+  : decode_event_received(false), decode_done((double)0) 
+{
+}
 
-void
-DjVuToPS::DecodePort::notify_file_flags_changed(const DjVuFile * source,
-                                                long set_mask, long clr_mask)
+GP<DjVuToPS::DecodePort>
+DjVuToPS::DecodePort::create(void)
+{
+  return new DecodePort;
+}
+
+void DjVuToPS::DecodePort::
+notify_file_flags_changed(const DjVuFile *source,
+                          long set_mask, 
+                          long clr_mask)
 {
   // WARNING! This function is called from another thread
-  if (set_mask & (DjVuFile::DECODE_OK | DjVuFile::DECODE_FAILED | DjVuFile::DECODE_STOPPED))
+  if (set_mask & (DjVuFile::DECODE_OK | 
+                  DjVuFile::DECODE_FAILED | 
+                  DjVuFile::DECODE_STOPPED))
     {
       if (source->get_url() == decode_page_url)
         {
@@ -1976,9 +2007,9 @@ DjVuToPS::DecodePort::notify_file_flags_changed(const DjVuFile * source,
     }
 }
 
-void
-DjVuToPS::DecodePort::notify_decode_progress(const DjVuPort * source,
-                                             double done)
+void DjVuToPS::DecodePort::
+notify_decode_progress(const DjVuPort *source, 
+                       double done)
 {
   // WARNING! This function is called from another thread
   if (source->inherits("DjVuFile"))
@@ -1994,16 +2025,57 @@ DjVuToPS::DecodePort::notify_decode_progress(const DjVuPort * source,
     }
 }
 
+void DjVuToPS::
+set_refresh_cb(void (*_refresh_cb)(void*),
+               void *_refresh_cl_data)
+{
+  refresh_cb=_refresh_cb;
+  refresh_cl_data=_refresh_cl_data;
+}
+
+void DjVuToPS::
+set_prn_progress_cb(void (*_prn_progress_cb)(double, void *),
+                    void *_prn_progress_cl_data)
+{
+  prn_progress_cb=_prn_progress_cb;
+  prn_progress_cl_data=_prn_progress_cl_data;
+}
+
+void DjVuToPS::
+set_dec_progress_cb(void (*_dec_progress_cb)(double, void *),
+                    void *_dec_progress_cl_data)
+{
+  dec_progress_cb=_dec_progress_cb;
+  dec_progress_cl_data=_dec_progress_cl_data;
+}
+
+void DjVuToPS::
+set_info_cb(void (*_info_cb)(int, int, int, Stage, void*),
+            void *_info_cl_data)
+{
+  info_cb=_info_cb;
+  info_cl_data=_info_cl_data;
+}
+
+
+
+// ***********************************************************************
+// ******* PUBLIC FUNCTIONS FOR PRINTING MULTIPLE PAGES ******************
+// ***********************************************************************
+
 void
-DjVuToPS::print(ByteStream &str, const GP<DjVuDocument> &doc)
+DjVuToPS::print(ByteStream &str, 
+                const GP<DjVuDocument> &doc)
 {
   GUTF8String dummy;
   print(str,doc,dummy);
 }
 
+
 void
-DjVuToPS::print(ByteStream &str, const GP<DjVuDocument> &doc,
-				GUTF8String page_range)
+DjVuToPS::print(ByteStream &str, 
+                const GP<DjVuDocument> &doc,
+                GUTF8String page_range)
 {
   DEBUG_MSG("DjVuToPS::print(): Printing DjVu document to a stream\n");
   DEBUG_MAKE_INDENT(3);
@@ -2138,13 +2210,10 @@ DjVuToPS::print(ByteStream &str, const GP<DjVuDocument> &doc,
       if (!dimg)
         {
           // Make an empty page
-          write(str,
+          write(str, 
                 "%%%%Page: %d %d\n"
-                "%%%%BeginPageSetup\n"
-                "/page-origstate save def\n"
-                "%%%%EndPageSetup\n",
-                page_cnt, page_cnt);
-          store_page_trailer(str);
+                "showpage\n",
+                page_cnt+1, page_cnt+1);
         }
       else
         {
@@ -2152,7 +2221,8 @@ DjVuToPS::print(ByteStream &str, const GP<DjVuDocument> &doc,
           int image_dpi=dimg->get_dpi();
           if (image_dpi<=0) image_dpi=300;
           GRect img_rect(0, 0, dimg->get_width(), dimg->get_height());
-          store_page_setup(str, page_cnt, image_dpi, img_rect);
+          write(str,"%%%%Page: %d %d\n", page_cnt+1, page_cnt+1);
+          store_page_setup(str, image_dpi, img_rect);
           //get the text
           GP<DjVuTXT>  txt=0;
           if (options.get_text())
@@ -2161,6 +2231,7 @@ DjVuToPS::print(ByteStream &str, const GP<DjVuDocument> &doc,
           print_image(str, dimg, img_rect,txt);
           // Close the page
           store_page_trailer(str);
+          write(str,"showpage\n");
         }
     }
   // Close the PostScript document.

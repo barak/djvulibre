@@ -254,8 +254,8 @@ protected:
                         int dpi, const GRect &grect);
   void store_doc_setup(ByteStream &str);
   void store_doc_trailer(ByteStream &str);
-  void store_page_setup(ByteStream &str, int page_num,
-                        int dpi, const GRect &print_rect);
+  void store_page_setup(ByteStream &str, int dpi, 
+                        const GRect &print_rect, int align=0);
   void store_page_trailer(ByteStream &str);
   void make_gamma_ramp(const GP<DjVuImage> &dimg);
   void print_image_lev1(ByteStream &str, const GP<DjVuImage> &dimg,
@@ -273,7 +273,6 @@ protected:
   void print_image(ByteStream &str, const GP<DjVuImage> &dimg,
                    const GRect &print_rect, const GP<DjVuTXT> &txt);
 
-
 public:
   /** Options affecting the print result. Please refer to
       \Ref{DjVuToPS::Options} for details. */
@@ -287,7 +286,7 @@ public:
       
       @param refresh_cb Callback function to be called periodically
       @param refresh_cl_data Pointer passed to #refresh_cb()# */
-   void set_refresh_cb(void (*refresh_cb)(void *), void *refresh_cl_data);
+   void set_refresh_cb(void (*refresh_cb)(void*), void *refresh_cl_data);
   /** Callback used to report the progress of printing.  The progress is a
       double number from 0 to 1.  If an existing \Ref{DjVuImage} is printed,
       this callback will be called at least twice: in the beginning and at the
@@ -299,7 +298,7 @@ public:
       
       @param prn_progress_cb Callback function to be called
       @param prn_progress_cl_data Pointer passed to #prn_progress_cb()#. */
-  void set_prn_progress_cb(void (*prn_progress_cb)(double done, void *),
+  void set_prn_progress_cb(void (*prn_progress_cb)(double, void*),
                            void *prn_progress_cl_data);
   /** Callback used to report the progress of decoding.  The progress is a
       double number from 0 to 1.  This callback is only used when printing a
@@ -315,7 +314,7 @@ public:
           
       @param dec_progress_cb Callback function to be called
       @param dec_progress_cl_data Pointer passed to #dec_progress_cb()#. */
-  void set_dec_progress_cb(void (*dec_progress_cb)(double done, void *),
+  void set_dec_progress_cb(void (*dec_progress_cb)(double, void*),
                            void *dec_progress_cl_data);
   /** Callback used to report the current printing stage of a
       \Ref{DjVuDocument}.  When printing a \Ref{DjVuDocument} ({\bf not} a
@@ -334,9 +333,7 @@ public:
       \end{description}
       @param info_cb Callback function to be called
       @param info_cl_data Pointer, which will be passed to #info_cb()#. */
-  void set_info_cb(void (*info_cb)(int page_num, int page_cnt,
-                                    int tot_pages, Stage stage,
-                                    void *info_cl_data),
+  void set_info_cb(void (*info_cb)(int, int, int, Stage,void*),
                    void *info_cl_data);
   //@}
   
@@ -473,39 +470,6 @@ DjVuToPS::Options::get_text(void) const
 //****************************************************************************
 //******************************** DjVuToPS **********************************
 //****************************************************************************
-
-inline void
-DjVuToPS::set_refresh_cb(void (*_refresh_cb)(void *),
-                         void *_refresh_cl_data)
-{
-  refresh_cb=_refresh_cb;
-  refresh_cl_data=_refresh_cl_data;
-}
-
-inline void
-DjVuToPS::set_prn_progress_cb(void (*_prn_progress_cb)(double done, void *),
-                              void *_prn_progress_cl_data)
-{
-  prn_progress_cb=_prn_progress_cb;
-  prn_progress_cl_data=_prn_progress_cl_data;
-}
-
-inline void
-DjVuToPS::set_dec_progress_cb(void (*_dec_progress_cb)(double done, void *),
-                              void *_dec_progress_cl_data)
-{
-  dec_progress_cb=_dec_progress_cb;
-  dec_progress_cl_data=_dec_progress_cl_data;
-}
-
-inline void
-DjVuToPS::set_info_cb(void (*_info_cb)(int page_num, int page_cnt,
-                                        int tot_pages, Stage stage, void *),
-                      void *_info_cl_data)
-{
-  info_cb=_info_cb;
-  info_cl_data=_info_cl_data;
-}
 
 //@}
 // ------------
