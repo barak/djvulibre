@@ -1,4 +1,4 @@
-%define release 0.3
+%define release 0.4
 %define version 3.5.13
 %define prefix %{?_prefix:%{_prefix}}%{!?_prefix:/usr}
 %define mandir %{?_mandir:%{_mandir}}%{!?_mandir:%{prefix}/man}
@@ -62,10 +62,15 @@ find %{buildroot}%{_libdir} -name "*.so*" -exec chmod 755 {} \;
 # Quick cleanup of the docs
 rm -rf doc/CVS 2>/dev/null || :
 
+# Compute file list
+find %{buildroot} \( ! -type d \) -print | \
+ sed -e 's:^%{buildroot}::'                \
+     -e 's:^%{_mandir}/.*$:#&:'            \
+     -e 's:^%{_datadir}/djvu/osi/.*$:#&:'  \
+      > files.list
 
 %clean
 rm -rf %{buildroot}
-
 
 %post 
 /sbin/ldconfig
@@ -77,7 +82,6 @@ rm -rf %{buildroot}
    ln -s ../../netscape/plugins/nsdejavu.so $n/plugins/nsdejavu.so ; \
  fi ; done ) 2>/dev/null || true
 
-
 %postun 
 /sbin/ldconfig
 # HACK: Remove links to nsdejavu.so in all mozilla dirs
@@ -88,20 +92,22 @@ rm -rf %{buildroot}
      rmdir $n/plugins ; \
   fi ; done ; fi ) 2>/dev/null || true
 
-
-%files
+%files -f files.list
 %defattr(-, root, root)
 %doc README COPYRIGHT COPYING INSTALL NEWS TODO doc
-/
-#%lang(ja) %{_datadir}/djvu/osi/ja*
-#%lang(fr) %{_datadir}/djvu/osi/fr*
-#%lang(de) %{_datadir}/djvu/osi/de*
-#%lang(zh) %{_datadir}/djvu/osi/zh*
-#%lang(ja) %{_mandir}/ja*
-#%lang(fr) %{_mandir}/fr*
-#%lang(de) %{_mandir}/de*
+%{_mandir}/man?/*
+%{_datadir}/djvu/osi/en
+%lang(ja) %{_datadir}/djvu/osi/ja*
+%lang(fr) %{_datadir}/djvu/osi/fr*
+%lang(de) %{_datadir}/djvu/osi/de*
+%lang(zh) %{_datadir}/djvu/osi/zh*
+%lang(ja) %{_mandir}/ja*
+%lang(fr) %{_mandir}/fr*
+%lang(de) %{_mandir}/de*
 
 %changelog
+* Thu Apr  8 2004 Leon Bottou <leon@bottou.org> 3.5.13.0.4
+- Runtime generation of file list.
 * Fri Apr  2 2004 Leon Bottou <leon@bottou.org> 3.5.13.0.3
 - Use DESTDIR instead of %makeinstall
 - make install-desktop-files.
