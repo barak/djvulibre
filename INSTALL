@@ -336,10 +336,9 @@ The configure command line was:
 
 
 4.3- SUN SOLARIS 5
---------------------------
+------------------
 
 SPARC-SUN-SOLARIS-5.6:
-
 Successful compilation using qt-2.3.0
 Compilation was made with gcc-3.0.2 with option -fpermissive.
 The configure command line was:
@@ -349,7 +348,6 @@ The configure command line was:
         CXX='g++ -fpermissive'
 
 I386-SUN-SOLARIS-5.9:
-
 Successful compilation using qt-3.2 and gcc-3.3.
   1) Installed gcc 3.3
   2) Installed and built Qt
@@ -376,3 +374,19 @@ The configure command line was:
   $ ./configure \
         JPEG_LIBS='/usr/local/lib/libjpeg.a' \
         JPEG_CFLAGS='-I/usr/local/include'
+
+
+
+4.5- MACOX-10.3.2
+-----------------
+
+The DjVuLibre distribution assumes that you 
+have the Fink distribution installed in directory /sw.
+Among the required packages: libjpeg qt3 qt3-linguist qt3-dev.
+
+Once this is done, djvulibre should compile and 
+install without problems. Note that the djvulibre plugin 
+does not run in Safari or MSIE. It only runs in X11 based 
+browsers such as mozilla or konqueror.  Similarly
+the viewer djview only runs under X11.
+
