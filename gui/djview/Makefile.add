@@ -384,7 +384,6 @@ OBJS = \
  exceptions.o \
  throw_error.o \
  qx_imager.o \
- rem_netscape.o \
  qxlib.o \
  qt_fix.o \
  qt_fix_moc.o \
