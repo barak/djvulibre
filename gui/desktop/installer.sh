@@ -3,8 +3,10 @@
 
 # Base
 DESTDIR=
+srcdir=.
 datadir="/usr/share"
 applications="$datadir/applications"
+icons="$datadir/icons"
 pixmaps="$datadir/pixmaps"
 mime_info="$datadir/mime-info"
 application_registry="$datadir/application-registry"
@@ -40,10 +42,14 @@ do
   case "$arg" in
       --destdir=*)
 	  DESTDIR=`echo "$arg" | sed -e 's/^[^=]*=//'` ;;
+      --srcdir=*)
+	  srcdir=`echo "$arg" | sed -e 's/^[^=]*=//'` ;;
       --datadir=*)
 	  datadir=`echo "$arg" | sed -e 's/^[^=]*=//'` ;;
       --applications=*)
 	  applications=`echo "$arg" | sed -e 's/^[^=]*=//'` ;;
+      --icons=*)
+	  icons=`echo "$arg" | sed -e 's/^[^=]*=//'` ;;
       --pixmaps=*)
 	  pixmaps=`echo "$arg" | sed -e 's/^[^=]*=//'` ;;
       --mime=*)
@@ -65,8 +71,10 @@ cat >&2 <<EOF
 Usage: installer.sh [..options..]
 Valid options are:
     --destdir=DIR (default: /)
+    --srcdir=DIR (default: .)
     --datadir=DIR (default: $datadir)
     --applications=DIR (default: $applications)
+    --icons=DIR (default: $icons)
     --pixmaps=DIR (default: $pixmaps)
     --mime_info=DIR (default: $mime_info)
     --application_registry=DIR (default: $application_registry)
@@ -90,12 +98,12 @@ done
 run()
 {
     echo "+ $*"
-    test "$dryrun" == "yes" || "$@"
+    test "$dryrun" = "yes" || "$@"
 }
 
 makedir()
 {
-    if [ ! -d $1 -a  $onlyexistingdirs == no ] 
+    if [ ! -d $1 -a $onlyexistingdirs = no ]
     then
 	makedir `dirname $1`
 	run mkdir $1
@@ -104,11 +112,11 @@ makedir()
 
 install()
 {
-    if [ -d $2 ]
+    if [ -d `dirname $2` -a ! -d "$2" ]
     then
-	test -r $2/$1 && $run rm -f $2/$1
-	run cp $1 $2/$1
-	run chmod 644 $2/$1
+	test -f $2 && run rm -f $2
+	run cp $srcdir/$1 $2
+	run chmod 644 $2
     fi
 }
 
@@ -129,30 +137,62 @@ esac
 
 # Go
 
-makedir $DESTDIR$pixmaps
-install djvu.png $DESTDIR$pixmaps
+if [ "$icons" != no ]
+then
+  makedir $DESTDIR$icons/hicolor/48x48/mimetypes
+  makedir $DESTDIR$icons/hicolor/32x32/mimetypes
+  makedir $DESTDIR$icons/hicolor/22x22/mimetypes
+  install hi48-mimetype-djvu.png $DESTDIR$icons/hicolor/48x48/mimetypes/djvu.png
+  install hi48-mimetype-djvu.png $DESTDIR$icons/hicolor/32x32/mimetypes/djvu.png
+  install hi48-mimetype-djvu.png $DESTDIR$icons/hicolor/22x22/mimetypes/djvu.png
+fi
 
-makedir $DESTDIR$mime_info
-install djvu.mime $DESTDIR$mime_info
-install djvu.keys $DESTDIR$mime_info
+if [ "$pixmaps" != no ]
+then
+  makedir $DESTDIR$pixmaps
+  install hi48-mimetype-djvu.png $DESTDIR$pixmaps/djvu.png
+fi
 
-makedir $DESTDIR$application_registry
-install djvu.applications $DESTDIR$application_registry
+if [ "$mime_info" != no ]
+then
+  makedir $DESTDIR$mime_info
+  install djvu.mime $DESTDIR$mime_info/djvu.mime
+  install djvu.keys $DESTDIR$mime_info/djvu.keys
+fi
 
-makedir $DESTDIR$mimelnk/image
-install x-djvu.desktop $DESTDIR$mimelnk/image
+if [ "$application_registry" != no ]
+then
+  makedir $DESTDIR$application_registry
+  install djvu.applications $DESTDIR$application_registry
+fi
+
+if [ "$mimelnk" != no ]
+then
+  makedir $DESTDIR$mimelnk/image
+  install x-djvu.desktop $DESTDIR$mimelnk/image/x-djvu.desktop
+fi
 
 case "$menutype" in
     redhat)
-	makedir $DESTDIR$applications
-	run $desktop_file_install --vendor= --dir=$DESTDIR$applications djview.desktop
+	if [ "$applications" != no ] 
+	then
+ 	  makedir $DESTDIR$applications
+	  run $desktop_file_install --vendor= --dir=$DESTDIR$applications djview.desktop
+        fi
 	;;
     xdg)
-	makedir $DESTDIR$applications
-	install djview.desktop $DESTDIR$applications
+	if [ "$applications" != no ] 
+	then
+	  makedir $DESTDIR$applications
+	  install djview.desktop $DESTDIR$applications/djview.desktop
+	fi
 	;;
     applnk)
-	makedir $DESTDIR$applnk/Graphics
-	install djview.desktop $DESTDIR$applnk/Graphics
+	if [ "$applnk" != no ] 
+	then
+	  makedir $DESTDIR$applnk/Graphics
+	  install djview.desktop $DESTDIR$applnk/Graphics/djview.desktop
+	fi
+	;;
 esac
 
