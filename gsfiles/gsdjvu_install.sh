@@ -88,9 +88,22 @@ for n in fonts/* ; do
   test -r $n && $INSTALL -m 644 $n $DESTDIR$gsdir/fonts 
 done
 
+echo Installing resources
+if test -d Resource ; then
+  for n in `find Resource -type d -print` ; do
+      $MKDIRP $DESTDIR$gsdir/$n
+  done
+  for n in `find Resource -type f -print` ; do
+      $INSTALL -m 644 $n $DESTDIR$gsdir/$n
+  done
+  cp lib/gs_res.ps lib/gs_res.ps.orig
+  sed -e "s:(/Resource/:($gsdir/Resource/:g" lib/gs_res.ps.orig > lib/gs_res.ps
+fi
+
 echo Installing library files
-for n in lib/*.ps lib/Fontmap* lib/CIDFnmap* ; do
+for n in lib/*.ps lib/Fontmap* lib/CIDFnmap* lib/cidfmap lib/FAPI* ; do
   test -r $n && $INSTALL -m 644 $n $DESTDIR$gsdir/lib
 done
+
 
 echo Done
