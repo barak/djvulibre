@@ -78,25 +78,17 @@
 #include "DjVuImage.h"
 #include "DjVuFileCache.h"
 #include "DjVuDocument.h"
+#include "DjVuMessageLite.h"
+
 
 // ----------------------------------------
 
 struct ddjvu_message_p : public GPEnabled
 {
-  char *tmp1;
-  char *tmp2;
-  char *tmp3;
+  GNativeString tmp1;
+  GNativeString tmp2;
   ddjvu_message_t p;
-
-  ddjvu_message_p() 
-    : tmp1(0), tmp2(0), tmp3(0)
-  { memset(&p, 0, sizeof(p)); }
-
-  ~ddjvu_message_p() 
-  { if (tmp1) free((void*)tmp1);
-    if (tmp2) free((void*)tmp2);
-    if (tmp3) free((void*)tmp3);
-    tmp1 = tmp2 = tmp3 = 0; }
+  ddjvu_message_p() { memset(&p, 0, sizeof(p)); }
 };
 
 
@@ -148,7 +140,7 @@ static void unref(GPEnabled *p)
   n.assign(0);
 }
 
-// Allocate stings
+// Allocate strings
 static char *xstr(const char *s)
 {
   int l = strlen(s);
@@ -160,22 +152,54 @@ static char *xstr(const char *s)
     }
   return p;
 }
-
-// Allocate stings
-static char *xstr(GNativeString n)
+static char *xstr(const GNativeString &n)
 {
   return xstr( (const char*) n );
 }
-
-// Allocate stings
-static char *xstr(GUTF8String u)
+static char *xstr(const GUTF8String &u)
 {
   GNativeString n(u);
-  return xstr( (const char*) n );
+  return xstr( n );
+}
+
+// Fill a message head
+static ddjvu_message_any_t 
+xhead(ddjvu_message_tag_t tag,
+      ddjvu_context_t *ctx)
+{
+  ddjvu_message_any_t any;
+  any.tag = tag;
+  any.page = 0;
+  any.document = 0;
+  any.context = ctx;
+  return any;
+}
+static ddjvu_message_any_t 
+xhead(ddjvu_message_tag_t tag,
+      ddjvu_document_t *doc)
+{
+  ddjvu_message_any_t any;
+  any.tag = tag;
+  any.page = 0;
+  any.document = doc;
+  any.context = any.document->myctx;
+  return any;
+}
+static ddjvu_message_any_t 
+xhead(ddjvu_message_tag_t tag,
+      ddjvu_page_t *pag)
+{
+  ddjvu_message_any_t any;
+  any.tag = tag;
+  any.page = pag;
+  any.document = any.page->mydoc;
+  any.context = any.document->myctx;
+  return any;
 }
 
 
 // ----------------------------------------
+
 
 ddjvu_context_t *
 ddjvu_context_create(void)
@@ -193,6 +217,7 @@ ddjvu_context_release(ddjvu_context_t *ctx)
   if (ctx)
     unref(ctx);
 }
+
 
 // ----------------------------------------
 
@@ -265,25 +290,50 @@ ddjvu_message_set_callback(ddjvu_context_t *ctx,
   return oldcallback;
 }
 
-static void
-ddjvu_message_push(ddjvu_context_t *ctx, GP<ddjvu_message_p> msg)
+
+// ----------------------------------------
+
+
+// internal: warning: mlist must be locked
+static void 
+msg_del_(ddjvu_context_t *ctx, 
+         ddjvu_message_tag_t tag,
+         ddjvu_page_t *pag)
 {
+  // warning: mlist must be locked
+  GPosition p = ctx->mlist;
+  while (p)
+    {
+      ddjvu_message_any_t &any = ctx->mlist[p]->p.m_any;
+      if (any.tag == tag && any.page == pag)
+        {
+          GPosition c = p; --p;
+          ctx->mlist.del(c);
+        }
+      ++p;
+    }
+}
+
+// push a new message
+static void
+msg_push(const ddjvu_message_any_t &head,
+         GP<ddjvu_message_p> msg = 0)
+{
+  ddjvu_context_t *ctx = head.context;
+  if (! msg) 
+    msg = new ddjvu_message_p;
+  msg->p.m_any = head;
   // lock
   ctx->monitor.enter();
   // special treatment
-  ddjvu_message_tag_t k = msg->p.m_any.kind;
-  if (k == DDJVU_RELAYOUT || k == DDJVU_REDISPLAY)
+  switch (head.tag)
     {
-      for (GPosition p = ctx->mlist; p; ++p)
-        {
-          ddjvu_message_tag_t s = ctx->mlist[p]->p.m_any.kind;
-          if ((k==DDJVU_REDISPLAY && (s==k)) || 
-              (k==DDJVU_RELAYOUT  && (s==k || s==DDJVU_REDISPLAY)) )
-            {
-              GPosition c = p; --p;
-              ctx->mlist.del(c);
-            }
-        }
+    case DDJVU_RELAYOUT:
+      msg_del_(ctx, DDJVU_RELAYOUT, head.page);
+      // fall thru
+    case DDJVU_REDISPLAY:
+      msg_del_(ctx, DDJVU_REDISPLAY, head.page);
+      break;
     }
   // append
   ctx->mlist.append(msg);
@@ -295,32 +345,59 @@ ddjvu_message_push(ddjvu_context_t *ctx, GP<ddjvu_message_p> msg)
     (ctx->callback)(ctx, ctx->mlist.size());
 }
 
-static void
-ddjvu_error(const char *msg,
-            ddjvu_context_t *ctx, 
-            ddjvu_document_t *doc = 0,
-            ddjvu_page_t *pag = 0,
-            ddjvu_error_t cat = ddjvu_error_api,
-            const char *filename = 0,
-            int lineno = 0)
+// ----------------------------------------
+
+
+
+static GP<ddjvu_message_p>
+msg_prep_error(const char *message,
+               ddjvu_error_t category = ddjvu_error_api,
+               const char *function=0, 
+               const char *filename=0, 
+               int lineno=0)
 {
   GP<ddjvu_message_p> p = new ddjvu_message_p;
-  p->tmp1 = xstr(msg);
-  p->p.m_any.kind = DDJVU_ERROR;
-  p->p.m_any.context = ctx;
-  p->p.m_any.document = doc;
-  p->p.m_any.page = pag;
-  p->p.m_error.message = p->tmp1;
+  p->tmp1 = message;
+  p->p.m_error.category = category;
+  p->p.m_error.message = (const char*)p->tmp1;
+  p->p.m_error.function = function;
   p->p.m_error.filename = filename;
   p->p.m_error.lineno = lineno;
-  ddjvu_message_push(ctx, p);
+  return p;
 }
 
-#define APIERROR(m,c,d,p) \
-  ddjvu_error(m, c, d, p, ddjvu_error_api, __FILE__, __LINE__)
+static GP<ddjvu_message_p>
+msg_prep_error(GUTF8String message,
+               ddjvu_error_t category = ddjvu_error_api,
+               const char *function=0, 
+               const char *filename=0, 
+               int lineno=0)
+{
+  GP<ddjvu_message_p> p = new ddjvu_message_p;
+  p->tmp1 = DjVuMessageLite::LookUpUTF8(message); // i18n nonsense!
+  p->p.m_error.category = category;
+  p->p.m_error.message = (const char*)p->tmp1;
+  p->p.m_error.function = function;
+  p->p.m_error.filename = filename;
+  p->p.m_error.lineno = lineno;
+  return p;
+}
 
-#define APIASSERT(cond, m,c,d,p) \
-  if (!(cond)) ddjvu_error(m, c, d, p, ddjvu_error_api, __FILE__, __LINE__)
+#ifdef __GNUG__
+# define APIERR(x, m) \
+    msg_push(xhead(DDJVU_ERROR,x),\
+             msg_prep_error(m,ddjvu_error_api,__func__,__FILE__,__LINE__))
+#else
+# define APIERR(x, m) \
+    msg_push(xhead(DDJVU_ERROR,x),\
+             msg_prep_error(m,ddjvu_error_api,0,__FILE__,__LINE__))
+#endif
+
+#define ASSERTM(cond, x, m, action) \
+    do{if(!(cond)){APIERR(x,m);action;}}while(0)
+
+#define ASSERT(cond, x, action) \
+    do{if(!(cond)){APIERR(x,"Assertion failed");action;}while(0)
 
 
 // ----------------------------------------

@@ -257,7 +257,7 @@ typedef enum {
    pointers when they are not relevant. */
 
 typedef struct ddjvu_message_any_s {
-  ddjvu_message_tag_t   kind;
+  ddjvu_message_tag_t   tag;
   ddjvu_context_t      *context;
   ddjvu_document_t     *document;
   ddjvu_page_t         *page;
@@ -285,6 +285,7 @@ struct ddjvu_message_error_s {  /* ddjvu_message_t::m_error */
   ddjvu_message_any_t   any;
   ddjvu_error_t         category;
   const char           *message;
+  const char           *function;
   const char           *filename;
   int                   lineno;
 }; 
