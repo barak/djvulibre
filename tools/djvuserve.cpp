@@ -65,6 +65,7 @@ bool head = false;
 bool autoindirect = true;
 GUTF8String pathtranslated;
 GUTF8String requestmethod;
+GUTF8String querystring;
 
 
 static void
@@ -139,7 +140,10 @@ djvuserver_file(GURL pathurl)
                 {
                   // It is bundled
                   GUTF8String id = pathurl.name();
-                  fprintf(stdout,"Location: %s/index\n\n", (const char*)id);
+                  fprintf(stdout,"Location: %s/index", (const char*)id);
+                  if (querystring.length())
+                    fprintf(stdout,"?%s", (const char*)querystring);
+                  fprintf(stdout,"\n\n");
                   return;
                 }
             }
@@ -264,6 +268,7 @@ main(int argc, char ** argv)
           if (! pathtranslated)
             usage();
           requestmethod = GNativeString(getenv("REQUEST_METHOD"));
+          querystring = GUTF8String(getenv("QUERY_STRING"));
         }
       else if (argc == 2)
         {
