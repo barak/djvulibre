@@ -106,31 +106,15 @@ fmin(float a, float b)
 // ------- DJVUPALETTE
 
 
-bool DjVuPalette::initialized = false;
-int DjVuPalette::hind[3][256];
-
 DjVuPalette::DjVuPalette()
-  : hcube(0), pcube(0)
+  : mask(0), hist(0), pmap(0)
 {
-  // Initialization of static tables
-  if (!initialized)
-    {
-      for (int i=0; i<256; i++)
-        {
-          hind[0][i] = (i>>(8-CUBEBITS));
-          hind[1][i] = hind[0][i] << CUBEBITS;
-          hind[2][i] = hind[1][i] << CUBEBITS;
-        }
-      initialized = true;
-    }
 }
 
 DjVuPalette::~DjVuPalette()
 {
-  if (hcube) 
-    delete [] hcube;
-  if (pcube)
-    delete [] pcube;
+  delete hist;
+  delete pmap;
 }
 
 DjVuPalette& 
@@ -138,8 +122,9 @@ DjVuPalette::operator=(const DjVuPalette &ref)
 {
   if (this != &ref)
     {
-      if (hcube) { delete [] hcube; hcube=0; }
-      if (pcube) { delete [] pcube; pcube=0; }
+      delete hist;
+      delete pmap;
+      mask = 0;
       palette = ref.palette;
       colordata = ref.colordata;
     }
@@ -147,25 +132,37 @@ DjVuPalette::operator=(const DjVuPalette &ref)
 }
 
 DjVuPalette::DjVuPalette(const DjVuPalette &ref)
-  : hcube(0), pcube(0)
+  : mask(0), hist(0), pmap(0)
 {
   this->operator=(ref);
 }
 
-void
-DjVuPalette::allocate_hcube()
-{
-  if (! hcube)  hcube = new PHist[CUBESIZE];
-  memset(hcube, 0, sizeof(PHist)*CUBESIZE);
-}
+
+
+// -------- HISTOGRAM ALLOCATION
 
 void
-DjVuPalette::allocate_pcube()
+DjVuPalette::allocate_hist()
 {
-  if (! pcube)  pcube = new short[CUBESIZE];
-  for (int i=0; i<CUBESIZE; i++) pcube[i] = -1;
+  if (! hist)
+    {
+      hist = new GMap<int,int>;
+      mask = 0;
+    }
+  else
+    {
+      GMap<int,int> *old = hist;
+      hist = new GMap<int,int>;
+      mask = (mask<<1)|(0x010101);
+      for (GPosition p = *old; p; ++p)
+        {
+          int k = old->key(p);
+          int w = (*old)[p];
+          (*hist)[k | mask] += w;
+        }
+      delete old;
+    }
 }
-
 
 
 // -------- PALETTE COMPUTATION
@@ -223,7 +220,7 @@ DjVuPalette::lcomp (const void *a, const void *b)
 int
 DjVuPalette::compute_palette(int maxcolors, int minboxsize)
 {
-  if (!hcube)
+  if (!hist)
     G_THROW( ERR_MSG("DjVuPalette.no_color") );
   if (maxcolors<1 || maxcolors>MAXPALETTESIZE)
     G_THROW( ERR_MSG("DjVuPalette.many_colors") );
@@ -235,22 +232,17 @@ DjVuPalette::compute_palette(int maxcolors, int minboxsize)
   int sum = 0;
   int ncolors = 0;
   GTArray<PData> pdata;
-  for (int i=0; i<CUBESIZE; i++)
-    if (hcube[i].w > 0)
-      {
-        pdata.touch(ncolors);
-        PData &data = pdata[ncolors++];
-        PHist &hist = hcube[i];
-	// [LB] -- I restored the (float)(p)/w over the broken
-	// static_cast<float>(p/w).  The first form forces a floating
-	// point division. I could also write (float)((p+w/2)/w) to
-	// obtain the proper rounding.
-        data.p[0] = (unsigned char) fmin(255, (float)(hist.p[0])/hist.w);
-        data.p[1] = (unsigned char) fmin(255, (float)(hist.p[1])/hist.w);
-        data.p[2] = (unsigned char) fmin(255, (float)(hist.p[2])/hist.w);
-        data.w = hist.w;
-        sum += data.w;
-      }
+  for (GPosition p = *hist; p; ++p)
+    {
+      pdata.touch(ncolors);
+      PData &data = pdata[ncolors++];
+      int k = hist->key(p);
+      data.p[0] = (k>>16) & 0xff;
+      data.p[1] = (k>>8) & 0xff;
+      data.p[2] = (k) & 0xff;
+      data.w = (*hist)[p];
+      sum += data.w;
+    }
   // Create first box
   GList<PBox> boxes;
   PBox newbox;
@@ -350,8 +342,8 @@ DjVuPalette::compute_palette(int maxcolors, int minboxsize)
   qsort((PColor*)palette, ncolors, sizeof(PColor), lcomp);
   // Clear invalid data
   colordata.empty();
-  if (pcube) 
-    allocate_pcube();
+  delete pmap;
+  pmap = 0;
   // Return dominant color
   return color_to_index_slow(dcolor.p);
 }
@@ -381,15 +373,21 @@ DjVuPalette::compute_pixmap_palette(const GPixmap &pm, int ncolors, int minboxsi
 
 // -------- QUANTIZATION
 
+
+void
+DjVuPalette::allocate_pmap()
+{
+  if (! pmap)
+    pmap = new GMap<int,int>;
+}
+
 int 
 DjVuPalette::color_to_index_slow(const unsigned char *bgr)
 {
+  PColor *pal = palette;
   const int ncolors = palette.size();
   if (! ncolors)
-  {
     G_THROW( ERR_MSG("DjVuPalette.not_init") );
-  }
-  PColor *pal = palette;
   // Should be able to do better
   int found = 0;
   int founddist = 3*256*256;
@@ -405,6 +403,13 @@ DjVuPalette::color_to_index_slow(const unsigned char *bgr)
           founddist = dist;
         }
     }
+  // Store in pmap
+  if (pmap && pmap->size()<0x8000)
+    {
+      int key = (bgr[0]<<16)|(bgr[1]<<8)|(bgr[0]);
+      (*pmap)[key] = found;
+    }
+  // Return
   return found;
 }
 
@@ -531,12 +536,11 @@ DjVuPalette::decode(GP<ByteStream> gbs)
 {
   ByteStream &bs=*gbs;
   // Make sure that everything is clear
-  if (hcube) 
-    delete [] hcube;
-  if (pcube)
-    delete [] pcube;
-  hcube = 0;
-  pcube = 0;
+  delete hist;
+  delete pmap;
+  hist = 0;
+  pmap = 0;
+  mask = 0;
   // Code version
   int version = bs.read8();
   if ( (version & 0x7f) != DJVUPALETTEVERSION)

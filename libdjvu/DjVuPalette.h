@@ -209,22 +209,21 @@ public:
   void decode(GP<ByteStream> bs);
 
 private:
-  int color_to_index_slow(const unsigned char *bgr);
   // Histogram
-  struct PHist { double p[3]; int w; };
-  PHist *hcube;
-  void allocate_hcube();
-  static int hind[3][256];
-  static bool initialized;
+  int mask;
+  GMap<int,int> *hist;
   // Quantization data
   struct PColor { unsigned char p[4]; };
   GTArray<PColor> palette;
-  void allocate_pcube();
-  short *pcube;
+  GMap<int,int> *pmap;
+  // Helpers
+  void allocate_hist();
+  void allocate_pmap();
   static int CALLINGCONVENTION bcomp (const void*, const void*);
   static int CALLINGCONVENTION gcomp (const void*, const void*);
   static int CALLINGCONVENTION rcomp (const void*, const void*);
   static int CALLINGCONVENTION lcomp (const void*, const void*);
+  int color_to_index_slow(const unsigned char *bgr);
 private: // dummy functions
   static void encode(ByteStream *);
   static void decode(ByteStream *);
@@ -239,48 +238,41 @@ private: // dummy functions
 inline void 
 DjVuPalette::histogram_clear()
 {
-  allocate_hcube();
-}
-
-inline void 
-DjVuPalette::histogram_add(const GPixel &p, int weight)
-{
-  if (!hcube) allocate_hcube();
-  PHist &d = hcube[hind[0][p.b]+hind[1][p.g]+hind[2][p.r]];
-  d.p[0] += weight*p.b;
-  d.p[1] += weight*p.g;
-  d.p[2] += weight*p.r;
-  d.w += weight;
+  delete hist;
+  hist = 0;
+  mask = 0;
 }
 
 inline void 
 DjVuPalette::histogram_add(const unsigned char *bgr, int weight)
 {
-  if (!hcube) allocate_hcube();
-  if (weight>0) 
+  if (weight > 0)
     {
-      PHist &d = hcube[hind[0][bgr[0]]+hind[1][bgr[1]]+hind[2][bgr[2]]];
-      d.p[0] +=  bgr[0] * weight;
-      d.p[1] +=  bgr[1] * weight;
-      d.p[2] +=  bgr[2] * weight;
-      d.w += weight;
+      if (!hist || hist->size()>=0x4000) 
+        allocate_hist();
+      int key = (bgr[0]<<16)|(bgr[1]<<8)|(bgr[2])|(mask);
+      (*hist)[key] += weight;
     }
+}  
+
+inline void 
+DjVuPalette::histogram_add(const GPixel &p, int weight)
+{
+  histogram_add(&p.b, weight);
 }
 
 inline void 
 DjVuPalette::histogram_norm_and_add(const int *bgr, int weight)
 {
-  if (!hcube) allocate_hcube();
-  if (weight>0) 
+  if (weight > 0)
     {
       int p0 = bgr[0]/weight; if (p0>255) p0=255;
       int p1 = bgr[1]/weight; if (p1>255) p1=255;
       int p2 = bgr[2]/weight; if (p2>255) p2=255;
-      PHist &d = hcube[hind[0][p0]+hind[1][p1]+hind[2][p2]];
-      d.p[0] +=  bgr[0];
-      d.p[1] +=  bgr[1];
-      d.p[2] +=  bgr[2];
-      d.w += weight;
+      if (!hist || hist->size()>=0x4000) 
+        allocate_hist();
+      int key = (p0<<16)|(p1<<8)|(p2)|(mask);
+      (*hist)[key] += weight;
     }
 }
 
@@ -293,10 +285,13 @@ DjVuPalette::size() const
 inline int 
 DjVuPalette::color_to_index(const unsigned char *bgr)
 {
-  if (!pcube) allocate_pcube();
-  short &d = pcube[hind[0][bgr[0]]+hind[1][bgr[1]]+hind[2][bgr[2]]];
-  if (d < 0) d = color_to_index_slow(bgr);
-  return d;
+  if (! pmap)
+    allocate_pmap();
+  int key = (bgr[0]<<16)|(bgr[1]<<8)|(bgr[2]);
+  GPosition p = pmap->contains(key);
+  if ( p)
+    return (*pmap)[p];
+  return color_to_index_slow(bgr);
 }
 
 inline int 
