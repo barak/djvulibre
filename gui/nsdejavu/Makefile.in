@@ -49,11 +49,11 @@ INCS = \
  -I${top_srcdir}/gui/shared/res \
  -I${top_srcdir}/gui/npsdk 
 
-CFLAGS = ${DEFS} ${OPTS} ${INCS} ${NSDEJAVU_FLAGS}
+CFLAGS = @CPPFLAGS@ ${DEFS} ${OPTS} ${INCS} ${NSDEJAVU_FLAGS}
 
 OBJS = nsdejavu.o
 
-LIBS = ${NSDEJAVU_LIBS}
+LIBS = @LDFLAGS@ ${NSDEJAVU_LIBS}
 
 all: ${NSDEJAVU} nsdejavu.1
 

@@ -670,11 +670,11 @@ AC_DEFUN([AC_PATH_QT],
     # Unusual install: bsd style
     if test "x$ac_has_qt" = xno ; then
       ac_qt_names="qt3 qt2 qt"
-      ac_qt_dirs="$QTDIR /usr /usr/X11R6 /usr/local"
+      ac_qt_dirs="$QTDIR $prefix /sw /usr /usr/X11R6 /usr/local"
       for d in $ac_qt_dirs ; do
         for n in $ac_qt_names ; do
           if test -r $d/include/$n/qwidget.h ; then
-              for l in lib$n.so lib$n-mt.so lib$n.a lib$n-mt.a ; do
+              for l in lib$n.so lib$n-mt.so lib$n-mt.dylib lib$n.a lib$n-mt.a ; do
                   if test -r $d/lib/$l ; then
                       QT_CFLAGS="-I$d/include/$n"
                       QT_LIBS="-L$d/lib -l$n"
@@ -690,11 +690,11 @@ AC_DEFUN([AC_PATH_QT],
     # Unusual install: debian style
     if test "x$ac_has_qt" = xno ; then
       ac_qt_names="qt3 qt2 qt"
-      ac_qt_dirs="$QTDIR /usr /usr/X11R6 /usr/local"
+      ac_qt_dirs="$QTDIR $prefix /sw /usr /usr/X11R6 /usr/local"
       for d in $ac_qt_dirs ; do
         for n in $ac_qt_names ; do
           if test -r $d/include/$n/qwidget.h ; then
-              for l in libqt.so libqt-mt.so libqt.a libqt-mt.a ; do
+              for l in libqt.so libqt-mt.so libqt-mt.dylib libqt.a libqt-mt.a; do
                   if test -r $d/lib/$l ; then
                       QT_CFLAGS="-I$d/include/$n"
                       QT_LIBS="-L$d/lib -lqt"
@@ -726,7 +726,8 @@ AC_DEFUN([AC_PATH_QT],
           esac
         done
         ac_has_qt_mt=no
-        for n in ${qt_libdir}/lib${qt_libname}-mt.so.3.* ; do
+        for n in ${qt_libdir}/lib${qt_libname}-mt.so.3.* \
+	         ${qt_libdir}/lib${qt_libname}-mt.dylib; do
           if test -r $n ; then
             ac_has_qt_mt=yes
           fi

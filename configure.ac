@@ -32,6 +32,45 @@ AC_CONFIG_HEADER(config.h:config/config.h.in)
 AC_PREFIX_DEFAULT(/usr/local)
 AC_CANONICAL_HOST
 
+AC_ARG_WITH(extra-includes,
+            AC_HELP_STRING([--with-extra-includes=DIR],
+                       [Define an additional directory for include files]),
+        [ if test -d "$withval" ; then
+            CPPFLAGS="$CPPFLAGS -I$withval" 
+          else
+            AC_MSG_ERROR([Cannot stat directory $withval])
+          fi ] )
+
+AC_ARG_WITH(extra-libraries,
+            AC_HELP_STRING([--with-extra-libraries=DIR],
+                       [Define an additional directory for library files]),
+        [ if test -d "$withval" ; then
+           LDFLAGS="$LDFLAGS -L$withval"
+          else
+            AC_MSG_ERROR([Cannot stat directory $withval])
+          fi ] )
+
+# Always look into a "gnu" directory.
+curwd=`pwd`
+if test -d $curwd/gnu/include ; then
+   CPPFLAGS="$CPPFLAGS -I$curwd/gnu/include"
+fi
+if test -d $curwd/gnu/lib ; then
+   LDFLAGS="$LDFLAGS -L$curwd/gnu/lib"
+fi
+
+# Special cases
+case "$host" in
+  *-darwin* | *-macos10*)
+     if test -d /sw ; then
+       CPPFLAGS="$CPPFLAGS -I/sw/include"
+       LDFLAGS="$LDFLAGS -L/sw/lib"
+     fi
+  ;;
+esac
+
+
+
 # ----------------------------------------
 # Programs
 # ----------------------------------------
@@ -81,7 +120,7 @@ dnl   not ready for general use with C++.
 # ----------------------------------------
 
 AC_CHECK_LIB(m,sqrt)
-AC_CHECK_LIB(iconv,libconv)
+AC_CHECK_LIB(iconv,libiconv)
 
 # ----------------------------------------
 # Header Files
