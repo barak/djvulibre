@@ -21,27 +21,26 @@
 .\" of the Free Software Foundation at http://www.fsf.org.
 .TH CJB2 1 "10/11/2001" "DjVuLibre-3.5" "DjVuLibre-3.5"
 .SH NAME
-cjb2 \- Simple DjVuBitonal encoder.
+cpaldjvu \- DjVuDocument encoder for low-color images.
 
 .SH SYNOPSIS
-.BI "cjb2  [" "options" "] " "inputpbmfile" " " "outputdjvufile"
+.BI "cpaldjvu  [" "options" "] " "inputppmfile" " " "outputdjvufile"
 
 .SH DESCRIPTION
-This is a simple encoder for bitonal files.
-Argument 
-.I inputpbmfile
-is the name of a 
-.SM PBM
-file containing the black-and-white image of a document.
-This program produces a DjVuBitonal file named
-.IR outputdjvufile .
+Program 
+.B cpaldjvu
+is a DjVuDocument encoder for images containing few colors.  It performs best
+on images containing large solid color areas such as screen dumps.
+Compression ratios on such images can be much higher than those achieved by
+.SM GIF
+or
+.SM PNG
+compression.
 
-The default compression process is lossless: decoding the DjVuBitonal file at
-full resolution will produce an image exactly identical to the input file.
-Lossy compression is enabled by selecting option
-.B -clean 
-and/or option
-.BR -loose .
+This program works by first reducing the number of distinct colors to a small
+specified value using a simple color quantization algorithm.  The dominant
+color is encoded into the background layer.  The other colors are encoded into
+the foreground layer.
 
 .SH OPTIONS
 .TP
@@ -51,37 +50,23 @@ dots per inch. The resolution information encoded in DjVu files determine how
 the decoder scales the image on a particular display.  Meaningful resolutions
 range from 25 to 1200.  The default value is 300 dpi.
 .TP
-.B "-clean"
-Remove flyspecks from the input image. 
-This option enables a heuristic algorithm that removes very small marks.  
-Such marks are often causes by noise and dust during the scanning process.
-The threshold mark size is chosen according to the resolution
-specified with option 
-.BR -dpi .
-.TP
-.B "-loose"
-Substitute patterns with small variations.
-This option enables a heuristic algorithm that encodes certain characters
-by simply replicating the shape of a previously encoded character.
-The shape difference between both characters must represent less
-than 6% of the pixels in the character bounding box.
+.BI "-colors " "n"
+Specify a maximum number of distinct colors for the color quantization
+algorithm.  process. The default value is 256.  Smaller values can produce
+much smaller files.
 .TP
 .B "-verbose"
 Display informational messages while running.
 
-.SH REMARKS
-Lossless encoding is competitive with that of the Lizardtech commercial
-encoders.  Lossy encoding mode lags behind.  Additional algorithms could
-improve the overall performance:
-.IP "*" 3
-Detecting small marks belonging to half-tone patterns
-would improve compression speed.
-.IP "*" 3
-Multi-page character matches would improve the
-compression ratios for multi-page documents.
-.IP "*" 3
-A better pattern matching code would improve the 
-lossy compression ratios.
+.SH LIMITATIONS
+The color quantization might introduce severe degradation if the image
+contains photographic areas with a large number of very similar colors.
+Color quantization problems might be solved by pre-processing
+the input file with a different quantization program such as
+.BR ppmquant .
+Avoid using the error diffusion dithering algorithm.
+This algorithm generates random dithering patterns that
+might be very costly to encode.
 
 .SH CREDITS
 This program was initially written by L\('eon Bottou
@@ -91,4 +76,6 @@ This program was initially written by L\('eon Bottou
 .SH SEE ALSO
 .BR djvu (1),
 .BR pbm (5),
-.BR pnmtotiff (1),
+.BR ppmquant (1),
+.BR pnmtogif (1),
+.BR pnmtopng (1)
