@@ -396,7 +396,7 @@ main(int argc, char **argv)
           GUTF8String s(dargv[1]);
           int pos;
           int n=s.toLong(0,pos);
-          if (dargv[1] == GUTF8String("-v"))
+          if (s == "-v" || s == "-verbose")
             {
               flag_verbose = 1;
             }
