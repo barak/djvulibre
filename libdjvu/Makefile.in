@@ -25,6 +25,7 @@ bindir = @bindir@
 datadir = @datadir@
 libdir = @libdir@
 mandir = @mandir@
+includedir = @includedir@
 
 CC = @CC@
 CXX = @CXX@
@@ -43,7 +44,7 @@ JPEG_CFLAGS=@JPEG_CFLAGS@
 THREAD_LIBS = @THREAD_LIBS@
 THREAD_CFLAGS = @THREAD_CFLAGS@
 
-LIBDJVU_LA = libdjvulibre-3.5.la
+LIBDJVU_LA = libdjvulibre.la
 LIBDJVU_VER = `echo ${PACKAGE_VERSION} | sed -e 's/^3\.5\.//'`:0:0
 
 INCS = -I${top_builddir} -I${srcdir}
@@ -54,7 +55,7 @@ CXXFLAGS = @CPPFLAGS@ @CXXFLAGS@ ${CXXPICFLAGS} ${CXXRPOFLAGS} ${FLAGS}
 
 all: ${LIBDJVU_LA} 
 
-install: install-lib install-data
+install: install-lib install-data install-include
 
 OBJS = \
 	DjVuGlobal.lo DjVuGlobalMemory.lo GOS.lo GException.lo GContainer.lo \
@@ -99,6 +100,10 @@ install-lib: ${LIBDJVU_LA} FORCE
 	${INSTALL} -d ${DESTDIR}${libdir}
 	${LIBTOOL} --mode=install \
 	   ${INSTALL} -m 644 ${LIBDJVU_LA} ${DESTDIR}${libdir}
+
+install-include: FORCE
+	${INSTALL} -d ${DESTDIR}${includedir}/libdjvu
+	${INSTALL} -m 0644 ddjvuapi.h ${DESTDIR}${includedir}/libdjvu
 
 depend: FORCE
 	${CXX} -MM ${CXXFLAGS} ${srcdir}/*.cpp > Makefile.dep

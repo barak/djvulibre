@@ -58,13 +58,13 @@
 # include "config.h"
 #endif
 #if NEED_GNUG_PRAGMAS
-# pragma implementation "ddjvu.h"
+# pragma implementation "ddjvuapi.h"
 #endif
 
 #include <stdlib.h>
 #include <string.h>
 
-#include "ddjvu.h"
+#include "ddjvuapi.h"
 
 #include "GException.h"
 #include "GSmartPointer.h"

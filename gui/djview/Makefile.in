@@ -52,7 +52,7 @@ QT_CFLAGS = @QT_CFLAGS@
 X_LIBS = @X_LIBS@
 X_CFLAGS = @X_CFLAGS@
 
-LIBDJVU = ${top_builddir}/libdjvu/libdjvulibre-3.5.la
+LIBDJVU = ${top_builddir}/libdjvu/libdjvulibre.la
 
 PROGRAM = djview
 
