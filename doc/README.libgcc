@@ -1,0 +1,12 @@
+
+The file "PATCH.libgcc" contains a patch for the GNU compiler "gcc".
+
+There is no need to apply this patch unless (a) you compile djvu using
+the cothread threading model, and (b) gcc on your platform implements
+exceptions using the sjlj model. The configuration script will test the
+presence of the patch and indicate if the patch is necessary.
+
+To use the patch, you must obtain a source code distribution of gcc,
+apply the patch to the file "gcc/libgcc2.c", and create a compiler
+binary as explained in the gcc documentation.  Then set the environment
+variables CC and CXX, and run the djvu configuration script.

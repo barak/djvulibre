@@ -1,0 +1,139 @@
+#C- This program is free software; you can redistribute it and/or 
+#C- modify it under the terms of the GNU General Public License, 
+#C- version 2.  The license should have accompanied the program 
+#C- or you may obtain a copy of the license from the Free Software
+#C- Foundation at http://www.fsf.org.
+#C- 
+#C- This program is distributed in the hope that it will be useful,
+#C- but WITHOUT ANY WARRANTY; without even the implied warranty of
+#C- MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+#C- GNU General Public License for more details.
+
+@SET_MAKE@
+SHELL = @SHELL@
+VPATH = @srcdir@
+PACKAGE_NAME = @PACKAGE_NAME@
+PACKAGE_VERSION = @PACKAGE_VERSION@
+
+srcdir = @srcdir@
+top_srcdir = @top_srcdir@
+top_builddir = ..
+
+prefix = @prefix@
+exec_prefix = @exec_prefix@
+bindir = @bindir@
+datadir = @datadir@
+libdir = @libdir@
+mandir = @mandir@
+
+CC = @CC@
+CXX = @CXX@
+RM = @RM@
+AR = @AR@
+LN_S = @LN_S@
+TOUCH = @TOUCH@
+INSTALL = @INSTALL@
+RANLIB = @RANLIB@
+
+DEFS = @DEFS@
+OPTS = @OPTS@
+CXXRPOFLAGS = @CXXRPOFLAGS@
+JPEG_LIBS=@JPEG_LIBS@
+JPEG_CFLAGS=@JPEG_CFLAGS@
+THREAD_LIBS = @THREAD_LIBS@
+THREAD_CFLAGS = @THREAD_CFLAGS@
+
+LIBDJVU_A = libdjvu.a
+LIBDJVU_SO = libdjvu-${PACKAGE_VERSION}.so
+
+@RPO_YES@LIBDJVU_RPO = libdjvu-rpo.o
+@RPO_NO@LIBDJVU_RPO = 
+
+@SHARED_YES@CXXPICFLAGS = -fPIC -DPIC
+@SHARED_NO@CXXPICFLAGS =
+@SHARED_YES@CXXSHARED = ${CXX} -shared -Wl,-soname,${LIBDJVU_SO}
+@SHARED_NO@CXXSHARED =
+
+INCS = -I${top_builddir} -I${srcdir}
+FLAGS = ${DEFS} ${INCS} ${OPTS} ${JPEG_CFLAGS} ${THREAD_CFLAGS}
+LIBS= ${JPEG_LIBS} ${THREAD_LIBS} @LIBS@
+CFLAGS = @CFLAGS@ ${FLAGS}
+CXXFLAGS = @CXXFLAGS@ ${CXXPICFLAGS} ${CXXRPOFLAGS} ${FLAGS}
+
+all: ${LIBDJVU_A} 
+
+@SHARED_YES@all: ${LIBDJVU_SO}
+
+install: install-data
+@SHARED_YES@install: install-lib
+
+OBJS = \
+	DjVuGlobal.o DjVuGlobalMemory.o GOS.o GException.o GContainer.o \
+        GString.o GThreads.o GRect.o GSmartPointer.o  MMX.o Arrays.o debug.o \
+	GBitmap.o GPixmap.o GScaler.o DjVuPalette.o ByteStream.o \
+	IFFByteStream.o BSByteStream.o BSEncodeByteStream.o ZPCodec.o \
+	JB2Image.o JB2EncodeCodec.o IW44Image.o IW44EncodeCodec.o \
+	MMRDecoder.o JPEGDecoder.o DataPool.o GURL.o DjVuFileCache.o \
+	DjVuPort.o GMapAreas.o DjVuAnno.o GIFFManager.o DjVuText.o \
+	DjVuInfo.o DjVuFile.o DjVuImage.o DjVuDocument.o \
+	DjVmDir.o DjVmDoc.o DjVmDir0.o DjVuNavDir.o DjVuErrorList.o \
+	DjVuDocEditor.o DjVuToPS.o DjVuDumpHelper.o \
+	DjVuMessageLite.o DjVuMessage.o GUnicode.o UnicodeByteStream.o \
+	XMLParser.o XMLTags.o DjVuDynamic.o
+
+${LIBDJVU_A} : ${OBJS} ${LIBDJVU_RPO}
+	@echo "[ generating $@ ... ]"
+	-${RM} 2>/dev/null ${LIBDJVU_A}
+	${AR} cru ${LIBDJVU_A} ${OBJS}
+	${RANLIB} ${LIBDJVU_A}
+
+@RPO_YES@${LIBDJVU_RPO} : ${OBJS}
+@RPO_YES@	@echo "[ forcing repository closure ... ]"
+@RPO_YES@	-${CXX} -o $@ ${CXXRPOFLAGS} ${OBJS} ${LIBS}
+@RPO_YES@	${TOUCH} $@
+
+@SHARED_YES@${LIBDJVU_SO} : ${OBJS}
+@SHARED_YES@	@echo "[ linking $@ ... ]"
+@SHARED_YES@	${CXXSHARED} -o ${LIBDJVU_SO} ${CXXFLAGS} ${OBJS} ${LIBS}
+
+install-data: FORCE
+	${INSTALL} -d ${datadir}/djvu
+	cd ${top_srcdir}/share && \
+	  for n in `find djvu -type d -print` ; do \
+	    ${INSTALL} -d ${datadir}/$$n || exit ; done
+	cd ${top_srcdir}/share && \
+	  for n in `find djvu -type f -print` ; do \
+	    ${INSTALL} -m 0644 $$n ${datadir}/`dirname $$n` || exit ; done
+
+install-lib: ${LIBDJVU_SO} FORCE
+	${INSTALL} -d ${libdir}
+	${INSTALL} -m 644 ${LIBDJVU_SO} ${libdir}
+	-${RM} 2>/dev/null ${libdir}/libdjvu.so 
+	cd ${libdir} && ${LN_S} ${LIBDJVU_SO} libdjvu.so
+
+depend: FORCE
+	${CXX} -MM ${CXXFLAGS} ${srcdir}/*.cpp > Makefile.dep
+
+clean: FORCE
+	-${RM} 2>/dev/null *.o *.a *.so *.stamp
+
+distclean: clean 
+	-${RM} -r 2>/dev/null Makefile *.rpo ii_files
+
+FORCE:
+.PHONY: FORCE
+.SUFFIXES: .c .cpp
+
+.c.o:
+	${CC} ${CFLAGS} -c $<
+
+.cpp.o:
+	${CXX} ${CXXFLAGS} -c $<
+
+# Dependencies
+
+Makefile.dep: ${srcdir}/Makefile.dep
+	cp ${srcdir}/Makefile.dep $@
+
+include Makefile.dep
+

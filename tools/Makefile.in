@@ -1,0 +1,118 @@
+#C- This program is free software; you can redistribute it and/or 
+#C- modify it under the terms of the GNU General Public License, 
+#C- version 2.  The license should have accompanied the program 
+#C- or you may obtain a copy of the license from the Free Software
+#C- Foundation at http://www.fsf.org.
+#C- 
+#C- This program is distributed in the hope that it will be useful,
+#C- but WITHOUT ANY WARRANTY; without even the implied warranty of
+#C- MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+#C- GNU General Public License for more details.
+
+@SET_MAKE@
+SHELL = @SHELL@
+VPATH = @srcdir@
+PACKAGE_NAME = @PACKAGE_NAME@
+PACKAGE_VERSION = @PACKAGE_VERSION@
+
+srcdir = @srcdir@
+top_srcdir = @top_srcdir@
+top_builddir = ..
+
+prefix = @prefix@
+exec_prefix = @exec_prefix@
+bindir = @bindir@
+datadir = @datadir@
+libdir = @libdir@
+mandir = @mandir@
+
+CC = @CC@
+CXX = @CXX@
+RM = @RM@
+AR = @AR@
+LN_S = @LN_S@
+TOUCH = @TOUCH@
+INSTALL = @INSTALL@
+RANLIB = @RANLIB@
+
+DEFS = @DEFS@
+OPTS = @OPTS@
+CXXRPOFLAGS = @CXXRPOFLAGS@
+JPEG_LIBS=@JPEG_LIBS@
+JPEG_CFLAGS=@JPEG_CFLAGS@
+THREAD_LIBS = @THREAD_LIBS@
+THREAD_CFLAGS = @THREAD_CFLAGS@
+
+LIBDJVU_A = ${top_builddir}/libdjvu/libdjvu.a
+LIBDJVU_SO = ${top_builddir}/libdjvu/libdjvu-${PACKAGE_VERSION}.so
+@SHARED_YES@LIBDJVU = -Wl,-rpath,${libdir} ${LIBDJVU_SO}
+@SHARED_NO@LIBDJVU = ${LIBDJVU_A}
+
+INCS = -I${top_builddir} -I${top_srcdir}/libdjvu -I${srcdir}
+FLAGS = ${DEFS} ${INCS} ${OPTS} ${JPEG_CFLAGS} ${THREAD_CFLAGS}
+LIBS= ${JPEG_LIBS} ${THREAD_LIBS} @LIBS@
+CFLAGS = @CFLAGS@ ${FLAGS}
+CXXFLAGS = @CXXFLAGS@ ${CXXRPOFLAGS} ${FLAGS}
+
+PROGRAMS = bzz c44 cjb2 cpaldjvu csepdjvu \
+	   ddjvu djvudump djvuextract djvumake \
+	   djvused djvutxt
+
+all: ${PROGRAMS}
+
+${PROGRAMS}:
+	${CXX} -o $@ ${CXXFLAGS} $< ${LIBDJVU} ${LIBS}
+
+install: install-bin install-man
+
+install-bin: ${PROGRAMS} FORCE
+	${INSTALL} -d ${bindir}
+	for n in ${PROGRAMS} ; do \
+	  ${INSTALL} -s -m 0755 $$n ${bindir} || exit ; done
+
+install-man: FORCE
+	${INSTALL} -d ${mandir}/man1
+	for n in ${srcdir}/*.1 ; do \
+	  ${INSTALL} -m 0644 $$n ${mandir}/man1 || exit ; done 
+
+depend: FORCE
+	${CXX} -MM ${CXXFLAGS} ${srcdir}/*.cpp > Makefile.dep
+
+clean: FORCE
+	-${RM} 2>/dev/null *.o *.a *.so *.stamp
+
+distclean: clean 
+	-${RM} -r 2>/dev/null Makefile *.rpo ii_files
+
+FORCE:
+.PHONY: FORCE
+.SUFFIXES: .c .cpp
+
+.c.o:
+	${CC} ${CFLAGS} -c $<
+
+.cpp.o:
+	${CXX} ${CXXFLAGS} -c $<
+
+
+# Dependencies
+
+annotate: annotate.o
+bzz: bzz.o
+c44: c44.o
+cjb2: cjb2.o
+cpaldjvu: cpaldjvu.o
+csepdjvu: csepdjvu.o
+ddjvu: ddjvu.o
+djvudump: djvudump.o
+djvuextract: djvuextract.o
+djvumake: djvumake.o
+djvused: djvused.o
+djvutxt: djvutxt.o
+
+@SHARED_NO@${PROGRAMS}: ${LIBDJVU_A}
+
+Makefile.dep: ${srcdir}/Makefile.dep
+	cp ${srcdir}/Makefile.dep $@
+
+include Makefile.dep

@@ -1,0 +1,2012 @@
+exc_base.o: ../../gui/indep/except/exc_base.cpp ../../config.h \
+  ../../gui/indep/except/exc_base.h ../../libdjvu/GException.h \
+  ../../libdjvu/DjVuGlobal.h ../../libdjvu/debug.h
+exc_file.o: ../../gui/indep/except/exc_file.cpp ../../config.h \
+  ../../gui/indep/except/exc_file.h ../../gui/indep/except/exc_base.h \
+  ../../libdjvu/GException.h ../../libdjvu/DjVuGlobal.h
+exc_misc.o: ../../gui/indep/except/exc_misc.cpp ../../config.h \
+  ../../gui/indep/except/exc_misc.h ../../gui/indep/except/exc_base.h \
+  ../../libdjvu/GException.h ../../libdjvu/DjVuGlobal.h
+exc_msg.o: ../../gui/indep/except/exc_msg.cpp ../../config.h \
+  ../../gui/indep/except/exc_msg.h ../../gui/indep/except/exc_base.h \
+  ../../libdjvu/GException.h ../../libdjvu/DjVuGlobal.h
+exc_range.o: ../../gui/indep/except/exc_range.cpp ../../config.h \
+  ../../gui/indep/except/exc_range.h ../../gui/indep/except/exc_base.h \
+  ../../libdjvu/GException.h ../../libdjvu/DjVuGlobal.h
+exc_res.o: ../../gui/indep/except/exc_res.cpp ../../config.h \
+  ../../gui/indep/except/exc_res.h ../../gui/indep/except/exc_base.h \
+  ../../libdjvu/GException.h ../../libdjvu/DjVuGlobal.h
+exc_sys.o: ../../gui/indep/except/exc_sys.cpp ../../config.h \
+  ../../gui/indep/except/exc_sys.h ../../gui/indep/except/exc_base.h \
+  ../../libdjvu/GException.h ../../libdjvu/DjVuGlobal.h
+exceptions.o: ../../gui/indep/except/exceptions.cpp ../../config.h \
+  ../../gui/indep/except/exceptions.h ../../gui/indep/except/exc_file.h \
+  ../../gui/indep/except/exc_base.h ../../libdjvu/GException.h \
+  ../../libdjvu/DjVuGlobal.h ../../gui/indep/except/exc_msg.h \
+  ../../gui/indep/except/exc_range.h ../../gui/indep/except/exc_res.h
+throw_error.o: ../../gui/indep/except/throw_error.cpp ../../config.h \
+  ../../libdjvu/debug.h ../../gui/indep/except/throw_error.h \
+  ../../gui/indep/except/exc_base.h ../../libdjvu/GException.h \
+  ../../libdjvu/DjVuGlobal.h ../../libdjvu/GString.h \
+  ../../libdjvu/GContainer.h ../../libdjvu/GSmartPointer.h \
+  ../../gui/indep/except/exc_msg.h ../../gui/indep/except/exc_sys.h
+qx_imager.o: ../../gui/indep/QX/qx_imager.cpp ../../config.h \
+  ../../gui/indep/QX/qx_imager.h ../../gui/indep/QT/qt_imager.h \
+  ../../gui/indep/utils/int_types.h /usr/lib/qt-2.3.1/include/qstring.h \
+  /usr/lib/qt-2.3.1/include/qcstring.h /usr/lib/qt-2.3.1/include/qarray.h \
+  /usr/lib/qt-2.3.1/include/qgarray.h /usr/lib/qt-2.3.1/include/qshared.h \
+  /usr/lib/qt-2.3.1/include/qnamespace.h \
+  /usr/lib/qt-2.3.1/include/qrect.h /usr/lib/qt-2.3.1/include/qsize.h \
+  /usr/lib/qt-2.3.1/include/qpoint.h ../../libdjvu/GRect.h \
+  ../../libdjvu/DjVuGlobal.h ../../libdjvu/GPixmap.h \
+  ../../libdjvu/GSmartPointer.h ../../libdjvu/GBitmap.h \
+  ../../libdjvu/GContainer.h ../../libdjvu/GException.h \
+  ../../gui/indep/QT/qt_painter.h \
+  /usr/lib/qt-2.3.1/include/qfontmetrics.h \
+  /usr/lib/qt-2.3.1/include/qfont.h /usr/lib/qt-2.3.1/include/qfontinfo.h \
+  /usr/lib/qt-2.3.1/include/qregion.h /usr/lib/qt-2.3.1/include/qpen.h \
+  /usr/lib/qt-2.3.1/include/qbrush.h \
+  /usr/lib/qt-2.3.1/include/qpointarray.h \
+  /usr/lib/qt-2.3.1/include/qwmatrix.h ../../gui/indep/except/exc_res.h \
+  ../../gui/indep/except/exc_base.h ../../gui/indep/except/exc_msg.h \
+  ../../libdjvu/debug.h ../../gui/indep/utils/col_db.h \
+  ../../libdjvu/GString.h /usr/lib/qt-2.3.1/include/qobject.h \
+  /usr/lib/qt-2.3.1/include/qevent.h /usr/lib/qt-2.3.1/include/qmime.h \
+  /usr/lib/qt-2.3.1/include/qstringlist.h \
+  /usr/lib/qt-2.3.1/include/qvaluelist.h \
+  /usr/lib/qt-2.3.1/include/qdatastream.h \
+  /usr/lib/qt-2.3.1/include/qiodevice.h \
+  /usr/lib/qt-2.3.1/include/qregexp.h \
+  /usr/lib/qt-2.3.1/include/qpalette.h \
+  /usr/lib/qt-2.3.1/include/qcursor.h /usr/lib/qt-2.3.1/include/qstyle.h \
+  /usr/lib/qt-2.3.1/include/qsizepolicy.h \
+  /usr/lib/qt-2.3.1/include/qasciidict.h \
+  /usr/lib/qt-2.3.1/include/qgdict.h \
+  /usr/lib/qt-2.3.1/include/qcollection.h \
+  /usr/lib/qt-2.3.1/include/qtranslator.h \
+  /usr/lib/qt-2.3.1/include/qintdict.h ../../gui/indep/QT/qlib.h \
+  ../../libdjvu/Arrays.h ../../gui/indep/QT/qt_n_in_one.h \
+  /usr/lib/qt-2.3.1/include/qlist.h /usr/lib/qt-2.3.1/include/qglist.h \
+  ../../gui/indep/QT/qt_fix.h /usr/lib/qt-2.3.1/include/qiconset.h \
+  qx_imager_moc.inc /usr/lib/qt-2.3.1/include/qstrlist.h
+rem_netscape.o: ../../gui/indep/QX/rem_netscape.cpp ../../config.h \
+  ../../gui/indep/except/throw_error.h ../../gui/indep/except/exc_base.h \
+  ../../libdjvu/GException.h ../../libdjvu/DjVuGlobal.h \
+  ../../libdjvu/GString.h ../../libdjvu/GContainer.h \
+  ../../libdjvu/GSmartPointer.h ../../gui/indep/except/exc_msg.h \
+  ../../libdjvu/debug.h ../../gui/indep/QX/rem_netscape.h
+qxlib.o: ../../gui/indep/QX/qxlib.cpp ../../config.h \
+  ../../gui/indep/QX/qxlib.h /usr/lib/qt-2.3.1/include/qstring.h \
+  /usr/lib/qt-2.3.1/include/qcstring.h /usr/lib/qt-2.3.1/include/qarray.h \
+  /usr/lib/qt-2.3.1/include/qgarray.h /usr/lib/qt-2.3.1/include/qshared.h \
+  /usr/lib/qt-2.3.1/include/qnamespace.h \
+  /usr/lib/qt-2.3.1/include/qobject.h /usr/lib/qt-2.3.1/include/qevent.h \
+  /usr/lib/qt-2.3.1/include/qregion.h /usr/lib/qt-2.3.1/include/qrect.h \
+  /usr/lib/qt-2.3.1/include/qsize.h /usr/lib/qt-2.3.1/include/qpoint.h \
+  /usr/lib/qt-2.3.1/include/qmime.h \
+  /usr/lib/qt-2.3.1/include/qstringlist.h \
+  /usr/lib/qt-2.3.1/include/qvaluelist.h \
+  /usr/lib/qt-2.3.1/include/qdatastream.h \
+  /usr/lib/qt-2.3.1/include/qiodevice.h \
+  /usr/lib/qt-2.3.1/include/qregexp.h \
+  /usr/lib/qt-2.3.1/include/qpaintdevice.h \
+  /usr/lib/qt-2.3.1/include/qpalette.h /usr/lib/qt-2.3.1/include/qcolor.h \
+  /usr/lib/qt-2.3.1/include/qbrush.h /usr/lib/qt-2.3.1/include/qcursor.h \
+  /usr/lib/qt-2.3.1/include/qfont.h \
+  /usr/lib/qt-2.3.1/include/qfontmetrics.h \
+  /usr/lib/qt-2.3.1/include/qfontinfo.h \
+  /usr/lib/qt-2.3.1/include/qstyle.h \
+  /usr/lib/qt-2.3.1/include/qsizepolicy.h ../../libdjvu/debug.h \
+  ../../gui/indep/except/exc_misc.h ../../gui/indep/except/exc_base.h \
+  ../../libdjvu/GException.h ../../libdjvu/DjVuGlobal.h
+qt_fix.o: ../../gui/indep/QT/qt_fix.cpp ../../config.h \
+  ../../libdjvu/debug.h ../../gui/indep/except/exc_msg.h \
+  ../../gui/indep/except/exc_base.h ../../libdjvu/GException.h \
+  ../../libdjvu/DjVuGlobal.h /usr/lib/qt-2.3.1/include/qwindowdefs.h \
+  /usr/lib/qt-2.3.1/include/qstring.h \
+  /usr/lib/qt-2.3.1/include/qcstring.h /usr/lib/qt-2.3.1/include/qarray.h \
+  /usr/lib/qt-2.3.1/include/qgarray.h /usr/lib/qt-2.3.1/include/qshared.h \
+  /usr/lib/qt-2.3.1/include/qnamespace.h \
+  /usr/lib/qt-2.3.1/include/qevent.h /usr/lib/qt-2.3.1/include/qregion.h \
+  /usr/lib/qt-2.3.1/include/qrect.h /usr/lib/qt-2.3.1/include/qsize.h \
+  /usr/lib/qt-2.3.1/include/qpoint.h /usr/lib/qt-2.3.1/include/qmime.h \
+  /usr/lib/qt-2.3.1/include/qstringlist.h \
+  /usr/lib/qt-2.3.1/include/qvaluelist.h \
+  /usr/lib/qt-2.3.1/include/qdatastream.h \
+  /usr/lib/qt-2.3.1/include/qiodevice.h \
+  /usr/lib/qt-2.3.1/include/qregexp.h /usr/lib/qt-2.3.1/include/qlist.h \
+  /usr/lib/qt-2.3.1/include/qglist.h \
+  /usr/lib/qt-2.3.1/include/qcollection.h \
+  /usr/lib/qt-2.3.1/include/qsizepolicy.h \
+  /usr/lib/qt-2.3.1/include/qwidget.h \
+  /usr/lib/qt-2.3.1/include/qpaintdevice.h \
+  /usr/lib/qt-2.3.1/include/qpalette.h /usr/lib/qt-2.3.1/include/qcolor.h \
+  /usr/lib/qt-2.3.1/include/qbrush.h /usr/lib/qt-2.3.1/include/qcursor.h \
+  /usr/lib/qt-2.3.1/include/qfont.h \
+  /usr/lib/qt-2.3.1/include/qfontmetrics.h \
+  /usr/lib/qt-2.3.1/include/qfontinfo.h \
+  /usr/lib/qt-2.3.1/include/qstyle.h /usr/lib/qt-2.3.1/include/qpen.h \
+  /usr/lib/qt-2.3.1/include/qpointarray.h \
+  /usr/lib/qt-2.3.1/include/qwmatrix.h \
+  /usr/lib/qt-2.3.1/include/qasciidict.h \
+  /usr/lib/qt-2.3.1/include/qgdict.h \
+  /usr/lib/qt-2.3.1/include/qtranslator.h \
+  /usr/lib/qt-2.3.1/include/qintdict.h ../../gui/indep/QT/qt_fix.h \
+  /usr/lib/qt-2.3.1/include/qiconset.h \
+  /usr/lib/qt-2.3.1/include/qpixmap.h \
+  /usr/lib/qt-2.3.1/include/qrangecontrol.h \
+  /usr/lib/qt-2.3.1/include/qmenudata.h \
+  /usr/lib/qt-2.3.1/include/qfileinfo.h /usr/lib/qt-2.3.1/include/qfile.h \
+  /usr/lib/qt-2.3.1/include/qdatetime.h \
+  /usr/lib/qt-2.3.1/include/qlistbox.h \
+  /usr/lib/qt-2.3.1/include/qscrollview.h \
+  /usr/lib/qt-2.3.1/include/qscrollbar.h \
+  /usr/lib/qt-2.3.1/include/qdrawutil.h \
+  /usr/lib/qt-2.3.1/include/qlistview.h \
+  /usr/lib/qt-2.3.1/include/qurloperator.h \
+  /usr/lib/qt-2.3.1/include/qurl.h \
+  /usr/lib/qt-2.3.1/include/qnetworkprotocol.h \
+  /usr/lib/qt-2.3.1/include/qurlinfo.h ../../libdjvu/GString.h \
+  ../../libdjvu/GContainer.h ../../libdjvu/GSmartPointer.h \
+  ../../gui/indep/QT/qlib.h ../../libdjvu/GRect.h ../../libdjvu/Arrays.h \
+  ../../libdjvu/GPixmap.h ../../gui/indep/QT/qt_n_in_one.h \
+  ../../gui/indep/QX/qxlib.h
+qt_imager.o: ../../gui/indep/QT/qt_imager.cpp ../../config.h \
+  ../../gui/indep/QT/qt_imager.h ../../gui/indep/utils/int_types.h \
+  /usr/lib/qt-2.3.1/include/qstring.h \
+  /usr/lib/qt-2.3.1/include/qcstring.h /usr/lib/qt-2.3.1/include/qarray.h \
+  /usr/lib/qt-2.3.1/include/qgarray.h /usr/lib/qt-2.3.1/include/qshared.h \
+  /usr/lib/qt-2.3.1/include/qnamespace.h \
+  /usr/lib/qt-2.3.1/include/qrect.h /usr/lib/qt-2.3.1/include/qsize.h \
+  /usr/lib/qt-2.3.1/include/qpoint.h ../../libdjvu/debug.h \
+  ../../gui/indep/except/exc_msg.h ../../gui/indep/except/exc_base.h \
+  ../../libdjvu/GException.h ../../libdjvu/DjVuGlobal.h
+qt_painter.o: ../../gui/indep/QT/qt_painter.cpp ../../config.h \
+  ../../gui/indep/QT/qt_painter.h ../../libdjvu/GPixmap.h \
+  ../../libdjvu/GSmartPointer.h ../../libdjvu/DjVuGlobal.h \
+  ../../libdjvu/GBitmap.h ../../libdjvu/GContainer.h \
+  ../../libdjvu/GException.h ../../libdjvu/GRect.h \
+  /usr/lib/qt-2.3.1/include/qstring.h \
+  /usr/lib/qt-2.3.1/include/qcstring.h /usr/lib/qt-2.3.1/include/qarray.h \
+  /usr/lib/qt-2.3.1/include/qgarray.h /usr/lib/qt-2.3.1/include/qshared.h \
+  /usr/lib/qt-2.3.1/include/qnamespace.h \
+  /usr/lib/qt-2.3.1/include/qrect.h /usr/lib/qt-2.3.1/include/qsize.h \
+  /usr/lib/qt-2.3.1/include/qpoint.h /usr/lib/qt-2.3.1/include/qcolor.h \
+  /usr/lib/qt-2.3.1/include/qfontmetrics.h \
+  /usr/lib/qt-2.3.1/include/qfont.h /usr/lib/qt-2.3.1/include/qfontinfo.h \
+  /usr/lib/qt-2.3.1/include/qregion.h /usr/lib/qt-2.3.1/include/qpen.h \
+  /usr/lib/qt-2.3.1/include/qbrush.h \
+  /usr/lib/qt-2.3.1/include/qpointarray.h \
+  /usr/lib/qt-2.3.1/include/qwmatrix.h ../../gui/indep/except/exc_msg.h \
+  ../../gui/indep/except/exc_base.h ../../gui/indep/QX/qx_imager.h \
+  ../../gui/indep/QT/qt_imager.h ../../gui/indep/utils/int_types.h
+qt_n_in_one.o: ../../gui/indep/QT/qt_n_in_one.cpp ../../config.h \
+  /usr/lib/qt-2.3.1/include/qwindowdefs.h \
+  /usr/lib/qt-2.3.1/include/qstring.h \
+  /usr/lib/qt-2.3.1/include/qcstring.h /usr/lib/qt-2.3.1/include/qarray.h \
+  /usr/lib/qt-2.3.1/include/qgarray.h /usr/lib/qt-2.3.1/include/qshared.h \
+  /usr/lib/qt-2.3.1/include/qnamespace.h \
+  /usr/lib/qt-2.3.1/include/qevent.h /usr/lib/qt-2.3.1/include/qregion.h \
+  /usr/lib/qt-2.3.1/include/qrect.h /usr/lib/qt-2.3.1/include/qsize.h \
+  /usr/lib/qt-2.3.1/include/qpoint.h /usr/lib/qt-2.3.1/include/qmime.h \
+  /usr/lib/qt-2.3.1/include/qstringlist.h \
+  /usr/lib/qt-2.3.1/include/qvaluelist.h \
+  /usr/lib/qt-2.3.1/include/qdatastream.h \
+  /usr/lib/qt-2.3.1/include/qiodevice.h \
+  /usr/lib/qt-2.3.1/include/qregexp.h \
+  /usr/lib/qt-2.3.1/include/qsizepolicy.h \
+  /usr/lib/qt-2.3.1/include/qwidget.h \
+  /usr/lib/qt-2.3.1/include/qpaintdevice.h \
+  /usr/lib/qt-2.3.1/include/qpalette.h /usr/lib/qt-2.3.1/include/qcolor.h \
+  /usr/lib/qt-2.3.1/include/qbrush.h /usr/lib/qt-2.3.1/include/qcursor.h \
+  /usr/lib/qt-2.3.1/include/qfont.h \
+  /usr/lib/qt-2.3.1/include/qfontmetrics.h \
+  /usr/lib/qt-2.3.1/include/qfontinfo.h \
+  /usr/lib/qt-2.3.1/include/qstyle.h ../../gui/indep/QT/qt_n_in_one.h \
+  /usr/lib/qt-2.3.1/include/qlist.h /usr/lib/qt-2.3.1/include/qglist.h \
+  /usr/lib/qt-2.3.1/include/qcollection.h ../../gui/indep/QT/qt_fix.h \
+  ../../libdjvu/GString.h ../../libdjvu/DjVuGlobal.h \
+  ../../libdjvu/GContainer.h ../../libdjvu/GException.h \
+  ../../libdjvu/GSmartPointer.h ../../libdjvu/debug.h \
+  ../../gui/indep/QT/qlib.h ../../libdjvu/GRect.h ../../libdjvu/Arrays.h \
+  ../../libdjvu/GPixmap.h /usr/lib/qt-2.3.1/include/qiconset.h \
+  /usr/lib/qt-2.3.1/include/qpixmap.h
+qlib.o: ../../gui/indep/QT/qlib.cpp ../../config.h \
+  ../../gui/indep/QT/qlib.h ../../libdjvu/GException.h \
+  ../../libdjvu/DjVuGlobal.h ../../libdjvu/GRect.h ../../libdjvu/Arrays.h \
+  ../../libdjvu/GSmartPointer.h ../../libdjvu/GPixmap.h \
+  ../../gui/indep/QT/qt_n_in_one.h \
+  /usr/lib/qt-2.3.1/include/qwindowdefs.h \
+  /usr/lib/qt-2.3.1/include/qstring.h \
+  /usr/lib/qt-2.3.1/include/qcstring.h /usr/lib/qt-2.3.1/include/qarray.h \
+  /usr/lib/qt-2.3.1/include/qgarray.h /usr/lib/qt-2.3.1/include/qshared.h \
+  /usr/lib/qt-2.3.1/include/qnamespace.h \
+  /usr/lib/qt-2.3.1/include/qevent.h /usr/lib/qt-2.3.1/include/qregion.h \
+  /usr/lib/qt-2.3.1/include/qrect.h /usr/lib/qt-2.3.1/include/qsize.h \
+  /usr/lib/qt-2.3.1/include/qpoint.h /usr/lib/qt-2.3.1/include/qmime.h \
+  /usr/lib/qt-2.3.1/include/qstringlist.h \
+  /usr/lib/qt-2.3.1/include/qvaluelist.h \
+  /usr/lib/qt-2.3.1/include/qdatastream.h \
+  /usr/lib/qt-2.3.1/include/qiodevice.h \
+  /usr/lib/qt-2.3.1/include/qregexp.h /usr/lib/qt-2.3.1/include/qlist.h \
+  /usr/lib/qt-2.3.1/include/qglist.h \
+  /usr/lib/qt-2.3.1/include/qcollection.h \
+  /usr/lib/qt-2.3.1/include/qpaintdevice.h \
+  /usr/lib/qt-2.3.1/include/qpalette.h /usr/lib/qt-2.3.1/include/qcolor.h \
+  /usr/lib/qt-2.3.1/include/qbrush.h /usr/lib/qt-2.3.1/include/qcursor.h \
+  /usr/lib/qt-2.3.1/include/qfont.h \
+  /usr/lib/qt-2.3.1/include/qfontmetrics.h \
+  /usr/lib/qt-2.3.1/include/qfontinfo.h \
+  /usr/lib/qt-2.3.1/include/qstyle.h \
+  /usr/lib/qt-2.3.1/include/qsizepolicy.h ../../gui/indep/QT/qt_fix.h \
+  ../../libdjvu/GString.h ../../libdjvu/GContainer.h \
+  ../../libdjvu/debug.h /usr/lib/qt-2.3.1/include/qiconset.h \
+  /usr/lib/qt-2.3.1/include/qpixmap.h /usr/lib/qt-2.3.1/include/qsignal.h \
+  ../../gui/indep/except/exc_msg.h ../../gui/indep/except/exc_base.h \
+  ../../gui/indep/except/exc_misc.h ../../gui/indep/except/exc_res.h \
+  ../../gui/indep/utils/int_types.h ../../gui/indep/QT/qt_painter.h \
+  ../../libdjvu/GBitmap.h /usr/lib/qt-2.3.1/include/qpen.h \
+  /usr/lib/qt-2.3.1/include/qpointarray.h \
+  /usr/lib/qt-2.3.1/include/qwmatrix.h ../../libdjvu/DataPool.h \
+  ../../libdjvu/GThreads.h ../../libdjvu/GURL.h \
+  /usr/lib/qt-2.3.1/include/qasciidict.h \
+  /usr/lib/qt-2.3.1/include/qgdict.h \
+  /usr/lib/qt-2.3.1/include/qtranslator.h \
+  /usr/lib/qt-2.3.1/include/qintdict.h \
+  /usr/lib/qt-2.3.1/include/qstrlist.h ../../libdjvu/DjVuMessage.h \
+  ../../libdjvu/DjVuMessageLite.h
+col_db.o: ../../gui/indep/utils/col_db.cpp ../../config.h \
+  ../../gui/indep/utils/col_db.h ../../gui/indep/utils/int_types.h \
+  ../../libdjvu/GContainer.h ../../libdjvu/GException.h \
+  ../../libdjvu/DjVuGlobal.h ../../libdjvu/GSmartPointer.h \
+  ../../libdjvu/GString.h
+execdir.o: ../../gui/indep/utils/execdir.cpp ../../config.h \
+  /usr/lib/qt-2.3.1/include/qcstring.h /usr/lib/qt-2.3.1/include/qarray.h \
+  /usr/lib/qt-2.3.1/include/qgarray.h /usr/lib/qt-2.3.1/include/qshared.h \
+  /usr/lib/qt-2.3.1/include/qstring.h \
+  /usr/lib/qt-2.3.1/include/qdatetime.h /usr/lib/qt-2.3.1/include/qlist.h \
+  /usr/lib/qt-2.3.1/include/qglist.h \
+  /usr/lib/qt-2.3.1/include/qcollection.h \
+  /usr/lib/qt-2.3.1/include/qdatastream.h ../../gui/indep/utils/execdir.h \
+  ../../libdjvu/GString.h ../../libdjvu/DjVuGlobal.h \
+  ../../libdjvu/GContainer.h ../../libdjvu/GException.h \
+  ../../libdjvu/GSmartPointer.h
+cin_data.o: ../../gui/indep/utils/cin_data.cpp ../../config.h \
+  ../../gui/indep/utils/cin_data.h ../../libdjvu/ByteStream.h \
+  ../../libdjvu/Arrays.h ../../libdjvu/GException.h \
+  ../../libdjvu/DjVuGlobal.h ../../libdjvu/GSmartPointer.h \
+  ../../libdjvu/GContainer.h ../../libdjvu/GString.h \
+  ../../libdjvu/BSByteStream.h ../../libdjvu/ZPCodec.h
+qd_wpaper.o: ../../gui/shared/QT/qd_wpaper.cpp ../../config.h \
+  ../../gui/shared/QT/qd_wpaper.h /usr/lib/qt-2.3.1/include/qstring.h \
+  /usr/lib/qt-2.3.1/include/qcstring.h /usr/lib/qt-2.3.1/include/qarray.h \
+  /usr/lib/qt-2.3.1/include/qgarray.h /usr/lib/qt-2.3.1/include/qshared.h \
+  /usr/lib/qt-2.3.1/include/qnamespace.h \
+  /usr/lib/qt-2.3.1/include/qobject.h /usr/lib/qt-2.3.1/include/qevent.h \
+  /usr/lib/qt-2.3.1/include/qregion.h /usr/lib/qt-2.3.1/include/qrect.h \
+  /usr/lib/qt-2.3.1/include/qsize.h /usr/lib/qt-2.3.1/include/qpoint.h \
+  /usr/lib/qt-2.3.1/include/qmime.h \
+  /usr/lib/qt-2.3.1/include/qstringlist.h \
+  /usr/lib/qt-2.3.1/include/qvaluelist.h \
+  /usr/lib/qt-2.3.1/include/qdatastream.h \
+  /usr/lib/qt-2.3.1/include/qiodevice.h \
+  /usr/lib/qt-2.3.1/include/qregexp.h \
+  /usr/lib/qt-2.3.1/include/qpaintdevice.h \
+  /usr/lib/qt-2.3.1/include/qpalette.h /usr/lib/qt-2.3.1/include/qcolor.h \
+  /usr/lib/qt-2.3.1/include/qbrush.h /usr/lib/qt-2.3.1/include/qcursor.h \
+  /usr/lib/qt-2.3.1/include/qfont.h \
+  /usr/lib/qt-2.3.1/include/qfontmetrics.h \
+  /usr/lib/qt-2.3.1/include/qfontinfo.h \
+  /usr/lib/qt-2.3.1/include/qstyle.h \
+  /usr/lib/qt-2.3.1/include/qsizepolicy.h \
+  ../../gui/shared/QT/qd_painter.h ../../gui/indep/QT/qt_painter.h \
+  ../../libdjvu/GPixmap.h ../../libdjvu/GSmartPointer.h \
+  ../../libdjvu/DjVuGlobal.h ../../libdjvu/GBitmap.h \
+  ../../libdjvu/GContainer.h ../../libdjvu/GException.h \
+  ../../libdjvu/GRect.h /usr/lib/qt-2.3.1/include/qpen.h \
+  /usr/lib/qt-2.3.1/include/qpointarray.h \
+  /usr/lib/qt-2.3.1/include/qwmatrix.h ../../gui/indep/QT/qlib.h \
+  ../../libdjvu/Arrays.h ../../gui/indep/QT/qt_n_in_one.h \
+  /usr/lib/qt-2.3.1/include/qlist.h /usr/lib/qt-2.3.1/include/qglist.h \
+  /usr/lib/qt-2.3.1/include/qcollection.h ../../gui/indep/QT/qt_fix.h \
+  ../../libdjvu/GString.h ../../libdjvu/debug.h \
+  /usr/lib/qt-2.3.1/include/qiconset.h \
+  /usr/lib/qt-2.3.1/include/qpixmap.h
+qd_prefs.o: ../../gui/shared/QT/qd_prefs.cpp ../../config.h \
+  ../../gui/shared/utils/djvu_file_cache.h ../../libdjvu/DjVuFileCache.h \
+  ../../libdjvu/DjVuFile.h ../../libdjvu/DjVuInfo.h \
+  ../../libdjvu/GSmartPointer.h ../../libdjvu/DjVuGlobal.h \
+  ../../libdjvu/GRect.h ../../libdjvu/DjVuPalette.h \
+  ../../libdjvu/GContainer.h ../../libdjvu/GException.h \
+  ../../libdjvu/GPixmap.h ../../libdjvu/DjVuPort.h \
+  ../../libdjvu/GThreads.h ../../libdjvu/GURL.h ../../libdjvu/GString.h \
+  ../../libdjvu/Arrays.h ../../gui/shared/QT/qd_prefs.h \
+  /usr/lib/qt-2.3.1/include/qstring.h \
+  /usr/lib/qt-2.3.1/include/qcstring.h /usr/lib/qt-2.3.1/include/qarray.h \
+  /usr/lib/qt-2.3.1/include/qgarray.h /usr/lib/qt-2.3.1/include/qshared.h \
+  /usr/lib/qt-2.3.1/include/qnamespace.h \
+  /usr/lib/qt-2.3.1/include/qobject.h /usr/lib/qt-2.3.1/include/qevent.h \
+  /usr/lib/qt-2.3.1/include/qregion.h /usr/lib/qt-2.3.1/include/qrect.h \
+  /usr/lib/qt-2.3.1/include/qsize.h /usr/lib/qt-2.3.1/include/qpoint.h \
+  /usr/lib/qt-2.3.1/include/qmime.h \
+  /usr/lib/qt-2.3.1/include/qstringlist.h \
+  /usr/lib/qt-2.3.1/include/qvaluelist.h \
+  /usr/lib/qt-2.3.1/include/qdatastream.h \
+  /usr/lib/qt-2.3.1/include/qiodevice.h \
+  /usr/lib/qt-2.3.1/include/qregexp.h \
+  /usr/lib/qt-2.3.1/include/qpaintdevice.h \
+  /usr/lib/qt-2.3.1/include/qpalette.h /usr/lib/qt-2.3.1/include/qcolor.h \
+  /usr/lib/qt-2.3.1/include/qbrush.h /usr/lib/qt-2.3.1/include/qcursor.h \
+  /usr/lib/qt-2.3.1/include/qfont.h \
+  /usr/lib/qt-2.3.1/include/qfontmetrics.h \
+  /usr/lib/qt-2.3.1/include/qfontinfo.h \
+  /usr/lib/qt-2.3.1/include/qstyle.h \
+  /usr/lib/qt-2.3.1/include/qsizepolicy.h ../../gui/shared/utils/prefs.h \
+  ../../gui/indep/QT/qt_fix.h ../../gui/indep/QT/qlib.h \
+  ../../gui/indep/QT/qt_n_in_one.h /usr/lib/qt-2.3.1/include/qlist.h \
+  /usr/lib/qt-2.3.1/include/qglist.h \
+  /usr/lib/qt-2.3.1/include/qcollection.h ../../libdjvu/debug.h \
+  /usr/lib/qt-2.3.1/include/qiconset.h \
+  /usr/lib/qt-2.3.1/include/qpixmap.h ../../gui/indep/except/exc_msg.h \
+  ../../gui/indep/except/exc_base.h ../../gui/indep/QT/qt_painter.h \
+  ../../libdjvu/GBitmap.h /usr/lib/qt-2.3.1/include/qpen.h \
+  /usr/lib/qt-2.3.1/include/qpointarray.h \
+  /usr/lib/qt-2.3.1/include/qwmatrix.h ../../gui/indep/QX/qx_imager.h \
+  ../../gui/indep/QT/qt_imager.h ../../gui/indep/utils/int_types.h \
+  /usr/lib/qt-2.3.1/include/qrangecontrol.h \
+  /usr/lib/qt-2.3.1/include/qasciidict.h \
+  /usr/lib/qt-2.3.1/include/qgdict.h \
+  /usr/lib/qt-2.3.1/include/qtranslator.h \
+  /usr/lib/qt-2.3.1/include/qintdict.h /usr/lib/qt-2.3.1/include/qtimer.h
+qd_welcome.o: ../../gui/shared/QT/qd_welcome.cpp ../../config.h \
+  ../../gui/shared/QT/qd_welcome.h /usr/lib/qt-2.3.1/include/qstring.h \
+  /usr/lib/qt-2.3.1/include/qcstring.h /usr/lib/qt-2.3.1/include/qarray.h \
+  /usr/lib/qt-2.3.1/include/qgarray.h /usr/lib/qt-2.3.1/include/qshared.h \
+  /usr/lib/qt-2.3.1/include/qnamespace.h \
+  /usr/lib/qt-2.3.1/include/qobject.h /usr/lib/qt-2.3.1/include/qevent.h \
+  /usr/lib/qt-2.3.1/include/qregion.h /usr/lib/qt-2.3.1/include/qrect.h \
+  /usr/lib/qt-2.3.1/include/qsize.h /usr/lib/qt-2.3.1/include/qpoint.h \
+  /usr/lib/qt-2.3.1/include/qmime.h \
+  /usr/lib/qt-2.3.1/include/qstringlist.h \
+  /usr/lib/qt-2.3.1/include/qvaluelist.h \
+  /usr/lib/qt-2.3.1/include/qdatastream.h \
+  /usr/lib/qt-2.3.1/include/qiodevice.h \
+  /usr/lib/qt-2.3.1/include/qregexp.h \
+  /usr/lib/qt-2.3.1/include/qpaintdevice.h \
+  /usr/lib/qt-2.3.1/include/qpalette.h /usr/lib/qt-2.3.1/include/qcolor.h \
+  /usr/lib/qt-2.3.1/include/qbrush.h /usr/lib/qt-2.3.1/include/qcursor.h \
+  /usr/lib/qt-2.3.1/include/qfont.h \
+  /usr/lib/qt-2.3.1/include/qfontmetrics.h \
+  /usr/lib/qt-2.3.1/include/qfontinfo.h \
+  /usr/lib/qt-2.3.1/include/qstyle.h \
+  /usr/lib/qt-2.3.1/include/qsizepolicy.h \
+  /usr/lib/qt-2.3.1/include/qiconset.h \
+  /usr/lib/qt-2.3.1/include/qpixmap.h ../../gui/indep/QT/qt_fix.h \
+  ../../libdjvu/GString.h ../../libdjvu/DjVuGlobal.h \
+  ../../libdjvu/GContainer.h ../../libdjvu/GException.h \
+  ../../libdjvu/GSmartPointer.h ../../gui/indep/QT/qlib.h \
+  ../../libdjvu/GRect.h ../../libdjvu/Arrays.h ../../libdjvu/GPixmap.h \
+  ../../gui/indep/QT/qt_n_in_one.h /usr/lib/qt-2.3.1/include/qlist.h \
+  /usr/lib/qt-2.3.1/include/qglist.h \
+  /usr/lib/qt-2.3.1/include/qcollection.h ../../libdjvu/debug.h \
+  /usr/lib/qt-2.3.1/include/qasciidict.h \
+  /usr/lib/qt-2.3.1/include/qgdict.h \
+  /usr/lib/qt-2.3.1/include/qtranslator.h \
+  /usr/lib/qt-2.3.1/include/qintdict.h
+qd_pane.o: ../../gui/shared/QT/qd_pane.cpp ../../config.h \
+  ../../gui/shared/QT/qd_pane.h ../../libdjvu/GRect.h \
+  ../../libdjvu/DjVuGlobal.h ../../libdjvu/GContainer.h \
+  ../../libdjvu/GException.h ../../libdjvu/GSmartPointer.h \
+  /usr/lib/qt-2.3.1/include/qstring.h \
+  /usr/lib/qt-2.3.1/include/qcstring.h /usr/lib/qt-2.3.1/include/qarray.h \
+  /usr/lib/qt-2.3.1/include/qgarray.h /usr/lib/qt-2.3.1/include/qshared.h \
+  /usr/lib/qt-2.3.1/include/qnamespace.h \
+  /usr/lib/qt-2.3.1/include/qobject.h /usr/lib/qt-2.3.1/include/qevent.h \
+  /usr/lib/qt-2.3.1/include/qregion.h /usr/lib/qt-2.3.1/include/qrect.h \
+  /usr/lib/qt-2.3.1/include/qsize.h /usr/lib/qt-2.3.1/include/qpoint.h \
+  /usr/lib/qt-2.3.1/include/qmime.h \
+  /usr/lib/qt-2.3.1/include/qstringlist.h \
+  /usr/lib/qt-2.3.1/include/qvaluelist.h \
+  /usr/lib/qt-2.3.1/include/qdatastream.h \
+  /usr/lib/qt-2.3.1/include/qiodevice.h \
+  /usr/lib/qt-2.3.1/include/qregexp.h \
+  /usr/lib/qt-2.3.1/include/qpaintdevice.h \
+  /usr/lib/qt-2.3.1/include/qpalette.h /usr/lib/qt-2.3.1/include/qcolor.h \
+  /usr/lib/qt-2.3.1/include/qbrush.h /usr/lib/qt-2.3.1/include/qcursor.h \
+  /usr/lib/qt-2.3.1/include/qfont.h \
+  /usr/lib/qt-2.3.1/include/qfontmetrics.h \
+  /usr/lib/qt-2.3.1/include/qfontinfo.h \
+  /usr/lib/qt-2.3.1/include/qstyle.h \
+  /usr/lib/qt-2.3.1/include/qsizepolicy.h ../../gui/indep/QT/qt_fix.h \
+  ../../libdjvu/GString.h ../../libdjvu/debug.h ../../gui/indep/QT/qlib.h \
+  ../../libdjvu/Arrays.h ../../libdjvu/GPixmap.h \
+  ../../gui/indep/QT/qt_n_in_one.h /usr/lib/qt-2.3.1/include/qlist.h \
+  /usr/lib/qt-2.3.1/include/qglist.h \
+  /usr/lib/qt-2.3.1/include/qcollection.h \
+  /usr/lib/qt-2.3.1/include/qiconset.h \
+  /usr/lib/qt-2.3.1/include/qpixmap.h \
+  /usr/lib/qt-2.3.1/include/qasciidict.h \
+  /usr/lib/qt-2.3.1/include/qgdict.h \
+  /usr/lib/qt-2.3.1/include/qtranslator.h \
+  /usr/lib/qt-2.3.1/include/qintdict.h
+qd_base.o: ../../gui/shared/QT/qd_base.cpp ../../config.h \
+  ../../libdjvu/DjVuGlobal.h ../../gui/shared/QT/qd_base.h \
+  ../../libdjvu/DjVuImage.h ../../libdjvu/DjVuFile.h \
+  ../../libdjvu/DjVuInfo.h ../../libdjvu/GSmartPointer.h \
+  ../../libdjvu/GRect.h ../../libdjvu/DjVuPalette.h \
+  ../../libdjvu/GContainer.h ../../libdjvu/GException.h \
+  ../../libdjvu/GPixmap.h ../../libdjvu/DjVuPort.h \
+  ../../libdjvu/GThreads.h ../../libdjvu/GURL.h ../../libdjvu/GString.h \
+  ../../libdjvu/Arrays.h ../../libdjvu/DjVuAnno.h \
+  ../../gui/shared/utils/GMarginCache.h ../../libdjvu/debug.h \
+  ../../gui/shared/QT/MapAreas.h ../../libdjvu/GMapAreas.h \
+  ../../libdjvu/GBitmap.h ../../gui/shared/QT/qd_painter.h \
+  ../../gui/indep/QT/qt_painter.h /usr/lib/qt-2.3.1/include/qstring.h \
+  /usr/lib/qt-2.3.1/include/qcstring.h /usr/lib/qt-2.3.1/include/qarray.h \
+  /usr/lib/qt-2.3.1/include/qgarray.h /usr/lib/qt-2.3.1/include/qshared.h \
+  /usr/lib/qt-2.3.1/include/qnamespace.h \
+  /usr/lib/qt-2.3.1/include/qrect.h /usr/lib/qt-2.3.1/include/qsize.h \
+  /usr/lib/qt-2.3.1/include/qpoint.h /usr/lib/qt-2.3.1/include/qcolor.h \
+  /usr/lib/qt-2.3.1/include/qfontmetrics.h \
+  /usr/lib/qt-2.3.1/include/qfont.h /usr/lib/qt-2.3.1/include/qfontinfo.h \
+  /usr/lib/qt-2.3.1/include/qregion.h /usr/lib/qt-2.3.1/include/qpen.h \
+  /usr/lib/qt-2.3.1/include/qbrush.h \
+  /usr/lib/qt-2.3.1/include/qpointarray.h \
+  /usr/lib/qt-2.3.1/include/qwmatrix.h /usr/lib/qt-2.3.1/include/qevent.h \
+  /usr/lib/qt-2.3.1/include/qmime.h \
+  /usr/lib/qt-2.3.1/include/qstringlist.h \
+  /usr/lib/qt-2.3.1/include/qvaluelist.h \
+  /usr/lib/qt-2.3.1/include/qdatastream.h \
+  /usr/lib/qt-2.3.1/include/qiodevice.h \
+  /usr/lib/qt-2.3.1/include/qregexp.h ../../gui/shared/utils/prefs.h \
+  ../../gui/shared/QT/qd_pane.h /usr/lib/qt-2.3.1/include/qpalette.h \
+  /usr/lib/qt-2.3.1/include/qstyle.h \
+  /usr/lib/qt-2.3.1/include/qsizepolicy.h ../../gui/indep/QT/qt_fix.h \
+  ../../libdjvu/DjVuText.h /usr/lib/qt-2.3.1/include/qrangecontrol.h \
+  /usr/lib/qt-2.3.1/include/qdrawutil.h \
+  ../../gui/shared/res/djvu_base_res.h ../../gui/indep/QT/qlib.h \
+  ../../gui/indep/QT/qt_n_in_one.h /usr/lib/qt-2.3.1/include/qlist.h \
+  /usr/lib/qt-2.3.1/include/qglist.h \
+  /usr/lib/qt-2.3.1/include/qcollection.h \
+  /usr/lib/qt-2.3.1/include/qiconset.h ../../gui/indep/except/exc_msg.h \
+  ../../gui/indep/except/exc_base.h ../../libdjvu/GOS.h \
+  ../../gui/indep/utils/cin_data.h ../../libdjvu/ByteStream.h \
+  ../../gui/shared/QT/qd_tbar_mode_piece.h \
+  ../../gui/shared/QT/qd_toolbar.h \
+  ../../gui/shared/QT/qd_tbar_rotate_piece.h ../../gui/shared/QT/wait.bm \
+  ../../gui/shared/QT/wait_mask.bm ../../gui/shared/QT/hand1.bm \
+  ../../gui/shared/QT/hand1_mask.bm ../../gui/shared/QT/hand2.bm \
+  ../../gui/shared/QT/hand2_mask.bm ../../gui/shared/QT/zoom_select.bm \
+  ../../gui/shared/QT/zoom_select_mask.bm \
+  /usr/lib/qt-2.3.1/include/qasciidict.h \
+  /usr/lib/qt-2.3.1/include/qgdict.h \
+  /usr/lib/qt-2.3.1/include/qtranslator.h \
+  /usr/lib/qt-2.3.1/include/qintdict.h /usr/lib/qt-2.3.1/include/qlabel.h \
+  /usr/lib/qt-2.3.1/include/qprogressbar.h \
+  /usr/lib/qt-2.3.1/include/qfileinfo.h /usr/lib/qt-2.3.1/include/qfile.h \
+  /usr/lib/qt-2.3.1/include/qdatetime.h \
+  /usr/lib/qt-2.3.1/include/qlistbox.h \
+  /usr/lib/qt-2.3.1/include/qscrollview.h \
+  /usr/lib/qt-2.3.1/include/qlineedit.h \
+  /usr/lib/qt-2.3.1/include/qlistview.h \
+  /usr/lib/qt-2.3.1/include/qurloperator.h \
+  /usr/lib/qt-2.3.1/include/qurl.h \
+  /usr/lib/qt-2.3.1/include/qnetworkprotocol.h \
+  /usr/lib/qt-2.3.1/include/qurlinfo.h
+qd_base_paint.o: ../../gui/shared/QT/qd_base_paint.cpp ../../config.h \
+  ../../gui/shared/QT/qd_base_paint.h ../../gui/shared/QT/qd_base.h \
+  ../../libdjvu/DjVuImage.h ../../libdjvu/DjVuFile.h \
+  ../../libdjvu/DjVuInfo.h ../../libdjvu/GSmartPointer.h \
+  ../../libdjvu/DjVuGlobal.h ../../libdjvu/GRect.h \
+  ../../libdjvu/DjVuPalette.h ../../libdjvu/GContainer.h \
+  ../../libdjvu/GException.h ../../libdjvu/GPixmap.h \
+  ../../libdjvu/DjVuPort.h ../../libdjvu/GThreads.h ../../libdjvu/GURL.h \
+  ../../libdjvu/GString.h ../../libdjvu/Arrays.h ../../libdjvu/DjVuAnno.h \
+  ../../gui/shared/utils/GMarginCache.h ../../libdjvu/debug.h \
+  ../../gui/shared/QT/MapAreas.h ../../libdjvu/GMapAreas.h \
+  ../../libdjvu/GBitmap.h ../../gui/shared/QT/qd_painter.h \
+  ../../gui/indep/QT/qt_painter.h /usr/lib/qt-2.3.1/include/qstring.h \
+  /usr/lib/qt-2.3.1/include/qcstring.h /usr/lib/qt-2.3.1/include/qarray.h \
+  /usr/lib/qt-2.3.1/include/qgarray.h /usr/lib/qt-2.3.1/include/qshared.h \
+  /usr/lib/qt-2.3.1/include/qnamespace.h \
+  /usr/lib/qt-2.3.1/include/qrect.h /usr/lib/qt-2.3.1/include/qsize.h \
+  /usr/lib/qt-2.3.1/include/qpoint.h /usr/lib/qt-2.3.1/include/qcolor.h \
+  /usr/lib/qt-2.3.1/include/qfontmetrics.h \
+  /usr/lib/qt-2.3.1/include/qfont.h /usr/lib/qt-2.3.1/include/qfontinfo.h \
+  /usr/lib/qt-2.3.1/include/qregion.h /usr/lib/qt-2.3.1/include/qpen.h \
+  /usr/lib/qt-2.3.1/include/qbrush.h \
+  /usr/lib/qt-2.3.1/include/qpointarray.h \
+  /usr/lib/qt-2.3.1/include/qwmatrix.h /usr/lib/qt-2.3.1/include/qevent.h \
+  /usr/lib/qt-2.3.1/include/qmime.h \
+  /usr/lib/qt-2.3.1/include/qstringlist.h \
+  /usr/lib/qt-2.3.1/include/qvaluelist.h \
+  /usr/lib/qt-2.3.1/include/qdatastream.h \
+  /usr/lib/qt-2.3.1/include/qiodevice.h \
+  /usr/lib/qt-2.3.1/include/qregexp.h ../../gui/shared/utils/prefs.h \
+  ../../gui/shared/QT/qd_pane.h /usr/lib/qt-2.3.1/include/qpalette.h \
+  /usr/lib/qt-2.3.1/include/qstyle.h \
+  /usr/lib/qt-2.3.1/include/qsizepolicy.h ../../gui/indep/QT/qt_fix.h \
+  ../../libdjvu/DjVuText.h /usr/lib/qt-2.3.1/include/qrangecontrol.h \
+  /usr/lib/qt-2.3.1/include/qdrawutil.h ../../libdjvu/GOS.h \
+  ../../gui/indep/except/exc_msg.h ../../gui/indep/except/exc_base.h \
+  ../../gui/indep/except/exc_res.h ../../gui/indep/except/exc_misc.h \
+  ../../gui/indep/QT/qt_imager.h ../../gui/shared/res/djvu_base_res.h \
+  ../../gui/shared/QT/qd_thr_yielder.h ../../gui/indep/QT/qlib.h \
+  ../../gui/indep/QT/qt_n_in_one.h /usr/lib/qt-2.3.1/include/qlist.h \
+  /usr/lib/qt-2.3.1/include/qglist.h \
+  /usr/lib/qt-2.3.1/include/qcollection.h \
+  /usr/lib/qt-2.3.1/include/qiconset.h ../../gui/indep/QX/qx_imager.h \
+  ../../gui/indep/QX/qxlib.h /usr/lib/qt-2.3.1/include/qasciidict.h \
+  /usr/lib/qt-2.3.1/include/qgdict.h \
+  /usr/lib/qt-2.3.1/include/qtranslator.h \
+  /usr/lib/qt-2.3.1/include/qintdict.h
+qd_base_events.o: ../../gui/shared/QT/qd_base_events.cpp ../../config.h \
+  ../../gui/shared/QT/qd_base_events.h ../../gui/shared/QT/qd_base.h \
+  ../../libdjvu/DjVuImage.h ../../libdjvu/DjVuFile.h \
+  ../../libdjvu/DjVuInfo.h ../../libdjvu/GSmartPointer.h \
+  ../../libdjvu/DjVuGlobal.h ../../libdjvu/GRect.h \
+  ../../libdjvu/DjVuPalette.h ../../libdjvu/GContainer.h \
+  ../../libdjvu/GException.h ../../libdjvu/GPixmap.h \
+  ../../libdjvu/DjVuPort.h ../../libdjvu/GThreads.h ../../libdjvu/GURL.h \
+  ../../libdjvu/GString.h ../../libdjvu/Arrays.h ../../libdjvu/DjVuAnno.h \
+  ../../gui/shared/utils/GMarginCache.h ../../libdjvu/debug.h \
+  ../../gui/shared/QT/MapAreas.h ../../libdjvu/GMapAreas.h \
+  ../../libdjvu/GBitmap.h ../../gui/shared/QT/qd_painter.h \
+  ../../gui/indep/QT/qt_painter.h /usr/lib/qt-2.3.1/include/qstring.h \
+  /usr/lib/qt-2.3.1/include/qcstring.h /usr/lib/qt-2.3.1/include/qarray.h \
+  /usr/lib/qt-2.3.1/include/qgarray.h /usr/lib/qt-2.3.1/include/qshared.h \
+  /usr/lib/qt-2.3.1/include/qnamespace.h \
+  /usr/lib/qt-2.3.1/include/qrect.h /usr/lib/qt-2.3.1/include/qsize.h \
+  /usr/lib/qt-2.3.1/include/qpoint.h /usr/lib/qt-2.3.1/include/qcolor.h \
+  /usr/lib/qt-2.3.1/include/qfontmetrics.h \
+  /usr/lib/qt-2.3.1/include/qfont.h /usr/lib/qt-2.3.1/include/qfontinfo.h \
+  /usr/lib/qt-2.3.1/include/qregion.h /usr/lib/qt-2.3.1/include/qpen.h \
+  /usr/lib/qt-2.3.1/include/qbrush.h \
+  /usr/lib/qt-2.3.1/include/qpointarray.h \
+  /usr/lib/qt-2.3.1/include/qwmatrix.h /usr/lib/qt-2.3.1/include/qevent.h \
+  /usr/lib/qt-2.3.1/include/qmime.h \
+  /usr/lib/qt-2.3.1/include/qstringlist.h \
+  /usr/lib/qt-2.3.1/include/qvaluelist.h \
+  /usr/lib/qt-2.3.1/include/qdatastream.h \
+  /usr/lib/qt-2.3.1/include/qiodevice.h \
+  /usr/lib/qt-2.3.1/include/qregexp.h ../../gui/shared/utils/prefs.h \
+  ../../gui/shared/QT/qd_pane.h /usr/lib/qt-2.3.1/include/qpalette.h \
+  /usr/lib/qt-2.3.1/include/qstyle.h \
+  /usr/lib/qt-2.3.1/include/qsizepolicy.h ../../gui/indep/QT/qt_fix.h \
+  ../../libdjvu/DjVuText.h /usr/lib/qt-2.3.1/include/qrangecontrol.h \
+  /usr/lib/qt-2.3.1/include/qdrawutil.h \
+  ../../gui/shared/res/djvu_base_res.h ../../gui/shared/QT/qd_toolbar.h \
+  ../../gui/indep/QT/qt_imager.h ../../gui/indep/QT/qlib.h \
+  ../../gui/indep/QT/qt_n_in_one.h /usr/lib/qt-2.3.1/include/qlist.h \
+  /usr/lib/qt-2.3.1/include/qglist.h \
+  /usr/lib/qt-2.3.1/include/qcollection.h \
+  /usr/lib/qt-2.3.1/include/qiconset.h \
+  /usr/lib/qt-2.3.1/include/qasciidict.h \
+  /usr/lib/qt-2.3.1/include/qgdict.h \
+  /usr/lib/qt-2.3.1/include/qtranslator.h \
+  /usr/lib/qt-2.3.1/include/qintdict.h
+qd_base_ant.o: ../../gui/shared/QT/qd_base_ant.cpp ../../config.h \
+  ../../libdjvu/ByteStream.h ../../libdjvu/Arrays.h \
+  ../../libdjvu/GException.h ../../libdjvu/DjVuGlobal.h \
+  ../../libdjvu/GSmartPointer.h ../../gui/shared/QT/qd_base_ant.h \
+  ../../gui/shared/QT/qd_base.h ../../libdjvu/DjVuImage.h \
+  ../../libdjvu/DjVuFile.h ../../libdjvu/DjVuInfo.h ../../libdjvu/GRect.h \
+  ../../libdjvu/DjVuPalette.h ../../libdjvu/GContainer.h \
+  ../../libdjvu/GPixmap.h ../../libdjvu/DjVuPort.h \
+  ../../libdjvu/GThreads.h ../../libdjvu/GURL.h ../../libdjvu/GString.h \
+  ../../libdjvu/DjVuAnno.h ../../gui/shared/utils/GMarginCache.h \
+  ../../libdjvu/debug.h ../../gui/shared/QT/MapAreas.h \
+  ../../libdjvu/GMapAreas.h ../../libdjvu/GBitmap.h \
+  ../../gui/shared/QT/qd_painter.h ../../gui/indep/QT/qt_painter.h \
+  /usr/lib/qt-2.3.1/include/qstring.h \
+  /usr/lib/qt-2.3.1/include/qcstring.h /usr/lib/qt-2.3.1/include/qarray.h \
+  /usr/lib/qt-2.3.1/include/qgarray.h /usr/lib/qt-2.3.1/include/qshared.h \
+  /usr/lib/qt-2.3.1/include/qnamespace.h \
+  /usr/lib/qt-2.3.1/include/qrect.h /usr/lib/qt-2.3.1/include/qsize.h \
+  /usr/lib/qt-2.3.1/include/qpoint.h /usr/lib/qt-2.3.1/include/qcolor.h \
+  /usr/lib/qt-2.3.1/include/qfontmetrics.h \
+  /usr/lib/qt-2.3.1/include/qfont.h /usr/lib/qt-2.3.1/include/qfontinfo.h \
+  /usr/lib/qt-2.3.1/include/qregion.h /usr/lib/qt-2.3.1/include/qpen.h \
+  /usr/lib/qt-2.3.1/include/qbrush.h \
+  /usr/lib/qt-2.3.1/include/qpointarray.h \
+  /usr/lib/qt-2.3.1/include/qwmatrix.h /usr/lib/qt-2.3.1/include/qevent.h \
+  /usr/lib/qt-2.3.1/include/qmime.h \
+  /usr/lib/qt-2.3.1/include/qstringlist.h \
+  /usr/lib/qt-2.3.1/include/qvaluelist.h \
+  /usr/lib/qt-2.3.1/include/qdatastream.h \
+  /usr/lib/qt-2.3.1/include/qiodevice.h \
+  /usr/lib/qt-2.3.1/include/qregexp.h ../../gui/shared/utils/prefs.h \
+  ../../gui/shared/QT/qd_pane.h /usr/lib/qt-2.3.1/include/qpalette.h \
+  /usr/lib/qt-2.3.1/include/qstyle.h \
+  /usr/lib/qt-2.3.1/include/qsizepolicy.h ../../gui/indep/QT/qt_fix.h \
+  ../../libdjvu/DjVuText.h /usr/lib/qt-2.3.1/include/qrangecontrol.h \
+  /usr/lib/qt-2.3.1/include/qdrawutil.h \
+  ../../gui/shared/res/djvu_base_res.h ../../gui/indep/QT/qlib.h \
+  ../../gui/indep/QT/qt_n_in_one.h /usr/lib/qt-2.3.1/include/qlist.h \
+  /usr/lib/qt-2.3.1/include/qglist.h \
+  /usr/lib/qt-2.3.1/include/qcollection.h \
+  /usr/lib/qt-2.3.1/include/qiconset.h \
+  /usr/lib/qt-2.3.1/include/qasciidict.h \
+  /usr/lib/qt-2.3.1/include/qgdict.h \
+  /usr/lib/qt-2.3.1/include/qtranslator.h \
+  /usr/lib/qt-2.3.1/include/qintdict.h
+MapAreas.o: ../../gui/shared/QT/MapAreas.cpp ../../config.h \
+  ../../libdjvu/DjVuGlobal.h ../../gui/shared/QT/MapAreas.h \
+  ../../libdjvu/GMapAreas.h ../../libdjvu/GSmartPointer.h \
+  ../../libdjvu/GContainer.h ../../libdjvu/GException.h \
+  ../../libdjvu/GString.h ../../libdjvu/GRect.h ../../libdjvu/GURL.h \
+  ../../libdjvu/Arrays.h ../../libdjvu/GThreads.h ../../libdjvu/GBitmap.h \
+  ../../libdjvu/GPixmap.h ../../gui/shared/QT/qd_painter.h \
+  ../../gui/indep/QT/qt_painter.h /usr/lib/qt-2.3.1/include/qstring.h \
+  /usr/lib/qt-2.3.1/include/qcstring.h /usr/lib/qt-2.3.1/include/qarray.h \
+  /usr/lib/qt-2.3.1/include/qgarray.h /usr/lib/qt-2.3.1/include/qshared.h \
+  /usr/lib/qt-2.3.1/include/qnamespace.h \
+  /usr/lib/qt-2.3.1/include/qrect.h /usr/lib/qt-2.3.1/include/qsize.h \
+  /usr/lib/qt-2.3.1/include/qpoint.h /usr/lib/qt-2.3.1/include/qcolor.h \
+  /usr/lib/qt-2.3.1/include/qfontmetrics.h \
+  /usr/lib/qt-2.3.1/include/qfont.h /usr/lib/qt-2.3.1/include/qfontinfo.h \
+  /usr/lib/qt-2.3.1/include/qregion.h /usr/lib/qt-2.3.1/include/qpen.h \
+  /usr/lib/qt-2.3.1/include/qbrush.h \
+  /usr/lib/qt-2.3.1/include/qpointarray.h \
+  /usr/lib/qt-2.3.1/include/qwmatrix.h /usr/lib/qt-2.3.1/include/qevent.h \
+  /usr/lib/qt-2.3.1/include/qmime.h \
+  /usr/lib/qt-2.3.1/include/qstringlist.h \
+  /usr/lib/qt-2.3.1/include/qvaluelist.h \
+  /usr/lib/qt-2.3.1/include/qdatastream.h \
+  /usr/lib/qt-2.3.1/include/qiodevice.h \
+  /usr/lib/qt-2.3.1/include/qregexp.h ../../gui/indep/utils/int_types.h \
+  ../../gui/shared/QT/MapDraw.h ../../libdjvu/debug.h \
+  ../../gui/indep/except/exc_msg.h ../../gui/indep/except/exc_base.h \
+  ../../gui/indep/QT/qlib.h ../../gui/indep/QT/qt_n_in_one.h \
+  /usr/lib/qt-2.3.1/include/qlist.h /usr/lib/qt-2.3.1/include/qglist.h \
+  /usr/lib/qt-2.3.1/include/qcollection.h \
+  /usr/lib/qt-2.3.1/include/qpalette.h /usr/lib/qt-2.3.1/include/qstyle.h \
+  /usr/lib/qt-2.3.1/include/qsizepolicy.h ../../gui/indep/QT/qt_fix.h \
+  /usr/lib/qt-2.3.1/include/qiconset.h ../../gui/indep/QX/qxlib.h \
+  ../../gui/indep/QT/qt_imager.h ../../gui/indep/QX/qx_imager.h \
+  ../../gui/indep/except/exc_misc.h \
+  /usr/lib/qt-2.3.1/include/qasciidict.h \
+  /usr/lib/qt-2.3.1/include/qgdict.h \
+  /usr/lib/qt-2.3.1/include/qtranslator.h \
+  /usr/lib/qt-2.3.1/include/qintdict.h ../../gui/shared/QT/vertex.bm \
+  ../../gui/shared/QT/vertex_mask.bm
+MapBorder.o: ../../gui/shared/QT/MapBorder.cpp ../../config.h \
+  ../../libdjvu/GContainer.h ../../libdjvu/GException.h \
+  ../../libdjvu/DjVuGlobal.h ../../libdjvu/GSmartPointer.h \
+  ../../libdjvu/Arrays.h ../../gui/shared/QT/MapBorder.h \
+  ../../gui/shared/QT/MapAreas.h ../../libdjvu/GMapAreas.h \
+  ../../libdjvu/GString.h ../../libdjvu/GRect.h ../../libdjvu/GURL.h \
+  ../../libdjvu/GThreads.h ../../libdjvu/GBitmap.h \
+  ../../libdjvu/GPixmap.h ../../gui/shared/QT/qd_painter.h \
+  ../../gui/indep/QT/qt_painter.h /usr/lib/qt-2.3.1/include/qstring.h \
+  /usr/lib/qt-2.3.1/include/qcstring.h /usr/lib/qt-2.3.1/include/qarray.h \
+  /usr/lib/qt-2.3.1/include/qgarray.h /usr/lib/qt-2.3.1/include/qshared.h \
+  /usr/lib/qt-2.3.1/include/qnamespace.h \
+  /usr/lib/qt-2.3.1/include/qrect.h /usr/lib/qt-2.3.1/include/qsize.h \
+  /usr/lib/qt-2.3.1/include/qpoint.h /usr/lib/qt-2.3.1/include/qcolor.h \
+  /usr/lib/qt-2.3.1/include/qfontmetrics.h \
+  /usr/lib/qt-2.3.1/include/qfont.h /usr/lib/qt-2.3.1/include/qfontinfo.h \
+  /usr/lib/qt-2.3.1/include/qregion.h /usr/lib/qt-2.3.1/include/qpen.h \
+  /usr/lib/qt-2.3.1/include/qbrush.h \
+  /usr/lib/qt-2.3.1/include/qpointarray.h \
+  /usr/lib/qt-2.3.1/include/qwmatrix.h /usr/lib/qt-2.3.1/include/qevent.h \
+  /usr/lib/qt-2.3.1/include/qmime.h \
+  /usr/lib/qt-2.3.1/include/qstringlist.h \
+  /usr/lib/qt-2.3.1/include/qvaluelist.h \
+  /usr/lib/qt-2.3.1/include/qdatastream.h \
+  /usr/lib/qt-2.3.1/include/qiodevice.h \
+  /usr/lib/qt-2.3.1/include/qregexp.h ../../gui/indep/utils/int_types.h \
+  ../../libdjvu/debug.h
+MapDraw.o: ../../gui/shared/QT/MapDraw.cpp ../../config.h \
+  ../../gui/shared/QT/MapDraw.h ../../libdjvu/GPixmap.h \
+  ../../libdjvu/GSmartPointer.h ../../libdjvu/DjVuGlobal.h \
+  ../../libdjvu/GMapAreas.h ../../libdjvu/GContainer.h \
+  ../../libdjvu/GException.h ../../libdjvu/GString.h \
+  ../../libdjvu/GRect.h ../../libdjvu/GURL.h ../../libdjvu/Arrays.h \
+  ../../libdjvu/GThreads.h ../../gui/indep/utils/int_types.h \
+  ../../libdjvu/debug.h
+qd_painter.o: ../../gui/shared/QT/qd_painter.cpp ../../config.h \
+  ../../gui/shared/QT/qd_painter.h ../../gui/indep/QT/qt_painter.h \
+  ../../libdjvu/GPixmap.h ../../libdjvu/GSmartPointer.h \
+  ../../libdjvu/DjVuGlobal.h ../../libdjvu/GBitmap.h \
+  ../../libdjvu/GContainer.h ../../libdjvu/GException.h \
+  ../../libdjvu/GRect.h /usr/lib/qt-2.3.1/include/qstring.h \
+  /usr/lib/qt-2.3.1/include/qcstring.h /usr/lib/qt-2.3.1/include/qarray.h \
+  /usr/lib/qt-2.3.1/include/qgarray.h /usr/lib/qt-2.3.1/include/qshared.h \
+  /usr/lib/qt-2.3.1/include/qnamespace.h \
+  /usr/lib/qt-2.3.1/include/qrect.h /usr/lib/qt-2.3.1/include/qsize.h \
+  /usr/lib/qt-2.3.1/include/qpoint.h /usr/lib/qt-2.3.1/include/qcolor.h \
+  /usr/lib/qt-2.3.1/include/qfontmetrics.h \
+  /usr/lib/qt-2.3.1/include/qfont.h /usr/lib/qt-2.3.1/include/qfontinfo.h \
+  /usr/lib/qt-2.3.1/include/qregion.h /usr/lib/qt-2.3.1/include/qpen.h \
+  /usr/lib/qt-2.3.1/include/qbrush.h \
+  /usr/lib/qt-2.3.1/include/qpointarray.h \
+  /usr/lib/qt-2.3.1/include/qwmatrix.h ../../libdjvu/debug.h \
+  ../../gui/indep/QT/qlib.h ../../libdjvu/Arrays.h \
+  ../../gui/indep/QT/qt_n_in_one.h /usr/lib/qt-2.3.1/include/qevent.h \
+  /usr/lib/qt-2.3.1/include/qmime.h \
+  /usr/lib/qt-2.3.1/include/qstringlist.h \
+  /usr/lib/qt-2.3.1/include/qvaluelist.h \
+  /usr/lib/qt-2.3.1/include/qdatastream.h \
+  /usr/lib/qt-2.3.1/include/qiodevice.h \
+  /usr/lib/qt-2.3.1/include/qregexp.h /usr/lib/qt-2.3.1/include/qlist.h \
+  /usr/lib/qt-2.3.1/include/qglist.h \
+  /usr/lib/qt-2.3.1/include/qcollection.h \
+  /usr/lib/qt-2.3.1/include/qpalette.h \
+  /usr/lib/qt-2.3.1/include/qcursor.h /usr/lib/qt-2.3.1/include/qstyle.h \
+  /usr/lib/qt-2.3.1/include/qsizepolicy.h ../../gui/indep/QT/qt_fix.h \
+  ../../libdjvu/GString.h /usr/lib/qt-2.3.1/include/qiconset.h \
+  /usr/lib/qt-2.3.1/include/qpixmap.h ../../gui/indep/utils/cin_data.h \
+  ../../libdjvu/ByteStream.h
+qd_doc_info.o: ../../gui/shared/QT/qd_doc_info.cpp ../../config.h \
+  ../../gui/shared/QT/qd_doc_info.h ../../libdjvu/DjVuDocument.h \
+  ../../libdjvu/DjVuPort.h ../../libdjvu/GThreads.h \
+  ../../libdjvu/DjVuGlobal.h ../../libdjvu/GException.h \
+  ../../libdjvu/GURL.h ../../libdjvu/GString.h ../../libdjvu/GContainer.h \
+  ../../libdjvu/GSmartPointer.h ../../libdjvu/Arrays.h \
+  ../../gui/shared/QT/qd_port.h ../../libdjvu/DjVuImage.h \
+  ../../libdjvu/DjVuFile.h ../../libdjvu/DjVuInfo.h ../../libdjvu/GRect.h \
+  ../../libdjvu/DjVuPalette.h ../../libdjvu/GPixmap.h \
+  ../../libdjvu/DjVuAnno.h ../../gui/shared/QT/qd_messenger.h \
+  ../../libdjvu/debug.h /usr/lib/qt-2.3.1/include/qwindowdefs.h \
+  /usr/lib/qt-2.3.1/include/qstring.h \
+  /usr/lib/qt-2.3.1/include/qcstring.h /usr/lib/qt-2.3.1/include/qarray.h \
+  /usr/lib/qt-2.3.1/include/qgarray.h /usr/lib/qt-2.3.1/include/qshared.h \
+  /usr/lib/qt-2.3.1/include/qnamespace.h \
+  /usr/lib/qt-2.3.1/include/qevent.h /usr/lib/qt-2.3.1/include/qregion.h \
+  /usr/lib/qt-2.3.1/include/qrect.h /usr/lib/qt-2.3.1/include/qsize.h \
+  /usr/lib/qt-2.3.1/include/qpoint.h /usr/lib/qt-2.3.1/include/qmime.h \
+  /usr/lib/qt-2.3.1/include/qstringlist.h \
+  /usr/lib/qt-2.3.1/include/qvaluelist.h \
+  /usr/lib/qt-2.3.1/include/qdatastream.h \
+  /usr/lib/qt-2.3.1/include/qiodevice.h \
+  /usr/lib/qt-2.3.1/include/qregexp.h ../../gui/indep/QT/qt_fix.h \
+  /usr/lib/qt-2.3.1/include/qwidget.h \
+  /usr/lib/qt-2.3.1/include/qpaintdevice.h \
+  /usr/lib/qt-2.3.1/include/qpalette.h /usr/lib/qt-2.3.1/include/qcolor.h \
+  /usr/lib/qt-2.3.1/include/qbrush.h /usr/lib/qt-2.3.1/include/qcursor.h \
+  /usr/lib/qt-2.3.1/include/qfont.h \
+  /usr/lib/qt-2.3.1/include/qfontmetrics.h \
+  /usr/lib/qt-2.3.1/include/qfontinfo.h \
+  /usr/lib/qt-2.3.1/include/qstyle.h \
+  /usr/lib/qt-2.3.1/include/qsizepolicy.h \
+  /usr/lib/qt-2.3.1/include/qiconset.h \
+  /usr/lib/qt-2.3.1/include/qpixmap.h \
+  /usr/lib/qt-2.3.1/include/qscrollbar.h \
+  /usr/lib/qt-2.3.1/include/qrangecontrol.h \
+  /usr/lib/qt-2.3.1/include/qdrawutil.h \
+  /usr/lib/qt-2.3.1/include/qpainter.h /usr/lib/qt-2.3.1/include/qpen.h \
+  /usr/lib/qt-2.3.1/include/qpointarray.h \
+  /usr/lib/qt-2.3.1/include/qwmatrix.h ../../gui/indep/QT/qlib.h \
+  ../../gui/indep/QT/qt_n_in_one.h /usr/lib/qt-2.3.1/include/qlist.h \
+  /usr/lib/qt-2.3.1/include/qglist.h \
+  /usr/lib/qt-2.3.1/include/qcollection.h ../../libdjvu/IFFByteStream.h \
+  ../../libdjvu/ByteStream.h ../../libdjvu/DjVuDumpHelper.h \
+  ../../libdjvu/DjVmDir.h ../../libdjvu/DjVmDir0.h \
+  ../../libdjvu/DjVuNavDir.h ../../libdjvu/DataPool.h \
+  /usr/lib/qt-2.3.1/include/qtimer.h \
+  /usr/lib/qt-2.3.1/include/qasciidict.h \
+  /usr/lib/qt-2.3.1/include/qgdict.h \
+  /usr/lib/qt-2.3.1/include/qtranslator.h \
+  /usr/lib/qt-2.3.1/include/qintdict.h
+qd_nav_goto_page.o: ../../gui/shared/QT/qd_nav_goto_page.cpp \
+  ../../config.h ../../libdjvu/DjVuDocument.h ../../libdjvu/DjVuPort.h \
+  ../../libdjvu/GThreads.h ../../libdjvu/DjVuGlobal.h \
+  ../../libdjvu/GException.h ../../libdjvu/GURL.h ../../libdjvu/GString.h \
+  ../../libdjvu/GContainer.h ../../libdjvu/GSmartPointer.h \
+  ../../libdjvu/Arrays.h ../../libdjvu/DjVuImage.h \
+  ../../libdjvu/DjVuFile.h ../../libdjvu/DjVuInfo.h ../../libdjvu/GRect.h \
+  ../../libdjvu/DjVuPalette.h ../../libdjvu/GPixmap.h \
+  ../../libdjvu/DjVuAnno.h ../../gui/shared/QT/qd_nav_goto_page.h \
+  /usr/lib/qt-2.3.1/include/qstring.h \
+  /usr/lib/qt-2.3.1/include/qcstring.h /usr/lib/qt-2.3.1/include/qarray.h \
+  /usr/lib/qt-2.3.1/include/qgarray.h /usr/lib/qt-2.3.1/include/qshared.h \
+  /usr/lib/qt-2.3.1/include/qnamespace.h \
+  /usr/lib/qt-2.3.1/include/qobject.h /usr/lib/qt-2.3.1/include/qevent.h \
+  /usr/lib/qt-2.3.1/include/qregion.h /usr/lib/qt-2.3.1/include/qrect.h \
+  /usr/lib/qt-2.3.1/include/qsize.h /usr/lib/qt-2.3.1/include/qpoint.h \
+  /usr/lib/qt-2.3.1/include/qmime.h \
+  /usr/lib/qt-2.3.1/include/qstringlist.h \
+  /usr/lib/qt-2.3.1/include/qvaluelist.h \
+  /usr/lib/qt-2.3.1/include/qdatastream.h \
+  /usr/lib/qt-2.3.1/include/qiodevice.h \
+  /usr/lib/qt-2.3.1/include/qregexp.h \
+  /usr/lib/qt-2.3.1/include/qpaintdevice.h \
+  /usr/lib/qt-2.3.1/include/qpalette.h /usr/lib/qt-2.3.1/include/qcolor.h \
+  /usr/lib/qt-2.3.1/include/qbrush.h /usr/lib/qt-2.3.1/include/qcursor.h \
+  /usr/lib/qt-2.3.1/include/qfont.h \
+  /usr/lib/qt-2.3.1/include/qfontmetrics.h \
+  /usr/lib/qt-2.3.1/include/qfontinfo.h \
+  /usr/lib/qt-2.3.1/include/qstyle.h \
+  /usr/lib/qt-2.3.1/include/qsizepolicy.h ../../gui/indep/QT/qt_fix.h \
+  /usr/lib/qt-2.3.1/include/qiconset.h \
+  /usr/lib/qt-2.3.1/include/qpixmap.h
+qd_set_zoom.o: ../../gui/shared/QT/qd_set_zoom.cpp ../../config.h \
+  ../../gui/shared/res/djvu_base_res.h ../../gui/shared/QT/qd_set_zoom.h \
+  /usr/lib/qt-2.3.1/include/qstring.h \
+  /usr/lib/qt-2.3.1/include/qcstring.h /usr/lib/qt-2.3.1/include/qarray.h \
+  /usr/lib/qt-2.3.1/include/qgarray.h /usr/lib/qt-2.3.1/include/qshared.h \
+  /usr/lib/qt-2.3.1/include/qnamespace.h \
+  /usr/lib/qt-2.3.1/include/qobject.h /usr/lib/qt-2.3.1/include/qevent.h \
+  /usr/lib/qt-2.3.1/include/qregion.h /usr/lib/qt-2.3.1/include/qrect.h \
+  /usr/lib/qt-2.3.1/include/qsize.h /usr/lib/qt-2.3.1/include/qpoint.h \
+  /usr/lib/qt-2.3.1/include/qmime.h \
+  /usr/lib/qt-2.3.1/include/qstringlist.h \
+  /usr/lib/qt-2.3.1/include/qvaluelist.h \
+  /usr/lib/qt-2.3.1/include/qdatastream.h \
+  /usr/lib/qt-2.3.1/include/qiodevice.h \
+  /usr/lib/qt-2.3.1/include/qregexp.h \
+  /usr/lib/qt-2.3.1/include/qpaintdevice.h \
+  /usr/lib/qt-2.3.1/include/qpalette.h /usr/lib/qt-2.3.1/include/qcolor.h \
+  /usr/lib/qt-2.3.1/include/qbrush.h /usr/lib/qt-2.3.1/include/qcursor.h \
+  /usr/lib/qt-2.3.1/include/qfont.h \
+  /usr/lib/qt-2.3.1/include/qfontmetrics.h \
+  /usr/lib/qt-2.3.1/include/qfontinfo.h \
+  /usr/lib/qt-2.3.1/include/qstyle.h \
+  /usr/lib/qt-2.3.1/include/qsizepolicy.h \
+  /usr/lib/qt-2.3.1/include/qrangecontrol.h ../../gui/indep/QT/qt_fix.h \
+  ../../libdjvu/GString.h ../../libdjvu/DjVuGlobal.h \
+  ../../libdjvu/GContainer.h ../../libdjvu/GException.h \
+  ../../libdjvu/GSmartPointer.h /usr/lib/qt-2.3.1/include/qiconset.h \
+  /usr/lib/qt-2.3.1/include/qpixmap.h
+qd_port.o: ../../gui/shared/QT/qd_port.cpp ../../config.h \
+  ../../gui/shared/QT/qd_port.h ../../libdjvu/DjVuPort.h \
+  ../../libdjvu/GThreads.h ../../libdjvu/DjVuGlobal.h \
+  ../../libdjvu/GException.h ../../libdjvu/GURL.h ../../libdjvu/GString.h \
+  ../../libdjvu/GContainer.h ../../libdjvu/GSmartPointer.h \
+  ../../libdjvu/Arrays.h ../../libdjvu/DjVuImage.h \
+  ../../libdjvu/DjVuFile.h ../../libdjvu/DjVuInfo.h ../../libdjvu/GRect.h \
+  ../../libdjvu/DjVuPalette.h ../../libdjvu/GPixmap.h \
+  ../../libdjvu/DjVuAnno.h ../../libdjvu/DjVuDocument.h \
+  ../../gui/shared/QT/qd_messenger.h ../../libdjvu/debug.h \
+  /usr/lib/qt-2.3.1/include/qwindowdefs.h \
+  /usr/lib/qt-2.3.1/include/qstring.h \
+  /usr/lib/qt-2.3.1/include/qcstring.h /usr/lib/qt-2.3.1/include/qarray.h \
+  /usr/lib/qt-2.3.1/include/qgarray.h /usr/lib/qt-2.3.1/include/qshared.h \
+  /usr/lib/qt-2.3.1/include/qnamespace.h \
+  /usr/lib/qt-2.3.1/include/qevent.h /usr/lib/qt-2.3.1/include/qregion.h \
+  /usr/lib/qt-2.3.1/include/qrect.h /usr/lib/qt-2.3.1/include/qsize.h \
+  /usr/lib/qt-2.3.1/include/qpoint.h /usr/lib/qt-2.3.1/include/qmime.h \
+  /usr/lib/qt-2.3.1/include/qstringlist.h \
+  /usr/lib/qt-2.3.1/include/qvaluelist.h \
+  /usr/lib/qt-2.3.1/include/qdatastream.h \
+  /usr/lib/qt-2.3.1/include/qiodevice.h \
+  /usr/lib/qt-2.3.1/include/qregexp.h ../../gui/indep/QT/qt_fix.h \
+  /usr/lib/qt-2.3.1/include/qwidget.h \
+  /usr/lib/qt-2.3.1/include/qpaintdevice.h \
+  /usr/lib/qt-2.3.1/include/qpalette.h /usr/lib/qt-2.3.1/include/qcolor.h \
+  /usr/lib/qt-2.3.1/include/qbrush.h /usr/lib/qt-2.3.1/include/qcursor.h \
+  /usr/lib/qt-2.3.1/include/qfont.h \
+  /usr/lib/qt-2.3.1/include/qfontmetrics.h \
+  /usr/lib/qt-2.3.1/include/qfontinfo.h \
+  /usr/lib/qt-2.3.1/include/qstyle.h \
+  /usr/lib/qt-2.3.1/include/qsizepolicy.h
+qd_decoder.o: ../../gui/shared/QT/qd_decoder.cpp ../../config.h \
+  ../../gui/shared/QT/qd_decoder.h ../../libdjvu/DjVuDocument.h \
+  ../../libdjvu/DjVuPort.h ../../libdjvu/GThreads.h \
+  ../../libdjvu/DjVuGlobal.h ../../libdjvu/GException.h \
+  ../../libdjvu/GURL.h ../../libdjvu/GString.h ../../libdjvu/GContainer.h \
+  ../../libdjvu/GSmartPointer.h ../../libdjvu/Arrays.h \
+  ../../gui/shared/QT/qd_port.h ../../libdjvu/DjVuImage.h \
+  ../../libdjvu/DjVuFile.h ../../libdjvu/DjVuInfo.h ../../libdjvu/GRect.h \
+  ../../libdjvu/DjVuPalette.h ../../libdjvu/GPixmap.h \
+  ../../libdjvu/DjVuAnno.h ../../gui/shared/QT/qd_messenger.h \
+  ../../libdjvu/debug.h /usr/lib/qt-2.3.1/include/qwindowdefs.h \
+  /usr/lib/qt-2.3.1/include/qstring.h \
+  /usr/lib/qt-2.3.1/include/qcstring.h /usr/lib/qt-2.3.1/include/qarray.h \
+  /usr/lib/qt-2.3.1/include/qgarray.h /usr/lib/qt-2.3.1/include/qshared.h \
+  /usr/lib/qt-2.3.1/include/qnamespace.h \
+  /usr/lib/qt-2.3.1/include/qevent.h /usr/lib/qt-2.3.1/include/qregion.h \
+  /usr/lib/qt-2.3.1/include/qrect.h /usr/lib/qt-2.3.1/include/qsize.h \
+  /usr/lib/qt-2.3.1/include/qpoint.h /usr/lib/qt-2.3.1/include/qmime.h \
+  /usr/lib/qt-2.3.1/include/qstringlist.h \
+  /usr/lib/qt-2.3.1/include/qvaluelist.h \
+  /usr/lib/qt-2.3.1/include/qdatastream.h \
+  /usr/lib/qt-2.3.1/include/qiodevice.h \
+  /usr/lib/qt-2.3.1/include/qregexp.h ../../gui/indep/QT/qt_fix.h \
+  /usr/lib/qt-2.3.1/include/qwidget.h \
+  /usr/lib/qt-2.3.1/include/qpaintdevice.h \
+  /usr/lib/qt-2.3.1/include/qpalette.h /usr/lib/qt-2.3.1/include/qcolor.h \
+  /usr/lib/qt-2.3.1/include/qbrush.h /usr/lib/qt-2.3.1/include/qcursor.h \
+  /usr/lib/qt-2.3.1/include/qfont.h \
+  /usr/lib/qt-2.3.1/include/qfontmetrics.h \
+  /usr/lib/qt-2.3.1/include/qfontinfo.h \
+  /usr/lib/qt-2.3.1/include/qstyle.h \
+  /usr/lib/qt-2.3.1/include/qsizepolicy.h \
+  /usr/lib/qt-2.3.1/include/qpushbutton.h \
+  /usr/lib/qt-2.3.1/include/qbutton.h \
+  /usr/lib/qt-2.3.1/include/qiconset.h \
+  /usr/lib/qt-2.3.1/include/qpixmap.h /usr/lib/qt-2.3.1/include/qlabel.h \
+  ../../gui/indep/except/exc_msg.h ../../gui/indep/except/exc_base.h \
+  ../../gui/indep/except/throw_error.h ../../gui/indep/QT/qlib.h \
+  ../../gui/indep/QT/qt_n_in_one.h /usr/lib/qt-2.3.1/include/qlist.h \
+  /usr/lib/qt-2.3.1/include/qglist.h \
+  /usr/lib/qt-2.3.1/include/qcollection.h \
+  /usr/lib/qt-2.3.1/include/qasciidict.h \
+  /usr/lib/qt-2.3.1/include/qgdict.h \
+  /usr/lib/qt-2.3.1/include/qtranslator.h \
+  /usr/lib/qt-2.3.1/include/qintdict.h
+qd_toolbutt.o: ../../gui/shared/QT/qd_toolbutt.cpp ../../config.h \
+  ../../gui/shared/QT/qd_toolbutt.h ../../libdjvu/ByteStream.h \
+  ../../libdjvu/Arrays.h ../../libdjvu/GException.h \
+  ../../libdjvu/DjVuGlobal.h ../../libdjvu/GSmartPointer.h \
+  /usr/lib/qt-2.3.1/include/qstring.h \
+  /usr/lib/qt-2.3.1/include/qcstring.h /usr/lib/qt-2.3.1/include/qarray.h \
+  /usr/lib/qt-2.3.1/include/qgarray.h /usr/lib/qt-2.3.1/include/qshared.h \
+  /usr/lib/qt-2.3.1/include/qnamespace.h \
+  /usr/lib/qt-2.3.1/include/qobject.h /usr/lib/qt-2.3.1/include/qevent.h \
+  /usr/lib/qt-2.3.1/include/qregion.h /usr/lib/qt-2.3.1/include/qrect.h \
+  /usr/lib/qt-2.3.1/include/qsize.h /usr/lib/qt-2.3.1/include/qpoint.h \
+  /usr/lib/qt-2.3.1/include/qmime.h \
+  /usr/lib/qt-2.3.1/include/qstringlist.h \
+  /usr/lib/qt-2.3.1/include/qvaluelist.h \
+  /usr/lib/qt-2.3.1/include/qdatastream.h \
+  /usr/lib/qt-2.3.1/include/qiodevice.h \
+  /usr/lib/qt-2.3.1/include/qregexp.h \
+  /usr/lib/qt-2.3.1/include/qpaintdevice.h \
+  /usr/lib/qt-2.3.1/include/qpalette.h /usr/lib/qt-2.3.1/include/qcolor.h \
+  /usr/lib/qt-2.3.1/include/qbrush.h /usr/lib/qt-2.3.1/include/qcursor.h \
+  /usr/lib/qt-2.3.1/include/qfont.h \
+  /usr/lib/qt-2.3.1/include/qfontmetrics.h \
+  /usr/lib/qt-2.3.1/include/qfontinfo.h \
+  /usr/lib/qt-2.3.1/include/qstyle.h \
+  /usr/lib/qt-2.3.1/include/qsizepolicy.h \
+  /usr/lib/qt-2.3.1/include/qpixmap.h \
+  /usr/lib/qt-2.3.1/include/qiconset.h ../../gui/indep/QT/qt_fix.h \
+  ../../libdjvu/GString.h ../../libdjvu/GContainer.h \
+  ../../gui/indep/QT/qt_painter.h ../../libdjvu/GPixmap.h \
+  ../../libdjvu/GBitmap.h ../../libdjvu/GRect.h \
+  /usr/lib/qt-2.3.1/include/qpen.h \
+  /usr/lib/qt-2.3.1/include/qpointarray.h \
+  /usr/lib/qt-2.3.1/include/qwmatrix.h ../../gui/indep/QX/qx_imager.h \
+  ../../gui/indep/QT/qt_imager.h ../../gui/indep/utils/int_types.h \
+  ../../libdjvu/debug.h ../../gui/indep/except/exc_msg.h \
+  ../../gui/indep/except/exc_base.h /usr/lib/qt-2.3.1/include/qtimer.h \
+  /usr/lib/qt-2.3.1/include/qstrlist.h /usr/lib/qt-2.3.1/include/qlist.h \
+  /usr/lib/qt-2.3.1/include/qglist.h \
+  /usr/lib/qt-2.3.1/include/qcollection.h \
+  /usr/lib/qt-2.3.1/include/qasciidict.h \
+  /usr/lib/qt-2.3.1/include/qgdict.h \
+  /usr/lib/qt-2.3.1/include/qtranslator.h \
+  /usr/lib/qt-2.3.1/include/qintdict.h
+qd_doc_saver.o: ../../gui/shared/QT/qd_doc_saver.cpp ../../config.h \
+  ../../gui/shared/QT/qd_doc_saver.h ../../libdjvu/DjVuDocument.h \
+  ../../libdjvu/DjVuPort.h ../../libdjvu/GThreads.h \
+  ../../libdjvu/DjVuGlobal.h ../../libdjvu/GException.h \
+  ../../libdjvu/GURL.h ../../libdjvu/GString.h ../../libdjvu/GContainer.h \
+  ../../libdjvu/GSmartPointer.h ../../libdjvu/Arrays.h \
+  ../../libdjvu/DjVmDir.h ../../gui/shared/QT/qd_port.h \
+  ../../libdjvu/DjVuImage.h ../../libdjvu/DjVuFile.h \
+  ../../libdjvu/DjVuInfo.h ../../libdjvu/GRect.h \
+  ../../libdjvu/DjVuPalette.h ../../libdjvu/GPixmap.h \
+  ../../libdjvu/DjVuAnno.h ../../gui/shared/QT/qd_messenger.h \
+  ../../libdjvu/debug.h /usr/lib/qt-2.3.1/include/qwindowdefs.h \
+  /usr/lib/qt-2.3.1/include/qstring.h \
+  /usr/lib/qt-2.3.1/include/qcstring.h /usr/lib/qt-2.3.1/include/qarray.h \
+  /usr/lib/qt-2.3.1/include/qgarray.h /usr/lib/qt-2.3.1/include/qshared.h \
+  /usr/lib/qt-2.3.1/include/qnamespace.h \
+  /usr/lib/qt-2.3.1/include/qevent.h /usr/lib/qt-2.3.1/include/qregion.h \
+  /usr/lib/qt-2.3.1/include/qrect.h /usr/lib/qt-2.3.1/include/qsize.h \
+  /usr/lib/qt-2.3.1/include/qpoint.h /usr/lib/qt-2.3.1/include/qmime.h \
+  /usr/lib/qt-2.3.1/include/qstringlist.h \
+  /usr/lib/qt-2.3.1/include/qvaluelist.h \
+  /usr/lib/qt-2.3.1/include/qdatastream.h \
+  /usr/lib/qt-2.3.1/include/qiodevice.h \
+  /usr/lib/qt-2.3.1/include/qregexp.h ../../gui/indep/QT/qt_fix.h \
+  /usr/lib/qt-2.3.1/include/qwidget.h \
+  /usr/lib/qt-2.3.1/include/qpaintdevice.h \
+  /usr/lib/qt-2.3.1/include/qpalette.h /usr/lib/qt-2.3.1/include/qcolor.h \
+  /usr/lib/qt-2.3.1/include/qbrush.h /usr/lib/qt-2.3.1/include/qcursor.h \
+  /usr/lib/qt-2.3.1/include/qfont.h \
+  /usr/lib/qt-2.3.1/include/qfontmetrics.h \
+  /usr/lib/qt-2.3.1/include/qfontinfo.h \
+  /usr/lib/qt-2.3.1/include/qstyle.h \
+  /usr/lib/qt-2.3.1/include/qsizepolicy.h \
+  /usr/lib/qt-2.3.1/include/qiconset.h \
+  /usr/lib/qt-2.3.1/include/qpixmap.h \
+  /usr/lib/qt-2.3.1/include/qprogressbar.h ../../gui/indep/QT/qlib.h \
+  ../../gui/indep/QT/qt_n_in_one.h /usr/lib/qt-2.3.1/include/qlist.h \
+  /usr/lib/qt-2.3.1/include/qglist.h \
+  /usr/lib/qt-2.3.1/include/qcollection.h ../../libdjvu/GOS.h \
+  ../../libdjvu/ByteStream.h ../../libdjvu/DataPool.h \
+  /usr/lib/qt-2.3.1/include/qasciidict.h \
+  /usr/lib/qt-2.3.1/include/qgdict.h \
+  /usr/lib/qt-2.3.1/include/qtranslator.h \
+  /usr/lib/qt-2.3.1/include/qintdict.h \
+  /usr/lib/qt-2.3.1/include/qfileinfo.h /usr/lib/qt-2.3.1/include/qfile.h \
+  /usr/lib/qt-2.3.1/include/qdatetime.h \
+  /usr/lib/qt-2.3.1/include/qlistbox.h \
+  /usr/lib/qt-2.3.1/include/qscrollview.h \
+  /usr/lib/qt-2.3.1/include/qscrollbar.h \
+  /usr/lib/qt-2.3.1/include/qrangecontrol.h \
+  /usr/lib/qt-2.3.1/include/qdrawutil.h \
+  /usr/lib/qt-2.3.1/include/qpainter.h /usr/lib/qt-2.3.1/include/qpen.h \
+  /usr/lib/qt-2.3.1/include/qpointarray.h \
+  /usr/lib/qt-2.3.1/include/qwmatrix.h /usr/lib/qt-2.3.1/include/qtimer.h \
+  /usr/lib/qt-2.3.1/include/qlineedit.h \
+  /usr/lib/qt-2.3.1/include/qlistview.h \
+  /usr/lib/qt-2.3.1/include/qurloperator.h \
+  /usr/lib/qt-2.3.1/include/qurl.h \
+  /usr/lib/qt-2.3.1/include/qnetworkprotocol.h \
+  /usr/lib/qt-2.3.1/include/qurlinfo.h qd_doc_saver_moc.inc
+qd_thumb.o: ../../gui/shared/QT/qd_thumb.cpp ../../config.h \
+  ../../gui/shared/QT/qd_thumb.h ../../gui/shared/QT/qd_port.h \
+  ../../libdjvu/DjVuPort.h ../../libdjvu/GThreads.h \
+  ../../libdjvu/DjVuGlobal.h ../../libdjvu/GException.h \
+  ../../libdjvu/GURL.h ../../libdjvu/GString.h ../../libdjvu/GContainer.h \
+  ../../libdjvu/GSmartPointer.h ../../libdjvu/Arrays.h \
+  ../../libdjvu/DjVuImage.h ../../libdjvu/DjVuFile.h \
+  ../../libdjvu/DjVuInfo.h ../../libdjvu/GRect.h \
+  ../../libdjvu/DjVuPalette.h ../../libdjvu/GPixmap.h \
+  ../../libdjvu/DjVuAnno.h ../../libdjvu/DjVuDocument.h \
+  ../../gui/shared/QT/qd_messenger.h ../../libdjvu/debug.h \
+  /usr/lib/qt-2.3.1/include/qwindowdefs.h \
+  /usr/lib/qt-2.3.1/include/qstring.h \
+  /usr/lib/qt-2.3.1/include/qcstring.h /usr/lib/qt-2.3.1/include/qarray.h \
+  /usr/lib/qt-2.3.1/include/qgarray.h /usr/lib/qt-2.3.1/include/qshared.h \
+  /usr/lib/qt-2.3.1/include/qnamespace.h \
+  /usr/lib/qt-2.3.1/include/qevent.h /usr/lib/qt-2.3.1/include/qregion.h \
+  /usr/lib/qt-2.3.1/include/qrect.h /usr/lib/qt-2.3.1/include/qsize.h \
+  /usr/lib/qt-2.3.1/include/qpoint.h /usr/lib/qt-2.3.1/include/qmime.h \
+  /usr/lib/qt-2.3.1/include/qstringlist.h \
+  /usr/lib/qt-2.3.1/include/qvaluelist.h \
+  /usr/lib/qt-2.3.1/include/qdatastream.h \
+  /usr/lib/qt-2.3.1/include/qiodevice.h \
+  /usr/lib/qt-2.3.1/include/qregexp.h ../../gui/indep/QT/qt_fix.h \
+  /usr/lib/qt-2.3.1/include/qwidget.h \
+  /usr/lib/qt-2.3.1/include/qpaintdevice.h \
+  /usr/lib/qt-2.3.1/include/qpalette.h /usr/lib/qt-2.3.1/include/qcolor.h \
+  /usr/lib/qt-2.3.1/include/qbrush.h /usr/lib/qt-2.3.1/include/qcursor.h \
+  /usr/lib/qt-2.3.1/include/qfont.h \
+  /usr/lib/qt-2.3.1/include/qfontmetrics.h \
+  /usr/lib/qt-2.3.1/include/qfontinfo.h \
+  /usr/lib/qt-2.3.1/include/qstyle.h \
+  /usr/lib/qt-2.3.1/include/qsizepolicy.h \
+  /usr/lib/qt-2.3.1/include/qscrollbar.h \
+  /usr/lib/qt-2.3.1/include/qrangecontrol.h \
+  /usr/lib/qt-2.3.1/include/qdrawutil.h \
+  /usr/lib/qt-2.3.1/include/qpainter.h /usr/lib/qt-2.3.1/include/qpen.h \
+  /usr/lib/qt-2.3.1/include/qpointarray.h \
+  /usr/lib/qt-2.3.1/include/qwmatrix.h \
+  /usr/lib/qt-2.3.1/include/qpixmap.h /usr/lib/qt-2.3.1/include/qtimer.h \
+  ../../gui/shared/QT/qd_painter.h ../../gui/indep/QT/qt_painter.h \
+  ../../libdjvu/GBitmap.h ../../gui/indep/QX/qx_imager.h \
+  ../../gui/indep/QT/qt_imager.h ../../gui/indep/utils/int_types.h \
+  ../../libdjvu/IW44Image.h ../../libdjvu/ZPCodec.h \
+  ../../libdjvu/GScaler.h ../../libdjvu/ByteStream.h \
+  ../../libdjvu/DataPool.h ../../gui/indep/QT/qlib.h \
+  ../../gui/indep/QT/qt_n_in_one.h /usr/lib/qt-2.3.1/include/qlist.h \
+  /usr/lib/qt-2.3.1/include/qglist.h \
+  /usr/lib/qt-2.3.1/include/qcollection.h \
+  /usr/lib/qt-2.3.1/include/qiconset.h \
+  /usr/lib/qt-2.3.1/include/qstrlist.h \
+  /usr/lib/qt-2.3.1/include/qasciidict.h \
+  /usr/lib/qt-2.3.1/include/qgdict.h \
+  /usr/lib/qt-2.3.1/include/qtranslator.h \
+  /usr/lib/qt-2.3.1/include/qintdict.h
+qd_search_dialog.o: ../../gui/shared/QT/qd_search_dialog.cpp \
+  ../../config.h ../../libdjvu/DjVuAnno.h ../../libdjvu/GString.h \
+  ../../libdjvu/DjVuGlobal.h ../../libdjvu/GContainer.h \
+  ../../libdjvu/GException.h ../../libdjvu/GSmartPointer.h \
+  ../../libdjvu/DjVuFile.h ../../libdjvu/DjVuInfo.h ../../libdjvu/GRect.h \
+  ../../libdjvu/DjVuPalette.h ../../libdjvu/GPixmap.h \
+  ../../libdjvu/DjVuPort.h ../../libdjvu/GThreads.h ../../libdjvu/GURL.h \
+  ../../libdjvu/Arrays.h ../../libdjvu/DataPool.h \
+  ../../libdjvu/ByteStream.h ../../gui/shared/QT/qd_search_dialog.h \
+  ../../libdjvu/DjVuDocument.h ../../libdjvu/DjVuText.h \
+  ../../libdjvu/GMapAreas.h /usr/lib/qt-2.3.1/include/qstring.h \
+  /usr/lib/qt-2.3.1/include/qcstring.h /usr/lib/qt-2.3.1/include/qarray.h \
+  /usr/lib/qt-2.3.1/include/qgarray.h /usr/lib/qt-2.3.1/include/qshared.h \
+  /usr/lib/qt-2.3.1/include/qnamespace.h \
+  /usr/lib/qt-2.3.1/include/qobject.h /usr/lib/qt-2.3.1/include/qevent.h \
+  /usr/lib/qt-2.3.1/include/qregion.h /usr/lib/qt-2.3.1/include/qrect.h \
+  /usr/lib/qt-2.3.1/include/qsize.h /usr/lib/qt-2.3.1/include/qpoint.h \
+  /usr/lib/qt-2.3.1/include/qmime.h \
+  /usr/lib/qt-2.3.1/include/qstringlist.h \
+  /usr/lib/qt-2.3.1/include/qvaluelist.h \
+  /usr/lib/qt-2.3.1/include/qdatastream.h \
+  /usr/lib/qt-2.3.1/include/qiodevice.h \
+  /usr/lib/qt-2.3.1/include/qregexp.h \
+  /usr/lib/qt-2.3.1/include/qpaintdevice.h \
+  /usr/lib/qt-2.3.1/include/qpalette.h /usr/lib/qt-2.3.1/include/qcolor.h \
+  /usr/lib/qt-2.3.1/include/qbrush.h /usr/lib/qt-2.3.1/include/qcursor.h \
+  /usr/lib/qt-2.3.1/include/qfont.h \
+  /usr/lib/qt-2.3.1/include/qfontmetrics.h \
+  /usr/lib/qt-2.3.1/include/qfontinfo.h \
+  /usr/lib/qt-2.3.1/include/qstyle.h \
+  /usr/lib/qt-2.3.1/include/qsizepolicy.h ../../gui/indep/QT/qt_fix.h \
+  ../../libdjvu/debug.h ../../gui/indep/QT/qlib.h \
+  ../../gui/indep/QT/qt_n_in_one.h /usr/lib/qt-2.3.1/include/qlist.h \
+  /usr/lib/qt-2.3.1/include/qglist.h \
+  /usr/lib/qt-2.3.1/include/qcollection.h \
+  /usr/lib/qt-2.3.1/include/qiconset.h \
+  /usr/lib/qt-2.3.1/include/qpixmap.h \
+  /usr/lib/qt-2.3.1/include/qasciidict.h \
+  /usr/lib/qt-2.3.1/include/qgdict.h \
+  /usr/lib/qt-2.3.1/include/qtranslator.h \
+  /usr/lib/qt-2.3.1/include/qintdict.h
+qd_print_dialog.o: ../../gui/shared/QT/qd_print_dialog.cpp ../../config.h \
+  ../../gui/shared/QT/qd_print_dialog.h ../../libdjvu/DjVuImage.h \
+  ../../libdjvu/DjVuFile.h ../../libdjvu/DjVuInfo.h \
+  ../../libdjvu/GSmartPointer.h ../../libdjvu/DjVuGlobal.h \
+  ../../libdjvu/GRect.h ../../libdjvu/DjVuPalette.h \
+  ../../libdjvu/GContainer.h ../../libdjvu/GException.h \
+  ../../libdjvu/GPixmap.h ../../libdjvu/DjVuPort.h \
+  ../../libdjvu/GThreads.h ../../libdjvu/GURL.h ../../libdjvu/GString.h \
+  ../../libdjvu/Arrays.h ../../libdjvu/DjVuAnno.h \
+  ../../libdjvu/DjVuDocument.h ../../libdjvu/DjVuToPS.h \
+  ../../libdjvu/DjVuText.h ../../libdjvu/GMapAreas.h \
+  /usr/lib/qt-2.3.1/include/qstring.h \
+  /usr/lib/qt-2.3.1/include/qcstring.h /usr/lib/qt-2.3.1/include/qarray.h \
+  /usr/lib/qt-2.3.1/include/qgarray.h /usr/lib/qt-2.3.1/include/qshared.h \
+  /usr/lib/qt-2.3.1/include/qnamespace.h \
+  /usr/lib/qt-2.3.1/include/qobject.h /usr/lib/qt-2.3.1/include/qevent.h \
+  /usr/lib/qt-2.3.1/include/qregion.h /usr/lib/qt-2.3.1/include/qrect.h \
+  /usr/lib/qt-2.3.1/include/qsize.h /usr/lib/qt-2.3.1/include/qpoint.h \
+  /usr/lib/qt-2.3.1/include/qmime.h \
+  /usr/lib/qt-2.3.1/include/qstringlist.h \
+  /usr/lib/qt-2.3.1/include/qvaluelist.h \
+  /usr/lib/qt-2.3.1/include/qdatastream.h \
+  /usr/lib/qt-2.3.1/include/qiodevice.h \
+  /usr/lib/qt-2.3.1/include/qregexp.h \
+  /usr/lib/qt-2.3.1/include/qpaintdevice.h \
+  /usr/lib/qt-2.3.1/include/qpalette.h /usr/lib/qt-2.3.1/include/qcolor.h \
+  /usr/lib/qt-2.3.1/include/qbrush.h /usr/lib/qt-2.3.1/include/qcursor.h \
+  /usr/lib/qt-2.3.1/include/qfont.h \
+  /usr/lib/qt-2.3.1/include/qfontmetrics.h \
+  /usr/lib/qt-2.3.1/include/qfontinfo.h \
+  /usr/lib/qt-2.3.1/include/qstyle.h \
+  /usr/lib/qt-2.3.1/include/qsizepolicy.h ../../gui/shared/utils/prefs.h \
+  ../../gui/indep/QT/qt_n_in_one.h /usr/lib/qt-2.3.1/include/qlist.h \
+  /usr/lib/qt-2.3.1/include/qglist.h \
+  /usr/lib/qt-2.3.1/include/qcollection.h ../../gui/indep/QT/qt_fix.h \
+  ../../libdjvu/debug.h ../../gui/indep/QT/qlib.h \
+  /usr/lib/qt-2.3.1/include/qiconset.h \
+  /usr/lib/qt-2.3.1/include/qpixmap.h ../../gui/indep/except/exc_msg.h \
+  ../../gui/indep/except/exc_base.h ../../gui/indep/except/exc_misc.h \
+  ../../gui/shared/res/djvu_base_res.h ../../libdjvu/GOS.h \
+  ../../libdjvu/ByteStream.h /usr/lib/qt-2.3.1/include/qfileinfo.h \
+  /usr/lib/qt-2.3.1/include/qfile.h /usr/lib/qt-2.3.1/include/qdatetime.h \
+  /usr/lib/qt-2.3.1/include/qlistbox.h \
+  /usr/lib/qt-2.3.1/include/qscrollview.h \
+  /usr/lib/qt-2.3.1/include/qscrollbar.h \
+  /usr/lib/qt-2.3.1/include/qrangecontrol.h \
+  /usr/lib/qt-2.3.1/include/qdrawutil.h \
+  /usr/lib/qt-2.3.1/include/qpainter.h /usr/lib/qt-2.3.1/include/qpen.h \
+  /usr/lib/qt-2.3.1/include/qpointarray.h \
+  /usr/lib/qt-2.3.1/include/qwmatrix.h /usr/lib/qt-2.3.1/include/qtimer.h \
+  /usr/lib/qt-2.3.1/include/qlineedit.h \
+  /usr/lib/qt-2.3.1/include/qlistview.h \
+  /usr/lib/qt-2.3.1/include/qurloperator.h \
+  /usr/lib/qt-2.3.1/include/qurl.h \
+  /usr/lib/qt-2.3.1/include/qnetworkprotocol.h \
+  /usr/lib/qt-2.3.1/include/qurlinfo.h \
+  /usr/lib/qt-2.3.1/include/qasciidict.h \
+  /usr/lib/qt-2.3.1/include/qtranslator.h \
+  /usr/lib/qt-2.3.1/include/qintdict.h
+init_qt.o: ../../gui/shared/QT/init_qt.cpp ../../config.h \
+  /usr/lib/qt-2.3.1/include/qcstring.h /usr/lib/qt-2.3.1/include/qarray.h \
+  /usr/lib/qt-2.3.1/include/qgarray.h /usr/lib/qt-2.3.1/include/qshared.h \
+  /usr/lib/qt-2.3.1/include/qstring.h \
+  /usr/lib/qt-2.3.1/include/qdatetime.h \
+  /usr/lib/qt-2.3.1/include/qwindowdefs.h \
+  /usr/lib/qt-2.3.1/include/qnamespace.h \
+  /usr/lib/qt-2.3.1/include/qevent.h /usr/lib/qt-2.3.1/include/qregion.h \
+  /usr/lib/qt-2.3.1/include/qrect.h /usr/lib/qt-2.3.1/include/qsize.h \
+  /usr/lib/qt-2.3.1/include/qpoint.h /usr/lib/qt-2.3.1/include/qmime.h \
+  /usr/lib/qt-2.3.1/include/qstringlist.h \
+  /usr/lib/qt-2.3.1/include/qvaluelist.h \
+  /usr/lib/qt-2.3.1/include/qdatastream.h \
+  /usr/lib/qt-2.3.1/include/qregexp.h \
+  /usr/lib/qt-2.3.1/include/qintdict.h /usr/lib/qt-2.3.1/include/qgdict.h \
+  /usr/lib/qt-2.3.1/include/qcollection.h \
+  ../../gui/shared/utils/djvu_file_cache.h ../../libdjvu/DjVuFileCache.h \
+  ../../libdjvu/DjVuFile.h ../../libdjvu/DjVuInfo.h \
+  ../../libdjvu/GSmartPointer.h ../../libdjvu/DjVuGlobal.h \
+  ../../libdjvu/GRect.h ../../libdjvu/DjVuPalette.h \
+  ../../libdjvu/GContainer.h ../../libdjvu/GException.h \
+  ../../libdjvu/GPixmap.h ../../libdjvu/DjVuPort.h \
+  ../../libdjvu/GThreads.h ../../libdjvu/GURL.h ../../libdjvu/GString.h \
+  ../../libdjvu/Arrays.h ../../gui/shared/QT/init_qt.h \
+  /usr/lib/qt-2.3.1/include/qpaintdevice.h \
+  /usr/lib/qt-2.3.1/include/qpalette.h /usr/lib/qt-2.3.1/include/qcolor.h \
+  /usr/lib/qt-2.3.1/include/qbrush.h /usr/lib/qt-2.3.1/include/qcursor.h \
+  /usr/lib/qt-2.3.1/include/qfont.h \
+  /usr/lib/qt-2.3.1/include/qfontmetrics.h \
+  /usr/lib/qt-2.3.1/include/qfontinfo.h \
+  /usr/lib/qt-2.3.1/include/qstyle.h \
+  /usr/lib/qt-2.3.1/include/qsizepolicy.h \
+  /usr/lib/qt-2.3.1/include/qasciidict.h ../../gui/indep/QT/qt_fix.h \
+  ../../libdjvu/debug.h ../../libdjvu/DjVuMessage.h \
+  ../../libdjvu/DjVuMessageLite.h ../../gui/indep/except/exc_msg.h \
+  ../../gui/indep/except/exc_base.h ../../gui/indep/except/exc_res.h \
+  ../../gui/indep/QX/qx_imager.h ../../gui/indep/QT/qt_imager.h \
+  ../../gui/indep/utils/int_types.h ../../libdjvu/GBitmap.h \
+  ../../gui/shared/utils/prefs.h /usr/lib/qt-2.3.1/include/qguardedptr.h
+qd_messenger.o: ../../gui/shared/QT/qd_messenger.cpp ../../config.h \
+  ../../gui/shared/QT/qd_messenger.h ../../libdjvu/GThreads.h \
+  ../../libdjvu/DjVuGlobal.h ../../libdjvu/GException.h \
+  ../../libdjvu/GContainer.h ../../libdjvu/GSmartPointer.h \
+  ../../libdjvu/debug.h ../../libdjvu/GURL.h ../../libdjvu/GString.h \
+  ../../libdjvu/Arrays.h /usr/lib/qt-2.3.1/include/qwindowdefs.h \
+  /usr/lib/qt-2.3.1/include/qstring.h \
+  /usr/lib/qt-2.3.1/include/qcstring.h /usr/lib/qt-2.3.1/include/qarray.h \
+  /usr/lib/qt-2.3.1/include/qgarray.h /usr/lib/qt-2.3.1/include/qshared.h \
+  /usr/lib/qt-2.3.1/include/qnamespace.h \
+  /usr/lib/qt-2.3.1/include/qevent.h /usr/lib/qt-2.3.1/include/qregion.h \
+  /usr/lib/qt-2.3.1/include/qrect.h /usr/lib/qt-2.3.1/include/qsize.h \
+  /usr/lib/qt-2.3.1/include/qpoint.h /usr/lib/qt-2.3.1/include/qmime.h \
+  /usr/lib/qt-2.3.1/include/qstringlist.h \
+  /usr/lib/qt-2.3.1/include/qvaluelist.h \
+  /usr/lib/qt-2.3.1/include/qdatastream.h \
+  /usr/lib/qt-2.3.1/include/qiodevice.h \
+  /usr/lib/qt-2.3.1/include/qregexp.h ../../gui/indep/except/exc_msg.h \
+  ../../gui/indep/except/exc_base.h ../../gui/indep/QT/qlib.h \
+  ../../libdjvu/GRect.h ../../libdjvu/GPixmap.h \
+  ../../gui/indep/QT/qt_n_in_one.h /usr/lib/qt-2.3.1/include/qlist.h \
+  /usr/lib/qt-2.3.1/include/qglist.h \
+  /usr/lib/qt-2.3.1/include/qcollection.h \
+  /usr/lib/qt-2.3.1/include/qpaintdevice.h \
+  /usr/lib/qt-2.3.1/include/qpalette.h /usr/lib/qt-2.3.1/include/qcolor.h \
+  /usr/lib/qt-2.3.1/include/qbrush.h /usr/lib/qt-2.3.1/include/qcursor.h \
+  /usr/lib/qt-2.3.1/include/qfont.h \
+  /usr/lib/qt-2.3.1/include/qfontmetrics.h \
+  /usr/lib/qt-2.3.1/include/qfontinfo.h \
+  /usr/lib/qt-2.3.1/include/qstyle.h \
+  /usr/lib/qt-2.3.1/include/qsizepolicy.h ../../gui/indep/QT/qt_fix.h \
+  /usr/lib/qt-2.3.1/include/qiconset.h \
+  /usr/lib/qt-2.3.1/include/qpixmap.h \
+  ../../gui/indep/except/throw_error.h
+qd_toolbar.o: ../../gui/shared/QT/qd_toolbar.cpp ../../config.h \
+  ../../gui/shared/QT/qd_toolbar.h ../../libdjvu/GContainer.h \
+  ../../libdjvu/GException.h ../../libdjvu/DjVuGlobal.h \
+  ../../libdjvu/GSmartPointer.h /usr/lib/qt-2.3.1/include/qstring.h \
+  /usr/lib/qt-2.3.1/include/qcstring.h /usr/lib/qt-2.3.1/include/qarray.h \
+  /usr/lib/qt-2.3.1/include/qgarray.h /usr/lib/qt-2.3.1/include/qshared.h \
+  /usr/lib/qt-2.3.1/include/qnamespace.h \
+  /usr/lib/qt-2.3.1/include/qobject.h /usr/lib/qt-2.3.1/include/qevent.h \
+  /usr/lib/qt-2.3.1/include/qregion.h /usr/lib/qt-2.3.1/include/qrect.h \
+  /usr/lib/qt-2.3.1/include/qsize.h /usr/lib/qt-2.3.1/include/qpoint.h \
+  /usr/lib/qt-2.3.1/include/qmime.h \
+  /usr/lib/qt-2.3.1/include/qstringlist.h \
+  /usr/lib/qt-2.3.1/include/qvaluelist.h \
+  /usr/lib/qt-2.3.1/include/qdatastream.h \
+  /usr/lib/qt-2.3.1/include/qiodevice.h \
+  /usr/lib/qt-2.3.1/include/qregexp.h \
+  /usr/lib/qt-2.3.1/include/qpaintdevice.h \
+  /usr/lib/qt-2.3.1/include/qpalette.h /usr/lib/qt-2.3.1/include/qcolor.h \
+  /usr/lib/qt-2.3.1/include/qbrush.h /usr/lib/qt-2.3.1/include/qcursor.h \
+  /usr/lib/qt-2.3.1/include/qfont.h \
+  /usr/lib/qt-2.3.1/include/qfontmetrics.h \
+  /usr/lib/qt-2.3.1/include/qfontinfo.h \
+  /usr/lib/qt-2.3.1/include/qstyle.h \
+  /usr/lib/qt-2.3.1/include/qsizepolicy.h ../../gui/indep/QT/qt_fix.h \
+  ../../libdjvu/GString.h ../../libdjvu/debug.h ../../gui/indep/QT/qlib.h \
+  ../../libdjvu/GRect.h ../../libdjvu/Arrays.h ../../libdjvu/GPixmap.h \
+  ../../gui/indep/QT/qt_n_in_one.h /usr/lib/qt-2.3.1/include/qlist.h \
+  /usr/lib/qt-2.3.1/include/qglist.h \
+  /usr/lib/qt-2.3.1/include/qcollection.h \
+  /usr/lib/qt-2.3.1/include/qiconset.h \
+  /usr/lib/qt-2.3.1/include/qpixmap.h \
+  /usr/lib/qt-2.3.1/include/qasciidict.h \
+  /usr/lib/qt-2.3.1/include/qgdict.h \
+  /usr/lib/qt-2.3.1/include/qtranslator.h \
+  /usr/lib/qt-2.3.1/include/qintdict.h qd_toolbar_moc.inc \
+  /usr/lib/qt-2.3.1/include/qstrlist.h
+qd_tbar_mode_piece.o: ../../gui/shared/QT/qd_tbar_mode_piece.cpp \
+  ../../config.h ../../gui/shared/QT/qd_tbar_mode_piece.h \
+  ../../gui/shared/QT/qd_toolbar.h ../../libdjvu/GContainer.h \
+  ../../libdjvu/GException.h ../../libdjvu/DjVuGlobal.h \
+  ../../libdjvu/GSmartPointer.h /usr/lib/qt-2.3.1/include/qstring.h \
+  /usr/lib/qt-2.3.1/include/qcstring.h /usr/lib/qt-2.3.1/include/qarray.h \
+  /usr/lib/qt-2.3.1/include/qgarray.h /usr/lib/qt-2.3.1/include/qshared.h \
+  /usr/lib/qt-2.3.1/include/qnamespace.h \
+  /usr/lib/qt-2.3.1/include/qobject.h /usr/lib/qt-2.3.1/include/qevent.h \
+  /usr/lib/qt-2.3.1/include/qregion.h /usr/lib/qt-2.3.1/include/qrect.h \
+  /usr/lib/qt-2.3.1/include/qsize.h /usr/lib/qt-2.3.1/include/qpoint.h \
+  /usr/lib/qt-2.3.1/include/qmime.h \
+  /usr/lib/qt-2.3.1/include/qstringlist.h \
+  /usr/lib/qt-2.3.1/include/qvaluelist.h \
+  /usr/lib/qt-2.3.1/include/qdatastream.h \
+  /usr/lib/qt-2.3.1/include/qiodevice.h \
+  /usr/lib/qt-2.3.1/include/qregexp.h \
+  /usr/lib/qt-2.3.1/include/qpaintdevice.h \
+  /usr/lib/qt-2.3.1/include/qpalette.h /usr/lib/qt-2.3.1/include/qcolor.h \
+  /usr/lib/qt-2.3.1/include/qbrush.h /usr/lib/qt-2.3.1/include/qcursor.h \
+  /usr/lib/qt-2.3.1/include/qfont.h \
+  /usr/lib/qt-2.3.1/include/qfontmetrics.h \
+  /usr/lib/qt-2.3.1/include/qfontinfo.h \
+  /usr/lib/qt-2.3.1/include/qstyle.h \
+  /usr/lib/qt-2.3.1/include/qsizepolicy.h ../../gui/indep/QT/qt_fix.h \
+  ../../libdjvu/GString.h ../../libdjvu/debug.h ../../gui/indep/QT/qlib.h \
+  ../../libdjvu/GRect.h ../../libdjvu/Arrays.h ../../libdjvu/GPixmap.h \
+  ../../gui/indep/QT/qt_n_in_one.h /usr/lib/qt-2.3.1/include/qlist.h \
+  /usr/lib/qt-2.3.1/include/qglist.h \
+  /usr/lib/qt-2.3.1/include/qcollection.h \
+  /usr/lib/qt-2.3.1/include/qiconset.h \
+  /usr/lib/qt-2.3.1/include/qpixmap.h ../../gui/shared/QT/qd_toolbutt.h \
+  ../../libdjvu/ByteStream.h ../../gui/shared/res/djvu_base_res.h \
+  ../../gui/indep/utils/cin_data.h /usr/lib/qt-2.3.1/include/qtimer.h
+qd_tbar_nav_piece.o: ../../gui/shared/QT/qd_tbar_nav_piece.cpp \
+  ../../config.h ../../libdjvu/DjVuDocument.h ../../libdjvu/DjVuPort.h \
+  ../../libdjvu/GThreads.h ../../libdjvu/DjVuGlobal.h \
+  ../../libdjvu/GException.h ../../libdjvu/GURL.h ../../libdjvu/GString.h \
+  ../../libdjvu/GContainer.h ../../libdjvu/GSmartPointer.h \
+  ../../libdjvu/Arrays.h ../../gui/shared/QT/qd_tbar_nav_piece.h \
+  ../../gui/shared/QT/qd_toolbar.h /usr/lib/qt-2.3.1/include/qstring.h \
+  /usr/lib/qt-2.3.1/include/qcstring.h /usr/lib/qt-2.3.1/include/qarray.h \
+  /usr/lib/qt-2.3.1/include/qgarray.h /usr/lib/qt-2.3.1/include/qshared.h \
+  /usr/lib/qt-2.3.1/include/qnamespace.h \
+  /usr/lib/qt-2.3.1/include/qobject.h /usr/lib/qt-2.3.1/include/qevent.h \
+  /usr/lib/qt-2.3.1/include/qregion.h /usr/lib/qt-2.3.1/include/qrect.h \
+  /usr/lib/qt-2.3.1/include/qsize.h /usr/lib/qt-2.3.1/include/qpoint.h \
+  /usr/lib/qt-2.3.1/include/qmime.h \
+  /usr/lib/qt-2.3.1/include/qstringlist.h \
+  /usr/lib/qt-2.3.1/include/qvaluelist.h \
+  /usr/lib/qt-2.3.1/include/qdatastream.h \
+  /usr/lib/qt-2.3.1/include/qiodevice.h \
+  /usr/lib/qt-2.3.1/include/qregexp.h \
+  /usr/lib/qt-2.3.1/include/qpaintdevice.h \
+  /usr/lib/qt-2.3.1/include/qpalette.h /usr/lib/qt-2.3.1/include/qcolor.h \
+  /usr/lib/qt-2.3.1/include/qbrush.h /usr/lib/qt-2.3.1/include/qcursor.h \
+  /usr/lib/qt-2.3.1/include/qfont.h \
+  /usr/lib/qt-2.3.1/include/qfontmetrics.h \
+  /usr/lib/qt-2.3.1/include/qfontinfo.h \
+  /usr/lib/qt-2.3.1/include/qstyle.h \
+  /usr/lib/qt-2.3.1/include/qsizepolicy.h ../../gui/indep/QT/qt_fix.h \
+  ../../libdjvu/debug.h ../../gui/indep/QT/qlib.h ../../libdjvu/GRect.h \
+  ../../libdjvu/GPixmap.h ../../gui/indep/QT/qt_n_in_one.h \
+  /usr/lib/qt-2.3.1/include/qlist.h /usr/lib/qt-2.3.1/include/qglist.h \
+  /usr/lib/qt-2.3.1/include/qcollection.h \
+  /usr/lib/qt-2.3.1/include/qiconset.h \
+  /usr/lib/qt-2.3.1/include/qpixmap.h ../../gui/shared/QT/qd_toolbutt.h \
+  ../../libdjvu/ByteStream.h ../../gui/shared/res/djvu_base_res.h \
+  ../../gui/indep/utils/cin_data.h /usr/lib/qt-2.3.1/include/qtimer.h
+qd_tbar_print_piece.o: ../../gui/shared/QT/qd_tbar_print_piece.cpp \
+  ../../config.h ../../gui/shared/QT/qd_tbar_print_piece.h \
+  ../../gui/shared/QT/qd_toolbar.h ../../libdjvu/GContainer.h \
+  ../../libdjvu/GException.h ../../libdjvu/DjVuGlobal.h \
+  ../../libdjvu/GSmartPointer.h /usr/lib/qt-2.3.1/include/qstring.h \
+  /usr/lib/qt-2.3.1/include/qcstring.h /usr/lib/qt-2.3.1/include/qarray.h \
+  /usr/lib/qt-2.3.1/include/qgarray.h /usr/lib/qt-2.3.1/include/qshared.h \
+  /usr/lib/qt-2.3.1/include/qnamespace.h \
+  /usr/lib/qt-2.3.1/include/qobject.h /usr/lib/qt-2.3.1/include/qevent.h \
+  /usr/lib/qt-2.3.1/include/qregion.h /usr/lib/qt-2.3.1/include/qrect.h \
+  /usr/lib/qt-2.3.1/include/qsize.h /usr/lib/qt-2.3.1/include/qpoint.h \
+  /usr/lib/qt-2.3.1/include/qmime.h \
+  /usr/lib/qt-2.3.1/include/qstringlist.h \
+  /usr/lib/qt-2.3.1/include/qvaluelist.h \
+  /usr/lib/qt-2.3.1/include/qdatastream.h \
+  /usr/lib/qt-2.3.1/include/qiodevice.h \
+  /usr/lib/qt-2.3.1/include/qregexp.h \
+  /usr/lib/qt-2.3.1/include/qpaintdevice.h \
+  /usr/lib/qt-2.3.1/include/qpalette.h /usr/lib/qt-2.3.1/include/qcolor.h \
+  /usr/lib/qt-2.3.1/include/qbrush.h /usr/lib/qt-2.3.1/include/qcursor.h \
+  /usr/lib/qt-2.3.1/include/qfont.h \
+  /usr/lib/qt-2.3.1/include/qfontmetrics.h \
+  /usr/lib/qt-2.3.1/include/qfontinfo.h \
+  /usr/lib/qt-2.3.1/include/qstyle.h \
+  /usr/lib/qt-2.3.1/include/qsizepolicy.h ../../gui/indep/QT/qt_fix.h \
+  ../../libdjvu/GString.h ../../libdjvu/debug.h ../../gui/indep/QT/qlib.h \
+  ../../libdjvu/GRect.h ../../libdjvu/Arrays.h ../../libdjvu/GPixmap.h \
+  ../../gui/indep/QT/qt_n_in_one.h /usr/lib/qt-2.3.1/include/qlist.h \
+  /usr/lib/qt-2.3.1/include/qglist.h \
+  /usr/lib/qt-2.3.1/include/qcollection.h \
+  /usr/lib/qt-2.3.1/include/qiconset.h \
+  /usr/lib/qt-2.3.1/include/qpixmap.h ../../gui/shared/QT/qd_toolbutt.h \
+  ../../libdjvu/ByteStream.h ../../gui/shared/res/djvu_base_res.h \
+  ../../gui/indep/utils/cin_data.h
+qd_tbar_rotate_piece.o: ../../gui/shared/QT/qd_tbar_rotate_piece.cpp \
+  ../../config.h ../../gui/shared/QT/qd_tbar_rotate_piece.h \
+  ../../gui/shared/QT/qd_toolbar.h ../../libdjvu/GContainer.h \
+  ../../libdjvu/GException.h ../../libdjvu/DjVuGlobal.h \
+  ../../libdjvu/GSmartPointer.h /usr/lib/qt-2.3.1/include/qstring.h \
+  /usr/lib/qt-2.3.1/include/qcstring.h /usr/lib/qt-2.3.1/include/qarray.h \
+  /usr/lib/qt-2.3.1/include/qgarray.h /usr/lib/qt-2.3.1/include/qshared.h \
+  /usr/lib/qt-2.3.1/include/qnamespace.h \
+  /usr/lib/qt-2.3.1/include/qobject.h /usr/lib/qt-2.3.1/include/qevent.h \
+  /usr/lib/qt-2.3.1/include/qregion.h /usr/lib/qt-2.3.1/include/qrect.h \
+  /usr/lib/qt-2.3.1/include/qsize.h /usr/lib/qt-2.3.1/include/qpoint.h \
+  /usr/lib/qt-2.3.1/include/qmime.h \
+  /usr/lib/qt-2.3.1/include/qstringlist.h \
+  /usr/lib/qt-2.3.1/include/qvaluelist.h \
+  /usr/lib/qt-2.3.1/include/qdatastream.h \
+  /usr/lib/qt-2.3.1/include/qiodevice.h \
+  /usr/lib/qt-2.3.1/include/qregexp.h \
+  /usr/lib/qt-2.3.1/include/qpaintdevice.h \
+  /usr/lib/qt-2.3.1/include/qpalette.h /usr/lib/qt-2.3.1/include/qcolor.h \
+  /usr/lib/qt-2.3.1/include/qbrush.h /usr/lib/qt-2.3.1/include/qcursor.h \
+  /usr/lib/qt-2.3.1/include/qfont.h \
+  /usr/lib/qt-2.3.1/include/qfontmetrics.h \
+  /usr/lib/qt-2.3.1/include/qfontinfo.h \
+  /usr/lib/qt-2.3.1/include/qstyle.h \
+  /usr/lib/qt-2.3.1/include/qsizepolicy.h ../../gui/indep/QT/qt_fix.h \
+  ../../libdjvu/GString.h ../../libdjvu/debug.h ../../gui/indep/QT/qlib.h \
+  ../../libdjvu/GRect.h ../../libdjvu/Arrays.h ../../libdjvu/GPixmap.h \
+  ../../gui/indep/QT/qt_n_in_one.h /usr/lib/qt-2.3.1/include/qlist.h \
+  /usr/lib/qt-2.3.1/include/qglist.h \
+  /usr/lib/qt-2.3.1/include/qcollection.h \
+  /usr/lib/qt-2.3.1/include/qiconset.h \
+  /usr/lib/qt-2.3.1/include/qpixmap.h ../../gui/shared/QT/qd_toolbutt.h \
+  ../../libdjvu/ByteStream.h ../../gui/shared/res/djvu_base_res.h \
+  ../../gui/indep/utils/cin_data.h
+qd_page_saver.o: ../../gui/shared/QT/qd_page_saver.cpp ../../config.h \
+  ../../gui/shared/QT/qd_page_saver.h ../../libdjvu/DjVuFile.h \
+  ../../libdjvu/DjVuInfo.h ../../libdjvu/GSmartPointer.h \
+  ../../libdjvu/DjVuGlobal.h ../../libdjvu/GRect.h \
+  ../../libdjvu/DjVuPalette.h ../../libdjvu/GContainer.h \
+  ../../libdjvu/GException.h ../../libdjvu/GPixmap.h \
+  ../../libdjvu/DjVuPort.h ../../libdjvu/GThreads.h ../../libdjvu/GURL.h \
+  ../../libdjvu/GString.h ../../libdjvu/Arrays.h ../../libdjvu/DjVmDoc.h \
+  ../../libdjvu/DjVmDir.h /usr/lib/qt-2.3.1/include/qstring.h \
+  /usr/lib/qt-2.3.1/include/qcstring.h /usr/lib/qt-2.3.1/include/qarray.h \
+  /usr/lib/qt-2.3.1/include/qgarray.h /usr/lib/qt-2.3.1/include/qshared.h \
+  /usr/lib/qt-2.3.1/include/qnamespace.h \
+  /usr/lib/qt-2.3.1/include/qobject.h /usr/lib/qt-2.3.1/include/qevent.h \
+  /usr/lib/qt-2.3.1/include/qregion.h /usr/lib/qt-2.3.1/include/qrect.h \
+  /usr/lib/qt-2.3.1/include/qsize.h /usr/lib/qt-2.3.1/include/qpoint.h \
+  /usr/lib/qt-2.3.1/include/qmime.h \
+  /usr/lib/qt-2.3.1/include/qstringlist.h \
+  /usr/lib/qt-2.3.1/include/qvaluelist.h \
+  /usr/lib/qt-2.3.1/include/qdatastream.h \
+  /usr/lib/qt-2.3.1/include/qiodevice.h \
+  /usr/lib/qt-2.3.1/include/qregexp.h \
+  /usr/lib/qt-2.3.1/include/qpaintdevice.h \
+  /usr/lib/qt-2.3.1/include/qpalette.h /usr/lib/qt-2.3.1/include/qcolor.h \
+  /usr/lib/qt-2.3.1/include/qbrush.h /usr/lib/qt-2.3.1/include/qcursor.h \
+  /usr/lib/qt-2.3.1/include/qfont.h \
+  /usr/lib/qt-2.3.1/include/qfontmetrics.h \
+  /usr/lib/qt-2.3.1/include/qfontinfo.h \
+  /usr/lib/qt-2.3.1/include/qstyle.h \
+  /usr/lib/qt-2.3.1/include/qsizepolicy.h ../../gui/indep/QT/qt_fix.h \
+  ../../libdjvu/GOS.h ../../libdjvu/ByteStream.h ../../libdjvu/DataPool.h \
+  ../../gui/indep/QT/qlib.h ../../gui/indep/QT/qt_n_in_one.h \
+  /usr/lib/qt-2.3.1/include/qlist.h /usr/lib/qt-2.3.1/include/qglist.h \
+  /usr/lib/qt-2.3.1/include/qcollection.h ../../libdjvu/debug.h \
+  /usr/lib/qt-2.3.1/include/qiconset.h \
+  /usr/lib/qt-2.3.1/include/qpixmap.h \
+  /usr/lib/qt-2.3.1/include/qasciidict.h \
+  /usr/lib/qt-2.3.1/include/qgdict.h \
+  /usr/lib/qt-2.3.1/include/qtranslator.h \
+  /usr/lib/qt-2.3.1/include/qintdict.h \
+  /usr/lib/qt-2.3.1/include/qfileinfo.h /usr/lib/qt-2.3.1/include/qfile.h \
+  /usr/lib/qt-2.3.1/include/qdatetime.h \
+  /usr/lib/qt-2.3.1/include/qlistbox.h \
+  /usr/lib/qt-2.3.1/include/qscrollview.h \
+  /usr/lib/qt-2.3.1/include/qscrollbar.h \
+  /usr/lib/qt-2.3.1/include/qrangecontrol.h \
+  /usr/lib/qt-2.3.1/include/qdrawutil.h \
+  /usr/lib/qt-2.3.1/include/qpainter.h /usr/lib/qt-2.3.1/include/qpen.h \
+  /usr/lib/qt-2.3.1/include/qpointarray.h \
+  /usr/lib/qt-2.3.1/include/qwmatrix.h /usr/lib/qt-2.3.1/include/qtimer.h \
+  /usr/lib/qt-2.3.1/include/qlineedit.h \
+  /usr/lib/qt-2.3.1/include/qlistview.h \
+  /usr/lib/qt-2.3.1/include/qurloperator.h \
+  /usr/lib/qt-2.3.1/include/qurl.h \
+  /usr/lib/qt-2.3.1/include/qnetworkprotocol.h \
+  /usr/lib/qt-2.3.1/include/qurlinfo.h qd_page_saver_moc.inc
+qd_thr_yielder.o: ../../gui/shared/QT/qd_thr_yielder.cpp ../../config.h
+GMarginCache.o: ../../gui/shared/utils/GMarginCache.cpp ../../config.h \
+  ../../gui/shared/utils/GMarginCache.h ../../libdjvu/GRect.h \
+  ../../libdjvu/DjVuGlobal.h ../../libdjvu/GContainer.h \
+  ../../libdjvu/GException.h ../../libdjvu/GSmartPointer.h \
+  ../../libdjvu/GPixmap.h ../../libdjvu/debug.h
+djvu_file_cache.o: ../../gui/shared/utils/djvu_file_cache.cpp \
+  ../../config.h ../../gui/shared/utils/djvu_file_cache.h \
+  ../../libdjvu/DjVuFileCache.h ../../libdjvu/DjVuFile.h \
+  ../../libdjvu/DjVuInfo.h ../../libdjvu/GSmartPointer.h \
+  ../../libdjvu/DjVuGlobal.h ../../libdjvu/GRect.h \
+  ../../libdjvu/DjVuPalette.h ../../libdjvu/GContainer.h \
+  ../../libdjvu/GException.h ../../libdjvu/GPixmap.h \
+  ../../libdjvu/DjVuPort.h ../../libdjvu/GThreads.h ../../libdjvu/GURL.h \
+  ../../libdjvu/GString.h ../../libdjvu/Arrays.h
+io.o: ../../gui/shared/utils/io.cpp ../../config.h \
+  ../../gui/shared/utils/io.h ../../libdjvu/GString.h \
+  ../../libdjvu/DjVuGlobal.h ../../libdjvu/GContainer.h \
+  ../../libdjvu/GException.h ../../libdjvu/GSmartPointer.h \
+  ../../libdjvu/Arrays.h ../../gui/indep/except/exc_sys.h \
+  ../../gui/indep/except/exc_base.h ../../libdjvu/debug.h \
+  ../../libdjvu/GThreads.h ../../gui/indep/except/exc_msg.h \
+  ../../gui/indep/except/throw_error.h
+prefs.o: ../../gui/shared/utils/prefs.cpp ../../config.h \
+  ../../gui/shared/utils/prefs.h ../../libdjvu/GString.h \
+  ../../libdjvu/DjVuGlobal.h ../../libdjvu/GContainer.h \
+  ../../libdjvu/GException.h ../../libdjvu/GSmartPointer.h \
+  ../../libdjvu/debug.h ../../gui/shared/res/djvu_base_res.h
+mime_utils.o: ../../gui/shared/utils/mime_utils.cpp ../../config.h \
+  ../../libdjvu/Arrays.h ../../libdjvu/GException.h \
+  ../../libdjvu/DjVuGlobal.h ../../libdjvu/GSmartPointer.h \
+  ../../libdjvu/GString.h ../../libdjvu/GContainer.h \
+  ../../libdjvu/debug.h
+saved_data.o: ../../gui/shared/res/saved_data.cpp ../../config.h \
+  ../../gui/shared/res/saved_data.h
+netscape.o: ./netscape.cpp ../../config.h ../../libdjvu/ZPCodec.h \
+  ../../libdjvu/GContainer.h ../../libdjvu/GException.h \
+  ../../libdjvu/DjVuGlobal.h ../../libdjvu/GSmartPointer.h netscape.h \
+  ../../libdjvu/debug.h ../../gui/indep/except/throw_error.h \
+  ../../gui/indep/except/exc_base.h ../../libdjvu/GString.h dispatch.h \
+  djvu_viewer.h qd_viewer.h ../../gui/shared/QT/qd_base.h \
+  ../../libdjvu/DjVuImage.h ../../libdjvu/DjVuFile.h \
+  ../../libdjvu/DjVuInfo.h ../../libdjvu/GRect.h \
+  ../../libdjvu/DjVuPalette.h ../../libdjvu/GPixmap.h \
+  ../../libdjvu/DjVuPort.h ../../libdjvu/GThreads.h ../../libdjvu/GURL.h \
+  ../../libdjvu/Arrays.h ../../libdjvu/DjVuAnno.h \
+  ../../gui/shared/utils/GMarginCache.h ../../gui/shared/QT/MapAreas.h \
+  ../../libdjvu/GMapAreas.h ../../libdjvu/GBitmap.h \
+  ../../gui/shared/QT/qd_painter.h ../../gui/indep/QT/qt_painter.h \
+  /usr/lib/qt-2.3.1/include/qstring.h \
+  /usr/lib/qt-2.3.1/include/qcstring.h /usr/lib/qt-2.3.1/include/qarray.h \
+  /usr/lib/qt-2.3.1/include/qgarray.h /usr/lib/qt-2.3.1/include/qshared.h \
+  /usr/lib/qt-2.3.1/include/qnamespace.h \
+  /usr/lib/qt-2.3.1/include/qrect.h /usr/lib/qt-2.3.1/include/qsize.h \
+  /usr/lib/qt-2.3.1/include/qpoint.h /usr/lib/qt-2.3.1/include/qcolor.h \
+  /usr/lib/qt-2.3.1/include/qfontmetrics.h \
+  /usr/lib/qt-2.3.1/include/qfont.h /usr/lib/qt-2.3.1/include/qfontinfo.h \
+  /usr/lib/qt-2.3.1/include/qregion.h /usr/lib/qt-2.3.1/include/qpen.h \
+  /usr/lib/qt-2.3.1/include/qbrush.h \
+  /usr/lib/qt-2.3.1/include/qpointarray.h \
+  /usr/lib/qt-2.3.1/include/qwmatrix.h /usr/lib/qt-2.3.1/include/qevent.h \
+  /usr/lib/qt-2.3.1/include/qmime.h \
+  /usr/lib/qt-2.3.1/include/qstringlist.h \
+  /usr/lib/qt-2.3.1/include/qvaluelist.h \
+  /usr/lib/qt-2.3.1/include/qdatastream.h \
+  /usr/lib/qt-2.3.1/include/qiodevice.h \
+  /usr/lib/qt-2.3.1/include/qregexp.h ../../gui/shared/utils/prefs.h \
+  ../../gui/shared/QT/qd_pane.h /usr/lib/qt-2.3.1/include/qpalette.h \
+  /usr/lib/qt-2.3.1/include/qstyle.h \
+  /usr/lib/qt-2.3.1/include/qsizepolicy.h ../../gui/indep/QT/qt_fix.h \
+  ../../libdjvu/DjVuText.h /usr/lib/qt-2.3.1/include/qrangecontrol.h \
+  /usr/lib/qt-2.3.1/include/qdrawutil.h ../../gui/indep/QX/rem_netscape.h \
+  ../../gui/shared/res/saved_data.h ../../libdjvu/DjVuDocument.h \
+  ../../gui/shared/QT/qd_port.h ../../gui/shared/QT/qd_messenger.h \
+  ../../gui/shared/res/djvu_base_res.h \
+  /usr/lib/qt-2.3.1/include/qmenudata.h \
+  /usr/lib/qt-2.3.1/include/qiconset.h ../../gui/indep/except/exc_msg.h \
+  ../../gui/shared/utils/io.h ../../gui/indep/except/exc_sys.h \
+  /usr/lib/qt-2.3.1/include/qasciidict.h \
+  /usr/lib/qt-2.3.1/include/qgdict.h \
+  /usr/lib/qt-2.3.1/include/qcollection.h \
+  /usr/lib/qt-2.3.1/include/qtranslator.h \
+  /usr/lib/qt-2.3.1/include/qintdict.h netscape_moc.inc \
+  /usr/lib/qt-2.3.1/include/qstrlist.h
+dispatch.o: ./dispatch.cpp ../../config.h ../../libdjvu/DataPool.h \
+  ../../libdjvu/GThreads.h ../../libdjvu/DjVuGlobal.h \
+  ../../libdjvu/GException.h ../../libdjvu/GString.h \
+  ../../libdjvu/GContainer.h ../../libdjvu/GSmartPointer.h \
+  ../../libdjvu/GURL.h ../../libdjvu/Arrays.h ../../libdjvu/ZPCodec.h \
+  ../../gui/shared/utils/io.h ../../gui/indep/except/exc_sys.h \
+  ../../gui/indep/except/exc_base.h ../../gui/shared/utils/prefs.h \
+  ../../gui/shared/QT/init_qt.h /usr/lib/qt-2.3.1/include/qstring.h \
+  /usr/lib/qt-2.3.1/include/qcstring.h /usr/lib/qt-2.3.1/include/qarray.h \
+  /usr/lib/qt-2.3.1/include/qgarray.h /usr/lib/qt-2.3.1/include/qshared.h \
+  /usr/lib/qt-2.3.1/include/qnamespace.h \
+  /usr/lib/qt-2.3.1/include/qobject.h /usr/lib/qt-2.3.1/include/qevent.h \
+  /usr/lib/qt-2.3.1/include/qregion.h /usr/lib/qt-2.3.1/include/qrect.h \
+  /usr/lib/qt-2.3.1/include/qsize.h /usr/lib/qt-2.3.1/include/qpoint.h \
+  /usr/lib/qt-2.3.1/include/qmime.h \
+  /usr/lib/qt-2.3.1/include/qstringlist.h \
+  /usr/lib/qt-2.3.1/include/qvaluelist.h \
+  /usr/lib/qt-2.3.1/include/qdatastream.h \
+  /usr/lib/qt-2.3.1/include/qiodevice.h \
+  /usr/lib/qt-2.3.1/include/qregexp.h \
+  /usr/lib/qt-2.3.1/include/qpaintdevice.h \
+  /usr/lib/qt-2.3.1/include/qpalette.h /usr/lib/qt-2.3.1/include/qcolor.h \
+  /usr/lib/qt-2.3.1/include/qbrush.h /usr/lib/qt-2.3.1/include/qcursor.h \
+  /usr/lib/qt-2.3.1/include/qfont.h \
+  /usr/lib/qt-2.3.1/include/qfontmetrics.h \
+  /usr/lib/qt-2.3.1/include/qfontinfo.h \
+  /usr/lib/qt-2.3.1/include/qstyle.h \
+  /usr/lib/qt-2.3.1/include/qsizepolicy.h \
+  /usr/lib/qt-2.3.1/include/qasciidict.h \
+  /usr/lib/qt-2.3.1/include/qgdict.h \
+  /usr/lib/qt-2.3.1/include/qcollection.h \
+  /usr/lib/qt-2.3.1/include/qtranslator.h \
+  /usr/lib/qt-2.3.1/include/qintdict.h ../../gui/indep/QT/qt_fix.h \
+  ../../libdjvu/debug.h ../../gui/shared/res/names.h dispatch.h \
+  djvu_viewer.h qd_viewer.h ../../gui/shared/QT/qd_base.h \
+  ../../libdjvu/DjVuImage.h ../../libdjvu/DjVuFile.h \
+  ../../libdjvu/DjVuInfo.h ../../libdjvu/GRect.h \
+  ../../libdjvu/DjVuPalette.h ../../libdjvu/GPixmap.h \
+  ../../libdjvu/DjVuPort.h ../../libdjvu/DjVuAnno.h \
+  ../../gui/shared/utils/GMarginCache.h ../../gui/shared/QT/MapAreas.h \
+  ../../libdjvu/GMapAreas.h ../../libdjvu/GBitmap.h \
+  ../../gui/shared/QT/qd_painter.h ../../gui/indep/QT/qt_painter.h \
+  /usr/lib/qt-2.3.1/include/qpen.h \
+  /usr/lib/qt-2.3.1/include/qpointarray.h \
+  /usr/lib/qt-2.3.1/include/qwmatrix.h ../../gui/shared/QT/qd_pane.h \
+  ../../libdjvu/DjVuText.h /usr/lib/qt-2.3.1/include/qrangecontrol.h \
+  /usr/lib/qt-2.3.1/include/qdrawutil.h ../../gui/indep/QX/rem_netscape.h \
+  ../../gui/shared/res/saved_data.h ../../libdjvu/DjVuDocument.h \
+  ../../gui/shared/QT/qd_port.h ../../gui/shared/QT/qd_messenger.h \
+  ../../gui/shared/res/djvu_base_res.h \
+  /usr/lib/qt-2.3.1/include/qmenudata.h \
+  /usr/lib/qt-2.3.1/include/qiconset.h netscape.h \
+  ../../gui/indep/except/exc_msg.h ../../gui/indep/except/exc_file.h \
+  ../../gui/indep/except/exc_res.h ../../gui/indep/QX/qx_imager.h \
+  ../../gui/indep/QT/qt_imager.h ../../gui/indep/QT/qlib.h \
+  ../../gui/indep/QT/qt_n_in_one.h mime_check.h dispatch_moc.inc \
+  /usr/lib/qt-2.3.1/include/qstrlist.h
+mime_check.o: ./mime_check.cpp ../../config.h \
+  ../../gui/shared/utils/prefs.h ../../libdjvu/GString.h \
+  ../../libdjvu/DjVuGlobal.h ../../libdjvu/GContainer.h \
+  ../../libdjvu/GException.h ../../libdjvu/GSmartPointer.h mime_check.h \
+  ../../gui/shared/utils/mime_utils.h ../../libdjvu/ByteStream.h \
+  ../../libdjvu/Arrays.h qd_mime_dialog.h \
+  /usr/lib/qt-2.3.1/include/qstring.h \
+  /usr/lib/qt-2.3.1/include/qcstring.h /usr/lib/qt-2.3.1/include/qarray.h \
+  /usr/lib/qt-2.3.1/include/qgarray.h /usr/lib/qt-2.3.1/include/qshared.h \
+  /usr/lib/qt-2.3.1/include/qnamespace.h \
+  /usr/lib/qt-2.3.1/include/qobject.h /usr/lib/qt-2.3.1/include/qevent.h \
+  /usr/lib/qt-2.3.1/include/qregion.h /usr/lib/qt-2.3.1/include/qrect.h \
+  /usr/lib/qt-2.3.1/include/qsize.h /usr/lib/qt-2.3.1/include/qpoint.h \
+  /usr/lib/qt-2.3.1/include/qmime.h \
+  /usr/lib/qt-2.3.1/include/qstringlist.h \
+  /usr/lib/qt-2.3.1/include/qvaluelist.h \
+  /usr/lib/qt-2.3.1/include/qdatastream.h \
+  /usr/lib/qt-2.3.1/include/qiodevice.h \
+  /usr/lib/qt-2.3.1/include/qregexp.h \
+  /usr/lib/qt-2.3.1/include/qpaintdevice.h \
+  /usr/lib/qt-2.3.1/include/qpalette.h /usr/lib/qt-2.3.1/include/qcolor.h \
+  /usr/lib/qt-2.3.1/include/qbrush.h /usr/lib/qt-2.3.1/include/qcursor.h \
+  /usr/lib/qt-2.3.1/include/qfont.h \
+  /usr/lib/qt-2.3.1/include/qfontmetrics.h \
+  /usr/lib/qt-2.3.1/include/qfontinfo.h \
+  /usr/lib/qt-2.3.1/include/qstyle.h \
+  /usr/lib/qt-2.3.1/include/qsizepolicy.h ../../gui/indep/QT/qt_fix.h \
+  ../../libdjvu/GURL.h ../../libdjvu/GThreads.h ../../libdjvu/debug.h \
+  mime_check_moc.inc /usr/lib/qt-2.3.1/include/qstrlist.h \
+  /usr/lib/qt-2.3.1/include/qlist.h /usr/lib/qt-2.3.1/include/qglist.h \
+  /usr/lib/qt-2.3.1/include/qcollection.h \
+  /usr/lib/qt-2.3.1/include/qasciidict.h \
+  /usr/lib/qt-2.3.1/include/qgdict.h \
+  /usr/lib/qt-2.3.1/include/qtranslator.h \
+  /usr/lib/qt-2.3.1/include/qintdict.h
+qd_viewer.o: ./qd_viewer.cpp ../../config.h qd_viewer.h \
+  ../../gui/shared/QT/qd_base.h ../../libdjvu/DjVuImage.h \
+  ../../libdjvu/DjVuFile.h ../../libdjvu/DjVuInfo.h \
+  ../../libdjvu/GSmartPointer.h ../../libdjvu/DjVuGlobal.h \
+  ../../libdjvu/GRect.h ../../libdjvu/DjVuPalette.h \
+  ../../libdjvu/GContainer.h ../../libdjvu/GException.h \
+  ../../libdjvu/GPixmap.h ../../libdjvu/DjVuPort.h \
+  ../../libdjvu/GThreads.h ../../libdjvu/GURL.h ../../libdjvu/GString.h \
+  ../../libdjvu/Arrays.h ../../libdjvu/DjVuAnno.h \
+  ../../gui/shared/utils/GMarginCache.h ../../libdjvu/debug.h \
+  ../../gui/shared/QT/MapAreas.h ../../libdjvu/GMapAreas.h \
+  ../../libdjvu/GBitmap.h ../../gui/shared/QT/qd_painter.h \
+  ../../gui/indep/QT/qt_painter.h /usr/lib/qt-2.3.1/include/qstring.h \
+  /usr/lib/qt-2.3.1/include/qcstring.h /usr/lib/qt-2.3.1/include/qarray.h \
+  /usr/lib/qt-2.3.1/include/qgarray.h /usr/lib/qt-2.3.1/include/qshared.h \
+  /usr/lib/qt-2.3.1/include/qnamespace.h \
+  /usr/lib/qt-2.3.1/include/qrect.h /usr/lib/qt-2.3.1/include/qsize.h \
+  /usr/lib/qt-2.3.1/include/qpoint.h /usr/lib/qt-2.3.1/include/qcolor.h \
+  /usr/lib/qt-2.3.1/include/qfontmetrics.h \
+  /usr/lib/qt-2.3.1/include/qfont.h /usr/lib/qt-2.3.1/include/qfontinfo.h \
+  /usr/lib/qt-2.3.1/include/qregion.h /usr/lib/qt-2.3.1/include/qpen.h \
+  /usr/lib/qt-2.3.1/include/qbrush.h \
+  /usr/lib/qt-2.3.1/include/qpointarray.h \
+  /usr/lib/qt-2.3.1/include/qwmatrix.h /usr/lib/qt-2.3.1/include/qevent.h \
+  /usr/lib/qt-2.3.1/include/qmime.h \
+  /usr/lib/qt-2.3.1/include/qstringlist.h \
+  /usr/lib/qt-2.3.1/include/qvaluelist.h \
+  /usr/lib/qt-2.3.1/include/qdatastream.h \
+  /usr/lib/qt-2.3.1/include/qiodevice.h \
+  /usr/lib/qt-2.3.1/include/qregexp.h ../../gui/shared/utils/prefs.h \
+  ../../gui/shared/QT/qd_pane.h /usr/lib/qt-2.3.1/include/qpalette.h \
+  /usr/lib/qt-2.3.1/include/qstyle.h \
+  /usr/lib/qt-2.3.1/include/qsizepolicy.h ../../gui/indep/QT/qt_fix.h \
+  ../../libdjvu/DjVuText.h /usr/lib/qt-2.3.1/include/qrangecontrol.h \
+  /usr/lib/qt-2.3.1/include/qdrawutil.h ../../gui/indep/QX/rem_netscape.h \
+  ../../gui/shared/res/saved_data.h ../../libdjvu/DjVuDocument.h \
+  ../../gui/shared/QT/qd_port.h ../../gui/shared/QT/qd_messenger.h \
+  ../../gui/shared/res/djvu_base_res.h \
+  /usr/lib/qt-2.3.1/include/qmenudata.h \
+  /usr/lib/qt-2.3.1/include/qiconset.h ../../gui/indep/QT/qlib.h \
+  ../../gui/indep/QT/qt_n_in_one.h /usr/lib/qt-2.3.1/include/qlist.h \
+  /usr/lib/qt-2.3.1/include/qglist.h \
+  /usr/lib/qt-2.3.1/include/qcollection.h ../../gui/indep/QX/qx_imager.h \
+  ../../gui/indep/QT/qt_imager.h ../../gui/shared/QT/qd_welcome.h \
+  ../../libdjvu/GOS.h ../../gui/indep/except/exc_msg.h \
+  ../../gui/indep/except/exc_base.h ../../gui/shared/res/names.h \
+  ../../gui/indep/except/throw_error.h ../../libdjvu/DjVuFileCache.h \
+  ../../libdjvu/DjVuMessage.h ../../libdjvu/DjVuMessageLite.h \
+  qd_viewer_prefs.h ../../gui/shared/QT/qd_prefs.h \
+  ../../gui/shared/QT/qd_print_dialog.h ../../libdjvu/DjVuToPS.h \
+  ../../gui/shared/QT/qd_doc_saver.h ../../libdjvu/DjVmDir.h \
+  /usr/lib/qt-2.3.1/include/qprogressbar.h \
+  ../../gui/shared/QT/qd_page_saver.h ../../libdjvu/DjVmDoc.h \
+  ../../gui/shared/QT/qd_search_dialog.h \
+  ../../gui/shared/QT/qd_tbar_nav_piece.h \
+  ../../gui/shared/QT/qd_toolbar.h \
+  ../../gui/shared/QT/qd_tbar_print_piece.h \
+  ../../gui/shared/QT/qd_thumb.h /usr/lib/qt-2.3.1/include/qfileinfo.h \
+  /usr/lib/qt-2.3.1/include/qfile.h /usr/lib/qt-2.3.1/include/qdatetime.h \
+  /usr/lib/qt-2.3.1/include/qlineedit.h \
+  /usr/lib/qt-2.3.1/include/qlistview.h \
+  /usr/lib/qt-2.3.1/include/qurloperator.h \
+  /usr/lib/qt-2.3.1/include/qurl.h \
+  /usr/lib/qt-2.3.1/include/qnetworkprotocol.h \
+  /usr/lib/qt-2.3.1/include/qurlinfo.h \
+  /usr/lib/qt-2.3.1/include/qasciidict.h \
+  /usr/lib/qt-2.3.1/include/qtranslator.h \
+  /usr/lib/qt-2.3.1/include/qintdict.h
+qd_viewer_shell.o: ./qd_viewer_shell.cpp ../../config.h \
+  ../../libdjvu/DjVuImage.h ../../libdjvu/DjVuFile.h \
+  ../../libdjvu/DjVuInfo.h ../../libdjvu/GSmartPointer.h \
+  ../../libdjvu/DjVuGlobal.h ../../libdjvu/GRect.h \
+  ../../libdjvu/DjVuPalette.h ../../libdjvu/GContainer.h \
+  ../../libdjvu/GException.h ../../libdjvu/GPixmap.h \
+  ../../libdjvu/DjVuPort.h ../../libdjvu/GThreads.h ../../libdjvu/GURL.h \
+  ../../libdjvu/GString.h ../../libdjvu/Arrays.h ../../libdjvu/DjVuAnno.h \
+  ../../libdjvu/DataPool.h qd_viewer_shell.h \
+  /usr/lib/qt-2.3.1/include/qstring.h \
+  /usr/lib/qt-2.3.1/include/qcstring.h /usr/lib/qt-2.3.1/include/qarray.h \
+  /usr/lib/qt-2.3.1/include/qgarray.h /usr/lib/qt-2.3.1/include/qshared.h \
+  /usr/lib/qt-2.3.1/include/qnamespace.h \
+  /usr/lib/qt-2.3.1/include/qobject.h /usr/lib/qt-2.3.1/include/qevent.h \
+  /usr/lib/qt-2.3.1/include/qregion.h /usr/lib/qt-2.3.1/include/qrect.h \
+  /usr/lib/qt-2.3.1/include/qsize.h /usr/lib/qt-2.3.1/include/qpoint.h \
+  /usr/lib/qt-2.3.1/include/qmime.h \
+  /usr/lib/qt-2.3.1/include/qstringlist.h \
+  /usr/lib/qt-2.3.1/include/qvaluelist.h \
+  /usr/lib/qt-2.3.1/include/qdatastream.h \
+  /usr/lib/qt-2.3.1/include/qiodevice.h \
+  /usr/lib/qt-2.3.1/include/qregexp.h \
+  /usr/lib/qt-2.3.1/include/qpaintdevice.h \
+  /usr/lib/qt-2.3.1/include/qpalette.h /usr/lib/qt-2.3.1/include/qcolor.h \
+  /usr/lib/qt-2.3.1/include/qbrush.h /usr/lib/qt-2.3.1/include/qcursor.h \
+  /usr/lib/qt-2.3.1/include/qfont.h \
+  /usr/lib/qt-2.3.1/include/qfontmetrics.h \
+  /usr/lib/qt-2.3.1/include/qfontinfo.h \
+  /usr/lib/qt-2.3.1/include/qstyle.h \
+  /usr/lib/qt-2.3.1/include/qsizepolicy.h \
+  /usr/lib/qt-2.3.1/include/qmenudata.h \
+  /usr/lib/qt-2.3.1/include/qiconset.h \
+  /usr/lib/qt-2.3.1/include/qpixmap.h ../../gui/indep/QT/qt_n_in_one.h \
+  /usr/lib/qt-2.3.1/include/qlist.h /usr/lib/qt-2.3.1/include/qglist.h \
+  /usr/lib/qt-2.3.1/include/qcollection.h ../../gui/indep/QT/qt_fix.h \
+  ../../libdjvu/debug.h ../../gui/shared/utils/prefs.h djvu_viewer.h \
+  qd_viewer.h ../../gui/shared/QT/qd_base.h \
+  ../../gui/shared/utils/GMarginCache.h ../../gui/shared/QT/MapAreas.h \
+  ../../libdjvu/GMapAreas.h ../../libdjvu/GBitmap.h \
+  ../../gui/shared/QT/qd_painter.h ../../gui/indep/QT/qt_painter.h \
+  /usr/lib/qt-2.3.1/include/qpen.h \
+  /usr/lib/qt-2.3.1/include/qpointarray.h \
+  /usr/lib/qt-2.3.1/include/qwmatrix.h ../../gui/shared/QT/qd_pane.h \
+  ../../libdjvu/DjVuText.h /usr/lib/qt-2.3.1/include/qrangecontrol.h \
+  /usr/lib/qt-2.3.1/include/qdrawutil.h ../../gui/indep/QX/rem_netscape.h \
+  ../../gui/shared/res/saved_data.h ../../libdjvu/DjVuDocument.h \
+  ../../gui/shared/QT/qd_port.h ../../gui/shared/QT/qd_messenger.h \
+  ../../gui/shared/res/djvu_base_res.h ../../gui/indep/utils/cin_data.h \
+  ../../libdjvu/ByteStream.h ../../gui/indep/QT/qlib.h djvu_viewer_res.h \
+  ../../gui/indep/except/throw_error.h ../../gui/indep/except/exc_base.h \
+  ../../gui/shared/QT/qd_wpaper.h ../../gui/shared/res/version.h \
+  ../../gui/indep/except/exc_msg.h /usr/lib/qt-2.3.1/include/qasciidict.h \
+  /usr/lib/qt-2.3.1/include/qgdict.h \
+  /usr/lib/qt-2.3.1/include/qtranslator.h \
+  /usr/lib/qt-2.3.1/include/qintdict.h \
+  /usr/lib/qt-2.3.1/include/qfileinfo.h /usr/lib/qt-2.3.1/include/qfile.h \
+  /usr/lib/qt-2.3.1/include/qdatetime.h \
+  /usr/lib/qt-2.3.1/include/qlistbox.h \
+  /usr/lib/qt-2.3.1/include/qscrollview.h \
+  /usr/lib/qt-2.3.1/include/qlineedit.h \
+  /usr/lib/qt-2.3.1/include/qlistview.h \
+  /usr/lib/qt-2.3.1/include/qurloperator.h \
+  /usr/lib/qt-2.3.1/include/qurl.h \
+  /usr/lib/qt-2.3.1/include/qnetworkprotocol.h \
+  /usr/lib/qt-2.3.1/include/qurlinfo.h
+qd_viewer_prefs.o: ./qd_viewer_prefs.cpp ../../config.h \
+  ../../gui/shared/utils/djvu_file_cache.h ../../libdjvu/DjVuFileCache.h \
+  ../../libdjvu/DjVuFile.h ../../libdjvu/DjVuInfo.h \
+  ../../libdjvu/GSmartPointer.h ../../libdjvu/DjVuGlobal.h \
+  ../../libdjvu/GRect.h ../../libdjvu/DjVuPalette.h \
+  ../../libdjvu/GContainer.h ../../libdjvu/GException.h \
+  ../../libdjvu/GPixmap.h ../../libdjvu/DjVuPort.h \
+  ../../libdjvu/GThreads.h ../../libdjvu/GURL.h ../../libdjvu/GString.h \
+  ../../libdjvu/Arrays.h qd_viewer_prefs.h ../../gui/shared/QT/qd_prefs.h \
+  /usr/lib/qt-2.3.1/include/qstring.h \
+  /usr/lib/qt-2.3.1/include/qcstring.h /usr/lib/qt-2.3.1/include/qarray.h \
+  /usr/lib/qt-2.3.1/include/qgarray.h /usr/lib/qt-2.3.1/include/qshared.h \
+  /usr/lib/qt-2.3.1/include/qnamespace.h \
+  /usr/lib/qt-2.3.1/include/qobject.h /usr/lib/qt-2.3.1/include/qevent.h \
+  /usr/lib/qt-2.3.1/include/qregion.h /usr/lib/qt-2.3.1/include/qrect.h \
+  /usr/lib/qt-2.3.1/include/qsize.h /usr/lib/qt-2.3.1/include/qpoint.h \
+  /usr/lib/qt-2.3.1/include/qmime.h \
+  /usr/lib/qt-2.3.1/include/qstringlist.h \
+  /usr/lib/qt-2.3.1/include/qvaluelist.h \
+  /usr/lib/qt-2.3.1/include/qdatastream.h \
+  /usr/lib/qt-2.3.1/include/qiodevice.h \
+  /usr/lib/qt-2.3.1/include/qregexp.h \
+  /usr/lib/qt-2.3.1/include/qpaintdevice.h \
+  /usr/lib/qt-2.3.1/include/qpalette.h /usr/lib/qt-2.3.1/include/qcolor.h \
+  /usr/lib/qt-2.3.1/include/qbrush.h /usr/lib/qt-2.3.1/include/qcursor.h \
+  /usr/lib/qt-2.3.1/include/qfont.h \
+  /usr/lib/qt-2.3.1/include/qfontmetrics.h \
+  /usr/lib/qt-2.3.1/include/qfontinfo.h \
+  /usr/lib/qt-2.3.1/include/qstyle.h \
+  /usr/lib/qt-2.3.1/include/qsizepolicy.h ../../gui/shared/utils/prefs.h \
+  ../../gui/indep/QT/qt_fix.h ../../gui/indep/QT/qlib.h \
+  ../../gui/indep/QT/qt_n_in_one.h /usr/lib/qt-2.3.1/include/qlist.h \
+  /usr/lib/qt-2.3.1/include/qglist.h \
+  /usr/lib/qt-2.3.1/include/qcollection.h ../../libdjvu/debug.h \
+  /usr/lib/qt-2.3.1/include/qiconset.h \
+  /usr/lib/qt-2.3.1/include/qpixmap.h ../../gui/indep/except/exc_msg.h \
+  ../../gui/indep/except/exc_base.h /usr/lib/qt-2.3.1/include/qtimer.h
+qd_viewer_menu.o: ./qd_viewer_menu.cpp ../../config.h qd_viewer_menu.h \
+  qd_viewer.h ../../gui/shared/QT/qd_base.h ../../libdjvu/DjVuImage.h \
+  ../../libdjvu/DjVuFile.h ../../libdjvu/DjVuInfo.h \
+  ../../libdjvu/GSmartPointer.h ../../libdjvu/DjVuGlobal.h \
+  ../../libdjvu/GRect.h ../../libdjvu/DjVuPalette.h \
+  ../../libdjvu/GContainer.h ../../libdjvu/GException.h \
+  ../../libdjvu/GPixmap.h ../../libdjvu/DjVuPort.h \
+  ../../libdjvu/GThreads.h ../../libdjvu/GURL.h ../../libdjvu/GString.h \
+  ../../libdjvu/Arrays.h ../../libdjvu/DjVuAnno.h \
+  ../../gui/shared/utils/GMarginCache.h ../../libdjvu/debug.h \
+  ../../gui/shared/QT/MapAreas.h ../../libdjvu/GMapAreas.h \
+  ../../libdjvu/GBitmap.h ../../gui/shared/QT/qd_painter.h \
+  ../../gui/indep/QT/qt_painter.h /usr/lib/qt-2.3.1/include/qstring.h \
+  /usr/lib/qt-2.3.1/include/qcstring.h /usr/lib/qt-2.3.1/include/qarray.h \
+  /usr/lib/qt-2.3.1/include/qgarray.h /usr/lib/qt-2.3.1/include/qshared.h \
+  /usr/lib/qt-2.3.1/include/qnamespace.h \
+  /usr/lib/qt-2.3.1/include/qrect.h /usr/lib/qt-2.3.1/include/qsize.h \
+  /usr/lib/qt-2.3.1/include/qpoint.h /usr/lib/qt-2.3.1/include/qcolor.h \
+  /usr/lib/qt-2.3.1/include/qfontmetrics.h \
+  /usr/lib/qt-2.3.1/include/qfont.h /usr/lib/qt-2.3.1/include/qfontinfo.h \
+  /usr/lib/qt-2.3.1/include/qregion.h /usr/lib/qt-2.3.1/include/qpen.h \
+  /usr/lib/qt-2.3.1/include/qbrush.h \
+  /usr/lib/qt-2.3.1/include/qpointarray.h \
+  /usr/lib/qt-2.3.1/include/qwmatrix.h /usr/lib/qt-2.3.1/include/qevent.h \
+  /usr/lib/qt-2.3.1/include/qmime.h \
+  /usr/lib/qt-2.3.1/include/qstringlist.h \
+  /usr/lib/qt-2.3.1/include/qvaluelist.h \
+  /usr/lib/qt-2.3.1/include/qdatastream.h \
+  /usr/lib/qt-2.3.1/include/qiodevice.h \
+  /usr/lib/qt-2.3.1/include/qregexp.h ../../gui/shared/utils/prefs.h \
+  ../../gui/shared/QT/qd_pane.h /usr/lib/qt-2.3.1/include/qpalette.h \
+  /usr/lib/qt-2.3.1/include/qstyle.h \
+  /usr/lib/qt-2.3.1/include/qsizepolicy.h ../../gui/indep/QT/qt_fix.h \
+  ../../libdjvu/DjVuText.h /usr/lib/qt-2.3.1/include/qrangecontrol.h \
+  /usr/lib/qt-2.3.1/include/qdrawutil.h ../../gui/indep/QX/rem_netscape.h \
+  ../../gui/shared/res/saved_data.h ../../libdjvu/DjVuDocument.h \
+  ../../gui/shared/QT/qd_port.h ../../gui/shared/QT/qd_messenger.h \
+  ../../gui/shared/res/djvu_base_res.h \
+  /usr/lib/qt-2.3.1/include/qmenudata.h \
+  /usr/lib/qt-2.3.1/include/qiconset.h djvu_viewer_res.h \
+  ../../gui/shared/QT/qd_doc_info.h \
+  ../../gui/shared/QT/qd_nav_goto_page.h \
+  ../../gui/shared/QT/qd_set_zoom.h ../../gui/shared/QT/qd_thumb.h \
+  ../../gui/indep/QT/qlib.h ../../gui/indep/QT/qt_n_in_one.h \
+  /usr/lib/qt-2.3.1/include/qlist.h /usr/lib/qt-2.3.1/include/qglist.h \
+  /usr/lib/qt-2.3.1/include/qcollection.h ../../libdjvu/DjVuMessage.h \
+  ../../libdjvu/DjVuMessageLite.h
+djvu_viewer.o: ./djvu_viewer.cpp ../../config.h djvu_viewer.h qd_viewer.h \
+  ../../gui/shared/QT/qd_base.h ../../libdjvu/DjVuImage.h \
+  ../../libdjvu/DjVuFile.h ../../libdjvu/DjVuInfo.h \
+  ../../libdjvu/GSmartPointer.h ../../libdjvu/DjVuGlobal.h \
+  ../../libdjvu/GRect.h ../../libdjvu/DjVuPalette.h \
+  ../../libdjvu/GContainer.h ../../libdjvu/GException.h \
+  ../../libdjvu/GPixmap.h ../../libdjvu/DjVuPort.h \
+  ../../libdjvu/GThreads.h ../../libdjvu/GURL.h ../../libdjvu/GString.h \
+  ../../libdjvu/Arrays.h ../../libdjvu/DjVuAnno.h \
+  ../../gui/shared/utils/GMarginCache.h ../../libdjvu/debug.h \
+  ../../gui/shared/QT/MapAreas.h ../../libdjvu/GMapAreas.h \
+  ../../libdjvu/GBitmap.h ../../gui/shared/QT/qd_painter.h \
+  ../../gui/indep/QT/qt_painter.h /usr/lib/qt-2.3.1/include/qstring.h \
+  /usr/lib/qt-2.3.1/include/qcstring.h /usr/lib/qt-2.3.1/include/qarray.h \
+  /usr/lib/qt-2.3.1/include/qgarray.h /usr/lib/qt-2.3.1/include/qshared.h \
+  /usr/lib/qt-2.3.1/include/qnamespace.h \
+  /usr/lib/qt-2.3.1/include/qrect.h /usr/lib/qt-2.3.1/include/qsize.h \
+  /usr/lib/qt-2.3.1/include/qpoint.h /usr/lib/qt-2.3.1/include/qcolor.h \
+  /usr/lib/qt-2.3.1/include/qfontmetrics.h \
+  /usr/lib/qt-2.3.1/include/qfont.h /usr/lib/qt-2.3.1/include/qfontinfo.h \
+  /usr/lib/qt-2.3.1/include/qregion.h /usr/lib/qt-2.3.1/include/qpen.h \
+  /usr/lib/qt-2.3.1/include/qbrush.h \
+  /usr/lib/qt-2.3.1/include/qpointarray.h \
+  /usr/lib/qt-2.3.1/include/qwmatrix.h /usr/lib/qt-2.3.1/include/qevent.h \
+  /usr/lib/qt-2.3.1/include/qmime.h \
+  /usr/lib/qt-2.3.1/include/qstringlist.h \
+  /usr/lib/qt-2.3.1/include/qvaluelist.h \
+  /usr/lib/qt-2.3.1/include/qdatastream.h \
+  /usr/lib/qt-2.3.1/include/qiodevice.h \
+  /usr/lib/qt-2.3.1/include/qregexp.h ../../gui/shared/utils/prefs.h \
+  ../../gui/shared/QT/qd_pane.h /usr/lib/qt-2.3.1/include/qpalette.h \
+  /usr/lib/qt-2.3.1/include/qstyle.h \
+  /usr/lib/qt-2.3.1/include/qsizepolicy.h ../../gui/indep/QT/qt_fix.h \
+  ../../libdjvu/DjVuText.h /usr/lib/qt-2.3.1/include/qrangecontrol.h \
+  /usr/lib/qt-2.3.1/include/qdrawutil.h ../../gui/indep/QX/rem_netscape.h \
+  ../../gui/shared/res/saved_data.h ../../libdjvu/DjVuDocument.h \
+  ../../gui/shared/QT/qd_port.h ../../gui/shared/QT/qd_messenger.h \
+  ../../gui/shared/res/djvu_base_res.h \
+  /usr/lib/qt-2.3.1/include/qmenudata.h \
+  /usr/lib/qt-2.3.1/include/qiconset.h ../../gui/indep/except/exc_msg.h \
+  ../../gui/indep/except/exc_base.h ../../libdjvu/ByteStream.h \
+  ../../libdjvu/DataPool.h ../../libdjvu/DjVuMessage.h \
+  ../../libdjvu/DjVuMessageLite.h ../../gui/indep/QT/qlib.h \
+  ../../gui/indep/QT/qt_n_in_one.h /usr/lib/qt-2.3.1/include/qlist.h \
+  /usr/lib/qt-2.3.1/include/qglist.h \
+  /usr/lib/qt-2.3.1/include/qcollection.h \
+  ../../gui/shared/utils/djvu_file_cache.h ../../libdjvu/DjVuFileCache.h \
+  /usr/lib/qt-2.3.1/include/qasciidict.h \
+  /usr/lib/qt-2.3.1/include/qgdict.h \
+  /usr/lib/qt-2.3.1/include/qtranslator.h \
+  /usr/lib/qt-2.3.1/include/qintdict.h
+qd_mime_dialog.o: ./qd_mime_dialog.cpp ../../config.h qd_mime_dialog.h \
+  /usr/lib/qt-2.3.1/include/qstring.h \
+  /usr/lib/qt-2.3.1/include/qcstring.h /usr/lib/qt-2.3.1/include/qarray.h \
+  /usr/lib/qt-2.3.1/include/qgarray.h /usr/lib/qt-2.3.1/include/qshared.h \
+  /usr/lib/qt-2.3.1/include/qnamespace.h \
+  /usr/lib/qt-2.3.1/include/qobject.h /usr/lib/qt-2.3.1/include/qevent.h \
+  /usr/lib/qt-2.3.1/include/qregion.h /usr/lib/qt-2.3.1/include/qrect.h \
+  /usr/lib/qt-2.3.1/include/qsize.h /usr/lib/qt-2.3.1/include/qpoint.h \
+  /usr/lib/qt-2.3.1/include/qmime.h \
+  /usr/lib/qt-2.3.1/include/qstringlist.h \
+  /usr/lib/qt-2.3.1/include/qvaluelist.h \
+  /usr/lib/qt-2.3.1/include/qdatastream.h \
+  /usr/lib/qt-2.3.1/include/qiodevice.h \
+  /usr/lib/qt-2.3.1/include/qregexp.h \
+  /usr/lib/qt-2.3.1/include/qpaintdevice.h \
+  /usr/lib/qt-2.3.1/include/qpalette.h /usr/lib/qt-2.3.1/include/qcolor.h \
+  /usr/lib/qt-2.3.1/include/qbrush.h /usr/lib/qt-2.3.1/include/qcursor.h \
+  /usr/lib/qt-2.3.1/include/qfont.h \
+  /usr/lib/qt-2.3.1/include/qfontmetrics.h \
+  /usr/lib/qt-2.3.1/include/qfontinfo.h \
+  /usr/lib/qt-2.3.1/include/qstyle.h \
+  /usr/lib/qt-2.3.1/include/qsizepolicy.h ../../gui/indep/QT/qt_fix.h \
+  ../../libdjvu/GString.h ../../libdjvu/DjVuGlobal.h \
+  ../../libdjvu/GContainer.h ../../libdjvu/GException.h \
+  ../../libdjvu/GSmartPointer.h ../../gui/shared/utils/prefs.h \
+  ../../libdjvu/debug.h /usr/lib/qt-2.3.1/include/qiconset.h \
+  /usr/lib/qt-2.3.1/include/qpixmap.h
+main.o: ./main.cpp ../../config.h ../../libdjvu/DjVuGlobal.h \
+  ../../libdjvu/ZPCodec.h ../../libdjvu/GContainer.h \
+  ../../libdjvu/GException.h ../../libdjvu/GSmartPointer.h \
+  ../../gui/shared/utils/prefs.h ../../libdjvu/GString.h netscape.h \
+  ../../libdjvu/debug.h ../../libdjvu/GThreads.h \
+  ../../gui/shared/QT/init_qt.h /usr/lib/qt-2.3.1/include/qstring.h \
+  /usr/lib/qt-2.3.1/include/qcstring.h /usr/lib/qt-2.3.1/include/qarray.h \
+  /usr/lib/qt-2.3.1/include/qgarray.h /usr/lib/qt-2.3.1/include/qshared.h \
+  /usr/lib/qt-2.3.1/include/qnamespace.h \
+  /usr/lib/qt-2.3.1/include/qobject.h /usr/lib/qt-2.3.1/include/qevent.h \
+  /usr/lib/qt-2.3.1/include/qregion.h /usr/lib/qt-2.3.1/include/qrect.h \
+  /usr/lib/qt-2.3.1/include/qsize.h /usr/lib/qt-2.3.1/include/qpoint.h \
+  /usr/lib/qt-2.3.1/include/qmime.h \
+  /usr/lib/qt-2.3.1/include/qstringlist.h \
+  /usr/lib/qt-2.3.1/include/qvaluelist.h \
+  /usr/lib/qt-2.3.1/include/qdatastream.h \
+  /usr/lib/qt-2.3.1/include/qiodevice.h \
+  /usr/lib/qt-2.3.1/include/qregexp.h \
+  /usr/lib/qt-2.3.1/include/qpaintdevice.h \
+  /usr/lib/qt-2.3.1/include/qpalette.h /usr/lib/qt-2.3.1/include/qcolor.h \
+  /usr/lib/qt-2.3.1/include/qbrush.h /usr/lib/qt-2.3.1/include/qcursor.h \
+  /usr/lib/qt-2.3.1/include/qfont.h \
+  /usr/lib/qt-2.3.1/include/qfontmetrics.h \
+  /usr/lib/qt-2.3.1/include/qfontinfo.h \
+  /usr/lib/qt-2.3.1/include/qstyle.h \
+  /usr/lib/qt-2.3.1/include/qsizepolicy.h \
+  /usr/lib/qt-2.3.1/include/qasciidict.h \
+  /usr/lib/qt-2.3.1/include/qgdict.h \
+  /usr/lib/qt-2.3.1/include/qcollection.h \
+  /usr/lib/qt-2.3.1/include/qtranslator.h \
+  /usr/lib/qt-2.3.1/include/qintdict.h ../../gui/indep/QT/qt_fix.h \
+  qd_viewer_shell.h ../../libdjvu/DjVuImage.h ../../libdjvu/DjVuFile.h \
+  ../../libdjvu/DjVuInfo.h ../../libdjvu/GRect.h \
+  ../../libdjvu/DjVuPalette.h ../../libdjvu/GPixmap.h \
+  ../../libdjvu/DjVuPort.h ../../libdjvu/GURL.h ../../libdjvu/Arrays.h \
+  ../../libdjvu/DjVuAnno.h /usr/lib/qt-2.3.1/include/qmenudata.h \
+  /usr/lib/qt-2.3.1/include/qiconset.h \
+  /usr/lib/qt-2.3.1/include/qpixmap.h ../../gui/indep/QT/qt_n_in_one.h \
+  djvu_viewer.h qd_viewer.h ../../gui/shared/QT/qd_base.h \
+  ../../gui/shared/utils/GMarginCache.h ../../gui/shared/QT/MapAreas.h \
+  ../../libdjvu/GMapAreas.h ../../libdjvu/GBitmap.h \
+  ../../gui/shared/QT/qd_painter.h ../../gui/indep/QT/qt_painter.h \
+  /usr/lib/qt-2.3.1/include/qpen.h \
+  /usr/lib/qt-2.3.1/include/qpointarray.h \
+  /usr/lib/qt-2.3.1/include/qwmatrix.h ../../gui/shared/QT/qd_pane.h \
+  ../../libdjvu/DjVuText.h /usr/lib/qt-2.3.1/include/qrangecontrol.h \
+  /usr/lib/qt-2.3.1/include/qdrawutil.h ../../gui/indep/QX/rem_netscape.h \
+  ../../gui/shared/res/saved_data.h ../../libdjvu/DjVuDocument.h \
+  ../../gui/shared/QT/qd_port.h ../../gui/shared/QT/qd_messenger.h \
+  ../../gui/shared/res/djvu_base_res.h ../../gui/indep/except/exc_msg.h \
+  ../../gui/indep/except/exc_base.h \
+  ../../gui/shared/utils/djvu_file_cache.h ../../libdjvu/DjVuFileCache.h \
+  ../../gui/indep/QT/qlib.h ../../gui/indep/utils/execdir.h mime_check.h \
+  ../../gui/shared/res/version.h

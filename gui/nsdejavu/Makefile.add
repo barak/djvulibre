@@ -1,0 +1,52 @@
+plugin.o : ${srcdir}/plugin.cpp
+	${CXX} ${CXXFLAGS} -c ${srcdir}/plugin.cpp
+stubs.o : ${srcdir}/stubs.cpp
+	${CXX} ${CXXFLAGS} -c ${srcdir}/stubs.cpp
+path.o : ${srcdir}/path.cpp
+	${CXX} ${CXXFLAGS} -c ${srcdir}/path.cpp
+io.o : ${top_srcdir}/gui/shared/utils/io.cpp
+	${CXX} ${CXXFLAGS} -c ${top_srcdir}/gui/shared/utils/io.cpp
+saved_data.o : ${top_srcdir}/gui/shared/res/saved_data.cpp
+	${CXX} ${CXXFLAGS} -c ${top_srcdir}/gui/shared/res/saved_data.cpp
+npunix.o : ${top_srcdir}/gui/npsdk/npunix.cpp
+	${CXX} ${CXXFLAGS} -c ${top_srcdir}/gui/npsdk/npunix.cpp
+GString.o : ${top_srcdir}/libdjvu/GString.cpp
+	${CXX} ${CXXFLAGS} -c ${top_srcdir}/libdjvu/GString.cpp
+GException.o : ${top_srcdir}/libdjvu/GException.cpp
+	${CXX} ${CXXFLAGS} -c ${top_srcdir}/libdjvu/GException.cpp
+GContainer.o : ${top_srcdir}/libdjvu/GContainer.cpp
+	${CXX} ${CXXFLAGS} -c ${top_srcdir}/libdjvu/GContainer.cpp
+GSmartPointer.o : ${top_srcdir}/libdjvu/GSmartPointer.cpp
+	${CXX} ${CXXFLAGS} -c ${top_srcdir}/libdjvu/GSmartPointer.cpp
+GThreads.o : ${top_srcdir}/libdjvu/GThreads.cpp
+	${CXX} ${CXXFLAGS} -c ${top_srcdir}/libdjvu/GThreads.cpp
+Arrays.o : ${top_srcdir}/libdjvu/Arrays.cpp
+	${CXX} ${CXXFLAGS} -c ${top_srcdir}/libdjvu/Arrays.cpp
+
+
+SRCINCS = \
+ -I${srcdir}/ \
+ -I${top_srcdir}/gui/npsdk/ \
+ -I${top_srcdir}/gui/shared/res/ \
+ -I${top_srcdir}/gui/shared/utils/ \
+ -I${top_srcdir}/libdjvu/ \
+
+
+OBJS = \
+ plugin.o \
+ stubs.o \
+ path.o \
+ io.o \
+ saved_data.o \
+ npunix.o \
+ GString.o \
+ GException.o \
+ GContainer.o \
+ GSmartPointer.o \
+ GThreads.o \
+ Arrays.o \
+
+
+MOCINCS = \
+
+
