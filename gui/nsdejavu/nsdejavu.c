@@ -2092,12 +2092,14 @@ NPP_URLNotify(NPP np_inst, const char *url, NPReason reason, void *ptr)
 char *
 NPP_GetMIMEDescription(void)
 {
-  return "image/x-djvu:djvu,djv:DjVu File;"
-         "image/x.djvu::DjVu File;"
-         "image/x-dejavu::DjVu File (obsolete mime type);"
-         "image/x-iw44:iw44,iw4:DjVu File (obsolete mime type);"
-         "image/djvu::DjVu File;"
-      	 "image/x-djvu:djvu,djv:DjVu File";
+  return 
+    "image/x-djvu:djvu,djv:DjVu File;"
+    "image/x.djvu::DjVu File;"
+    "image/djvu::DjVu File;"
+    "image/vnd.djvu::DjVu File;"
+    "application/vnd.djvu::DjVu File;" 
+    "image/x-dejavu::DjVu File (obsolete mime type);"
+    "image/x-iw44:iw44,iw4:DjVu File (obsolete mime type);"
 }
 
 jref
