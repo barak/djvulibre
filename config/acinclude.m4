@@ -274,7 +274,7 @@ AC_DEFUN([AC_CXX_RPO],
                      [Enable compilation with option -frepo]),
       [ac_rpo=$enableval], [ac_rpo=no] )
     if test x$ac_rpo != xno ; then
-      CXXRPOFLAGS=-frepo
+      CXXRPOFLAGS='-frepo -fno-rtti'
       RPO_YES=''
       RPO_NO='#'
     fi

@@ -19305,7 +19305,7 @@ else
   ac_rpo=no
 fi;
     if test x$ac_rpo != xno ; then
-      CXXRPOFLAGS=-frepo
+      CXXRPOFLAGS='-frepo -fno-rtti'
       RPO_YES=''
       RPO_NO='#'
     fi

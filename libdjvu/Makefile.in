@@ -82,10 +82,7 @@ ${LIBDJVU_LA} : ${OBJS}
 @RPO_YES@	@echo "[ performing library closure ... ]"
 @RPO_YES@	@echo "int main() { return 0; }" > $@.cpp
 @RPO_YES@	${LIBTOOL} --mode=compile ${CXX} ${CXXFLAGS} -c $@.cpp
-@RPO_YES@	${CXX} ${CXXFLAGS} -o $@ $@.o ${OBJS} ${LIBS} || \
-@RPO_YES@	${CXX} ${CXXFLAGS} -o $@ $@.o ${OBJS} ${LIBS} || \
-@RPO_YES@	${CXX} ${CXXFLAGS} -o $@ $@.o ${OBJS} ${LIBS} || \
-@RPO_YES@	${CXX} ${CXXFLAGS} -o $@ $@.o ${OBJS} ${LIBS} 
+@RPO_YES@	${LIBTOOL} --mode=link ${CXX} ${CXXFLAGS} -o $@ $@.lo ${OBJS} ${LIBS}
 
 install-data: FORCE
 	${INSTALL} -d ${DESTDIR}${datadir}/djvu
