@@ -1105,7 +1105,7 @@ GStringRep::substr(const unsigned short *s,const int start,const int len) const
       eptr=&(s[len]);
     }
     s=&s[start];
-    if((size_t)s>(size_t)eptr)
+    if((size_t)s<(size_t)eptr)
     {
       mbstate_t ps;
       memset(&ps,0,sizeof(mbstate_t));
@@ -1143,7 +1143,7 @@ GStringRep::substr(const unsigned long *s,const int start,const int len) const
       eptr=&(s[len]);
     }
     s=&s[start];
-    if((size_t)s>(size_t)eptr)
+    if((size_t)s<(size_t)eptr)
     {
       mbstate_t ps;
       memset(&ps,0,sizeof(mbstate_t));
