@@ -97,7 +97,8 @@ ShowUsage(void)
 {
 #ifdef DJVULIBRE_VERSION
   DjVuPrintError(QDJView::tr("DJVIEW --- DjVuLibre-%1")
-                 .arg(DJVULIBRE_VERSION));
+                 .arg(DJVULIBRE_VERSION)
+                 + "\n");
 #endif
   DjVuPrintError(QDJView::tr
   ("DjVu document viewer.\n\n"
@@ -186,6 +187,7 @@ main(int argc, char ** argv)
           !strcmp(argv[i],"-h")    ||
           !strcmp(argv[i],"-?") )
         {
+          InitializeQT(argc, argv);
           ShowUsage();
           exit(0);
         }
