@@ -1,8 +1,9 @@
 djvulibre (3.5.14-2) unstable; urgency=low
 
   * versioned build dependency on debhelper (for debian pedants)
+  * tighten version dependencies (closes: #278946)
 
- --
+ -- Barak A. Pearlmutter <bap@debian.org>  Mon,  1 Nov 2004 16:49:49 +0000
 
 djvulibre (3.5.14-1) unstable; urgency=high
 
