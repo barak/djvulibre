@@ -8,10 +8,10 @@ Summary: DjVu viewers, encoders and utilities.
 Name: djvulibre
 Version: %{version}
 Release: %{release}
-Copyright: GPL
+License: GPL
 Group: Applications/Publishing
 Source: http://prdownloads.sourceforge.net/djvu/djvulibre-%{version}.tar.gz
-BuildRoot: /var/tmp/djvulibre-root
+BuildRoot: %{_tmppath}/%{name}-root
 URL: http://djvu.sourceforge.net
 
 #These are RH specific:
@@ -23,7 +23,7 @@ URL: http://djvu.sourceforge.net
 DjVu is a web-centric format and software platform for distributing documents
 and images.  DjVu content downloads faster, displays and renders faster, looks
 nicer on a screen, and consume less client resources than competing formats.
-DjVu was originally developped at AT&T Labs-Research by Leon Bottou, Yann
+DjVu was originally developed at AT&T Labs-Research by Leon Bottou, Yann
 LeCun, Patrick Haffner, and many others.  In March 2000, AT&T sold DjVu to
 LizardTech Inc. who now distributes Windows/Mac plug-ins, and commercial
 encoders (mostly on Windows)
@@ -43,24 +43,6 @@ DjVulibre-3.5 contains:
 - A set of utilities to manipulate and assemble DjVu images and documents. 
 - A set of decoders to convert DjVu to a number of other formats. 
 - An up-to-date version of the C++ DjVu Reference Library.
-
-%changelog
-* Wed Oct  9 2002 Leon Bottou <leonb@users.sourceforge.net> 3.5.9-2
-- fixed logic for uninstalling nsdejavu links.
-- copy stuff from the freshrpms spec file.
-* Sun Oct  6 2002 Leon Bottou <leonb@users.sourceforge.net> 3.5.9-1
-- added logic to install nsdejavu for mozilla.
-* Wed May 29 2002 Leon Bottou <leonb@users.sourceforge.net> 3.5.6-1
-- bumped to version 3.5.6-1
-* Mon Apr 1 2002  Leon Bottou <leonb@users.sourceforge.net> 3.5.5-2
-- changed group to Applications/Publishing
-* Tue Mar 25 2002 Leon Bottou <leonb@users.sourceforge.net> 3.5.5-2
-* Tue Jan 22 2002 Leon Bottou <leonb@users.sourceforge.net> 3.5.4-2
-- fixed for properly locating the man directory.
-* Wed Jan 16 2002 Leon Bottou <leonb@users.sourceforge.net> 3.5.3-1
-* Fri Dec  7 2001 Leon Bottou <leonb@users.sourceforge.net> 3.5.2-1
-* Wed Dec  5 2001 Leon Bottou <leonb@users.sourceforge.net> 3.5.1-1
-- created spec file for rh7.x.
 
 %prep
 %setup -q
@@ -103,9 +85,28 @@ rm -rf %{buildroot}
 
 %files
 %defattr(-, root, root)
-%doc README COPYRIGHT COPYING INSTALL NEWS TODO
-%doc doc/*
-%{prefix}/bin
-%{prefix}/lib
-%{prefix}/share/djvu
-%{mandir}
+%doc README COPYRIGHT COPYING INSTALL NEWS TODO doc
+%{_bindir}/*
+%{_libdir}/*.so*
+%{_libdir}/*/plugins/*.so*
+%{_datadir}/djvu
+%{_mandir}/man?/*
+
+%changelog
+* Wed Oct  9 2002 Leon Bottou <leonb@users.sourceforge.net> 3.5.9-2
+- fixed logic for uninstalling nsdejavu links.
+- copy stuff from the freshrpms spec file.
+* Sun Oct  6 2002 Leon Bottou <leonb@users.sourceforge.net> 3.5.9-1
+- added logic to install nsdejavu for mozilla.
+* Wed May 29 2002 Leon Bottou <leonb@users.sourceforge.net> 3.5.6-1
+- bumped to version 3.5.6-1
+* Mon Apr 1 2002  Leon Bottou <leonb@users.sourceforge.net> 3.5.5-2
+- changed group to Applications/Publishing
+* Tue Mar 25 2002 Leon Bottou <leonb@users.sourceforge.net> 3.5.5-2
+* Tue Jan 22 2002 Leon Bottou <leonb@users.sourceforge.net> 3.5.4-2
+- fixed for properly locating the man directory.
+* Wed Jan 16 2002 Leon Bottou <leonb@users.sourceforge.net> 3.5.3-1
+* Fri Dec  7 2001 Leon Bottou <leonb@users.sourceforge.net> 3.5.2-1
+* Wed Dec  5 2001 Leon Bottou <leonb@users.sourceforge.net> 3.5.1-1
+- created spec file for rh7.x.
+
