@@ -1,6 +1,7 @@
 NEW IN VERSION 3.5.5
 --------------------
 - Removed annoying flicker with djview/Qt3
+- Simplified the use of djvuserve
 
 
 NEW IN VERSION 3.5.4
