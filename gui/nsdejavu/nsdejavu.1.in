@@ -269,7 +269,7 @@ print	for the print button.
 pagecombo	for the page selection tool.
 firstlast	for the first-page and last-page buttons.
 prevnext	for the previous-page and next-page buttons.
-backforw        for the back and forward buttons.
+backforw	for the back and forward buttons.
 .TE
 .PP
 .TP
