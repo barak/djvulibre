@@ -77,10 +77,10 @@ main(int argc, char ** argv)
   const char * name=argv[1];
   
   // First read all data into memory
-  GP<ByteStream> gstr_in=ByteStream::create(GURL::Filename::UTF8("-"),"rb");
-  ByteStream &str_in=*gstr_in;
-  GP<ByteStream> gmem_str1=ByteStream::create();
-  ByteStream &mem_str1=*gmem_str1;
+  GP<ByteStream> gstr_in = ByteStream::create("rb");
+  ByteStream &str_in = *gstr_in;
+  GP<ByteStream> gmem_str1 = ByteStream::create();
+  ByteStream &mem_str1 = *gmem_str1;
   mem_str1.copy(str_in);
   
   // Now compute block size for BSByteStream
@@ -89,11 +89,12 @@ main(int argc, char ** argv)
   if (block_size>1024) block_size=1024;
   
   // Compress data
-  GP<ByteStream> mem_str2=ByteStream::create();
+  GP<ByteStream> mem_str2 = ByteStream::create();
   {
-    GP<ByteStream> bs_str=BSByteStream::create(mem_str2, block_size);
+    GP<ByteStream> bs_str = BSByteStream::create(mem_str2, block_size);
     mem_str1.seek(0);
     bs_str->copy(mem_str1);
+    bs_str = 0;
   }
   
   // Finally: generate file
