@@ -172,7 +172,7 @@ fi
 if [ "$pixmaps" != no ] ; then
   makedir $DESTDIR$pixmaps
   install hi48-mimetype-djvu.png $DESTDIR$pixmaps/djvu.png
-  install djvu.xpm $DESTDIR$pixmaps/djvu.xpm
+  test "$menus" = debian && install djvu.xpm $DESTDIR$pixmaps/djvu.xpm
 fi
 
 if [ "$mime_info" != no ] ; then
