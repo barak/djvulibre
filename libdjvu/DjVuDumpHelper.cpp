@@ -134,29 +134,20 @@ static void
 display_iw4(ByteStream & out_str, IFFByteStream &iff,
 	    GUTF8String, size_t, DjVmInfo&, int)
 {
-  struct PrimaryHeader {
-    unsigned char serial;
-    unsigned char slices;
-  } primary;
-
-  struct SecondaryHeader {
-    unsigned char major;
-    unsigned char minor;
-    unsigned char xhi, xlo;
-    unsigned char yhi, ylo;
-  } secondary;
-  
-  if (iff.get_bytestream()->readall((void*)&primary, sizeof(primary)) == sizeof(primary))
+  GP<ByteStream> gbs = iff.get_bytestream();
+  unsigned char serial = gbs->read8();
+  unsigned char slices = gbs->read8();
+  out_str.format( "IW4 data #%d, %d slices", serial+1, slices);
+  if (serial == 0)
     {
-      out_str.format( "IW4 data #%d, %d slices", primary.serial+1, primary.slices);
-      if (primary.serial==0)
-        if (iff.get_bytestream()->readall((void*)&secondary, sizeof(secondary)) == sizeof(secondary))
-          {
-            out_str.format( ", v%d.%d (%s), %dx%d", secondary.major&0x7f, secondary.minor,
-                   (secondary.major & 0x80 ? "b&w" : "color"),
-                   (secondary.xhi<<8)+secondary.xlo,
-                   (secondary.yhi<<8)+secondary.ylo  );
-          }
+      unsigned char major = gbs->read8();
+      unsigned char minor = gbs->read8();
+      unsigned char xhi = gbs->read8();
+      unsigned char xlo = gbs->read8();
+      unsigned char yhi = gbs->read8();
+      unsigned char ylo = gbs->read8();
+      out_str.format( ", v%d.%d (%s), %dx%d", major & 0x7f, minor,
+                      (major & 0x80 ? "b&w" : "color"), (xhi<<8)+xlo, (yhi<<8)+ylo );
     }
 }
 

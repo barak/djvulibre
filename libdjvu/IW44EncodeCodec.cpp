@@ -1338,6 +1338,40 @@ IW44Image::Codec::Encode::estimate_decibel(float frac)
   return decibel;
 }
 
+
+
+
+//////////////////////////////////////////////////////
+// IW44IMAGE ENCODING ROUTINES
+//////////////////////////////////////////////////////
+
+
+void 
+IW44Image::PrimaryHeader::encode(GP<ByteStream> gbs)
+{
+  gbs->write8(serial);
+  gbs->write8(slices);
+}
+
+void 
+IW44Image::SecondaryHeader::encode(GP<ByteStream> gbs)
+{
+  gbs->write8(major);
+  gbs->write8(minor);
+}
+
+void 
+IW44Image::TertiaryHeader::encode(GP<ByteStream> gbs)
+{
+  gbs->write8(xhi);
+  gbs->write8(xlo);
+  gbs->write8(yhi);
+  gbs->write8(ylo);
+  gbs->write8(crcbdelay);
+}
+
+
+
 GP<IW44Image>
 IW44Image::create_encode(const ImageType itype)
 {
@@ -1360,6 +1394,7 @@ IW44Image::create_encode(const GBitmap &bm, const GP<GBitmap> mask)
   bit->init(bm, mask);
   return retval;
 }
+
 
 IWBitmap::Encode::Encode(void)
 : IWBitmap(), ycodec_enc(0)
@@ -1437,7 +1472,7 @@ IWBitmap::Encode::encode_chunk(GP<ByteStream> gbs, const IWEncoderParms &parm)
   // Adjust cbytes
   cbytes += sizeof(struct IW44Image::PrimaryHeader);
   if (cserial == 0)
-    cbytes += sizeof(struct IW44Image::SecondaryHeader) + sizeof(struct IW44Image::TertiaryHeader2);
+    cbytes += sizeof(struct IW44Image::SecondaryHeader) + sizeof(struct IW44Image::TertiaryHeader);
   // Prepare zcoded slices
   int flag = 1;
   int nslices = 0;
@@ -1468,26 +1503,25 @@ IWBitmap::Encode::encode_chunk(GP<ByteStream> gbs, const IWEncoderParms &parm)
   struct IW44Image::PrimaryHeader primary;
   primary.serial = cserial;
   primary.slices = nslices;
-  ByteStream &bs=*gbs;
-  bs.writall((void*)&primary, sizeof(primary));
+  primary.encode(gbs);
   // Write auxilliary headers
   if (cserial == 0)
     {
       struct IW44Image::SecondaryHeader secondary;
       secondary.major = IWCODEC_MAJOR + 0x80;
       secondary.minor = IWCODEC_MINOR;
-      bs.writall((void*)&secondary, sizeof(secondary));
-      struct IW44Image::TertiaryHeader2 tertiary;
+      secondary.encode(gbs);
+      struct IW44Image::TertiaryHeader tertiary;
       tertiary.xhi = (ymap->iw >> 8) & 0xff;
       tertiary.xlo = (ymap->iw >> 0) & 0xff;
       tertiary.yhi = (ymap->ih >> 8) & 0xff;
       tertiary.ylo = (ymap->ih >> 0) & 0xff;
       tertiary.crcbdelay = 0;
-      bs.writall((void*)&tertiary, sizeof(tertiary));
+      tertiary.encode(gbs);
     }
   // Write slices
   mbs.seek(0);
-  bs.copy(mbs);
+  gbs->copy(mbs);
   // Return
   cbytes  += mbs.tell();
   cslice  += nslices;
@@ -1656,7 +1690,7 @@ IWPixmap::Encode::encode_chunk(GP<ByteStream> gbs, const IWEncoderParms &parm)
   // Adjust cbytes
   cbytes += sizeof(struct IW44Image::PrimaryHeader);
   if (cserial == 0)
-    cbytes += sizeof(struct IW44Image::SecondaryHeader) + sizeof(struct IW44Image::TertiaryHeader2);
+    cbytes += sizeof(struct IW44Image::SecondaryHeader) + sizeof(struct IW44Image::TertiaryHeader);
   // Prepare zcodec slices
   int flag = 1;
   int nslices = 0;
@@ -1692,7 +1726,7 @@ IWPixmap::Encode::encode_chunk(GP<ByteStream> gbs, const IWEncoderParms &parm)
   struct IW44Image::PrimaryHeader primary;
   primary.serial = cserial;
   primary.slices = nslices;
-  gbs->writall((void*)&primary, sizeof(primary));
+  primary.encode(gbs);
   // Write secondary header
   if (cserial == 0)
     {
@@ -1701,15 +1735,15 @@ IWPixmap::Encode::encode_chunk(GP<ByteStream> gbs, const IWEncoderParms &parm)
       secondary.minor = IWCODEC_MINOR;
       if (! (crmap && cbmap))
         secondary.major |= 0x80;
-      gbs->writall((void*)&secondary, sizeof(secondary));
-      struct IW44Image::TertiaryHeader2 tertiary;
+      secondary.encode(gbs);
+      struct IW44Image::TertiaryHeader tertiary;
       tertiary.xhi = (ymap->iw >> 8) & 0xff;
       tertiary.xlo = (ymap->iw >> 0) & 0xff;
       tertiary.yhi = (ymap->ih >> 8) & 0xff;
       tertiary.ylo = (ymap->ih >> 0) & 0xff;
       tertiary.crcbdelay = (crcb_half ? 0x00 : 0x80);
       tertiary.crcbdelay |= (crcb_delay>=0 ? crcb_delay : 0x00);
-      gbs->writall((void*)&tertiary, sizeof(tertiary));
+      tertiary.encode(gbs);
     }
   // Write slices
   mbs.seek(0);

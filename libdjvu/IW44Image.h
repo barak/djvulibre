@@ -246,8 +246,7 @@ public:
   struct Alloc;
   struct PrimaryHeader;
   struct SecondaryHeader;
-  struct TertiaryHeader1;
-  struct TertiaryHeader2;
+  struct TertiaryHeader;
   enum ImageType {
     GRAY=false,
     COLOR=true };
@@ -684,22 +683,23 @@ public:
 struct IW44Image::PrimaryHeader {
   unsigned char serial;
   unsigned char slices;
+  void encode(GP<ByteStream> gbs);
+  void decode(GP<ByteStream> gbs);
 };  
 
 struct IW44Image::SecondaryHeader {
   unsigned char major;
   unsigned char minor;
+  void encode(GP<ByteStream> gbs);
+  void decode(GP<ByteStream> gbs);
 };
 
-struct IW44Image::TertiaryHeader1 {        // VER 1.1
-  unsigned char xhi, xlo;
-  unsigned char yhi, ylo;
-};
-
-struct IW44Image::TertiaryHeader2 {        // VER 1.2
+struct IW44Image::TertiaryHeader {
   unsigned char xhi, xlo;
   unsigned char yhi, ylo;
   unsigned char crcbdelay;
+  void encode(GP<ByteStream> gbs);
+  void decode(GP<ByteStream> gbs, int major=1, int minor=2);
 };
 
 inline const short* 

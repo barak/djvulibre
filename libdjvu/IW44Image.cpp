@@ -1285,6 +1285,32 @@ max(const int x, const int y)
 }
 
 
+void 
+IW44Image::PrimaryHeader::decode(GP<ByteStream> gbs)
+{
+  serial = gbs->read8();
+  slices = gbs->read8();
+}
+
+void 
+IW44Image::SecondaryHeader::decode(GP<ByteStream> gbs)
+{
+  major = gbs->read8();
+  minor = gbs->read8();
+}
+
+void 
+IW44Image::TertiaryHeader::decode(GP<ByteStream> gbs, int major, int minor)
+{
+  xhi = gbs->read8();
+  xlo = gbs->read8();
+  yhi = gbs->read8();
+  ylo = gbs->read8();
+  crcbdelay = 0;
+  if (major== 1 && minor>=2)
+    crcbdelay = gbs->read8();
+}
+
 
 
 //////////////////////////////////////////////////////
@@ -1458,9 +1484,7 @@ IWBitmap::decode_chunk(GP<ByteStream> gbs)
   }
   // Read primary header
   struct IW44Image::PrimaryHeader primary;
-  ByteStream &bs=*gbs;
-  if (bs.readall((void*)&primary, sizeof(primary)) != sizeof(primary))
-    G_THROW( ERR_MSG("IW44Image.cant_read_primary") );
+  primary.decode(gbs);
   if (primary.serial != cserial)
     G_THROW( ERR_MSG("IW44Image.wrong_serial") );
   int nslices = cslice + primary.slices;
@@ -1468,17 +1492,14 @@ IWBitmap::decode_chunk(GP<ByteStream> gbs)
   if (cserial == 0)
     {
       struct IW44Image::SecondaryHeader secondary;
-      if (bs.readall((void*)&secondary, sizeof(secondary)) != sizeof(secondary))
-        G_THROW( ERR_MSG("IW44Image.cant_read_secondary") );
+      secondary.decode(gbs);
       if ((secondary.major & 0x7f) != IWCODEC_MAJOR)
         G_THROW( ERR_MSG("IW44Image.incompat_codec") );
       if (secondary.minor > IWCODEC_MINOR)
         G_THROW( ERR_MSG("IW44Image.recent_codec") );
       // Read tertiary header
-      struct IW44Image::TertiaryHeader2 tertiary;
-      unsigned int header3size = sizeof(tertiary);
-      if (bs.readall((void*)&tertiary, header3size) != header3size)
-        G_THROW( ERR_MSG("IW44Image.cant_read_tertiary") );
+      struct IW44Image::TertiaryHeader tertiary;
+      tertiary.decode(gbs, secondary.major & 0x7f, secondary.minor);
       if (! (secondary.major & 0x80))
         G_THROW( ERR_MSG("IW44Image.has_color") );
       // Create ymap and ycodec
@@ -1708,9 +1729,7 @@ IWPixmap::decode_chunk(GP<ByteStream> gbs)
 
   // Read primary header
   struct IW44Image::PrimaryHeader primary;
-  ByteStream &bs=*gbs;
-  if (bs.readall((void*)&primary, sizeof(primary)) != sizeof(primary))
-    G_THROW( ERR_MSG("IW44Image.cant_read_primary2") );
+  primary.decode(gbs);
   if (primary.serial != cserial)
     G_THROW( ERR_MSG("IW44Image.wrong_serial2") );
   int nslices = cslice + primary.slices;
@@ -1718,19 +1737,14 @@ IWPixmap::decode_chunk(GP<ByteStream> gbs)
   if (cserial == 0)
     {
       struct IW44Image::SecondaryHeader secondary;
-      if (bs.readall((void*)&secondary, sizeof(secondary)) != sizeof(secondary))
-        G_THROW( ERR_MSG("IW44Image.cant_read_secondary2") );
+      secondary.decode(gbs);
       if ((secondary.major & 0x7f) != IWCODEC_MAJOR)
         G_THROW( ERR_MSG("IW44Image.incompat_codec2") );
       if (secondary.minor > IWCODEC_MINOR)
         G_THROW( ERR_MSG("IW44Image.recent_codec2") );
       // Read tertiary header
-      struct IW44Image::TertiaryHeader2 tertiary;
-      unsigned int header3size = sizeof(tertiary);
-      if (secondary.minor < 2)
-        header3size = sizeof(IW44Image::TertiaryHeader1);
-      if (bs.readall((void*)&tertiary, header3size) != header3size)
-        G_THROW( ERR_MSG("IW44Image.cant_read_tertiary2") );
+      struct IW44Image::TertiaryHeader tertiary;
+      tertiary.decode(gbs, secondary.major & 0x7f, secondary.minor);
       // Handle header information
       int w = (tertiary.xhi << 8) | tertiary.xlo;
       int h = (tertiary.yhi << 8) | tertiary.ylo;
