@@ -189,6 +189,27 @@ collections of DjVu files.  Each of these scripts can be
 password protected using the usual methods supported by
 your web server.
 
+.SH KNOWN BUGS
+
+Hyperlinks specified using a relative 
+.SM URL 
+may not work with 
+.BR djvuserve.  
+These 
+.SM URLs 
+are relative to the 
+.SM URL 
+of the DjVu document. Yet 
+.BR djvuserve
+changes the apparent document 
+.SM URL
+.IB http://server/dir/doc.djvu
+into the more complicated 
+.SM URL
+.IB http://server /cgi\(enbin/djvuserve/ dir/doc.djvu /index.
+The extra components change the interpretation of relative 
+.SM URLs.
+
 .SH CREDITS
 This program was written by Leon Bottou <leonb@users.sourceforge.com>.
 
