@@ -41,7 +41,7 @@ DjVulibre-3.5 contains:
 - An up-to-date version of the C++ DjVu Reference Library.
 
 %changelog
-* Mon Apr 1st 2002 Leon Bottou <leonb@users.sourceforge.net>
+* Mon Apr 1 2002 Leon Bottou <leonb@users.sourceforge.net>
     - bumped to version 3.5.5-2
     - changed group to Applications/Publishing
 * Tue Mar 25 2002 Leon Bottou <leonb@users.sourceforge.net>
