@@ -11,5 +11,6 @@ GenericName[es]=Visor de documentos DjVu
 GenericName[fr]=Afficheur DjVu
 GenericName[it]=Visualizzatore DjVu
 GenericName[ja]=DjVuビューア
+StartupWMClass=Djview
 Terminal=0
 Categories=Qt;Graphics
