@@ -117,26 +117,48 @@ AC_PATH_QT(,
 # What to compile
 # ----------------------------------------
 
+
+# Check compilation of xmltools
+AC_ARG_ENABLE(xmltools,
+   AC_HELP_STRING([--enable-xmltools],
+                  [enable compilation of the xml tools.]),
+   [ac_enable_xmltools=$enableval], 
+   [ac_enable_xmltools=no] ) 
+if test x$ac_enable_xmltools != xno ; then
+   XML_YES=''
+   XML_NO='#'
+else
+   XML_YES='#'
+   XML_NO=''
+fi
+AC_SUBST(XML_YES)
+AC_SUBST(XML_NO)
+
+
 # Check compilation of djview
 AC_ARG_ENABLE(djview,
    AC_HELP_STRING([--enable-djview],
                   [enable compilation of djview (default).]),
    [ac_enable_djview=$enableval], 
-   [ac_enable_djview=no] ) 
-if test x$no_threads = xyes ||
-   test x$no_qt = xyes ; then
-   AC_MSG_WARN([Disabling compilation of djview.
+   [ac_enable_djview=yes] ) 
+if test x$ac_enable_djview != xno ; then
+  if test x$no_threads = xyes || test x$no_qt = xyes ; then
+     AC_MSG_WARN([Disabling compilation of djview.
 --------------------------------------------------------
 *** The GUI portion of this package will not be compiled.
 *** This is probably not what you want.  Chech the output
 *** of configure for warning messages.  Read file INSTALL. 
 *** Investigate options --with-qt and --enable-threads.
 --------------------------------------------------------])
-   GUI_YES='#'
-   GUI_NO=''
-else
+     ac_enable_djview=no;
+  fi
+fi
+if test x$ac_enable_djview != xno ; then
    GUI_YES=''
    GUI_NO='#'
+else
+   GUI_YES='#'
+   GUI_NO=''
 fi
 AC_SUBST(GUI_YES)
 AC_SUBST(GUI_NO)   
@@ -277,6 +299,7 @@ AC_DEFINE_UNQUOTED(DJVULIBRE_VERSION,["${PACKAGE_VERSION}"],[version string])
 AC_CONFIG_FILES(Makefile)
 AC_CONFIG_FILES(libdjvu/Makefile)
 AC_CONFIG_FILES(tools/Makefile)
+AC_CONFIG_FILES(xmltools/Makefile)
 AC_CONFIG_FILES(gui/Makefile)
 AC_CONFIG_FILES(gui/bin2cpp/Makefile)
 AC_CONFIG_FILES(gui/djview/Makefile)

@@ -1,0 +1,31 @@
+djvutoxml.o: ./djvutoxml.cpp ../config.h ../libdjvu/DjVuDocument.h \
+  ../libdjvu/DjVuPort.h ../libdjvu/GThreads.h ../libdjvu/DjVuGlobal.h \
+  ../libdjvu/GException.h ../libdjvu/GURL.h ../libdjvu/GString.h \
+  ../libdjvu/GContainer.h ../libdjvu/GSmartPointer.h ../libdjvu/Arrays.h \
+  ../libdjvu/GOS.h ../libdjvu/DjVuMessage.h ../libdjvu/DjVuMessageLite.h \
+  ../libdjvu/ByteStream.h ../libdjvu/DjVuAnno.h ../libdjvu/DjVuText.h \
+  ../libdjvu/GMapAreas.h ../libdjvu/GRect.h ../libdjvu/DjVuImage.h \
+  ../libdjvu/DjVuFile.h ../libdjvu/DjVuInfo.h ../libdjvu/DjVuPalette.h \
+  ../libdjvu/GPixmap.h ../libdjvu/debug.h
+djvuxmlparser.o: ./djvuxmlparser.cpp ../config.h ../libdjvu/XMLParser.h \
+  ../libdjvu/GContainer.h ../libdjvu/GException.h ../libdjvu/DjVuGlobal.h \
+  ../libdjvu/GSmartPointer.h ../libdjvu/GURL.h ../libdjvu/GString.h \
+  ../libdjvu/Arrays.h ../libdjvu/GThreads.h ../libdjvu/XMLTags.h \
+  ../libdjvu/GOS.h ../libdjvu/DjVuDocument.h ../libdjvu/DjVuPort.h \
+  ../libdjvu/ByteStream.h ../libdjvu/DjVuMessage.h \
+  ../libdjvu/DjVuMessageLite.h
+xml2native.o: ./xml2native.cpp ../config.h ../libdjvu/GException.h \
+  ../libdjvu/DjVuGlobal.h ../libdjvu/UnicodeByteStream.h \
+  ../libdjvu/GString.h ../libdjvu/GContainer.h ../libdjvu/GSmartPointer.h \
+  ../libdjvu/ByteStream.h ../libdjvu/Arrays.h ../libdjvu/DjVuMessage.h \
+  ../libdjvu/DjVuMessageLite.h ../libdjvu/GURL.h ../libdjvu/GThreads.h
+xml2utf16.o: ./xml2utf16.cpp ../config.h ../libdjvu/GException.h \
+  ../libdjvu/DjVuGlobal.h ../libdjvu/UnicodeByteStream.h \
+  ../libdjvu/GString.h ../libdjvu/GContainer.h ../libdjvu/GSmartPointer.h \
+  ../libdjvu/ByteStream.h ../libdjvu/Arrays.h ../libdjvu/DjVuMessage.h \
+  ../libdjvu/DjVuMessageLite.h ../libdjvu/GURL.h ../libdjvu/GThreads.h
+xml2utf8.o: ./xml2utf8.cpp ../config.h ../libdjvu/GException.h \
+  ../libdjvu/DjVuGlobal.h ../libdjvu/UnicodeByteStream.h \
+  ../libdjvu/GString.h ../libdjvu/GContainer.h ../libdjvu/GSmartPointer.h \
+  ../libdjvu/ByteStream.h ../libdjvu/Arrays.h ../libdjvu/DjVuMessage.h \
+  ../libdjvu/DjVuMessageLite.h ../libdjvu/GURL.h ../libdjvu/GThreads.h

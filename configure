@@ -872,6 +872,7 @@ Optional Features:
   --enable-debug          Compile with debugging options (default: no)
   --enable-rpo            Enable compilation with option -frepo
   --enable-threads        select threading model (default is auto)
+  --enable-xmltools       enable compilation of the xml tools.
   --enable-djview         enable compilation of djview (default).
   --enable-shared         Enable shared libdjvu (default: linux only)
 
@@ -7329,17 +7330,33 @@ echo "$as_me: WARNING: Qt support is disabled" >&2;}
 # What to compile
 # ----------------------------------------
 
+# Check compilation of xmltools
+# Check whether --enable-xmltools or --disable-xmltools was given.
+if test "${enable_xmltools+set}" = set; then
+  enableval="$enable_xmltools"
+  ac_enable_xmltools=$enableval
+else
+  ac_enable_xmltools=no
+fi;
+if test x$ac_enable_xmltools != xno ; then
+   XML_YES=''
+   XML_NO='#'
+else
+   XML_YES='#'
+   XML_NO=''
+fi
+
 # Check compilation of djview
 # Check whether --enable-djview or --disable-djview was given.
 if test "${enable_djview+set}" = set; then
   enableval="$enable_djview"
   ac_enable_djview=$enableval
 else
-  ac_enable_djview=no
+  ac_enable_djview=yes
 fi;
-if test x$no_threads = xyes ||
-   test x$no_qt = xyes ; then
-   { echo "$as_me:$LINENO: WARNING: Disabling compilation of djview.
+if test x$ac_enable_djview != xno ; then
+  if test x$no_threads = xyes || test x$no_qt = xyes ; then
+     { echo "$as_me:$LINENO: WARNING: Disabling compilation of djview.
 --------------------------------------------------------
 *** The GUI portion of this package will not be compiled.
 *** This is probably not what you want.  Chech the output
@@ -7353,11 +7370,15 @@ echo "$as_me: WARNING: Disabling compilation of djview.
 *** of configure for warning messages.  Read file INSTALL.
 *** Investigate options --with-qt and --enable-threads.
 --------------------------------------------------------" >&2;}
-   GUI_YES='#'
-   GUI_NO=''
-else
+     ac_enable_djview=no;
+  fi
+fi
+if test x$ac_enable_djview != xno ; then
    GUI_YES=''
    GUI_NO='#'
+else
+   GUI_YES='#'
+   GUI_NO=''
 fi
 
 # ----------------------------------------
@@ -7557,6 +7578,8 @@ ac_config_files="$ac_config_files Makefile"
 ac_config_files="$ac_config_files libdjvu/Makefile"
 
 ac_config_files="$ac_config_files tools/Makefile"
+
+ac_config_files="$ac_config_files xmltools/Makefile"
 
 ac_config_files="$ac_config_files gui/Makefile"
 
@@ -8030,6 +8053,7 @@ do
   "Makefile" ) CONFIG_FILES="$CONFIG_FILES Makefile" ;;
   "libdjvu/Makefile" ) CONFIG_FILES="$CONFIG_FILES libdjvu/Makefile" ;;
   "tools/Makefile" ) CONFIG_FILES="$CONFIG_FILES tools/Makefile" ;;
+  "xmltools/Makefile" ) CONFIG_FILES="$CONFIG_FILES xmltools/Makefile" ;;
   "gui/Makefile" ) CONFIG_FILES="$CONFIG_FILES gui/Makefile" ;;
   "gui/bin2cpp/Makefile" ) CONFIG_FILES="$CONFIG_FILES gui/bin2cpp/Makefile" ;;
   "gui/djview/Makefile" ) CONFIG_FILES="$CONFIG_FILES gui/djview/Makefile" ;;
@@ -8162,6 +8186,8 @@ s,@QT_CFLAGS@,$QT_CFLAGS,;t t
 s,@QT_LIBS@,$QT_LIBS,;t t
 s,@MOC@,$MOC,;t t
 s,@UIC@,$UIC,;t t
+s,@XML_YES@,$XML_YES,;t t
+s,@XML_NO@,$XML_NO,;t t
 s,@GUI_YES@,$GUI_YES,;t t
 s,@GUI_NO@,$GUI_NO,;t t
 s,@SHARED_YES@,$SHARED_YES,;t t
