@@ -102,8 +102,9 @@ rm -rf %{buildroot}
 #%lang(de) %{_mandir}/de*
 
 %changelog
-* Fri Apr  2 2004 Leon Bottou <leon@bottou.org>
+* Fri Apr  2 2004 Leon Bottou <leon@bottou.org> 3.5.13.0.3
 - Use DESTDIR instead of %makeinstall
+- make install-desktop-files.
 * Tue Nov 18 2003 Leon Bottou <leon@bottou.org> 3.5.13-0.1
 - new version
 * Wed Nov  5 2003 Leon Bottou <leon@bottou.org> 3.5.12-3
