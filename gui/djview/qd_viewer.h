@@ -103,6 +103,7 @@ private:
    QPopupMenu	* popup_menu;
    int		popup_menu_id;
    QWidget	* welcome;
+   QDialog      * about;
 
    class QDPrintDialog	* print_win;
 

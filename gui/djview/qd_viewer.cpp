@@ -58,6 +58,7 @@
 #include "qd_viewer_prefs.h"
 #include "djvu_base_res.h"
 #include "qd_print_dialog.h"
+#include "qd_about_dialog.h"
 #include "qd_doc_saver.h"
 #include "qd_page_saver.h"
 #include "qd_search_dialog.h"
@@ -295,7 +296,7 @@ QDViewer::QDViewer(int _in_netscape,
 		   const PluginData & _plugin_data,
 		   QWidget * parent, const char * name) :
       QDBase(parent, name), in_netscape(_in_netscape),
-      plugin_data(_plugin_data), welcome(0), page_port(0, 0), doc_port(0, 0)
+      plugin_data(_plugin_data), welcome(0), about(0), page_port(0, 0), doc_port(0, 0)
 #ifdef UNIX
       , rem_netscape(x11Display(), (u_long) winId())
 #endif
@@ -399,6 +400,7 @@ QDViewer::~QDViewer(void)
    qeApp->killWidget(popup_menu); popup_menu=0;
       // QDWelcome is also non-modal dialog, which is not destroyed automatically
    qeApp->killWidget(welcome); welcome=0;
+   qeApp->killWidget(about); about=0;
       // QDPrintDialog is created here as a non-modal dialog, and thus
       // it's not destroyed automatically.
    qeApp->killWidget(print_win); print_win=0;
@@ -1340,14 +1342,10 @@ QDViewer::slotHelp(void)
 void
 QDViewer::slotAbout(void)
 {
-   DEBUG_MSG("QDViewer::slotAbout(): showing 'About' page\n");
-   try
-   {
-      gotoStdPage("index.html");
-   } catch(const GException & exc)
-   {
-      showError(this, tr("DjVu Error"), exc);
-   }
+  if (! about)
+    about = new QDAboutDialog(this, "about", FALSE);
+  about->show();
+  about->raise();
 }
 
 void

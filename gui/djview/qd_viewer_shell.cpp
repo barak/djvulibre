@@ -53,6 +53,7 @@
 #include "throw_error.h"
 #include "DjVuDocument.h"
 #include "qd_wpaper.h"
+#include "qd_about_dialog.h"
 #include "version.h"
 #include "exc_msg.h"
 
@@ -203,48 +204,9 @@ QDViewerShell::createNewShell(const GURL & url) const
 void
 QDViewerShell::about(void)
 {
-   QeDialog * d=new QeDialog(this, "about", TRUE);
-   d->setCaption(tr("About DjView"));
-
-   QWidget * start=d->startWidget();
-   
-   QeLabel * label;
-   QVBoxLayout * vlay=new QVBoxLayout(start, 10, 10);
-
-   QFrame * frame=new QFrame(start);
-   frame->setFrameStyle(QFrame::Box | QFrame::Sunken);
-   vlay->addWidget(frame);
-   QVBoxLayout * frame_vlay=new QVBoxLayout(frame, 20, 10);
-
-   label=new QeLabel(tr("DjVu(tm) standalone viewer"), frame);
-   QFont font=label->font();
-   font.setBold(TRUE);
-   font.setPointSize(font.pointSize()+3);
-   label->setFont(font);
-   label->setAlignment(AlignCenter);
-   frame_vlay->addWidget(label);
-
-   QString ver=tr("Version DjVuLibre-")+DJVIEW_VERSION_STR;
-   label=new QeLabel(ver, frame);
-   label->setAlignment(AlignCenter);
-   frame_vlay->addWidget(label);
-
-   frame_vlay->activate();
-
-   QHBoxLayout * hlay=new QHBoxLayout(10);
-   vlay->addLayout(hlay);
-   hlay->addStretch(1);
-   QePushButton * butt=new QePushButton(tr("&Close"), start);
-   butt->setDefault(TRUE);
-   hlay->addWidget(butt);
-   hlay->addStretch(1);
-   
-   vlay->activate();
-
-   connect(butt, SIGNAL(clicked(void)), d, SLOT(accept(void)));
-
-   d->exec();
-   delete d;
+  QDAboutDialog *d = new QDAboutDialog(this, "about", TRUE);
+  d->exec();
+  delete d;
 }
 
 void

@@ -272,6 +272,12 @@ qd_mime_dialog_moc.o : qd_mime_dialog_moc.cpp
 	${CXX} ${CXXFLAGS} -c qd_mime_dialog_moc.cpp
 qd_mime_dialog_moc.cpp : ${srcdir}/qd_mime_dialog.h
 	${MOC} ${srcdir}/qd_mime_dialog.h -o qd_mime_dialog_moc.cpp
+qd_about_dialog.o : ${srcdir}/qd_about_dialog.cpp
+	${CXX} ${CXXFLAGS} -c ${srcdir}/qd_about_dialog.cpp
+qd_about_dialog_moc.o : qd_about_dialog_moc.cpp
+	${CXX} ${CXXFLAGS} -c qd_about_dialog_moc.cpp
+qd_about_dialog_moc.cpp : ${srcdir}/qd_about_dialog.h
+	${MOC} ${srcdir}/qd_about_dialog.h -o qd_about_dialog_moc.cpp
 main.o : ${srcdir}/main.cpp
 	${CXX} ${CXXFLAGS} -c ${srcdir}/main.cpp
 ppm_djvu_logo.o : ppm_djvu_logo.cpp
@@ -472,6 +478,8 @@ OBJS = \
  djvu_viewer_moc.o \
  qd_mime_dialog.o \
  qd_mime_dialog_moc.o \
+ qd_about_dialog.o \
+ qd_about_dialog_moc.o \
  main.o \
  ppm_djvu_logo.o \
  ppm_vzoom_in.o \

@@ -134,3 +134,4 @@ QDMimeDialog::QDMimeDialog(QWidget * parent, const char * name, bool modal)
    connect(yes_butt, SIGNAL(clicked(void)), this, SLOT(accept(void)));
    connect(no_butt, SIGNAL(clicked(void)), this, SLOT(reject(void)));
 }
+

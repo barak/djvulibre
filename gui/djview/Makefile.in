@@ -149,6 +149,7 @@ CPP_SOURCES = \
  ${srcdir}/qd_viewer_menu.cpp \
  ${srcdir}/djvu_viewer.cpp \
  ${srcdir}/qd_mime_dialog.cpp \
+ ${srcdir}/qd_about_dialog.cpp \
  ${srcdir}/main.cpp
 
 # Makefile.add contains
