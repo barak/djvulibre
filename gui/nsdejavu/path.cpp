@@ -322,11 +322,9 @@ get_viewer_path(strpool *pool)
   const char *dir;
   const char *test;
   /* Environment variable NPX_DJVIEW overrides everything */
-#ifndef NO_DEBUG
   if ((env = getenv("NPX_DJVIEW")))
     if (is_executable(env))
       return env;
-#endif
   /* Try relative to plugin path */
   if ((env = (const char*)GetPluginPath())) {
     const char *envs = follow_symlinks(pool, env);
