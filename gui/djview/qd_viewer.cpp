@@ -1178,27 +1178,52 @@ QDViewer::getURL(const GUTF8String &url_in, const GUTF8String &target)
    }
    
    GURL url;
-
-      // See if it starts with '#'
+   
+   // See if it starts with '#'
    if (url_in[0]=='#')
-   {
-      try
-      {
-	 const char *str=url_in;
-	 GUTF8String url_str=++str;
-	 if (url_str.is_int()) url=djvu_doc->page_to_url(url_str.toInt()-1);
-	 else url=djvu_doc->id_to_url(url_str);
-      } catch(const GException & exc)
-      {
-	 showError(this, exc);
-      }
-   } else
-   {
-     GURL base = dimg->get_djvu_file()->get_url().base();
-     base.clear_all_arguments();
-     url=GURL::UTF8(url_in,base);
-   }
-
+     {
+       try
+         {
+           char base = 0;
+           const char *s = (const char*)url_in + 1;
+           int doc_page = djvu_doc->url_to_page(dimg->get_djvu_file()->get_url());
+           int doc_pages = djvu_doc->get_pages_num();
+           const char *q = s;
+           if (*q == '+' || *q == '-')
+             base = *q++;
+           GUTF8String str = q;
+           if (str.is_int())
+             {
+               int n = str.toInt();
+               if (base=='+')
+                 doc_page = doc_page + n;
+               else if (base=='-')
+                 doc_page = doc_page - n;
+               else
+                 doc_page = n - 1;
+               if (doc_page >= doc_pages)
+                 doc_page = doc_pages - 1;
+               if (doc_page < 0)
+                 doc_page = 0;
+               url=djvu_doc->page_to_url(doc_page);
+             }
+           else
+             {
+               url=djvu_doc->id_to_url(s);
+             }
+         } 
+       catch(const GException & exc)
+         {
+           showError(this, exc);
+         }
+     } 
+   else
+     {
+       GURL base = dimg->get_djvu_file()->get_url().base();
+       base.clear_all_arguments();
+       url=GURL::UTF8(url_in,base);
+     }
+   
    if (!url.is_empty())
    {
       if ( !target.length() || (target=="_self") )
