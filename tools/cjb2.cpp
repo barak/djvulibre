@@ -78,9 +78,10 @@
     Options are:
     \begin{description}
     \item[-dpi xxx]     Specify image resolution (default 300).
-    \item[-clean]       Clean small flyspecs (lossy).
-    \item[-lossy]       Lossy compression (implies -clean as well)
-    \item[-losslevel n] Set loss level (implies -lossy, default 100)
+    \item[-lossless]    Lossless compresion (same as -losslevel 0, default).
+    \item[-clean]       Quasi-lossless compresion (same as -losslevel 1).
+    \item[-lossy]       Lossy compression (same as -losslevel 100).
+    \item[-losslevel n] Set loss level (0 to 200)
     \item[-verbose]     Displays additional messages.
     \end{description}
     Encoding is lossless unless one or several lossy options are selected.
@@ -688,11 +689,9 @@ CCImage::get_jb2image() const
 // --------------------------------------------------
 
 struct cjb2opts {
-  int dpi;
-  int forcedpi;
-  int losslevel;
-  bool lossy;
-  bool clean; 
+  int  dpi;
+  int  forcedpi;
+  int  losslevel;
   bool verbose;
 };
 
@@ -797,6 +796,11 @@ read_tiff(CCImage &rimg, ByteStream *bs, cjb2opts &opts)
           if (! mask) 
             {
               b = scanline[off++];
+              while (b==c && x+8<(int)w )
+                {
+                  x = x + 8;  // speedup
+                  b = scanline[off++];
+                }
               mask = 0x80;
             }
           if ( (b ^ c) & mask ) 
@@ -845,7 +849,7 @@ cjb2(const GURL &urlin, const GURL &urlout, cjb2opts &opts)
   if (opts.verbose)
     DjVuFormatErrorUTF8( "%s\t%d", ERR_MSG("cjb2.ccs_before"), 
                          rimg.ccs.size());
-  if (opts.clean) 
+  if (opts.losslevel > 0) 
     rimg.erase_tiny_ccs();       // clean
   rimg.merge_and_split_ccs();    // reorganize weird ccs
   rimg.sort_in_reading_order();  // sort cc descriptors
@@ -857,7 +861,7 @@ cjb2(const GURL &urlin, const GURL &urlout, cjb2opts &opts)
   GP<JB2Image> jimg = rimg.get_jb2image();          // get ``raw'' jb2image
   rimg.runs.empty();                                // save memory
   rimg.ccs.empty();                                 // save memory
-  if (opts.lossy && opts.losslevel>0)
+  if (opts.losslevel>1)
     tune_jb2image_lossy(jimg, opts.dpi, opts.losslevel);
   else
     tune_jb2image_lossless(jimg);
@@ -942,9 +946,7 @@ main(int argc, const char **argv)
       // Defaults
       opts.forcedpi = 0;
       opts.dpi = 300;
-      opts.losslevel = 100;
-      opts.lossy = false;
-      opts.clean = false;
+      opts.losslevel = 0;
       opts.verbose = false;
       // Parse options
       for (int i=1; i<argc; i++)
@@ -957,23 +959,19 @@ main(int argc, const char **argv)
               if (*end || opts.dpi<25 || opts.dpi>1200)
                 usage();
             }
-          else if (arg == "-clean")
-            opts.clean = true;
-          else if (arg == "-lossy")
-            opts.clean = opts.lossy = true;
           else if (arg == "-losslevel")
             {
               char *end;
-              opts.clean = opts.lossy = true;
               opts.losslevel = strtol(dargv[++i], &end, 10);
               if (*end || opts.losslevel<0 || opts.losslevel>200)
                 usage();
             }
-          else if (arg == "-loose")
-            {
-              DjVuPrintErrorUTF8("cjb2: option -loose is deprecated. use -lossy.");
-              opts.losslevel = 100;
-            }
+          else if (arg == "-lossless")
+            opts.losslevel = 0;
+          else if (arg == "-lossy")
+            opts.losslevel = 100;
+          else if (arg == "-clean") // almost deprecated
+            opts.losslevel = 1;
           else if (arg == "-verbose" || arg == "-v")
             opts.verbose = true;
           else if (arg[0] == '-' && arg[1])

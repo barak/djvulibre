@@ -38,11 +38,12 @@ file containing a single document image.
 This program produces a DjVuBitonal file named
 .IR outputdjvufile .
 
-The default compression process is lossless: decoding the DjVuBitonal file at
-full resolution will produce an image exactly identical to the input file.
-Lossy compression is enabled by selecting option
-.BR -lossy ,
+The default compression process is lossless: 
+decoding the DjVuBitonal file at full resolution will 
+produce an image exactly identical to the input file.
+Lossy compression is enabled by options
 .BR -losslevel ,
+.BR -lossy ,
 or
 .BR -clean .
 
@@ -59,31 +60,37 @@ The default resolution for
 .SM PBM
 files is 300 dpi.
 .TP
+.B "-lossless"
+Ensure that the encoded image is pixel-per-pixel equal
+to the initial image. 
+This option is is equivalent to 
+.BR "-losslevel 0" 
+and is the default.
+.TP
 .B "-clean"
-Remove flyspecks from the input image. 
+Only remove flyspecks from the input image. 
 This option enables a heuristic algorithm that removes very small marks.  
 Such marks are often causes by noise and dust during the scanning process.
 The threshold mark size is chosen according to the resolution
 specified with option 
-.BR -dpi .
+This option is is equivalent to 
+.BR "-losslevel 1" .
 .TP
 .B "-lossy"
 Substitute patterns with small variations.
-This option enables a heuristic algorithm that encodes certain characters
-by simply replicating the shape of a previously encoded character.
-This option automatically selects option
-.BR --clean .
+In addition to the flyspec removal heuristic, this option 
+enables an algorithm that encodes certain characters
+by simply replicating the shape of a previously encoded character
+with a similar shape.
+This option is is equivalent to 
+.BR "-losslevel 100" .
 .TP
 .BI "-losslevel " "x"
 Specify the aggressivity of the lossy compression.
 Its argument ranges from 0 to 200. 
 Higher values generate smaller files 
 with more potential distorsions.
-The default value is 100.
-This option automatically selects options
-.BR --lossy
-and
-.BR --clean.
+Value zero corresponds to lossless encoding.
 .TP
 .B "-verbose"
 Display informational messages while running.
@@ -98,7 +105,9 @@ This also means that the lossy encoding performance
 can change from version to version.
 When lossy compression yields inadequate results,
 simply revert to only using option
-.BR -clean .
+.BR -clean 
+or change the parameter of option
+.BR -losslevel .
 .PP
 Two features are still missing:
 .IP "*" 3
@@ -116,8 +125,6 @@ The pattern matching algorithm for lossy compression
 was contributed by Ilya Mezhirov <ilya@mezhirov.mccme.ru>.
 TIFF input routines are inspired by the ones contributed by 
 R. Keith Dennis <dennis@rkd.math.cornell.edu> and Paul Young.
-The new routines directly access the TIFF RLE data instead
-of going through bitmaps.
 
 .SH SEE ALSO
 .BR djvu (1),
