@@ -1,0 +1,54 @@
+.\" Copyright (c) 2002 Bill C. Riemers
+.\"
+.\" This is free documentation; you can redistribute it and/or
+.\" modify it under the terms of the GNU General Public License as
+.\" published by the Free Software Foundation; either version 2 of
+.\" the License, or (at your option) any later version.
+.\"
+.\" The GNU General Public License's references to "object code"
+.\" and "executables" are to be interpreted as the output of any
+.\" document formatting or typesetting system, including
+.\" intermediate and printed output.
+.\"
+.\" This manual is distributed in the hope that it will be useful,
+.\" but WITHOUT ANY WARRANTY; without even the implied warranty of
+.\" MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+.\" GNU General Public License for more details.
+.\"
+.\" You should have received a copy of the GNU General Public
+.\" License along with this manual. Otherwise check the web site
+.\" of the Free Software Foundation at http://www.fsf.org.
+.TH XML2UTF16 1 "11/15/2002" "DjVuLibre-3.5" "DjVuLibre-3.5"
+.de SS
+.SH \\0\\0\\0\\$*
+..
+.SH NAME
+xml2utf16 \- Converts a Extensible Markup Language (XML) document to UTF16 character encoding.
+
+.SH SYNOPSIS
+.BI "xml2utf16 " "inputxmlfile" " " "outputxmlfile" " "
+
+.SH DESCRIPTION
+Program 
+.B xml2utf16
+converts an Extensible Markup Language (XML) file to 
+.SM UTF16 
+character encoding.
+
+.SH REMARKS
+This conversion is needed to display 
+.SM XML 
+files in old versions of Windows Notepad and many other Windows programs.
+
+.SH CREDITS
+This program was written by Bill C. Riemers <docbill@sourceforge.net>.
+
+.SH SEE ALSO
+.BR djvutoxml (1),
+.BR djvuxmlparser (1),
+.BR djvuxml-s (3),
+.BR xml2native (1),
+.BR xml2utf8 (1),
+and
+.BR utf8 (3).
+

@@ -1,0 +1,147 @@
+.\" Copyright (c) 2002 Bill C. Riemers
+.\"
+.\" This is free documentation; you can redistribute it and/or
+.\" modify it under the terms of the GNU General Public License as
+.\" published by the Free Software Foundation; either version 2 of
+.\" the License, or (at your option) any later version.
+.\"
+.\" The GNU General Public License's references to "object code"
+.\" and "executables" are to be interpreted as the output of any
+.\" document formatting or typesetting system, including
+.\" intermediate and printed output.
+.\"
+.\" This manual is distributed in the hope that it will be useful,
+.\" but WITHOUT ANY WARRANTY; without even the implied warranty of
+.\" MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+.\" GNU General Public License for more details.
+.\"
+.\" You should have received a copy of the GNU General Public
+.\" License along with this manual. Otherwise check the web site
+.\" of the Free Software Foundation at http://www.fsf.org.
+.TH DJVUXML-S 3 "11/15/2002" "DjVuLibre-3.5" "DjVuLibre-3.5"
+.de SS
+.SH \\0\\0\\0\\$*
+..
+.SH NAME
+DjVuXML-s \- The Document Type Definition (DTD) use by DjVu Extensible Markup Language (XML) tools.
+
+.SH DESCRIPTION
+The document type definition 
+.SM (DTD) 
+.I DjVuXML-s.dtd
+defines the input and output of DjVu Extensible Markup (XML) tools to describe all the metadata associated with a DjVu document.  The DjVuXML-s 
+.SM DTD 
+is a simplification of the 
+.SM HTML DTD: 
+
+http://www.w3c.org/TR/1998/REC-html40-19980424/sgml/dtd.html
+ 
+with a few new attributes added specific to DjVu.  Each of the specified pages of a DjVu document are represented as 
+.I OBJECT 
+elements within the 
+.I BODY 
+element of the 
+.SM XML
+file. Each 
+.I OBJECT
+element may contain multiple 
+.I PARAM 
+elements to specify attributes like page name (PAGE), resolution (DPI), and
+gamma factor (GAMMA).  Each 
+.I OBJECT
+element may also contain one
+.I HIDDENTTEXT
+element to specify the hidden text (usually generated with an OCR engine) within the DjVu page.  In addition each 
+.I OBJECT
+element may reference a single area 
+.I MAP
+element which contains multiple
+.I AREA
+elements to represent all the hyperlink and highlight areas within the DjVu document.
+
+.SH PARAM Elements
+Legal 
+.I PARAM 
+elements of a DjVu 
+.I OBJECT 
+include but are not limited to
+.I PAGE
+for specifying the page-name,
+.I GAMMA
+for specifying the gamma correction factor (normally 2.2), and
+.I DPI
+for specifying the page resolution.
+
+.SH HIDDENTEXT Elements
+The 
+.I HIDDENTEXT
+elements consists of nested elements of 
+.I PAGECOLUMNS,
+.I REGION,
+.I PARAGRAPH,
+.I LINE,
+and
+.I WORD.
+The most deeply nested element specified, should specify the bounding coordinates of the element in top-down orientation.  The body of the most deeply nested elelement should contain the text.  Most DjVu documents use either 
+.I LINE 
+or 
+.I WORD 
+as the lowest level element, but any element is legal as the lowest level element.  A white space is always added between 
+.I
+WORD
+elements and a line feed is always added between
+.I
+LINE
+elements.  Since languages such as Japanese do not use spaces between words, it is quite common for Asian OCR engines to use
+.I
+WORD
+as characters instead.
+
+.SH MAP Elements
+The body of the 
+.I MAP
+elements consist of 
+.I AREA
+elements.  In addition to the attributes listed in
+
+http://www.w3.org/TR/1998/REC-html40-19980424/struct/objects.html#edef-AREA ,
+
+the attributes
+.I bordertype,
+.I bordercolor,
+.I border,
+and 
+.I highlight
+have been added to specify border type, border color, border width, and highlight colors respectively.  Legal values for each of these attributes are listed in the 
+.I DjVuXML-s
+.SM DTD.
+In addition, the shape
+.I oval
+has been added to the legal list of shapes.  An oval uses a rectangular bounding box.
+
+.SH REMARKS
+Used by
+.BR djvuxmlparser (1)
+and
+.BR djvutoxml (1).
+Perhaps it would have been better to use CC2 style sheets with standard HTML elements instead of defining the 
+.I HIDDENTEXT 
+element.
+
+.SH CREDITS
+This 
+.SM DTD 
+was written by Bill C. Riemers <docbill@sourceforge.net> and Fred Crary.
+
+.SH SEE ALSO
+.BR djvu (1),
+.BR djvuxmlparser (1),
+.BR djvused (1),
+.BR djvutoxml (1),
+.BR djvutxt (1),
+.BR xml2native (1),
+.BR xml2utf8 (1),
+.BR xml2utf16 (1),
+and
+.BR utf8 (3).
+

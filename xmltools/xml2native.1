@@ -1,0 +1,58 @@
+.\" Copyright (c) 2002 Bill C. Riemers
+.\"
+.\" This is free documentation; you can redistribute it and/or
+.\" modify it under the terms of the GNU General Public License as
+.\" published by the Free Software Foundation; either version 2 of
+.\" the License, or (at your option) any later version.
+.\"
+.\" The GNU General Public License's references to "object code"
+.\" and "executables" are to be interpreted as the output of any
+.\" document formatting or typesetting system, including
+.\" intermediate and printed output.
+.\"
+.\" This manual is distributed in the hope that it will be useful,
+.\" but WITHOUT ANY WARRANTY; without even the implied warranty of
+.\" MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+.\" GNU General Public License for more details.
+.\"
+.\" You should have received a copy of the GNU General Public
+.\" License along with this manual. Otherwise check the web site
+.\" of the Free Software Foundation at http://www.fsf.org.
+.TH XML2NATIVE 1 "11/15/2002" "DjVuLibre-3.5" "DjVuLibre-3.5"
+.de SS
+.SH \\0\\0\\0\\$*
+..
+.SH NAME
+xml2native \- Converts a Extensible Markup Language (XML) document to the current locale Multi Byte Encoding.
+
+.SH SYNOPSIS
+.BI "xml2native " "inputxmlfile" " " "outputxmlfile" " "
+
+.SH DESCRIPTION
+Program 
+.B xml2native
+converts an Extensible Markup Language (XML) file to the current locale Multi Byte Encoding.  This is usefull if your operating system can not display 
+.SM UTF8
+encoded pages.
+.SM XML
+parsing routines.
+
+.SH REMARKS
+Since the locale name is not easily mapped into the character set name, the resultant 
+.SM XML
+file is nolonger legally encoded for use with a compliant 
+.SM XML
+parser.
+
+.SH CREDITS
+This program was written by Bill C. Riemers <docbill@sourceforge.net>.
+
+.SH SEE ALSO
+.BR djvutoxml (1),
+.BR djvuxmlparser (1),
+.BR djvuxml-s (3),
+.BR xml2utf8 (1),
+.BR xml2utf16 (1),
+and
+.BR utf8 (3).
+

@@ -1,0 +1,82 @@
+.\" Copyright (c) 2002 Bill C. Riemers
+.\"
+.\" This is free documentation; you can redistribute it and/or
+.\" modify it under the terms of the GNU General Public License as
+.\" published by the Free Software Foundation; either version 2 of
+.\" the License, or (at your option) any later version.
+.\"
+.\" The GNU General Public License's references to "object code"
+.\" and "executables" are to be interpreted as the output of any
+.\" document formatting or typesetting system, including
+.\" intermediate and printed output.
+.\"
+.\" This manual is distributed in the hope that it will be useful,
+.\" but WITHOUT ANY WARRANTY; without even the implied warranty of
+.\" MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+.\" GNU General Public License for more details.
+.\"
+.\" You should have received a copy of the GNU General Public
+.\" License along with this manual. Otherwise check the web site
+.\" of the Free Software Foundation at http://www.fsf.org.
+.TH DJVUPARSEXML 1 "11/15/2002" "DjVuLibre-3.5" "DjVuLibre-3.5"
+.de SS
+.SH \\0\\0\\0\\$*
+..
+.SH NAME
+djvuxmlparser \- Parses an Extensible Markup Language (XML) file using the DjVuXML-s.dtd and modifies the metadata of the referenced DjVu files.
+
+.SH SYNOPSIS
+.BI "djvuxmlparser [" inputxmlfile "]"
+
+.SH DESCRIPTION
+Program 
+.B djvuxmlparser
+parses an Extensible Markup Language (XML) file using the 
+.I DjVuXML-s.dtd
+and modifies the metadata of the DjVu files reference by the 
+.I OBJECT 
+elements.
+
+DjVuLibre contains a non-compliant XML parser, designed to read in an XML file specified by the DjVuXML-s.dtd.  This file should contain within the 
+.I BODY
+element a series of 
+.I OBJECT
+elements representing pages of DjVu files.  Each 
+.I OBJECT 
+element may contain a
+.I HIDDENTEXT
+element.  If a
+.I HIDDENTEXT 
+element exists, the contents will be used to replace the existing HIDDENTEXT for the specified DjVu page.  Each 
+.I OBJECT
+may also reference a 
+.I MAP
+element.  If such a
+.I MAP
+element exists, the contents will be used to replace the existing
+hyperlinks and highlight areas.
+
+The precise format of the XML output is defined in the pubtext/DjVuXML-s.dtd file.  See 
+.I djvuxml-s (3)
+for more details.
+
+.SH REMARKS
+Use with 
+.BR djvutoxml (1)
+to modify the contents of a DjVu file.
+
+.SH CREDITS
+This program was written by Bill C. Riemers <docbill@sourceforge.net>.
+
+.SH SEE ALSO
+.BR djvu (1),
+.BR djvutoxml (1),
+.BR djvused (1),
+.BR djvutxt (1),
+.BR djvuxml-s (3),
+.BR xml2native (1),
+.BR xml2utf8 (1),
+.BR xml2utf16 (1),
+and
+.BR utf8 (3).
+
