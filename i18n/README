@@ -1,10 +1,25 @@
-These subdirectories install additional files for localized versions of djvulibre.  
-These additional files are mostly documentation and man pages. 
-The message files are located in djvu/share/osi and gui/djview/i18n.
+These subdirectories install additional files for localized versions 
+of djvulibre.  More localization files can be found in djvu/share/osi 
+and gui/djview/i18n. Eventually we will move them here.
 
 More information can be found in the Makefiles.
-These Makefiles are not called by the main Makefile.
-You must call them by hand at install time:
-    make -C i18n/XXX install
+
+Currently these Makefiles are not called by the main Makefile.  
+The rpm spec file calls them explicitely at install time.
+Eventually this will become part of the main Makefile.
 
 
+CREDITS:
+
+Library messages were translated by Lizardtech
+and released as part of the DjVu Reference library.
+(the messages in the funny xml files).
+
+French translations (gui):
+	Leon Bottou <leonb@users.sourceforge.net>
+
+Japanese translations (gui, man pages):
+	Nobchika Morimoto <morimoto@celartem.com>
+
+German translations ():
+	[Your name here!]
