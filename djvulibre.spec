@@ -1,4 +1,4 @@
-%define release 0.4
+%define release 1
 %define version 3.5.13
 %define prefix %{?_prefix:%{_prefix}}%{!?_prefix:/usr}
 %define mandir %{?_mandir:%{_mandir}}%{!?_mandir:%{prefix}/man}
@@ -106,6 +106,8 @@ rm -rf %{buildroot}
 %lang(de) %{_mandir}/de*
 
 %changelog
+* Fri Apr  9 2004 Leon Bottou <leon@bottou.org> 3.5.13-1
+- release
 * Thu Apr  8 2004 Leon Bottou <leon@bottou.org> 3.5.13.0.4
 - Runtime generation of file list.
 * Fri Apr  2 2004 Leon Bottou <leon@bottou.org> 3.5.13.0.3
