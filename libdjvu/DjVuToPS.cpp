@@ -816,7 +816,6 @@ DjVuToPS::print_fg_2layer(ByteStream &str, const GP<DjVuImage> &dimg,
   int currenty=0;
   GP<DjVuPalette> pal = dimg->get_fgbc();
   GP<JB2Image> jb2 = dimg->get_fgjb();
-  if (! pal) return;
   if (! jb2) return;
   int num_blits = jb2->get_blit_count();
   int current_blit;
