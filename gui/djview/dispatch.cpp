@@ -38,7 +38,7 @@
 #ifdef HAVE_CONFIG_H
 #include "config.h"
 #endif
-#ifdef DJVU_VIEWER
+#ifndef REPARENT
 #define REPARENT 1
 #endif
 

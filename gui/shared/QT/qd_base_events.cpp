@@ -704,15 +704,6 @@ QDBase::eventFilter(QObject *obj, QEvent *e)
 	    {
 	       DEBUG_MSGN("Event_Enter\n");
 	       if (needToShowToolBar()) showToolBar();
-	       // 1 ) changing focus following mouse position doesn't make
-	       //     sense for editor/shop besides
-	       // 2 ) an infinit recursion may occur due to the fact that
-	       //     we call setFocus to switch active window in "windows"
-	       //     menu (for editor/shop only, see function
-	       //     slotWindowsMenuActivated in qd_editor_shell.cpp)
-#ifdef DJVU_VIEWER
-	       pane->setFocus();
-#endif
 	       return TRUE;
 	    }
 	    case Event_Resize:

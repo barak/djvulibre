@@ -490,6 +490,24 @@ QDViewer::eventFilter(QObject *obj, QEvent *e)
    {
       switch(e->type())
       {
+         case Event_Enter:
+         {
+           if (in_netscape)
+             {
+               DEBUG_MSG("QDViewer::eventFilter(): Got Event_Enter\n");
+               pane->setFocus();
+               // Reparenting prevent the window manager to send proper focus events.
+               Window w;
+               XEvent focusevent;
+               focusevent.type = FocusIn;
+               focusevent.xfocus.window = w  = topLevelWidget()->winId();
+               focusevent.xfocus.mode = NotifyNormal;
+               focusevent.xfocus.detail = NotifyInferior;
+               XSendEvent(x11Display(), w, False, NoEventMask, &focusevent);
+             }
+           return FALSE;
+         }
+
 	 case Event_MouseButtonPress:
 	 {
 	    DEBUG_MSG("QDViewer::eventFilter(): Got Event_MousePress\n");
