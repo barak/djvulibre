@@ -1,6 +1,5 @@
 %define release 1
-%define version 1.0
-%define gsversion 7.07
+%define version 7.07
 %define prefix %{?_prefix:%{_prefix}}%{!?_prefix:/usr}
 %define mandir %{?_mandir:%{_mandir}}%{!?_mandir:%{prefix}/man}
 
@@ -14,7 +13,7 @@ Group: Applications/Publishing
 BuildRoot: %{_tmppath}/%{name}-root
 URL: http://djvu.sourceforge.net
 
-Source0: ghostscript-%{gsversion}.tar.bz2
+Source0: ghostscript-%{version}.tar.bz2
 Source1: ghostscript-fonts-std-8.11.tar.gz
 Source2: gsdjvu-1.0.tar.gz
 Source3: jpegsrc.v6b.tar.gz
@@ -28,12 +27,12 @@ djvu output device. This package provides such
 a ghostscript interpreter.
 
 %prep
-%setup -n ghostscript-%{gsversion}
-%setup -n ghostscript-%{gsversion} -T -D -a 1
-%setup -n ghostscript-%{gsversion} -T -D -a 2
-%setup -n ghostscript-%{gsversion} -T -D -a 3
-%setup -n ghostscript-%{gsversion} -T -D -a 4
-%setup -n ghostscript-%{gsversion} -T -D -a 5
+%setup -n ghostscript-%{version}
+%setup -n ghostscript-%{version} -T -D -a 1
+%setup -n ghostscript-%{version} -T -D -a 2
+%setup -n ghostscript-%{version} -T -D -a 3
+%setup -n ghostscript-%{version} -T -D -a 4
+%setup -n ghostscript-%{version} -T -D -a 5
 
 %build
 gsdjvu-1.0/gsdjvu_configure.sh
@@ -48,7 +47,7 @@ rm -rf %{buildroot}
 
 %files
 %defattr(-, root, root)
-%doc README
+%doc gsdjvu-1.0/README
 %{_bindir}/*
 %{_libdir}/*
 
