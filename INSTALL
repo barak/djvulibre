@@ -273,6 +273,14 @@ Works nicely.
 Install the plugin for mozilla and it will work for galeon.
 
 
+
+3.6- OPERA-6
+------------
+
+You must install openmotif to have plugin support in Opera.
+The DjVu plugin then works okay.  
+
+
 
 
 
