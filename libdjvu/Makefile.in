@@ -92,12 +92,10 @@ ${LIBDJVU_A} : ${OBJS}
 
 install-data: FORCE
 	${INSTALL} -d ${datadir}/djvu
-	cd ${top_srcdir}/share && \
-	  for n in `find djvu -type d -print` ; do \
-	    ${INSTALL} -d ${datadir}/$$n || exit ; done
-	cd ${top_srcdir}/share && \
-	  for n in `find djvu -type f -print` ; do \
-	    ${INSTALL} -m 0644 $$n ${datadir}/`dirname $$n` || exit ; done
+	for n in `cd ${top_srcdir}/share && find djvu -name '*.xml' -print` ; do \
+	  src="${top_srcdir}/share/$$n" ; dir="`dirname ${datadir}/$$n`" ;\
+	  test -d $$dir || ${INSTALL} -d $$dir ; \
+	  ${INSTALL} -m 0644 $$src $$dir || exit ; done
 
 install-lib: ${LIBDJVU_SO} FORCE
 	${INSTALL} -d ${libdir}

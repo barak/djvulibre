@@ -18,12 +18,17 @@ AC_CANONICAL_HOST
 
 # Does make set variable $(MAKE)
 AC_PROG_MAKE_SET
-AC_PROG_INSTALL
+
+# Programs
 AC_PROG_RANLIB
 AC_PROG_LN_S
 AC_PATH_PROG(RM, rm)
 AC_PATH_PROG(AR, ar)
 AC_PATH_PROG(TOUCH, touch)
+
+# Prefer the shell script
+INSTALL='${top_srcdir}/config/install-sh -c' 
+AC_SUBST(INSTALL)
 
 # Compilers
 AC_PROG_CC
