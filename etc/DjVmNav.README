@@ -1,0 +1,18 @@
+The files DjVmNav* have been contributed by Lizardtech 
+to document their bookmark format.
+Bookmarks go into a NAVM chunk located 
+after the DIRM chunk.
+
+Note that DjVmNav.cpp cannot encode bookmarks with more
+than 256 entries under a specific level.
+I have been told that this has been fixed in a
+compatible way, but I do not know how.
+
+I think the high byte of a 16 bits count
+is written where was the third byte of the length of
+the string describing the bookmark. 
+Who needs a description that is more than 64K long....
+
+- Leon Bottou
+  2003-2004
+
