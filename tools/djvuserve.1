@@ -75,7 +75,7 @@ as an indirect multi-page DjVu document
 using the following 
 .SM URL.
 .IP "" 3
-.IB http "" ://server /cgi\(enbin/djvuserve/ dir/doc.djvu /index
+.IB http "" ://server /cgi\(enbin/djvuserve/ dir/doc.djvu
 .PP
 Serving indirect multi-page DjVu documents provides
 for efficiently browsing large document without
@@ -83,36 +83,6 @@ transferring unnecessary pages over the network.
 See 
 .BR djvu(1)
 for more information.
-
-.SH ACCESSING THE COMPONENT FILES
-
-The name
-.B index
-in the above 
-.SM URL
-is simply a conventional name that causes 
-.B djvuserve
-to generate the index of an indirect multi-page document.
-In fact, all the component files of a bundled multi-page DjVu 
-document can be accessed using extended 
-.SM URL.
-Suppose that the component file representing page 1
-is named
-.BR p0001.djvu .
-The following 
-.SM URL
-provides a direct access to this page:
-.IP "" 3
-.IB http "" ://server /cgi\(enbin/djvuserve/ dir/doc.djvu /p0001.djvu
-.PP
-It is preferred however to access individual pages using the 
-.B CGI
-style arguments described in 
-.BR nsdejavu (1),
-as in the following 
-.SM URL.
-.IP "" 3
-.IB http "" ://server /cgi\(enbin/djvuserve/ dir/doc.djvu /index?djvuopts&page=12
 
 .SH USING DJVUSERVE AS A HANDLER
 
@@ -134,22 +104,55 @@ Apache then executes program
 for serving all DjVu files. 
 Providing the 
 .SM URL
-of DjVu file serves this DjVu file as usual.
-Adding 
-.B /index
-to the 
-.SM URL
-of a bundled multi-page DjVu document
-will serve it as an indirect DjVu document,
-as in the following 
-.SM URL.
-.IP "" 3
-.IB http "" ://server/dir/doc.djvu /index
-.PP
+of DjVu file serves this DjVu file as usual,
+except that bundled multipage documents are converted
+to indirect documents on the fly.
 This convenience comes at the expense
 of the computational cost of executing
 .B djvuserve
 whenever a DjVu file is requested.
+
+.SH TECHNICAL DETAILS
+
+Program
+.B djvuserve
+provides a mean to directly access any component
+of a bundled multi-page DjVu document can be accessed using an extended 
+.SM URL.
+Suppose that the component file representing page 1
+is named
+.BR p0001.djvu .
+The following 
+.SM URL
+provides a direct access to this page:
+.IP "" 3
+.IB http "" ://server /cgi\(enbin/djvuserve/ dir/doc.djvu /p0001.djvu
+.PP
+It is preferred however to access individual pages using the 
+.B CGI
+style arguments described in 
+.BR nsdejavu (1),
+as in the following 
+.SM URL.
+.IP "" 3
+.IB http "" ://server /cgi\(enbin/djvuserve/ dir/doc.djvu ?djvuopts&page=12
+.PP
+The special component file name
+.B index
+is recognized as a request for the index of the corresponding
+indirect multi-page document.  In fact, when you access a bundled
+document using 
+.BR djvuserve ,
+the browser gets redirected to the following 
+.SM URL:
+.IP "" 3
+.IB http "" ://server /cgi\(enbin/djvuserve/ dir/doc.djvu /index
+.PP
+and then behaves as if the bundled file was a directory containing 
+the various component files of an equivalent indirect document.
+You can directly use the above 
+.SM URL
+and save a round trip with the web server.
 
 .SH CREDITS
 This program was written by Leon Bottou <leonb@users.sourceforge.com>.
