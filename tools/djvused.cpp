@@ -342,6 +342,10 @@ get_data_from_file(const char *cmd, ParsingByteStream &pbs, ByteStream &out)
 void
 print_c_string(const char *data, int length, ByteStream &out, 
 	       bool rawstrings=false)
+  // Option rawstrings is necessary because the libdjvu annotation 
+  // parser does not recognize c string escapes in strings (other than \"). 
+  // Djvused now translates them into raw data before writing annotation chunk,
+  // and performs the reverse translation when extracting annotation chunks.
 {
   out.write("\"",1);
   while (*data && length>0) 
