@@ -141,6 +141,9 @@ are shown in the below:
 center,box;
 lfI l
 lfB l
+lfB l
+lfB l
+lfB l
 .
 number	Magnification factor in range 10% to 999%.
 one2one	Select the "one-to-one" mode.
@@ -160,6 +163,9 @@ are shown in the below:
 .br
 .TS
 center,box;
+lfB l
+lfB l
+lfB l
 lfB l
 .
 color	Display the color image.
