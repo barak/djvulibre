@@ -73,20 +73,22 @@
 #include <ctype.h>
 #include <string.h>
 #include <stdlib.h>
-// #include <stdio.h>
 #ifdef WIN32
-#include <tchar.h>
-#include <atlbase.h>
-#include <windows.h>
-#include <winreg.h>
+# include <tchar.h>
+# include <atlbase.h>
+# include <windows.h>
+# include <winreg.h>
 #endif
 #ifdef UNIX
-#include <unistd.h>
-#include <pwd.h>
-#include <sys/types.h>
+# include <unistd.h>
+# include <pwd.h>
+# include <sys/types.h>
 #endif
 #ifndef UNDER_CE
-#include <locale.h>
+# include <locale.h>
+#endif
+#ifndef LC_MESSAGES
+# define LC_MESSAGES LC_ALL
 #endif
 
 
@@ -128,7 +130,6 @@ static const char ModuleDjVuDir[] ="share/djvu";
 static const char ModuleDjVuDir[] ="profiles";
 #endif /* !AUTOCONF */
 static const char LocalDjVuDir[] =".DjVu";      // relative to ${HOME}
-static const char RootDjVuDir[] ="/etc/DjVu/";  // global last resort
 #ifdef LT_DEFAULT_PREFIX
 static const char DjVuPrefixDir[] = LT_DEFAULT_PREFIX "/profiles";
 #endif
@@ -138,6 +139,8 @@ static const char DebugModuleDjVuDir[] ="../TOPDIR/SRCDIR/profiles";
 #ifdef WIN32
 static const char RootDjVuDir[] ="C:/Program Files/LizardTech/Profiles";
 static const TCHAR registrypath[]= TEXT("Software\\LizardTech\\DjVu\\Profile Path");
+#else
+static const char RootDjVuDir[] ="/etc/DjVu/";  // global last resort
 #endif
 
 static const char DjVuEnv[] = "DJVU_CONFIG_DIR";

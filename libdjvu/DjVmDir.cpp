@@ -232,11 +232,11 @@ DjVmDir::decode(const GP<ByteStream> &gstr)
 
    DEBUG_MSG("DIRM version=" << ver << ", our version=" << version << "\n");
    if (ver>version)
-      G_THROW( ERR_MSG("DjVmDir.version_error") "\t" + GUTF8String(version) + "\t" + GUTF8String(ver));
-                                           // Unable to read DJVM directories of versions higher than xxx
-                                           // Data version number is yyy.
+      G_THROW( ERR_MSG("DjVmDir.version_error") "\t" 
+               + GUTF8String(version) + "\t" + GUTF8String(ver));
+   // Unable to read DJVM directories of versions higher than xxx
+   // Data version number is yyy.
    DEBUG_MSG("bundled directory=" << bundled << "\n");
-   
    DEBUG_MSG("reading the directory records...\n");
    int files=str.read16();
    DEBUG_MSG("number of files=" << files << "\n");
@@ -244,7 +244,7 @@ DjVmDir::decode(const GP<ByteStream> &gstr)
    if (files)
    {
       DEBUG_MSG("reading offsets (and sizes for ver==0)\n");
-      for(int file=0;file<files;file++)
+      for(int nfile=0;nfile<files;nfile++)
       {
          GP<File> file=new File();
          files_list.append(file);

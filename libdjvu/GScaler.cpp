@@ -376,12 +376,17 @@ GBitmapScaler::get_line(int fy,
           const unsigned char *inp0 = botline + x;
           int sy1 = mini(line.height(), (1<<yshift));
           for (int sy=0; sy<sy1; sy++,inp0+=rowsize)
-        {
-          const unsigned char *inp1 = inp0;
-          int sx1 = mini(x+sw, line.xmax);
-          for (int sx=x; sx<sx1; s++,sx++,inp1++)
-            g += conv[*inp1];
-        }
+            {
+              const unsigned char *inp1 = inp0;
+              int sx1 = mini(x+sw, line.xmax);
+              s += sx1 - x;
+              const unsigned char *inp2 = inp1 + sx1 - x;
+              while (inp1 < inp2)
+                {
+                  g += conv[*inp1];
+                  inp1++;
+                }
+            }
           if (s == rnd+rnd)
             *p = (g+rnd)>>div;
           else
@@ -495,13 +500,17 @@ GBitmapScaler::scale( const GRect &provided_input, const GBitmap &input,
 
 
 GPixmapScaler::GPixmapScaler()
-  : glbuffer((void *&)lbuffer,0,sizeof(GPixel)), gp1((void *&)p1,0,sizeof(GPixel)), gp2((void *&)p2,0,sizeof(GPixel))
+  : glbuffer((void *&)lbuffer,0,sizeof(GPixel)), 
+    gp1((void *&)p1,0,sizeof(GPixel)), 
+    gp2((void *&)p2,0,sizeof(GPixel))
 {
 }
 
 
 GPixmapScaler::GPixmapScaler(int inw, int inh, int outw, int outh)
-  : glbuffer((void *&)lbuffer,0,sizeof(GPixel)), gp1((void *&)p1,0,sizeof(GPixel)), gp2((void *&)p2,0,sizeof(GPixel))
+  : glbuffer((void *&)lbuffer,0,sizeof(GPixel)), 
+    gp1((void *&)p1,0,sizeof(GPixel)), 
+    gp2((void *&)p2,0,sizeof(GPixel))
 {
   set_input_size(inw, inh);
   set_output_size(outw, outh);
@@ -558,12 +567,14 @@ GPixmapScaler::get_line(int fy,
         {
           const GPixel *inp1 = inp0;
           int sx1 = mini(x+sw, line.xmax);
-          for (int sx=x; sx<sx1; sx++,inp1++)
+          s += sx1 - x;
+          const GPixel *inp2 = inp1 + sx1 - x;
+          while (inp2 < inp1)
             {
               r += inp1->r;  
               g += inp1->g;  
               b += inp1->b; 
-              s += 1;
+              inp1++;
             }
         }
       if (s == rnd+rnd)

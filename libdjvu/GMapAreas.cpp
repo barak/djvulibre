@@ -800,8 +800,8 @@ bool
 GMapOval::gma_is_point_inside(const int x, const int y) const
 {
    return
-      sqrt((x-xf1)*(x-xf1)+(y-yf1)*(y-yf1))+
-      sqrt((x-xf2)*(x-xf2)+(y-yf2)*(y-yf2))<=2*rmax;
+      sqrt((double)((x-xf1)*(x-xf1)+(y-yf1)*(y-yf1))) +
+      sqrt((double)((x-xf2)*(x-xf2)+(y-yf2)*(y-yf2))) <= 2*rmax;
 }
 
 char const * const
@@ -825,12 +825,12 @@ GMapOval::initialize(void)
    if (a>b)
    {
       rmin=b; rmax=a;
-      f=(int) sqrt(rmax*rmax-rmin*rmin);
+      f=(int) sqrt((double)(rmax*rmax-rmin*rmin));
       xf1=xc+f; xf2=xc-f; yf1=yf2=yc;
    } else
    {
       rmin=a; rmax=b;
-      f=(int) sqrt(rmax*rmax-rmin*rmin);
+      f=(int) sqrt((double)(rmax*rmax-rmin*rmin));
       yf1=yc+f; yf2=yc-f; xf1=xf2=xc;
    }
 }
