@@ -1,4 +1,4 @@
-%define release 0p2
+%define release 1
 %define version 3.5.9
 %define prefix %{?_prefix:%{_prefix}}%{!?_prefix:/usr}
 %define mandir %{?_mandir:%{_mandir}}%{!?_mandir:%{prefix}/man}
@@ -41,24 +41,25 @@ DjVulibre-3.5 contains:
 - An up-to-date version of the C++ DjVu Reference Library.
 
 %changelog
-* Sun Oct  6 2002 Leon Bottou <leonb@humbert.bottou.org> 3.5.9-0p1
-- version 3.5.9-0p1
-* Wed May 29 2002 Leon Bottou <leon@bottou.org>
+* Sun Oct  6 2002 Leon Bottou <leonb@users.sourceforge.net> 3.5.9-1
+- version 3.5.9-1
+- added logic to 
+* Wed May 29 2002 Leon Bottou <leonb@users.sourceforge.net> 3.5.6-1
 - bumped to version 3.5.6-1
-* Mon Apr 1 2002 Leon Bottou <leonb@users.sourceforge.net>
+* Mon Apr 1 2002  Leon Bottou <leonb@users.sourceforge.net> 3.5.5-2
 - bumped to version 3.5.5-2
 - changed group to Applications/Publishing
-* Tue Mar 25 2002 Leon Bottou <leonb@users.sourceforge.net>
+* Tue Mar 25 2002 Leon Bottou <leonb@users.sourceforge.net> 3.5.5-2
 - bumped to version 3.5.5-2
-* Tue Jan 22 2002 Leon Bottou <leonb@users.sourceforge.net>
+* Tue Jan 22 2002 Leon Bottou <leonb@users.sourceforge.net> 3.5.4-2
 - bumped to version 3.5.4-1.
 - fixed for properly locating the man directory.
 - bumped to version 3.5.4-2.
-* Wed Jan 16 2002 Leon Bottou <leonb@users.sourceforge.net>
+* Wed Jan 16 2002 Leon Bottou <leonb@users.sourceforge.net> 3.5.3-1
 - bumped to version 3.5.3-1
-* Fri Dec  7 2001 Leon Bottou <leonb@users.sourceforge.net>
+* Fri Dec  7 2001 Leon Bottou <leonb@users.sourceforge.net> 3.5.2-1
 - bumped to version 3.5.2-1.
-* Wed Dec  5 2001 Leon Bottou <leonb@users.sourceforge.net>
+* Wed Dec  5 2001 Leon Bottou <leonb@users.sourceforge.net> 3.5.1-1
 - created spec file for rh7.x.
 
 %prep
@@ -81,27 +82,20 @@ rm -rf $RPM_BUILD_ROOT
 %post 
 /sbin/ldconfig
 # Create links to nsdejavu.so in mozilla dirs
-for n in %{prefix}/lib/mozilla* 
-do
- if [ -d $n ]
- then 
-   test -d $n/plugins || mkdir $n/plugins 
-   ln -s %{prefix}/lib/netscape/plugins/nsdejavu.so $n/plugins
- fi
-done
+( for n in %{prefix}/lib/mozilla*  ; do \
+  if [ -d $n ] ; then \
+   test -d $n/plugins || mkdir $n/plugins ; \
+   ln -s %{prefix}/lib/netscape/plugins/nsdejavu.so $n/plugins ; \
+ fi ; done ) 2>/dev/null || true
 
 %postun 
 /sbin/ldconfig
 # Remove links to nsdejavu.so in all mozilla dirs
-for n in %{prefix}/lib/mozilla* 
-do
- if [ -h $n/plugins/nsdejavu.so ]
- then 
-   rm $n/plugins/nsdejavu.so 2>/dev/null  
-   rmdir $n/plugins 2>/dev/null
- fi
-done
-
+( for n in %{prefix}/lib/mozilla* ; do \
+  if [ -h $n/plugins/nsdejavu.so ] ; then \
+   rm $n/plugins/nsdejavu.so ; \
+   rmdir $n/plugins ; \
+ fi ; done ) 2>/dev/null || true
 
 %files
 %defattr(-, root, root)
