@@ -58,31 +58,29 @@ impractical for remote access. Another major problem is that a fully decoded
 pixels), which is more than what a typical PC can handle without heavy disk
 swapping.
 .PP
-The third reason is that digital documents are more than just a
-collection of individual page images. Pages in a scanned documents
-have a natural serial order. Special provision must be made to ensure
-that flipping pages be instantaneous and effortless so as to maintain
-a good user experience. Even more important, most existing document
-formats force users to download the entire document first before
-displaying a chosen page.  However, users often want to jump to
-individual pages of the document without waiting for the entire
-document to download.  Efficient browsing requires efficient random
-page access, fast sequential page flipping, and quick rendering. This
-can be achieved with a combination of advanced compression,
-pre-fetching, pre-decoding, caching, and progressive
-rendering. Lastly, advanced document image compression systems, such
-as the one described in this paper, decompose each page into multiple
-components (text, backgrounds, images, libraries of common shapes...)
-that may be shared by several pages and downloaded on demand.  All
-these requirements call for a very sophisticated but parsimonious
-control mechanism to handle on-demand downloading, pre-fetching,
-decoding, caching, and progressive rendering of the page images.
-What is being considered here is not just a document image compression
-technique, but a whole platform for document delivery.
+The third reason is that digital documents are more than just a collection of
+individual page images. Pages in a scanned documents have a natural serial
+order. Special provision must be made to ensure that flipping pages be
+instantaneous and effortless so as to maintain a good user experience. Even
+more important, most existing document formats force users to download the
+entire document first before displaying a chosen page.  However, users often
+want to jump to individual pages of the document without waiting for the
+entire document to download.  Efficient browsing requires efficient random
+page access, fast sequential page flipping, and quick rendering. This can be
+achieved with a combination of advanced compression, pre-fetching,
+pre-decoding, caching, and progressive rendering. Lastly, advanced document
+image compression systems, such as the one described in this paper, decompose
+each page into multiple components (text, backgrounds, images, libraries of
+common shapes...)  that may be shared by several pages and downloaded on
+demand.  All these requirements call for a very sophisticated but parsimonious
+control mechanism to handle on-demand downloading, pre-fetching, decoding,
+caching, and progressive rendering of the page images.  What is being
+considered here is not just a document image compression technique, but a
+whole platform for document delivery.
 .PP
-DjVu is an image compression technique, a document format, and a
-software platform for delivering documents images over the Internet
-that fulfills the above requirements.  
+DjVu is an image compression technique, a document format, and a software
+platform for delivering documents images over the Internet that fulfills the
+above requirements.
 
 .SH DJVU IMAGE COMPRESSION
 
@@ -109,11 +107,10 @@ and contains the background texture and the pictures at lower resolution.
 
 .SH DJVU DOCUMENT DELIVERY PLATFORM
 
-The DjVu technology is designed from the gound up to support
-the efficient delivery of digital documents over the Internet.
-It provides various ways to deal with multi-page documents,
-and various ways to enrich the content with hyperlinks, metadata,
-searchable text, etc.
+The DjVu technology is designed from the gound up to support the efficient
+delivery of digital documents over the Internet.  It provides various ways to
+deal with multi-page documents, and various ways to enrich the content with
+hyperlinks, metadata, searchable text, etc.
 .SS Bundled multi-page documents
 Bundled multi-page DjVu document uses a single file to represent the entire
 document.  This single file contains all the pages as well as ancillary
@@ -137,42 +134,37 @@ HTTP/1.1 protocol.  This option has to be supported by the web server, the
 proxies, the caches and the browser.  Byte serving however does not solve the
 first problem (the waste of bandwith).
 .SS Indirect multi-page documents
-Indirect multi-page DjVu documents solve both problems.
-An indirect multi-page DjVu document is composed of several files.
-The main file is named the
-.B index file.  
-You can browse a document using the URL of the index file, just like you do
-with a bundled multi-page document.  The index file however is very small.  It
-simply contains the document directory and the URLs of secondary files
-containing the page data.  When you browse an indirect multi-page document,
-the browser only accesses data for the pages you are viewing.  This can be
-done at a reasonable speed because the browser maintains a cache of pages and
-sometimes pre-fetches a few pages ahead of the current page.  This model uses
-the web serving bandwith much more effectively.  It also eliminates
-unnecessary delays when jumping ahead to pages located anywhere in a long
-document.
+Indirect multi-page DjVu documents solve both problems.  An indirect
+multi-page DjVu document is composed of several files.  The main file is named
+the index file.  You can browse a document using the URL of the index file,
+just like you do with a bundled multi-page document.  The index file however
+is very small.  It simply contains the document directory and the URLs of
+secondary files containing the page data.  When you browse an indirect
+multi-page document, the browser only accesses data for the pages you are
+viewing.  This can be done at a reasonable speed because the browser maintains
+a cache of pages and sometimes pre-fetches a few pages ahead of the current
+page.  This model uses the web serving bandwith much more effectively.  It
+also eliminates unnecessary delays when jumping ahead to pages located
+anywhere in a long document.
 .SS Annotations
-Every DjVu image optionally includes so-called annotation chunks.
-The annotation chunk is often used to define hyperlinks to other 
-document pages or to arbitrary web pages.  Annotation chunks can also
-be used for other purposes such as setting the initial viewing mode of a page,
-defining hilited zones, or storing arbitrary metadata about the page or
-the document.
+Every DjVu image optionally includes so-called annotation chunks.  The
+annotation chunk is often used to define hyperlinks to other document pages or
+to arbitrary web pages.  Annotation chunks can also be used for other purposes
+such as setting the initial viewing mode of a page, defining hilited zones, or
+storing arbitrary metadata about the page or the document.
 .SS Hidden text
-Every DjVu image optionally includes a hidden text layer 
-that associated graphical features with the corresponding
-text.  The hidden text layer is usually generated by running
-an Optical Character Recognition software.  This textual
-information provides for indexing DjVu documents and copying/pasting 
+Every DjVu image optionally includes a hidden text layer that associated
+graphical features with the corresponding text.  The hidden text layer is
+usually generated by running an Optical Character Recognition software.  This
+textual information provides for indexing DjVu documents and copying/pasting
 text from DjVu page images.
 .SS Thumbnails
 DjVu documents sometimes contain precomputed page thumbnails.
 
-
 .SH DJVUZONE AND DJVULIBRE
 
-The DjVu technology was initially created by a few researchers
-in AT&T Labs between 1995 and 1999.  Lizardtech, Inc. (
+The DjVu technology was initially created by a few researchers in AT&T Labs
+between 1995 and 1999.  Lizardtech, Inc. (
 .B http://www.lizardtech.com
 ) then obtained a commercial license from AT&T and continued
 the development.  They have now a variety of solutions for producing
