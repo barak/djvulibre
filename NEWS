@@ -4,6 +4,7 @@ NEW IN VERSION 3.5.13
 - New option -fullscreen in djview.
 - Silently processes files up to version 25. 
 - Only produces files with version 24.
+- Support for localization (french)
 - TODO: Bookmarks.
 - TODO: MacOS X fixes.
 
