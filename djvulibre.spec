@@ -45,7 +45,7 @@ DjVulibre-3.5 contains:
 - An up-to-date version of the C++ DjVu Reference Library.
 
 %prep
-%setup -q -n djvulibre-3.5
+%setup -q
 
 %build
 %configure
