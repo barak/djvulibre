@@ -1,1107 +1,124 @@
 <!DOCTYPE TS><TS>
 <context>
-    <name>DjVuViewer</name>
+    <name>QAccel</name>
     <message>
-        <source>Unexpected end of file encountered</source>
+        <source>Space</source>
         <translation type="unfinished"></translation>
     </message>
-</context>
-<context>
-    <name>QDAboutDialog</name>
     <message>
-        <source>About DjView</source>
+        <source>Esc</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>DjVu standalone viewer
-and browser plugin.</source>
+        <source>Tab</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Version DjVuLibre-</source>
+        <source>Backtab</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>&amp;Close</source>
+        <source>Backspace</source>
         <translation type="unfinished"></translation>
     </message>
-</context>
-<context>
-    <name>QDBase</name>
     <message>
-        <source>DjVu Error</source>
+        <source>Return</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Exporting DjVu image...</source>
+        <source>Enter</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>&amp;Raw</source>
+        <source>Ins</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>&amp;Ascii</source>
+        <source>Del</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>&amp;Cancel</source>
+        <source>Pause</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>All files (*)</source>
+        <source>Print</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Select export file name...</source>
+        <source>SysReq</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Please stand by...</source>
+        <source>Home</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>&amp;Abort</source>
+        <source>End</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>DjVu: Exporting image...</source>
+        <source>Left</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>This will export the DjVu image in either &apos;Raw %1&apos;
-or &apos;ASCII %2&apos; format. Which one do you prefer?
-</source>
+        <source>Up</source>
         <translation type="unfinished"></translation>
     </message>
-</context>
-<context>
-    <name>QDCachePrefs</name>
     <message>
-        <source>Off screen cache size:</source>
+        <source>Right</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Decoded pages cache:</source>
+        <source>Down</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Clear</source>
+        <source>PgUp</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>&lt;b&gt;Caches:&lt;/b&gt;&lt;br&gt;There are several caches in &lt;i&gt;djview&lt;/i&gt;.&lt;ul&gt;&lt;li&gt;The &lt;i&gt;off screen cache&lt;/i&gt; stores image data located outside the visible area. This cache makes panning smoother.&lt;/li&gt;&lt;li&gt;The &lt;i&gt;decoded page cache&lt;/i&gt; contains partially decoded pages. It provides faster response times when navigating a multipage document or when returning to a previously viewed page. Clearing this cache might be useful to reflect a change in the page data without restarting the DjVu viewer.&lt;/li&gt;&lt;/ul&gt;</source>
+        <source>PgDown</source>
         <translation type="unfinished"></translation>
     </message>
-</context>
-<context>
-    <name>QDDocInfo</name>
     <message>
-        <source>DjVu Error</source>
+        <source>CapsLock</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Information on page </source>
+        <source>NumLock</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Information on file </source>
+        <source>ScrollLock</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Please wait...</source>
+        <source>Ctrl</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Please wait while I&apos;m downloading the data...</source>
+        <source>Alt</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>&amp;Cancel</source>
+        <source>Shift</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Page &amp;Info</source>
+        <source>+</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>&amp;Goto to page</source>
+        <source>F%1</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>DjVu multipage document info</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Document Information</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Document Name:</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Document Format:</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>BUNDLED</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Obsolete BUNDLED</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>INDIRECT</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Obsolete INDEXED</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>SINGLE_PAGE</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>UNKNOWN</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Total size:</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>unknown</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Pages:</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Files:</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Page</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>File Name</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>File Size</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Double click any page from the list to view it.
-</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Press the right mouse button to see popup menu.</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>&amp;Info</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>&amp;Goto</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Order #</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Pages Covered</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>File Type</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>&amp;Summary</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>&amp;Pages</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>&amp;Thumbnails</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>&amp;All Files</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>&amp;Close</source>
-        <translation type="unfinished"></translation>
-    </message>
-</context>
-<context>
-    <name>QDDocNameDialog</name>
-    <message>
-        <source>All files (*)</source>
-        <translation type="unfinished"></translation>
-    </message>
-</context>
-<context>
-    <name>QDFileFormatDialog</name>
-    <message>
-        <source>DjVu page file format</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>It seems that contents of this page are currently </source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>scattered over more than one file. </source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>So you can now do either of the following:</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Create all these files. This is useful if you plan </source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>to save more than one page and then to insert them </source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>into another document: the shared files will remain shared.</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Pack all these files into one bundle </source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>(so called BUNDLED format). This is convenient because </source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>you will have only one file and will still be able </source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>to split it into many when necessary.</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Merge chunks from all files and store them </source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>into one file. </source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Use this if you need the simplest structure of the file </source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>and you do not plan to separate the chunks again.</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>&amp;OK</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>&amp;Cancel</source>
-        <translation type="unfinished"></translation>
-    </message>
-</context>
-<context>
-    <name>QDFilesListDialog</name>
-    <message>
-        <source>DjVu: Files list</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>The following files will be created in directory &quot;</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>
-
-Are you sure you want to proceed?
-</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>&amp;Yes</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>&amp;No</source>
-        <translation type="unfinished"></translation>
-    </message>
-</context>
-<context>
-    <name>QDGammaDispl</name>
-    <message>
-        <source>DjVu Error</source>
-        <translation type="unfinished"></translation>
-    </message>
-</context>
-<context>
-    <name>QDGammaPrefs</name>
-    <message>
-        <source>Screen color correction.
-</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Adjust slider until
-gray shades look similar.</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Darker</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Lighter</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Printer color correction.</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Automatic color matching.</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>&lt;b&gt;Screen gamma correction:&lt;/b&gt;&lt;br&gt;The best color rendition is achieved by adjusting the gamma correction slider and choosing the position that makes the gray square as uniform as possible.&lt;p&gt;&lt;b&gt;Printer color correction:&lt;/b&gt;&lt;br&gt;The &lt;i&gt;automatic color matching&lt;/i&gt; option works best with PostScript printers and ICC profiled printers. The slider might be useful in other cases.</source>
-        <translation type="unfinished"></translation>
-    </message>
-</context>
-<context>
-    <name>QDHlinkPrefs</name>
-    <message>
-        <source>Disable hyperlink popup messages.</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Draw hyperlinks using simple border.</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>&quot;Show all hyperlinks&quot; key:</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>&lt;b&gt;Hyperlinks:&lt;/b&gt;&lt;ul&gt;&lt;li&gt;Hyperlinks are hilited when the mouse hovers above the hyperlink region or when the the key combination specified in the &lt;i&gt;show all hyperlinks&lt;/i&gt; box is depressed.&lt;/li&gt;&lt;li&gt;The &lt;i&gt;disable hyperlink popups&lt;/i&gt; option hides the popup messages optionally associated with the hyperlinks.&lt;/li&gt;&lt;li&gt;The &lt;i&gt;draw using simple border&lt;/i&gt; option selects simpler hiliting effects.&lt;/li&gt;&lt;/ul&gt;</source>
-        <translation type="unfinished"></translation>
-    </message>
-</context>
-<context>
-    <name>QDLensPrefs</name>
-    <message>
-        <source>Control key</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Shift key</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Alt key</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Middle mouse button</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Size: </source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source> pixels</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Magnification: </source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>To activate press: </source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>&lt;b&gt;Magnification lens:&lt;/b&gt;&lt;br&gt;The &lt;i&gt;magnification lens&lt;/i&gt; appears under the mouse pointer when you press the selected key.</source>
-        <translation type="unfinished"></translation>
-    </message>
-</context>
-<context>
-    <name>QDMessageQueue</name>
-    <message>
-        <source>DjVu Error</source>
-        <translation type="unfinished"></translation>
-    </message>
-</context>
-<context>
-    <name>QDMimeDialog</name>
-    <message>
-        <source>DjVu</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>We have just found that your configuration files &quot;.mime.types&quot; and &quot;.mailcap&quot; should be updated in order for the DjVu plugin to work properly. The invalid information can prevent Netscape from correctly displaying DjVu documents and can make Netscape use incorrect MIME type when sending DjVu documents via e-mail.
-
-Would  you like to update these files now?</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Next time &amp;check this again</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Next time do the update &amp;silently</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>&amp;Never do this check again</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>&amp;Yes</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>&amp;No</source>
-        <translation type="unfinished"></translation>
-    </message>
-</context>
-<context>
-    <name>QDNavGotoPage</name>
-    <message>
-        <source>DjVu: Goto Page</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Goto page</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>&amp;OK</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>&amp;Cancel</source>
-        <translation type="unfinished"></translation>
-    </message>
-</context>
-<context>
-    <name>QDOptimPrefs</name>
-    <message>
-        <source>Favor fast magnifications for &quot;Fit&quot; resolutions.</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Enable fast thumbnails.</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Optimize images for LCD displays.</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>&lt;b&gt;Optimizations:&lt;/b&gt;&lt;ul&gt;&lt;li&gt;The &lt;i&gt;fast magnification&lt;/i&gt; option selects integer magnifications that require less computing resources.&lt;/li&gt;&lt;li&gt;The &lt;i&gt;fast thumbnails&lt;/i&gt; option never compute thumbnails unless the page data is already cached. This cuts network traffic that might be otherwise unnecessary.&lt;/li&gt;&lt;li&gt;The &lt;i&gt;LCD display&lt;/i&gt; option might improve the image quality on certain LCD displays.&lt;/li&gt;&lt;/ul&gt;</source>
-        <translation type="unfinished"></translation>
-    </message>
-</context>
-<context>
-    <name>QDPageSaver</name>
-    <message>
-        <source>All files (*)</source>
-        <translation type="unfinished"></translation>
-    </message>
-</context>
-<context>
-    <name>QDPane</name>
-    <message>
-        <source>DjVu Error</source>
-        <translation type="unfinished"></translation>
-    </message>
-</context>
-<context>
-    <name>QDPrintDialog</name>
-    <message>
-        <source>current page</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>custom pages</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>document</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>window</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Scale to Fit</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>One to One</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Current Zoom</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Custom Zoom:</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>rectos and versos</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>rectos only</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>versos only</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Select output file name</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>File &apos;</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>&apos; already exists.
-</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Are you sure you want to overwrite it?</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>&amp;Yes</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>&amp;No</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Print quality will be lower because
-PostScript level 1 cannot perform
-automatic color matching.</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>&amp;OK</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>DjVu Print Dialog</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Main</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>What to print</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>1 copy</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source> copies</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>of the</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>C&amp;ustom pages:</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>&lt;b&gt;Printing selected pages:&lt;/b&gt;&lt;br&gt;The page specification box is enabled when the &lt;i&gt;custom pages&lt;/i&gt; mode is selected.  Enter page ranges separated by commas. Blank pages can be specified as page &lt;b&gt;0&lt;/b&gt;. The last page can be referred to as page &lt;b&gt;$&lt;/b&gt;.&lt;ul&gt;&lt;li&gt;Simple case: &lt;b&gt;1,2,10-12&lt;/b&gt;.&lt;/li&gt;&lt;li&gt;Printing multiple pages: &lt;b&gt;1,1,2,2&lt;/b&gt;.&lt;/li&gt;&lt;li&gt;Inserting a blank page: &lt;b&gt;1-10,0,11-$&lt;/b&gt;.&lt;/li&gt;&lt;li&gt;Printing in reverse: &lt;b&gt;$-1&lt;/b&gt;.&lt;/li&gt;&lt;/ul&gt;</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Color model</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>&amp;Color</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>&amp;GreyScale</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Print destination</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Send Image To:</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Printe&amp;r</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>F&amp;ile</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Print Command:</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>File Name:</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Browse...</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>&lt;b&gt;Print Destination:&lt;/b&gt;&lt;ul&gt;&lt;li&gt;Enter the file name when printing to a file.&lt;/li&gt;&lt;li&gt;Enter a print command to select a printer. Command line options are of course allowed. Command print commands include:&lt;br&gt;&lt;b&gt;lp -d&lt;/b&gt;&lt;i&gt;printername&lt;/i&gt;,&lt;br&gt;&lt;b&gt;lpr -P&lt;/b&gt;&lt;i&gt;printername&lt;/i&gt;,&lt;br&gt;&lt;b&gt;kprinter --stdin&lt;/b&gt;.&lt;/ul&gt;</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Postscript</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>&amp;PostScript File (*.ps)</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>&lt;b&gt;PostScript file format:&lt;/b&gt;These options are enabled when printing to a file.&lt;ul&gt;&lt;li&gt;&lt;i&gt;Postscript files&lt;/i&gt; provide more configuration options.&lt;/li&gt;&lt;li&gt;&lt;i&gt;Encapsulated PostScript files&lt;/i&gt; are nicely imported by other applications. On the other hand they can only contain a single page with predefined scaling.&lt;/li&gt;&lt;/ul&gt;</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>PostScript language level</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Level &amp;1 (almost obsolete)</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Level &amp;2 (default)</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Level &amp;3 (might print faster)</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>&lt;b&gt;PostScript language level:&lt;/b&gt;&lt;br&gt;Level 1 is only useful with very old printers. Level 2 works with most printers. Level 3 might print faster on recent color printers.</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Position</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Scaling</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>&lt;b&gt;Scaling:&lt;/b&gt;&lt;br&gt;Option &lt;i&gt;scale to fit&lt;/i&gt; accomodates whetever paper size your printer uses. Option &lt;i&gt;one to one&lt;/i&gt; attempts to reproduce the initial document size.</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Orientation</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>&amp;Auto</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Po&amp;rtrait</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>&amp;Landscape</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>&lt;b&gt;Orientation:&lt;/b&gt;&lt;br&gt;Automatic orientation chooses portrait or landscape on a page per page basis.</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Marks</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Print image &amp;frame</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Print &amp;crop marks</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>&lt;b&gt;Marks:&lt;/b&gt;&lt;br&gt;The image frame is useful to delimit the page area. The crop marks are useful to cut the paper to the correct size.</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Booklet</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Booklet options</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Print sheets suitable for folding booklet(s).</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>at most </source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source> sheet(s).</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>as many sheets as needed.</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>&lt;b&gt;Producing booklets:&lt;/b&gt;&lt;br&gt;The booklet mode prints the selected pages as sheets suitable for folding one or several booklets. Several booklets might be produced when a maximum number of sheets per booklet is specified. You can either use a duplex printer or print rectos and versos separately.</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Advanced booklet options</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Shift rectos and versos by</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source> points.</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Center margins:</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source> points</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>plus</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>/100</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>per sheet.</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>&lt;b&gt;Advanced booklet options:&lt;/b&gt;&lt;br&gt;Shifting rectos and versos is useful with poorly aligned duplex printers. The center margins determine how much space is left between the pages to fold the sheets. This space slowly increases from the inner sheet to the outer sheet.</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>&amp;Save settings</source>
+        <source>Menu</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <source>Help</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>&amp;Cancel</source>
-        <translation type="unfinished"></translation>
-    </message>
-</context>
-<context>
-    <name>QDSavedFilesDialog</name>
-    <message>
-        <source>This will create the following files</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source> (plus additional included files)</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source> into the directory &apos;</source>
-        <translation type="unfinished"></translation>
-    </message>
-</context>
-<context>
-    <name>QDSearchDialog</name>
-    <message>
-        <source>&amp;Stop</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Loading page </source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>document</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>page</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>End of </source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source> reached. Continue from the beginning?</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Beginning of </source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source> reached. Continue from the end?</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>&amp;Yes</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>&amp;No</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Page </source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>DjVu Search Failed</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>After looking through every page of this document
-</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>we have found, that neither of them contain
-textual information.</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>This means, that the document
-creator did not run an OCR engine on this document.
-
-</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>The search is impossible.</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>This page does not contain textual information,
-</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>which means that either creator of this document did not run an OCR engine on it, </source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>or the OCR engine did not recognize any text on this page.
-
-</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Search string not found</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>&amp;Find</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>DjVu: Find</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Find: </source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Search &amp;all pages</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>&amp;Case sensitive</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>&amp;Whole word</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Search &amp;backwards</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Loading page WWWWWWW</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>&amp;Clear</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>C&amp;lose</source>
-        <translation type="unfinished"></translation>
-    </message>
-</context>
-<context>
-    <name>QDSetZoom</name>
-    <message>
-        <source>DjVu: Set Zoom</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Custom zoom</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>&amp;OK</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>&amp;Cancel</source>
-        <translation type="unfinished"></translation>
-    </message>
-</context>
-<context>
-    <name>QDTBarModePiece</name>
-    <message>
-        <source>Fit Width</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Fit Page</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Stretch</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Color</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>B&amp;W</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Fore</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Back</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Display mode</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Zoom</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Zoom In</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Zoom Out</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Pane Mode</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Zoom Selected Area</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Select Text in Selected Area</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Stick</source>
-        <translation type="unfinished"></translation>
-    </message>
-</context>
-<context>
-    <name>QDTBarNavPiece</name>
-    <message>
-        <source>Page</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>First page</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Previous Page</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Next Page</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Last page</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
@@ -1112,338 +129,279 @@ creator did not run an OCR engine on this document.
         <source>Forward</source>
         <translation type="unfinished"></translation>
     </message>
-</context>
-<context>
-    <name>QDTBarPrintPiece</name>
     <message>
-        <source>Find</source>
+        <source>Stop</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Print</source>
+        <source>Refresh</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Save</source>
+        <source>Volume Down</source>
         <translation type="unfinished"></translation>
     </message>
-</context>
-<context>
-    <name>QDTBarRotatePiece</name>
     <message>
-        <source>Rotate +90</source>
+        <source>Volume Mute</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Rotate -90</source>
+        <source>Volume Up</source>
         <translation type="unfinished"></translation>
     </message>
-</context>
-<context>
-    <name>QDTbarPrefs</name>
     <message>
-        <source>Enable toolbar</source>
+        <source>Bass Boost</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Toolbar is always visible</source>
+        <source>Bass Up</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Toolbar hide delay:</source>
+        <source>Bass Down</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>&lt;b&gt;Toolbar:&lt;/b&gt;&lt;br&gt;Checking the &lt;i&gt;enable toolbar&lt;/i&gt; box adds a toolbar at the bottom of each DjVu image. Checking the &lt;i&gt;always visible&lt;/i&gt; box makes the toolbar visible at all times. Otherwise the toolbar appears when the mouse pointer comes close to the bottom of the image and remains visible until the specified delay expires.</source>
+        <source>Treble Up</source>
         <translation type="unfinished"></translation>
     </message>
-</context>
-<context>
-    <name>QDThumbnails</name>
     <message>
-        <source>Page </source>
+        <source>Treble Down</source>
         <translation type="unfinished"></translation>
     </message>
-</context>
-<context>
-    <name>QDViewer</name>
     <message>
-        <source>DjVu Viewer - </source>
+        <source>Media Play</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Printing prohibited</source>
+        <source>Media Stop</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Printing of this image
-has been disallowed.</source>
+        <source>Media Previous</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Upgrade DjVu now!</source>
+        <source>Media Next</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>You are using an obsolete version of the
-DjVu plugin. To install the newest
-version click &quot;Download&quot; and follow the
-instructions.
-</source>
+        <source>Media Record</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>&amp;Download</source>
+        <source>Favorites</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>&amp;Ignore</source>
+        <source>Search</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>You are using an obsolete version of the
-DjVu plugin. Please upgrade the viewer to
-view this document.
-</source>
+        <source>Standby</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>This DjVu document uses an inferior
-technology, which is no longer supported.
-Please send a flame to the webmaster who
-uses outdated tools.
-</source>
+        <source>Open URL</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Page decoding done</source>
+        <source>Launch Mail</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Finish printing first</source>
+        <source>Launch Media</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Please close the Print dialog first.</source>
+        <source>Launch (0)</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Requesting URL </source>
+        <source>Launch (1)</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>DjVu Error</source>
+        <source>Launch (2)</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Subprocess diagnostics</source>
+        <source>Launch (3)</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>&amp;Color</source>
+        <source>Launch (4)</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Black and &amp;White</source>
+        <source>Launch (5)</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>&amp;Background</source>
+        <source>Launch (6)</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>&amp;Foreground</source>
+        <source>Launch (7)</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Full &amp;Screen</source>
+        <source>Launch (8)</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>&amp;Display</source>
+        <source>Launch (9)</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>&amp;Custom...</source>
+        <source>Launch (A)</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>One &amp;to One</source>
+        <source>Launch (B)</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>&amp;Stretch</source>
+        <source>Launch (C)</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Fit &amp;Width</source>
+        <source>Launch (D)</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Fit &amp;Page</source>
+        <source>Launch (E)</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Zoom &amp;In</source>
+        <source>Launch (F)</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Zoom &amp;Out</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>&amp;Zoom</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Normal</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Left side down</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Upside down</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Right side down</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>&amp;Rotation</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>&amp;Next Page</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>&amp;Previous Page</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>&amp;First Page</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>&amp;Last Page</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>&amp;Goto Page...</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>&amp;Back</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>&amp;Forward</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>&amp;Navigate</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>&amp;Find</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Page &amp;Information</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Document In&amp;formation</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Show &amp;Thumbnails</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Show &amp;Bookmarks</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Save D&amp;ocument As ...</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Save P&amp;age As ...</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>&amp;Export page</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Print Pa&amp;ge</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>&amp;Print Document</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Print &amp;Window</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>P&amp;references ...</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>A&amp;bout DjVu ...</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>&amp;Help ...</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>DjVu: Page Information</source>
+        <source>Meta</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
-    <name>QDViewerPrefs</name>
+    <name>QApplication</name>
     <message>
-        <source>DjVu: Viewer Preferences</source>
+        <source>QT_LAYOUT_DIRECTION</source>
+        <comment>Translate this string to the string &apos;LTR&apos; in left-to-right languages or to &apos;RTL&apos; in right-to-left languages (such as Hebrew and Arabic) to get proper widget layout.</comment>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Gamma</source>
+        <source>Executable &apos;%1&apos; requires Qt %2, found Qt %3.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Toolbar</source>
+        <source>Incompatible Qt Library Error</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
+    <name>QAquaStyle</name>
+    <message>
+        <source>OK</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Links</source>
+        <source>Cancel</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
+    <name>QColorDialog</name>
+    <message>
+        <source>Hu&amp;e:</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Lens</source>
+        <source>&amp;Sat:</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Cache</source>
+        <source>&amp;Val:</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Optimization</source>
+        <source>&amp;Red:</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Save preferences.</source>
+        <source>&amp;Green:</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Help</source>
+        <source>Bl&amp;ue:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>A&amp;lpha channel:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>&amp;Basic colors</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>&amp;Custom colors</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>&amp;Define Custom Colors &gt;&gt;</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>OK</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Cancel</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>&amp;Add to Custom Colors</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Select color</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
+    <name>QDataTable</name>
+    <message>
+        <source>True</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>False</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Insert</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Update</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Delete</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
+    <name>QDialog</name>
+    <message>
+        <source>What&apos;s This?</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
+    <name>QErrorMessage</name>
+    <message>
+        <source>&amp;Show this message again</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
@@ -1451,26 +409,150 @@ uses outdated tools.
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>&amp;Cancel</source>
+        <source>Debug Message:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Warning:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Fatal Error:</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
-    <name>QDViewerShell</name>
+    <name>QFileDialog</name>
     <message>
-        <source>Select &quot;File&quot; and then &quot;Open&quot; to load a DjVu file</source>
+        <source>Copy or Move a File</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>DjVu Error</source>
+        <source>Read: %1</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>DjVu: Select DjVu file to open</source>
+        <source>Write: %1</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>DjVu Standalone Viewer</source>
+        <source>Cancel</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>All Files (*)</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Name</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Size</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Type</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Date</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Attributes</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>OK</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Look &amp;in:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>File &amp;name:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>File &amp;type:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Back</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>One directory up</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Create New Folder</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>List View</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Detail View</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Preview File Info</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Preview File Contents</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Read-write</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Read-only</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Write-only</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Inaccessible</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Symlink to File</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Symlink to Directory</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Symlink to Special</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>File</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Dir</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Special</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Open</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Save As</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
@@ -1478,47 +560,335 @@ uses outdated tools.
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>&amp;New Window</source>
+        <source>&amp;Save</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Save D&amp;ocument As...</source>
+        <source>&amp;Rename</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Save P&amp;age As...</source>
+        <source>&amp;Delete</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>&amp;Export page</source>
+        <source>R&amp;eload</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>&amp;Find</source>
+        <source>Sort by &amp;Name</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>&amp;Preferences</source>
+        <source>Sort by &amp;Size</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>P&amp;rint Page</source>
+        <source>Sort by &amp;Date</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Pr&amp;int Document</source>
+        <source>&amp;Unsorted</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>&amp;Close</source>
+        <source>Sort</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>E&amp;xit</source>
+        <source>Show &amp;hidden files</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>&amp;File</source>
+        <source>the file</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>the directory</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>the symlink</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Delete %1</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>&lt;qt&gt;Are you sure you wish to delete %1 &quot;%2&quot;?&lt;/qt&gt;</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>&amp;Yes</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>&amp;No</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>New Folder 1</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>New Folder</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>New Folder %1</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Find Directory</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Directories</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Save</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Error</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>%1
+File not found.
+Check path and filename.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>All Files (*.*)</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Open </source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Select a Directory</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Directory:</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
+    <name>QFont</name>
+    <message>
+        <source>Latin</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Greek</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Cyrillic</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Armenian</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Georgian</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Runic</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Ogham</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Hebrew</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Arabic</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Syriac</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Thaana</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Devanagari</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Bengali</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Gurmukhi</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Gujarati</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Oriya</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Tamil</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Telugu</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Kannada</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Malayalam</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Sinhala</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Thai</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Lao</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Tibetan</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Myanmar</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Khmer</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Han</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Hiragana</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Katakana</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Hangul</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Bopomofo</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Yi</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Ethiopic</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Cherokee</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Canadian Aboriginal</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Mongolian</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Currency Symbols</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Letterlike Symbols</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Number Forms</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Mathematical Operators</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Technical Symbols</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Geometric Symbols</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Miscellaneous Symbols</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Enclosed and Square</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Braille</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Unicode</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
+    <name>QFontDialog</name>
+    <message>
+        <source>&amp;Font</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Font st&amp;yle</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>&amp;Size</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Effects</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Stri&amp;keout</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>&amp;Underline</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
@@ -1526,179 +896,925 @@ uses outdated tools.
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Black and &amp;White</source>
+        <source>Sample</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>&amp;Background</source>
+        <source>Scr&amp;ipt</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>&amp;Foreground</source>
+        <source>OK</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Full &amp;Screen</source>
+        <source>Apply</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>&amp;Display</source>
+        <source>Cancel</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>&amp;Custom...</source>
+        <source>Close</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>One &amp;to One</source>
+        <source>Select Font</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
+    <name>QFtp</name>
+    <message>
+        <source>Host %1 found</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>&amp;Stretch</source>
+        <source>Host found</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Fit &amp;Width</source>
+        <source>Connected to host %1</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Fit &amp;Page</source>
+        <source>Connected to host</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Zoom &amp;In</source>
+        <source>Connection to %1 closed</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Zoom &amp;Out</source>
+        <source>Connection closed</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>&amp;Zoom</source>
+        <source>Host %1 not found</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>&amp;Next Page</source>
+        <source>Connection refused to host %1</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>&amp;Previous Page</source>
+        <source>Unknown error</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>&amp;+10 Pages</source>
+        <source>Connecting to host failed:
+%1</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>&amp;-10 Pages</source>
+        <source>Login failed:
+%1</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>&amp;First Page</source>
+        <source>Listing directory failed:
+%1</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>&amp;Last Page</source>
+        <source>Changing directory failed:
+%1</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>&amp;Goto Page...</source>
+        <source>Downloading file failed:
+%1</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>&amp;Back</source>
+        <source>Uploading file failed:
+%1</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>&amp;Forward</source>
+        <source>Removing file failed:
+%1</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>&amp;Navigate</source>
+        <source>Creating directory failed:
+%1</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>&amp;Page Information</source>
+        <source>Removing directory failed:
+%1</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>&amp;Document Information</source>
+        <source>Not connected</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Show &amp;Thumbnails</source>
+        <source>Connection refused for data connection</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
+    <name>QHeader</name>
+    <message>
+        <source>%1</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
+    <name>QHttp</name>
+    <message>
+        <source>Connection refused</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Show &amp;Bookmarks</source>
+        <source>Host %1 not found</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>&amp;Info</source>
+        <source>Wrong content length</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>&amp;About</source>
+        <source>HTTP request failed</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Host %1 found</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Host found</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Connected to host %1</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Connected to host</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Connection to %1 closed</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Connection closed</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Unknown error</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Request aborted</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>No server set to connect to</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Server closed connection unexpectedly</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Invalid HTTP response header</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Invalid HTTP chunked body</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
+    <name>QInputDialog</name>
+    <message>
+        <source>OK</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Cancel</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
+    <name>QLineEdit</name>
+    <message>
+        <source>&amp;Undo</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>&amp;Redo</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Cu&amp;t</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>&amp;Copy</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>&amp;Paste</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Clear</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Select All</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
+    <name>QLocalFs</name>
+    <message>
+        <source>Could not rename
+%1
+to
+%2</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Could not open
+%1</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Could not write
+%1</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Could not read directory
+%1</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Could not create directory
+%1</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Could not remove file or directory
+%1</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
+    <name>QMainWindow</name>
+    <message>
+        <source>Line up</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Customize...</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
+    <name>QMenuBar</name>
+    <message>
+        <source>About</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Config</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Preference</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Options</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Setting</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Setup</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Quit</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Exit</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
+    <name>QMessageBox</name>
+    <message>
+        <source>OK</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Cancel</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>&amp;Yes</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>&amp;No</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>&amp;Abort</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>&amp;Retry</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>&amp;Ignore</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>&lt;h3&gt;About Qt&lt;/h3&gt;&lt;p&gt;This program uses Qt version %1.&lt;/p&gt;&lt;p&gt;Qt is a C++ toolkit for multiplatform GUI &amp;amp; application development.&lt;/p&gt;&lt;p&gt;Qt provides single-source portability across MS&amp;nbsp;Windows, Mac&amp;nbsp;OS&amp;nbsp;X, Linux, and all major commercial Unix variants.&lt;br&gt;Qt is also available for embedded devices.&lt;/p&gt;&lt;p&gt;Qt is a Trolltech product. See &lt;tt&gt;http://www.trolltech.com/qt/&lt;/tt&gt; for more information.&lt;/p&gt;</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
+    <name>QNetworkProtocol</name>
+    <message>
+        <source>Operation stopped by the user</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
+    <name>QPrintDialog</name>
+    <message>
+        <source>locally connected</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Aliases: %1</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>unknown</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Unknown Location</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>OK</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Cancel</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Printer settings</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Print in color if available</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Print in grayscale</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Print destination</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Print to printer:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Printer</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Host</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Comment</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Print to file:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Browse...</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Options</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Print all</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Print range</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>From page:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>To page:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Print first page first</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Print last page first</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Number of copies:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Paper format</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Portrait</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Landscape</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>A0 (841 x 1189 mm)</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>A1 (594 x 841 mm)</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>A2 (420 x 594 mm)</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>A3 (297 x 420 mm)</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>A4 (210x297 mm, 8.26x11.7 inches)</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>A5 (148 x 210 mm)</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>A6 (105 x 148 mm)</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>A7 (74 x 105 mm)</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>A8 (52 x 74 mm)</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>A9 (37 x 52 mm)</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>B0 (1000 x 1414 mm)</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>B1 (707 x 1000 mm)</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>B2 (500 x 707 mm)</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>B3 (353 x 500 mm)</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>B4 (250 x 353 mm)</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>B5 (176 x 250 mm, 6.93x9.84 inches)</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>B6 (125 x 176 mm)</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>B7 (88 x 125 mm)</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>B8 (62 x 88 mm)</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>B9 (44 x 62 mm)</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>B10 (31 x 44 mm)</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>C5E (163 x 229 mm)</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>DLE (110 x 220 mm)</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Executive (7.5x10 inches, 191x254 mm)</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Folio (210 x 330 mm)</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Ledger (432 x 279 mm)</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Legal (8.5x14 inches, 216x356 mm)</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Letter (8.5x11 inches, 216x279 mm)</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Tabloid (279 x 432 mm)</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>US Common #10 Envelope (105 x 241 mm)</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Setup Printer</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>PostScript Files (*.ps);;All Files (*)</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
+    <name>QProgressDialog</name>
+    <message>
+        <source>Cancel</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
+    <name>QRegExp</name>
+    <message>
+        <source>no error occurred</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>disabled feature used</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>bad char class syntax</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>bad lookahead syntax</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>bad repetition syntax</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>invalid octal value</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>missing left delim</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>unexpected end</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>met internal limit</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
+    <name>QSql</name>
+    <message>
+        <source>Delete</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Delete this record?</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Yes</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>No</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Insert</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Update</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Save edits?</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Cancel</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Confirm</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Cancel your edits?</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
+    <name>QTabDialog</name>
+    <message>
+        <source>OK</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Apply</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Help</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Defaults</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Cancel</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
+    <name>QTextEdit</name>
+    <message>
+        <source>&amp;Undo</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>&amp;Redo</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Cu&amp;t</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>&amp;Copy</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>&amp;Paste</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Clear</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Select All</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
+    <name>QTitleBar</name>
+    <message>
+        <source>System Menu</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Shade</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Unshade</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Normalize</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Minimize</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Maximize</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Close</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
+    <name>QToolBar</name>
+    <message>
+        <source>More...</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
+    <name>QUrlOperator</name>
+    <message>
+        <source>The protocol `%1&apos; is not supported</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>The protocol `%1&apos; does not support listing directories</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>The protocol `%1&apos; does not support creating new directories</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>The protocol `%1&apos; does not support removing files or directories</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>The protocol `%1&apos; does not support renaming files or directories</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>The protocol `%1&apos; does not support getting files</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>The protocol `%1&apos; does not support putting files</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>The protocol `%1&apos; does not support copying or moving files or directories</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>(unknown)</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
+    <name>QWSDecoration</name>
+    <message>
+        <source>&amp;Restore</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>&amp;Move</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>&amp;Size</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Mi&amp;nimize</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Ma&amp;ximize</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Close</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Windows</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>KDE</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>KDE2</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>BeOS</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Hydro</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Default</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
+    <name>QWhatsThisButton</name>
+    <message>
+        <source>What&apos;s this?</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
+    <name>QWizard</name>
+    <message>
+        <source>&amp;Cancel</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>&lt; &amp;Back</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>&amp;Next &gt;</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>&amp;Finish</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <source>&amp;Help</source>
         <translation type="unfinished"></translation>
     </message>
-    <message>
-        <source>Status bar</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Failed to locate file &apos;%1&apos;</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Failed to open file &apos;%1&apos;</source>
-        <translation type="unfinished"></translation>
-    </message>
 </context>
 <context>
-    <name>QDWPaper</name>
+    <name>QWorkspace</name>
     <message>
-        <source>DjVu Error</source>
-        <translation type="unfinished"></translation>
-    </message>
-</context>
-<context>
-    <name>QDWelcome</name>
-    <message>
-        <source>Welcome to the DjVu Plug-in</source>
+        <source>&amp;Restore</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>&amp;Preferences</source>
+        <source>&amp;Move</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Adjust gamma correction, caches, etc.</source>
+        <source>&amp;Size</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>&amp;Help</source>
+        <source>Mi&amp;nimize</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Learn how to use DjVu</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>&amp;About</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Credit and links</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>These functions and many others can be
-accessed from within a DjVu document
-by clicking the right mouse button.</source>
+        <source>Ma&amp;ximize</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
@@ -1706,87 +1822,161 @@ by clicking the right mouse button.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>&amp;Never show this window again</source>
+        <source>Stay on &amp;Top</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Sh&amp;ade</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>%1 - [%2]</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Minimize</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Restore Down</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Close</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>&amp;Unshade</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
-    <name>QMimeChecker</name>
+    <name>QXml</name>
     <message>
-        <source>Please restart Netscape for the changes to take effect</source>
+        <source>no error occurred</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>error triggered by consumer</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>unexpected end of file</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>more than one document type definition</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>error occurred while parsing element</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>tag mismatch</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>error occurred while parsing content</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>unexpected character</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>invalid name for processing instruction</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>version expected while reading the XML declaration</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>wrong value for standalone declaration</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>encoding declaration or standalone declaration expected while reading the XML declaration</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>standalone declaration expected while reading the XML declaration</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>error occurred while parsing document type definition</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>letter is expected</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>error occurred while parsing comment</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>error occurred while parsing reference</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>internal general entity reference not allowed in DTD</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>external parsed general entity reference not allowed in attribute value</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>external parsed general entity reference not allowed in DTD</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>unparsed entity reference in wrong context</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>recursive entities</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>error in the text declaration of an external entity</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
-    <name>QPushButton</name>
+    <name>QtMultiLineEdit</name>
     <message>
-        <source>&amp;Close</source>
-        <translation type="unfinished"></translation>
-    </message>
-</context>
-<context>
-    <name>QeExcMessage</name>
-    <message>
-        <source>&amp;Details</source>
+        <source>Undo</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Hide &amp;Details</source>
+        <source>Redo</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Function name</source>
+        <source>Cut</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>File name</source>
+        <source>Copy</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Line number</source>
+        <source>Paste</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>&amp;OK</source>
+        <source>Paste special...</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Error</source>
-        <translation type="unfinished"></translation>
-    </message>
-</context>
-<context>
-    <name>QeFileDialog</name>
-    <message>
-        <source>You should select a regular file,
-not a pipe, socket or device file.</source>
+        <source>Clear</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Select directory for page files...</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Select DjVu page output file name...</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Cannot open file &apos;%1&apos; for reading.
-%2</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Cannot open file &apos;%1&apos; for writing.
-%2</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>File &apos;%1&apos; already exists.
-Are you sure you want to overwrite it?</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Failed to stat file &apos;%1&apos;</source>
+        <source>Select All</source>
         <translation type="unfinished"></translation>
     </message>
 </context>

@@ -42,6 +42,7 @@ MOC = @MOC@
 LUPDATE = @LUPDATE@
 LRELEASE = @LRELEASE@
 LANGUAGES = fr_FR ja_JP
+LANGFILES = qt djview
 
 DEFS = @DEFS@
 OPTS = @OPTS@
@@ -189,10 +190,11 @@ install-data: FORCE
 	${INSTALL} -d ${DESTDIR}${datadir}/djvu/osi
 	for l in ${LANGUAGES} ; do \
 	  ${INSTALL} -d ${DESTDIR}${datadir}/djvu/osi/$$l ;\
-	  test -r i18n/$$l/djview.qm && \
-	   ${INSTALL} -m 0644 i18n/$$l/djview.qm \
-	     ${DESTDIR}${datadir}/djvu/osi/$$l ;\
-	done
+	  for p in ${LANGFILES} ; do \
+	    test -r i18n/$$l/$$p.qm && \
+	     ${INSTALL} -m 0644 i18n/$$l/$$p.qm \
+	       ${DESTDIR}${datadir}/djvu/osi/$$l ;\
+	done ; done
 	-test -r ${srcdir}/djview_help.djvu && \
 	  ${INSTALL} -m 0644 ${srcdir}/djview_help.djvu \
 	    ${DESTDIR}${datadir}/djvu/osi
@@ -223,14 +225,18 @@ lupdate: FORCE
 
 lrelease: FORCE
 	@( echo -n "all: " ;\
-          for l in ${LANGUAGES} ; do echo -n " " i18n/$$l/djview.qm ; done ;\
+          for l in ${LANGUAGES} ; do \
+	    for p in ${LANGFILES} ; do \
+              echo -n " i18n/$$l/$$p.qm" ;\
+	  done ; done ;\
 	  echo "" ;\
 	  for l in ${LANGUAGES} ; do \
-	    echo  "i18n/$$l/djview.ts: ${srcdir}/i18n/$$l/djview.ts" ;\
-	    echo  "	cp ${srcdir}/\$$@ \$$@" ;\
-	    echo  "i18n/$$l/djview.qm: i18n/$$l/djview.ts";\
-	    echo  "	${LRELEASE} i18n/$$l/djview.ts";\
-          done ) > Makefile.i18n
+	    for p in ${LANGFILES} ; do \
+	      echo  "i18n/$$l/$$p.ts: ${srcdir}/i18n/$$l/$$p.ts" ;\
+	      echo  "	cp ${srcdir}/\$$@ \$$@" ;\
+	      echo  "i18n/$$l/$$p.qm: i18n/$$l/$$p.ts";\
+	      echo  "	${LRELEASE} i18n/$$l/$$p.ts";\
+          done ; done ) > Makefile.i18n
 	-@test -d i18n || ${MKDIR} i18n
 	-@for l in ${LANGUAGES} ; do test -d i18n/$$l || ${MKDIR} i18n/$$l; done
 	${MAKE} -f Makefile.i18n

@@ -224,7 +224,8 @@ QDViewerShell::help(void)
   GURL helpurl = getDjVuDataFile(DJVIEW_HELP_DJVU);
   if (helpurl.is_empty() )
     {
-      QString mesg=tr("Failed to locate file '")+DJVIEW_HELP_DJVU+"'";
+      QString mesg = 
+        tr("Failed to locate file '%1'").arg(DJVIEW_HELP_DJVU);
       showError(this, tr("DjVu Error"), mesg);
     }
   else
@@ -346,8 +347,8 @@ QDViewerShell::slotGetURLTimeout(void)
 	    } catch(...)
 	    {
 		  // Don't want to report 'file not found' errors
-	       QString mesg=tr("Failed to open file '")
-                 + QStringFromGString(fname) + "'";
+	       QString mesg = tr("Failed to open file '%1'")
+                 .arg( QStringFromGString(fname) );
 	       slotShowStatus(mesg);
 	       DEBUG_MSG("Failed to open url=" << gu_url << "\n");
 	       return;

@@ -1044,18 +1044,20 @@ QDBase::exportToPNM(void)
    
    bool raw=0;
    {
-     QString mesg = tr("This will export the DjVu image in either 'Raw ")
-       + format_str + "'\n" + tr("or 'ASCII ") 
-       + format_str + tr("' format. Which one do you prefer?\n");
-     
-     switch(QMessageBox::information(this, 
-                                     tr("Exporting DjVu image..."), mesg,
-                                     tr("&Raw"), tr("&Ascii"), tr("&Cancel"), 
-                                     0, 2))
+     QString mesg = 
+       tr("This will export the DjVu image in either 'Raw %1'\n"
+          "or 'ASCII %2' format. Which one do you prefer?\n")
+       .arg(format_str)
+       .arg(format_str);
+       
+       switch(QMessageBox::information(this, 
+                                       tr("Exporting DjVu image..."), mesg,
+                                       tr("&Raw"), tr("&Ascii"), tr("&Cancel"), 
+                                       0, 2))
        {
-       case 0: raw=1; break;
-       case 1: raw=0; break;
-       default: return;
+         case 0: raw=1; break;
+         case 1: raw=0; break;
+         default: return;
        }
    }
    

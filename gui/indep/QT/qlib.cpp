@@ -309,9 +309,9 @@ QeFileDialog::done(int rc)
           if (fd<0)
             {
               QMessageBox::critical(this, "DjVu",
-                                    tr("Failed to open file") + " '" 
-                                    + fileName + "' " 
-                                    + tr("for reading:\n") + strerror(errno));
+                                    tr("Cannot open file '%1' for reading.\n%2")
+                                    .arg(fileName)
+                                    .arg(strerror(errno)) );
               return;
             } 
           ::close(fd);
@@ -319,19 +319,18 @@ QeFileDialog::done(int rc)
       else
         {
           if (QMessageBox::warning(this, "DjVu",
-                                   tr("File") + " '" + fileName
-                                   + "' " + tr(" already exists.\n")
-                                   + tr("Are you sure you want to overwrite it?"),
+                                   tr("File '%1' already exists.\n"
+                                      "Are you sure you want to overwrite it?")
+                                   .arg(fileName),
                                    "&Yes", "&No", 0, 0, 1))
             return;
           int fd=::open(cFileName, O_WRONLY);
           if (fd<0)
             {
               QMessageBox::critical(this, "DjVu",
-                                    tr("Failed to open file")
-                                    + " '" + fileName + "' "
-                                    + tr("for writing:\n")
-                                    + strerror(errno));
+                                    tr("Cannot open file '%1' for writing.\n%2")
+                                    .arg(fileName)
+                                    .arg(strerror(errno)) );
               return;
             }
           ::close(fd);
@@ -340,8 +339,8 @@ QeFileDialog::done(int rc)
   else if (!forWriting)
     {
       QMessageBox::critical(this, "DjVu", 
-                            tr("Failed to stat file")
-                            + " '" + fileName + "'.");
+                            tr("Failed to stat file '%1'")
+                            .arg(fileName) );
       return;
     }
 #endif

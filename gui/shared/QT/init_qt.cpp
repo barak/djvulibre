@@ -221,18 +221,22 @@ InstallLangTranslator(void)
      QApplication::setFont( font, TRUE );
 #endif
    // load language translation files
-   GList<GURL> paths = DjVuMessage::GetProfilePaths();
-   for(GPosition pos=paths; pos; ++pos)
-     fprintf(stderr,"%s\n", (const char*) paths[pos]);
-   GURL url = getDjVuDataFile("djview.qm");
-   if (url.is_file())
+   GURL urla = getDjVuDataFile("qt.qm");
+   if (urla.is_file()) 
      {
-       QString lang = QStringFromGString(url.pathname());
-       QTranslator *translator = new QTranslator(qApp);
-       if ( translator->load(lang) )
-         qApp->installTranslator(translator);
-       return true;
+       QTranslator *trans = new QTranslator(qApp);
+       if (trans->load(QStringFromGString(urla.pathname())))
+         qApp->installTranslator(trans);
      }
+   GURL pn = GURL::Filename::UTF8(DjVuMessage::programname());
+   GURL urlb = getDjVuDataFile(pn.fname() + ".qm");
+   if (urlb.is_file())
+     {
+       QTranslator *trans = new QTranslator(qApp);
+       if (trans->load(QStringFromGString(urlb.pathname())))
+         qApp->installTranslator(trans);
+     }
+   return true;
 #endif
    return false;
 }

@@ -3,83 +3,78 @@
     <name>DjVuViewer</name>
     <message>
         <source>Unexpected end of file encountered</source>
-        <translation type="unfinished"></translation>
+        <translation>Fin de fichier impromptue</translation>
     </message>
 </context>
 <context>
     <name>QDAboutDialog</name>
     <message>
         <source>About DjView</source>
-        <translation type="unfinished"></translation>
+        <translation>À propos de DjView</translation>
     </message>
     <message>
         <source>DjVu standalone viewer
 and browser plugin.</source>
-        <translation type="unfinished"></translation>
+        <translation>Visualiseur DjVu
+et extension de butineur.</translation>
     </message>
     <message>
         <source>Version DjVuLibre-</source>
-        <translation type="unfinished"></translation>
+        <translation>Version DjVuLibre-</translation>
     </message>
     <message>
         <source>&amp;Close</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Fermer</translation>
     </message>
 </context>
 <context>
     <name>QDBase</name>
     <message>
         <source>DjVu Error</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>This will export the DjVu image in either &apos;Raw </source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>or &apos;ASCII </source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>&apos; format. Which one do you prefer?
-</source>
-        <translation type="unfinished"></translation>
+        <translation>Erreur DjVu</translation>
     </message>
     <message>
         <source>Exporting DjVu image...</source>
-        <translation type="unfinished"></translation>
+        <translation>Export de l&apos;image DjVu...</translation>
     </message>
     <message>
         <source>&amp;Raw</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Binaire</translation>
     </message>
     <message>
         <source>&amp;Ascii</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Texte</translation>
     </message>
     <message>
         <source>&amp;Cancel</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Annuler</translation>
     </message>
     <message>
         <source>All files (*)</source>
-        <translation type="unfinished"></translation>
+        <translation>Tous les fichiers (*)</translation>
     </message>
     <message>
         <source>Select export file name...</source>
-        <translation type="unfinished"></translation>
+        <translation>Choisir un nom de fichier pour l&apos;export...</translation>
     </message>
     <message>
         <source>Please stand by...</source>
-        <translation type="unfinished"></translation>
+        <translation>Un  instant s&apos;il vous plait...</translation>
     </message>
     <message>
         <source>&amp;Abort</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Annuler</translation>
     </message>
     <message>
         <source>DjVu: Exporting image...</source>
-        <translation type="unfinished"></translation>
+        <translation>DjVu: Export de l&apos;image...</translation>
+    </message>
+    <message>
+        <source>This will export the DjVu image in either &apos;Raw %1&apos;
+or &apos;ASCII %2&apos; format. Which one do you prefer?
+</source>
+        <translation>L&apos;image DjVu peur être exportée sous le format &apos;%1 Binaire&apos;,
+ou &apos;%2 Texte&apos;.  Quel format préferez vous?</translation>
     </message>
 </context>
 <context>
@@ -105,159 +100,160 @@ and browser plugin.</source>
     <name>QDDocInfo</name>
     <message>
         <source>DjVu Error</source>
-        <translation type="unfinished"></translation>
+        <translation>Erreur DjVu</translation>
     </message>
     <message>
         <source>Information on page </source>
-        <translation type="unfinished"></translation>
+        <translation>Informations sur la Page</translation>
     </message>
     <message>
         <source>Information on file </source>
-        <translation type="unfinished"></translation>
+        <translation>Informations sur le fichier</translation>
     </message>
     <message>
         <source>Please wait...</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Un  instant s&apos;il vous plait...</translation>
     </message>
     <message>
         <source>Please wait while I&apos;m downloading the data...</source>
-        <translation type="unfinished"></translation>
+        <translation>Attendez pendant le téléchargement des données...</translation>
     </message>
     <message>
         <source>&amp;Cancel</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Annuler</translation>
     </message>
     <message>
         <source>Page &amp;Info</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Informations sur la Page</translation>
     </message>
     <message>
         <source>&amp;Goto to page</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Aller à la Page</translation>
     </message>
     <message>
         <source>DjVu multipage document info</source>
-        <translation type="unfinished"></translation>
+        <translation>Information sur le document DjVu multipage</translation>
     </message>
     <message>
         <source>Document Information</source>
-        <translation type="unfinished"></translation>
+        <translation>Informations sur le Document</translation>
     </message>
     <message>
         <source>Document Name:</source>
-        <translation type="unfinished"></translation>
+        <translation>Nom du document:</translation>
     </message>
     <message>
         <source>Document Format:</source>
-        <translation type="unfinished"></translation>
+        <translation>Format du document:</translation>
     </message>
     <message>
         <source>BUNDLED</source>
-        <translation type="unfinished"></translation>
+        <translation>BUNDLED</translation>
     </message>
     <message>
         <source>Obsolete BUNDLED</source>
-        <translation type="unfinished"></translation>
+        <translation>BUNDLED obsolète</translation>
     </message>
     <message>
         <source>INDIRECT</source>
-        <translation type="unfinished"></translation>
+        <translation>INDIRECT</translation>
     </message>
     <message>
         <source>Obsolete INDEXED</source>
-        <translation type="unfinished"></translation>
+        <translation>INDEXED obsolète</translation>
     </message>
     <message>
         <source>SINGLE_PAGE</source>
-        <translation type="unfinished"></translation>
+        <translation>SINGLE_PAGE</translation>
     </message>
     <message>
         <source>UNKNOWN</source>
-        <translation type="unfinished"></translation>
+        <translation>Inconnu</translation>
     </message>
     <message>
         <source>Total size:</source>
-        <translation type="unfinished"></translation>
+        <translation>Taille totale:</translation>
     </message>
     <message>
         <source>unknown</source>
-        <translation type="unfinished"></translation>
+        <translation>inconnu</translation>
     </message>
     <message>
         <source>Pages:</source>
-        <translation type="unfinished"></translation>
+        <translation>Nombre de pages:</translation>
     </message>
     <message>
         <source>Files:</source>
-        <translation type="unfinished"></translation>
+        <translation>Nombre de fichiers:</translation>
     </message>
     <message>
         <source>Page</source>
-        <translation type="unfinished"></translation>
+        <translation>Page</translation>
     </message>
     <message>
         <source>File Name</source>
-        <translation type="unfinished"></translation>
+        <translation>Nom du fichier</translation>
     </message>
     <message>
         <source>File Size</source>
-        <translation type="unfinished"></translation>
+        <translation>Taille du fichier</translation>
     </message>
     <message>
         <source>Double click any page from the list to view it.
 </source>
-        <translation type="unfinished"></translation>
+        <translation>Cliquer deux fois sur une page pour l&apos;afficher.
+</translation>
     </message>
     <message>
         <source>Press the right mouse button to see popup menu.</source>
-        <translation type="unfinished"></translation>
+        <translation>Appuyez sur le bouton droit de la souris pour afficher le menu.</translation>
     </message>
     <message>
         <source>&amp;Info</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Information</translation>
     </message>
     <message>
         <source>&amp;Goto</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Aller à</translation>
     </message>
     <message>
         <source>Order #</source>
-        <translation type="unfinished"></translation>
+        <translation>Numéro</translation>
     </message>
     <message>
         <source>Pages Covered</source>
-        <translation type="unfinished"></translation>
+        <translation>Pages correspondantes</translation>
     </message>
     <message>
         <source>File Type</source>
-        <translation type="unfinished"></translation>
+        <translation>Type du fichier</translation>
     </message>
     <message>
         <source>&amp;Summary</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">&amp;Résumé</translation>
     </message>
     <message>
         <source>&amp;Pages</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Pages</translation>
     </message>
     <message>
         <source>&amp;Thumbnails</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Vignettes</translation>
     </message>
     <message>
         <source>&amp;All Files</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Tout les fichiers</translation>
     </message>
     <message>
         <source>&amp;Close</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Fermer</translation>
     </message>
 </context>
 <context>
     <name>QDDocNameDialog</name>
     <message>
         <source>All files (*)</source>
-        <translation type="unfinished"></translation>
+        <translation>Tous les fichiers (*)</translation>
     </message>
 </context>
 <context>
@@ -324,7 +320,7 @@ and browser plugin.</source>
     </message>
     <message>
         <source>&amp;OK</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">&amp;Ok</translation>
     </message>
     <message>
         <source>&amp;Cancel</source>
@@ -361,7 +357,7 @@ Are you sure you want to proceed?
     <name>QDGammaDispl</name>
     <message>
         <source>DjVu Error</source>
-        <translation type="unfinished"></translation>
+        <translation>Erreur DjVu</translation>
     </message>
 </context>
 <context>
@@ -459,7 +455,7 @@ gray shades look similar.</source>
     <name>QDMessageQueue</name>
     <message>
         <source>DjVu Error</source>
-        <translation type="unfinished"></translation>
+        <translation>Erreur DjVu</translation>
     </message>
 </context>
 <context>
@@ -499,19 +495,19 @@ Would  you like to update these files now?</source>
     <name>QDNavGotoPage</name>
     <message>
         <source>DjVu: Goto Page</source>
-        <translation type="unfinished"></translation>
+        <translation>DjVu: Aller à la Page</translation>
     </message>
     <message>
         <source>Goto page</source>
-        <translation type="unfinished"></translation>
+        <translation>Aller à la Page</translation>
     </message>
     <message>
         <source>&amp;OK</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Ok</translation>
     </message>
     <message>
         <source>&amp;Cancel</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Annuler</translation>
     </message>
 </context>
 <context>
@@ -537,14 +533,14 @@ Would  you like to update these files now?</source>
     <name>QDPageSaver</name>
     <message>
         <source>All files (*)</source>
-        <translation type="unfinished"></translation>
+        <translation>Tous les fichiers (*)</translation>
     </message>
 </context>
 <context>
     <name>QDPane</name>
     <message>
         <source>DjVu Error</source>
-        <translation type="unfinished"></translation>
+        <translation>Erreur DjVu</translation>
     </message>
 </context>
 <context>
@@ -626,7 +622,7 @@ automatic color matching.</source>
     </message>
     <message>
         <source>&amp;OK</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">&amp;Ok</translation>
     </message>
     <message>
         <source>DjVu Print Dialog</source>
@@ -666,7 +662,7 @@ automatic color matching.</source>
     </message>
     <message>
         <source>&amp;Color</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">&amp;Couleur</translation>
     </message>
     <message>
         <source>&amp;GreyScale</source>
@@ -968,7 +964,7 @@ creator did not run an OCR engine on this document.
     </message>
     <message>
         <source>&amp;Find</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Rec&amp;hercher</translation>
     </message>
     <message>
         <source>DjVu: Find</source>
@@ -1011,19 +1007,19 @@ creator did not run an OCR engine on this document.
     <name>QDSetZoom</name>
     <message>
         <source>DjVu: Set Zoom</source>
-        <translation type="unfinished"></translation>
+        <translation>DjVu: Facteur d&apos;agrandissement</translation>
     </message>
     <message>
         <source>Custom zoom</source>
-        <translation type="unfinished"></translation>
+        <translation>Zoom</translation>
     </message>
     <message>
         <source>&amp;OK</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Ok</translation>
     </message>
     <message>
         <source>&amp;Cancel</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Annuler</translation>
     </message>
 </context>
 <context>
@@ -1150,46 +1146,47 @@ creator did not run an OCR engine on this document.
     <name>QDTbarPrefs</name>
     <message>
         <source>Enable toolbar</source>
-        <translation type="unfinished"></translation>
+        <translation>Afficher la barre d&apos;outils</translation>
     </message>
     <message>
         <source>Toolbar is always visible</source>
-        <translation type="unfinished"></translation>
+        <translation>Toujours montrer la barre d&apos;outils</translation>
     </message>
     <message>
         <source>Toolbar hide delay:</source>
-        <translation type="unfinished"></translation>
+        <translation>Cacher la barre d&apos;outils après:</translation>
     </message>
     <message>
         <source>&lt;b&gt;Toolbar:&lt;/b&gt;&lt;br&gt;Checking the &lt;i&gt;enable toolbar&lt;/i&gt; box adds a toolbar at the bottom of each DjVu image. Checking the &lt;i&gt;always visible&lt;/i&gt; box makes the toolbar visible at all times. Otherwise the toolbar appears when the mouse pointer comes close to the bottom of the image and remains visible until the specified delay expires.</source>
-        <translation type="unfinished"></translation>
+        <translation>&lt;b&gt;Barre d&apos;outils:&lt;/b&gt;&lt;br&gt;L&apos;option &lt;i&gt;afficher la barre d&apos;outils&lt;/i&gt; ajoute une barre d&apos;outils en bas de chaque image DjVu.  L&apos;option &lt;i&gt;toujours montrer la barre d&apos;outils&lt;/i&gt; rend la barre d&apos;outils visible en permanence.  Sinon la barre d&apos;outil apparait quand le pointeur de la souris est proche du bas de l&apos;image et reste visible jusqu&apos;à expiration du délai spécifié.</translation>
     </message>
 </context>
 <context>
     <name>QDThumbnails</name>
     <message>
         <source>Page </source>
-        <translation type="unfinished"></translation>
+        <translation>Page</translation>
     </message>
 </context>
 <context>
     <name>QDViewer</name>
     <message>
         <source>DjVu Viewer - </source>
-        <translation type="unfinished"></translation>
+        <translation>DjVu Viewer - </translation>
     </message>
     <message>
         <source>Printing prohibited</source>
-        <translation type="unfinished"></translation>
+        <translation>Impression interdite.</translation>
     </message>
     <message>
         <source>Printing of this image
 has been disallowed.</source>
-        <translation type="unfinished"></translation>
+        <translation>L&apos;impression de cette image
+n&apos;est pas autorisée.</translation>
     </message>
     <message>
         <source>Upgrade DjVu now!</source>
-        <translation type="unfinished"></translation>
+        <translation>Mettez à jour DjVuLibre.</translation>
     </message>
     <message>
         <source>You are using an obsolete version of the
@@ -1197,22 +1194,30 @@ DjVu plugin. To install the newest
 version click &quot;Download&quot; and follow the
 instructions.
 </source>
-        <translation type="unfinished"></translation>
+        <translation>Vous utilisez une version obsolète du
+visualiseur DjVu. Pour installer la dernière
+version, cliquer sur «Télécharger» et suivez
+les instructions.
+
+</translation>
     </message>
     <message>
         <source>&amp;Download</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Télécharger</translation>
     </message>
     <message>
         <source>&amp;Ignore</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Ignorer</translation>
     </message>
     <message>
         <source>You are using an obsolete version of the
 DjVu plugin. Please upgrade the viewer to
 view this document.
 </source>
-        <translation type="unfinished"></translation>
+        <translation>Vous utilisez une version obsolète du 
+visualiseur DjVu.  Mettez à jour le visualiseur
+pour afficher ce document.
+</translation>
     </message>
     <message>
         <source>This DjVu document uses an inferior
@@ -1220,546 +1225,550 @@ technology, which is no longer supported.
 Please send a flame to the webmaster who
 uses outdated tools.
 </source>
-        <translation type="unfinished"></translation>
+        <translation>Ce document DjVu utilise une technologie dépassée
+qui n&apos;est plus maintenue.  Envoyez un email rageur
+au Webmaistre qui utilise des outils obsolètes.</translation>
     </message>
     <message>
         <source>Page decoding done</source>
-        <translation type="unfinished"></translation>
+        <translation>Decodage de la page terminé</translation>
     </message>
     <message>
         <source>Finish printing first</source>
-        <translation type="unfinished"></translation>
+        <translation>Finissez d&apos;abord d&apos;imprimer</translation>
     </message>
     <message>
         <source>Please close the Print dialog first.</source>
-        <translation type="unfinished"></translation>
+        <translation>Fermez d&apos;abord le Dialogue d&apos;Impression.</translation>
     </message>
     <message>
         <source>Requesting URL </source>
-        <translation type="unfinished"></translation>
+        <translation>Requête de l&apos;URL</translation>
     </message>
     <message>
         <source>DjVu Error</source>
-        <translation type="unfinished"></translation>
+        <translation>Erreur DjVu</translation>
     </message>
     <message>
         <source>Subprocess diagnostics</source>
-        <translation type="unfinished"></translation>
+        <translation>Diagnostics du sous-processus</translation>
     </message>
     <message>
         <source>&amp;Color</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Couleur</translation>
     </message>
     <message>
         <source>Black and &amp;White</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Noir et Blanc</translation>
     </message>
     <message>
         <source>&amp;Background</source>
-        <translation type="unfinished"></translation>
+        <translation>A&amp;rrière Plan</translation>
     </message>
     <message>
         <source>&amp;Foreground</source>
-        <translation type="unfinished"></translation>
+        <translation>A&amp;vant Plan</translation>
     </message>
     <message>
         <source>Full &amp;Screen</source>
-        <translation type="unfinished"></translation>
+        <translation>Plein &amp;Écran</translation>
     </message>
     <message>
         <source>&amp;Display</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Affichage</translation>
     </message>
     <message>
         <source>&amp;Custom...</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Spécifier...</translation>
     </message>
     <message>
         <source>One &amp;to One</source>
-        <translation type="unfinished"></translation>
+        <translation>Un &amp;Pixel pour un pixel</translation>
     </message>
     <message>
         <source>&amp;Stretch</source>
-        <translation type="unfinished"></translation>
+        <translation>É&amp;tirer l&apos;image sur toute la fenêtre</translation>
     </message>
     <message>
         <source>Fit &amp;Width</source>
-        <translation type="unfinished"></translation>
+        <translation>Montrer toute la &amp;Largeur</translation>
     </message>
     <message>
         <source>Fit &amp;Page</source>
-        <translation type="unfinished"></translation>
+        <translation>Montrer toute la &amp;Page</translation>
     </message>
     <message>
         <source>Zoom &amp;In</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Agrandir</translation>
     </message>
     <message>
         <source>Zoom &amp;Out</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Réduire</translation>
     </message>
     <message>
         <source>&amp;Zoom</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Zoom</translation>
     </message>
     <message>
         <source>Normal</source>
-        <translation type="unfinished"></translation>
+        <translation>Normal</translation>
     </message>
     <message>
         <source>Left side down</source>
-        <translation type="unfinished"></translation>
+        <translation>Coté gauche en bas</translation>
     </message>
     <message>
         <source>Upside down</source>
-        <translation type="unfinished"></translation>
+        <translation>À l&apos;envers</translation>
     </message>
     <message>
         <source>Right side down</source>
-        <translation type="unfinished"></translation>
+        <translation>Coté droit en bas</translation>
     </message>
     <message>
         <source>&amp;Rotation</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Rotation</translation>
     </message>
     <message>
         <source>&amp;Next Page</source>
-        <translation type="unfinished"></translation>
+        <translation>Page Sui&amp;vante</translation>
     </message>
     <message>
         <source>&amp;Previous Page</source>
-        <translation type="unfinished"></translation>
+        <translation>Page Pré&amp;cédente</translation>
     </message>
     <message>
         <source>&amp;First Page</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Première Page</translation>
     </message>
     <message>
         <source>&amp;Last Page</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Dernière Page</translation>
     </message>
     <message>
         <source>&amp;Goto Page...</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Aller à la Page...</translation>
     </message>
     <message>
         <source>&amp;Back</source>
-        <translation type="unfinished"></translation>
+        <translation>En A&amp;rrière</translation>
     </message>
     <message>
         <source>&amp;Forward</source>
-        <translation type="unfinished"></translation>
+        <translation>En A&amp;vant</translation>
     </message>
     <message>
         <source>&amp;Navigate</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Naviguer</translation>
     </message>
     <message>
         <source>&amp;Find</source>
-        <translation type="unfinished"></translation>
+        <translation>Rec&amp;hercher</translation>
     </message>
     <message>
         <source>Page &amp;Information</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Informations sur la Page</translation>
     </message>
     <message>
         <source>Document In&amp;formation</source>
-        <translation type="unfinished"></translation>
+        <translation>In&amp;formations sur le Document</translation>
     </message>
     <message>
         <source>Show &amp;Thumbnails</source>
-        <translation type="unfinished"></translation>
+        <translation>Montrer les &amp;Vignettes</translation>
     </message>
     <message>
         <source>Show &amp;Bookmarks</source>
-        <translation type="unfinished"></translation>
+        <translation>Montrer les &amp;Marque-pages</translation>
     </message>
     <message>
         <source>Save D&amp;ocument As ...</source>
-        <translation type="unfinished"></translation>
+        <translation>Enregistrer le D&amp;ocument ...</translation>
     </message>
     <message>
         <source>Save P&amp;age As ...</source>
-        <translation type="unfinished"></translation>
+        <translation>Enregister la P&amp;age ...</translation>
     </message>
     <message>
         <source>&amp;Export page</source>
-        <translation type="unfinished"></translation>
+        <translation>E&amp;xporter la page</translation>
     </message>
     <message>
         <source>Print Pa&amp;ge</source>
-        <translation type="unfinished"></translation>
+        <translation>Imprimer la Pa&amp;ge</translation>
     </message>
     <message>
         <source>&amp;Print Document</source>
-        <translation type="unfinished"></translation>
+        <translation>Im&amp;primer le Document</translation>
     </message>
     <message>
         <source>Print &amp;Window</source>
-        <translation type="unfinished"></translation>
+        <translation>Imprimer la Fe&amp;nêtre</translation>
     </message>
     <message>
         <source>P&amp;references ...</source>
-        <translation type="unfinished"></translation>
+        <translation>P&amp;réferences ...</translation>
     </message>
     <message>
         <source>A&amp;bout DjVu ...</source>
-        <translation type="unfinished"></translation>
+        <translation>À propos de DjVu...</translation>
     </message>
     <message>
         <source>&amp;Help ...</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Aide ...</translation>
     </message>
     <message>
         <source>DjVu: Page Information</source>
-        <translation type="unfinished"></translation>
+        <translation>DjVu: Informations sur la page</translation>
     </message>
 </context>
 <context>
     <name>QDViewerPrefs</name>
     <message>
         <source>DjVu: Viewer Preferences</source>
-        <translation type="unfinished"></translation>
+        <translation>DjVu: Préferences</translation>
     </message>
     <message>
         <source>Gamma</source>
-        <translation type="unfinished"></translation>
+        <translation>Gamma</translation>
     </message>
     <message>
         <source>Toolbar</source>
-        <translation type="unfinished"></translation>
+        <translation>Barre d&apos;outils</translation>
     </message>
     <message>
         <source>Links</source>
-        <translation type="unfinished"></translation>
+        <translation>Hyperliens</translation>
     </message>
     <message>
         <source>Lens</source>
-        <translation type="unfinished"></translation>
+        <translation>Loupe</translation>
     </message>
     <message>
         <source>Cache</source>
-        <translation type="unfinished"></translation>
+        <translation>Caches</translation>
     </message>
     <message>
         <source>Optimization</source>
-        <translation type="unfinished"></translation>
+        <translation>Optimisation</translation>
     </message>
     <message>
         <source>Save preferences.</source>
-        <translation type="unfinished"></translation>
+        <translation>Enregistrer les préferences.</translation>
     </message>
     <message>
         <source>Help</source>
-        <translation type="unfinished"></translation>
+        <translation>Aide</translation>
     </message>
     <message>
         <source>&amp;OK</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Ok</translation>
     </message>
     <message>
         <source>&amp;Cancel</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Annuler</translation>
     </message>
 </context>
 <context>
     <name>QDViewerShell</name>
     <message>
         <source>Select &quot;File&quot; and then &quot;Open&quot; to load a DjVu file</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Failed to locate file &apos;</source>
-        <translation type="unfinished"></translation>
+        <translation>Sélectionnez «Ouvrir» dans le menu «Fichier» pour charger un fichier DjVu</translation>
     </message>
     <message>
         <source>DjVu Error</source>
-        <translation type="unfinished"></translation>
+        <translation>Erreur DjVu</translation>
     </message>
     <message>
         <source>DjVu: Select DjVu file to open</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Failed to open file &apos;</source>
-        <translation type="unfinished"></translation>
+        <translation>DjVu: Ouvrir un fichier DjVu</translation>
     </message>
     <message>
         <source>DjVu Standalone Viewer</source>
-        <translation type="unfinished"></translation>
+        <translation>Visualiseur DjVu</translation>
     </message>
     <message>
         <source>&amp;Open</source>
-        <translation type="unfinished">&amp;Ouvrir</translation>
+        <translation>&amp;Ouvrir</translation>
     </message>
     <message>
         <source>&amp;New Window</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Nouvelle Fenêtre</translation>
     </message>
     <message>
         <source>Save D&amp;ocument As...</source>
-        <translation type="unfinished"></translation>
+        <translation>Enregistrer le D&amp;ocument ...</translation>
     </message>
     <message>
         <source>Save P&amp;age As...</source>
-        <translation type="unfinished"></translation>
+        <translation>Enregister la P&amp;age ...</translation>
     </message>
     <message>
         <source>&amp;Export page</source>
-        <translation type="unfinished"></translation>
+        <translation>E&amp;xporter la page</translation>
     </message>
     <message>
         <source>&amp;Find</source>
-        <translation type="unfinished"></translation>
+        <translation>Rec&amp;hercher</translation>
     </message>
     <message>
         <source>&amp;Preferences</source>
-        <translation type="unfinished"></translation>
+        <translation>P&amp;réferences</translation>
     </message>
     <message>
         <source>P&amp;rint Page</source>
-        <translation type="unfinished"></translation>
+        <translation>Imprimer la Pa&amp;ge</translation>
     </message>
     <message>
         <source>Pr&amp;int Document</source>
-        <translation type="unfinished"></translation>
+        <translation>Im&amp;primer le Document</translation>
     </message>
     <message>
         <source>&amp;Close</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Fermer</translation>
     </message>
     <message>
         <source>E&amp;xit</source>
-        <translation type="unfinished"></translation>
+        <translation>Quitter</translation>
     </message>
     <message>
         <source>&amp;File</source>
-        <translation type="unfinished">&amp;Fichier</translation>
+        <translation>&amp;Fichier</translation>
     </message>
     <message>
         <source>&amp;Color</source>
-        <translation type="unfinished">&amp;Couleur</translation>
+        <translation>&amp;Couleur</translation>
     </message>
     <message>
         <source>Black and &amp;White</source>
-        <translation type="unfinished">&amp;Noir et Blanc</translation>
+        <translation>&amp;Noir et Blanc</translation>
     </message>
     <message>
         <source>&amp;Background</source>
-        <translation type="unfinished">A&amp;rriere Plan</translation>
+        <translation>A&amp;rrière Plan</translation>
     </message>
     <message>
         <source>&amp;Foreground</source>
-        <translation type="unfinished">A&amp;vant Plan</translation>
+        <translation>A&amp;vant Plan</translation>
     </message>
     <message>
         <source>Full &amp;Screen</source>
-        <translation type="unfinished">Plein Écran</translation>
+        <translation>Plein &amp;Écran</translation>
     </message>
     <message>
         <source>&amp;Display</source>
-        <translation type="unfinished">&amp;Affichage</translation>
+        <translation>&amp;Affichage</translation>
     </message>
     <message>
         <source>&amp;Custom...</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Spécifier...</translation>
     </message>
     <message>
         <source>One &amp;to One</source>
-        <translation type="unfinished"></translation>
+        <translation>Un &amp;Pixel pour un pixel</translation>
     </message>
     <message>
         <source>&amp;Stretch</source>
-        <translation type="unfinished"></translation>
+        <translation>É&amp;tirer l&apos;image sur toute la fenêtre</translation>
     </message>
     <message>
         <source>Fit &amp;Width</source>
-        <translation type="unfinished"></translation>
+        <translation>Montrer toute la &amp;Largeur</translation>
     </message>
     <message>
         <source>Fit &amp;Page</source>
-        <translation type="unfinished"></translation>
+        <translation>Montrer toute la &amp;Page</translation>
     </message>
     <message>
         <source>Zoom &amp;In</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Agrandir</translation>
     </message>
     <message>
         <source>Zoom &amp;Out</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Réduire</translation>
     </message>
     <message>
         <source>&amp;Zoom</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Zoom</translation>
     </message>
     <message>
         <source>&amp;Next Page</source>
-        <translation type="unfinished"></translation>
+        <translation>Page &amp;Suivante</translation>
     </message>
     <message>
         <source>&amp;Previous Page</source>
-        <translation type="unfinished"></translation>
+        <translation>Page Pré&amp;cédente</translation>
     </message>
     <message>
         <source>&amp;+10 Pages</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;+10 Pages</translation>
     </message>
     <message>
         <source>&amp;-10 Pages</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;-10 Pages</translation>
     </message>
     <message>
         <source>&amp;First Page</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Première Page</translation>
     </message>
     <message>
         <source>&amp;Last Page</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Dernière Page</translation>
     </message>
     <message>
         <source>&amp;Goto Page...</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Aller à la Page...</translation>
     </message>
     <message>
         <source>&amp;Back</source>
-        <translation type="unfinished"></translation>
+        <translation>En A&amp;rrière</translation>
     </message>
     <message>
         <source>&amp;Forward</source>
-        <translation type="unfinished"></translation>
+        <translation>En A&amp;vant</translation>
     </message>
     <message>
         <source>&amp;Navigate</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Naviguer</translation>
     </message>
     <message>
         <source>&amp;Page Information</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Informations sur la Page</translation>
     </message>
     <message>
         <source>&amp;Document Information</source>
-        <translation type="unfinished"></translation>
+        <translation>In&amp;formations sur le Document</translation>
     </message>
     <message>
         <source>Show &amp;Thumbnails</source>
-        <translation type="unfinished"></translation>
+        <translation>Montrer les &amp;Vignettes</translation>
     </message>
     <message>
         <source>Show &amp;Bookmarks</source>
-        <translation type="unfinished"></translation>
+        <translation>Montrer les &amp;Marque-pages</translation>
     </message>
     <message>
         <source>&amp;Info</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Information</translation>
     </message>
     <message>
         <source>&amp;About</source>
-        <translation type="unfinished"></translation>
+        <translation>À propos de DjVu</translation>
     </message>
     <message>
         <source>&amp;Help</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Aide</translation>
     </message>
     <message>
         <source>Status bar</source>
-        <translation type="unfinished"></translation>
+        <translation>Barre d&apos;état</translation>
+    </message>
+    <message>
+        <source>Failed to locate file &apos;%1&apos;</source>
+        <translation>Impossible de trouver le fichier «%1»</translation>
+    </message>
+    <message>
+        <source>Failed to open file &apos;%1&apos;</source>
+        <translation>Impossible d&apos;ouvrir le fichier «%1»</translation>
     </message>
 </context>
 <context>
     <name>QDWPaper</name>
     <message>
         <source>DjVu Error</source>
-        <translation type="unfinished"></translation>
+        <translation>Erreur DjVu</translation>
     </message>
 </context>
 <context>
     <name>QDWelcome</name>
     <message>
         <source>Welcome to the DjVu Plug-in</source>
-        <translation type="unfinished"></translation>
+        <translation>Bienvenue dans le Visualiseur DjVu</translation>
     </message>
     <message>
         <source>&amp;Preferences</source>
-        <translation type="unfinished"></translation>
+        <translation>P&amp;réferences</translation>
     </message>
     <message>
         <source>Adjust gamma correction, caches, etc.</source>
-        <translation type="unfinished"></translation>
+        <translation>Ajuster la correction de couleurs, les caches, etc.</translation>
     </message>
     <message>
         <source>&amp;Help</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Aide</translation>
     </message>
     <message>
         <source>Learn how to use DjVu</source>
-        <translation type="unfinished"></translation>
+        <translation>Apprenez à utiliser Djvu</translation>
     </message>
     <message>
         <source>&amp;About</source>
-        <translation type="unfinished"></translation>
+        <translation>À propos de DjVu</translation>
     </message>
     <message>
         <source>Credit and links</source>
-        <translation type="unfinished"></translation>
+        <translation>Auteurs et Liens</translation>
     </message>
     <message>
         <source>These functions and many others can be
 accessed from within a DjVu document
 by clicking the right mouse button.</source>
-        <translation type="unfinished"></translation>
+        <translation>Les fonctions suivantes (et bien d&apos;autres) sont
+accessibles en cliquant le bouton droit de la 
+souris sur un document DjVu.</translation>
     </message>
     <message>
         <source>&amp;Close</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Fermer</translation>
     </message>
     <message>
         <source>&amp;Never show this window again</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Ne jamais montrer cette fenêtre</translation>
     </message>
 </context>
 <context>
     <name>QMimeChecker</name>
     <message>
         <source>Please restart Netscape for the changes to take effect</source>
-        <translation type="unfinished"></translation>
+        <translation>Redemmarrez Netscape pour observer les changements</translation>
     </message>
 </context>
 <context>
     <name>QPushButton</name>
     <message>
         <source>&amp;Close</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Fermer</translation>
     </message>
 </context>
 <context>
     <name>QeExcMessage</name>
     <message>
         <source>&amp;Details</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Détails</translation>
     </message>
     <message>
         <source>Hide &amp;Details</source>
-        <translation type="unfinished"></translation>
+        <translation>Cacher les &amp;Détails</translation>
     </message>
     <message>
         <source>Function name</source>
-        <translation type="unfinished"></translation>
+        <translation>Fonction</translation>
     </message>
     <message>
         <source>File name</source>
-        <translation type="unfinished"></translation>
+        <translation>Fichier</translation>
     </message>
     <message>
         <source>Line number</source>
-        <translation type="unfinished"></translation>
+        <translation>Ligne</translation>
     </message>
     <message>
         <source>&amp;OK</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Ok</translation>
     </message>
     <message>
         <source>Error</source>
-        <translation type="unfinished"></translation>
+        <translation>Erreur</translation>
     </message>
 </context>
 <context>
@@ -1767,46 +1776,38 @@ by clicking the right mouse button.</source>
     <message>
         <source>You should select a regular file,
 not a pipe, socket or device file.</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Failed to open file</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>for reading:
-</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>File</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source> already exists.
-</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Are you sure you want to overwrite it?</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>for writing:
-</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Failed to stat file</source>
-        <translation type="unfinished"></translation>
+        <translation>Vous devez choisir un fichier ordinaire, 
+pas un «pipe», un «socket» ou un «device».</translation>
     </message>
     <message>
         <source>Select directory for page files...</source>
-        <translation type="unfinished"></translation>
+        <translation>Sélectionner un répertoire pour les fichiers...</translation>
     </message>
     <message>
         <source>Select DjVu page output file name...</source>
-        <translation type="unfinished"></translation>
+        <translation>Sélectionner un nom de fichier pour la page...</translation>
+    </message>
+    <message>
+        <source>Cannot open file &apos;%1&apos; for reading.
+%2</source>
+        <translation>Impossible d&apos;ouvrir le fichier «%1» en lecture.
+%2</translation>
+    </message>
+    <message>
+        <source>Cannot open file &apos;%1&apos; for writing.
+%2</source>
+        <translation>Impossible d&apos;ouvrir le fichier «%1» en écriture.
+%2</translation>
+    </message>
+    <message>
+        <source>File &apos;%1&apos; already exists.
+Are you sure you want to overwrite it?</source>
+        <translation>Le fichier «%1» existe déjà.
+Voulez vous le remplacer?</translation>
+    </message>
+    <message>
+        <source>Failed to stat file &apos;%1&apos;</source>
+        <translation>Impossible de localiser le fichier «%1»</translation>
     </message>
 </context>
 </TS>
