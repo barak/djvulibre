@@ -87,10 +87,9 @@ AC_PATH_PROG(RM, rm)
 AC_PATH_PROG(AR, ar)
 AC_PATH_PROG(TOUCH, touch)
 AC_PATH_PROG(MKDIR, mkdir)
-
-# Prefer the shell script
-INSTALL='${top_srcdir}/config/install-sh -c' 
-AC_SUBST(INSTALL)
+AC_PROG_INSTALL
+dnl INSTALL='${top_srcdir}/config/install-sh -c' 
+dnl AC_SUBST(INSTALL)
 
 # Libtool & Compilers
 AC_DISABLE_STATIC
