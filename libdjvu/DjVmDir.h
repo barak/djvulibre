@@ -365,56 +365,23 @@ DjVmDir::File::set_title(const GUTF8String &xtitle) { title=xtitle; }
     Flag #hasname# is set when the name of the file is different from the file
     ID.  Flag #hastitle# is set when the title of the file is different from
     the file ID.  These flags are used to avoid encoding the same string three
-    times.  Then come zero terminated strings representing the IDs of each
-    file.  These strings are followed by zero terminated strings representing
-    the names of only those files for which the flag #hasname# is set (if
-    any).  Finally come zero-terminated strings representing the titles of
-    only those files for which the flag #hastitle# is set (if any).  The
-    \Ref{bzz} encoding system makes sure that all these strings will be
-    encoded efficiently.
+    times.  Then come a sequence of zero terminated strings.  There are one to
+    three such strings per component file.  The first string contains the ID
+    of the component file.  The second string contains the name of the
+    component file.  It is only present when the flag #hasname# is set. The third
+    one contains the title of the component file. It is only present when the
+    flag #hastitle# is set. The \Ref{bzz} encoding system makes sure that 
+    all these strings will be encoded efficiently despite their possible
+    redundancies.
     \begin{verbatim}
           ZSTR:     ID of the first component file.
+          ZSTR:     Name of the first component file (only if #hasname# is set.)
+          ZSTR:     Title of the first component file (only if #hastitle# is set.)
           ... 
           ZSTR:     ID of the last component file.
-          ZSTR:     Name of the first file for which #hasname# is set.
-          ...  
-          ZSTR:     Name of the last file for which #hasname# is set..
-          ZSTR:     Title of the first file for which #hastitle# is set.
-          ...  
-          ZSTR:     Title of the last file for which #hastitle# is set..
+          ZSTR:     Name of the last component file (only if #hasname# is set.)
+          ZSTR:     Title of the last component file (only if #hastitle# is set.)
     \end{verbatim}
-
-    {\bf Ideas for future evolutions} ---
-    Besides the version byte contained in the #"DIRM"# chunk of a multipage
-    document, there is a 16 bit version number in the #"INFO"# chunk of every
-    page (see \Ref{DjVuInfo.h}.)  These version numbers have different values
-    and different formats.  Although one could argue that the capability to
-    parse a multipage file and the capability to view the pages are different
-    in nature, tracking two version numbers is often a useless complexity.
-    Here is a suggested format for the beginning of the unencoded part:
-    \begin{verbatim}
-          BYTE:             Flags:  0x<bundled>0000011
-          INT24:            Number of component files (extended to 32 bits)
-          INT16:            DjVu version number (cf "DjVuInfo.h")
-    \end{verbatim}
-    The concept of IDs, names and titles did not provide all the expected
-    benefits.  A simpler and more effective scheme would consist of only
-    providing a unique ID for each component file.  The URLs of the component
-    file of indirect document could be constructed using a single template
-    stored in the #"DIRM"# chunk.  This arrangement would give much more freedom 
-    for placing the component files on a web server. Here are a few examples
-    of templates:
-    \begin{verbatim}
-         "${ID}"
-         "${DJVUBASE}/${DJVUNAME}.dir/${ID}"
-         "/cgi-bin/onthefly.pl?DOC=${DJVUNAME}.djvu&FILE=${ID}"
-    \end{verbatim}
-    Finally the file titles would be advantageously replaced by an optional
-    chunk #"NAVM"# following the DIRM chunk and describing how the user can
-    navigate the document.  This chunk would define aliases for accessing the
-    pages (such as ``Chapter 1'' and ``Part 2'').  It could also define how
-    these aliases can be presented in a menu representing the structure of the
-    document.  The PDF specification could be a good source of ideas.
 
     @memo Description of the format of the DIRM chunk.  */
 //@}
