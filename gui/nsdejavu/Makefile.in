@@ -48,7 +48,7 @@ CFLAGS = @CPPFLAGS@ ${DEFS} ${OPTS} ${INCS} ${X_CFLAGS}
 
 LIBS = @LDFLAGS@ ${NSDEJAVU_LIBS} ${X_LIBS}
 
-all: nsdejavu.la nsdejavu.1
+all: nsdejavu.la nsdejavu.x nsdejavu.1
 
 nsdejavu.lo: nsdejavu.c
 
@@ -56,17 +56,21 @@ nsdejavu.la: nsdejavu.lo
 	${LIBTOOL} --mode=link ${CC} ${CFLAGS} nsdejavu.lo ${LIBS} \
 	  -rpath ${plugindir} -module -o $@
 
-nsdejavu.1: ${srcdir}/nsdejavu.1.in
-	sed < ${srcdir}/nsdejavu.1.in > nsdejavu.1 \
-	 -e 's,LIBDIR,${libdir},' -e 's,NSDEJAVUSO,${NSDEJAVU},'
+nsdejavu.x: nsdejavu.la
+	eval `grep '^dlname=' nsdejavu.la` && \
+	  echo $${dlname=nsdejavu.so} | sed -e 's/\.[0-9.]*$$//g' > $@ 
+
+nsdejavu.1: ${srcdir}/nsdejavu.1.in nsdejavu.x
+	eval "NSDEJAVU=`cat nsdejavu.x`" && \
+	  sed < ${srcdir}/nsdejavu.1.in > nsdejavu.1 \
+	   -e 's,LIBDIR,${libdir},' -e "s,NSDEJAVUSO,$$NSDEJAVU,"
 
 install: install-bin install-man
 
 install-bin: nsdejavu.la FORCE
 	${INSTALL} -d ${DESTDIR}${plugindir}	
-	eval `grep '^dlname=' nsdejavu.la` \
-	  && so=`echo $${dlname-nsdejavu.so} | sed -e 's/\.[0-9.]*$$//'` \
-	  && ${INSTALL} -m 0644 .libs/$$so ${DESTDIR}${plugindir}
+	eval "NSDEJAVU=`cat nsdejavu.x`" && \
+	  ${INSTALL} -m 0644 .libs/$$NSDEJAVU ${DESTDIR}${plugindir}
 
 install-man: nsdejavu.1 FORCE
 	${INSTALL} -d ${DESTDIR}${mandir}/man1
@@ -77,7 +81,7 @@ depend: FORCE
 
 clean: FORCE
 	-${LIBTOOL} --mode=clean ${RM} 2>/dev/null *.lo *.la 
-	-${RM} 2>/dev/null ${NSDEJAVU} nsdejavu.1
+	-${RM} 2>/dev/null nsdejavu.x nsdejavu.1
 
 distclean: clean 
 	-${RM} -r 2>/dev/null Makefile *.rpo ii_files
