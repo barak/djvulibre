@@ -103,7 +103,7 @@ install-lib: ${LIBDJVU_LA} FORCE
 
 install-include: FORCE
 	${INSTALL} -d ${DESTDIR}${includedir}/libdjvu
-	${INSTALL} -m 0644 ddjvuapi.h ${DESTDIR}${includedir}/libdjvu
+	${INSTALL} -m 0644 ${srcdir}/ddjvuapi.h ${DESTDIR}${includedir}/libdjvu
 
 depend: FORCE
 	${CXX} -MM ${CXXFLAGS} ${srcdir}/*.cpp > Makefile.dep

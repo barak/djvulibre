@@ -244,13 +244,16 @@ ddjvu_message_set_callback(ddjvu_context_t *context,
 
 typedef enum {
   DDJVU_ERROR,
-  DDJVU_STATUS,
+  DDJVU_INFO,
   DDJVU_NEWSTREAM,
   DDJVU_DOCINFO,
   DDJVU_PAGEINFO,
   DDJVU_RELAYOUT,
   DDJVU_REDISPLAY,
   DDJVU_CHUNK,
+  DDJVU_THUMBNAIL,
+  DDJVU_SAVE_PROGRESS,
+  DDJVU_PRINT_PROGRESS,
 } ddjvu_message_tag_t;
 
 
@@ -288,12 +291,12 @@ struct ddjvu_message_error_s {  /* ddjvu_message_t::m_error */
 }; 
 
 
-/* ddjvu_message_t::m_status ---
+/* ddjvu_message_t::m_info ---
    This messages provides informational text indicating
    the progress of the decoding process. This might
    be displayed in the browser status bar. */
 
-struct ddjvu_message_status_s { /* ddjvu_message_t::m_status */
+struct ddjvu_message_info_s {   /* ddjvu_message_t::m_info */
   ddjvu_message_any_t  any;
   const char          *message;
 }; 
@@ -461,21 +464,21 @@ struct ddjvu_message_docinfo_s {
    decoding process. */
    
 typedef enum {
-  DDJVU_DECODE_NOTSTARTED, /* decoding was not even started */
-  DDJVU_DECODE_STARTED,    /* decoding is in progress */
-  DDJVU_DECODE_OK,         /* decoding terminated successfully */
-  DDJVU_DECODE_FAILED,     /* decoding failed because of an error */
-  DDJVU_DECODE_STOPPED     /* decoding interrupted by user */
-} ddjvu_decoding_status_t;
+  DDJVU_OPERATION_NOTSTARTED, /* decoding was not even started */
+  DDJVU_OPERATION_STARTED,    /* decoding is in progress */
+  DDJVU_OPERATION_OK,         /* decoding terminated successfully */
+  DDJVU_OPERATION_FAILED,     /* decoding failed because of an error */
+  DDJVU_OPERATION_STOPPED     /* decoding interrupted by user */
+} ddjvu_status_t;
 
-DDJVUAPI ddjvu_decoding_status_t
+DDJVUAPI ddjvu_status_t
 ddjvu_document_decoding_status(ddjvu_document_t *doc);
 
 #define ddjvu_document_decoding_done(page) \
-    (ddjvu_document_decoding_status(page) >= DDJVU_DECODE_OK)
+    (ddjvu_document_decoding_status(page) >= DDJVU_OPERATION_OK)
 
 #define ddjvu_document_decoding_error(page) \
-    (ddjvu_document_decoding_status(page) >= DDJVU_DECODE_FAILED)
+    (ddjvu_document_decoding_status(page) >= DDJVU_OPERATION_FAILED)
 
 
 /* ddjvu_document_get_type ---
@@ -612,14 +615,14 @@ struct ddjvu_message_chunk_s {     /* ddjvu_message_t::m_chunk */
    This function returns the status of the page 
    decoding process. */
 
-DDJVUAPI ddjvu_decoding_status_t
+DDJVUAPI ddjvu_status_t
 ddjvu_page_decoding_status(ddjvu_page_t *page);
 
 #define ddjvu_page_decoding_done(page) \
-    (ddjvu_page_decoding_status(page) >= DDJVU_DECODE_OK)
+    (ddjvu_page_decoding_status(page) >= DDJVU_OPERATION_OK)
 
 #define ddjvu_page_decoding_error(page) \
-    (ddjvu_page_decoding_status(page) >= DDJVU_DECODE_FAILED)
+    (ddjvu_page_decoding_status(page) >= DDJVU_OPERATION_FAILED)
 
 
 /* ddjvu_page_get_width ---
@@ -862,8 +865,52 @@ ddjvu_format_release(ddjvu_format_t *format);
 
 
 /* -------------------------------------------------- */
+/* THUMBNAILS                                         */
+/* -------------------------------------------------- */
+
+/* ddjvu_thumbnail_status ---
+   Determine whether a thumbnail is available for page <pagenum>.
+   Calling this function with non zero argument <start> initiates
+   a thumbnail calculation when no thumbnail is available.
+   The completion of the calculation is signalled by 
+   a subsequent <m_thumbnail> message. */
+
+DDJVUAPI ddjvu_status_t
+ddjvu_thumbnail_status(ddjvu_document_t *document, int pagenum, int start);
+
+
+/* ddjvu_message_t::m_thumbnail ---
+   This message is sent when additional thumbnails are available. */
+
+struct ddjvu_message_thumbnail_s { /* ddjvu_message_t::m_thumbnail */
+  ddjvu_message_any_t  any;
+  int pagenum;
+}; 
+
+
+/* ddjvu_thumbnail_render ---
+   Renders a thumbnail for page <pagenum>.
+   Argument <imagebuffer> must be large enough to contain
+   an image of size <*wptr> by <*hptr> using pixel format
+   <pixelformat>. Argument <rowsize> specifies the number 
+   of BYTES from one row to the next in the buffer.
+   This function returns <FALSE> when no thumbnail is available.
+   Otherwise it returns <TRUE>, adjusts <*wptr> and <*hptr> to 
+   reflect the thumbnail size, and writes the pixel data into 
+   the image buffer. */
+
+DDJVUAPI int
+ddjvu_thumbnail_render(ddjvu_document_t *document, int pagenum, 
+                       int *wptr, int *hptr,
+                       const ddjvu_format_t *pixelformat,
+                       unsigned long rowsize,
+                       char *imagebuffer);
+
+
+/* -------------------------------------------------- */
 /* MORE                                               */
 /* -------------------------------------------------- */
+
 
 
 /* More should be defined here:
@@ -884,13 +931,14 @@ ddjvu_format_release(ddjvu_format_t *format);
 union ddjvu_message_s {
   struct ddjvu_message_any_s        m_any;
   struct ddjvu_message_error_s      m_error;
-  struct ddjvu_message_status_s     m_status;
+  struct ddjvu_message_info_s       m_info;
   struct ddjvu_message_newstream_s  m_newstream;
   struct ddjvu_message_docinfo_s    m_docinfo;
   struct ddjvu_message_pageinfo_s   m_pageinfo;
   struct ddjvu_message_chunk_s      m_chunk;
   struct ddjvu_message_relayout_s   m_relayout;
   struct ddjvu_message_redisplay_s  m_redisplay;
+  struct ddjvu_message_thumbnail_s  m_thumbnail;
 };
 
 

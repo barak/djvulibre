@@ -90,6 +90,7 @@ using namespace DJVU;
 #include "DjVuPort.h"
 #include "DataPool.h"
 #include "DjVuInfo.h"
+#include "IW44Image.h"
 #include "DjVuImage.h"
 #include "DjVuFileCache.h"
 #include "DjVuDocument.h"
@@ -379,11 +380,11 @@ msg_prep_error(const GException &ex,
 
 // prepare status message
 static GP<ddjvu_message_p>
-msg_prep_status(GUTF8String message)
+msg_prep_info(GUTF8String message)
 {
   GP<ddjvu_message_p> p = new ddjvu_message_p;
   p->tmp1 = DjVuMessageLite::LookUpUTF8(message); // i18n nonsense!
-  p->p.m_status.message = (const char*)(p->tmp1);
+  p->p.m_info.message = (const char*)(p->tmp1);
   return p;
 }
 
@@ -538,7 +539,7 @@ bool
 ddjvu_document_s::notify_status(const DjVuPort *p, const GUTF8String &m)
 {
   if (!doc) return 0;
-  msg_push(xhead(DDJVU_STATUS, this), msg_prep_status(m));
+  msg_push(xhead(DDJVU_INFO, this), msg_prep_info(m));
   return 1;
 }
 
@@ -757,7 +758,7 @@ ddjvu_stream_close(ddjvu_document_t *doc,
 // ----------------------------------------
 
 
-ddjvu_decoding_status_t
+ddjvu_status_t
 ddjvu_document_decoding_status(ddjvu_document_t *document)
 {
   G_TRY
@@ -767,11 +768,11 @@ ddjvu_document_decoding_status(ddjvu_document_t *document)
         {
           long flags = doc->get_doc_flags();
           if (flags & DjVuDocument::DOC_INIT_OK)
-            return DDJVU_DECODE_OK;
+            return DDJVU_OPERATION_OK;
           else if (flags & DjVuDocument::DOC_INIT_FAILED)
-            return DDJVU_DECODE_FAILED;
+            return DDJVU_OPERATION_FAILED;
           else
-            return DDJVU_DECODE_STARTED;
+            return DDJVU_OPERATION_STARTED;
         }
     }
   G_CATCH(ex)
@@ -779,7 +780,7 @@ ddjvu_document_decoding_status(ddjvu_document_t *document)
       ERROR(document,ex);
     }
   G_ENDCATCH;
-  return DDJVU_DECODE_NOTSTARTED;
+  return DDJVU_OPERATION_NOTSTARTED;
 }
 
 ddjvu_document_type_t
@@ -924,7 +925,7 @@ bool
 ddjvu_page_s::notify_status(const DjVuPort *p, const GUTF8String &m)
 {
   if (!img) return 0;
-  msg_push(xhead(DDJVU_STATUS, this), msg_prep_status(m));
+  msg_push(xhead(DDJVU_INFO, this), msg_prep_info(m));
   return 1;
 }
 
@@ -996,31 +997,31 @@ ddjvu_page_get_user_data(ddjvu_page_t *pag)
 // ----------------------------------------
 
 
-ddjvu_decoding_status_t
+ddjvu_status_t
 ddjvu_page_decoding_status(ddjvu_page_t *page)
 {
   G_TRY
     {
       if (! page->img)
-        return DDJVU_DECODE_NOTSTARTED;        
+        return DDJVU_OPERATION_NOTSTARTED;        
       DjVuFile *file = page->img->get_djvu_file();
       if (! file)
-        return DDJVU_DECODE_NOTSTARTED;
+        return DDJVU_OPERATION_NOTSTARTED;
       else if (file->is_decode_stopped())
-        return DDJVU_DECODE_STOPPED;
+        return DDJVU_OPERATION_STOPPED;
       else if (file->is_decode_failed())
-        return DDJVU_DECODE_FAILED;
+        return DDJVU_OPERATION_FAILED;
       else if (file->is_decode_ok())
-        return DDJVU_DECODE_OK;
+        return DDJVU_OPERATION_OK;
       else if (file->is_decoding())
-        return DDJVU_DECODE_STARTED;
+        return DDJVU_OPERATION_STARTED;
     }
   G_CATCH(ex)
     {
       ERROR(page, ex);
     }
   G_ENDCATCH;
-  return DDJVU_DECODE_NOTSTARTED;
+  return DDJVU_OPERATION_NOTSTARTED;
 }
 
 int
@@ -1606,3 +1607,19 @@ ddjvu_page_render(ddjvu_page_t *page,
 
 // ----------------------------------------
 
+
+ddjvu_status_t
+ddjvu_thumbnail_status(ddjvu_document_t *document, int pagenum, int start)
+{
+  return DDJVU_OPERATION_NOTSTARTED;
+}
+
+int
+ddjvu_thumbnail_render(ddjvu_document_t *document, int pagenum, 
+                       int *wptr, int *hptr,
+                       const ddjvu_format_t *pixelformat,
+                       unsigned long rowsize,
+                       char *imagebuffer)
+{
+  return 0;
+}
