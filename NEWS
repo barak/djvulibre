@@ -1,3 +1,9 @@
+NEW IN VERSION 3.5.8
+--------------------
+- Fixed printing of b&w documents (broken since 3.5.6)
+- Fixed menu problem on rh7.3
+- Included fixes for gcc-3.1.
+
 NEW IN VERSION 3.5.7
 --------------------
 - Fixes for cygwin
