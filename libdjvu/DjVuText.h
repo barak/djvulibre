@@ -139,17 +139,17 @@ public:
         with an empty rectangle, empty text, and has the same type as this
         zone. */
     Zone *append_child();
-    /// Find the text_start and text_end indicated by the given box.
+    /** Find the text_start and text_end indicated by the given box. */
     void get_text_with_rect(const GRect &box, 
                             int &string_start,int &string_end ) const;
-    /// Find the zones used by the specified string and append them to the list.
+    /** Find the zones used by the specified string and append them to the list. */
     void find_zones(GList<Zone *> &list, 
                     const int string_start, const int string_end) const;
-    /// Finds the smallest rectangles and appends them to the list.
+    /** Finds the smallest rectangles and appends them to the list. */
     void get_smallest(GList<GRect> &list) const;
     /** Finds the smallest rectangles and appends them to the list after 
-      padding the smallest unit to fit width or height for the parent rectangle
-      and adding the number of specified pixels. */
+        padding the smallest unit to fit width or height for the parent rectangle
+        and adding the number of specified pixels. */
     void get_smallest(GList<GRect> &list,const int padding) const;
     /// Find out this Zone's parent.
     const Zone *get_parent(void) const;
@@ -160,10 +160,10 @@ public:
     void normtext(const char *instr, GUTF8String &outstr);
     unsigned int memuse() const;
     static const int version;
-    void encode(
-      const GP<ByteStream> &bs, const Zone * parent=0, const Zone * prev=0) const;
+    void encode(const GP<ByteStream> &bs, 
+                const Zone * parent=0, const Zone * prev=0) const;
     void decode(const GP<ByteStream> &bs, int maxtext,
-	            	const Zone * parent=0, const Zone * prev=0);
+                const Zone * parent=0, const Zone * prev=0);
   };
   /** Textual data for this page.  
       The content of this string is encoded using the UTF8 code.
@@ -203,57 +203,16 @@ public:
   void writeText(ByteStream &bs,const int height) const;
   /// Get XML formatted text.
   GUTF8String get_xmlText(const int height) const;
-  /** Searches the TXT chunk for the given string and returns a list of
-      the smallest zones covering the text.
-      @param string String to be found. May contain spaces as word separators.
-      @param start_pos Position where to start searching. It may be negative
-             or it may be bigger than the length of the \Ref{textUTF8}
-	     string. If the #start_pos# is out of bounds, it will be fixed
-	     before starting the search
-	     \begin{itemize}
-	        \item If #start_pos# is negative and we search forward,
-		      the #start_pos# will be reset to #0#.
-		\item If #start_pos# is too big and we search backward,
-		      the #start_pos# will be reset to the #textUTF8.length()-1#.
-		\item Otherwise the #start_pos# will remain unchanged, and
-		      nothing will be found.
-	     \end{itemize}
-	     
-	     If the function manages to find an occurrence of the string,
-	     it will modify the #start_pos# to point to it. If no match has
-	     been found, the #start_pos# will be reset to some big number
-	     if searching forward and #-1# otherwise.
-      @param search_fwd #TRUE# means to search forward. #FALSE# - backward.
-      @param match_case If set to #FALSE# the search will be case-insensitive.
-      @param whole_word If set to #TRUE# the function will try to find
-	     a whole word matching the passed string. The word separators
-	     are all blank and punctuation characters. The passed
-	     string may {\bf not} contain word separators, that is it
-	     {\bf must} be a whole word.
-
-      {\bf WARNING:} The returned list contains pointers to Zones.
-      {\bf DO NOT DELETE} these Zones.
-      */
-  GList<Zone *> search_string(GUTF8String string, int & start_pos,
-			      bool search_fwd, bool match_case,
-			      bool whole_word=false) const;
-
-  GList<Zone *> find_text_in_rect(GRect target_rect, GUTF8String &text) const;
-    /// Find the text specified by the rectangles.
-  GList<GRect> find_text_with_rect(
-    const GRect &box, GUTF8String &text, const int padding=0) const;
-
-   // get all zones of zone type zone_type under node parent. zone_list
-   // contains the return value
-   void get_zones(int zone_type, const Zone *parent, GList<Zone *> & zone_list) const;
-     
+  /** Find the text specified by the rectangle. */  
+  GList<Zone*> find_text_in_rect(GRect target_rect, GUTF8String &text) const;
+  /** Find the text specified by the rectangle. */
+  GList<GRect> find_text_with_rect(const GRect &box, GUTF8String &text, const int padding=0) const;
+  /** Get all zones of zone type zone_type under node parent. 
+      zone_list contains the return value. */
+  void get_zones(int zone_type, const Zone *parent, GList<Zone *> & zone_list) const;
   /** Returns the number of bytes needed by this data structure. It's
       used by caching routines to estimate the size of a \Ref{DjVuImage}. */
   unsigned int get_memory_usage() const;
-private:
-  bool		search_zone(const Zone * zone, int start, int & end) const;
-  Zone	*	get_smallest_zone(int max_type, int start, int & end) const;
-  GList<Zone *>	find_zones(int string_start, int string_length) const;
 };
 
 inline const DjVuTXT::Zone *

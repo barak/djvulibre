@@ -84,6 +84,85 @@ bool	QDSearchDialog::case_sensitive=false;
 bool	QDSearchDialog::whole_word=false;
 bool	QDSearchDialog::search_backwards=false;
 
+
+static GList<DjVuTXT::Zone*>
+search_string(DjVuTXT *txt, QString dat, int &pfrom, bool fwd, bool casep, bool wordp)
+{
+  GList<DjVuTXT::Zone*> res;
+  // Access utf8 string
+  GUTF8String utext = txt->textUTF8;
+  QString qtext = QStringFromGString(utext);
+  // Normalize dat
+  dat = dat.stripWhiteSpace();
+  if (! dat.length())
+    return res;
+  // Normalize from
+  int from = pfrom;
+  if (fwd)
+    {
+      if (from < 0)
+        from = 0;
+      else
+        from += 1;
+    }
+  else
+    {
+      if (from < 0 || from >= (int)qtext.length())
+        from = qtext.length() - 1;
+      else
+        from -= 1;
+    }
+  // Search
+  int found;
+  int foundx;
+  for(;;)
+    {
+      if (fwd)
+        found = qtext.find(dat, from, casep);
+      else
+        found = qtext.findRev(dat, from, casep);
+      if (found < 0)
+        return res;
+      foundx = found + dat.length();
+      if (!wordp)
+        break;
+      if ((found==0 || !qtext[found-1].isLetterOrNumber()) &&
+          (foundx==(int)qtext.length() || !qtext[foundx].isLetterOrNumber()) )
+        break;
+      if (fwd) {
+        if (++pfrom >= (int)qtext.length())
+          return res;
+      } else {
+        if (--pfrom < 0)
+          return res;
+      }
+    }
+  // Compute indices into utf8 string
+  int ufound = -1;
+  int ufoundx = -1;
+  const char *ctext = (const char*)utext;
+  int qi = 0;
+  int ui = 0;
+  while (ctext[ui] && ufoundx<0)
+    {
+      if (ufound<0 && qi == found)
+        ufound = ui;
+      if (ufoundx<0 && qi == foundx)
+        ufoundx = ui;
+      ui += 1;
+      if ( (ctext[ui] & 0xc0) != 0x80)
+        qi += 1;
+    }
+  // Retrieve zones
+  if (ufoundx > ufound && ufound >= 0) 
+    {
+      txt->page_zone.find_zones(res, ufound, ufoundx);
+      pfrom = found;
+    }
+  return res;
+}
+
+
 void
 QDSearchDialog::slotSearch(void)
 {
@@ -151,21 +230,13 @@ QDSearchDialog::slotSearch(void)
 	    anno->decode(str);
 	    GP<DjVuTXT> txt=anno->txt;
 	    if (txt)
-	    {
-	       no_txt=false;
-	       int saved_page_pos=page_pos;
-	       zone_list=txt->search_string(GStringFromQString(text->text()), page_pos,
-					    fwd, case_butt->isChecked(),
-					    whole_word_butt->isChecked());
-	       if (page_pos==saved_page_pos)
-	       {
-		     // Arghh. found the same thing. Shift the page_pos
-		  if (fwd) page_pos++;
-		  else page_pos--;
-		  zone_list=txt->search_string(GStringFromQString(text->text()), page_pos,
-					       fwd, case_butt->isChecked());
-	       }
-	       if (zone_list.size()) break;
+              {
+	       no_txt = false;
+	       zone_list = search_string(txt, text->text(), page_pos,
+                                         fwd, case_butt->isChecked(),
+                                         whole_word_butt->isChecked());
+	       if (zone_list.size()) 
+                 break;
 	    }
 	 }
 	    // Didn't find anything. Switch to the next page or give up
@@ -178,14 +249,16 @@ QDSearchDialog::slotSearch(void)
 	    {
 	       page_num=seen_page_num;
 	       break;
-	    } else
+	    } 
+            else
 	    {
 	       asked_once=true;
 	       QString msg=all_pages_butt->isChecked() ? tr("document") : tr("page");
 	       if (fwd)
                {
                  msg=tr("End of ")+msg+tr(" reached. Continue from the beginning?");
-               }else
+               }
+               else
                {
                  msg=tr("Beginning of ")+msg+tr(" reached. Continue from the end?");
                }
@@ -193,14 +266,20 @@ QDSearchDialog::slotSearch(void)
 	       {
 		  if (all_pages_butt->isChecked())
 		  {
-		     if (fwd) page_num=-1;
-		     else page_num=doc->get_pages_num();
-		  } else
+		     if (fwd) 
+                       page_num=-1;
+		     else 
+                       page_num=doc->get_pages_num();
+		  } 
+                  else
 		  {
-		     if (fwd) page_num--;
-		     else page_num++;
+		     if (fwd) 
+                       page_num--;
+		     else 
+                       page_num++;
 		  }
-	       } else
+	       } 
+               else
 	       {
 		  page_num=seen_page_num;
 		  break;
@@ -212,11 +291,12 @@ QDSearchDialog::slotSearch(void)
 	 if (fwd)
 	 {
 	    page_num++;
-	    page_pos=-1;
-	 } else
+	    page_pos = -1;
+	 } 
+         else
 	 {
 	    page_num--;
-	    page_pos=0xffffff;
+	    page_pos = -1;
 	 }
 
          {
@@ -225,12 +305,11 @@ QDSearchDialog::slotSearch(void)
          }
 
 	    // Wrapped back and returned
-	 if (all_pages_butt->isChecked() &&
-	     page_num==start_page_num)
-	 {
-	    page_num=seen_page_num;
-	    break;
-	 }
+	 if (all_pages_butt->isChecked() && page_num==start_page_num)
+           {
+             page_num=seen_page_num;
+             break;
+           }
       } // while(true)
 
       emit sigDisplaySearchResults(seen_page_num=page_num, zone_list);
@@ -284,8 +363,8 @@ QDSearchDialog::slotSetPageNum(int page_num_)
    if (!in_search)
    {
       if (page_num!=page_num_)
-	 page_pos=back_butt->isChecked() ? 0xffffff : -1;
-      page_num=seen_page_num;
+	 page_pos = -1;
+      page_num = seen_page_num;
    }
    
    QString mesg=tr("Page ")+QString::number(page_num+1);
@@ -315,8 +394,8 @@ QDSearchDialog::QDSearchDialog(int page_num_, const GP<DjVuDocument> & doc_,
 			       QWidget * parent, const char * name, bool modal) :
       QeDialog(parent, name, modal), page_num(page_num_), doc(doc_)
 {
-   seen_page_num=page_num;
-   page_pos=search_backwards ? 0xffffff : -1;
+   seen_page_num = page_num;
+   page_pos = -1;
    in_search=false;
    
    setCaption(tr("DjVu: Find"));

@@ -366,21 +366,6 @@ DjVuTXT::copy(void) const
 }
 
 
-bool
-DjVuTXT::search_zone(const Zone * zone, int start, int & end) const
-      // Will return TRUE if 'zone' contains beginning of the text
-      // at 'start'. In this case it will also modify the 'end'
-      // to point to the first character beyond the zone
-{
-  if (start>=zone->text_start && start<zone->text_start+zone->text_length)
-  {
-    if (end>zone->text_start+zone->text_length)
-      end=zone->text_start+zone->text_length;
-    return true;
-  }
-  return false;
-}
-
 static inline bool
 intersects_zone(GRect box, const GRect &zone)
 {
@@ -394,8 +379,8 @@ intersects_zone(GRect box, const GRect &zone)
 }
 
 void
-DjVuTXT::Zone::get_text_with_rect(
-  const GRect &box, int &string_start, int &string_end) const
+DjVuTXT::Zone::get_text_with_rect(const GRect &box, 
+                                  int &string_start, int &string_end) const
 {
   GPosition pos=children;
   if(pos?box.contains(rect):intersects_zone(box,rect))
@@ -422,36 +407,30 @@ DjVuTXT::Zone::get_text_with_rect(
 }
 
 void
-DjVuTXT::Zone::find_zones(
-  GList<Zone *> &list, const int string_start, const int string_end) const
+DjVuTXT::Zone::find_zones(GList<Zone *> &list, 
+                          const int string_start, const int string_end) const
 {
-  GPosition pos=children;
   const int text_end=text_start+text_length;
   if(text_start >= string_start)
-  {
-    if(text_end <= string_end)
     {
-      list.append(const_cast<Zone *>(this));
-    }else if(text_start < string_end)
-    {
-      if(pos)
-      {
-        do
+      if(text_end <= string_end)
         {
-          children[pos].find_zones(list,string_start,string_end);
-        } while (++pos);
-      }else
-      {
-        list.append(const_cast<Zone *>(this));
-      }
+          list.append(const_cast<Zone *>(this));
+        }
+      else if(text_start < string_end)
+        {
+          if (children.size())
+            for (GPosition pos=children; pos; ++pos)
+              children[pos].find_zones(list,string_start,string_end);
+          else
+            list.append(const_cast<Zone *>(this));
+        }
     }
-  }else if( text_end > string_start)
-  {
-    do
+  else if( text_end > string_start)
     {
-      children[pos].find_zones(list,string_start,string_end);
-    } while (++pos);
-  }
+      for (GPosition pos=children; pos; ++pos)
+        children[pos].find_zones(list,string_start,string_end);
+    }
 }
 
 void
@@ -459,42 +438,43 @@ DjVuTXT::Zone::get_smallest(GList<GRect> &list) const
 {
   GPosition pos=children;
   if(pos)
-  {
-    do
     {
-      children[pos].get_smallest(list);
-    } while (++pos);
-  }else
-  {
-    list.append(rect);
-  }
+      do {
+        children[pos].get_smallest(list);
+      } while (++pos);
+    }
+  else
+    {
+      list.append(rect);
+    }
 }
 
 void
-DjVuTXT::Zone::get_smallest( 
-  GList<GRect> &list, const int padding) const
+DjVuTXT::Zone::get_smallest(GList<GRect> &list, const int padding) const
 {
   GPosition pos=children;
   if(pos)
-  {
-    do
     {
-      children[pos].get_smallest(list,padding);
-    } while (++pos);
-  }else if(zone_parent && zone_parent->ztype >= PARAGRAPH)
-  {
-    const GRect &xrect=zone_parent->rect;
-    if(xrect.height() < xrect.width())
-    {
-      list.append(GRect(rect.xmin-padding,xrect.ymin-padding,rect.width()+2*padding,xrect.height()+2*padding));
-    }else
-    {
-      list.append(GRect(xrect.xmin-padding,rect.ymin-padding,xrect.width()+2*padding,rect.height()+2*padding));
+      do {
+        children[pos].get_smallest(list,padding);
+      } while (++pos);
     }
-  }else
-  {
-    list.append(GRect(rect.xmin-padding,rect.ymin-padding,rect.width()+2*padding,rect.height()+2*padding));
-  }
+  else if(zone_parent && zone_parent->ztype >= PARAGRAPH)
+    {
+      const GRect &xrect=zone_parent->rect;
+      if(xrect.height() < xrect.width())
+        {
+          list.append(GRect(rect.xmin-padding,xrect.ymin-padding,rect.width()+2*padding,xrect.height()+2*padding));
+        }
+      else
+        {
+          list.append(GRect(xrect.xmin-padding,rect.ymin-padding,xrect.width()+2*padding,rect.height()+2*padding));
+        }
+    }
+  else
+    {
+      list.append(GRect(rect.xmin-padding,rect.ymin-padding,rect.width()+2*padding,rect.height()+2*padding));
+    }
 }
 
 void
@@ -521,81 +501,9 @@ DjVuTXT::get_zones(int zone_type, const Zone *parent, GList<Zone *> & zone_list)
    }
 }
 
-DjVuTXT::Zone *
-DjVuTXT::get_smallest_zone(int max_type, int start, int & end) const
-      // Will return the smallest zone with type up to max_type containing
-      // the text starting at start. If anything is found, end will
-      // be modified to point to the first character beyond the zone
-{
-  if (!search_zone(&page_zone, start, end)) return 0;
-  
-  const Zone * zone=&page_zone;
-  while(zone->ztype<max_type)
-  {
-    GPosition pos;
-    for(pos=zone->children;pos;++pos)
-       if (search_zone(&zone->children[pos], start, end))
-	  break;
-    if (pos) 
-       zone=&zone->children[pos];
-    else 
-       break;
-  }
-  
-  return (Zone *) zone;
-}
-
-GList<DjVuTXT::Zone *>
-DjVuTXT::find_zones(int string_start, int string_length) const
-      // For the string starting at string_start of length string_length
-      // the function will generate a list of smallest zones of the
-      // same type and will return it
-{
-  GList<Zone *> zone_list;
-  
-  {
-    // Get rid of the leading and terminating spaces
-    const int start=textUTF8.nextNonSpace(string_start,string_length);
-    const int end=textUTF8.firstEndSpace(start,string_length+string_start-start);
-    if (start==end)
-      return zone_list;
-    string_start=start;
-    string_length=end-start;
-  }
-  
-  int zone_type=CHARACTER;
-  while(zone_type>=PAGE)
-  {
-    int start=string_start;
-    int end=string_start+string_length;
-    
-    while(start<end)
-    {
-      start=textUTF8.nextNonSpace(start,string_length);
-      if (start==end)
-        break;
-      
-      Zone * zone=get_smallest_zone(zone_type, start, end);
-      if (zone && zone_type==zone->ztype)
-      {
-        zone_list.append(zone);
-        start=end;
-        end=string_start+string_length;
-      } else
-      {
-        zone_type--;
-        zone_list.empty();
-        break;
-      }
-    }
-    if (zone_list.size()) break;
-  }
-  return zone_list;
-}
-
 GList<GRect>
-DjVuTXT::find_text_with_rect(
-  const GRect &box, GUTF8String &text, const int padding) const
+DjVuTXT::find_text_with_rect(const GRect &box, GUTF8String &text, 
+                             const int padding) const
 {
   GList<GRect> retval;
   int text_start=0;
@@ -753,157 +661,6 @@ DjVuTXT::find_text_in_rect(GRect target_rect, GUTF8String &text) const
    } 
 
    return zone_list;
-}
-
-
-static inline bool
-is_blank(char ch)
-{
-   return
-       isspace(ch) ||
-       ch==DjVuTXT::end_of_column ||
-       ch==DjVuTXT::end_of_region ||
-       ch==DjVuTXT::end_of_paragraph ||
-       ch==DjVuTXT::end_of_line;
-}
-
-static inline bool
-is_separator(char ch, bool whole_word)
-   // Returns TRUE, if the 'ch' is a separator.
-   // If 'whole_word' is TRUE, the separators also include
-   // all punctuation characters. Otherwise, they include only
-   // white characters.
-{
-   return is_blank(ch) ||
-	  whole_word && strchr("-!,.;:?\"'", ch);
-}
-
-static inline bool
-chars_equal(char ch1, char ch2, bool match_case)
-{
-   if (is_blank(ch1) && is_blank(ch2))
-      return true;
-
-   return match_case ? (ch1==ch2) : (toupper(ch1)==toupper(ch2));
-}
-
-static bool
-equal(const char * txt, const char * str, bool match_case, int * length)
-      // Returns TRUE, if 'txt' contains the same words as the 'str'
-      // in the same order (but possibly with different number of
-      // separators between words). The 'separators' in this
-      // function are blank and 'end_of_...' characters.
-      //
-      // If search has been successful, the function will make 'length'
-      // contain the index of the first character in the 'txt' beyond the
-      // found string
-      //
-      // NOTE, that it may be different from strlen(str) because of different
-      // number of spaces between words in 'str' and 'txt'
-{
-   const char * str_ptr=str;
-   const char * txt_ptr=txt;
-   while(*str_ptr)
-   {
-      while(*str_ptr && is_blank(*str_ptr)) str_ptr++;
-      while(*str_ptr && *txt_ptr && !is_blank(*str_ptr))
-	 if (chars_equal(*txt_ptr, *str_ptr, match_case))
-	 {
-	    txt_ptr++; str_ptr++;
-	 } else break;
-      if (!*str_ptr)
-	 break;
-      if (!*txt_ptr || !is_blank(*str_ptr) || !is_blank(*txt_ptr))
-	 return false;
-      while(*txt_ptr && is_blank(*txt_ptr)) txt_ptr++;
-   }
-   if (length) *length=txt_ptr-txt;
-   return true;
-}
-
-GList<DjVuTXT::Zone *>
-DjVuTXT::search_string(GUTF8String string, int & from, bool search_fwd,
-		       bool match_case, bool whole_word) const
-{
-  GUTF8String local_string;
-  
-  const char * ptr;
-  
-  // Get rid of the leading separators
-  for(ptr=string;*ptr;ptr++)
-    if (!is_separator(*ptr, whole_word))
-      break;
-  local_string=ptr;
-  
-  // Get rid of the terminating separators
-  while(local_string.length() &&
-        is_separator(local_string[(int)(local_string.length())-1], whole_word))
-    local_string.setat(local_string.length()-1, 0);
-  
-  string=local_string;
-  
-  if (whole_word)
-  {
-    // Make sure that the string does not contain any
-    // separators in the middle
-    for(const char * ptr=string;*ptr;ptr++)
-      if (is_separator(*ptr, true))
-        G_THROW( ERR_MSG("DjVuText.one_word") );
-  }
-  
-  int string_length=strlen(string);
-  bool found=false;
-  
-  if (string_length==0 || textUTF8.length()==0 ||
-    string_length>(int) textUTF8.length())
-  {
-    if (search_fwd) from=textUTF8.length();
-    else from=-1;
-    return GList<Zone *>();
-  }
-  
-  int real_str_len;
-  if (search_fwd)
-  {
-    if (from<0) from=0;
-    while(from<(int) textUTF8.length())
-    {
-      if (equal((const char *) textUTF8+from, string, match_case, &real_str_len))
-      {
-        if (!whole_word ||
-          (from==0 || is_separator(textUTF8[from-1], true)) &&
-          (from+real_str_len==(int) textUTF8.length() ||
-          is_separator(textUTF8[from+real_str_len], true)))
-        {
-          found=true;
-          break;
-        }
-      }
-      from++;
-    }      
-  }
-  else
-  {
-    if (from>(int) textUTF8.length()-1) from=(int) textUTF8.length()-1;
-    while(from>=0)
-    {
-      if (equal((const char *) textUTF8+from, string, match_case, &real_str_len))
-      {
-        if (!whole_word ||
-          (from==0 || is_separator(textUTF8[from-1], true)) &&
-          (from+real_str_len==(int) textUTF8.length() ||
-          is_separator(textUTF8[from+real_str_len], true)))
-        {
-          found=true;
-          break;
-        }
-      }
-      from--;
-    }
-  }
-  
-  if (found) return find_zones(from, real_str_len);
-  else return GList<Zone *>();
 }
 
 unsigned int 
