@@ -1,4 +1,11 @@
 
+NEW IN VERSION 3.5.3
+--------------------
+- Support for QT2 and QT3
+- Removed lots of QT1 specific hacks.
+- ...
+
+
 NEW IN VERSION 3.5.2
 --------------------
 - Added support for image/vnd.djvu mime type.

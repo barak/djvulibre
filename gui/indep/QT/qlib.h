@@ -55,6 +55,7 @@
 
 #include <qdialog.h>
 #include <qpushbutton.h>
+#include <qcombobox.h>
 #include <qrect.h>
 #include <qmenudata.h>
 #include <qstring.h>
@@ -121,6 +122,6 @@ void showMessage(QWidget * parent, const QString &title, const QString &message,
 // ------------------------------------------------
 
 void setItemsEnabled(QMenuData * menu, bool flag);
-
+bool setComboBoxCurrentItem(QComboBox *combo, QString item);
 
 #endif

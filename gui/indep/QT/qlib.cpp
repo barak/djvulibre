@@ -336,6 +336,18 @@ setItemsEnabled(QMenuData * menu, bool flag)
    }
 }
 
+bool
+setComboBoxCurrentItem(QComboBox *combo, QString item)
+{
+  for(int i=0; i<combo->count(); i++)
+    if (combo->text(i) == item)
+      {
+	combo->setCurrentItem(i);
+	return TRUE;
+      }
+  return FALSE;
+}
+
 QPixmap
 createIcon(const GPixmap & gpix_in)
 {

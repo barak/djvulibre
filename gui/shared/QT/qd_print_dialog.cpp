@@ -151,12 +151,7 @@ QDPrintDialog::setZoom(int zoom)
    {
       setting=custom_zoom_str;
    }
-   for (int i=0; i<zoom_menu->count(); i++)
-     if (setting == zoom_menu->text(i))
-       {
-	 zoom_menu->setCurrentItem(i);
-	 break;
-       }
+   setComboBoxCurrentItem(zoom_menu, setting);
 }
 
 void
@@ -171,12 +166,7 @@ void
 QDPrintDialog::setPrint(What what)
 {
    const QString str=id2str(what);
-   for(int i=0;i<what_menu->count();i++)
-      if (what_menu->text(i)==str)
-      {
-	 what_menu->setCurrentItem(i);
-	 break;
-      }
+   setComboBoxCurrentItem(what_menu, str);
 }
 
 void
@@ -219,12 +209,7 @@ QDPrintDialog::adjustScaling(void)
   if (eps_butt->isChecked())
     {
       const QString setting(one_to_one_str);
-      for (int i=0; i<zoom_menu->count(); i++)
-	if (setting == zoom_menu->text(i))
-	  {
-	    zoom_menu->setCurrentItem(i);
-	    break;
-	  }
+      setComboBoxCurrentItem(zoom_menu,setting);
     }
   zoom_menu->setEnabled(ps_butt->isChecked());
 }
@@ -328,54 +313,52 @@ QDPrintDialog::refresh_cb(void * cl_data)
 {
    QDPrintDialog * th=(QDPrintDialog *) cl_data;
    qApp->processEvents();
-   
    if (th->interrupt_printing)
       throw Interrupted("QDPrintDialog::refresh_cb", "Printing interrupted.");
 }
 
 void
-QDPrintDialog::decProgress_cb(double done, void * cl_data)
+QDPrintDialog::progress_cb(double done, void * cl_data)
 {
-   QDPrintDialog * th=(QDPrintDialog *) cl_data;
-   if (done<0)
-   {
-	 // Alas the progress is unknown.
-      QString buffer=tr("Decoding: ")+QString::number(-done)+tr(" bytes");
-      th->progress->setPrefix(buffer);
-      th->progress->setProgress(0);
-      th->progress->show();
-   } else th->progress->setProgress((int)(done*20));
-}
-
-void
-QDPrintDialog::prnProgress_cb(double done, void * cl_data)
-{
-   QDPrintDialog * th=(QDPrintDialog *) cl_data;
-   th->progress->setProgress((int)(done*20));
+  QDPrintDialog * th=(QDPrintDialog *) cl_data;
+  double &low = th->progress_low;
+  double &high = th->progress_high;
+  double progress = low;
+  if (done >= 1)
+    progress = high;
+  else if (done >= 0)
+    progress = low + done * (high-low);
+  th->progress->setProgress((int)(progress*100));
+  QDPrintDialog::refresh_cb(cl_data);
 }
 
 void
 QDPrintDialog::info_cb(int page_num, int page_cnt, int tot_pages,
 		       DjVuToPS::Stage stage, void * cl_data)
 {
-   QDPrintDialog * th=(QDPrintDialog *) cl_data;
-   QString prefix=stage==DjVuToPS::DECODING ? tr("Decoding") : tr("Printing");
-   if (tot_pages>1)
-   {
-      QString buffer=tr(" page #") + QString::number(page_num+1)
-	+ " (" + QString::number(page_cnt+1)
-	+ "/" + QString::number(tot_pages) + "): ";
-      prefix=prefix+buffer;
-   } else
-   {
-      if (th->doc && th->doc->get_pages_num()>1)
-      {
-	 QString buffer=tr(" page ")+ QString::number(page_num+1)+": ";
-	 prefix=prefix+buffer;
-      } else prefix=prefix+": ";
-   }
-   th->progress->setPrefix(prefix);
-   th->progress->reset();
+  QDPrintDialog * th=(QDPrintDialog *) cl_data;
+  double &low = th->progress_low;
+  double &high = th->progress_high;
+  low = 0;
+  high = 100;
+  if (tot_pages > 0) 
+    {
+      double step = 1.0 / (double)tot_pages;
+      low = (double)page_cnt * step;
+      if (stage != DjVuToPS::DECODING) 
+	low += step / 2.0;
+      high = low  + step / 2.0;
+    }
+  if (low < 0)
+    low = 0;
+  if (low > 1)
+    low = 1;
+  if (high < low)
+    high = low;
+  if (high > 1)
+    high = 1;
+  th->progress->setProgress((int)(low*100));
+  QDPrintDialog::refresh_cb(cl_data);
 }
 
 void
@@ -512,8 +495,8 @@ QDPrintDialog::done(int rc)
 	 opt.set_copies(copies_spin->value());
 	 opt.set_frame(what==PRINT_WIN);
 	 print->set_refresh_cb(refresh_cb, this);
-	 print->set_dec_progress_cb(decProgress_cb, this);
-	 print->set_prn_progress_cb(decProgress_cb, this);
+	 print->set_dec_progress_cb(progress_cb, this);
+	 print->set_prn_progress_cb(progress_cb, this);
 	 print->set_info_cb(info_cb, this);
 	 if ((what==PRINT_DOC || what==PRINT_CUSTOM) && doc)
 	    print->print(*pstr, doc, (what==PRINT_CUSTOM && customPages.length()) ?
@@ -647,7 +630,8 @@ QDPrintDialog::QDPrintDialog(const GP<DjVuDocument> & _doc,
 			     DjVuPrefs * _prefs, int _displ_mode,
 			     int _cur_zoom, const GRect & _print_rect,
 			     QWidget * parent, const char * name, bool modal) :
-      QeDialog(parent, name, modal), doc(_doc), dimg(_dimg), cur_page_num(0),
+      QeDialog(parent, name, modal), doc(_doc), dimg(_dimg), 
+      cur_page_num(0), progress_low(0), progress_high(1),
       prefs(_prefs), displ_mode(_displ_mode), cur_zoom(_cur_zoom),
       print_rect(_print_rect)
 {
@@ -848,7 +832,9 @@ QDPrintDialog::QDPrintDialog(const GP<DjVuDocument> & _doc,
    QHBoxLayout * prg_lay=new QHBoxLayout(vlay);
    prog_widget=new QeNInOne(start, "prog_widget");
    prg_lay->addWidget(prog_widget, 1);
-   progress=new QeProgressBar(20, prog_widget, "progress_bar");
+   progress=new QProgressBar(prog_widget, "progress_bar");
+   progress->setIndicatorFollowsStyle(FALSE);
+   progress->setCenterIndicator(TRUE);
 
    save_butt=new QCheckBox(tr("&Save settings to disk"), prog_widget, "save_butt");
    save_butt->setChecked(TRUE);

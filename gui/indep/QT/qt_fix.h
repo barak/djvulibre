@@ -129,27 +129,6 @@ public:
 };
 #endif
 
-#if (defined(QT_FIX_DO_ALL) || defined(QPROGRESSBAR_H)) && !defined(QePROGRESSBAR_DEFINED)
-#define QePROGRESSBAR_DEFINED
-#ifdef QT_FIX_DO_ALL
-#include <qprogressbar.h>
-#endif
-class QeProgressBar : public QProgressBar
-{
-   Q_OBJECT
-private:
-   QString	prefix;
-   int		prefix_changed;
-protected:
-   bool		setIndicator(QString & string, int progress, int totalSteps);
-public:
-   void		setPrefix(const QString & _prefix);
-   
-   QeProgressBar(QWidget * parent=0, const char * name=0);
-   QeProgressBar(int totalSteps, QWidget * parent=0, const char * name=0);
-};
-#endif
-
 #if (defined(QT_FIX_DO_ALL) || defined(QFILEDIALOG_H)) && !defined(QeFILEDIALOG_DEFINED)
 #define QeFILEDIALOG_DEFINED
 #ifdef QT_FIX_DO_ALL

@@ -348,42 +348,6 @@ QeFileDialog::QeFileDialog(QWidget * parent, const char * name, bool modal) :
 }
 
 
-// QEPROGRESSBAR ----------------------------------------
-
-bool
-QeProgressBar::setIndicator(QString & string, int progress, int totalSteps)
-{
-  bool rc = prefix_changed;
-  if ( QProgressBar::setIndicator(string, progress, totalSteps) )
-    rc = true;
-  if (prefix.length()) 
-    string = prefix + string;
-  prefix_changed = false;
-  return rc;
-}
-
-void
-QeProgressBar::setPrefix(const QString & _prefix)
-{
-  prefix_changed = (prefix!=_prefix);
-  prefix=_prefix;
-}
-
-QeProgressBar::QeProgressBar(QWidget * parent=0, const char * name=0) 
-  : QProgressBar(parent, name), prefix_changed(false) 
-{
-  setCenterIndicator(TRUE);
-}
-
-QeProgressBar::QeProgressBar(int totalSteps, QWidget * parent=0, const char * name=0) 
-  : QProgressBar(totalSteps, parent, name), prefix_changed(false) 
-{
-  setCenterIndicator(TRUE);
-}
-
-
-
-
 // QEDIALOG ----------------------------------------
 
 bool

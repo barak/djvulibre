@@ -324,18 +324,10 @@ QDLensPrefs::slotHlHotKeyChanged(DjVuPrefs::HLButtType key)
 {
       // Make sure that we don't have the same button selected
    QString cur_text=hkey_menu->currentText();
-   
    if (key==DjVuPrefs::HLB_CTRL && cur_text==ctrl_hkey ||
        key==DjVuPrefs::HLB_SHIFT && cur_text==shift_hkey ||
        key==DjVuPrefs::HLB_ALT && cur_text==alt_hkey)
-     {
-       for (int i=0; i<hkey_menu->count(); i++)
-	 if (hkey_menu->text(i) == mid_hkey)
-	   {
-	     hkey_menu->setCurrentItem(i);
-	     break;
-	   }
-     }
+     setComboBoxCurrentItem(hkey_menu, mid_hkey);
 }
    
 QDLensPrefs::QDLensPrefs(DjVuPrefs * prefs, QWidget * parent, const char * name) 
@@ -397,12 +389,7 @@ QDLensPrefs::QDLensPrefs(DjVuPrefs * prefs, QWidget * parent, const char * name)
       cur_hkey=alt_hkey;
    else if (prefs->magnifierHotKey==DjVuPrefs::MAG_MID)
       cur_hkey=mid_hkey;
-   for (int i=0; i<hkey_menu->count(); i++)
-     if (cur_hkey == hkey_menu->text(i))
-       {
-	 hkey_menu->setCurrentItem(i);
-	 break;
-       }
+   setComboBoxCurrentItem(hkey_menu, cur_hkey);
    glay->addWidget(hkey_menu,3,1);
    
    QString tip=tr("To use the magnifying glass\n"

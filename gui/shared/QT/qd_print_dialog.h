@@ -84,7 +84,7 @@ private:
    class QLineEdit	* printer_text, * file_text;
 
    QeNInOne		* prog_widget;
-   class QeProgressBar	* progress;
+   class QProgressBar	* progress;
    class QPushButton	* cancel_butt;
 
    GP<DjVuDocument>	doc;
@@ -92,7 +92,7 @@ private:
 
    int			cur_page_num;
    bool			printing, interrupt_printing;
-
+   double               progress_low, progress_high;
    DjVuPrefs		* prefs;
    int			displ_mode;
    int			cur_zoom;
@@ -103,8 +103,7 @@ private:
    static int		str2id(const QString &);
    
    static void		refresh_cb(void * cl_data);
-   static void		prnProgress_cb(double done, void * cl_data);
-   static void		decProgress_cb(double done, void * cl_data);
+   static void		progress_cb(double done, void * cl_data);
    static void		info_cb(int page_num, int page_cnt, int tot_pages,
 				DjVuToPS::Stage stage,void * cl_data);
 
