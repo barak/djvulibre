@@ -34,7 +34,7 @@ AR = @AR@
 LN_S = @LN_S@
 TOUCH = @TOUCH@
 INSTALL = @INSTALL@
-LIBTOOL = @LIBTOOL@
+LIBTOOL = @LIBTOOL@ --tag=disable-static
 DEFS = @DEFS@ 
 OPTS = @OPTS@
 
@@ -56,9 +56,15 @@ nsdejavu.la: nsdejavu.lo
 	${LIBTOOL} --mode=link ${CC} ${CFLAGS} nsdejavu.lo ${LIBS} \
 	  -no-undefined -rpath ${plugindir} -module -o $@
 
-nsdejavu.x: nsdejavu.la
+nsdejavu.x: nsdejavu.la FORCE
 	eval `grep '^dlname=' nsdejavu.la` && \
 	  echo $${dlname} | sed -e 's/\(\.[0-9][0-9]*\)*//g' > $@ 
+	-@if test -z "`cat nsdejavu.x`" ; then \
+	   echo "-----------------------------------------------";\
+	   echo "*** Libtool cannot build the plugin 'nsdejavu'.";\
+	   echo "*** Did you configure with '--disable-shared'? ";\
+	   echo "-----------------------------------------------";\
+	  fi
 
 nsdejavu.1: nsdejavu.1.in nsdejavu.x
 	eval "nsdejavu=`cat nsdejavu.x`" && \
