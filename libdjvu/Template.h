@@ -76,7 +76,8 @@
 #include <string.h>
 #include "GException.h"
 
-
+//T// Begin name space
+#include "DjVu_begin.h"
 
 /** @name Template.h
     
@@ -234,6 +235,8 @@ ClassExample::width()
 
 
 // ------------ THE END
+//T// End name space
+#include "DjVu_end.h"
 #endif
 //T// Terminates the multiple inclusion #ifndef
       

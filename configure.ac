@@ -58,6 +58,7 @@ AC_CXX_BOOL
 AC_CXX_EXCEPTIONS
 AC_CXX_TYPENAME
 AC_CXX_STDINCLUDES
+AC_CXX_NAMESPACES
 AC_CXX_MEMBER_TEMPLATES
 AC_CXX_OPTIMIZE
 AC_CXX_RPO
@@ -358,6 +359,17 @@ AH_BOTTOM([
 #define bool  char
 #define true  1
 #define false 0
+#endif
+
+/* - NAMESPACES */
+#if defined(HAVE_NAMESPACES)
+# define BEGIN_NAMESPACE(x)  namespace x { 
+# define END_NAMESPACE(x)    }
+# define USING_NAMESPACE(x)  using namespace x;
+#else
+# define BEGIN_NAMESPACE(x)  /**/
+# define END_NAMESPACE(x)    /**/
+# define USING_NAMESPACE(x)  /**/
 #endif
 
 /* - WCHAR etc.*/

@@ -1,0 +1,3 @@
+// DjVuLibre-3.5
+
+BEGIN_NAMESPACE(DJVU)
