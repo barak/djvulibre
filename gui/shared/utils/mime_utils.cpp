@@ -255,6 +255,12 @@ static const char *mime_types[] = {
   "type=image/djvu desc=\"DjVu File\"",
 };
 
+static const char *ns_start[] = {
+  "#--Netscape Communications Corporation MIME Information\n",
+  "#Do not delete the above line. It is used to identify the file type.\n",
+  "#\n"
+};
+
 #define N_MIME_TYPES ((int)(sizeof(mime_types)/sizeof(mime_types[0])))
 
 bool 
@@ -274,6 +280,21 @@ FixMimeTypes(bool really)
     readFile(f, fdata);
     fclose(f);
   }
+  // Check mailcap file
+  if (! fdata.size() )
+    {
+      modified = true;
+      fdata.append(ns_start[0]);
+      fdata.append(ns_start[1]);
+      fdata.append(ns_start[2]);
+    }
+  else
+    {
+      GPosition first = fdata;
+      if ( (! line_contains((const char*)fdata[first], "Netscape")) ||
+           (! line_contains((const char*)fdata[first], "MIME Information")) )
+        return false;
+    }
   // Initialize array of observed entries
   int i;
   bool seen[N_MIME_TYPES];
