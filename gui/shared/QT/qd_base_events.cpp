@@ -708,7 +708,6 @@ QDBase::eventFilter(QObject *obj, QEvent *e)
 		  cur_map_area=0;
 		  delete map_area_tip; map_area_tip=0;
 	       }
-
 	       hideLens();
 	       return TRUE;
 	    }
@@ -718,6 +717,16 @@ QDBase::eventFilter(QObject *obj, QEvent *e)
 	       if (needToShowToolBar()) showToolBar();
 	       return TRUE;
 	    }
+#if QT_VERSION > 210
+            case QEvent::Wheel:
+            {
+                QWheelEvent *ev = (QWheelEvent *)e;
+                int delta = ev->delta() / 5;
+                if (delta != 0)
+                  scroll(0, -delta);
+                ev->accept();
+            }
+#endif
 	    case QEvent::Resize:
 	    {
 	       DEBUG_MSGN("QEvent::Resize\n");
