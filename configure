@@ -881,7 +881,7 @@ Optional Features:
   --enable-debug          Compile with debugging options (default: no)
   --enable-rpo            Enable compilation with option -frepo
   --enable-threads        select threading model (default is auto)
-  --enable-xmltools       enable compilation of the xml tools.
+  --enable-xmltools       enable compilation of the xml tools (default).
   --enable-djview         enable compilation of djview (default).
   --enable-shared         Enable shared libdjvu (default: linux only)
 
@@ -7753,7 +7753,7 @@ if test "${enable_xmltools+set}" = set; then
   enableval="$enable_xmltools"
   ac_enable_xmltools=$enableval
 else
-  ac_enable_xmltools=no
+  ac_enable_xmltools=yes
 fi;
 if test x$ac_enable_xmltools != xno ; then
    XML_YES=''

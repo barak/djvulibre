@@ -69,7 +69,7 @@
     \end{verbatim}
 
     @author
-    Dr Bill C Riemers <bcr@lizardtech.com>
+    Dr Bill C Riemers <docbill@sourceforge.net>
     @version
     #$Id$# */
 //@{

@@ -73,7 +73,7 @@ class ByteStream;
     messages that would normally end up on stderr to a double linked list.
 
     @memo DjVuErrorList class.
-    @author Bill C Riemers <bcr@lizardtech.com>
+    @author Bill C Riemers <docbill@sourceforge.net>
     @version #$Id$#
 */
 

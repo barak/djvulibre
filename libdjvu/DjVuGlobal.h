@@ -103,7 +103,7 @@ inline void * operator new(size_t, void * ptr) { return ptr; }
     #$Id$#
     @author
     L\'eon Bottou <leonb@research.att.com> -- empty file.\\
-    Bill Riemers <bcr@lizardtech.com> -- real work.  */
+    Bill Riemers <docbill@sourceforge.net> -- real work.  */
 //@{
 
 

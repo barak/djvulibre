@@ -80,7 +80,7 @@
     @memo 
     XML file parser.
     @author
-    Bill C Riemers <bcr@lizardtech.org>
+    Bill C Riemers <docbill@sourceforge.net>
     @version
     #$Id$# */
 //@{

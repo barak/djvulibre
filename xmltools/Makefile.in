@@ -60,7 +60,7 @@ PROGRAMS = djvutoxml djvuxmlparser xml2native \
 
 all: ${PROGRAMS}
 
-install: install-bin install-data # install-man (disabled for now)
+install: install-bin install-data install-man
 
 install-bin: ${PROGRAMS} FORCE
 	${INSTALL} -d ${bindir}
@@ -78,6 +78,9 @@ install-man: FORCE
 	${INSTALL} -d ${mandir}/man1
 	for n in ${srcdir}/*.1 ; do \
 	  ${INSTALL} -m 0644 $$n ${mandir}/man1 || exit ; done 
+	${INSTALL} -d ${mandir}/man3
+	for n in ${srcdir}/*.3 ; do \
+	  ${INSTALL} -m 0644 $$n ${mandir}/man3 || exit ; done 
 
 depend: FORCE
 	${CXX} -MM ${CXXFLAGS} ${srcdir}/*.cpp > Makefile.dep
