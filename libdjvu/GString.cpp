@@ -1597,7 +1597,7 @@ GStringRep::UTF8::create_format(const char fmt[],...)
 }
 
 GP<GStringRep>
-GStringRep::vformat(va_list &args) const
+GStringRep::vformat(va_list args) const
 {
   GP<GStringRep> retval;
   if(size)

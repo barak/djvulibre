@@ -217,7 +217,7 @@ public:
       function #vprintf()# for more information. The current implementation
       will cause a segmentation violation if the resulting string is longer
       than 32768 characters. */
-  GP<GStringRep> vformat(va_list &args) const;
+  GP<GStringRep> vformat(va_list args) const;
   // -- SEARCHING
 
   static GP<GStringRep> UTF8ToNative( const char *s,
