@@ -107,7 +107,7 @@ then
     cat 1>&2 <<\EOF
 djvudigital: cannot locate csepdjvu executable.
 +--------------------------------------------------------------------+
-| DjVuDigital was not able to locate the djvulibre tool "cspdjvu".   |
+| DjVuDigital was not able to locate the djvulibre tool "csepdjvu".   |
 | Please make sure that the djvulibre tools are properly installed.  |
 +--------------------------------------------------------------------+
 EOF
