@@ -1129,7 +1129,7 @@ StartProgram(void)
 	// to orphan a child under all versions of Unix.  Otherwise the
 	// SIGCHLD may cause Netscape to crash.
 
-#ifndef DEBUG
+#ifdef NO_DEBUG
 	// Don't do it in DEBUG mode => all DEBUG messages got lost.
       setsid();
 #endif
