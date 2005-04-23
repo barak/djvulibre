@@ -1,0 +1,7 @@
+NEWS
+README
+TODO
+doc/*.djvu
+doc/*.txt
+doc/DjVmNav*
+doc/GMapAreas*
