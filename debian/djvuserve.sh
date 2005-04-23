@@ -1,2 +1,2 @@
-#!/bin/sh
+#! /bin/sh -f
 exec /usr/bin/djvuserve
