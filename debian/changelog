@@ -1,3 +1,10 @@
+djvulibre (3.5.14-4) unstable; urgency=low
+
+  * generate -dev package again, like pre 3.5.9-5 (closes: #305790)
+  * strip down decriptions a little (closes: #164391)
+
+ -- Barak A. Pearlmutter <bap@debian.org>  Sat, 23 Apr 2005 20:47:56 +0100
+
 djvulibre (3.5.14-3) unstable; urgency=low
 
   * Incorporate Loic Minier <lool@dooz.org> documentation of plugin URL
