@@ -5,6 +5,7 @@ djvulibre-bin
 djvulibre-plugin
 djvuserve
 files
+libdjvulibre-dev
 libdjvulibre1
 libdjvulibre1-dev
 tmp
