@@ -1,3 +1,9 @@
+djvulibre (3.5.14-5) unstable; urgency=low
+
+  * libdjvulibre-dev needs to depend upon libdjvulibre1
+
+ -- Barak A. Pearlmutter <bap@debian.org>  Mon, 25 Apr 2005 02:03:26 +0100
+
 djvulibre (3.5.14-4) unstable; urgency=low
 
   * generate -dev package again, like pre 3.5.9-5 (closes: #305790)

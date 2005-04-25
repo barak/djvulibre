@@ -8,7 +8,7 @@ Standards-Version: 3.6.1
 Package: libdjvulibre-dev
 Section: devel
 Architecture: any
-Depends: ${shlibs:Depends}
+Depends: ${shlibs:Depends}, libdjvulibre1 (= ${Source-Version})
 Description: Development files for the DjVu image format
  DjVu image format static library and development files.
  .
