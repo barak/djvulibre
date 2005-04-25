@@ -118,7 +118,7 @@ binary-arch: build install
 	dh_makeshlibs --exclude=/plugins
 	dh_installdeb
 #	dh_perl
-	dh_shlibdeps -l libdjvu:libdjvu/.libs
+	dh_shlibdeps -L libdjvulibre1 -l debian/libdjvulibre1/usr/lib
 	dh_gencontrol
 	dh_md5sums
 	dh_builddeb
