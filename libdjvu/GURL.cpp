@@ -65,7 +65,7 @@
 // This has been heavily changed by Lizardtech.
 // They decided to use URLs for everyting, including
 // the most basic file access.  The URL class now is a unholy 
-// mixture of code for syntactically parsing the urls (which is was)
+// mixture of code for syntactically parsing the urls (which it was)
 // and file status code (only for local file: urls).
 
 #include "GException.h"
@@ -170,7 +170,6 @@ namespace DJVU {
 
 static const char djvuopts[]="DJVUOPTS";
 static const char localhost[]="file://localhost/";
-static const char fileproto[]="file:";
 static const char backslash='\\';  
 static const char colon=':';
 static const char dot='.';

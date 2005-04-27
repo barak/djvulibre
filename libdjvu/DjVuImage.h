@@ -121,6 +121,7 @@ namespace DJVU {
 class DjVuInterface
 {
 public:
+  virtual ~DjVuInterface();
   virtual void notify_chunk(const char *chkid, const char *msg) = 0;
   virtual void notify_relayout(void) = 0;
   virtual void notify_redisplay(void) = 0;

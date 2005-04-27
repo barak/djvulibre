@@ -126,8 +126,6 @@ static const char namestring[]="name";
 static const char valuestring[]="value";
 static const char numberstring[]="number";
 static const char bodystring[]="BODY";
-static const char headstring[]="HEAD";
-static const char includestring[]="INCLUDE";
 static const char messagestring[]="MESSAGE";
 
 GPList<ByteStream> &

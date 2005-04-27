@@ -208,6 +208,7 @@ static int donut_connectivity_test(byte *upper, byte *row, byte *lower)/*{{{*/
             return 0;
         default: assert(0); return 0;
     }
+    assert(0); return 0;
 }/*}}}*/
 static byte donut_transform_pixel(byte *upper, byte *row, byte *lower)/*{{{*/
 {
@@ -303,6 +304,7 @@ static byte donut_transform_pixel(byte *upper, byte *row, byte *lower)/*{{{*/
             return 1; /* lone pixels are NOT omitted */
         default: assert(0); return 0;
     }
+    assert(0); return 0;
 }/*}}}*/
 
 /* `pixels' should have a margin of 1 pixel at each side

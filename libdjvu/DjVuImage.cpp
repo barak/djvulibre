@@ -446,6 +446,10 @@ DjVuImage::notify_chunk_done(const DjVuPort *, const GUTF8String & name)
 
 //// DJVUIMAGE: OLD-STYLE DECODING
 
+DjVuInterface::~DjVuInterface() 
+{
+}
+
 class DjVuImageNotifier : public DjVuPort
 {
   friend class DjVuImage;
