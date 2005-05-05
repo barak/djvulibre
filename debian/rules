@@ -29,8 +29,9 @@ config.status: configure
 		    --infodir=\$${prefix}/share/info
 
 build: build-stamp
-build-stamp:  config.status
+build-stamp: config.status
 	dh_testdir
+	test -e tools/jb2cmp/mdjvucfg.h || touch tools/jb2cmp/mdjvucfg.h
 	$(MAKE) -k depend	# otherwise a missing Makefile.dep blows up
 	$(MAKE) # OPTS="-hotwire -compiler -options"
 	touch build-stamp
