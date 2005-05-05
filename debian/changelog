@@ -1,7 +1,8 @@
 djvulibre (3.5.14-5) unstable; urgency=low
 
   * libdjvulibre-dev needs to depend upon libdjvulibre1
-
+  * fix #include <mdjvucfg.h> problem (closes: #306266)
+  
  -- Barak A. Pearlmutter <bap@debian.org>  Mon, 25 Apr 2005 02:03:26 +0100
 
 djvulibre (3.5.14-4) unstable; urgency=low
