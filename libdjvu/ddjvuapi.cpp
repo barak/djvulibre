@@ -771,6 +771,7 @@ ddjvu_document_s::request_data(const DjVuPort*p, const GURL &url)
           p->tmp2 = (const char*)url.get_string();
           p->p.m_newstream.url = (const char*)(p->tmp2);
         }
+      msg_push(xhead(DDJVU_NEWSTREAM, this), p);
     }
   return pool;
 }

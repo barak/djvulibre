@@ -395,7 +395,7 @@ struct ddjvu_message_info_s {   /* ddjvu_message_t::m_info */
 
    Argument <url> specifies an optional URL for the document.  
    The URL follows the usual syntax (<"protocol://machine/path">). 
-   It only serves two purposes:
+   It should not end with a slash. It only serves two purposes:
    - The URL is used as a key for the cache of decoded pages.
    - The URL is used to document <m_newstream> messages.
 
@@ -808,11 +808,11 @@ ddjvu_page_set_rotation(ddjvu_page_t *page,
 
 /* ddjvu_rect_t ---
    This structure specifies the location of a rectangle.
-   Coordinates are always expressed in pixels relative to
-   the BOTTOM LEFT CORNER of an image.  Members <x> and <y>
-   indicate the position of the bottom left corner of the
-   rectangle Members <w> and <h> indicate the width and
-   height of the rectangle. */
+   Coordinates are usually expressed in pixels relative to 
+   the BOTTOM LEFT CORNER (but see ddjvu_format_set_y_direction).
+   Members <x> and <y> indicate the position of the bottom left 
+   corner of the rectangle Members <w> and <h> indicate the 
+   width and height of the rectangle. */
 
 typedef struct ddjvu_rect_s {
   int x, y;
