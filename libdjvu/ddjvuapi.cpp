@@ -112,6 +112,7 @@ typedef unsigned int uint32_t;
 
 
 // ----------------------------------------
+// Private structures
 
 
 struct DJVUNS ddjvu_message_p : public GPEnabled
@@ -133,6 +134,7 @@ struct DJVUNS ddjvu_thumbnail_p : public GPEnabled
 
 
 // ----------------------------------------
+// Context, Jobs, Document, Pages
 
 
 struct DJVUNS ddjvu_context_s : public GPEnabled
@@ -202,6 +204,7 @@ struct DJVUNS ddjvu_page_s : public ddjvu_job_s
 
 
 // ----------------------------------------
+// Helpers
 
 
 // Hack to increment counter
@@ -305,6 +308,7 @@ xhead(ddjvu_message_tag_t tag,
 
 
 // ----------------------------------------
+// Context
 
 
 ddjvu_context_t *
@@ -350,6 +354,7 @@ ddjvu_context_release(ddjvu_context_t *ctx)
 
 
 // ----------------------------------------
+// Message helpers
 
 
 // post a new message
@@ -382,10 +387,6 @@ msg_push_nothrow(const ddjvu_message_any_t &head,
     }
   G_ENDCATCH;
 }
-
-
-// ----------------------------------------
-
 
 // prepare error message from string
 static GP<ddjvu_message_p>
@@ -461,8 +462,9 @@ msg_prep_info(GUTF8String message)
                      msg_prep_error(m,0,__FILE__,__LINE__))
 #endif
 
-// ----------------------------------------
 
+// ----------------------------------------
+// Cache
 
 void
 ddjvu_cache_set_size(ddjvu_context_t *ctx,
@@ -516,6 +518,7 @@ ddjvu_cache_clear(ddjvu_context_t *ctx)
 
 
 // ----------------------------------------
+// Jobs
 
 
 bool
@@ -606,6 +609,7 @@ ddjvu_job_get_user_data(ddjvu_job_t *job)
 
 
 // ----------------------------------------
+// Message queue
 
 
 ddjvu_message_t *
@@ -672,6 +676,8 @@ ddjvu_message_set_callback(ddjvu_context_t *ctx,
 
 
 // ----------------------------------------
+// Document callbacks
+
 
 void
 ddjvu_document_s::release()
@@ -779,6 +785,7 @@ ddjvu_document_s::request_data(const DjVuPort*p, const GURL &url)
 
 
 // ----------------------------------------
+// Documents
 
 
 ddjvu_document_t *
@@ -869,6 +876,7 @@ ddjvu_document_job(ddjvu_document_t *document)
 
 
 // ----------------------------------------
+// Streams
 
 
 void
@@ -925,6 +933,7 @@ ddjvu_stream_close(ddjvu_document_t *doc,
 
 
 // ----------------------------------------
+// Document queries
 
 
 ddjvu_document_type_t
@@ -977,9 +986,81 @@ ddjvu_document_get_pagenum(ddjvu_document_t *document)
   return 1;
 }
 
+ddjvu_status_t
+ddjvu_document_get_pageinfo(ddjvu_document_t *document, int pageno, 
+                            ddjvu_pageinfo_t *pageinfo)
+{
+  G_TRY
+    {
+      DjVuDocument *doc = document->doc;
+      if (doc)
+        {
+          GP<DjVuFile> file = doc->get_djvu_file(pageno);
+          if (! file || ! file->is_all_data_present() )
+            return DDJVU_JOB_STARTED;
+          const GP<ByteStream> pbs(file->get_djvu_bytestream(false, false));
+          const GP<IFFByteStream> iff(IFFByteStream::create(pbs));
+          GUTF8String chkid;
+          if (iff->get_chunk(chkid))
+            {
+              if (chkid == "FORM:DJVU")
+                {
+                  while (iff->get_chunk(chkid) && chkid!="INFO")
+                    iff->close_chunk();
+                  if (chkid == "INFO")
+                    {
+                      GP<ByteStream> gbs = iff->get_bytestream();
+                      GP<DjVuInfo> info=DjVuInfo::create();
+                      info->decode(*gbs);
+                      int rot = ((360-GRect::findangle(info->orientation))/90)%4;
+                      if (pageinfo)
+                        {
+                          pageinfo->width = (rot&1) ? info->height : info->width;
+                          pageinfo->height = (rot&1) ? info->width : info->height;
+                          pageinfo->dpi = info->dpi;
+                        }
+                      return DDJVU_JOB_OK;
+                    }
+                }
+              else if (chkid == "FORM:BM44" || chkid == "FORM:PM44")
+                {
+                  while (iff->get_chunk(chkid) && chkid!="BM44" && chkid!="PM44")
+                    iff->close_chunk();
+                  if (chkid=="BM44" || chkid=="PM44")
+                    {
+                      GP<ByteStream> gbs = iff->get_bytestream();
+                      if (gbs->read8() == 0)
+                        {
+                          gbs->read8();
+                          gbs->read8();
+                          unsigned char xhi = gbs->read8();
+                          unsigned char xlo = gbs->read8();
+                          unsigned char yhi = gbs->read8();
+                          unsigned char ylo = gbs->read8();
+                          if (pageinfo)
+                            {
+                              pageinfo->width = (xhi<<8)+xlo;
+                              pageinfo->height = (yhi<<8)+ylo;
+                              pageinfo->dpi = 100;
+                            }
+                          return DDJVU_JOB_OK;
+                        }
+                    }
+                }
+            }
+        }
+    }
+  G_CATCH(ex)
+    {
+      ERROR(document, ex);
+    }
+  G_ENDCATCH;
+  return DDJVU_JOB_FAILED;
+}
+
 
 // ----------------------------------------
-
+// Page
 
 static ddjvu_page_t *
 ddjvu_page_create(ddjvu_document_t *document, ddjvu_job_t *job,
@@ -1037,7 +1118,7 @@ ddjvu_page_job(ddjvu_page_t *page)
 
 
 // ----------------------------------------
-
+// Page callbacks
 
 void
 ddjvu_page_s::release()
@@ -1141,7 +1222,7 @@ ddjvu_page_s::notify_chunk_done(const DjVuPort*, const GUTF8String &name)
 
 
 // ----------------------------------------
-
+// Page queries
 
 int
 ddjvu_page_get_width(ddjvu_page_t *page)
@@ -1285,7 +1366,7 @@ ddjvu_page_get_long_description(ddjvu_page_t *page)
 
 
 // ----------------------------------------
-
+// Rotations
 
 ddjvu_page_rotation_t
 ddjvu_page_get_rotation(ddjvu_page_t *page)
@@ -1341,7 +1422,7 @@ ddjvu_page_set_rotation(ddjvu_page_t *page,
 
 
 // ----------------------------------------
-
+// Render
 
 struct DJVUNS ddjvu_format_s
 {
@@ -1770,7 +1851,7 @@ ddjvu_page_render(ddjvu_page_t *page,
 
 
 // ----------------------------------------
-
+// Thumbnails
 
 void
 ddjvu_thumbnail_p::callback(void *cldata)
@@ -1906,83 +1987,40 @@ ddjvu_thumbnail_render(ddjvu_document_t *document, int pagenum,
 
 
 // ----------------------------------------
+// Not yet implemented
 
-
-DDJVUAPI ddjvu_status_t
-ddjvu_document_get_pageinfo(ddjvu_document_t *document, int pageno, 
-                            ddjvu_pageinfo_t *pageinfo)
+ddjvu_job_t *
+ddjvu_document_print(ddjvu_document_t *document, FILE *output,
+                     int optc, const char * const * optv)
 {
-  G_TRY
-    {
-      DjVuDocument *doc = document->doc;
-      if (doc)
-        {
-          GP<DjVuFile> file = doc->get_djvu_file(pageno);
-          if (! file || ! file->is_all_data_present() )
-            return DDJVU_JOB_STARTED;
-          const GP<ByteStream> pbs(file->get_djvu_bytestream(false, false));
-          const GP<IFFByteStream> iff(IFFByteStream::create(pbs));
-          GUTF8String chkid;
-          if (iff->get_chunk(chkid))
-            {
-              if (chkid == "FORM:DJVU")
-                {
-                  while (iff->get_chunk(chkid) && chkid!="INFO")
-                    iff->close_chunk();
-                  if (chkid == "INFO")
-                    {
-                      GP<ByteStream> gbs = iff->get_bytestream();
-                      GP<DjVuInfo> info=DjVuInfo::create();
-                      info->decode(*gbs);
-                      int rot = ((360-GRect::findangle(info->orientation))/90)%4;
-                      if (pageinfo)
-                        {
-                          pageinfo->width = (rot&1) ? info->height : info->width;
-                          pageinfo->height = (rot&1) ? info->width : info->height;
-                          pageinfo->dpi = info->dpi;
-                        }
-                      return DDJVU_JOB_OK;
-                    }
-                }
-              else if (chkid == "FORM:BM44" || chkid == "FORM:PM44")
-                {
-                  while (iff->get_chunk(chkid) && chkid!="BM44" && chkid!="PM44")
-                    iff->close_chunk();
-                  if (chkid=="BM44" || chkid=="PM44")
-                    {
-                      GP<ByteStream> gbs = iff->get_bytestream();
-                      if (gbs->read8() == 0)
-                        {
-                          gbs->read8();
-                          gbs->read8();
-                          unsigned char xhi = gbs->read8();
-                          unsigned char xlo = gbs->read8();
-                          unsigned char yhi = gbs->read8();
-                          unsigned char ylo = gbs->read8();
-                          if (pageinfo)
-                            {
-                              pageinfo->width = (xhi<<8)+xlo;
-                              pageinfo->height = (yhi<<8)+ylo;
-                              pageinfo->dpi = 100;
-                            }
-                          return DDJVU_JOB_OK;
-                        }
-                    }
-                }
-            }
-        }
-    }
-  G_CATCH(ex)
-    {
-      ERROR(document, ex);
-    }
-  G_ENDCATCH;
-  return DDJVU_JOB_FAILED;
+  return 0;
+}
+
+ddjvu_job_t *
+ddjvu_document_save(ddjvu_document_t *document, FILE *output, 
+                    int optc, const char * const * optv)
+{
+  return 0;
 }
 
 
 // ----------------------------------------
 
+
+// ----------------------------------------
+
+
+// ----------------------------------------
+
+
+// ----------------------------------------
+
+
+// ----------------------------------------
+
+
+// ----------------------------------------
+// Backdoors
 
 GP<DjVuImage>
 ddjvu_get_DjVuImage(ddjvu_page_t *page)
@@ -1998,19 +2036,3 @@ ddjvu_get_DjVuDocument(ddjvu_document_t *document)
 }
 
 
-// ----------------------------------------
-
-
-// ----------------------------------------
-
-
-// ----------------------------------------
-
-
-// ----------------------------------------
-
-
-// ----------------------------------------
-
-
-// ----------------------------------------

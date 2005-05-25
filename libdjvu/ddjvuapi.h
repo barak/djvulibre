@@ -188,6 +188,31 @@ ddjvu_cache_clear(ddjvu_context_t *context);
 
 /* ------- MESSAGE QUEUE ------- */
 
+/* Messages produced by the ddjvu api accumulate into
+   the message queue. Processing messages is not optional!
+   A typical message handling routine looks like this:
+   
+   void handle_ddjvu_messages(ddjvu_context_t *ctx, int wait)
+   {
+     const ddjvu_message_t *msg;
+     if (wait)
+       ddjvu_message_wait(ctx);
+     while ((msg = ddjvu_message_peek(ctx)))
+     {
+       switch(msg->m_any.tag)
+       { 
+       case DDJVU_ERROR:      .... ; break;
+       case DDJVU_INFO:       .... ; break;
+       case DDJVU_NEWSTREAM:  .... ; break;
+       ....
+       default: break;
+       }
+       ddjvu_message_pop(ctx);
+     }
+   }
+*/
+
+
 /* ddjvu_message_peek ---
    Returns a pointer to the next DDJVU message.
    This function returns 0 if no message is available.
@@ -584,6 +609,34 @@ ddjvu_document_get_type(ddjvu_document_t *document);
 DDJVUAPI int
 ddjvu_document_get_pagenum(ddjvu_document_t *document);
 
+
+/* ddjvu_document_get_pageinfo ---
+   Attempts to obtain information about page <pageno>
+   without decoding the page. If the information is available,
+   the function returns <DDJVU_JOB_OK> and fills the <info> 
+   structure. Otherwise it starts fetching the page data 
+   and returns <DDJVU_JOB_STARTED>.  Typical usage:
+
+   ddjvu_status_t r;
+   ddjvu_pageinfo_t info;
+   while ((r=ddjvu_document_get_pageinfo(doc,pageno,&info))<DDJVU_JOB_OK)
+     handle_ddjvu_messages(ctx, TRUE);
+   if (r>=DDJVU_JOB_FAILED)
+     signal_error();
+
+   When the djvu document comes from the network, the above idiom 
+   is very slow because it waits until the data for all page is present. 
+*/      
+
+typedef struct ddjvu_pageinfo_s {
+  int width;
+  int height;
+  int dpi;
+} ddjvu_pageinfo_t;
+
+DDJVUAPI ddjvu_status_t
+ddjvu_document_get_pageinfo(ddjvu_document_t *document, int pageno, 
+                            ddjvu_pageinfo_t *info);
 
 
 
@@ -1011,6 +1064,11 @@ ddjvu_thumbnail_render(ddjvu_document_t *document, int pagenum,
 /* -------------------------------------------------- */
 
 
+
+/* ddjvu_message_t::m_progress ---
+   These messages are generated to indicate progress 
+   towards the completion of a print or save job. */
+
 struct ddjvu_message_progress_s {
   ddjvu_message_any_t any;
   ddjvu_status_t status;
@@ -1024,7 +1082,7 @@ struct ddjvu_message_progress_s {
 
      ddjvu_job_t *job = ddjvu_document_print(....);
      while (! ddjvu_job_done(job) )
-       handle_ddjvu_messages(context);
+       handle_ddjvu_messages(context, TRUE);
      
    The postscript data is written to file <output>.
    Arguments <optc> and <optv> specify options exactly
@@ -1044,7 +1102,7 @@ ddjvu_document_print(ddjvu_document_t *document, FILE *output,
 
      ddjvu_job_t *job = ddjvu_document_save(....);
      while (! ddjvu_job_done(job) )
-       handle_ddjvu_messages(context);
+       handle_ddjvu_messages(context, TRUE);
      
    The bundled djvu data is written to file <output>
    which must be seekable. Arguments <optc> and <optv> 
@@ -1084,40 +1142,6 @@ ddjvu_document_save(ddjvu_document_t *document, FILE *output,
 /* Not yet defined */
 
 /* Not yet implemented */
-
-
-/* -------------------------------------------------- */
-/* WORKAROUNDS                                        */
-/* -------------------------------------------------- */
-
-/* ddjvu_document_get_pageinfo ---
-   Attempts to obtain information about page <pageno>
-   without decoding the page. If the information is available,
-   the function returns <DDJVU_JOB_OK> and fills the <info> 
-   structure. Otherwise it starts fetching the page data 
-   and returns <DDJVU_JOB_STARTED>.  Typical usage:
-
-   ddjvu_pageinfo_t info;
-   ddjvu_status_t r;
-   while ((r=ddjvu_document_get_pageinfo(doc,pageno,&info))<DDJVU_JOB_OK)
-     handle_ddjvu_messages(ctx);
-   if (r>=DDJVU_JOB_FAILED)
-     signal_error();
-
-   When the djvu document comes from the network, the above idiom 
-   is very slow because it waits until the data for all page is present. 
-*/      
-
-typedef struct ddjvu_pageinfo_s {
-  int width;
-  int height;
-  int dpi;
-} ddjvu_pageinfo_t;
-
-DDJVUAPI ddjvu_status_t
-ddjvu_document_get_pageinfo(ddjvu_document_t *document, int pageno, 
-                            ddjvu_pageinfo_t *info);
-
 
 
 /* -------------------------------------------------- */
