@@ -323,127 +323,133 @@ DjVuDocument::init_thread(void)
    }
    if (chkid=="FORM:DJVM")
    {
-      DEBUG_MSG("Got DJVM document here\n");
-      DEBUG_MAKE_INDENT(3);
-
-      size=iff.get_chunk(chkid);
-      if (chkid=="DIRM")
-      {
+     DEBUG_MSG("Got DJVM document here\n");
+     DEBUG_MAKE_INDENT(3);
+     
+     size=iff.get_chunk(chkid);
+     if (chkid=="DIRM")
+       {
 	 djvm_dir=DjVmDir::create();
 	 djvm_dir->decode(iff.get_bytestream());
 	 iff.close_chunk();
 	 if (djvm_dir->is_bundled())
-	 {
-	    DEBUG_MSG("Got BUNDLED file.\n");
-	    doc_type=BUNDLED;
-	 } else
-	 {
-	    DEBUG_MSG("Got INDIRECT file.\n");
-	    doc_type=INDIRECT;
-	 }
+           {
+             DEBUG_MSG("Got BUNDLED file.\n");
+             doc_type=BUNDLED;
+           } 
+         else
+           {
+             DEBUG_MSG("Got INDIRECT file.\n");
+             doc_type=INDIRECT;
+           }
 	 flags|=DOC_TYPE_KNOWN | DOC_DIR_KNOWN;
 	 pcaster->notify_doc_flags_changed(this, DOC_TYPE_KNOWN | DOC_DIR_KNOWN, 0);
 	 check_unnamed_files();
-      } else if (chkid=="DIR0")
-      {
+       } 
+     else if (chkid=="DIR0")
+       {
 	 DEBUG_MSG("Got OLD_BUNDLED file.\n");
 	 doc_type=OLD_BUNDLED;
 	 flags|=DOC_TYPE_KNOWN;
 	 pcaster->notify_doc_flags_changed(this, DOC_TYPE_KNOWN, 0);
 	 check_unnamed_files();
-      } else G_THROW( ERR_MSG("DjVuDocument.bad_format") );
-
-      if (doc_type==OLD_BUNDLED)
-      {
-	    // Read the DjVmDir0 directory. We are unable to tell what
-	    // files are pages and what are included at this point.
-	    // We only know that the first file with DJVU (BM44 or PM44)
-	    // form *is* the first page. The rest will become known
-	    // after we decode DjVuNavDir
+       } 
+     else 
+       G_THROW( ERR_MSG("DjVuDocument.bad_format") );
+     
+     if (doc_type==OLD_BUNDLED)
+       {
+         // Read the DjVmDir0 directory. We are unable to tell what
+         // files are pages and what are included at this point.
+         // We only know that the first file with DJVU (BM44 or PM44)
+         // form *is* the first page. The rest will become known
+         // after we decode DjVuNavDir
 	 djvm_dir0=DjVmDir0::create();
 	 djvm_dir0->decode(*iff.get_bytestream());
 	 iff.close_chunk();
-
-	    // Get offset to the first DJVU, PM44 or BM44 chunk
+         // Get offset to the first DJVU, PM44 or BM44 chunk
 	 int first_page_offset=0;
 	 while(!first_page_offset)
-	 {
-	    int offset;
-	    size=iff.get_chunk(chkid, &offset);
-	    if (size==0) G_THROW( ERR_MSG("DjVuDocument.no_page") );
-	    if (chkid=="FORM:DJVU" || chkid=="FORM:PM44" || chkid=="FORM:BM44")
-	    {
-	       DEBUG_MSG("Got 1st page offset=" << offset << "\n");
-	       first_page_offset=offset;
-	    }
-	    iff.close_chunk();
-	 }
-
-	    // Now get the name of this file
+           {
+             int offset;
+             size=iff.get_chunk(chkid, &offset);
+             if (size==0) G_THROW( ERR_MSG("DjVuDocument.no_page") );
+             if (chkid=="FORM:DJVU" || chkid=="FORM:PM44" || chkid=="FORM:BM44")
+               {
+                 DEBUG_MSG("Got 1st page offset=" << offset << "\n");
+                 first_page_offset=offset;
+               }
+             iff.close_chunk();
+           }
+         
+         // Now get the name of this file
 	 int file_num;
 	 for(file_num=0;file_num<djvm_dir0->get_files_num();file_num++)
-	 {
-	    DjVmDir0::FileRec & file=*djvm_dir0->get_file(file_num);
-	    if (file.offset==first_page_offset)
-	    {
-	       first_page_name=file.name;
-	       break;
-	    }
-	 }
+           {
+             DjVmDir0::FileRec & file=*djvm_dir0->get_file(file_num);
+             if (file.offset==first_page_offset)
+               {
+                 first_page_name=file.name;
+                 break;
+               }
+           }
 	 if (!first_page_name.length())
-	    G_THROW( ERR_MSG("DjVuDocument.no_page") );
-
+           G_THROW( ERR_MSG("DjVuDocument.no_page") );
 	 flags|=DOC_DIR_KNOWN;
 	 pcaster->notify_doc_flags_changed(this, DOC_DIR_KNOWN, 0);
 	 check_unnamed_files();
-      }
-   } else // chkid!="FORM:DJVM"
-   {
-	 // DJVU format
-      DEBUG_MSG("Got DJVU OLD_INDEXED or SINGLE_PAGE document here.\n");
-      doc_type=SINGLE_PAGE;
-
-      flags|=DOC_TYPE_KNOWN;
-      pcaster->notify_doc_flags_changed(this, DOC_TYPE_KNOWN, 0);
-      check_unnamed_files();
-   }
-
+       }
+     // Check for NAVM
+     iff.close_chunk();
+     size=iff.get_chunk(chkid);
+     if (size && chkid=="NAVM")
+       {
+         /* To come */
+       }
+   } 
+   else // chkid!="FORM:DJVM"
+     {
+       // DJVU format
+       DEBUG_MSG("Got DJVU OLD_INDEXED or SINGLE_PAGE document here.\n");
+       doc_type=SINGLE_PAGE;
+       flags|=DOC_TYPE_KNOWN;
+       pcaster->notify_doc_flags_changed(this, DOC_TYPE_KNOWN, 0);
+       check_unnamed_files();
+     }
    if (doc_type==OLD_BUNDLED || doc_type==SINGLE_PAGE)
-   {
-      DEBUG_MSG("Searching for NDIR chunks...\n");
-      ndir_file=get_djvu_file(-1);
-      if (ndir_file) ndir=ndir_file->decode_ndir();
-      ndir_file=0;	// Otherwise ~DjVuDocument() will stop (=kill) it
-      if (!ndir)
-      {
-	    // Seems to be 1-page old-style document. Create dummy NDIR
-	 if (doc_type==OLD_BUNDLED)
-	 {
-		 ndir=DjVuNavDir::create(GURL::UTF8("directory",init_url));
-	    ndir->insert_page(-1, first_page_name);
-	 } else
-	 {
-		 ndir=DjVuNavDir::create(GURL::UTF8("directory",init_url.base()));
-	    ndir->insert_page(-1, init_url.fname());
-	 }
-      } 
-      else
-      {
-	 if (doc_type==SINGLE_PAGE)
-	    doc_type=OLD_INDEXED;
-      }
-
-      flags|=DOC_NDIR_KNOWN;
-      pcaster->notify_doc_flags_changed(this, DOC_NDIR_KNOWN, 0);
-      check_unnamed_files();
-   }
-
+     {
+       DEBUG_MSG("Searching for NDIR chunks...\n");
+       ndir_file=get_djvu_file(-1);
+       if (ndir_file) ndir=ndir_file->decode_ndir();
+       ndir_file=0;	// Otherwise ~DjVuDocument() will stop (=kill) it
+       if (!ndir)
+         {
+           // Seems to be 1-page old-style document. Create dummy NDIR
+           if (doc_type==OLD_BUNDLED)
+             {
+               ndir=DjVuNavDir::create(GURL::UTF8("directory",init_url));
+               ndir->insert_page(-1, first_page_name);
+             } 
+           else
+             {
+               ndir=DjVuNavDir::create(GURL::UTF8("directory",init_url.base()));
+               ndir->insert_page(-1, init_url.fname());
+             }
+         } 
+       else
+         {
+           if (doc_type==SINGLE_PAGE)
+             doc_type=OLD_INDEXED;
+         }
+       flags|=DOC_NDIR_KNOWN;
+       pcaster->notify_doc_flags_changed(this, DOC_NDIR_KNOWN, 0);
+       check_unnamed_files();
+     }
+   
    flags|=DOC_INIT_OK;
    pcaster->notify_doc_flags_changed(this, DOC_INIT_OK, 0);
    check_unnamed_files();
-
    init_thread_flags|=FINISHED;
-   
    DEBUG_MSG("DOCUMENT IS FULLY INITIALIZED now: doc_type='" <<
 	     (doc_type==BUNDLED ? "BUNDLED" :
 	      doc_type==OLD_BUNDLED ? "OLD_BUNDLED" :

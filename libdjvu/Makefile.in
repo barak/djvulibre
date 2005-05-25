@@ -69,8 +69,8 @@ OBJS = \
 	MMRDecoder.lo JPEGDecoder.lo DataPool.lo GURL.lo DjVuFileCache.lo \
 	DjVuPort.lo GMapAreas.lo DjVuAnno.lo GIFFManager.lo DjVuText.lo \
 	DjVuInfo.lo DjVuFile.lo DjVuImage.lo DjVuDocument.lo \
-	DjVmDir.lo DjVmDoc.lo DjVmDir0.lo DjVuNavDir.lo DjVuErrorList.lo \
-	DjVuDocEditor.lo DjVuToPS.lo DjVuDumpHelper.lo \
+	DjVmDir.lo DjVmDoc.lo DjVmDir0.lo DjVmNav.lo DjVuNavDir.lo \
+	DjVuErrorList.lo DjVuDocEditor.lo DjVuToPS.lo DjVuDumpHelper.lo \
 	DjVuMessageLite.lo DjVuMessage.lo GUnicode.lo UnicodeByteStream.lo \
 	XMLParser.lo XMLTags.lo ddjvuapi.lo debug.lo
 

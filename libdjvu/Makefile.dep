@@ -30,6 +30,10 @@ DjVmDir.lo: ./DjVmDir.cpp ../config.h DjVmDir.h GString.h DjVuGlobal.h \
 DjVmDoc.lo: ./DjVmDoc.cpp ../config.h DjVmDoc.h DjVmDir.h GString.h \
   DjVuGlobal.h GContainer.h GException.h GSmartPointer.h GThreads.h \
   DataPool.h GURL.h Arrays.h IFFByteStream.h ByteStream.h GOS.h debug.h
+DjVmNav.lo: ./DjVmNav.cpp ../config.h DjVuDocument.h DjVuPort.h \
+  GThreads.h DjVuGlobal.h GException.h GURL.h GString.h \
+  GContainer.h GSmartPointer.h Arrays.h DjVmNav.h \
+  BSByteStream.h ByteStream.h ZPCodec.h debug.h
 DjVuAnno.lo: ./DjVuAnno.cpp ../config.h DjVuAnno.h GString.h DjVuGlobal.h \
   GContainer.h GException.h GSmartPointer.h IFFByteStream.h ByteStream.h \
   Arrays.h BSByteStream.h ZPCodec.h GMapAreas.h GRect.h GURL.h GThreads.h \
