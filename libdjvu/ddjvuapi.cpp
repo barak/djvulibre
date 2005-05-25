@@ -100,6 +100,9 @@ using namespace DJVU;
 #include "DjVuDocument.h"
 #include "DjVuMessageLite.h"
 #include "DjVuMessage.h"
+#include "DjVmNav.h"
+#include "DjVuText.h"
+#include "DjVuAnno.h"
 
 #include "ddjvuapi.h"
 

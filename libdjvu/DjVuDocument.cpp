@@ -64,6 +64,7 @@
 #include "DjVuDocument.h"
 #include "DjVmDoc.h"
 #include "DjVmDir0.h"
+#include "DjVmNav.h"
 #include "DjVuNavDir.h"
 #include "DjVuImage.h"
 #include "DjVuFileCache.h"
@@ -345,7 +346,16 @@ DjVuDocument::init_thread(void)
 	 flags|=DOC_TYPE_KNOWN | DOC_DIR_KNOWN;
 	 pcaster->notify_doc_flags_changed(this, DOC_TYPE_KNOWN | DOC_DIR_KNOWN, 0);
 	 check_unnamed_files();
-       } 
+         
+         /* Check for NAVM */
+         size=iff.get_chunk(chkid);
+         if (size && chkid=="NAVM")
+           {
+             djvm_nav=DjVmNav::create();
+             djvm_nav->decode(iff.get_bytestream());
+             iff.close_chunk();
+           }
+       }
      else if (chkid=="DIR0")
        {
 	 DEBUG_MSG("Got OLD_BUNDLED file.\n");
@@ -398,13 +408,6 @@ DjVuDocument::init_thread(void)
 	 flags|=DOC_DIR_KNOWN;
 	 pcaster->notify_doc_flags_changed(this, DOC_DIR_KNOWN, 0);
 	 check_unnamed_files();
-       }
-     // Check for NAVM
-     iff.close_chunk();
-     size=iff.get_chunk(chkid);
-     if (size && chkid=="NAVM")
-       {
-         /* To come */
        }
    } 
    else // chkid!="FORM:DJVM"
@@ -1672,63 +1675,71 @@ DjVuDocument::get_djvm_doc()
    GP<DjVmDoc> doc=DjVmDoc::create();
 
    if (doc_type==BUNDLED || doc_type==INDIRECT)
-   {
-      DEBUG_MSG("Trivial: the document is either INDIRECT or BUNDLED: follow DjVmDir.\n");
-
-      GPList<DjVmDir::File> files_list=djvm_dir->get_files_list();
-      for(GPosition pos=files_list;pos;++pos)
-      {
-	 GP<DjVmDir::File> f=new DjVmDir::File(*files_list[pos]);
-	 GP<DjVuFile> file=url_to_file(id_to_url(f->get_load_name()));
-	 GP<DataPool> data;
-	 if (file->is_modified()) data=file->get_djvu_data(false);
-	 else data=file->get_init_data_pool();
-	 doc->insert_file(f, data);
-      }
-   } else if (doc_type==SINGLE_PAGE)
-   {
-      DEBUG_MSG("Creating: djvm for a single page document.\n");
-      GMap<GURL, void *> map_add;
-      GP<DjVuFile> file=get_djvu_file(0);
-      add_file_to_djvm(file, true, *doc, map_add,needs_compression_flag,can_compress_flag);
-   } else
-   {
-      DEBUG_MSG("Converting: the document is in an old format.\n");
-
-      GMap<GURL, void *> map_add;
-      if(recover_errors == ABORT)
-      {
-        for(int page_num=0;page_num<ndir->get_pages_num();page_num++)
-        {
-          GP<DjVuFile> file=url_to_file(ndir->page_to_url(page_num));
-          add_file_to_djvm(file, true, *doc, map_add,needs_compression_flag,can_compress_flag);
-        }
-      }else
-      {
-        for(int page_num=0;page_num<ndir->get_pages_num();page_num++)
-        {
-          G_TRY
-          {
-            GP<DjVuFile> file=url_to_file(ndir->page_to_url(page_num));
-            add_file_to_djvm(file, true, *doc, map_add,needs_compression_flag,can_compress_flag);
-          }
-          G_CATCH(ex)
-          {
-            G_TRY { 
-              get_portcaster()->notify_error(this, ex.get_cause());
-              GUTF8String emsg = ERR_MSG("DjVuDocument.skip_page") "\t" + (page_num+1);
-              get_portcaster()->notify_error(this, emsg);
-            }
-            G_CATCH_ALL
-            {
-              G_RETHROW;
-            }
-            G_ENDCATCH;
-          }
-          G_ENDCATCH;
-        }
-      }
-   }
+     {
+       GPList<DjVmDir::File> files_list=djvm_dir->get_files_list();
+       for(GPosition pos=files_list;pos;++pos)
+         {
+           GP<DjVmDir::File> f=new DjVmDir::File(*files_list[pos]);
+           GP<DjVuFile> file=url_to_file(id_to_url(f->get_load_name()));
+           GP<DataPool> data;
+           if (file->is_modified()) 
+             data=file->get_djvu_data(false);
+           else 
+             data=file->get_init_data_pool();
+           doc->insert_file(f, data);
+         }
+       if (djvm_nav)
+         doc->set_djvm_nav(djvm_nav);
+     } 
+   else if (doc_type==SINGLE_PAGE)
+     {
+       DEBUG_MSG("Creating: djvm for a single page document.\n");
+       GMap<GURL, void *> map_add;
+       GP<DjVuFile> file=get_djvu_file(0);
+       add_file_to_djvm(file, true, *doc, map_add,
+                        needs_compression_flag,can_compress_flag);
+     } 
+   else
+     {
+       DEBUG_MSG("Converting: the document is in an old format.\n");
+       GMap<GURL, void *> map_add;
+       if(recover_errors == ABORT)
+         {
+           for(int page_num=0;page_num<ndir->get_pages_num();page_num++)
+             {
+               GP<DjVuFile> file=url_to_file(ndir->page_to_url(page_num));
+               add_file_to_djvm(file, true, *doc, map_add,
+                                needs_compression_flag,can_compress_flag);
+             }
+         }
+       else
+         {
+           for(int page_num=0;page_num<ndir->get_pages_num();page_num++)
+             {
+               G_TRY
+                 {
+                   GP<DjVuFile> file=url_to_file(ndir->page_to_url(page_num));
+                   add_file_to_djvm(file, true, *doc, map_add,
+                                    needs_compression_flag,can_compress_flag);
+                 }
+               G_CATCH(ex)
+                 {
+                   G_TRY { 
+                     get_portcaster()->notify_error(this, ex.get_cause());
+                     GUTF8String emsg = ERR_MSG("DjVuDocument.skip_page") "\t" 
+                                      + (page_num+1);
+                     get_portcaster()->notify_error(this, emsg);
+                   }
+                   G_CATCH_ALL
+                     {
+                       G_RETHROW;
+                     }
+                   G_ENDCATCH;
+                 }
+               G_ENDCATCH;
+             }
+         }
+     }
    return doc;
 }
 

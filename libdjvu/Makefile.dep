@@ -3,22 +3,22 @@ Arrays.lo: ./Arrays.cpp ../config.h Arrays.h GException.h DjVuGlobal.h \
 BSByteStream.lo: ./BSByteStream.cpp ../config.h BSByteStream.h \
   ByteStream.h Arrays.h GException.h DjVuGlobal.h GSmartPointer.h \
   ZPCodec.h GContainer.h
-BSEncodeByteStream.lo: ./BSEncodeByteStream.cpp ../config.h \
-  BSByteStream.h ByteStream.h Arrays.h GException.h DjVuGlobal.h \
-  GSmartPointer.h ZPCodec.h GContainer.h GString.h
+BSEncodeByteStream.lo: ./BSEncodeByteStream.cpp ../config.h BSByteStream.h \
+  ByteStream.h Arrays.h GException.h DjVuGlobal.h GSmartPointer.h \
+  ZPCodec.h GContainer.h GString.h
 ByteStream.lo: ./ByteStream.cpp ../config.h DjVuGlobal.h ByteStream.h \
   Arrays.h GException.h GSmartPointer.h GOS.h GString.h GContainer.h \
   GURL.h GThreads.h DjVuMessage.h DjVuMessageLite.h
-DataPool.lo: ./DataPool.cpp ../config.h DataPool.h GThreads.h \
-  DjVuGlobal.h GException.h GString.h GContainer.h GSmartPointer.h GURL.h \
-  Arrays.h IFFByteStream.h ByteStream.h GOS.h debug.h
+DataPool.lo: ./DataPool.cpp ../config.h DataPool.h GThreads.h DjVuGlobal.h \
+  GException.h GString.h GContainer.h GSmartPointer.h GURL.h Arrays.h \
+  IFFByteStream.h ByteStream.h GOS.h debug.h
 ddjvuapi.lo: ./ddjvuapi.cpp ../config.h GException.h DjVuGlobal.h \
-  GSmartPointer.h GThreads.h GContainer.h ByteStream.h IFFByteStream.h \
-  GString.h GBitmap.h GPixmap.h \
-  DjVuPort.h GURL.h Arrays.h DataPool.h DjVuInfo.h GRect.h IW44Image.h \
-  ZPCodec.h DjVuImage.h DjVuFile.h DjVuPalette.h DjVuAnno.h \
-  DjVuFileCache.h DjVuDocument.h DjVuMessageLite.h DjVuMessage.h \
-  ddjvuapi.h
+  GSmartPointer.h GThreads.h GContainer.h ByteStream.h Arrays.h \
+  IFFByteStream.h GString.h GBitmap.h GPixmap.h GScaler.h GRect.h \
+  DjVuPort.h GURL.h DataPool.h DjVuInfo.h IW44Image.h ZPCodec.h \
+  DjVuImage.h DjVuFile.h DjVuPalette.h DjVuAnno.h DjVuFileCache.h \
+  DjVuDocument.h DjVuMessageLite.h DjVuMessage.h DjVmNav.h DjVuText.h \
+  GMapAreas.h ddjvuapi.h
 debug.lo: ./debug.cpp ../config.h debug.h GString.h DjVuGlobal.h \
   GContainer.h GException.h GSmartPointer.h ByteStream.h Arrays.h GURL.h \
   GThreads.h
@@ -29,11 +29,11 @@ DjVmDir.lo: ./DjVmDir.cpp ../config.h DjVmDir.h GString.h DjVuGlobal.h \
   ByteStream.h Arrays.h ZPCodec.h GURL.h debug.h
 DjVmDoc.lo: ./DjVmDoc.cpp ../config.h DjVmDoc.h DjVmDir.h GString.h \
   DjVuGlobal.h GContainer.h GException.h GSmartPointer.h GThreads.h \
-  DataPool.h GURL.h Arrays.h IFFByteStream.h ByteStream.h GOS.h debug.h
-DjVmNav.lo: ./DjVmNav.cpp ../config.h DjVuDocument.h DjVuPort.h \
-  GThreads.h DjVuGlobal.h GException.h GURL.h GString.h \
-  GContainer.h GSmartPointer.h Arrays.h DjVmNav.h \
-  BSByteStream.h ByteStream.h ZPCodec.h debug.h
+  DjVmNav.h DataPool.h GURL.h Arrays.h IFFByteStream.h ByteStream.h GOS.h \
+  debug.h
+DjVmNav.lo: ./DjVmNav.cpp ../config.h DjVuDocument.h DjVuPort.h GThreads.h \
+  DjVuGlobal.h GException.h GURL.h GString.h GContainer.h GSmartPointer.h \
+  Arrays.h DjVmNav.h BSByteStream.h ByteStream.h ZPCodec.h debug.h
 DjVuAnno.lo: ./DjVuAnno.cpp ../config.h DjVuAnno.h GString.h DjVuGlobal.h \
   GContainer.h GException.h GSmartPointer.h IFFByteStream.h ByteStream.h \
   Arrays.h BSByteStream.h ZPCodec.h GMapAreas.h GRect.h GURL.h GThreads.h \
@@ -43,12 +43,12 @@ DjVuDocEditor.lo: ./DjVuDocEditor.cpp ../config.h DjVuDocEditor.h \
   GString.h GContainer.h GSmartPointer.h Arrays.h DjVmDoc.h DjVmDir.h \
   DjVuImage.h DjVuFile.h DjVuInfo.h GRect.h DjVuPalette.h GPixmap.h \
   DjVuAnno.h IFFByteStream.h ByteStream.h DataPool.h IW44Image.h \
-  ZPCodec.h GOS.h debug.h
+  ZPCodec.h GOS.h DjVmNav.h debug.h
 DjVuDocument.lo: ./DjVuDocument.cpp ../config.h DjVuDocument.h DjVuPort.h \
   GThreads.h DjVuGlobal.h GException.h GURL.h GString.h GContainer.h \
-  GSmartPointer.h Arrays.h DjVmDoc.h DjVmDir.h DjVmDir0.h DjVuNavDir.h \
-  DjVuImage.h DjVuFile.h DjVuInfo.h GRect.h DjVuPalette.h GPixmap.h \
-  DjVuAnno.h DjVuFileCache.h IFFByteStream.h ByteStream.h GOS.h \
+  GSmartPointer.h Arrays.h DjVmDoc.h DjVmDir.h DjVmDir0.h DjVmNav.h \
+  DjVuNavDir.h DjVuImage.h DjVuFile.h DjVuInfo.h GRect.h DjVuPalette.h \
+  GPixmap.h DjVuAnno.h DjVuFileCache.h IFFByteStream.h ByteStream.h GOS.h \
   DataPool.h IW44Image.h ZPCodec.h debug.h
 DjVuDumpHelper.lo: ./DjVuDumpHelper.cpp ../config.h DjVuDumpHelper.h \
   GSmartPointer.h DjVuGlobal.h DataPool.h GThreads.h GException.h \
@@ -92,10 +92,10 @@ DjVuNavDir.lo: ./DjVuNavDir.cpp ../config.h DjVuNavDir.h GString.h \
 DjVuPalette.lo: ./DjVuPalette.cpp ../config.h GException.h DjVuGlobal.h \
   ByteStream.h Arrays.h GSmartPointer.h BSByteStream.h ZPCodec.h \
   GContainer.h DjVuPalette.h GPixmap.h
-DjVuPort.lo: ./DjVuPort.cpp ../config.h DjVuPort.h GThreads.h \
-  DjVuGlobal.h GException.h GURL.h GString.h GContainer.h GSmartPointer.h \
-  Arrays.h GOS.h DjVuImage.h DjVuFile.h DjVuInfo.h GRect.h DjVuPalette.h \
-  GPixmap.h DjVuAnno.h DjVuDocument.h DjVuMessageLite.h DataPool.h
+DjVuPort.lo: ./DjVuPort.cpp ../config.h DjVuPort.h GThreads.h DjVuGlobal.h \
+  GException.h GURL.h GString.h GContainer.h GSmartPointer.h Arrays.h \
+  GOS.h DjVuImage.h DjVuFile.h DjVuInfo.h GRect.h DjVuPalette.h GPixmap.h \
+  DjVuAnno.h DjVuDocument.h DjVuMessageLite.h DataPool.h
 DjVuText.lo: ./DjVuText.cpp ../config.h DjVuText.h GMapAreas.h \
   GSmartPointer.h DjVuGlobal.h GContainer.h GException.h GString.h \
   GRect.h GURL.h Arrays.h GThreads.h IFFByteStream.h ByteStream.h \

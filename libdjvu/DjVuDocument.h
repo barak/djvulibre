@@ -76,6 +76,7 @@ namespace DJVU {
 class DjVmDoc;
 class DjVmDir;
 class DjVmDir0;
+class DjVmNav;
 class DjVuImage;
 class DjVuFile;
 class DjVuFileCache;
@@ -766,6 +767,14 @@ public:
 	  not been set yet). Check \Ref{is_init_complete}() and \Ref{init}()
           for details. */
    GP<DjVmDir>		get_djvm_dir(void) const;
+      /** Returns pointer to the document bookmarks.
+          This applies to #BUNDLED# and #INDIRECT# documents.
+
+	  #ZERO# will also be returned if the initializing thread has not
+	  learnt enough information about the document (#DOC_DIR_KNOWN# has
+	  not been set yet). Check \Ref{is_init_complete}() and \Ref{init}()
+          for details. */
+   GP<DjVmNav>		get_djvm_nav(void) const;
       /** Returns pointer to the internal directory of the document, if it
 	  is in obsolete #OLD_BUNDLED# format.
 
@@ -812,7 +821,8 @@ protected:
    GURL			init_url;
    GP<DataPool>		init_data_pool;
    GP<DjVmDir>		djvm_dir;	// New-style DjVm directory
-   int			doc_type;
+   GP<DjVmNav>          djvm_nav;
+   int	doc_type;
    bool needs_compression_flag;
    bool can_compress_flag;
    bool needs_rename_flag;
@@ -1013,6 +1023,14 @@ DjVuDocument::get_djvm_dir(void) const
    if (doc_type!=BUNDLED && doc_type!=INDIRECT)
       G_THROW( ERR_MSG("DjVuDocument.obsolete") );
    return djvm_dir;
+}
+
+inline GP<DjVmNav>
+DjVuDocument::get_djvm_nav(void) const
+{
+  if (doc_type==BUNDLED || doc_type==INDIRECT)
+    return djvm_nav;
+  return 0;
 }
 
 inline GP<DjVmDir0>

@@ -77,6 +77,7 @@ class ByteStream;
 class DataPool;
 class GURL;
 class GUTF8String;
+class DjVmNav;
 
 /** @name DjVmDoc.h
     Files #"DjVmDoc.h"# and #"DjVmDoc.cpp"# contain implementation of the
@@ -131,7 +132,7 @@ public:
           @param title Optional title of the file (shown in browsers).
           @param pos   Position of the file in the document (default is append).
       */
-   void		insert_file(
+   void	insert_file(
      ByteStream &data, DjVmDir::File::FILE_TYPE file_type,
      const GUTF8String &name, const GUTF8String &id,
      const GUTF8String &title=GUTF8String(), int pos=-1 );
@@ -144,7 +145,7 @@ public:
           @param title Optional title of the file (shown in browsers).
           @param pos   Position of the file in the document (default is append).
       */
-   void		insert_file(
+   void	insert_file(
      const GP<DataPool> &pool, DjVmDir::File::FILE_TYPE file_type,
      const GUTF8String &name, const GUTF8String &id,
      const GUTF8String &title=GUTF8String(), int pos=-1 );
@@ -153,14 +154,17 @@ public:
 	  data #data# at position #pos#. If #pos# is negative, the file
           will be appended to the document. Otherwise it will be inserted
           at position #pos#. */
-   void		insert_file(const GP<DjVmDir::File> & f,
-			    GP<DataPool> data, int pos=-1);
+   void	insert_file(const GP<DjVmDir::File> & f,
+                    GP<DataPool> data, int pos=-1);
 
       /** Removes file with the specified #id# from the document. Every
 	  file inside a new DjVu multipage document has its unique ID
 	  (refer to \Ref{DjVmDir} for details), which is passed to this
           function. */
-   void		delete_file(const GUTF8String &id);
+   void	delete_file(const GUTF8String &id);
+
+     /** Set the bookmarks */
+   void set_djvm_nav(GP<DjVmNav> n);
 
       /** Returns the directory of the DjVm document (the one which will
 	  be encoded into #DJVM# chunk of the top-level file or the bundle). */
@@ -175,10 +179,10 @@ public:
       //@{
       /** Reads contents of a {\em bundled} multipage DjVu document from
 	  the stream. */
-   void		read(ByteStream & str);
+   void	read(ByteStream & str);
       /** Reads contents of a {\em bundled} multipage DjVu document from
 	  the \Ref{DataPool}. */
-   void		read(const GP<DataPool> & data_pool);
+   void	read(const GP<DataPool> & data_pool);
       /** Reads the DjVu multipage document in either {\em bundled} or
 	  {\em indirect} format.
 
@@ -192,7 +196,7 @@ public:
 		 the \Ref{DjVmDir} with the list of all files).
 		 The rest of the files are expected to be in the
 		 same directory and will be read by this function as well. */
-   void		read(const GURL &url);
+   void	read(const GURL &url);
       //@}
 
       /** Writing routines */
@@ -203,10 +207,10 @@ public:
       /** Writes the multipage DjVu document in the {\em bundled} format into
 	  the stream, reserving any of the specified names. */
    void	write(const GP<ByteStream> &str,
-     const GMap<GUTF8String,void *>& reserved);
+              const GMap<GUTF8String,void *>& reserved);
       /** Stored index (top-level) file of the DjVu document in the {\em
 	  indirect} format into the specified stream. */
-   void		write_index(const GP<ByteStream> &str);
+   void	write_index(const GP<ByteStream> &str);
       /** Writes the multipage DjVu document in the {\em indirect} format
 	  into the given directory. Every page and included file will be
           stored as a separate file. Besides, one top-level file with
@@ -218,7 +222,7 @@ public:
 	  @param idx_name Name of the top-level file with the \Ref{DjVmDir}
 		 with the list of files composing the given document.
 		 If empty, the file will not be created. */
-   void		expand(const GURL &codebase, const GUTF8String &idx_name);
+   void	expand(const GURL &codebase, const GUTF8String &idx_name);
 
       /** Writes an individual file, and all included files. 
           INCL chunks will be remapped as appropriate. */
@@ -228,7 +232,7 @@ public:
           INCL chunks will be remapped as appropriate.  All pages saved
           are added to the #incl# map. */
    void save_page(const GURL &codebase, const DjVmDir::File &file,
-     GMap<GUTF8String,GUTF8String> &incl) const;
+                  GMap<GUTF8String,GUTF8String> &incl) const;
 
       /** Writes an individual file specified, remapping INCL chunks as
           appropriate.  Included files will not be saved. */
@@ -236,12 +240,14 @@ public:
 
       /** Writes the specified file from the given #pool#. */
    GUTF8String save_file(const GURL &codebase, const DjVmDir::File &file,
-      GMap<GUTF8String,GUTF8String> &incl, const GP<DataPool> &pool) const;
-      //@}
+                         GMap<GUTF8String,GUTF8String> &incl, 
+                         const GP<DataPool> &pool) const;
+  //@}
 private:
    void save_file(const GURL &codebase, const DjVmDir::File &file,
-     GMap<GUTF8String,GUTF8String> *incl) const;
+                  GMap<GUTF8String,GUTF8String> *incl) const;
    GP<DjVmDir> dir;
+   GP<DjVmNav> nav;
    GPMap<GUTF8String, DataPool > data;
 private: // dummy stuff
    static void write(ByteStream *);

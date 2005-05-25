@@ -70,6 +70,7 @@
 #include "GURL.h"
 #include "DjVuAnno.h"
 #include "GRect.h"
+#include "DjVmNav.h"
 
 #include "debug.h"
 
@@ -1466,6 +1467,14 @@ DjVuDocEditor::create_shared_anno_file(void (* progress_cb)(float progress, void
       if (progress_cb)
          progress_cb((float) page_num/pages_num, cl_data);
    }
+}
+
+void 
+DjVuDocEditor::set_djvm_nav(GP<DjVmNav> n)
+{
+  if (n && ! n->isValidBookmark())
+    G_THROW("Invalid bookmark data");
+  djvm_nav = n;
 }
 
 GP<DjVuFile>

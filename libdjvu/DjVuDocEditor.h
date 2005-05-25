@@ -354,17 +354,17 @@ public:
 		 #pages_num# is the total number of pages in the document.
 		 The callback should return #FALSE# if thumbnails generating
 		 should proceed. #TRUE# will stop it. */
-   void		generate_thumbnails(int thumb_size,
-				    bool (* cb)(int page_num, void *)=0,
-				    void * cl_data=0);
+   void	generate_thumbnails(int thumb_size,
+                            bool (* cb)(int page_num, void *)=0,
+                            void * cl_data=0);
       //@}
       /** Use this function to simplify annotations in the document.
         The "simplified" format is when annotations are only allowed
         either in top-level page files or in a special file with
         #SHARED_ANNO# flag on. This file is supposed to be included into
         every page. */
-   void               simplify_anno(void (* progress_cb)(float progress, void *)=0,
-                            void * cl_data=0);
+   void simplify_anno(void (* progress_cb)(float progress, void *)=0,
+                      void * cl_data=0);
 
       /** Will create a file that will be included into every page and
         marked with the #SHARED_ANNO# flag. This file can be used
@@ -372,8 +372,11 @@ public:
 
         {\bf Note:} There may be only one #SHARED_ANNO# file in any
         DjVu multipage document. */
-   void               create_shared_anno_file(void (* progress_cb)(float progress, void *)=0,
-                                      void * cl_data=0);
+   void create_shared_anno_file(void (* progress_cb)(float progress, void *)=0,
+                                void * cl_data=0);
+
+      /** Sets bookmark data */
+   void set_djvm_nav(GP<DjVmNav> nav);
 
       /** Returns a pointer to the file with #SHARED_ANNO# flag on.
         This file should be used for storing document-wide annotations.

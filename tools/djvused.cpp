@@ -80,6 +80,7 @@
 #include "DataPool.h"
 #include "DjVuPort.h"
 #include "DjVuFile.h"
+#include "DjVmNav.h"
 
 static bool modified = false;
 static bool verbose = false;
@@ -1445,6 +1446,68 @@ command_output_all(ParsingByteStream &)
     }
 }
 
+void
+print_outline_sub(const GP<DjVmNav> &nav, int &pos, int count, 
+                  const GP<ByteStream> &out, int indent)
+{
+  GUTF8String str;
+  GP<DjVmNav::DjVuBookMark> entry;
+  while (count > 0 && pos < nav->getBookMarkCount())
+    {
+      out->write("\n",1);
+      for (int i=0; i<indent; i++)
+        out->write(" ",1);
+      nav->getBookMark(entry, pos++);
+      out->write("(",2);
+      str = entry->displayname;
+      print_c_string(str, str.length(), *out);
+      out->write("\n ",2);
+      for (int i=0; i<indent; i++)
+        out->write(" ",1);
+      str = entry->url;
+      print_c_string(str, str.length(), *out);
+      print_outline_sub(nav, pos, entry->count, out, indent+1);
+      out->write(" )",2);
+      count--;
+    }
+}
+
+
+void
+command_print_outline(ParsingByteStream &pbs)
+{
+  GP<DjVmNav> nav = g().doc->get_djvm_nav();
+  if (nav)
+    {
+      int pos = 0;
+      int count = nav->getBookMarkCount();
+      if (count > 0)
+        {
+          const GP<ByteStream> out = ByteStream::create("w");
+          out->write("(bookmarks",10);
+          print_outline_sub(nav, pos, count, out, 1);
+          out->write(" )\n", 3);
+        }
+    }
+}
+
+void
+command_set_outline(ParsingByteStream &pbs)
+{
+  verror("not yet implemented");
+}
+
+void
+command_remove_outline(ParsingByteStream &pbs)
+{
+  GP<DjVmNav> nav = g().doc->get_djvm_nav();
+  if (nav)
+    {
+      g().doc->set_djvm_nav(0);
+      modified = true;
+    }
+}
+
 static bool
 callback_thumbnails(int page_num, void *)
 {
@@ -1587,16 +1650,19 @@ command_help(void)
           " . print-meta             -- prints file metadatas (a subset of the annotations\n"
           "   print-txt              -- prints hidden text using a lisp syntax\n"
           "   print-pure-txt         -- print hidden text without coordinates\n"
+          " _ print-outline          -- print outline (bookmarks)\n"
           "   output-ant             -- dumps ant as a valid cmdfile\n"
           "   output-txt             -- dumps text as a valid cmdfile\n"
           "   output-all             -- dumps ant and text as a valid cmdfile\n"
           " . set-ant [<antfile>]    -- copies <antfile> into the annotation chunk\n"
           " . set-meta [<metafile>]  -- copies <metafile> into the metadata part of the annotations\n"
           " . set-txt [<txtfile>]    -- copies <txtfile> into the hidden text chunk\n"
+          " _ set-outline [<bmfile>] -- sets outline (bootmarks)\n"
           " _ set-thumbnails [<sz>]  -- generates all thumbnails with given size\n"
           "   remove-ant             -- removes annotations\n"
           "   remove-meta            -- removes metadatas without changing other annotations\n"
           "   remove-txt             -- removes hidden text\n"
+          " _ remove-outline         -- removes outline (bookmarks)\n"
           " _ remove-thumbnails      -- removes all thumbnails\n"
           " . save-page <name>       -- saves selected page/file as is\n"
           " . save-page-with <name>  -- saves selected page/file, inserting all included files\n"
@@ -1647,16 +1713,19 @@ static GMap<GUTF8String,CommandFunc> &command_map() {
     xcommand_map["print-meta"] = command_print_meta;
     xcommand_map["print-txt"] = command_print_txt;
     xcommand_map["print-pure-txt"] = command_print_pure_txt;
+    xcommand_map["print-outline"] = command_print_outline;
     xcommand_map["output-ant"] = command_output_ant;
     xcommand_map["output-txt"] = command_output_txt;
     xcommand_map["output-all"] = command_output_all;
     xcommand_map["set-ant"] = command_set_ant;
     xcommand_map["set-meta"] = command_set_meta;
     xcommand_map["set-txt"] = command_set_txt;
+    xcommand_map["set-thumbnails"] = command_set_outline;
     xcommand_map["set-thumbnails"] = command_set_thumbnails;
     xcommand_map["remove-ant"] = command_remove_ant;
     xcommand_map["remove-meta"] = command_remove_meta;
     xcommand_map["remove-txt"] = command_remove_txt;
+    xcommand_map["remove-outline"] = command_remove_outline;
     xcommand_map["remove-thumbnails"] = command_remove_thumbnails;
     xcommand_map["save-page"] = command_save_page;
     xcommand_map["save-page-with"] = command_save_page_with;
