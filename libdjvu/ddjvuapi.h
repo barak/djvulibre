@@ -89,7 +89,7 @@ extern "C" {
    complexity with a familiar event model.
 */
 
-#define DDJVUAPI_VERSION 14
+#define DDJVUAPI_VERSION 15
 
 typedef struct ddjvu_context_s  ddjvu_context_t;
 typedef union  ddjvu_message_s  ddjvu_message_t;
@@ -1045,6 +1045,7 @@ ddjvu_document_save(ddjvu_document_t *document, FILE *output,
 /* -------------------------------------------------- */
 
 /* Not yet defined */
+
 /* Not yet implemented */
 
 
