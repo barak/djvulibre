@@ -63,6 +63,10 @@ extern "C" {
 #if 0
 }
 #endif
+
+#include <stdlib.h>
+#include <stdio.h>
+
 #ifndef DDJVUAPI
 # define DDJVUAPI /**/
 #endif
@@ -72,6 +76,7 @@ extern "C" {
 #ifndef FALSE
 # define FALSE (0)
 #endif
+
 
 
 /* -------------------------------------------------- */
@@ -1005,14 +1010,6 @@ ddjvu_thumbnail_render(ddjvu_document_t *document, int pagenum,
 /* SAVE AND PRINT JOBS                                */
 /* -------------------------------------------------- */
 
-/* Not yet implemented */
-
-#ifndef DDJVU_WITHOUT_STDIO
-# include <stdlib.h>
-# include <stdio.h>
-#else 
-# define FILE void
-#endif
 
 struct ddjvu_message_progress_s {
   ddjvu_message_any_t any;
@@ -1020,20 +1017,42 @@ struct ddjvu_message_progress_s {
   int percent;
 };
 
+/* Not yet implemented ---
+   Converts specified pages of a djvu document into postscript.  
+   This function works asynchronously in a separate thread.
+   You can use the following idiom for synchronous operation:
 
-/* Options like ddjvu ? */
-DDJVUAPI ddjvu_job_t *
-ddjvu_document_export(ddjvu_document_t *document, FILE *output,
-                      int optc, const char * const * optv);
+     ddjvu_job_t *job = ddjvu_document_print(....);
+     while (! ddjvu_job_done(job) )
+       handle_ddjvu_messages(context);
+     
+   The postscript data is written to file <output>.
+   Arguments <optc> and <optv> specify options exactly
+   like the command line arguments of program <djvups>. 
+   See the man page for <djvups>.
+*/
 
-
-/* Options like djvups ? */
 DDJVUAPI ddjvu_job_t *
 ddjvu_document_print(ddjvu_document_t *document, FILE *output,
                      int optc, const char * const * optv);
 
 
-/* Options to be defined */
+/* Not yet implemented ---
+   Saves the djvu document as a bundled djvu file.
+   This function works asynchronously in a separate thread.
+   You can use the following idiom for synchronous operation:
+
+     ddjvu_job_t *job = ddjvu_document_save(....);
+     while (! ddjvu_job_done(job) )
+       handle_ddjvu_messages(context);
+     
+   The bundled djvu data is written to file <output>
+   which must be seekable. Arguments <optc> and <optv> 
+   exactly like command line arguments of a program.
+   The only supported option is "-page=<pagespec>".
+   See the man page for <djvups> for more information
+   about page specifications.
+*/
 DDJVUAPI ddjvu_job_t *
 ddjvu_document_save(ddjvu_document_t *document, FILE *output, 
                     int optc, const char * const * optv);
