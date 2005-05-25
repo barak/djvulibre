@@ -1070,6 +1070,37 @@ union ddjvu_message_s {
 
 
 
+
+/* -------------------------------------------------- */
+/* WORKAROUNDS                                        */
+/* -------------------------------------------------- */
+
+/* ddjvu_document_get_pageinfo ---
+   Attempts to obtain information about page <pageno>
+   without decoding the page. If the information is available,
+   the function returns <DDJVU_JOB_OK> and fills the <info> 
+   structure. Otherwise it starts fetching the page data 
+   and returns <DDJVU_JOB_STARTED>.  Typical usage:
+
+   ddjvu_pageinfo_t info;
+   ddjvu_status_t r;
+   while ((r=ddjvu_document_get_pageinfo(doc,pageno,&info))<DDJVU_JOB_OK)
+     handle_ddjvu_messages(ctx);
+   if (r>=DDJVU_JOB_FAILED)
+     signal_error();
+*/      
+
+typedef struct ddjvu_pageinfo_s {
+  int width;
+  int height;
+  int dpi;
+} ddjvu_pageinfo_t;
+
+DDJVUAPI ddjvu_status_t
+ddjvu_document_get_pageinfo(ddjvu_document_t *document, int pageno, 
+                            ddjvu_pageinfo_t *info);
+
+
 /* -------------------------------------------------- */
 /* BACKDOORS                                          */
 /* -------------------------------------------------- */

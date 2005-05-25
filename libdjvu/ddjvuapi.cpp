@@ -86,6 +86,7 @@ using namespace DJVU;
 #include "GThreads.h"
 #include "GContainer.h"
 #include "ByteStream.h"
+#include "IFFByteStream.h"
 #include "GString.h"
 #include "GBitmap.h"
 #include "GPixmap.h"
@@ -1901,6 +1902,82 @@ ddjvu_thumbnail_render(ddjvu_document_t *document, int pagenum,
     }
   G_ENDCATCH;
   return FALSE;
+}
+
+
+// ----------------------------------------
+
+
+DDJVUAPI ddjvu_status_t
+ddjvu_document_get_pageinfo(ddjvu_document_t *document, int pageno, 
+                            ddjvu_pageinfo_t *pageinfo)
+{
+  G_TRY
+    {
+      DjVuDocument *doc = document->doc;
+      if (doc)
+        {
+          GP<DjVuFile> file = doc->get_djvu_file(pageno);
+          if (! file || ! file->is_all_data_present() )
+            return DDJVU_JOB_STARTED;
+          const GP<ByteStream> pbs(file->get_djvu_bytestream(false, false));
+          const GP<IFFByteStream> iff(IFFByteStream::create(pbs));
+          GUTF8String chkid;
+          if (iff->get_chunk(chkid))
+            {
+              if (chkid == "FORM:DJVU")
+                {
+                  while (iff->get_chunk(chkid) && chkid!="INFO")
+                    iff->close_chunk();
+                  if (chkid == "INFO")
+                    {
+                      GP<ByteStream> gbs = iff->get_bytestream();
+                      GP<DjVuInfo> info=DjVuInfo::create();
+                      info->decode(*gbs);
+                      int rot = ((360-GRect::findangle(info->orientation))/90)%4;
+                      if (pageinfo)
+                        {
+                          pageinfo->width = (rot&1) ? info->height : info->width;
+                          pageinfo->height = (rot&1) ? info->width : info->height;
+                          pageinfo->dpi = info->dpi;
+                        }
+                      return DDJVU_JOB_OK;
+                    }
+                }
+              else if (chkid == "FORM:BM44" || chkid == "FORM:PM44")
+                {
+                  while (iff->get_chunk(chkid) && chkid!="BM44" && chkid!="PM44")
+                    iff->close_chunk();
+                  if (chkid=="BM44" || chkid=="PM44")
+                    {
+                      GP<ByteStream> gbs = iff->get_bytestream();
+                      if (gbs->read8() == 0)
+                        {
+                          gbs->read8();
+                          gbs->read8();
+                          unsigned char xhi = gbs->read8();
+                          unsigned char xlo = gbs->read8();
+                          unsigned char yhi = gbs->read8();
+                          unsigned char ylo = gbs->read8();
+                          if (pageinfo)
+                            {
+                              pageinfo->width = (xhi<<8)+xlo;
+                              pageinfo->height = (yhi<<8)+ylo;
+                              pageinfo->dpi = 100;
+                            }
+                          return DDJVU_JOB_OK;
+                        }
+                    }
+                }
+            }
+        }
+    }
+  G_CATCH(ex)
+    {
+      ERROR(document, ex);
+    }
+  G_ENDCATCH;
+  return DDJVU_JOB_FAILED;
 }
 
 
