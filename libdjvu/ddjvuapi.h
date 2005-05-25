@@ -1005,14 +1005,14 @@ ddjvu_thumbnail_render(ddjvu_document_t *document, int pagenum,
 /* SAVE AND PRINT JOBS                                */
 /* -------------------------------------------------- */
 
+/* Not yet implemented */
+
 #ifndef DDJVU_WITHOUT_STDIO
 # include <stdlib.h>
 # include <stdio.h>
 #else 
 # define FILE void
 #endif
-
-/* Not yet implemented */
 
 struct ddjvu_message_progress_s {
   ddjvu_message_any_t any;
@@ -1041,6 +1041,15 @@ ddjvu_document_save(ddjvu_document_t *document, FILE *output,
 
 
 /* -------------------------------------------------- */
+/* S-EXPRESSIONS                                      */
+/* -------------------------------------------------- */
+
+/* Not yet defined */
+
+/* Not yet implemented */
+
+
+/* -------------------------------------------------- */
 /* ANNOTATIONS AND HIDDEN_TEXT                        */
 /* -------------------------------------------------- */
 
@@ -1050,26 +1059,12 @@ ddjvu_document_save(ddjvu_document_t *document, FILE *output,
 
 
 /* -------------------------------------------------- */
-/* DJVU_MESSAGE_T                                     */
+/* HIDDEN_TEXT                                        */
 /* -------------------------------------------------- */
 
+/* Not yet defined */
 
-/* We can now define the djvu_message_t union */
-
-union ddjvu_message_s {
-  struct ddjvu_message_any_s        m_any;
-  struct ddjvu_message_error_s      m_error;
-  struct ddjvu_message_info_s       m_info;
-  struct ddjvu_message_newstream_s  m_newstream;
-  struct ddjvu_message_docinfo_s    m_docinfo;
-  struct ddjvu_message_pageinfo_s   m_pageinfo;
-  struct ddjvu_message_chunk_s      m_chunk;
-  struct ddjvu_message_relayout_s   m_relayout;
-  struct ddjvu_message_redisplay_s  m_redisplay;
-  struct ddjvu_message_thumbnail_s  m_thumbnail;
-};
-
-
+/* Not yet implemented */
 
 
 /* -------------------------------------------------- */
@@ -1100,6 +1095,28 @@ typedef struct ddjvu_pageinfo_s {
 DDJVUAPI ddjvu_status_t
 ddjvu_document_get_pageinfo(ddjvu_document_t *document, int pageno, 
                             ddjvu_pageinfo_t *info);
+
+
+
+/* -------------------------------------------------- */
+/* DJVU_MESSAGE_T                                     */
+/* -------------------------------------------------- */
+
+
+/* We can now define the djvu_message_t union */
+
+union ddjvu_message_s {
+  struct ddjvu_message_any_s        m_any;
+  struct ddjvu_message_error_s      m_error;
+  struct ddjvu_message_info_s       m_info;
+  struct ddjvu_message_newstream_s  m_newstream;
+  struct ddjvu_message_docinfo_s    m_docinfo;
+  struct ddjvu_message_pageinfo_s   m_pageinfo;
+  struct ddjvu_message_chunk_s      m_chunk;
+  struct ddjvu_message_relayout_s   m_relayout;
+  struct ddjvu_message_redisplay_s  m_redisplay;
+  struct ddjvu_message_thumbnail_s  m_thumbnail;
+};
 
 
 /* -------------------------------------------------- */
