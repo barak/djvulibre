@@ -1103,6 +1103,9 @@ ddjvu_document_save(ddjvu_document_t *document, FILE *output,
      handle_ddjvu_messages(ctx);
    if (r>=DDJVU_JOB_FAILED)
      signal_error();
+
+   When the djvu document comes from the network, the above idiom 
+   is very slow because it waits until the data for all page is present. 
 */      
 
 typedef struct ddjvu_pageinfo_s {
