@@ -403,6 +403,11 @@
 2.3 - ANNOTATIONS ( "ANTa" AND "ANTz" CHUNKS )
 ------------------------------------------------------------
 
+[MAY 19TH, 2005: 
+ New annotation types have been defined by Lizardtech.
+ The authoritative documentation is now the djvused man page.]
+
+
     Annotations are contained in #"ANTa"# 
     or #"ANTz"# chunks.  The #"ANTa"# chunks contain the annotation in 
     plain text. The #"ANTz"# chunks contain the same information compressed 
@@ -512,6 +517,9 @@
        inside an #"ANTz"# chunk in this particular page.
 
     \end{description}
+
+    
+
 
 
 ------------------------------------------------------------
@@ -663,3 +671,17 @@
     The thumbnail component file is composed of a single #"FORM:THUM"#
     containing one or more #"TH44"# chunk.  Each #"TH44"# chunk contains one
     IW44 encoded thumbnail image for one page (cf. \Ref{IW44Image.h}).
+
+
+------------------------------------------------------------
+2.8 - OUTLINES/BOOKMARKS
+------------------------------------------------------------
+
+[MAY 19th, 2005
+ Multipage files (FORM:DJVM) can contain an 
+ additional chunk "NAVM" located after the "DIRM" chunk.
+ The NAVM chunk contains outlines and bookmarks.
+ See the files libdjvu/DjVmNav.h and libdjvu.DjVmNav.cpp]
+
+
+    

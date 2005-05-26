@@ -19,7 +19,7 @@
 .\" You should have received a copy of the GNU General Public
 .\" License along with this manual. Otherwise check the web site
 .\" of the Free Software Foundation at http://www.fsf.org.
-.TH DJVUSED 1 "10/11/2001" "DjVuLibre-3.5" "DjVuLibre-3.5"
+.TH DJVUSED 1 "5/22/2005" "DjVuLibre-3.5" "DjVuLibre-3.5"
 .de SS
 .SH \\0\\0\\0\\$*
 ..
@@ -385,7 +385,7 @@ a double-quoted string representing the
 .SM UTF-8
 encoded meta-data value.
 .TP
-.BI "set-meta " "djvusedmetafile"
+.BI "set-meta [" "djvusedmetafile" "]"
 Set the meta-data part of the annotations of the selected component file.
 The remaining part of the annotations is left unchanged
 The optional argument
@@ -405,7 +405,19 @@ be edited and executed by invoking program
 .B djvused
 with option
 .BR -f .
-
+.PP
+.SS Outline/bookmarks commands
+.TP
+.BI "print-outline"
+Print the outline of the document.
+Nothing is printed if the document contains no outline.
+.TP
+.BI "set-outline [" djvusedoutlinefile "]"
+Not yet implemented!
+.TP
+.BI "remove-outline"
+Remove the outline from the DjVu document.
+.PP
 .SS Thumbnail commands
 .TP
 .BI "set-thumbnails " "sz"
@@ -567,6 +579,31 @@ page level component might only specify a page level string, or might only
 provide a list of lines, or might provide a full hierarchy down to the
 individual characters.
 
+.SS Outline/Bookmark syntax
+The outline syntax is a single list of the form
+.IP "" 3
+.BI "(bookmarks ...)"
+.PP
+The first element of the list is symbol
+.BR bookmarks .
+The subsequent elements are lists representing
+the toplevel outline entries.
+Each outline entry is represented by
+a list with the following form:
+.IP "" 3
+.BI "(" title " " url " ... )"
+.PP
+The string 
+.I title
+is the title of the outline entry.
+The string
+.I url
+is composed of the hash character ("#")
+followed by either the component file identifier
+or the page number corresponding to the outline entry.
+The remaining expressions describe subentries of 
+this outline entry.
+
 .SS Annotation syntax
 Annotations are represented by a sequence of annotation expressions.
 The following annotation expressions are recognized:
@@ -657,7 +694,7 @@ when the user moves the mouse over the hyper-link.
 
 Argument
 .I area
-defines the shape and the location of the hyper-link.
+defines the shape and the location of the hyperlink.
 The following forms are recognized:
 .IP "" 3
 .BI "(rect " xmin " " ymin " " width " " height ")"
@@ -665,6 +702,12 @@ The following forms are recognized:
 .BI "(oval " xmin " " ymin " " width " " height ")"
 .br
 .BI "(polygon " x0 " " y0 " " x1 " " y1 " ... )"
+.br
+.BI "(text " xmin " " ymin " " width " " height ")"
+- Not implemented.
+.br
+.BI "(line " x0 " " y0 " " x1 " " y1 ")"
+- Not implemented.
 .PP
 All parameters are numbers representing coordinates.  
 Coordinates are measured in pixels and have their origin 
@@ -673,9 +716,15 @@ at the bottom left corner of the page.
 The remaining expressions in the
 .B maparea
 list represent the visual effect associated with
-the hyper-link.  A first set of options define the
-type of the hyper-link area borders:
+the hyper-link. 
+
+A first set of options defines how borders
+are drawn for 
+.BR rect ", " oval ", " polygon ", or " text 
+hyperlink areas.
 .IP "" 3
+.BI "(none)"
+.br
 .BI "(xor)"
 .br
 .BI "(border " color ")"
@@ -694,22 +743,68 @@ has syntax
 .B #RRGGBB
 as described above,
 and parameter thickness is an integer in range 1 to 32.
-The last four border modes are only supported for rectangular
-hyper-links.  The border becomes visible when the user moves the mouse
-over the hyper-link. The border may be made
+The last four border options are only supported for 
+.B rect
+hyperlink areas. 
+The default border is a simple black line.
+Border options do not apply to 
+.B line 
+areas.
+
+When a border option is specified, the border 
+becomes visible when the user moves the mouse 
+over the hyperlink. The border may be made
 always visible by using the following option:
 .IP "" 3
 .B (border-avis)
 .PP
-Finally the following option may be used with rectangular areas.
-The complete area will be highlighted using the specified color.
+The following two options may be used with 
+.B rect
+hyperlink areas.
+The complete area will be highlighted using the 
+specified color at the specified opacity (0-100, default 50).
 .IP "" 3
 .BI "(hilite " color ")"
+.br
+.BI "(opacity " op ")"
+- Not implemented.
 .PP
 This is often used with an empty 
 .SM URL 
 for simply emphasizing a specific
 segment of an image.
+.PP
+The following three options may be used with line areas to 
+specify an optional ending arrow, the line width and color.
+The default is a black line with width 1 and without arrow.
+.IP "" 3
+.B "(arrow)"
+- Not implemented.
+.br
+.BI "(width " w ")"
+- Not implemented.
+.br
+.BI "(lineclr " color ")"
+- Not implemented.
+.PP
+Finally the following three options can be used with text areas.
+The default background color is transparent. 
+The default text color is black.
+The 
+.B pushpin
+option indicates that the text is symbolized by a small pushpin icon.
+Clicking the icon reveals the text.
+.IP "" 3
+.BI "(backclr " bkcolor ")"
+- Not implemented.
+.br
+.BI "(textclr " txtcolor ")"
+- Not implemented.
+.br
+.BI "(pushpin)"
+- Not implemented.
+.PP
+
 .RE
 .TP
 .BI "(metadata ... (" key " " value ") ... )"
