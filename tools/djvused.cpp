@@ -919,13 +919,24 @@ print_meta(IFFByteStream &iff, ByteStream &out)
 void 
 command_print_meta(ParsingByteStream &)
 {
-  if (!g().file)
-    verror("you must first select a single page");
-  GP<ByteStream> out=ByteStream::create("w");
-  GP<ByteStream> anno = g().file->get_anno();
-  if (! (anno && anno->size())) return;
-  GP<IFFByteStream> iff=IFFByteStream::create(anno); 
-  print_meta(*iff,*out);
+  if (! g().file )
+    {
+      GP<DjVmDir::File> frec = g().doc->get_djvm_dir()->get_shared_anno_file();
+      if (frec)
+        {
+          vprint("print-meta: implicitely selecting shared annotations");
+          select_clear();
+          select_add(frec);
+        }
+    }
+  if ( g().file )
+    {
+      GP<ByteStream> out=ByteStream::create("w");
+      GP<ByteStream> anno = g().file->get_anno();
+      if (! (anno && anno->size())) return;
+      GP<IFFByteStream> iff=IFFByteStream::create(anno); 
+      print_meta(*iff,*out);
+    }
 }
 
 
@@ -996,8 +1007,6 @@ command_remove_meta(ParsingByteStream &)
 void
 command_set_meta(ParsingByteStream &pbs)
 {
-  if (!g().file)
-    verror("you must first select a single page");
   // get metadata
   GP<ByteStream> metastream = ByteStream::create();
   get_data_from_file("set-meta", pbs, *metastream);
@@ -1024,9 +1033,30 @@ command_set_meta(ParsingByteStream &pbs)
       if (key.length()>0 && val.length()>0)
         metadata[key] = val;
     }
+  // possibly select shared annotations.
+  if (! g().file)
+    {
+      GP<DjVmDir::File> frec = g().doc->get_djvm_dir()->get_shared_anno_file();
+      if (frec)
+        {
+          vprint("print-meta: implicitely selecting shared annotations.");
+        }
+      else if (metadata.size() > 0)
+        {
+          vprint("print-meta: implicitely creating and selecting shared annotations.");
+          g().doc->create_shared_anno_file();
+          frec = g().doc->get_djvm_dir()->get_shared_anno_file();
+        }
+      if (frec)
+        {
+          select_clear();
+          select_add(frec);
+        }
+    }
   // set metadata
-  if (modify_meta(g().file, &metadata))
-    vprint("set-meta: modified \"%s\"", (const char*)(GNativeString)g().fileid);
+  if (g().file && modify_meta(g().file, &metadata))
+    vprint("set-meta: modified \"%s\"", 
+           (const char*)(GNativeString)g().fileid);
 }
 
 struct  zone_names_struct
@@ -1472,7 +1502,6 @@ print_outline_sub(const GP<DjVmNav> &nav, int &pos, int count,
     }
 }
 
-
 void
 command_print_outline(ParsingByteStream &pbs)
 {
@@ -1494,7 +1523,24 @@ command_print_outline(ParsingByteStream &pbs)
 void
 construct_outline_sub(ParsingByteStream &pbs, GP<DjVmNav> nav, int &count)
 {
-  verror("not yet implemented");
+  int c;
+  GUTF8String name, url;
+  GP<DjVmNav::DjVuBookMark> mark;
+  if ((c = pbs.get_spaces(true)) != '\"')
+    verror("Syntax error in outline data: expecting name string.");    
+  pbs.unget(c);
+  name = pbs.get_utf8_token();
+  if ((c = pbs.get_spaces(true)) != '\"')
+    verror("Syntax error in outline data: expecting url string.");    
+  pbs.unget(c);
+  url = pbs.get_utf8_token();
+  mark = DjVmNav::DjVuBookMark::create(0, name, url);
+  nav->append(mark);
+  count += 1;
+  while ((c = pbs.get_spaces(true)) == '(')
+    construct_outline_sub(pbs, nav, mark->count);
+  if (c != ')')
+    verror("Syntax error in outline data: expecting ')'.");
 }
 
 GP<DjVmNav>
@@ -1502,18 +1548,24 @@ construct_outline(ParsingByteStream &pbs)
 {
   GP<DjVmNav> nav(DjVmNav::create());
   int c = pbs.get_spaces(true);
+  int count = 0;
   if (c == EOF)
     return 0;
   if (c!='(')
-    verror("Syntax error in txt data: expecting '(bookmarks ...'");
+    verror("Syntax error in outline data: expecting '(bookmarks ...'");
   if (pbs.get_utf8_token()!="bookmarks")
-    verror("Syntax error in txt data: expecting 'bookmarks ...'");    
-  construct_outline_sub(pbs, nav, c);
+    verror("Syntax error in outline data: expecting 'bookmarks ...'");    
+  while ((c = pbs.get_spaces(true)) == '(')
+    construct_outline_sub(pbs, nav, count);
+  if (c != ')')
+    verror("Syntax error in outline data: expecting ')'.");
   if (pbs.get_spaces(true) != EOF)
     verror("Syntax error in outline data: garbage after last ')'");
-  if (nav->getBookMarkCount() > 0)
-    return nav;
-  return 0;
+  if (nav->getBookMarkCount() < 1)
+    return 0;
+  if (!nav->isValidBookmark())
+    verror("Invalid outline data!");
+  return nav;
 }
 
 void
@@ -1527,17 +1579,6 @@ command_set_outline(ParsingByteStream &pbs)
   if (g().doc->get_djvm_nav() != nav)
     {
       g().doc->set_djvm_nav(nav);
-      modified = true;
-    }
-}
-
-void
-command_remove_outline(ParsingByteStream &pbs)
-{
-  GP<DjVmNav> nav = g().doc->get_djvm_nav();
-  if (nav)
-    {
-      g().doc->set_djvm_nav(0);
       modified = true;
     }
 }
@@ -1759,7 +1800,6 @@ static GMap<GUTF8String,CommandFunc> &command_map() {
     xcommand_map["remove-ant"] = command_remove_ant;
     xcommand_map["remove-meta"] = command_remove_meta;
     xcommand_map["remove-txt"] = command_remove_txt;
-    xcommand_map["remove-outline"] = command_remove_outline;
     xcommand_map["remove-thumbnails"] = command_remove_thumbnails;
     xcommand_map["save-page"] = command_save_page;
     xcommand_map["save-page-with"] = command_save_page_with;

@@ -413,10 +413,16 @@ Print the outline of the document.
 Nothing is printed if the document contains no outline.
 .TP
 .BI "set-outline [" djvusedoutlinefile "]"
-Not yet implemented!
-.TP
-.BI "remove-outline"
-Remove the outline from the DjVu document.
+Insert outline information into the document.
+The optional argument
+.I djvusedoutlinefile
+names a file containing the outline information.
+This file must contain data similar to what is produced
+by command
+.BR print-outline . 
+When the optional argument is omitted, the
+program reads the hidden text information from the djvused script
+until reaching an end-of-file or a line containing a single period.
 .PP
 .SS Thumbnail commands
 .TP
