@@ -1492,9 +1492,43 @@ command_print_outline(ParsingByteStream &pbs)
 }
 
 void
-command_set_outline(ParsingByteStream &pbs)
+construct_outline_sub(ParsingByteStream &pbs, GP<DjVmNav> nav, int &count)
 {
   verror("not yet implemented");
+}
+
+GP<DjVmNav>
+construct_outline(ParsingByteStream &pbs)
+{
+  GP<DjVmNav> nav(DjVmNav::create());
+  int c = pbs.get_spaces(true);
+  if (c == EOF)
+    return 0;
+  if (c!='(')
+    verror("Syntax error in txt data: expecting '(bookmarks ...'");
+  if (pbs.get_utf8_token()!="bookmarks")
+    verror("Syntax error in txt data: expecting 'bookmarks ...'");    
+  construct_outline_sub(pbs, nav, c);
+  if (pbs.get_spaces(true) != EOF)
+    verror("Syntax error in outline data: garbage after last ')'");
+  if (nav->getBookMarkCount() > 0)
+    return nav;
+  return 0;
+}
+
+void
+command_set_outline(ParsingByteStream &pbs)
+{
+  const GP<ByteStream> outbs(ByteStream::create());
+  get_data_from_file("set-outline", pbs, *outbs);
+  outbs->seek(0);
+  GP<ParsingByteStream> outpbs(ParsingByteStream::create(outbs));
+  GP<DjVmNav> nav(construct_outline(*outpbs));
+  if (g().doc->get_djvm_nav() != nav)
+    {
+      g().doc->set_djvm_nav(nav);
+      modified = true;
+    }
 }
 
 void
@@ -1720,7 +1754,7 @@ static GMap<GUTF8String,CommandFunc> &command_map() {
     xcommand_map["set-ant"] = command_set_ant;
     xcommand_map["set-meta"] = command_set_meta;
     xcommand_map["set-txt"] = command_set_txt;
-    xcommand_map["set-thumbnails"] = command_set_outline;
+    xcommand_map["set-outline"] = command_set_outline;
     xcommand_map["set-thumbnails"] = command_set_thumbnails;
     xcommand_map["remove-ant"] = command_remove_ant;
     xcommand_map["remove-meta"] = command_remove_meta;
