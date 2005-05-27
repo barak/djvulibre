@@ -62,14 +62,16 @@
 #endif
 
 #include "debug.h"
-#include "GString.h"
-#include "ByteStream.h"
-#include "GURL.h"
 
 #if ( DEBUGLVL > 0 )
 
 #include "GThreads.h"
 #include "GContainer.h"
+#include "GString.h"
+#include "GString.h"
+#include "ByteStream.h"
+#include "GURL.h"
+
 #include <stdarg.h>
 #include <stdio.h>
 #include <errno.h>
@@ -261,6 +263,15 @@ DjVuDebug& DjVuDebug::operator<<(const char * const ptr)
 DjVuDebug& DjVuDebug::operator<<(const unsigned char * const ptr) 
 { 
   return operator<<( (const char *) ptr );
+}
+
+DjVuDebug& DjVuDebug::operator<<(const GUTF8String &ptr)
+{
+  GUTF8String buffer(ptr);
+  if(buffer.length() > 255)
+    buffer=buffer.substr(0,252)+"...";
+  format("%s", (const char *)buffer);
+  return *this; 
 }
 
 DjVuDebugIndent::DjVuDebugIndent(int inc)

@@ -185,6 +185,8 @@ namespace DJVU {
 #  define _DEBUG
 # endif
 
+class GUTF8String;
+
 // ------------ SUPPORT
 
 class DjVuDebug // DJVU_CLASS
@@ -216,6 +218,7 @@ public:
   DjVuDebug &	operator<<(unsigned long i);
   DjVuDebug &	operator<<(const char * const ptr);
   DjVuDebug &	operator<<(const unsigned char * const ptr);
+  DjVuDebug&    operator<<(const GUTF8String &ptr);
   DjVuDebug &	operator<<(float f);
   DjVuDebug &	operator<<(double d);
   DjVuDebug &	operator<<(const void * const p);
