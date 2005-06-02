@@ -191,6 +191,7 @@ struct DJVUNS ddjvu_page_s : public ddjvu_job_s
   GP<DjVuImage> img;
   ddjvu_job_t *job;
   bool pageinfoflag;
+  bool pagedoneflag;
   bool relayoutflag;
   // virtual job functions:
   virtual ddjvu_status_t status();
@@ -1080,6 +1081,7 @@ ddjvu_page_create(ddjvu_document_t *document, ddjvu_job_t *job,
       p->mydoc = document;
       p->userdata = 0;
       p->pageinfoflag = false;
+      p->pagedoneflag = false;
       p->relayoutflag = false;
       if (job)
         p->job = job;
@@ -1172,18 +1174,22 @@ ddjvu_page_s::notify_status(const DjVuPort *p, const GUTF8String &m)
 }
 
 void 
-ddjvu_page_s::notify_file_flags_changed(const DjVuFile*, long, long)
+ddjvu_page_s::notify_file_flags_changed(const DjVuFile *sender, long, long)
 {
-  if (pageinfoflag || !img) return;
+  if (!img) return;
   DjVuFile *file = img->get_djvu_file();
-  if (!file) return;
+  if (file==0 || file!=sender) return;
   long flags = file->get_flags();
   if ((flags && DjVuFile::DECODE_OK) ||
       (flags && DjVuFile::DECODE_FAILED) ||
       (flags && DjVuFile::DECODE_STOPPED) )
     {
-      msg_push(xhead(DDJVU_PAGEINFO, this));
-      pageinfoflag = true;
+      if (! pagedoneflag)
+        {
+          msg_push(xhead(DDJVU_PAGEINFO, this));
+          pagedoneflag = true;
+          pageinfoflag = true;
+        }
     }
 }
 

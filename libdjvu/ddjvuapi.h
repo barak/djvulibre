@@ -717,8 +717,13 @@ ddjvu_page_job(ddjvu_page_t *page);
 
 
 /* ddjvu_message_t::m_pageinfo ---
-   This message is generated when the basic 
-   information about a page is available. */
+   This message is generated in two occasions:
+   - when basic page information is available and 
+     before any <m_relayout> or <m_redisplay> message,
+   - when the page decoding thread terminates.
+   You can distinguish both cases using 
+   function ddjvu_page_decoding_done().
+*/
 
 struct ddjvu_message_pageinfo_s {  /* ddjvu_message_t::m_pageinfo */
   ddjvu_message_any_t  any;
