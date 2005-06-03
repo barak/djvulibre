@@ -1,9 +1,12 @@
 djvulibre (3.5-1) unstable; urgency=low
 
   * New upstream release ???
-  * fix typo in djvu.1 (closes: #311757)
+  * fix typos in cjb2.1 (closes: #311755), ddjvu.1 (closes: #311756),
+    djvu.1 (closes: #311757), djvudigital.1 (closes: #311759),
+    djvups.1 (closes: #311760), djvuxml.1.in (closes: #311763),
+    nsdejavu.1.in (closes: #311765)
 
- --
+  --
 
 djvulibre (3.5.14-5) unstable; urgency=low
 
