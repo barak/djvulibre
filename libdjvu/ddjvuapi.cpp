@@ -1180,9 +1180,9 @@ ddjvu_page_s::notify_file_flags_changed(const DjVuFile *sender, long, long)
   DjVuFile *file = img->get_djvu_file();
   if (file==0 || file!=sender) return;
   long flags = file->get_flags();
-  if ((flags && DjVuFile::DECODE_OK) ||
-      (flags && DjVuFile::DECODE_FAILED) ||
-      (flags && DjVuFile::DECODE_STOPPED) )
+  if ((flags & DjVuFile::DECODE_OK) ||
+      (flags & DjVuFile::DECODE_FAILED) ||
+      (flags & DjVuFile::DECODE_STOPPED) )
     {
       if (! pagedoneflag)
         {
