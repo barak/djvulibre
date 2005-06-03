@@ -1,3 +1,10 @@
+djvulibre (3.5-1) unstable; urgency=low
+
+  * New upstream release ???
+  * fix typo in djvu.1 (closes: #311757)
+
+ --
+
 djvulibre (3.5.14-5) unstable; urgency=low
 
   * libdjvulibre-dev needs to depend upon libdjvulibre1
