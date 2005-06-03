@@ -229,7 +229,7 @@ and
 .B WORD.
 The most deeply nested element specified, should specify the bounding 
 coordinates of the element in top-down orientation.  The body of the 
-most deeply nested elelement should contain the text.  Most DjVu 
+most deeply nested element should contain the text.  Most DjVu 
 documents use either 
 .B LINE 
 or 
@@ -283,4 +283,3 @@ and Fred Crary.
 .BR djvused (1),
 and
 .BR utf8 (7).
-
