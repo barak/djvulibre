@@ -156,6 +156,7 @@ struct DJVUNS ddjvu_job_s : public DjVuPort
   void *userdata;
   GP<ddjvu_context_s> myctx;
   GP<ddjvu_document_s> mydoc;
+  virtual ~ddjvu_job_s();
   // virtual port functions:
   virtual bool inherits(const GUTF8String&);
   virtual bool notify_error(const DjVuPort*, const GUTF8String&);  
@@ -190,9 +191,9 @@ struct DJVUNS ddjvu_page_s : public ddjvu_job_s
 {
   GP<DjVuImage> img;
   ddjvu_job_t *job;
-  bool pageinfoflag;
-  bool pagedoneflag;
-  bool relayoutflag;
+  bool pageinfoflag;            // was the first m_pageinfo sent?
+  bool pagedoneflag;            // was the final m_pageinfo sent?
+  bool redisplayflag;           // did we receive a redisplay notification?
   // virtual job functions:
   virtual ddjvu_status_t status();
   virtual void release();
@@ -204,6 +205,7 @@ struct DJVUNS ddjvu_page_s : public ddjvu_job_s
   virtual void notify_relayout(const class DjVuImage*);
   virtual void notify_redisplay(const class DjVuImage*);
   virtual void notify_chunk_done(const DjVuPort*, const GUTF8String &);
+  void sendmessages(void);
 };
 
 
@@ -524,6 +526,25 @@ ddjvu_cache_clear(ddjvu_context_t *ctx)
 // ----------------------------------------
 // Jobs
 
+ddjvu_job_s::~ddjvu_job_s()
+{
+  G_TRY
+    {
+      ddjvu_context_t *ctx = myctx;
+      if (!ctx) return;
+      GMonitorLock lock(&ctx->monitor);
+      GPosition p = ctx->mlist;
+      while (p) {
+        GPosition s = p; ++p;
+        if (ctx->mlist[s]->p.m_any.job == this)
+          ctx->mlist.del(s);
+      }
+    }
+  G_CATCH()
+    {
+    }
+  G_ENDCATCH;
+}
 
 bool
 ddjvu_job_s::inherits(const GUTF8String &classname)
@@ -899,7 +920,8 @@ ddjvu_stream_write(ddjvu_document_t *doc,
       }
       if (! pool)
         G_THROW("Unknown stream ID");
-      pool->add_data(data, datalen);
+      if (datalen > 0)
+        pool->add_data(data, datalen);
     }
   G_CATCH(ex)
     {
@@ -1077,12 +1099,13 @@ ddjvu_page_create(ddjvu_document_t *document, ddjvu_job_t *job,
       if (! doc) return 0;
       p = new ddjvu_page_s;
       ref(p);
+      GMonitorLock lock(&p->monitor);
       p->myctx = document->myctx;
       p->mydoc = document;
       p->userdata = 0;
       p->pageinfoflag = false;
       p->pagedoneflag = false;
-      p->relayoutflag = false;
+      p->redisplayflag = false;
       if (job)
         p->job = job;
       else
@@ -1176,6 +1199,7 @@ ddjvu_page_s::notify_status(const DjVuPort *p, const GUTF8String &m)
 void 
 ddjvu_page_s::notify_file_flags_changed(const DjVuFile *sender, long, long)
 {
+  GMonitorLock lock(&monitor);
   if (!img) return;
   DjVuFile *file = img->get_djvu_file();
   if (file==0 || file!=sender) return;
@@ -1184,44 +1208,37 @@ ddjvu_page_s::notify_file_flags_changed(const DjVuFile *sender, long, long)
       (flags & DjVuFile::DECODE_FAILED) ||
       (flags & DjVuFile::DECODE_STOPPED) )
     {
-      if (! pagedoneflag)
-        {
-          msg_push(xhead(DDJVU_PAGEINFO, this));
-          pagedoneflag = true;
-          pageinfoflag = true;
-        }
+      if (pagedoneflag) return;
+      msg_push(xhead(DDJVU_PAGEINFO, this));
+      pageinfoflag = pagedoneflag = true;
     }
 }
 
 void 
 ddjvu_page_s::notify_relayout(const DjVuImage *dimg)
 {
-  if (! img) 
-    return;
-  if (! pageinfoflag) 
-    msg_push(xhead(DDJVU_PAGEINFO, this));
+  GMonitorLock lock(&monitor);
+  if (! img || pageinfoflag) return;
+  msg_push(xhead(DDJVU_PAGEINFO, this));
   pageinfoflag = true;
   msg_push(xhead(DDJVU_RELAYOUT, this));
-  relayoutflag = true;
+  if ( redisplayflag )
+    notify_redisplay(img);
 }
 
 void 
 ddjvu_page_s::notify_redisplay(const DjVuImage *dimg)
 {
-  if (! img) 
-    return;
-  if (! pageinfoflag) 
-    msg_push(xhead(DDJVU_PAGEINFO, this));
-  pageinfoflag = true;
-  if (! relayoutflag)
-    msg_push(xhead(DDJVU_RELAYOUT, this));
-  relayoutflag = true;
-  msg_push(xhead(DDJVU_REDISPLAY, this));
+  GMonitorLock lock(&monitor);
+  redisplayflag = true;
+  if (img && pageinfoflag)
+    msg_push(xhead(DDJVU_REDISPLAY, this));
 }
 
 void 
 ddjvu_page_s::notify_chunk_done(const DjVuPort*, const GUTF8String &name)
 {
+  GMonitorLock lock(&monitor);
   if (! img) return;
   GP<ddjvu_message_p> p = new ddjvu_message_p;
   p->tmp1 = name;
@@ -1406,14 +1423,15 @@ ddjvu_page_set_rotation(ddjvu_page_t *page,
         case DDJVU_ROTATE_90:
         case DDJVU_ROTATE_180:
         case DDJVU_ROTATE_270:
-          if (page->img)
+          if (page->img && page->pageinfoflag)
             {
               int old = page->img->get_rotate();
               if (old != (int)rot)
                 {
                   page->img->set_rotate((int)rot);
                   msg_push(xhead(DDJVU_RELAYOUT, page));
-                  msg_push(xhead(DDJVU_REDISPLAY, page));
+                  if (page->redisplayflag)
+                    msg_push(xhead(DDJVU_REDISPLAY, page));
                 }
             }
           break;

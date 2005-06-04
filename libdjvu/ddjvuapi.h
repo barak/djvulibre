@@ -762,6 +762,17 @@ struct ddjvu_message_chunk_s {     /* ddjvu_message_t::m_chunk */
   const char *chunkid;
 }; 
 
+/* About page messages --
+   Both the <m_relayout> and <m_redisplay> messages are derived from the
+   <m_chunk> message.  They are intended for driving a djvu image viewer. 
+   When receiving <m_relayout>, the viewer should get the image size, decide
+   zoom factors, and place the image area, scrollbars, toolbars, and other gui
+   objects.  When receiving <m_redisplay>, the viewer should invalidate the
+   image area so that the gui toolkint calls the repaint event handler. This
+   handler should call ddjvu_page_render() and paint the part og the
+   image that needs repainting. */
+
+
 
 /* ------- QUERIES ------- */
 
