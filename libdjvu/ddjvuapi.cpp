@@ -759,6 +759,7 @@ ddjvu_document_s::notify_status(const DjVuPort *p, const GUTF8String &m)
 void 
 ddjvu_document_s::notify_doc_flags_changed(const DjVuDocument *, long, long)
 {
+  GMonitorLock lock(&monitor);
   if (docinfoflag || !doc) return;
   long flags = doc->get_doc_flags();
   if ((flags & DjVuDocument::DOC_INIT_OK) ||
@@ -770,8 +771,9 @@ ddjvu_document_s::notify_doc_flags_changed(const DjVuDocument *, long, long)
 }
 
 GP<DataPool> 
-ddjvu_document_s::request_data(const DjVuPort*p, const GURL &url)
+ddjvu_document_s::request_data(const DjVuPort *p, const GURL &url)
 {
+  GMonitorLock lock(&monitor);
   GP<DataPool> pool;
   if (fileflag)
     {
@@ -780,14 +782,10 @@ ddjvu_document_s::request_data(const DjVuPort*p, const GURL &url)
     }
   else if (doc)
     {
-      streamid += 1;
-      {
-        GMonitorLock lock(&monitor);        
-        if (streamid > 0)
-          streams[streamid] = pool = DataPool::create();
-        else
-          pool = streams[(streamid = 0)];
-      }
+      if (++streamid > 0)
+        streams[streamid] = pool = DataPool::create();
+      else
+        pool = streams[(streamid = 0)];
       // build message
       GP<ddjvu_message_p> p = new ddjvu_message_p;
       p->p.m_newstream.streamid = streamid;
@@ -825,6 +823,7 @@ ddjvu_document_create(ddjvu_context_t *ctx,
       if (! cache) xcache = 0;
       d = new ddjvu_document_s;
       ref(d);
+      GMonitorLock lock(&d->monitor);
       d->streams[0] = DataPool::create();
       d->streamid = -1;
       d->fileflag = false;
@@ -872,6 +871,7 @@ ddjvu_document_create_by_filename(ddjvu_context_t *ctx,
       GURL gurl = GURL::Filename::UTF8(filename);
       d = new ddjvu_document_s;
       ref(d);
+      GMonitorLock lock(&d->monitor);
       d->streamid = -1;
       d->fileflag = true;
       d->urlflag = false;

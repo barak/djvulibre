@@ -247,7 +247,8 @@ ddjvu_message_pop(ddjvu_context_t *context);
    a new message is posted to the ddjvuapi message queue,
    and returns a pointer to the previous callback function.
    This callback function can be called at any time
-   while other code is executing. It should simply signal
+   while other code is executing. Do not call ddjvuapi
+   functions from this callback. It should simply signal
    the main application event loop that new ddjvuapi messages
    are available.  Under WIN32, this is usually achieved
    by posting a user window message.  Under UNIX, this is
