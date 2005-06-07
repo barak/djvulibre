@@ -1092,7 +1092,7 @@ struct ddjvu_message_progress_s {
   int percent;
 };
 
-/* Not yet implemented ---
+/* ddjvu_document_print ---
    Converts specified pages of a djvu document into postscript.  
    This function works asynchronously in a separate thread.
    You can use the following idiom for synchronous operation:
@@ -1100,11 +1100,11 @@ struct ddjvu_message_progress_s {
      ddjvu_job_t *job = ddjvu_document_print(....);
      while (! ddjvu_job_done(job) )
        handle_ddjvu_messages(context, TRUE);
-     
-   The postscript data is written to file <output>.
-   Arguments <optc> and <optv> specify options exactly
-   like the command line arguments of program <djvups>. 
-   See the man page for <djvups>.
+       
+   The postscript data is written to stdio file <output>.
+   Arguments <optc> and <optv> specify printing options.
+   All options described on the <djvups> man page are 
+   recognized, except <"-help"> and <"-verbose">.
 */
 
 DDJVUAPI ddjvu_job_t *
@@ -1179,6 +1179,7 @@ union ddjvu_message_s {
   struct ddjvu_message_relayout_s   m_relayout;
   struct ddjvu_message_redisplay_s  m_redisplay;
   struct ddjvu_message_thumbnail_s  m_thumbnail;
+  struct ddjvu_message_progress_s   m_progress;
 };
 
 

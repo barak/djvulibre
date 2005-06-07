@@ -24,13 +24,22 @@
 djvups \- Convert DjVu documents to PostScript.
 
 .SH SYNOPSIS
-.BI "djvups  [" "options" "] [" "djvufile" "]"
+.BI "djvups  [" "options" "] [" "djvufile" "] [" "outputfile" "]"
 
 .SH DESCRIPTION         
 This program decodes DjVu file 
 .IR djvufile ,  
-and generates a PostScript file on the standard 
-output. PostScript printers have various capabilities.
+and generates a PostScript file named
+.IR outputfile .
+The DjVu data is read from the standard input when argument 
+.IR "djvufile"
+is not specified or when it is equal to a single dash.
+Similarly, the output data is written to the standard output
+when argument 
+.IR "outputfile"
+is not specified or equal to a single dash.
+
+PostScript printers have various capabilities.
 Investigate options 
 .B -level
 and
@@ -38,6 +47,12 @@ and
 for obtaining the best results.
 
 .SH OPTIONS
+.TP
+.BI -help
+Prints the list of recognized options.
+.TP
+.BI -verbose
+Displays a progress bar.
 .TP
 .BI -page= pagespec
 Specify the document pages to be converted.

@@ -310,8 +310,8 @@ public:
 #define G_EMTHROW(ex) GExceptionHandler::emthrow(ex)
 #else
 #define G_THROW_TYPE(m,xtype) GExceptionHandler::emthrow \
-  (GException(m, __FILE__, __LINE__,0, xtype)) no_return
-#define G_EMTHROW(ex) GExceptionHandler::emthrow(ex) no_return
+  (GException(m, __FILE__, __LINE__,0, xtype))
+#define G_EMTHROW(ex) GExceptionHandler::emthrow(ex)
 #endif
 
 #endif // !CPP_SUPPORTS_EXCEPTIONS

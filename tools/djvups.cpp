@@ -52,45 +52,112 @@
 //C- +------------------------------------------------------------------
 // 
 // $Id$
-// $Name$
 
 #ifdef HAVE_CONFIG_H
 # include "config.h"
 #endif
-#if NEED_GNUG_PRAGMAS
-# pragma implementation
+
+#include <stdlib.h>
+#include <stdio.h>
+#include <stdarg.h>
+#include <string.h>
+#include <fcntl.h>
+#include <errno.h>
+
+#include "libdjvu/ddjvuapi.h"
+
+#if defined(WIN32) || defined(__CYGWIN32__)
+# include <io.h>
 #endif
 
+/* Some day we'll redo i18n right. */
+#ifndef i18n
+# define i18n(x) (x)
+# define I18N(x) (x)
+#endif
 
-#include "GException.h"
-#include "GSmartPointer.h"
-#include "GRect.h"
-#include "GPixmap.h"
-#include "GBitmap.h"
-#include "DjVuImage.h"
-#include "DjVuDocument.h"
-#include "DjVuToPS.h"
-#include "GOS.h"
-#include "ByteStream.h"
-#include "DjVuMessage.h"
+bool verbose = false;
+bool tryhelp = false;
+ddjvu_context_t *ctx;
+ddjvu_document_t *doc;
+ddjvu_job_t *job;
 
-#include <locale.h>
-#include <stdio.h>
-#include <stdlib.h>
+void
+progress(int p)
+{
+  if (verbose)
+    {
+      int i=0;
+      char buffer[52];
+      for (; p>0; p-=2)
+        buffer[i++]='#';
+      for (; i<50;)
+        buffer[i++]=' ';
+      buffer[i] = 0;
+      fprintf(stderr,"\r[%s]",buffer);
+    }        
+}
 
+void
+handle(int wait)
+{
+  const ddjvu_message_t *msg;
+  if (!ctx)
+    return;
+  if (wait)
+    msg = ddjvu_message_wait(ctx);
+  while ((msg = ddjvu_message_peek(ctx)))
+    {
+      switch(msg->m_any.tag)
+        {
+        case DDJVU_ERROR:
+          if (verbose)
+            fprintf(stderr,"\n");
+          fprintf(stderr,"djvups: %s\n", msg->m_error.message);
+          if (msg->m_error.filename)
+            fprintf(stderr,"djvups: '%s:%d'\n", 
+                    msg->m_error.filename, msg->m_error.lineno);
+          if (tryhelp)
+            fprintf(stderr,"djvups: %s\n", i18n("Try option --help."));
+          exit(10);
+        case DDJVU_PROGRESS:
+          if (verbose)
+            progress(msg->m_progress.percent);
+          break;
+        default:
+          break;
+        }
+      ddjvu_message_pop(ctx);
+    }
+}
 
+void 
+die(const char *fmt, ...)
+{
+  /* Handling messages might give a better error message */
+  tryhelp = true;
+  handle(FALSE);
+  /* Print */
+  va_list args;
+  fprintf(stderr,"ddjvu: ");
+  va_start(args, fmt);
+  vfprintf(stderr, fmt, args);
+  va_end(args);
+  fprintf(stderr,"\n");
+  /* Terminates */
+  exit(10);
+}
 
 void
 usage(void)
 {
-  DjVuPrintErrorUTF8(
 #ifdef DJVULIBRE_VERSION
-          "DJVUPS --- DjVuLibre-" DJVULIBRE_VERSION "\n"
+  fprintf(stderr, "DJVUPS --- DjVuLibre-" DJVULIBRE_VERSION "\n");
 #endif
-          "Convert DjVu documents into PostScript files\n"
-          "\n"
-          "Usage: djvups [<options>] [<document.djvu>]\n"
-          "Recognized options are:\n"
+  fprintf(stderr, "%s",
+     i18n("DjVu to PostScript conversion utility\n\n"
+          "Usage: djvups [<options>] [<infile.djvu> [<outfile.ps>]]\n\n"
+          "Options:\n"
           "  -page=<pagelists>                   (default: print all)\n"
           "  -format=<ps|eps>                    (default: ps)\n"
           "  -level=<1|2|3>                      (default: 2)\n"
@@ -109,270 +176,78 @@ usage(void)
           "  -bookletmax=<n>                     (default: 0)\n"
           "  -bookletalign=<n>                   (default: 0)\n"
           "  -bookletfold=<n>[+<m>]              (default: 18+200)\n"
-          "\n");
+          "\n"));
   exit(1);
 }
-
-void
-complain(GUTF8String option, GUTF8String message)
-{
-  DjVuPrintErrorUTF8("djvups: (parsing option '%s'): %s\n", 
-                     (const char *) option,
-                     (const char *) message );
-  exit(1);
-}
-
-
 
 int
 main(int argc, char **argv)
 {
-  setlocale(LC_ALL,"");
-  djvu_programname(argv[0]);
-  GArray<GUTF8String> dargv(0,argc-1);
-  for(int i=0;i<argc;++i)
-    dargv[i]=GNativeString(argv[i]);
+  int i;
+  int optc = 0;
+  char **optv;
+  char *infile = 0;
+  char *outfile = 0;
+  FILE *fout;
 
-  G_TRY
+  /* Sort options */
+  if (! (optv = (char**)malloc(argc*sizeof(char*))))
+    die(i18n("Out of memory"));
+  for (i=1; i<argc; i++)
     {
-      // Variables
-      DjVuToPS printer;
-      DjVuToPS::Options &options = printer.options;
-      GUTF8String pages;
-      GURL docname;
-  
-      // Process options
-      while (argc>1 && dargv[1][0]=='-')
-        {
-          // get rid of initial dashes
-          const char *s1 = (const char*)dargv[1];
-          if (*s1 == '-')
-            s1 ++;
-          if (*s1 == '-')
-            s1 ++;
-          if (*s1 == 0)
-            break;
-          // search equal sign
-          const char *s2 = s1;
-          while (*s2 && *s2 != '=')
-            s2 ++;
-          // separate arguments
-          GUTF8String s( s1, s2-s1 );
-          GUTF8String arg( s2[0] && s2[1] ? s2+1 : "" );
-
-          // rumble!
-          if (s == "page" || s == "pages")
-            {
-              if (pages.length())
-                pages = pages + ",";
-              pages = pages + arg;
-            }
-          else if (s == "format")
-            {
-              if (arg == "ps")
-                options.set_format(DjVuToPS::Options::PS);
-              else if (arg == "eps")
-                options.set_format(DjVuToPS::Options::EPS);
-              else
-                complain(dargv[1],"Invalid format. Use \"ps\" or \"eps\".");
-            }
-          else if (s == "level")
-            {
-              int endpos;
-              int lvl = arg.toLong(0, endpos);
-              if (endpos != (int)arg.length() || lvl < 1 || lvl > 4)
-                complain(dargv[1],"Invalid Postscript language level.");
-              options.set_level(lvl);
-            }
-          else if (s == "orient" || s == "orientation")
-            {
-              if (arg == "a" || arg == "auto" )
-                options.set_orientation(DjVuToPS::Options::AUTO);
-              if (arg == "l" || arg == "landscape" )
-                options.set_orientation(DjVuToPS::Options::LANDSCAPE);
-              if (arg == "p" || arg == "portrait" )
-                options.set_orientation(DjVuToPS::Options::PORTRAIT);
-              else
-                complain(dargv[1],"Invalid orientation. Use \"auto\", "
-                         "\"landscape\" or \"portrait\".");
-            }
-          else if (s == "mode")
-            {
-              if (arg == "c" || arg == "color" )
-                options.set_mode(DjVuToPS::Options::COLOR);
-              else if (arg == "black" || arg == "bw")
-                options.set_mode(DjVuToPS::Options::BW);
-              else if (arg == "fore" || arg == "foreground")
-                options.set_mode(DjVuToPS::Options::FORE);
-              else if (arg == "back" || arg == "background" )
-                options.set_mode(DjVuToPS::Options::BACK);
-              else
-                complain(dargv[1],"Invalid mode. Use \"color\", \"bw\", "
-                         "\"foreground\", or \"background\".");
-            }
-          else if (s == "zoom")
-            {
-              if (arg == "auto" || arg == "fit" || arg == "fit_page")
-                options.set_zoom(0);
-              else if (arg == "1to1" || arg == "onetoone")
-                options.set_zoom(100);                
-              else 
-                {
-                  int endpos;
-                  int z = arg.toLong(0,endpos);
-                  if (endpos != (int)arg.length() || z < 25 || z > 2400)
-                    complain(dargv[1],"Invalid zoom factor.");
-                  options.set_zoom(z);
-                }
-            }
-          else if (s == "color")
-            {
-              if (arg == "yes" || arg == "")
-                options.set_color(true);
-              else if (arg == "no")
-                options.set_color(false);
-              else
-                complain(dargv[1],"Invalid argument. Use \"yes\" or \"no\".");
-            }
-          else if (s == "gray" || s == "grayscale")
-            {
-              if (arg.length())
-                complain(dargv[1],"No argument was expected.");
-              options.set_color(false);
-            }
-          else if (s == "srgb" || s == "colormatch")
-            {
-              if (arg == "yes" || arg == "")
-                options.set_sRGB(true);
-              else if (arg == "no")
-                options.set_sRGB(false);
-              else
-                complain(dargv[1],"Invalid argument. Use \"yes\" or \"no\".");
-            }
-          else if (s == "gamma")
-            {
-              int endpos;
-              double g = arg.toDouble(0,endpos);
-              if (endpos != (int)arg.length() || g < 0.3 || g > 5.0)
-                complain(dargv[1],"Invalid gamma factor. Use a number "
-                         "in range 0.3 ... 5.0.");
-              options.set_gamma(g);
-            }
-          else if (s == "copies")
-            {
-              int endpos;
-              int n = arg.toLong(0, endpos);
-              if (endpos != (int)arg.length() || n < 1 || n > 999999)
-                complain(dargv[1],"Invalid number of copies.");
-              options.set_copies(n);
-            }
-          else if (s == "frame")
-            {
-              if (arg == "yes" || arg == "")
-                options.set_frame(true);
-              else if (arg == "no")
-                options.set_frame(false);
-              else
-                complain(dargv[1],"Invalid argument. Use \"yes\" or \"no\".");
-            }
-          else if (s == "cropmarks")
-            {
-              if (arg == "yes" || arg == "")
-                options.set_cropmarks(true);
-              else if (arg == "no")
-                options.set_cropmarks(false);
-              else
-                complain(dargv[1],"Invalid argument. Use \"yes\" or \"no\".");
-            }
-          else if (s == "text")
-            {
-              if (arg == "yes" || arg == "")
-                options.set_text(true);
-              else if (arg == "no")
-                options.set_text(false);
-              else
-                complain(dargv[1],"Invalid argument. Use \"yes\" or \"no\".");
-            }
-          else if (s == "booklet")
-            {
-              if (arg == "no")
-                options.set_bookletmode(DjVuToPS::Options::OFF);
-              else if (arg == "recto")
-                options.set_bookletmode(DjVuToPS::Options::RECTO);
-              else if (arg == "verso")
-                options.set_bookletmode(DjVuToPS::Options::VERSO);
-              else if (arg == "rectoverso" || arg=="yes" || arg=="")
-                options.set_bookletmode(DjVuToPS::Options::RECTOVERSO);
-              else 
-                complain(dargv[1],"Invalid argument."
-                         "Use \"no\", \"yes\", \"recto\", or \"verso\".");
-            }
-          else if (s == "bookletmax")
-            {
-              int endpos;
-              int n = arg.toLong(0, endpos);
-              if (endpos != (int)arg.length() || n < 0 || n > 999999)
-                complain(dargv[1],"Invalid argument.");
-              options.set_bookletmax(n);
-            }
-          else if (s == "bookletalign")
-            {
-              int endpos;
-              int n = arg.toLong(0, endpos);
-              if (endpos != (int)arg.length() || n < -720 || n > +720)
-                complain(dargv[1],"Invalid argument.");
-              options.set_bookletalign(n);
-            }
-          else if (s == "bookletfold")
-            {
-              int endpos;
-              int m = 250;
-              int n = arg.toLong(0, endpos);
-              if (endpos <= (int)arg.length() && arg[endpos]=='+')
-                m = arg.toLong(endpos+1, endpos);
-              if (endpos != (int)arg.length() || m<0 || m>720 || n<0 || n>9999 )
-                complain(dargv[1],"Invalid argument.");
-              options.set_bookletfold(n,m);
-            }
-          else
-            {
-              DjVuPrintErrorUTF8("djvups: Unrecognized option "
-                                 "\"%s\"\n",(const char*)dargv[1]);
-              usage();
-            }
-          // Next option
-          argc -= 1;
-          dargv.shift(-1);
-        }
-
-      // Obtain document name
-      if (argc == 1)
-        docname = GURL::Filename::UTF8("-");
-      else if (argc == 2)
-        docname = GURL::Filename::UTF8(dargv[1]);
-      else
+      char *s = argv[i];
+      if (s[0]=='-' && s[1]=='-')
+        s = s+1;
+      if (!strcmp(s,"-help"))
         usage();
-      
-      // Issue warnings
-      if ( options.get_sRGB() && options.get_level() < 2)
-        DjVuPrintErrorUTF8("Color matching requires PostScript "
-                           "level 2 or greater.\n");
-
-      // Open document
-      GP<DjVuDocument> doc = DjVuDocument::create_wait(docname);
-      if (! doc->wait_for_complete_init())
-        G_THROW("Decoding failed.  Nothing can be done.");
-      
-      // Print
-      GP<ByteStream> obs = ByteStream::create("w");
-      printer.print(*obs, doc, pages );
+      else if (!strcmp(s,"-verbose"))
+        verbose = true;
+      else if (s[0]=='-' && s[1])
+        optv[optc++] = s;
+      else if (s[0] && !infile)
+        infile = s;
+      else if (s[0] && !outfile)
+        outfile = s;
+      else
+        die(i18n("Incorrect arguments. Try option --help."));
     }
-  G_CATCH(ex)
+  if (! infile)
+    infile = "-";
+  if (! outfile)
+    outfile = "-";
+  /* Open document */
+  if (! (ctx = ddjvu_context_create(argv[0])))
+    die(i18n("Cannot create djvu context."));
+  if (! (doc = ddjvu_document_create_by_filename(ctx, infile, TRUE)))
+    die(i18n("Cannot open djvu document '%s'."), infile);
+  while (! ddjvu_document_decoding_done(doc))
+    handle(TRUE);
+  /* Open output file */
+  if (! strcmp(outfile,"-")) 
     {
-      ex.perror();
-      exit(1);
-    }
-  G_ENDCATCH;
-
+      fout = stdout;
+#if defined(__CYGWIN32__)
+      setmode(fileno(fout), O_BINARY);
+#elif defined(WIN32)
+      _setmode(_fileno(fout), _O_BINARY);
+#endif
+    } 
+  else if (! (fout = fopen(outfile, "wb")))
+    die(i18n("Cannot open output file '%s'."), outfile);
+  /* Create printing job */
+  if (! (job = ddjvu_document_print(doc, fout, optc, optv)))
+    die(i18n("Cannot create print job."));
+  /* Wait until completion and cleanup */
+  while (! ddjvu_job_done(job))
+    handle(TRUE);
+  if (verbose)
+    fprintf(stderr,"\n");
+  fclose(fout);
+  if (job)
+    ddjvu_job_release(job);
+  if (doc)
+    ddjvu_document_release(doc);
+  if (ctx)
+    ddjvu_context_release(ctx);
   return 0;
 }

@@ -67,13 +67,17 @@
 
 #ifdef HAVE_NAMESPACES
 namespace DJVU {
-  struct ddjvu_message_p;
-  struct ddjvu_thumbnail_p;
   struct ddjvu_context_s;
   struct ddjvu_job_s;
   struct ddjvu_document_s;
   struct ddjvu_page_s;
   struct ddjvu_format_s;
+  struct ddjvu_message_p;
+  struct ddjvu_thumbnail_p;
+  struct ddjvu_runnablejob_s;
+  struct ddjvu_printjob_s;
+  struct ddjvu_savejob_s;
+  
 }
 using namespace DJVU;
 # define DJVUNS DJVU::
@@ -103,6 +107,8 @@ using namespace DJVU;
 #include "DjVmNav.h"
 #include "DjVuText.h"
 #include "DjVuAnno.h"
+#include "DjVuToPS.h"
+
 
 #include "ddjvuapi.h"
 
@@ -205,7 +211,7 @@ struct DJVUNS ddjvu_page_s : public ddjvu_job_s
   virtual void notify_relayout(const class DjVuImage*);
   virtual void notify_redisplay(const class DjVuImage*);
   virtual void notify_chunk_done(const DjVuPort*, const GUTF8String &);
-  void sendmessages(void);
+  void sendmessages();
 };
 
 
@@ -2014,14 +2020,368 @@ ddjvu_thumbnail_render(ddjvu_document_t *document, int pagenum,
 
 
 // ----------------------------------------
-// Not yet implemented
+// job with an associated thread
+
+struct DJVUNS ddjvu_runnablejob_s : public ddjvu_job_s
+{
+  bool mystop;
+  int  myprogress;
+  ddjvu_status_t mystatus;
+  // methods
+  ddjvu_runnablejob_s();
+  ddjvu_status_t start();
+  void progress(int p);
+  // thread function
+  virtual ddjvu_status_t run() = 0;
+  // virtual port functions:
+  virtual bool inherits(const GUTF8String&);
+  virtual ddjvu_status_t status();
+  virtual void stop();
+private:
+  static void cbstart(void*);
+};
+
+ddjvu_runnablejob_s::ddjvu_runnablejob_s()
+  : mystop(false), myprogress(-1),
+    mystatus(DDJVU_JOB_NOTSTARTED) 
+{
+}
+
+void 
+ddjvu_runnablejob_s::progress(int x)
+{
+  GMonitorLock lock(&monitor);
+  if ((mystatus>=DDJVU_JOB_OK) || (x>myprogress && x<100))
+    {
+      GP<ddjvu_message_p> p = new ddjvu_message_p;
+      p->p.m_progress.status = mystatus;
+      p->p.m_progress.percent = myprogress = x;
+      msg_push(xhead(DDJVU_PROGRESS,this),p);
+    }
+}
+
+ddjvu_status_t
+ddjvu_runnablejob_s::start()
+{
+  GMonitorLock lock(&monitor);
+  if (mystatus==DDJVU_JOB_NOTSTARTED && myctx)
+    {
+      GThread thr;
+      thr.create(cbstart, (void*)this);
+      monitor.wait();
+    }
+  return mystatus;
+}
+
+void
+ddjvu_runnablejob_s::cbstart(void *arg)
+{
+  GP<ddjvu_runnablejob_s> self = (ddjvu_runnablejob_s*)arg;
+  {
+    GMonitorLock lock(&self->monitor);
+    self->mystatus = DDJVU_JOB_STARTED;
+    self->monitor.signal();
+  }
+  ddjvu_status_t r;
+  G_TRY
+    {
+      self->progress(0);
+      r = self->run();
+    }
+  G_CATCH(ex)
+    {
+      r = DDJVU_JOB_FAILED;
+      if (self && self->mystop)
+        r = DDJVU_JOB_STOPPED;
+    }
+  G_ENDCATCH;
+  {
+    GMonitorLock lock(&self->monitor);
+    self->mystatus = r;
+  }
+  if (self && self->mystatus> DDJVU_JOB_OK)
+    self->progress(self->myprogress);
+  else
+    self->progress(100);
+}
+
+bool 
+ddjvu_runnablejob_s::inherits(const GUTF8String &classname)
+{
+  return (classname == "ddjvu_runnablejob_s") 
+    || ddjvu_job_s::inherits(classname);
+}
+
+ddjvu_status_t 
+ddjvu_runnablejob_s::status()
+{
+  return mystatus;
+}
+
+void
+ddjvu_runnablejob_s::stop()
+{
+  mystop = true;
+}
+
+
+// ----------------------------------------
+// Printing
+
+struct DJVUNS ddjvu_printjob_s : public ddjvu_runnablejob_s
+{
+  DjVuToPS printer;
+  GUTF8String pages;
+  GP<ByteStream> obs;
+  virtual ddjvu_status_t run();
+  // progress
+};
+
+ddjvu_status_t 
+ddjvu_printjob_s::run()
+{
+  printer.print(*obs, mydoc->doc, pages);
+  return DDJVU_JOB_OK;
+}
+
+static void
+complain(GUTF8String opt, const char *msg)
+{
+  GUTF8String message;
+  if (opt.length() > 0)
+    message = "Parsing \"" + opt + "\": " + msg;
+  else
+    message = msg;
+  G_EMTHROW(GException((const char*)message));
+}
 
 ddjvu_job_t *
 ddjvu_document_print(ddjvu_document_t *document, FILE *output,
                      int optc, const char * const * optv)
 {
-  return 0;
+  ddjvu_printjob_s *job = 0;
+  G_TRY
+    {
+      job = new ddjvu_printjob_s;
+      ref(job);
+      job->myctx = document->myctx;
+      job->mydoc = document;
+      // parse options (see djvups(1))
+      DjVuToPS::Options &options = job->printer.options;
+      GUTF8String &pages = job->pages;
+      while (optc>0)
+        {
+          // normalize
+          GNativeString narg(optv[0]);
+          GUTF8String uarg = narg;
+          const char *s1 = (const char*)narg;
+          if (s1[0] == '-') s1++;
+          if (s1[0] == '-') s1++;
+          // separate arguments
+          const char *s2 = s1;
+          while (*s2 && *s2 != '=') s2++;
+          GUTF8String s( s1, s2-s1 );
+          GUTF8String arg( s2[0] && s2[1] ? s2+1 : "" );
+          // rumble!
+          if (s == "page" || s == "pages")
+            {
+              if (pages.length())
+                pages = pages + ",";
+              pages = pages + arg;
+            }
+          else if (s == "format")
+            {
+              if (arg == "ps")
+                options.set_format(DjVuToPS::Options::PS);
+              else if (arg == "eps")
+                options.set_format(DjVuToPS::Options::EPS);
+              else
+                complain(uarg,"Invalid format. Use \"ps\" or \"eps\".");
+            }
+          else if (s == "level")
+            {
+              int endpos;
+              int lvl = arg.toLong(0, endpos);
+              if (endpos != (int)arg.length() || lvl < 1 || lvl > 4)
+                complain(uarg,"Invalid Postscript language level.");
+              options.set_level(lvl);
+            }
+          else if (s == "orient" || s == "orientation")
+            {
+              if (arg == "a" || arg == "auto" )
+                options.set_orientation(DjVuToPS::Options::AUTO);
+              if (arg == "l" || arg == "landscape" )
+                options.set_orientation(DjVuToPS::Options::LANDSCAPE);
+              if (arg == "p" || arg == "portrait" )
+                options.set_orientation(DjVuToPS::Options::PORTRAIT);
+              else
+                complain(uarg,"Invalid orientation. Use \"auto\", "
+                         "\"landscape\" or \"portrait\".");
+            }
+          else if (s == "mode")
+            {
+              if (arg == "c" || arg == "color" )
+                options.set_mode(DjVuToPS::Options::COLOR);
+              else if (arg == "black" || arg == "bw")
+                options.set_mode(DjVuToPS::Options::BW);
+              else if (arg == "fore" || arg == "foreground")
+                options.set_mode(DjVuToPS::Options::FORE);
+              else if (arg == "back" || arg == "background" )
+                options.set_mode(DjVuToPS::Options::BACK);
+              else
+                complain(uarg,"Invalid mode. Use \"color\", \"bw\", "
+                         "\"foreground\", or \"background\".");
+            }
+          else if (s == "zoom")
+            {
+              if (arg == "auto" || arg == "fit" || arg == "fit_page")
+                options.set_zoom(0);
+              else if (arg == "1to1" || arg == "onetoone")
+                options.set_zoom(100);                
+              else 
+                {
+                  int endpos;
+                  int z = arg.toLong(0,endpos);
+                  if (endpos != (int)arg.length() || z < 25 || z > 2400)
+                    complain(uarg,"Invalid zoom factor.");
+                  options.set_zoom(z);
+                }
+            }
+          else if (s == "color")
+            {
+              if (arg == "yes" || arg == "")
+                options.set_color(true);
+              else if (arg == "no")
+                options.set_color(false);
+              else
+                complain(uarg,"Invalid argument. Use \"yes\" or \"no\".");
+            }
+          else if (s == "gray" || s == "grayscale")
+            {
+              if (arg.length())
+                complain(uarg,"No argument was expected.");
+              options.set_color(false);
+            }
+          else if (s == "srgb" || s == "colormatch")
+            {
+              if (arg == "yes" || arg == "")
+                options.set_sRGB(true);
+              else if (arg == "no")
+                options.set_sRGB(false);
+              else
+                complain(uarg,"Invalid argument. Use \"yes\" or \"no\".");
+            }
+          else if (s == "gamma")
+            {
+              int endpos;
+              double g = arg.toDouble(0,endpos);
+              if (endpos != (int)arg.length() || g < 0.3 || g > 5.0)
+                complain(uarg,"Invalid gamma factor. Use a number "
+                         "in range 0.3 ... 5.0.");
+              options.set_gamma(g);
+            }
+          else if (s == "copies")
+            {
+              int endpos;
+              int n = arg.toLong(0, endpos);
+              if (endpos != (int)arg.length() || n < 1 || n > 999999)
+                complain(uarg,"Invalid number of copies.");
+              options.set_copies(n);
+            }
+          else if (s == "frame")
+            {
+              if (arg == "yes" || arg == "")
+                options.set_frame(true);
+              else if (arg == "no")
+                options.set_frame(false);
+              else
+                complain(uarg,"Invalid argument. Use \"yes\" or \"no\".");
+            }
+          else if (s == "cropmarks")
+            {
+              if (arg == "yes" || arg == "")
+                options.set_cropmarks(true);
+              else if (arg == "no")
+                options.set_cropmarks(false);
+              else
+                complain(uarg,"Invalid argument. Use \"yes\" or \"no\".");
+            }
+          else if (s == "text")
+            {
+              if (arg == "yes" || arg == "")
+                options.set_text(true);
+              else if (arg == "no")
+                options.set_text(false);
+              else
+                complain(uarg,"Invalid argument. Use \"yes\" or \"no\".");
+            }
+          else if (s == "booklet")
+            {
+              if (arg == "no")
+                options.set_bookletmode(DjVuToPS::Options::OFF);
+              else if (arg == "recto")
+                options.set_bookletmode(DjVuToPS::Options::RECTO);
+              else if (arg == "verso")
+                options.set_bookletmode(DjVuToPS::Options::VERSO);
+              else if (arg == "rectoverso" || arg=="yes" || arg=="")
+                options.set_bookletmode(DjVuToPS::Options::RECTOVERSO);
+              else 
+                complain(uarg,"Invalid argument."
+                         "Use \"no\", \"yes\", \"recto\", or \"verso\".");
+            }
+          else if (s == "bookletmax")
+            {
+              int endpos;
+              int n = arg.toLong(0, endpos);
+              if (endpos != (int)arg.length() || n < 0 || n > 999999)
+                complain(uarg,"Invalid argument.");
+              options.set_bookletmax(n);
+            }
+          else if (s == "bookletalign")
+            {
+              int endpos;
+              int n = arg.toLong(0, endpos);
+              if (endpos != (int)arg.length() || n < -720 || n > +720)
+                complain(uarg,"Invalid argument.");
+              options.set_bookletalign(n);
+            }
+          else if (s == "bookletfold")
+            {
+              int endpos;
+              int m = 250;
+              int n = arg.toLong(0, endpos);
+              if (endpos <= (int)arg.length() && arg[endpos]=='+')
+                m = arg.toLong(endpos+1, endpos);
+              if (endpos != (int)arg.length() || m<0 || m>720 || n<0 || n>9999 )
+                complain(uarg,"Invalid argument.");
+              options.set_bookletfold(n,m);
+            }
+          else
+            {
+              complain(uarg, "Unrecognized option.");
+            }
+          // Next option
+          optc -= 1;
+          optv += 1;
+        }
+      // go
+      job->obs = ByteStream::create(output, "wb", false);
+      job->start();
+    }
+  G_CATCH(ex)
+    {
+      if (job) 
+        unref(job);
+      job = 0;
+      ERROR(document, ex);
+    }
+  G_ENDCATCH;
+  return job;
 }
+
+// ----------------------------------------
+// Not yet implemented
+
 
 ddjvu_job_t *
 ddjvu_document_save(ddjvu_document_t *document, FILE *output, 
