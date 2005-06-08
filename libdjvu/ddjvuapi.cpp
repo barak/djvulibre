@@ -2134,6 +2134,8 @@ struct DJVUNS ddjvu_printjob_s : public ddjvu_runnablejob_s
   GUTF8String pages;
   GP<ByteStream> obs;
   virtual ddjvu_status_t run();
+  // virtual port functions:
+  virtual bool inherits(const GUTF8String&);
   // progress
   static void cbrefresh(void*);
   static void cbprogress(double, void*);
@@ -2141,6 +2143,26 @@ struct DJVUNS ddjvu_printjob_s : public ddjvu_runnablejob_s
   double progress_low;
   double progress_high;
 };
+
+ddjvu_status_t 
+ddjvu_printjob_s::run()
+{
+  progress_low = 0;
+  progress_high = 1;
+  printer.set_refresh_cb(cbrefresh, (void*)this);
+  printer.set_dec_progress_cb(cbprogress, (void*)this);
+  printer.set_prn_progress_cb(cbprogress, (void*)this);
+  printer.set_info_cb(cbinfo, (void*)this);
+  printer.print(*obs, mydoc->doc, pages);
+  return DDJVU_JOB_OK;
+}
+
+bool 
+ddjvu_printjob_s::inherits(const GUTF8String &classname)
+{
+  return (classname == "ddjvu_printjob_s") 
+    || ddjvu_runnablejob_s::inherits(classname);
+}
 
 void
 ddjvu_printjob_s::cbrefresh(void *data)
@@ -2192,19 +2214,6 @@ ddjvu_printjob_s::cbinfo(int pnum, int pcnt, int ptot,
     high = 1;
   self->progress((int)(low * 100));
   ddjvu_printjob_s::cbrefresh(data);
-}
-
-ddjvu_status_t 
-ddjvu_printjob_s::run()
-{
-  progress_low = 0;
-  progress_high = 1;
-  printer.set_refresh_cb(cbrefresh, (void*)this);
-  printer.set_dec_progress_cb(cbprogress, (void*)this);
-  printer.set_prn_progress_cb(cbprogress, (void*)this);
-  printer.set_info_cb(cbinfo, (void*)this);
-  printer.print(*obs, mydoc->doc, pages);
-  return DDJVU_JOB_OK;
 }
 
 static void
