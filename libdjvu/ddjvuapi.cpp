@@ -2020,7 +2020,7 @@ ddjvu_thumbnail_render(ddjvu_document_t *document, int pagenum,
 
 
 // ----------------------------------------
-// job with an associated thread
+// Threaded jobs
 
 struct DJVUNS ddjvu_runnablejob_s : public ddjvu_job_s
 {
@@ -2050,9 +2050,9 @@ ddjvu_runnablejob_s::ddjvu_runnablejob_s()
 void 
 ddjvu_runnablejob_s::progress(int x)
 {
-  GMonitorLock lock(&monitor);
   if ((mystatus>=DDJVU_JOB_OK) || (x>myprogress && x<100))
     {
+      GMonitorLock lock(&monitor);
       GP<ddjvu_message_p> p = new ddjvu_message_p;
       p->p.m_progress.status = mystatus;
       p->p.m_progress.percent = myprogress = x;
@@ -2339,8 +2339,8 @@ ddjvu_document_print(ddjvu_document_t *document, FILE *output,
               int endpos;
               double g = arg.toDouble(0,endpos);
               if (endpos != (int)arg.length() || g < 0.3 || g > 5.0)
-                complain(uarg,"Invalid gamma factor. Use a number "
-                         "in range 0.3 ... 5.0.");
+                complain(uarg,"Invalid gamma factor. "
+                              "Use a number in range 0.3 ... 5.0.");
               options.set_gamma(g);
             }
           else if (s == "copies")

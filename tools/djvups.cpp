@@ -158,6 +158,8 @@ usage(void)
      i18n("DjVu to PostScript conversion utility\n\n"
           "Usage: djvups [<options>] [<infile.djvu> [<outfile.ps>]]\n\n"
           "Options:\n"
+          "  -help\n"
+          "  -verbose\n"
           "  -page=<pagelists>                   (default: print all)\n"
           "  -format=<ps|eps>                    (default: ps)\n"
           "  -level=<1|2|3>                      (default: 2)\n"
