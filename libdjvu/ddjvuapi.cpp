@@ -2135,11 +2135,74 @@ struct DJVUNS ddjvu_printjob_s : public ddjvu_runnablejob_s
   GP<ByteStream> obs;
   virtual ddjvu_status_t run();
   // progress
+  static void cbrefresh(void*);
+  static void cbprogress(double, void*);
+  static void cbinfo(int, int, int, DjVuToPS::Stage, void*);
+  double progress_low;
+  double progress_high;
 };
+
+void
+ddjvu_printjob_s::cbrefresh(void *data)
+{
+  ddjvu_printjob_s *self = (ddjvu_printjob_s*)data;
+  if (self->mystop)
+    G_THROW("STOP");
+}
+
+void
+ddjvu_printjob_s::cbprogress(double done, void *data)
+{
+  ddjvu_printjob_s *self = (ddjvu_printjob_s*)data;
+  double &low = self->progress_low;
+  double &high = self->progress_high;
+  double progress = low;
+  if (done >= 1)
+    progress = high;
+  else if (done >= 0)
+    progress = low + done * (high-low);
+  self->progress((int)(progress * 100));
+  ddjvu_printjob_s::cbrefresh(data);
+}
+
+void
+ddjvu_printjob_s::cbinfo(int pnum, int pcnt, int ptot,
+                         DjVuToPS::Stage stage, void *data)
+{
+  ddjvu_printjob_s *self = (ddjvu_printjob_s*)data;
+  double &low = self->progress_low;
+  double &high = self->progress_high;
+  low = 0;
+  high = 1;
+  if (ptot > 0) 
+    {
+      double step = 1.0 / (double)ptot;
+      low = (double)pcnt * step;
+      if (stage != DjVuToPS::DECODING) 
+	low += step / 2.0;
+      high = low  + step / 2.0;
+    }
+  if (low < 0)
+    low = 0;
+  if (low > 1) 
+    low = 1;
+  if (high < low) 
+    high = low;
+  if (high > 1)
+    high = 1;
+  self->progress((int)(low * 100));
+  ddjvu_printjob_s::cbrefresh(data);
+}
 
 ddjvu_status_t 
 ddjvu_printjob_s::run()
 {
+  progress_low = 0;
+  progress_high = 1;
+  printer.set_refresh_cb(cbrefresh, (void*)this);
+  printer.set_dec_progress_cb(cbprogress, (void*)this);
+  printer.set_prn_progress_cb(cbprogress, (void*)this);
+  printer.set_info_cb(cbinfo, (void*)this);
   printer.print(*obs, mydoc->doc, pages);
   return DDJVU_JOB_OK;
 }
