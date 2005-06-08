@@ -1202,8 +1202,8 @@ union ddjvu_message_s {
    These functions provide an access to the libdjvu objects 
    associated with the ddjvuapi objects.  These backdoors can
    be useful for advanced manipulations.  These two functions 
-   are declared in C++ when file "ddjvuapi.h" is included 
-   after the libdjvu header files "DjVuDocument.h". */
+   are declared in C++ when file <"ddjvuapi.h"> is included 
+   after the libdjvu header files <"DjVuDocument.h">. */
 
 #ifdef __cplusplus
 # ifndef NOT_USING_DJVU_NAMESPACE
