@@ -19902,7 +19902,7 @@ echo "${ECHO_T}no" >&6
      test -z "$cpu" && cpu=${host_cpu}
      case "${host_cpu}" in
         i?86)
-           opt="-mcpu=${host_cpu}"
+           opt="-mtune=${host_cpu}"
 
  opt="$opt"
  echo "$as_me:$LINENO: checking if $CXX accepts $opt" >&5
@@ -19917,6 +19917,23 @@ echo "${ECHO_T}yes" >&6
     echo "$as_me:$LINENO: result: no" >&5
 echo "${ECHO_T}no" >&6
     rm conftest.*
+     opt="-mcpu=${host_cpu}"
+
+ opt="$opt"
+ echo "$as_me:$LINENO: checking if $CXX accepts $opt" >&5
+echo $ECHO_N "checking if $CXX accepts $opt... $ECHO_C" >&6
+ echo 'void f(){}' > conftest.cc
+ if test -z "`${CXX} ${CXXFLAGS} ${OPTS} $opt -c conftest.cc 2>&1`"; then
+    echo "$as_me:$LINENO: result: yes" >&5
+echo "${ECHO_T}yes" >&6
+    rm conftest.*
+    OPTS="$OPTS $opt"
+ else
+    echo "$as_me:$LINENO: result: no" >&5
+echo "${ECHO_T}no" >&6
+    rm conftest.*
+
+ fi
 
  fi
 

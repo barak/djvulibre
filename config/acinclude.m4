@@ -109,8 +109,10 @@ AC_DEFUN(AC_CXX_OPTIMIZE,[
      test -z "$cpu" && cpu=${host_cpu}
      case "${host_cpu}" in
         i?86)
-           opt="-mcpu=${host_cpu}"
-           AC_CHECK_CXX_OPT([$opt], [OPTS="$OPTS $opt"])
+           opt="-mtune=${host_cpu}"
+           AC_CHECK_CXX_OPT([$opt], [OPTS="$OPTS $opt"],
+             [ opt="-mcpu=${host_cpu}"
+               AC_CHECK_CXX_OPT([$opt], [OPTS="$OPTS $opt"]) ])
            ;;
       esac
    else
