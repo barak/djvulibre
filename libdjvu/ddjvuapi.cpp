@@ -182,6 +182,7 @@ struct DJVUNS ddjvu_document_s : public ddjvu_job_s
   bool fileflag;
   bool urlflag;
   bool docinfoflag;
+  bool pageinfoflag;
   // virtual job functions:
   virtual ddjvu_status_t status();
   virtual void release();
@@ -190,6 +191,7 @@ struct DJVUNS ddjvu_document_s : public ddjvu_job_s
   virtual bool notify_error(const DjVuPort*, const GUTF8String&);  
   virtual bool notify_status(const DjVuPort*, const GUTF8String&);
   virtual void notify_doc_flags_changed(const DjVuDocument*, long, long);
+  virtual void notify_file_flags_changed(const DjVuFile*, long, long);
   virtual GP<DataPool> request_data(const DjVuPort*, const GURL&);
 };
 
@@ -776,6 +778,14 @@ ddjvu_document_s::notify_doc_flags_changed(const DjVuDocument *, long, long)
   }
 }
 
+void 
+ddjvu_document_s::notify_file_flags_changed(const DjVuFile*, long s, long)
+{
+  if (pageinfoflag && !fileflag)
+    if (s & DjVuFile::ALL_DATA_PRESENT)
+      msg_push(xhead(DDJVU_PAGEINFO, this));
+}
+
 GP<DataPool> 
 ddjvu_document_s::request_data(const DjVuPort *p, const GURL &url)
 {
@@ -834,6 +844,7 @@ ddjvu_document_create(ddjvu_context_t *ctx,
       d->streamid = -1;
       d->fileflag = false;
       d->docinfoflag = false;
+      d->pageinfoflag = false;
       d->myctx = ctx;
       d->mydoc = 0;
       d->userdata = 0;
@@ -1027,6 +1038,7 @@ ddjvu_document_get_pageinfo(ddjvu_document_t *document, int pageno,
       DjVuDocument *doc = document->doc;
       if (doc)
         {
+          document->pageinfoflag = true;
           GP<DjVuFile> file = doc->get_djvu_file(pageno);
           if (! file || ! file->is_all_data_present() )
             return DDJVU_JOB_STARTED;
@@ -1261,7 +1273,7 @@ ddjvu_page_get_width(ddjvu_page_t *page)
 {
   G_TRY
     {
-      if (page->img)
+      if (page && page->img)
         return page->img->get_width();
     }
   G_CATCH(ex)
@@ -1277,7 +1289,7 @@ ddjvu_page_get_height(ddjvu_page_t *page)
 {
   G_TRY
     {
-      if (page->img)
+      if (page && page->img)
         return page->img->get_height();
     }
   G_CATCH(ex)
@@ -1293,7 +1305,7 @@ ddjvu_page_get_resolution(ddjvu_page_t *page)
 {
   G_TRY
     {
-      if (page->img)
+      if (page && page->img)
         return page->img->get_dpi();
     }
   G_CATCH(ex)
@@ -1309,7 +1321,7 @@ ddjvu_page_get_gamma(ddjvu_page_t *page)
 {
   G_TRY
     {
-      if (page->img)
+      if (page && page->img)
         return page->img->get_gamma();
     }
   G_CATCH(ex)
@@ -1325,7 +1337,7 @@ ddjvu_page_get_version(ddjvu_page_t *page)
 {
   G_TRY
     {
-      if (page->img)
+      if (page && page->img)
         return page->img->get_version();
     }
   G_CATCH(ex)
@@ -1341,7 +1353,7 @@ ddjvu_page_get_type(ddjvu_page_t *page)
 {
   G_TRY
     {
-      if (! page->img)
+      if (! (page && page->img))
         return DDJVU_PAGETYPE_UNKNOWN;
       else if (page->img->is_legal_bilevel())
         return DDJVU_PAGETYPE_BITONAL;
@@ -1406,7 +1418,7 @@ ddjvu_page_get_rotation(ddjvu_page_t *page)
   ddjvu_page_rotation_t rot = DDJVU_ROTATE_0;
   G_TRY
     {
-      if (page->img)
+      if (page && page->img)
         rot = (ddjvu_page_rotation_t)page->img->get_rotate();
     }
   G_CATCH(ex)
@@ -1429,7 +1441,7 @@ ddjvu_page_set_rotation(ddjvu_page_t *page,
         case DDJVU_ROTATE_90:
         case DDJVU_ROTATE_180:
         case DDJVU_ROTATE_270:
-          if (page->img && page->pageinfoflag)
+          if (page && page->img && page->pageinfoflag)
             {
               int old = page->img->get_rotate();
               if (old != (int)rot)
@@ -2169,7 +2181,10 @@ ddjvu_printjob_s::cbrefresh(void *data)
 {
   ddjvu_printjob_s *self = (ddjvu_printjob_s*)data;
   if (self->mystop)
-    G_THROW("STOP");
+    {
+      msg_push(xhead(DDJVU_INFO,self), msg_prep_info("Print job stopped"));
+      G_THROW("STOP");
+    }
 }
 
 void

@@ -161,9 +161,6 @@ handle(int wait)
             fprintf(stderr,"ddjvu: '%s:%d'\n", 
                     msg->m_error.filename, msg->m_error.lineno);
           exit(10);
-        case DDJVU_INFO:
-          fprintf(stderr,"ddjvu info: %s\n", msg->m_info.message);
-          break;
         default:
           break;
         }

@@ -311,8 +311,9 @@ ddjvu_job_stop(ddjvu_job_t *job);
 /* ddjvu_job_set_user_data ---
    ddjvu_job_get_user_data ---
    Each job can store an arbitray pointer
-   that callers can use for any purpose. These two functions
-   provide for accessing or setting this pointer. */
+   that callers can use for any purpose. These two 
+   functions provide for accessing or setting this pointer. 
+   This pointer is cleared when the job is released */
 
 DDJVUAPI void
 ddjvu_job_set_user_data(ddjvu_job_t *job, void *userdata);
@@ -322,11 +323,11 @@ ddjvu_job_get_user_data(ddjvu_job_t *job);
 
 
 /* ddjvu_job_release ---
-   Releases a reference to a job object.
-   This will not cause the job to stop executing.
+   Releases a reference to a job object and clears its user 
+   data field.  This does not cause the job to stop executing.
    The calling program should no longer reference this object.
-   The object itself will be destroyed as soon as no other object
-   or thread needs it. */
+   The object itself will be destroyed as soon as no 
+   other object or thread needs it. */
 
 DDJVUAPI void
 ddjvu_job_release(ddjvu_job_t *job);
@@ -614,9 +615,11 @@ ddjvu_document_get_pagenum(ddjvu_document_t *document);
 /* ddjvu_document_get_pageinfo ---
    Attempts to obtain information about page <pageno>
    without decoding the page. If the information is available,
-   the function returns <DDJVU_JOB_OK> and fills the <info> 
-   structure. Otherwise it starts fetching the page data 
-   and returns <DDJVU_JOB_STARTED>.  Typical usage:
+   the function returns <DDJVU_JOB_OK> and fills the <info> structure. 
+   Otherwise it starts fetching page data and returns <DDJVU_JOB_STARTED>. 
+   This function causes the emission of <m_pageinfo> messages 
+   with zero in the <m_any.page> field.
+   Typical synchronous usage:
 
    ddjvu_status_t r;
    ddjvu_pageinfo_t info;
@@ -718,12 +721,15 @@ ddjvu_page_job(ddjvu_page_t *page);
 
 
 /* ddjvu_message_t::m_pageinfo ---
-   This message is generated in two occasions:
+   The page decoding process generates this message
    - when basic page information is available and 
      before any <m_relayout> or <m_redisplay> message,
    - when the page decoding thread terminates.
    You can distinguish both cases using 
    function ddjvu_page_decoding_done().
+   Messages <m_pageinfo> are also generated as a consequence of 
+   functions such as <ddjvu_document_get_pageinfo>. 
+   The field <m_any.page> of such message is null.
 */
 
 struct ddjvu_message_pageinfo_s {  /* ddjvu_message_t::m_pageinfo */
