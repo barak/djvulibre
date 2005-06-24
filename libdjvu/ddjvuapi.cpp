@@ -486,7 +486,7 @@ ddjvu_cache_set_size(ddjvu_context_t *ctx,
 {
   G_TRY
     {
-      GMonitorLock(&ctx->monitor);
+      GMonitorLock lock(&ctx->monitor);
       if (ctx->cache && cachesize>0)
         ctx->cache->set_max_size(cachesize);
     }
@@ -502,7 +502,7 @@ ddjvu_cache_get_size(ddjvu_context_t *ctx)
 {
   G_TRY
     {
-      GMonitorLock(&ctx->monitor);
+      GMonitorLock lock(&ctx->monitor);
       if (ctx->cache)
         return ctx->cache->get_max_size();
     }
@@ -519,7 +519,7 @@ ddjvu_cache_clear(ddjvu_context_t *ctx)
 {
   G_TRY
     {
-      GMonitorLock(&ctx->monitor);
+      GMonitorLock lock(&ctx->monitor);
       if (ctx->cache)
         return ctx->cache->clear();
     }
@@ -650,7 +650,7 @@ ddjvu_message_peek(ddjvu_context_t *ctx)
 {
   G_TRY
     {
-      GMonitorLock(&ctx->monitor);
+      GMonitorLock lock(&ctx->monitor);
       GPosition p = ctx->mlist;
       if (p) 
         return &ctx->mlist[p]->p;
@@ -667,7 +667,7 @@ ddjvu_message_wait(ddjvu_context_t *ctx)
 {
   G_TRY
     {
-      GMonitorLock(&ctx->monitor);
+      GMonitorLock lock(&ctx->monitor);
       while (! ctx->mlist.size())
         ctx->monitor.wait();
       GPosition p = ctx->mlist;
@@ -686,7 +686,7 @@ ddjvu_message_pop(ddjvu_context_t *ctx)
 {
   G_TRY
     {
-      GMonitorLock(&ctx->monitor);
+      GMonitorLock lock(&ctx->monitor);
       GPosition p = ctx->mlist;
       if (p) 
         ctx->mlist.del(p);
@@ -702,7 +702,7 @@ ddjvu_message_set_callback(ddjvu_context_t *ctx,
                            ddjvu_message_callback_t callback,
                            void *closure)
 {
-  GMonitorLock(&ctx->monitor);
+  GMonitorLock lock(&ctx->monitor);
   ctx->callbackfun = callback;
   ctx->callbackarg = closure;
 }
@@ -1904,7 +1904,7 @@ ddjvu_thumbnail_p::callback(void *cldata)
   ddjvu_thumbnail_p *thumb = (ddjvu_thumbnail_p*)cldata;
   if (thumb->document)
     {
-      GMonitorLock(&thumb->document->monitor);
+      GMonitorLock lock(&thumb->document->monitor);
       if (thumb->pool && thumb->pool->is_eof())
         {
           GP<DataPool> pool = thumb->pool;
@@ -1936,7 +1936,7 @@ ddjvu_thumbnail_status(ddjvu_document_t *document, int pagenum, int start)
 {
   G_TRY
     {
-      GMonitorLock(&document->monitor);
+      GMonitorLock lock(&document->monitor);
       GPosition p = document->thumbnails.contains(pagenum);
       GP<ddjvu_thumbnail_p> thumb;
       if (p)
@@ -1986,7 +1986,7 @@ ddjvu_thumbnail_render(ddjvu_document_t *document, int pagenum,
       ddjvu_status_t status = ddjvu_thumbnail_status(document,pagenum,FALSE);
       if (status == DDJVU_JOB_OK)
         {
-          GMonitorLock(&document->monitor);
+          GMonitorLock lock(&document->monitor);
           thumb = document->thumbnails[pagenum];
         }
       if (! (thumb && wptr && hptr))
