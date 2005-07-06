@@ -148,38 +148,68 @@ die(const char *fmt, ...)
   exit(10);
 }
 
+const char *options[] = {
+  I18N("-verbose"),
+  I18N("-page=<pagelists>                   (default: print all)"),
+  I18N("-format=<ps|eps>                    (default: ps)"),
+  I18N("-level=<1|2|3>                      (default: 2)"),
+  I18N("-orient=<auto|portrait|landscape>   (default: auto)"),
+  I18N("-mode=<color|bw|fore|back>          (default: color)"),
+  I18N("-zoom=<auto|25...2400)              (default: auto)"),
+  I18N("-color=<yes|no>                     (default: yes)"),
+  I18N("-gray                               (same as -color=no)"),
+  I18N("-colormatch=<yes|no>                (default: yes)"),
+  I18N("-gamma=<0.3...5.0>                  (default: 2.2)"),
+  I18N("-copies=<1...999999>                (default: 1)"),
+  I18N("-frame=<yes|no>                     (default: no)"),
+  I18N("-cropmarks=<yes|no>                 (default: no)"),
+  I18N("-text=<yes|no>                      (default: no)"),
+  I18N("-booklet=<no|recto|verso|yes>       (default: no)"),
+  I18N("-bookletmax=<n>                     (default: 0)"),
+  I18N("-bookletalign=<n>                   (default: 0)"),
+  I18N("-bookletfold=<n>[+<m>]              (default: 18+200)"),
+  NULL };
+
+
 void
 usage(void)
 {
+  int i;
 #ifdef DJVULIBRE_VERSION
   fprintf(stderr, "DJVUPS --- DjVuLibre-" DJVULIBRE_VERSION "\n");
 #endif
-  fprintf(stderr, "%s",
-     i18n("DjVu to PostScript conversion utility\n\n"
-          "Usage: djvups [<options>] [<infile.djvu> [<outfile.ps>]]\n\n"
-          "Options:\n"
-          "  -help\n"
-          "  -verbose\n"
-          "  -page=<pagelists>                   (default: print all)\n"
-          "  -format=<ps|eps>                    (default: ps)\n"
-          "  -level=<1|2|3>                      (default: 2)\n"
-          "  -orient=<auto|portrait|landscape>   (default: auto)\n"
-          "  -mode=<color|bw|fore|back>          (default: color)\n"
-          "  -zoom=<auto|25...2400)              (default: auto)\n"
-          "  -color=<yes|no>                     (default: yes)\n"
-          "  -gray                               (same as -color=no)\n"
-          "  -colormatch=<yes|no>                (default: yes)\n"
-          "  -gamma=<0.3...5.0>                  (default: 2.2)\n"
-          "  -copies=<1...999999>                (default: 1)\n"
-          "  -frame=<yes|no>                     (default: no)\n"
-          "  -cropmarks=<yes|no>                 (default: no)\n"
-          "  -text=<yes|no>                      (default: no)\n"
-          "  -booklet=<no|recto|verso|yes>       (default: no)\n"
-          "  -bookletmax=<n>                     (default: 0)\n"
-          "  -bookletalign=<n>                   (default: 0)\n"
-          "  -bookletfold=<n>[+<m>]              (default: 18+200)\n"
-          "\n"));
+  fprintf(stderr, "%s\n",
+          i18n("DjVu to PostScript conversion utility\n\n"
+               "Usage: djvups [<options>] [<infile.djvu> [<outfile.ps>]]\n"
+               "Options:\n  -help"));
+  for(i=0; options[i]; i++)
+    fprintf(stderr, "  %s\n", i18n(options[i]));
+  fprintf(stderr,"\n");
   exit(1);
+}
+
+int 
+check_option(char *s)
+{
+  int i;
+  for (i=0; options[i]; i++)
+    {
+      int n = 0;
+      const char *p = options[i];
+      while (p[n] && p[n]!='=' && p[n]!=' ')
+        n += 1;
+      if (p[n]=='=' && !strncmp(s, p, n+1))
+        return 1;
+      if (p[n]!='=' && !strncmp(s, p, n) && !s[n])
+        return 1;        
+    }
+  // compatibility aliases 
+  if (!strcmp(s,"-grayscale") ||
+      !strncmp(s,"-pages=",7) ||
+      !strncmp(s,"-orientation=",13) ||
+      !strncmp(s,"-srgb=",6) )
+    return 1;
+  return 0;
 }
 
 int
@@ -200,12 +230,12 @@ main(int argc, char **argv)
       char *s = argv[i];
       if (s[0]=='-' && s[1]=='-')
         s = s+1;
-      if (!strcmp(s,"-help") && !strcmp(s,"-h"))
-        usage();
-      else if (!strcmp(s,"-verbose"))
+      if (!strcmp(s,"-verbose"))
         verbose = true;
-      else if (s[0]=='-' && s[1])
+      else if (check_option(s))
         optv[optc++] = s;
+      else if (s[0]=='-' && s[1])
+        usage();
       else if (s[0] && !infile)
         infile = s;
       else if (s[0] && !outfile)

@@ -2434,10 +2434,10 @@ ddjvu_document_print(ddjvu_document_t *document, FILE *output,
             }
           else if (s == "bookletfold")
             {
-              int endpos;
+              int endpos = 0;
               int m = 250;
               int n = arg.toLong(0, endpos);
-              if (endpos <= (int)arg.length() && arg[endpos]=='+')
+              if (endpos>0 && endpos<(int)arg.length() && arg[endpos]=='+')
                 m = arg.toLong(endpos+1, endpos);
               if (endpos != (int)arg.length() || m<0 || m>720 || n<0 || n>9999 )
                 complain(uarg,"Invalid argument.");
