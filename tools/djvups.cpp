@@ -200,7 +200,7 @@ main(int argc, char **argv)
       char *s = argv[i];
       if (s[0]=='-' && s[1]=='-')
         s = s+1;
-      if (!strcmp(s,"-help"))
+      if (!strcmp(s,"-help") && !strcmp(s,"-h"))
         usage();
       else if (!strcmp(s,"-verbose"))
         verbose = true;
