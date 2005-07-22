@@ -1027,10 +1027,6 @@ automatic color matching.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Loading page </source>
-        <translation type="obsolete"></translation>
-    </message>
-    <message>
         <source>End of document reached. Continue from the beginning?</source>
         <translation type="unfinished"></translation>
     </message>

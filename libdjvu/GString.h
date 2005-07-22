@@ -138,6 +138,10 @@ typedef int mbstate_t;
 # endif
 #endif
 
+class GBaseString;
+class GUTF8String;
+class GNativeString;
+
 // Internal string representation.
 class GStringRep : public GPEnabled
 {
@@ -433,8 +437,6 @@ protected:
   virtual unsigned long getValidUCS4(const char *&source) const;
 };
 
-class GUTF8String;
-class GNativeString;
 
 /** General purpose character string.
     Each dirivied instance of class #GBaseString# represents a
