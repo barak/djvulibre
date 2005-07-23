@@ -72,6 +72,15 @@ by the separated data but are called for by the DjVu specification.  Such
 background images always come at the lowest possible resolution and with a
 standard quality setting that ensures the color uniformity.
 .TP
+.B "-t"
+Program 
+.B csepdjvu
+interprets certain comments in the separated file to
+construct a hidden text layer in the DjVu file. This layer
+records the location of each word for hiliting purposes. 
+This option reduces the file size by simply recording the
+location of each line.
+.TP
 .B "-v"
 Display a brief message describing each page.
 .TP
@@ -97,8 +106,8 @@ of a background image simply indicates that a uniformly white background
 should be assumed.
 .IP "*" 3
 An arbitrary number of comment lines starting with character "#" and
-terminated by a linefeed character.  Comment lines whose first word starts
-with a capital letter are reserved for future extensions.
+terminated by a linefeed character. Comment lines whose first word starts
+with a capital letter have special meanings documented later in this document.
 .PP
 The dimensions (width and height) of the background image must be obtained by
 rounding up the quotient of the foreground image dimensions by an integer
@@ -177,6 +186,56 @@ The rest of the file encodes all the pixels.  Each pixel is represented by
 three bytes representing the red, green and blue component of the pixel.
 Pixels are ordered in left to right, top to bottom.
 
+.SS Comments in separated files
+
+Each page is followed by an arbitrary number of comment lines 
+starting with character "#" and terminated by a linefeed character. 
+Comment lines whose first word starts with a capital letter have 
+special meanings. The following constructs are currently defined:
+.IP "*" 3
+.BI "# T " px ":" py " " dx ":" dy " " w "x" h "+" x "+" y " (" string ")"
+.br
+This constructs indicates that the piece of text
+.I string
+must be associated with an area of size
+.IR w "x" h
+at position 
+.IR x "," y
+relative to the lower left corner of the page.
+The string is UTF-8 encoded. Special characters
+can be escaped as in PostScript using the backslash character.
+Integers
+.IR px ", and " py
+represent the position of the current point on the text baseline
+before the text was drawn. The drawing operation then moves the
+current point by 
+.IR dx ", and " dy
+pixels.
+.IP "*" 3
+.BI "# L " w "x" h "+" x "+" y " (" url ")"
+.br
+This construct indicates that an hyperlink to url
+.I url
+should be associated with area of size
+.IR w "x" h
+at position 
+.IR x "," y "."
+This is not currently supported by 
+.BR csepdjvu .
+.IP "*" 3
+.BI "# B " count " (" string ") (#" pageno ")"
+.br
+This constructs provides outline information for the document.
+An outline entry entitled
+.I string
+is associated with page
+.IR pageno .
+Integer 
+.I count 
+indicates how many of the following outline entries must
+be attached to the current entry as subentries.
+This is not currently supported by 
+.BR csepdjvu .
 
 .SH CREDITS
 

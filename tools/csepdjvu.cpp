@@ -155,6 +155,8 @@
 #include "GOS.h"
 #include "GURL.h"
 #include "DjVuMessage.h"
+#include "DjVuText.h"
+#include "BSByteStream.h"
 
 #include "jb2tune.h"
 
@@ -169,16 +171,43 @@ inline int MAX(int a, int b) { return ( a>b ?a :b); }
 
 
 // --------------------------------------------------
+// OPTIONS
+// --------------------------------------------------
+
+
+struct csepdjvuopts
+{
+  int dpi;                  // resolution
+  int verbose;              // verbosity level
+  DjVuTXT::ZoneType text;   // level of text detail
+  unsigned char slice[16];  // background quality spec
+  csepdjvuopts();
+};
+
+csepdjvuopts::csepdjvuopts()
+{
+      dpi = 300;
+      verbose = 0;
+      text = DjVuTXT::WORD;
+      slice[0] =  72;
+      slice[1] =  83;      
+      slice[2] =  93;
+      slice[3] = 103;
+      slice[4] =   0;
+}
+
+
+// --------------------------------------------------
 // BUFFERED BYTESTREAM
 // --------------------------------------------------
 
 // -- A bytestream that performs buffering and 
-//    offers a stdio-like interface for reading files.
+//    offers a stdio-like interface for parsing files.
 
 class BufferByteStream : public ByteStream 
 {
 public:
-	enum {bufsize=512};
+  enum {bufsize=512};
 private:
   ByteStream &bs;
   unsigned char buffer[bufsize];
@@ -192,6 +221,13 @@ public:
   int eof(void);
   int unget(int c);
   inline int get(void);
+  // parsing helpers
+  bool skip(const char *s = " \t\n\r");
+  bool expect(int &c, const char *s); 
+  bool read_integer(int &x);
+  bool read_pair(int &x, int &y);
+  bool read_geometry(GRect &r);
+  bool read_ps_string(GUTF8String &s);
 };
 
 BufferByteStream::BufferByteStream(ByteStream &bs)
@@ -252,13 +288,140 @@ BufferByteStream::get(void) // aka. getc()
 int  
 BufferByteStream::unget(int c) // aka. ungetc()
 {
-  if (bufpos > 0) 
+  if (bufpos > 0 && c != EOF) 
     return buffer[--bufpos] = (unsigned char)c;
   return EOF;
 }
-  
 
+bool 
+BufferByteStream::expect(int &c, const char *s)
+{
+  c = get();
+  if (strchr(s, c))
+    return true;
+  unget(c);
+  return false;
+}
 
+bool
+BufferByteStream::skip(const char *s)
+{
+  int c;
+  while (expect(c, s)) { }
+  return true;
+}
+
+bool 
+BufferByteStream::read_integer(int &x)
+{
+  x = 0;
+  int c = get();
+  if (c<'0' || c>'9')
+    return false;
+  while (c>='0' && c<='9') 
+    {
+      x = x*10 + c - '0';
+      c = get();
+    }
+  unget(c);
+  return true;
+}
+
+bool 
+BufferByteStream::read_pair(int &x, int &y)
+{
+  int c;
+  x = y = 0;
+  return read_integer(x) && expect(c, ":") && read_integer(y);
+}
+
+bool 
+BufferByteStream::read_geometry(GRect &r)
+{
+  int x,y,w,h,c;
+  x = y = w = h = 0;
+  if (read_integer(w) && expect(c, "x") && read_integer(h))
+    {
+      if (expect(c,"+-"))
+        {
+          if (! read_integer(x))
+            return false;
+          if (c == '-')
+            x = -x;
+        }
+      if (expect(c,"+-"))
+        {
+          if (! read_integer(y))
+            return false;
+          if (c == '-')
+            y = -y;
+        }
+      r = GRect(x,y,w,h);
+      return true;
+    }
+  return false;
+}
+
+bool 
+BufferByteStream::read_ps_string(GUTF8String &s)
+{
+  unsigned int pos = 0;
+  char buffer[512];
+  if (get() != '(') 
+    return false;
+  s = "";
+  for(;;)
+    {
+      int c = get();
+      if (c == '\n' || c == '\r')
+        return false;
+      if (c == ')')
+        break;
+      if (c == '\\')
+        {
+          c = get();
+          switch (c) 
+            {
+            case 'n': 
+              c='\n' ; break;
+            case 'r': 
+              c='\r' ; break;
+            case 't': 
+              c='\t' ; break;
+            case 'b': 
+              c='\b' ; break;
+            case 'f': 
+              c='\f' ; break;
+            default:
+              if (c>='0' && c<='7') 
+                {
+                  int n = 0;
+                  int x = 0;
+                  while (c>='0' && c<='7' && n<3)
+                    {
+                      x = (x * 8) + c - '0';
+                      c = get();
+                      n++;
+                    }
+                  unget(c);
+                  c = x;
+                }
+              break;
+            }
+        }
+      if (c == EOF)
+        return false;
+      if (pos+1 >= (int)sizeof(buffer))
+        {
+          buffer[pos] = 0;
+          s += buffer;
+        }
+      buffer[pos++] = c;
+    }
+  buffer[pos] = 0;
+  s += buffer;
+  return true;
+}
 
 // --------------------------------------------------
 // COLOR CONNECTED COMPONENT ANALYSIS
@@ -314,58 +477,47 @@ public:
   void merge_and_split_ccs(int smallsize, int largesize);
   void sort_in_reading_order(); 
 private:
-  unsigned int read_integer(char &c, ByteStream &bs);
+  unsigned int read_integer(BufferByteStream &bs);
   void insert_runs(int y, const short *x1x2color, int nruns);
 };
 
 
 // -- Helper for CRLEImage::CRLEImage(ByteStream &bs)
 unsigned int 
-CRLEImage::read_integer(char &c, ByteStream &bs)
+CRLEImage::read_integer(BufferByteStream &bs)
 {
-  unsigned int x = 0;
-  // Eat blanks before integer
-  while (c==' ' || c=='\t' || c=='\r' || c=='\n' || c=='#') 
+  int c, x;
+  while (bs.skip() && bs.expect(c, "#"))
     {
-      if (c=='#') 
+      char buffer[256];
+      char *s = buffer;
+      while (c != EOF && c != '\n' && c != '\r')
         {
-          char buffer[256];
-          char *s = buffer;
-          while (bs.read(&c,1) && c!='\n' && c!='\r')
-            if (s - buffer < (int)(sizeof(buffer) - 1))
-              *s++ = c;
-          *s = 0;
-          // Analyze comment flags
-          for (s = buffer; *s; s++) 
+          if (s - buffer < (int)sizeof(buffer) - 1)
+            *s++ = c;
+          c = bs.get();
+        }
+      *s = 0;
+      for(s = buffer; *s; s++)
+        {
+          if (!strncmp(s, "bg-", 3))
             {
-              if (!GStringRep::cmp(s, "bg-", 3))
-                {
-                  if (!GStringRep::cmp(s+3,"bw",2)   ||
-                      !GStringRep::cmp(s+3,"gray",4) ||
-                      !GStringRep::cmp(s+3,"color",5)  )
-                    bg_flags = s[3];
-                }
-              else if (!GStringRep::cmp(s, "fg-", 3))
-                {
-                  if (!GStringRep::cmp(s+3,"bw",2) ||
-                      !GStringRep::cmp(s+3,"gray",4) ||
-                      !GStringRep::cmp(s+3,"color",5)  )
-                    fg_flags = s[3];
-                }
+              if (!strncmp(s+3,"bw",2)   ||
+                  !strncmp(s+3,"gray",4) ||
+                  !strncmp(s+3,"color",5)  )
+                bg_flags = s[3];
+            }
+          if (!strncmp(s, "fg-", 3))
+            {
+              if (!strncmp(s+3,"bw",2)   ||
+                  !strncmp(s+3,"gray",4) ||
+                  !strncmp(s+3,"color",5)  )
+                fg_flags = s[3];
             }
         }
-      c = 0; 
-      bs.read(&c, 1);
     }
-  // Read integer
-  if (c<'0' || c>'9')
-      G_THROW("csepdjvu: corrupted input file (bad file header)");
-  while (c>='0' && c<='9') 
-    {
-      x = x*10 + c - '0';
-      c = 0;
-      bs.read(&c, 1);
-    }
+  if (! bs.read_integer(x) )
+    G_THROW("csepdjvu: corrupted input file (bad file header)");
   return x;
 }
 
@@ -398,9 +550,8 @@ CRLEImage::CRLEImage(BufferByteStream &bs)
   : height(0), width(0), nregularccs(0), bg_flags(0), fg_flags(0)
 {
   unsigned int magic = bs.read16();
-  char lookahead = '\n';
-  width = read_integer(lookahead, bs);
-  height = read_integer(lookahead, bs);
+  width = read_integer(bs);
+  height = read_integer(bs);
   if (width<1 || height<1)
     G_THROW("csepdjvu: corrupted input file (bad image size)");
   // An array for the runs and the buffered data
@@ -408,6 +559,8 @@ CRLEImage::CRLEImage(BufferByteStream &bs)
   // File format switch
   if (magic == 0x5234) // Black&White RLE data
     {
+      // Skip one character
+      bs.get(); 
       // Setup palette with one color
       pal = DjVuPalette::create();
       static char zeroes[4];
@@ -448,10 +601,13 @@ CRLEImage::CRLEImage(BufferByteStream &bs)
             }
         }
     } else if (magic == 0x5236) { // Color-RLE data 
+      // Read ncolors and skip one character.
+      int ncolors = read_integer(bs);
+      bs.get();
       // Setup palette 
-      int ncolors = read_integer(lookahead, bs);
       if (ncolors<1 || ncolors>4095) 
         G_THROW("csepdjvu: corrupted input file (bad number of colors)");
+
       pal = DjVuPalette::create();
       pal->decode_rgb_entries(bs, ncolors);
       // RLE format
@@ -889,18 +1045,14 @@ CRLEImage::get_bitmap_for_cc(const int ccid) const
 GP<GPixmap>
 read_background(BufferByteStream &bs, int w, int h, int &bgred)
 {
+  // Skip null bytes (why?)
   int lookahead;
-  // Peek next non null byte
-  while (! (lookahead = bs.get())) /**/;
-  if (lookahead != EOF)
-    bs.unget(lookahead);
+  while (! (lookahead = bs.get())) { }
+  bs.unget(lookahead);
+  // Check pixmap
   if (lookahead != 'P') 
     return 0;
-  // Check pixmap
   GP<GPixmap> pix = GPixmap::create(bs);
-  while (! (lookahead = bs.get())) /**/;
-  if (lookahead != EOF)
-    bs.unget(lookahead);
   // Check background reduction
   for (bgred=1; bgred<12; bgred++) 
     {
@@ -916,19 +1068,291 @@ read_background(BufferByteStream &bs, int w, int h, int &bgred)
 }
 
 
+// --------------------------------------------------
+// HANDLE COMMENTS IN SEP FILES
+// --------------------------------------------------
+
+class Comments
+{
+public:
+  Comments(int w, int h, const csepdjvuopts &opts);
+  void process_comments(BufferByteStream &bs, int verbose=0);
+  bool parse_comment_line(BufferByteStream &bs);
+  void make_chunks(IFFByteStream &iff);
+protected:
+  int w;
+  int h;
+  GRectMapper mapper;
+  DjVuTXT::ZoneType detail;
+  int lastx, lasty;
+  int lastdirx, lastdiry;
+  int lastsize[3];
+  struct TxtMark : public GPEnabled {
+    int x,y,dx,dy;
+    int inter;
+    GRect r;
+    GUTF8String s;
+  };
+  GPList<TxtMark> lastline;
+  GP<DjVuTXT> txt;
+protected:
+  bool allspace(const TxtMark *mark);
+  void textmark(GP<TxtMark> mark);
+  void textflush(void);
+};
+
+Comments::Comments(int w, int h, const csepdjvuopts &opts)
+  : w(w), h(h), detail(opts.text)
+{
+  GRect pagerect(0,0,w,h);
+  mapper.set_input(pagerect);
+  mapper.set_output(pagerect);
+  mapper.mirrory();
+}
+
+void 
+Comments::process_comments(BufferByteStream &bs, int verbose)
+{
+  int c;
+  // Skip null bytes
+  while (! (c = bs.get())) { }
+  // Process comment lines
+  while (c == '#')
+    {
+      bs.skip();
+      bool status = parse_comment_line(bs);
+      bool display = false;
+      if (verbose>1)
+        {
+          if (status)
+            {
+              bs.skip(" \t");
+              c = bs.get();
+              bs.unget(c);
+              if (c != '\r' && c != '\n')
+                display = true;
+              if (display)
+                DjVuPrintErrorUTF8("csepdjvu: garbage in comments: '");
+            }
+          else
+            {
+              display = true;
+              DjVuPrintErrorUTF8("csepdjvu: unrecognized comment '# ");
+            }              
+        }
+      c = bs.get();
+      while (c != EOF && c != '\r' && c != '\n')
+        {
+          if (display)
+            DjVuPrintErrorUTF8("%c", c);
+          c = bs.get();
+        }
+      if (display)
+        DjVuPrintErrorUTF8("'\n");
+      bs.skip();
+      c = bs.get();
+    }
+  bs.unget(c);
+}
+
+bool
+Comments::parse_comment_line(BufferByteStream &bs)
+{
+  int c = bs.get();
+  // Text comments
+  if (c == 'T')
+    {
+      GP<TxtMark> mark = new TxtMark;
+      if (! (bs.skip(" \t") && bs.read_pair(mark->x,mark->y) &&
+             bs.skip(" \t") && bs.read_pair(mark->dx,mark->dy) &&
+             bs.skip(" \t") && bs.read_geometry(mark->r) &&
+             bs.skip(" \t") && bs.read_ps_string(mark->s) ) )
+        G_THROW("msepdjvu: corrupted file (syntax error in text comment)");
+      textmark(mark);
+      return true;
+    }
+  // Unrecognized
+  bs.unget(c);
+  return false;
+}
+
+static int 
+median3(int *p)
+{
+  if (p[0] > p[1])
+    return MAX(p[1],MIN(p[0],p[2]));
+  else
+    return MIN(p[1],MAX(p[0],p[2]));
+}
+
+static bool 
+allspaces(const GUTF8String &s)
+{
+  bool ok = true;
+  for (int i=0; ok && i<(int)s.length(); i++)
+    if (s[i] != ' ')
+      ok = false;
+  return ok;
+}
+
+void 
+Comments::textmark(GP<TxtMark> mark)
+{
+  // determine direction
+  int dirx = 0;
+  int diry = 0;
+  int size = 0;
+  if (abs(mark->dx) > 8*abs(mark->dy))
+    {
+      dirx = (mark->dx > 0) ? +1 : -1;
+      size = mark->r.height();
+    }
+  else if (abs(mark->dy) > 8*abs(mark->dy))
+    {
+      diry = (mark->dy > 0) ? +1 : -1;
+      size = mark->r.width();
+    }
+  // make mark
+  mark->inter = 0;
+  // flush previous line
+  if (lastline.size())
+    {
+      if (size != lastsize[0])
+        {
+          lastsize[2] = lastsize[1];
+          lastsize[1] = lastsize[0];
+          lastsize[0] = size;
+        }
+      int fontsize = median3(lastsize) + 1;
+      int shx = (mark->x - lastx) * 100 / fontsize;
+      int shy = (mark->y - lasty) * 100 / fontsize;
+      int inter = dirx * shx + diry * shy;
+      if ( (dirx == lastdirx) && (diry == lastdiry) &&
+           (inter > -50) && (inter < 300) && 
+           abs(diry * shx + dirx * shy) < 80 )
+        mark->inter = inter;
+      else
+        textflush();
+    }
+  if (! lastline.size())
+    lastsize[0] = lastsize[1] = lastsize[2] = size;
+  lastline.append(mark);
+  lastdirx = dirx;
+  lastdiry = diry;
+  lastx = mark->x + mark->dx;
+  lasty = mark->y + mark->dy;
+}
+
+void 
+Comments::textflush(void)
+{
+  int size = lastline.size();
+  if (size > 0)
+    {
+      // compute word spacing
+      int i = 0;
+      GTArray<int> inter(0,size-1);
+      for (GPosition p=lastline; p; ++p)
+        inter[i++] = lastline[p]->inter;
+      inter.sort();
+      int wordsep = MAX(10, 2 * inter[(2*size)/3]);
+      // compute word list
+      GP<TxtMark> word;
+      GPList<TxtMark> words;
+      for (GPosition p=lastline; p; ++p)
+        {
+          TxtMark *mark = lastline[p];
+          if (word && mark->inter > wordsep) 
+            {
+              if (! allspaces(word->s))
+                words.append(word);
+              word = 0;
+            }
+          if (! word) 
+            {
+              word = mark;
+            } 
+          else 
+            {
+              word->dx += mark->dx;
+              word->dy += mark->dy;
+              word->s += mark->s;
+              word->r.recthull(word->r, mark->r);
+            }
+        }
+      if (word)
+        {
+          if (! allspaces(word->s))
+            words.append(word);
+          word = 0;
+        }
+      // create text data
+      int size = words.size();
+      if (size)
+        {
+          DjVuTXT::Zone *lzone = 0;
+          for (GPosition p = words; p; ++p)
+            {
+              word = words[p];
+              mapper.map(word->r);
+              if (! lzone)
+                {
+                  if (! txt)
+                    {
+                      txt = DjVuTXT::create();
+                      txt->page_zone.ztype = DjVuTXT::PAGE;
+                      txt->page_zone.rect = GRect(0,0,w,h);
+                      txt->page_zone.text_start = 0;
+                      txt->page_zone.text_length = 0;
+                    }
+                  lzone = txt->page_zone.append_child();
+                  lzone->ztype = DjVuTXT::LINE;
+                  lzone->text_start = txt->textUTF8.length();
+                  lzone->text_length = 0;
+                }
+              if (detail >= DjVuTXT::WORD)
+                {
+                  DjVuTXT::Zone *wzone = lzone->append_child();
+                  wzone->ztype = DjVuTXT::WORD;
+                  wzone->text_start = txt->textUTF8.length();
+                  txt->textUTF8 += word->s;
+                  wzone->text_length = txt->textUTF8.length() - wzone->text_start;
+                  wzone->rect = word->r;
+                  lzone->rect.recthull(lzone->rect, word->r);
+                }
+              else
+                {
+                  if (lzone->text_length > 0) txt->textUTF8 += " ";
+                  txt->textUTF8 += word->s;
+                  lzone->text_length = txt->textUTF8.length() - lzone->text_start;
+                  lzone->rect.recthull(lzone->rect, word->r);
+                }
+            }
+        }
+    }
+  lastline.empty();
+}
+
+void 
+Comments::make_chunks(IFFByteStream &iff)
+{
+  // Write text chunk
+  textflush();
+  if (txt)
+    {
+      txt->normalize_text();
+      iff.put_chunk("TXTz");
+      {
+        GP<ByteStream> bsb = BSByteStream::create(iff.get_bytestream(), 50);
+        txt->encode(bsb);
+      }
+      iff.close_chunk();
+    }
+}
 
 // --------------------------------------------------
 // MAIN COMPRESSION ROUTINE
 // --------------------------------------------------
-
-
-// -- Options
-struct csepdjvuopts
-{
-  int dpi;                  // resolution
-  int verbose;              // verbosity level
-  unsigned char slice[16];  // background quality spec
-};
 
 
 // -- Compresses one page:
@@ -1007,6 +1431,10 @@ csepdjvu_page(BufferByteStream &bs, GP<ByteStream> obs, const csepdjvuopts &opts
   GP<GPixmap> bgpix = read_background(bs, w, h, bgred);
   if (opts.verbose > 1 && bgpix)
     DjVuFormatErrorUTF8( "%s\t%d", ERR_MSG("csepdjvu.reduction"), bgred);
+
+  // Process comments
+  Comments coms(w, h, opts);
+  coms.process_comments(bs, opts.verbose);
   
   // Compute flags for simplifying output format
   bool white_background = (bgpix ? false : true);
@@ -1099,6 +1527,7 @@ csepdjvu_page(BufferByteStream &bs, GP<ByteStream> obs, const csepdjvuopts &opts
         }
     }
   // -- terminate main composite chunk
+  coms.make_chunks(iff);
   iff.close_chunk();
 }  
 
@@ -1106,36 +1535,18 @@ csepdjvu_page(BufferByteStream &bs, GP<ByteStream> obs, const csepdjvuopts &opts
 bool
 check_for_another_page(BufferByteStream &bs, const csepdjvuopts &opts)
 {
+  // Skip null bytes (why?)
   int lookahead;
-  for(;;) 
-    {
-      // Read next non zero byte
-      while (! (lookahead = bs.get())) /**/;
-      // Process well known cases
-      if (lookahead == 'R') {
-        /* Found page */
-        bs.unget(lookahead);
-        return true;
-      } else if (lookahead != '#') {
-        if (lookahead != EOF) 
-          DjVuPrintErrorUTF8("%s","csepdjvu: found corrupted data\n");
-        break;
-      }
-      // Skip comment line.
-      if (opts.verbose > 1)
-        DjVuPrintErrorUTF8("%s","csepdjvu: comment \"#");
-      lookahead = bs.get();
-      while (lookahead!=EOF && lookahead!='\n' && lookahead!='\r') {
-        if (opts.verbose > 1)
-          DjVuPrintErrorUTF8("%c",lookahead);
-        lookahead = bs.get();
-      }
-      if (opts.verbose > 1)
-        DjVuPrintErrorUTF8("%s","\"\n");
-    }
+  while (! (lookahead = bs.get())) { }
+  bs.unget(lookahead);
+  // Check next header
+  if (lookahead == 'R') 
+    return true;
+  if (lookahead != EOF) 
+    DjVuPrintErrorUTF8("%s","csepdjvu: found corrupted data\n");
   return false;
 }
-      
+
 
 // -- Prints usage message
 void
@@ -1148,11 +1559,11 @@ usage()
          "DjVu encoder working with \"separated\" files\n\n"
          "Usage: csepdjvu <...options_or_separatedfiles...> <outputdjvufile>\n"
          "Options are:\n"
-         "   -d <n>     Sets resolution to <n> dpi (default: 300).\n"
-         "   -q <spec>  Selects quality level for background (default: 72+11+10+10)\n"
-         "              See option -slice in program c44 for additional information\n"
-         "   -v         Displays a brief message per page.\n"
-         "   -vv        Displays lots of messages.\n"
+         "   -v, -vv    Select verbosity level.\n"
+         "   -d <n>     Set resolution to <n> dpi (default: 300).\n"
+         "   -t         Restricts text information to lines only.\n"
+         "   -q <spec>  Select quality level for background (default: 72+11+10+10);\n"
+         "              see option -slice in program c44 for additional information.\n"
          "Each separated files contain one or more pages\n"
          "Each page is composed of:\n"
          " (1) a B&W-RLE or Color-RLE image representing the foreground,\n"
@@ -1208,14 +1619,6 @@ main(int argc, const char **argv)
       GP<ByteStream> goutputpage=ByteStream::create();
       csepdjvuopts opts;
       int pageno = 0;
-      // Defaults
-      opts.dpi = 300;
-      opts.verbose = false;
-      opts.slice[0] =  72;
-      opts.slice[1] =  83;      
-      opts.slice[2] =  93;
-      opts.slice[3] = 103;
-      opts.slice[4] =   0;
       // Read outputurl name
       if (argc < 3) usage();
       outputurl = GURL::Filename::UTF8(dargv[--argc]);
@@ -1227,6 +1630,8 @@ main(int argc, const char **argv)
             opts.verbose = 1;
           else if (arg == "-vv")
             opts.verbose = 2;
+          else if (arg == "-t")
+            opts.text = DjVuTXT::LINE;
           else if (arg == "-d" && i+1<argc)
             {
               // Specify resolution
