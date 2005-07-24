@@ -63,9 +63,11 @@ PROGRAMS = bzz c44 cjb2 cpaldjvu csepdjvu \
 	   djvups djvuextract djvumake \
 	   djvused djvutxt djvuserve
 
+SCRIPTS = djvudigital
+
 all: ${PROGRAMS} 
 
-install: install-bin install-man
+install: install-bin install-scripts install-man
 
 install-bin: ${PROGRAMS} FORCE
 	${INSTALL} -d ${DESTDIR}${bindir}
@@ -73,6 +75,12 @@ install-bin: ${PROGRAMS} FORCE
 	  ${LIBTOOL} --mode=install \
 	    ${INSTALL_PROGRAM} -s $$n ${DESTDIR}${bindir} \
           || exit ; done
+
+install-scripts: FORCE
+	${INSTALL} -d ${DESTDIR}${bindir}
+	for n in ${SCRIPTS} ; do \
+	  ${INSTALL_PROGRAM} -m 0755 ${srcdir}/$$n ${DESTDIR}${bindir} \
+	  || exit ; done
 
 install-man: FORCE
 	${INSTALL} -d ${DESTDIR}${mandir}/man1
