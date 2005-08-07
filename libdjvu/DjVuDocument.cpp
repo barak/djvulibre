@@ -1411,11 +1411,8 @@ DjVuDocument::notify_file_flags_changed(const DjVuFile * source,
           can_compress_flag=true;
         }
       }
-      process_threqs();
    }
-   
-   if (set_mask & DjVuFile::DATA_PRESENT)
-      process_threqs();		// May be we can extract thumbnails now
+   process_threqs();
 }
 
 GP<DjVuFile>

@@ -1040,7 +1040,7 @@ ddjvu_document_get_pageinfo(ddjvu_document_t *document, int pageno,
         {
           document->pageinfoflag = true;
           GP<DjVuFile> file = doc->get_djvu_file(pageno);
-          if (! file || ! file->is_all_data_present() )
+          if (! file || ! file->is_data_present() )
             return DDJVU_JOB_STARTED;
           const GP<ByteStream> pbs(file->get_djvu_bytestream(false, false));
           const GP<IFFByteStream> iff(IFFByteStream::create(pbs));

@@ -296,6 +296,8 @@ DjVuMessage::GetProfilePaths(void)
       appendPath(GURL::UTF8(ModuleDjVuDir,mpath),pathsmap,paths);
       mpath=mpath.base();
       appendPath(GURL::UTF8(ModuleDjVuDir,mpath),pathsmap,paths);
+      mpath=mpath.base();
+      appendPath(GURL::UTF8(ModuleDjVuDir,mpath),pathsmap,paths);
     }
 #endif
 #if defined(AUTOCONF)

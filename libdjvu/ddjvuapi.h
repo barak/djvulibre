@@ -1046,8 +1046,9 @@ ddjvu_format_release(ddjvu_format_t *format);
 /* ddjvu_thumbnail_status ---
    Determine whether a thumbnail is available for page <pagenum>.
    Calling this function with non zero argument <start> initiates
-   a thumbnail calculation job. The completion of the job
-   is signalled by a subsequent <m_thumbnail> message. */
+   a thumbnail calculation job. Regardless of its success,
+   the completion of the job is signalled by a subsequent 
+   <m_thumbnail> message. */
 
 DDJVUAPI ddjvu_status_t
 ddjvu_thumbnail_status(ddjvu_document_t *document, int pagenum, int start);
