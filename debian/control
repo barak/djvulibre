@@ -8,7 +8,7 @@ Standards-Version: 3.6.2
 Package: libdjvulibre-dev
 Section: devel
 Architecture: any
-Depends: ${shlibs:Depends}, libdjvulibre1 (= ${Source-Version})
+Depends: ${shlibs:Depends}, libdjvulibre15 (= ${Source-Version})
 Description: Development files for the DjVu image format
  DjVu image format static library and development files.
  .
@@ -24,7 +24,7 @@ Description: Development files for the DjVu image format
  is practical for distributing high-resolution scanned documents in
  color.
 
-Package: libdjvulibre1
+Package: libdjvulibre15
 Section: libs
 Architecture: any
 Depends: ${shlibs:Depends}
@@ -34,7 +34,7 @@ Description: Runtime support for the DjVu image format
 Package: djview
 Section: graphics
 Architecture: any
-Depends: ${shlibs:Depends}, libdjvulibre1 (= ${Source-Version})
+Depends: ${shlibs:Depends}, libdjvulibre15 (= ${Source-Version})
 Suggests: djvulibre-bin
 Description: Viewer for the DjVu image format
  DjVu viewer djview.
@@ -53,7 +53,7 @@ Description: CGI program for unbundling DjVu files on the fly
 Package: djvulibre-bin
 Section: graphics
 Architecture: any
-Depends: curl, ${shlibs:Depends}, libdjvulibre1 (= ${Source-Version})
+Depends: curl, ${shlibs:Depends}, libdjvulibre15 (= ${Source-Version})
 Suggests: djview
 Description: Utilities for the DjVu image format
  Executables including utilities for conversion between DjVu and other
