@@ -90,7 +90,12 @@ Specify the aggressiveness of the lossy compression.
 Its argument ranges from 0 to 200. 
 Higher values generate smaller files 
 with more potential distortions.
-Value zero corresponds to lossless encoding.
+Loss level 0 corresponds to lossless encoding.
+Loss level 1 performs image cleaning but does not perform
+character substitution at all.
+Loss level 100 is intended to provide a good compromise.
+Higher loss levels provide marginally better compression
+at the risk of unacceptable character substitutions. 
 .TP
 .B "-verbose"
 Display informational messages while running.
@@ -106,7 +111,7 @@ can change from version to version.
 When lossy compression yields inadequate results,
 simply revert to only using option
 .BR -clean 
-or change the parameter of option
+or reduce the parameter of option
 .BR -losslevel .
 .PP
 Two features are still missing:
