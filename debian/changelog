@@ -1,3 +1,33 @@
+djvulibre (3.5.15-1) unstable; urgency=low
+
+  * New upstream release
+  * Upstream man page clarification (closes: #323307, #323085)
+
+ -- Barak A. Pearlmutter <bap@debian.org>  Mon, 22 Aug 2005 20:50:04 +0100
+
+djvulibre (3.5.14-6.1) unstable; urgency=medium
+
+  * Non-maintainer upload.
+  * Medium-urgency upload for RC bugfix.
+  * The library soname has changed without changing the package name;
+    reconcile the package name with the library name by changing
+    libdjvulibre1 to libdjvulibre15 (closes: #320582).  This
+    conveniently also addresses the C++ ABI change in the process.
+  * Build-depend only on libqt3-mt-dev (>= 3:3.3.4-4) without any
+    alternatives, for the C++ ABI transition; we don't want djview to be
+    accidentally linked against libqt3 instead of libqt3-mt anyway, since
+    that would give unpredictable results if any other libraries require
+    threading.  With this rebuild, any possible issues caused by
+    mismatched C++ ABIs are also resolved (closes: #322773).
+  * Use -O2 optimization when building on m68k to work around bug
+    #317475 in gcc-4.0, since this is the optimization level recommended
+    by policy anyway (closes: #321107).
+  * Re-libtoolize the package using the current Debian libtool, to
+    support trimming unnecessary library dependencies.  This cuts the
+    dependency tree of djview by better than 50%.
+
+ -- Steve Langasek <vorlon@debian.org>  Sun, 14 Aug 2005 04:10:36 -0700
+
 djvulibre (3.5.14-6) unstable; urgency=low
 
   * minor upstream updates, eg for GCC 4.0 (closes: #319436)

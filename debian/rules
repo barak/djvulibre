@@ -12,11 +12,20 @@ DEB_HOST_GNU_TYPE   ?= $(shell dpkg-architecture -qDEB_HOST_GNU_TYPE)
 DEB_BUILD_GNU_TYPE  ?= $(shell dpkg-architecture -qDEB_BUILD_GNU_TYPE)
 
 
+CFLAGS=-Wall -Wno-non-virtual-dtor # fix for m68k GCC 4.0 breakpage
 ifneq (,$(findstring debug,$(DEB_BUILD_OPTIONS)))
 	CFLAGS += -g
+else
+	CFLAGS += -DNDEBUG
 endif
 ifeq (,$(findstring nostrip,$(DEB_BUILD_OPTIONS)))
 	INSTALL_PROGRAM += -s
+endif
+
+ifeq ($(DEB_HOST_GNU_TYPE),m68k-linux-gnu) # fix for m68k GCC 4.0 breakpage
+	CFLAGS += -O2
+else
+	CFLAGS += -O3
 endif
 
 config.status: configure
@@ -33,7 +42,7 @@ build-stamp: config.status
 	dh_testdir
 	test -e tools/jb2cmp/mdjvucfg.h || touch tools/jb2cmp/mdjvucfg.h
 	$(MAKE) -k depend	# otherwise a missing Makefile.dep blows up
-	$(MAKE) # OPTS="-hotwire -compiler -options"
+	$(MAKE) OPTS="$(CFLAGS)" # OPTS="-hotwire -compiler -options" # fix for m68k GCC 4.0 breakpage
 	touch build-stamp
 
 clean:
@@ -119,7 +128,7 @@ binary-arch: build install
 	dh_makeshlibs --exclude=/plugins
 	dh_installdeb
 #	dh_perl
-	dh_shlibdeps -L libdjvulibre1 -l debian/libdjvulibre1/usr/lib
+	dh_shlibdeps -L libdjvulibre15 -l debian/libdjvulibre15/usr/lib
 	dh_gencontrol
 	dh_md5sums
 	dh_builddeb
