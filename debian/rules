@@ -81,7 +81,7 @@ install: build
 		dtop_mime_info='$${datadir}/mime-info'			\
 		dtop_application_registry='$${datadir}/application-registry' \
 		dtop_mimelnk='$${kdedatadir}/mimelnk'			\
-		dtop_menu='$${prefix}/lib/menu'
+		dtop_menu='$${prefix}/share/menu'
 #	-chrpath --delete debian/tmp/usr/bin/*
 	chmod +x debian/tmp/usr/bin/any2djvu
 	mkdir --parents debian/tmp/usr/lib/cgi-bin
@@ -91,7 +91,7 @@ install: build
 	ln -sf ../../$(plug) debian/tmp/usr/lib/mozilla/plugins/
 	mkdir --parents      debian/tmp/usr/lib/mozilla-firefox/plugins
 	ln -sf ../../$(plug) debian/tmp/usr/lib/mozilla-firefox/plugins/
-	mv debian/tmp/usr/lib/menu/djview.menu debian/tmp/usr/lib/menu/djview
+	mv debian/tmp/usr/share/menu/djview.menu debian/tmp/usr/share/menu/djview
 	cmp debian/tmp/usr/share/{pixmaps,icons/hicolor/48x48/mimetypes}/djvu.png \
 		&& ln -sf ../icons/hicolor/48x48/mimetypes/djvu.png	\
 			debian/tmp/usr/share/pixmaps/djvu.png
