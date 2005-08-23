@@ -85,7 +85,7 @@ install: build
 #	-chrpath --delete debian/tmp/usr/bin/*
 	chmod +x debian/tmp/usr/bin/any2djvu
 	mkdir --parents debian/tmp/usr/lib/cgi-bin
-	cp --preserver=timestamps debian/djvuserve.sh debian/tmp/usr/lib/cgi-bin/djvuserve
+	cp --preserve=timestamps debian/djvuserve.sh debian/tmp/usr/lib/cgi-bin/djvuserve
 	chmod +x debian/tmp/usr/lib/cgi-bin/djvuserve
 	mkdir --parents      debian/tmp/usr/lib/mozilla/plugins
 	ln -sf ../../$(plug) debian/tmp/usr/lib/mozilla/plugins/
