@@ -83,10 +83,9 @@ install: build
 		dtop_mimelnk='$${kdedatadir}/mimelnk'			\
 		dtop_menu='$${prefix}/lib/menu'
 #	-chrpath --delete debian/tmp/usr/bin/*
-	cp tools/any2djvu.sh debian/tmp/usr/bin/any2djvu
 	chmod +x debian/tmp/usr/bin/any2djvu
 	mkdir --parents debian/tmp/usr/lib/cgi-bin
-	cp debian/djvuserve.sh debian/tmp/usr/lib/cgi-bin/djvuserve
+	cp --preserver=timestamps debian/djvuserve.sh debian/tmp/usr/lib/cgi-bin/djvuserve
 	chmod +x debian/tmp/usr/lib/cgi-bin/djvuserve
 	mkdir --parents      debian/tmp/usr/lib/mozilla/plugins
 	ln -sf ../../$(plug) debian/tmp/usr/lib/mozilla/plugins/
