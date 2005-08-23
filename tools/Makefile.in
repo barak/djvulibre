@@ -65,6 +65,8 @@ PROGRAMS = bzz c44 cjb2 cpaldjvu csepdjvu \
 
 SCRIPTS = djvudigital any2djvu
 
+MAN1PAGES = djvu
+
 all: ${PROGRAMS}
 
 install: install-bin install-scripts install-man
@@ -84,7 +86,7 @@ install-scripts: FORCE
 
 install-man: FORCE
 	${INSTALL} -d ${DESTDIR}${mandir}/man1
-	for n in ${PROGRAMS} ${SCRIPTS} ; do \
+	for n in ${PROGRAMS} ${SCRIPTS} ${MAN1PAGES} ; do \
 	  if test -r ${srcdir}/$$n.1 ; then \
 	    ${INSTALL_DATA} ${srcdir}/$$n.1 ${DESTDIR}${mandir}/man1 \
 	    || exit ; fi ; done
