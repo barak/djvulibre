@@ -1,9 +1,9 @@
-#C- This program is free software; you can redistribute it and/or 
-#C- modify it under the terms of the GNU General Public License, 
-#C- version 2.  The license should have accompanied the program 
+#C- This program is free software; you can redistribute it and/or
+#C- modify it under the terms of the GNU General Public License,
+#C- version 2.  The license should have accompanied the program
 #C- or you may obtain a copy of the license from the Free Software
 #C- Foundation at http://www.fsf.org.
-#C- 
+#C-
 #C- This program is distributed in the hope that it will be useful,
 #C- but WITHOUT ANY WARRANTY; without even the implied warranty of
 #C- MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
@@ -63,9 +63,9 @@ PROGRAMS = bzz c44 cjb2 cpaldjvu csepdjvu \
 	   djvups djvuextract djvumake \
 	   djvused djvutxt djvuserve
 
-SCRIPTS = djvudigital
+SCRIPTS = djvudigital any2djvu
 
-all: ${PROGRAMS} 
+all: ${PROGRAMS}
 
 install: install-bin install-scripts install-man
 
@@ -87,7 +87,7 @@ install-man: FORCE
 	for n in ${PROGRAMS} ${SCRIPTS} ; do \
 	  if test -r ${srcdir}/$$n.1 ; then \
 	    ${INSTALL_DATA} ${srcdir}/$$n.1 ${DESTDIR}${mandir}/man1 \
-	    || exit ; fi ; done 
+	    || exit ; fi ; done
 
 depend: FORCE
 	for d in ${SUBDIRS}; do ( cd $$d && ${MAKE} $@ ); done
@@ -98,7 +98,7 @@ clean: FORCE
 	-${LIBTOOL} --mode=clean ${RM} 2>/dev/null ${PROGRAMS}
 	-${RM} 2>/dev/null *.o *.a *.so *.stamp
 
-distclean: clean 
+distclean: clean
 	for d in ${SUBDIRS}; do ( cd $$d && ${MAKE} $@ ); done
 	-${RM} -r 2>/dev/null Makefile *.rpo ii_files
 
