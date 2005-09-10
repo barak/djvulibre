@@ -72,7 +72,7 @@ OBJS = \
 	DjVmDir.lo DjVmDoc.lo DjVmDir0.lo DjVmNav.lo DjVuNavDir.lo \
 	DjVuErrorList.lo DjVuDocEditor.lo DjVuToPS.lo DjVuDumpHelper.lo \
 	DjVuMessageLite.lo DjVuMessage.lo GUnicode.lo UnicodeByteStream.lo \
-	XMLParser.lo XMLTags.lo ddjvuapi.lo debug.lo
+	XMLParser.lo XMLTags.lo miniexp.lo ddjvuapi.lo debug.lo
 
 ${LIBDJVU_LA} : ${OBJS}
 	@echo "[ generating $@ ... ]"
@@ -104,6 +104,7 @@ install-lib: ${LIBDJVU_LA} FORCE
 install-include: FORCE
 	${INSTALL} -d ${DESTDIR}${includedir}/libdjvu
 	${INSTALL_DATA} ${srcdir}/ddjvuapi.h ${DESTDIR}${includedir}/libdjvu
+	${INSTALL_DATA} ${srcdir}/miniexp.h ${DESTDIR}${includedir}/libdjvu
 
 depend: FORCE
 	for n in ${srcdir}/*.cpp ; do \

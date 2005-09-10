@@ -1145,27 +1145,47 @@ ddjvu_document_save(ddjvu_document_t *document, FILE *output,
 /* S-EXPRESSIONS                                      */
 /* -------------------------------------------------- */
 
-/* Not yet defined */
+typedef struct miniexp_s* miniexp_t;
 
-/* Not yet implemented */
+DDJVUAPI void
+ddjvu_miniexp_release(ddjvu_document_t *document, miniexp_t expr);
 
+DDJVUAPI miniexp_t
+ddjvu_document_get_outline(ddjvu_document_t *document);
 
-/* -------------------------------------------------- */
-/* ANNOTATIONS AND HIDDEN_TEXT                        */
-/* -------------------------------------------------- */
+DDJVUAPI miniexp_t
+ddjvu_document_get_pagetext(ddjvu_document_t *document, int pageno, 
+                            const char *maxdetail);
 
-/* Not yet defined */
+DDJVUAPI miniexp_t
+ddjvu_document_get_pageanno(ddjvu_document_t *document, int pageno);
 
-/* Not yet implemented */
+/* ------ helpers for annotations ---- */
 
+DDJVUAPI const char *
+ddjvu_anno_get_bgcolor(miniexp_t annotations);
 
-/* -------------------------------------------------- */
-/* HIDDEN_TEXT                                        */
-/* -------------------------------------------------- */
+DDJVUAPI const char *
+ddjvu_anno_get_zoom(miniexp_t annotations);
 
-/* Not yet defined */
+DDJVUAPI const char *
+ddjvu_anno_get_mode(miniexp_t annotations);
 
-/* Not yet implemented */
+DDJVUAPI const char *
+ddjvu_anno_get_horizalign(miniexp_t annotations);
+
+DDJVUAPI const char *
+ddjvu_anno_get_vertalign(miniexp_t annotations);
+
+DDJVUAPI miniexp_t *
+ddjvu_anno_get_hyperlinks(miniexp_t annotations);
+
+DDJVUAPI miniexp_t *
+ddjvu_anno_get_metadata_keys(miniexp_t annotations);
+
+DDJVUAPI const char *
+ddjvu_anno_get_metadata(miniexp_t annotations, miniexp_t key);
+
 
 
 /* -------------------------------------------------- */

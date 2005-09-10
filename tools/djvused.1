@@ -532,10 +532,10 @@ expressions, namely integers, symbols, strings and lists.
 Integer numbers are represented by one or more digits,
 with the usual interpretation.
 .IP Symbols:
-Symbols, or identifiers, are sequences of printable characters representing a
-name or a keyword.  Acceptable characters are the alpha-numeric characters,
-the underscore "_", the minus character "-", and the hash character "#".
-Names never begin with a digit or a minus character.
+Symbols, or identifiers, are sequences of printable ascii characters
+representing a name or a keyword.  Acceptable characters are the alpha-numeric
+characters, the underscore "_", the minus character "-", and the hash
+character "#".  Names should not begin with a digit or a minus character.
 .IP Strings:
 Strings denote an arbitrary sequence of bytes,
 usually interpreted as a sequence of 
@@ -543,13 +543,15 @@ usually interpreted as a sequence of
 encoded characters.  Strings in djvused files are similar to strings in the C
 language.  They are surrounded by double quote characters.  Certain sequences
 of characters starting with a backslash ("\\") have a special meaning.  
-A backslash followed by one to three digits stands for the byte whose octal 
-code is expressed by the digits.  A backslash followed by characters
-.BR a ", " b ", " t ", " n ", " v ", " f ", or " r
-stand for the character codes 8 to 13 respectively.  
-A backslash followed by any other character stands for that character.  
-In particular, a backslash followed by a double quote represents a double
-quote and does not terminate the string.
+A backslash followed by letter
+"a", "b", "t", "n", "v", "f", "r", "\\", and \"
+stands for the ascii character BEL(007), BS(008), HT(009),
+LF(010), VT(011), FF(012), CR(013), BACKSLASH(134) 
+and DOUBLEQUOTE(042) respectively.
+A backslash followed by one to three digits stands for the byte 
+whose octal code is expressed by the digits.  
+All other backslash sequences are illegal.
+All non printable ascii characters must be escaped.
 .IP Lists:
 Lists are sequence of expressions separated by blanks and surrounded by
 parentheses.  All expressions types are acceptable within a list, including
