@@ -202,10 +202,17 @@ miniexp_symbol(const char *name)
 // Memory is managed in chunks of nptrs_chunk pointers.
 // The first two pointers are used to hold mark bytes for the rest.
 // Chunks are carved from blocks of nptrs_block pointers.
+//
+// Dirty hack: The sixteen most recently created pairs are 
+// not destroyed by automatic garbage collection, in order
+// to preserve transient objects created in the course 
+// of evaluating complicated expressions.
 
 #define nptrs_chunk  (4*sizeof(void*))
 #define sizeof_chunk (nptrs_chunk*sizeof(void*))
 #define nptrs_block  (16384-8)
+#define recentlog    (4)
+#define recentsize   (1<<recentlog)
 
 static inline char *
 markbase(void **p)
@@ -275,6 +282,8 @@ static struct {
   int      objs_free;
   void   **objs_freelist;
   block_t *objs_blocks;
+  void **recent[recentsize];
+  int    recentindex;
 } gc;
 
 static void
@@ -335,32 +344,39 @@ static void
 gc_mark_object(void **v)
 {
   miniobj_t *obj = (miniobj_t*)v[0];
-  obj->mark(gc_mark);
+  if (obj) obj->mark(gc_mark);
 }
 
 static void
 gc_run(void)
 {
-  block_t *b;
-  // clear marks
-  for (b=gc.objs_blocks; b; b=b->next)
-    clear_marks(b);
-  for (b=gc.pairs_blocks; b; b=b->next)
-    clear_marks(b);
-  // mark
-  minivar_t::mark(gc_mark);
-  // sweep
-  gc.objs_free = gc.pairs_free = 0;
-  gc.objs_freelist = gc.pairs_freelist = 0;
-  for (b=gc.objs_blocks; b; b=b->next)
-    collect_free(b, gc.objs_freelist, gc.objs_free, true);
-  for (b=gc.pairs_blocks; b; b=b->next)
-    collect_free(b, gc.pairs_freelist, gc.pairs_free, false);
-  // alloc 33% extra space
-  while (gc.objs_free*4 < gc.objs_total)
-    new_obj_block();
-  while (gc.pairs_free*4 < gc.pairs_total)
-    new_pair_block();
+  gc.request++;
+  if (gc.lock == 0)
+    {
+      block_t *b;
+      gc.request = 0;
+      // clear marks
+      for (b=gc.objs_blocks; b; b=b->next)
+        clear_marks(b);
+      for (b=gc.pairs_blocks; b; b=b->next)
+        clear_marks(b);
+      // mark
+      minivar_t::mark(gc_mark);
+      for (int i=0; i<recentsize; i++)
+        gc_mark((miniexp_t*)&gc.recent[i]);
+      // sweep
+      gc.objs_free = gc.pairs_free = 0;
+      gc.objs_freelist = gc.pairs_freelist = 0;
+      for (b=gc.objs_blocks; b; b=b->next)
+        collect_free(b, gc.objs_freelist, gc.objs_free, true);
+      for (b=gc.pairs_blocks; b; b=b->next)
+        collect_free(b, gc.pairs_freelist, gc.pairs_free, false);
+      // alloc 33% extra space
+      while (gc.objs_free*4 < gc.objs_total)
+        new_obj_block();
+      while (gc.pairs_free*4 < gc.pairs_total)
+        new_pair_block();
+    }
 }
 
 static void **
@@ -368,7 +384,7 @@ gc_alloc_pair(void)
 {
   if (!gc.pairs_freelist)
     {
-      minilisp_gc();
+      gc_run();
       if (!gc.pairs_freelist)
         new_pair_block();
     }
@@ -377,6 +393,8 @@ gc_alloc_pair(void)
   void **p = gc.pairs_freelist;
   gc.pairs_freelist = (void**)p[0];
   gc.pairs_free -= 1;
+  p[0] = p[1] = 0;
+  gc.recent[(++gc.recentindex) & (recentsize-1)] = p;
   return p;
 }
 
@@ -385,7 +403,7 @@ gc_alloc_object(void)
 {
   if (!gc.objs_freelist)
     {
-      minilisp_gc();
+      gc_run();
       if (!gc.objs_freelist)
         new_obj_block();
     }
@@ -394,13 +412,43 @@ gc_alloc_object(void)
   void **p = gc.objs_freelist;
   gc.objs_freelist = (void**)p[0];
   gc.objs_free -= 1;
+  p[0] = p[1] = 0;
+  gc.recent[(++gc.recentindex) & (recentsize-1)] = p;
   return p;
 }
 
-static void
-gc_clear(miniexp_t *pp)
+
+
+
+
+/* ---- USER FUNCTIONS --- */
+
+miniexp_t
+minilisp_acquire_gc_lock(miniexp_t x)
 {
-  *pp = 0;
+  gc.lock++;
+  return x;
+}
+
+miniexp_t
+minilisp_release_gc_lock(miniexp_t x)
+{
+  if (gc.lock > 0)
+    if (--gc.lock == 0)
+      if (gc.request > 0)
+        {
+          minivar_t v = x;
+          gc_run();
+        }
+  return x;
+}
+
+void 
+minilisp_gc(void)
+{
+  for (int i=0; i<recentsize; i++)
+    gc.recent[i] = 0;
+  gc_run();
 }
 
 void 
@@ -425,49 +473,6 @@ minilisp_info(void)
   printf("gc.objects: %d free, %d total\n", gc.objs_free, gc.objs_total);
   printf("--- end info -- %s", dat);
 }
-
-
-
-
-/* ---- USER FUNCTIONS --- */
-
-miniexp_t
-minilisp_acquire_gc_lock(miniexp_t x)
-{
-  gc.lock++;
-  return x;
-}
-
-miniexp_t
-minilisp_release_gc_lock(miniexp_t x)
-{
-  if (gc.lock > 0)
-    if (--gc.lock == 0)
-      if (gc.request > 0)
-        {
-          minivar_t v = x;
-          minilisp_gc();
-        }
-  return x;
-}
-
-void 
-minilisp_gc(void)
-{
-  gc.request++;
-  if (gc.lock == 0)
-    {
-      gc.lock++;
-      gc.request = 0;
-      //printf("========================= GC\n");
-      //minilisp_info();
-      gc_run();
-      //minilisp_info();
-      //printf("========================= END\n");
-      --gc.lock;
-    }
-}
-
 
 
 /* -------------------------------------------------- */
@@ -1436,12 +1441,20 @@ miniexp_read(void)
 /* CLEANUP (SEE GC ABOVE)                             */
 /* -------------------------------------------------- */
 
+static void
+gc_clear(miniexp_t *pp)
+{
+  *pp = 0;
+}
+
 void
 minilisp_finish(void)
 {
   ASSERT(!gc.lock);
   // clear minivars
   minivar_t::mark(gc_clear);
+  for (int i=0; i<recentsize; i++)
+    gc.recent[i] = 0;
   // collect everything
   gc_run();
   // deallocate mblocks
