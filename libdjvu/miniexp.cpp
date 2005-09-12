@@ -34,12 +34,6 @@
 
 #include "miniexp.h"
 
-#ifdef __GNUC__
-# define GCCATTR(x) __attribute (x)
-#else
-# define GCCATTR(x)
-#endif 
-
 #ifdef HAVE_NAMESPACES
 # define BEGIN_ANONYMOUS_NAMESPACE namespace {
 # define END_ANONYMOUS_NAMESPACE }
@@ -53,9 +47,11 @@
 /* ASSERT                                            */
 /* -------------------------------------------------- */
 
+#if defined(__GNUC__)
 static void 
 assertfail(const char *fn, int ln) 
-  GCCATTR((noreturn));
+  __attribute__((noreturn));
+#endif
 
 static void
 assertfail(const char *fn, int ln)
@@ -312,8 +308,12 @@ new_obj_block(void)
   gc.objs_free += count;
 }
 
+#if defined(__GNUC__) && (__GNUC__ >= 3)
 static void gc_mark_object(void **v)
-  GCCATTR((noinline));
+  __attribute__((noinline));
+#else
+static void gc_mark_object(void **v);
+#endif
 
 static void
 gc_mark(miniexp_t *pp)
