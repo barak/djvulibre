@@ -421,7 +421,7 @@ MINILISPAPI void minilisp_finish(void);
    - Symbols are represented by their name.
      Vertical bars <|> can be used to delimit names that
      contain blanks, special characters, non printable
-     ascii characters, non ascii characters, or 
+     characters, non ascii characters, or 
      can be confused as a number.
      
    - Numbers follow the syntax specified by the C
@@ -429,6 +429,7 @@ MINILISPAPI void minilisp_finish(void);
 
    - Strings are delimited by double quotes.
      All C string escapes are recognized.
+     Non printable ascii characters must be escaped.
 
    - List are represented by an open parenthesis <(>
      followed by the space separated list elements,
