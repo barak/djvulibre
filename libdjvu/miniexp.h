@@ -533,7 +533,6 @@ public:
   minivar_t(miniexp_t p);
   minivar_t(const minivar_t &v);
   operator miniexp_t&() { return data; }
-  operator miniexp_t() const { return data; }
   miniexp_t* operator&() { return &data; }
   minivar_t& operator=(miniexp_t p) { data = p; return *this; }
   minivar_t& operator=(const minivar_t &v) { data = v.data; return *this; }
