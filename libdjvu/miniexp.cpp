@@ -266,6 +266,7 @@ collect_free(block_t *b, void **&freelist, int &count, bool destroy)
 static struct {
   int lock;
   int request;
+  int debug;
   int      pairs_total;
   int      pairs_free;
   void   **pairs_freelist;
@@ -371,6 +372,8 @@ gc_alloc_pair(void)
       if (!gc.pairs_freelist)
         new_pair_block();
     }
+  else if (gc.debug)
+    minilisp_gc();
   void **p = gc.pairs_freelist;
   gc.pairs_freelist = (void**)p[0];
   gc.pairs_free -= 1;
@@ -386,6 +389,8 @@ gc_alloc_object(void)
       if (!gc.objs_freelist)
         new_obj_block();
     }
+  else if (gc.debug)
+    minilisp_gc();
   void **p = gc.objs_freelist;
   gc.objs_freelist = (void**)p[0];
   gc.objs_free -= 1;
@@ -399,6 +404,12 @@ gc_clear(miniexp_t *pp)
 }
 
 void 
+minilisp_debug(int debug)
+{
+  gc.debug = debug;
+}
+
+void 
 minilisp_info(void)
 {
   time_t tim = time(0);
@@ -406,6 +417,8 @@ minilisp_info(void)
   printf("--- begin info -- %s", dat);
   printf("symbols: %d symbols in %d buckets\n", 
          symbols->nelems, symbols->nbuckets);
+  if (gc.debug)
+    printf("gc.debug: true\n");
   if (gc.lock)
     printf("gc.locked: true, %d requests\n", gc.request);
   printf("gc.pairs: %d free, %d total\n", gc.pairs_free, gc.pairs_total);
@@ -415,21 +428,27 @@ minilisp_info(void)
 
 
 
+
 /* ---- USER FUNCTIONS --- */
 
-void 
-minilisp_acquire_gc_lock(void)
+miniexp_t
+minilisp_acquire_gc_lock(miniexp_t x)
 {
   gc.lock++;
+  return x;
 }
 
-void 
-minilisp_release_gc_lock(void)
+miniexp_t
+minilisp_release_gc_lock(miniexp_t x)
 {
   if (gc.lock > 0)
     if (--gc.lock == 0)
       if (gc.request > 0)
-        minilisp_gc();
+        {
+          minivar_t v = x;
+          minilisp_gc();
+        }
+  return x;
 }
 
 void 
@@ -448,6 +467,7 @@ minilisp_gc(void)
       --gc.lock;
     }
 }
+
 
 
 /* -------------------------------------------------- */
@@ -594,32 +614,12 @@ miniexp_nth(int n, miniexp_t l)
 miniexp_t 
 miniexp_cons(miniexp_t a, miniexp_t d)
 {
+  minivar_t xa = a;  
+  minivar_t xd = d;
   miniexp_t r = (miniexp_t)gc_alloc_pair(); 
   car(r) = a;
   cdr(r) = d;
   return r;
-}
-
-miniexp_t 
-miniexp_list(miniexp_t p, ...)
-{
-  minivar_t l;
-  minivar_t q;
-  if (p != miniexp_dummy)
-    {
-      va_list ap;
-      va_start(ap, p);
-      q = l = miniexp_cons(p, 0);
-      while ((p = va_arg(ap, miniexp_t)) != miniexp_dummy)
-        {
-          miniexp_t c = (miniexp_t)gc_alloc_pair();
-          car(c) = p;
-          cdr(q) = c;
-          q = c;
-        }
-      va_end(ap);
-    }
-  return l;
 }
 
 miniexp_t 
@@ -857,11 +857,11 @@ miniexp_substring(const char *s, int n)
 }
 
 miniexp_t 
-miniexp_concat(miniexp_t l)
+miniexp_concat(miniexp_t p)
 {
-  int n = 0;
-  miniexp_t p;
+  minivar_t l = p;
   const char *s;
+  int n = 0;
   if (miniexp_length(l) < 0)
     return miniexp_nil;
   for (p=l; miniexp_consp(p); p=cdr(p))
@@ -960,11 +960,10 @@ printer_t::mltab(int n)
 }
 
 void
-printer_t::print(miniexp_t q)
+printer_t::print(miniexp_t p)
 {
   static char buffer[32];
-  minivar_t p = q;
-  minivar_t b = begin();
+  miniexp_t b = begin();
   if (p == miniexp_nil)
     {
       mlput("()");
@@ -1105,6 +1104,7 @@ END_ANONYMOUS_NAMESPACE
 miniexp_t 
 miniexp_prin(miniexp_t p)
 {
+  minivar_t xp = p;
   printer_t printer;
   printer.print(p);
   return p;
@@ -1113,6 +1113,7 @@ miniexp_prin(miniexp_t p)
 miniexp_t 
 miniexp_print(miniexp_t p)
 {
+  minivar_t xp = p;
   miniexp_prin(p);
   minilisp_puts("\n");
   return p;
@@ -1121,6 +1122,7 @@ miniexp_print(miniexp_t p)
 miniexp_t 
 miniexp_pprin(miniexp_t p, int width)
 {  
+  minivar_t xp = p;
   pprinter_t printer;
   printer.width = width;
   // step1 - measure lengths into list <l>

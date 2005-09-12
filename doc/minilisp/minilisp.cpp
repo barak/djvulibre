@@ -72,8 +72,9 @@ lookup(miniexp_t var, miniexp_t env)
 minivar_t globalenv;
 
 void
-defvar(miniexp_t s, miniexp_t v = 0)
+defvar(miniexp_t s, miniexp_t w = 0)
 {
+  minivar_t v;
   if (! globalenv)
     {
       minivar_t a = miniexp_cons(s_true, s_true);
@@ -82,15 +83,15 @@ defvar(miniexp_t s, miniexp_t v = 0)
   if (! miniexp_symbolp(s))
     error("defvar: not a symbol", s);
   miniexp_t a = lookup(s, globalenv);
-  if (a && v)
+  if (a && w)
     {
       printf("WARNING: redefining '%s\n", miniexp_to_name(s));
-      miniexp_rplacd(a, v);
+      miniexp_rplacd(a, w);
     }
   else
     {
-      a = miniexp_cons(s, v);
-      minivar_t v = miniexp_cons(a, miniexp_cdr(globalenv));
+      v = miniexp_cons(s, w);
+      v = miniexp_cons(v, miniexp_cdr(globalenv));
       miniexp_rplacd(globalenv, v);
     }
 }
@@ -969,8 +970,8 @@ parse_comment(void)
 miniexp_t 
 parse_quote(void)
 {
-  minivar_t s = miniexp_read();
-  minivar_t l = miniexp_list(s_quote,(miniexp_t)s,miniexp_dummy);
+  minivar_t l = miniexp_read();
+  l = miniexp_cons(s_quote, miniexp_cons(l, miniexp_nil));
   return miniexp_cons(l,miniexp_nil);
 }
 
@@ -984,6 +985,7 @@ sighandler(int signo)
 int 
 main()
 {
+  // minilisp_debug(1);
   minilisp_macrochar_parser[(int)';'] = parse_comment;  
   minilisp_macrochar_parser[(int)'\''] = parse_quote;  
   FILE *f = fopen("minilisp.in","r");

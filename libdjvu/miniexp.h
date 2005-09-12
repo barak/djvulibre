@@ -81,7 +81,7 @@ static inline miniexp_t miniexp_number(int x) {
 /* -------- SYMBOLS -------- */
 
 /* The textual representation of a minilisp symbol is a 
-   sequence of non blank characters forming an indentifier. 
+   sequence of printable characters forming an identifier. 
    Each symbol has a unique representation and remain 
    permanently allocated. To compare two symbols, 
    simply compare the <miniexp_t> pointers. */
@@ -109,8 +109,8 @@ MINILISPAPI miniexp_t miniexp_symbol(const char *name);
 
 /* -------- PAIRS -------- */
 
-/* Pairs are the basic building blocks for minilisp lists.
-   Each pair contains two expression:
+/* Pairs (also named "cons") are the basic building blocks for 
+   minilisp lists. Each pair contains two expression:
    - the <car> represents the first element of a list.
    - the <cdr> usually is a pair representing the rest of the list.
    The empty list is represented by a null pointer. */
@@ -128,15 +128,14 @@ const miniexp_t miniexp_nil = (miniexp_t)(size_t)0;
 const miniexp_t miniexp_dummy = (miniexp_t)(size_t)2;
 
 /* miniexp_listp --
-   Tests if an expression is a list, 
-   that is a pair or the empty list. */
+   Tests if an expression is either a pair or the empty list. */   
 
 static inline int miniexp_listp(miniexp_t p) {
   return ((((size_t)p)&3)==0);
 }
 
 /* miniexp_consp --
-   Tests if an expression is a non empty list. */
+   Tests if an expression is a pair. */
 
 static inline int miniexp_consp(miniexp_t p) {
   return p && miniexp_listp(p);
@@ -184,12 +183,6 @@ MINILISPAPI miniexp_t miniexp_nth(int n, miniexp_t l);
 
 MINILISPAPI miniexp_t miniexp_cons(miniexp_t car, miniexp_t cdr);
 
-/* miniexp_list --
-   Constructs a list with all arguments.
-   The last argument must be <miniexp_dummy>. */
-
-MINILISPAPI miniexp_t miniexp_list(miniexp_t p, ...);
-
 /* miniexp_rplaca --
    miniexp_rplacd --
    Changes the car or the cdr of a pair. */
@@ -233,10 +226,8 @@ MINILISPAPI miniexp_t miniexp_isa(miniexp_t p, miniexp_t c);
 
 /* -------- OBJECTS (STRINGS) -------- */
 
-/* The most common object objects are strings. */
-
 /* miniexp_stringp --
-   Tests that an expression is a string. */
+   Tests if an expression is a string. */
 
 MINILISPAPI int miniexp_stringp(miniexp_t p);
 
@@ -273,28 +264,75 @@ MINILISPAPI miniexp_t miniexp_concat(miniexp_t l);
 /* -------------------------------------------------- */
 
 
-/* The garbage collector reclaims the memory 
-   allocated for lisp expressions no longer in use.
-   The trick is to determine which lisp expressions
-   are in use at a given moment.
+/* The garbage collector reclaims the memory allocated for
+   lisp expressions no longer in use.  It is automatically
+   invoked by the pair and object allocation functions when
+   the available memory runs low.  It is however possible to
+   temporarily disable it.
 
-   Minilisp takes a somehow simplistic approach:
-   Type <minivar_t> represents a lisp expression *variable*.
-   The expressions in use are defined as 
-   - all lisp expressions referenced by a minivar 
-   - all lisp expressions referenced by a lisp expression
-     that has already been determined to be in use.
+   The trick is to determine which lisp expressions are in
+   use at a given moment. This package takes a simplistic
+   approach. All objects of type <minivar_t> are chained and
+   can reference an arbitrary lisp expression.  Garbage
+   collection preserves all lisp expressions referenced by a
+   minivar, as well as all lisp expressions that can be
+   accessed from these.
      
-   C++ program can directly use instances of <minivar_t> 
-   as if they were normal <miniexp_t> variables.
-   C programs must use wrappers to allocate minivars 
-   and to access their value. The garbage collector is 
-   automatically invoked when the available memory runs low. 
-   It is however possible to temporarily disable it. */
+   The minivar class is designed such that C++ program can
+   directly use instances of <minivar_t> as normal
+   <miniexp_t> variables.  There is almost no overhead
+   accessing or changing the lisp expression referenced by a
+   minivar. However, the minivar chain must be updated
+   whenever the minivar object is constructed or destructed.
+   
+   Example (in C++ only):
+     miniexp_t copy_in_reverse(miniexp_t p) {
+        minivar_t l = miniexp_nil;
+        while (miniexp_consp(p)) {
+          l = miniexp_cons(miniexp_car(p), l); 
+          p = miniexp_cdr(p); 
+        }
+        return l;
+     }
 
+   When to use minivar_t instead of miniexp_t?
+
+   * A function that only navigates properly secured
+     s-expressions without modifying them does not need to
+     bother about minivars.
+
+   * Only the following miniexp functions can cause a
+     garbage collection: miniexp_cons(), miniexp_object(),
+     miniexp_string(), miniexp_substring(),
+     miniexp_concat(), miniexp_pprin(), miniexp_pprint(),
+     miniexp_gc(), and miniexp_release_gc_lock().  A
+     function that does not cause calls to these functions
+     does not need to bother about minivars.
+
+   * Other functions should make sure that all useful
+     s-expression are directly or indirectly secured by a
+     minivar_t object. In case of doubt, use minivars
+     everywhere.
+
+   * Function arguments should remain <miniexp_t> in order
+     to allow interoperability with the C language. As a
+     consequence, functions must often copy their arguments
+     into minivars in order to make sure they remain
+     allocated. A small performance improvement can be
+     achieved by deciding that the function should always be
+     called using properly secured arguments. This is more
+     difficult to get right.
+
+   C programs cannot use minivars as easily as C++ programs.
+   Wrappers are provided to allocate minivars and to access
+   their value. This is somehow inconvenient.  It might be
+   more practical to control the garbage collector
+   invocations with <miniexp_acquire_gc_lock()> and
+   <miniexp_release_gc_lock()>...  */
+   
 
 /* minilisp_gc --
-   Invoke the garbage collector now. */
+   Invokes the garbage collector now. */
 
 MINILISPAPI void minilisp_gc(void);
 
@@ -306,10 +344,29 @@ MINILISPAPI void minilisp_info(void);
 /* minilisp_acquire_gc_lock --
    minilisp_release_gc_lock --
    Temporarily disables automatic garbage collection.
-   Acquire/release pairs may be nested. */
+   Acquire/release pairs may be nested. 
+   Both functions return their argument unmodified.
+   This is practical because <minilisp_release_gc_lock>
+   can invoke the garbage collector. Before doing
+   so it stores its argument in a minivar to 
+   preserve it. 
 
-MINILISPAPI void minilisp_acquire_gc_lock(void);
-MINILISPAPI void minilisp_release_gc_lock(void);
+   Example (in C):
+     miniexp_t copy_in_reverse(miniexp_t p) {
+        miniexp_t l = 0;
+        minilisp_acquire_gc_lock(0);
+        while (miniexp_consp(p)) {
+          l = miniexp_cons(miniexp_car(p), l); 
+          p = miniexp_cdr(p); 
+        }
+        return minilisp_release_gc_lock(l); 
+     }
+   
+   Disabling garbage collection for a long time 
+   increases the memory consumption. */
+
+MINILISPAPI miniexp_t minilisp_acquire_gc_lock(miniexp_t);
+MINILISPAPI miniexp_t minilisp_release_gc_lock(miniexp_t);
 
 /* minivar_t --
    The minivar type. */
@@ -321,20 +378,29 @@ typedef struct minivar_s minivar_t;
 
 /* minivar_alloc --
    minivar_free --
-   Wrappers for allocating and deallocating minivar objects. */
+   Wrappers for creating and destroying minivars in C. */
 
 MINILISPAPI minivar_t *minivar_alloc(void);
 MINILISPAPI void minivar_free(minivar_t *v);
 
 /* minivar_pointer --
-   Get a pointer to the miniexp_t reference 
-   managed by a minivar. */
+   Wrappers to access the lisp expression referenced
+   by a minivar. This function returns a pointer
+   to the actual miniexp_t variable. */
 
 MINILISPAPI miniexp_t *minivar_pointer(minivar_t *v);
 
+/* minilisp_debug -- 
+   Setting the debug flag runs the garbage collector 
+   very often. This is extremely slow, but can be
+   useful to debug memory allocation problems. */
+
+MINILISPAPI void minilisp_debug(int debugflag);
+
 /* minilisp_finish --
-   Deallocate everything.
-   Nothing should be reused after calling this. */
+   Deallocates everything.  This is only useful when using
+   development tools designed to check for memory leaks.  
+   No miniexp function can be used after calliang this. */
 
 MINILISPAPI void minilisp_finish(void);
 
@@ -366,7 +432,7 @@ MINILISPAPI void minilisp_finish(void);
 
    - List are represented by an open parenthesis <(>
      followed by the space separated list elements,
-     followed by a closed parenthesis <)>.
+     followed by a closing parenthesis <)>.
      When the cdr of the last pair is non zero,
      the closed parenthesis is preceded by 
      a space, a dot <.>, a space, and the textual 
@@ -375,7 +441,8 @@ MINILISPAPI void minilisp_finish(void);
    - When the parser encounters an ascii character corresponding
      to a non zero function pointer in <minilisp_macrochar_parser>,
      the function is invoked and must return a possibly empty
-     list of miniexps to be returned by the parser. */
+     list of miniexps to be returned by subsequent 
+     invocations of the parser. */
 
 
 /* minilisp_puts/getc/ungetc --
@@ -406,7 +473,8 @@ MINILISPAPI miniexp_t miniexp_read(void);
 /* miniexp_prin --
    miniexp_print --
    Prints a minilisp expression by repeatedly invoking <minilisp_puts>.
-   Only <minilisp_print> outputs a final newline character. */
+   Only <minilisp_print> outputs a final newline character. 
+   These functions are safe to call anytime. */
 
 MINILISPAPI miniexp_t miniexp_prin(miniexp_t p);
 MINILISPAPI miniexp_t miniexp_print(miniexp_t p);
@@ -415,13 +483,14 @@ MINILISPAPI miniexp_t miniexp_print(miniexp_t p);
    miniexp_pprint --
    Prints a minilisp expression with reasonably pretty line breaks. 
    Argument <width> is the intended number of columns. 
-   Only <minilisp_pprint> outputs a final newline character. */
+   Only <minilisp_pprint> outputs a final newline character. 
+   These functions can cause a garbage collection to occur. */
 
 MINILISPAPI miniexp_t miniexp_pprin(miniexp_t p, int width);
 MINILISPAPI miniexp_t miniexp_pprint(miniexp_t p, int width);
 
 /* minilisp_print_7bits --
-   When this flag is set, all non 7bit characters 
+   When this flag is set, all non ascii characters 
    in strings are escaped in octal. */
 
 extern MINILISPAPI int minilisp_print_7bits;
@@ -496,7 +565,7 @@ class miniobj_t {
   virtual bool isa(miniexp_t classname) const;
   
   /* --- optional stuff --- */
-  /* mark: iterate over miniexps contained by this c++ object
+  /* mark: iterates over miniexps contained by this object
      for garbage collecting purposes. */
   virtual void mark(minilisp_mark_t action);
   /* pname: returns a printable name for this object.
@@ -507,7 +576,7 @@ class miniobj_t {
 /* MINIOBJ_DECLARE --
    MINIOBJ_IMPLEMENT --
    Useful code fragments for implementing 
-   miniobj subclasses. */
+   the mandatory part of miniobj subclasses. */
 
 #define MINIOBJ_DECLARE(cls, supercls, name) \
   public: static miniexp_t classname; \
@@ -523,8 +592,10 @@ class miniobj_t {
 
 
 /* miniexp_to_obj --
-   Returns a pointer to the object represented
-   by an object expression. */
+   Returns a pointer to the object represented by an lisp
+   expression. Returns NULL if the expression is not an
+   object expression.
+*/
 
 static inline miniobj_t *miniexp_to_obj(miniexp_t p) {
   if (miniexp_objectp(p))
@@ -533,7 +604,7 @@ static inline miniobj_t *miniexp_to_obj(miniexp_t p) {
 }
 
 /* miniexp_object --
-   Create an object expression. */
+   Create an object expression for a given object. */
 
 MINILISPAPI miniexp_t miniexp_object(miniobj_t *obj);
 
