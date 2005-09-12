@@ -2835,8 +2835,19 @@ ddjvu_document_get_pageanno(ddjvu_document_t *document, int pageno)
         {
           document->pageinfoflag = true;
           GP<DjVuFile> file = doc->get_djvu_file(pageno);
-          if (! file || ! file->is_all_data_present() )
-            return miniexp_dummy;
+          // Make sure all data is present
+          if (! file || ! file->is_all_data_present())
+            {
+              if (file->is_data_present())
+                {
+                  if (! file->are_incl_files_created())
+                    file->process_incl_chunks();
+                  if (! file->are_incl_files_created())
+                    return miniexp_status(DDJVU_JOB_FAILED);
+                }
+              return miniexp_dummy;
+            }
+          // Access annotation data
           GP<ByteStream> annobs = file->get_merged_anno();
           if (! (annobs && annobs->size()))
             return miniexp_nil;
