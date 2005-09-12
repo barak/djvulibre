@@ -4,7 +4,9 @@ MINIEXPDIR=../../libdjvu
 
 VPATH=${MINIEXPDIR}
 
-CXXFLAGS=-Wall -g -O2 -I${MINIEXPDIR}
+OPTS=-g -O2
+
+CXXFLAGS=-Wall ${OPTS} -I${MINIEXPDIR}
 
 all: minilisp
 
