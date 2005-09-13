@@ -123,7 +123,7 @@ evaluate(miniexp_t expr, miniexp_t env)
   else if (miniexp_consp(expr))
     {
       miniexp_t s = miniexp_car(expr);
-      miniexp_t xs = evaluate(s, env);
+      minivar_t xs = evaluate(s, env);
       miniobj_t *obj = miniexp_to_obj(xs);
       if (break_request)
         error(0);
