@@ -380,7 +380,7 @@ gc_run(void)
 }
 
 static void **
-gc_alloc_pair(void)
+gc_alloc_pair(void *a, void *d)
 {
   if (!gc.pairs_freelist)
     {
@@ -393,13 +393,14 @@ gc_alloc_pair(void)
   void **p = gc.pairs_freelist;
   gc.pairs_freelist = (void**)p[0];
   gc.pairs_free -= 1;
-  p[0] = p[1] = 0;
+  p[0] = a;
+  p[1] = d;
   gc.recent[(++gc.recentindex) & (recentsize-1)] = p;
   return p;
 }
 
 static void **
-gc_alloc_object(void)
+gc_alloc_object(void *obj)
 {
   if (!gc.objs_freelist)
     {
@@ -412,7 +413,7 @@ gc_alloc_object(void)
   void **p = gc.objs_freelist;
   gc.objs_freelist = (void**)p[0];
   gc.objs_free -= 1;
-  p[0] = p[1] = 0;
+  p[0] = p[1] = obj;
   gc.recent[(++gc.recentindex) & (recentsize-1)] = p;
   return p;
 }
@@ -478,12 +479,6 @@ minilisp_info(void)
 /* -------------------------------------------------- */
 /* MINIVARS                                           */
 /* -------------------------------------------------- */
-
-minivar_t::~minivar_t()
-{
-  if ((*pprev = next))
-    next->pprev = pprev;
-}
 
 minivar_t::minivar_t()
   : data(0)
@@ -619,11 +614,9 @@ miniexp_nth(int n, miniexp_t l)
 miniexp_t 
 miniexp_cons(miniexp_t a, miniexp_t d)
 {
-  minivar_t xa = a;  
-  minivar_t xd = d;
-  miniexp_t r = (miniexp_t)gc_alloc_pair(); 
-  car(r) = a;
-  cdr(r) = d;
+  gc.recent[(gc.recentindex+1) & (recentsize-1)] = (void**)a;
+  gc.recent[(gc.recentindex+2) & (recentsize-1)] = (void**)d;
+  miniexp_t r = (miniexp_t)gc_alloc_pair((void*)a, (void*)d); 
   return r;
 }
 
@@ -697,8 +690,7 @@ miniobj_t::pname() const
 miniexp_t 
 miniexp_object(miniobj_t *obj)
 {
-  void **v = gc_alloc_object();
-  v[0] = v[1] = (void*)(obj);
+  void **v = gc_alloc_object((void*)obj);
   return (miniexp_t)(((size_t)v)|(size_t)1);
 }
 

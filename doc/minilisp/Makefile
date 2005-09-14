@@ -11,7 +11,7 @@ CXXFLAGS=-Wall ${OPTS} -I${MINIEXPDIR}
 all: minilisp
 
 minilisp: minilisp.o miniexp.o
-	${CXX} -o $@ minilisp.o miniexp.o
+	${CXX} ${CXXFLAGS} -o $@ minilisp.o miniexp.o
 
 miniexp.o: miniexp.cpp
 

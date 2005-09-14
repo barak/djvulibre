@@ -529,7 +529,6 @@ class minivar_t
   minivar_t *next;
   minivar_t **pprev;
 public:
-  ~minivar_t();
   minivar_t();
   minivar_t(miniexp_t p);
   minivar_t(const minivar_t &v);
@@ -537,6 +536,7 @@ public:
   miniexp_t* operator&() { return &data; }
   minivar_t& operator=(miniexp_t p) { data = p; return *this; }
   minivar_t& operator=(const minivar_t &v) { data = v.data; return *this; }
+  ~minivar_t() { if ((*pprev = next)) next->pprev = pprev; }
 #ifdef MINIEXP_IMPLEMENTATION
   static minivar_t *vars;
   static void mark(minilisp_mark_t*);
