@@ -112,7 +112,7 @@ protected:
      if (qrect.contains(pnt)) tip(qrect, text);
    }
 public:
-   QDMapAreaTip(const char * _text, const QRect & _qrect, QWidget * _parent) :
+   QDMapAreaTip(QString _text, const QRect & _qrect, QWidget * _parent) :
 	 QToolTip(_parent), text(_text), qrect(_qrect) {}
    virtual ~QDMapAreaTip(void) { clear(); }
 };
