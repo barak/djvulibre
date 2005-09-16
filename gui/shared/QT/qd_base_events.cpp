@@ -455,9 +455,10 @@ QDBase::processMouseMoveEvent(QMouseEvent * ev)
 	       GRect brect=new_cur_map_area->get_bound_rect();
 	       ma_mapper.map(brect);
 	       GUTF8String tip=url;
-	       if (comment.length()) tip=comment;
+	       if (comment.length()) 
+                 tip=comment;
 	       if (tip.length())
-		  map_area_tip=new QDMapAreaTip(tip, G2Q(brect), pane);
+                 map_area_tip=new QDMapAreaTip(QStringFromGString(tip), G2Q(brect), pane);
 	    }
 	 } else showStatus(" ");
 
