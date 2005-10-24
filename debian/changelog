@@ -1,3 +1,10 @@
+djvulibre (3.5.15-2) unstable; urgency=low
+
+  * Unversioned conflict/replace libdjvulibre1
+    (closes: #326414, #327190, #327836, #335363)
+
+ -- Barak A. Pearlmutter <bap@debian.org>  Tue, 25 Oct 2005 00:15:50 +0100
+
 djvulibre (3.5.15-1) unstable; urgency=low
 
   * New upstream release

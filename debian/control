@@ -28,8 +28,8 @@ Package: libdjvulibre15
 Section: libs
 Architecture: any
 Depends: ${shlibs:Depends}
-Conflicts: libdjvulibre1 (= 3.5.14-6)
-Replaces: libdjvulibre1 (= 3.5.14-6)
+Conflicts: libdjvulibre1
+Replaces: libdjvulibre1
 Description: Runtime support for the DjVu image format
  DjVu runtime library and support files.
 
