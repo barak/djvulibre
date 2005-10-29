@@ -588,7 +588,7 @@ class miniobj_t {
   miniexp_t cls::classof() const {\
     return cls::classname; }\
   bool cls::isa(miniexp_t n) const {\
-  return (cls::classname==n) || (supercls::isa(n)); }
+    return (cls::classname==n) || (supercls::isa(n)); }
 
 
 /* miniexp_to_obj --
