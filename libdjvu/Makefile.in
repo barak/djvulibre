@@ -48,7 +48,7 @@ THREAD_LIBS = @THREAD_LIBS@
 THREAD_CFLAGS = @THREAD_CFLAGS@
 
 LIBDJVU_LA = libdjvulibre.la
-LIBDJVU_VER = `echo ${PACKAGE_VERSION} | sed -e 's/^3\.5\.//'`:0:0
+LIBDJVU_VER = @LIBDJVU_VER@
 
 INCS = -I${top_builddir} -I${srcdir}
 FLAGS = ${DEFS} ${INCS} ${OPTS} ${JPEG_CFLAGS} ${THREAD_CFLAGS}

@@ -32,6 +32,13 @@ AC_CONFIG_HEADER(config.h:config/config.h.in)
 AC_PREFIX_DEFAULT(/usr/local)
 AC_CANONICAL_HOST
 
+# Library version
+LIBDJVU_VER_COMPAT=15
+LIBDJVU_VER=`echo $PACKAGE_VERSION | sed -e 's/^3\.5\.//'`
+LIBDJVU_VER=$LIBDJVU_VER:0:`expr $LIBDJVU_VER - $LIBDJVU_VER_COMPAT`
+AC_SUBST(LIBDJVU_VER)
+
+# Additional libraries
 AC_ARG_WITH(extra-includes,
             AC_HELP_STRING([--with-extra-includes=DIR],
                        [Define an additional directory for include files]),
