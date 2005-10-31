@@ -1,5 +1,5 @@
 %define release 1
-%define version 3.5.15
+%define version 3.5.16
 
 Summary: DjVu viewers, encoders and utilities.
 Name: djvulibre
@@ -117,6 +117,8 @@ if test -x /usr/bin/update-menus; then /usr/bin/update-menus; fi
 %lang(de) %{_mandir}/de*
 
 %changelog
+* Mon Oct 31 2005 Leon Bottou <leon@bottou.org> 3.5.16-1
+- Updated to 3.5.16-1
 * Wed Jul  6 2005 Leon Bottou <leon@bottou.org> 3.5.15-1
 - Updated to 3.5.15-1
 * Thu Jun 17 2004 Leon Bottou <leon@bottou.org> 3.5.13-4

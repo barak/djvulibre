@@ -94,7 +94,17 @@ extern "C" {
    complexity with a familiar event model.
 */
 
-#define DDJVUAPI_VERSION 15
+/* Compiler symbol DDJVUAPI_VERSION tracks 
+   backward compatible additions to the DDJVU API.
+
+   Version   Change
+   -----------------------------
+     16    Addition of miniexp.h and related functions.
+     15    Addition of ddjvu_document_get_pageinfo().
+     14    Initial version.
+*/
+
+#define DDJVUAPI_VERSION 16
 
 typedef struct ddjvu_context_s  ddjvu_context_t;
 typedef union  ddjvu_message_s  ddjvu_message_t;
