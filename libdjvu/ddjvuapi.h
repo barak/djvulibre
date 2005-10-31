@@ -99,8 +99,13 @@ extern "C" {
 
    Version   Change
    -----------------------------
-     16    Addition of miniexp.h and related functions.
-     15    Addition of ddjvu_document_get_pageinfo().
+     16    Addition of miniexp.h and related functions:
+              ddjvu_miniexp_release()
+              ddjvu_document_get_outline/pagetext/pageanno()
+              ddjvu_anno_get_XXX()
+     15    Addition of:
+              ddjvu_document_get_pageinfo()
+              ddjvu_document_print()
      14    Initial version.
 */
 
