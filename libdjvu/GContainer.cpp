@@ -387,7 +387,6 @@ GListBase::GListBase(const GListBase &ref)
   GListBase::operator= (ref);
 }
 
-#include <stdio.h>
 GListBase::~GListBase()
 {
   G_TRY

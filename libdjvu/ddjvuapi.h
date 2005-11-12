@@ -465,7 +465,7 @@ ddjvu_document_create(ddjvu_context_t *context,
                       int cache);
 
 
-/* ddjvu_document_create_from_file ---
+/* ddjvu_document_create_by_filename ---
    Creates a document for a DjVu document stored in a file.
    The document will directly access the specified DjVu file 
    or related files without generating <m_newstream> messages. */
@@ -792,7 +792,7 @@ struct ddjvu_message_chunk_s {     /* ddjvu_message_t::m_chunk */
    zoom factors, and place the image area, scrollbars, toolbars, and other gui
    objects.  When receiving <m_redisplay>, the viewer should invalidate the
    image area so that the gui toolkint calls the repaint event handler. This
-   handler should call ddjvu_page_render() and paint the part og the
+   handler should call ddjvu_page_render() and paint the part of the
    image that needs repainting. */
 
 

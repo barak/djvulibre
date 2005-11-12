@@ -57,7 +57,7 @@
 #ifndef _GEXCEPTION_H_
 #define _GEXCEPTION_H_
 #ifdef HAVE_CONFIG_H
-#include "config.h"
+# include "config.h"
 #endif
 #if NEED_GNUG_PRAGMAS
 # pragma interface
@@ -121,14 +121,39 @@
 
 #include "DjVuGlobal.h"
 
+// Check if compiler supports native exceptions
+#ifdef HAVE_CONFIG_H
+# if HAVE_EXCEPTIONS
+#  define CPP_SUPPORTS_EXCEPTIONS
+# endif
+#else
+# if defined(_MSC_VER)
+#  define CPP_SUPPORTS_EXCEPTIONS
+# endif
+# if defined(__MWERKS__)
+#  define CPP_SUPPORTS_EXCEPTIONS
+# endif
+# if defined(__EXCEPTIONS)
+#  define CPP_SUPPORTS_EXCEPTIONS
+# endif
+#endif
+// Decide which exception model to use
+#ifndef CPP_SUPPORTS_EXCEPTIONS
+# ifndef USE_EXCEPTION_EMULATION
+#  define USE_EXCEPTION_EMULATION
+# endif
+#endif
+
+#ifdef USE_EXCEPTION_EMULATION
+# include <setjmp.h>
+#endif
+
 #ifdef HAVE_NAMESPACES
 namespace DJVU {
 # ifdef NOT_DEFINED // Just to fool emacs c++ mode
 }
+# endif
 #endif
-#endif
-
-
 
 /** Exception class.  
     The library always uses macros #G_TRY#, #G_THROW#, #G_CATCH# and #G_ENDCATCH# for
@@ -226,24 +251,6 @@ private:
 #undef G_THROW_APPLICATION
 #undef G_THROW_OTHER
 
-// Check if compiler supports native exceptions
-#if defined(_MSC_VER)
-#define CPP_SUPPORTS_EXCEPTIONS
-#endif
-#if defined(__MWERKS__)
-#define CPP_SUPPORTS_EXCEPTIONS
-#endif
-#if defined(__EXCEPTIONS)
-#define CPP_SUPPORTS_EXCEPTIONS
-#endif
-// Decide which exception model to use
-#ifndef CPP_SUPPORTS_EXCEPTIONS
-#ifndef USE_EXCEPTION_EMULATION
-#define USE_EXCEPTION_EMULATION
-#endif
-#endif
-
-
 #ifndef USE_EXCEPTION_EMULATION
 
 // Compiler supports ANSI C++ exceptions.
@@ -277,8 +284,6 @@ public:
 
 // Compiler does not support ANSI C++ exceptions.
 // Emulate with setjmp/longjmp.
-
-#include <setjmp.h>
 
 class GExceptionHandler {
 public:
