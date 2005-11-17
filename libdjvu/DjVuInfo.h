@@ -96,7 +96,7 @@ class ByteStream;
 /** Current DjVu format version.  The value of this macro represents the
     version of the DjVu file format implemented by this release of the DjVu
     Reference Library. */
-#define DJVUVERSION              25
+#define DJVUVERSION              26
 /** DjVu format version. This is the value used in files produced 
     with DjVuLibre. This is smaller than DJVUVERSION because version
     number inflation causes problems with older software.
