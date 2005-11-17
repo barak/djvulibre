@@ -1245,6 +1245,7 @@ void DjVuImage::set_rotate(int count)
 GP<DjVuAnno> 
 DjVuImage::get_decoded_anno()
 {
+    GP<DjVuInfo> djvuinfo = get_info();
     GP<DjVuAnno> djvuanno = DjVuAnno::create();
     GP<ByteStream> bs=get_anno();
     if( bs )
