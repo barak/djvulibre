@@ -427,7 +427,7 @@ QXImager::allocateCell(int r, int g, int b)
       }
 		  
       int closest_distance=0xffff;
-      XColor closest_cell;
+      XColor closest_cell = cmap_cells[0];
       for(int pix=0;pix<256;pix++)
       {
 	 XColor & c=cmap_cells[pix];
