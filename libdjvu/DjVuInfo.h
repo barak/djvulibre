@@ -99,8 +99,7 @@ class ByteStream;
 #define DJVUVERSION              26
 /** DjVu format version. This is the value used in files produced 
     with DjVuLibre. This is smaller than DJVUVERSION because version
-    number inflation causes problems with older software.
- */ 
+    number inflation causes problems with older software. */ 
 #define DJVUVERSION_FOR_OUTPUT   24
 /** This is the version which introduced orientations. */
 #define DJVUVERSION_ORIENTATION  22
