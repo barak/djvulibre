@@ -1,3 +1,7 @@
+NEW IN VERSION 3.5.16
+---------------------
+- Shared library build system updates.
+
 NEW IN VERSION 3.5.15
 ---------------------
 - Fixes for compilation with GCC-4.0.
