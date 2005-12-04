@@ -58,7 +58,7 @@ CXXFLAGS = @CPPFLAGS@ @CXXFLAGS@ ${CXXPICFLAGS} ${CXXRPOFLAGS} ${FLAGS}
 
 all: ${LIBDJVU_LA} 
 
-install: install-lib install-data install-include
+install: install-lib install-data install-include install-pkgconfig
 
 OBJS = \
 	DjVuGlobal.lo DjVuGlobalMemory.lo GOS.lo GException.lo GContainer.lo \
@@ -105,6 +105,10 @@ install-include: FORCE
 	${INSTALL} -d ${DESTDIR}${includedir}/libdjvu
 	${INSTALL_DATA} ${srcdir}/ddjvuapi.h ${DESTDIR}${includedir}/libdjvu
 	${INSTALL_DATA} ${srcdir}/miniexp.h ${DESTDIR}${includedir}/libdjvu
+
+install-pkgconfig: FORCE
+	${INSTALL} -d ${DESTDIR}${libdir}/pkgconfig
+	${INSTALL_DATA} ddjvuapi.pc ${DESTDIR}${libdir}/pkgconfig
 
 depend: FORCE
 	for n in ${srcdir}/*.cpp ; do \

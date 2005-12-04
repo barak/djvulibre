@@ -77,17 +77,15 @@ AC_DEFUN([AC_FIND_DESKTOP_DIRS],[
        AC_MSG_RESULT(${dtop_menu:-no})
    
        # dtop_applications
-       if test -z "$dtop_menu" ; then
-           AC_MSG_CHECKING([for XDG menu directory])
-           if test -d /usr/share/applications ; then
-               if test -r /etc/xdg/menus/applications.menu ||
-                  test -r /etc/X11/desktop-menus/applications.menu ; then
-                    dtop_applications="/usr/share/applications"
-               fi
+       AC_MSG_CHECKING([for XDG menu directory])
+       if test -d /usr/share/applications ; then
+           if test -r /etc/xdg/menus/applications.menu ||
+              test -r /etc/X11/desktop-menus/applications.menu ; then
+                dtop_applications="/usr/share/applications"
            fi
-           AC_VARIFY(dtop_applications)
-           AC_MSG_RESULT(${dtop_applications:-no})
        fi
+       AC_VARIFY(dtop_applications)
+       AC_MSG_RESULT(${dtop_applications:-no})
 
        # dtop_pixmaps
        AC_MSG_CHECKING([for Gnome icon directory])

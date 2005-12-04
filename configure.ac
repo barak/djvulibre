@@ -415,6 +415,7 @@ AC_DEFINE_UNQUOTED(DJVULIBRE_VERSION,["${PACKAGE_VERSION}"],[version string])
 # Output files
 AC_CONFIG_FILES(Makefile)
 AC_CONFIG_FILES(libdjvu/Makefile)
+AC_CONFIG_FILES(libdjvu/ddjvuapi.pc)
 AC_CONFIG_FILES(tools/Makefile)
 AC_CONFIG_FILES(tools/jb2cmp/Makefile)
 AC_CONFIG_FILES(xmltools/Makefile)

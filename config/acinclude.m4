@@ -549,6 +549,8 @@ Valid arguments are: yes, no, posix, pthread, cothread, auto.])
 fi
 AC_SUBST(THREAD_LIBS)
 AC_SUBST(THREAD_CFLAGS)
+AC_SUBST(PTHREAD_LIBS)
+AC_SUBST(PTHREAD_CFLAGS)
 AC_MSG_CHECKING([threading model])
 AC_MSG_RESULT($ac_threads)
 if test $ac_threads != no ; then
