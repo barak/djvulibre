@@ -1,3 +1,9 @@
+djvulibre (3.5.16-2) unstable; urgency=low
+
+  * update to newly broken debian X libraries ... broken apart, that is
+
+ --
+
 djvulibre (3.5.16-1) unstable; urgency=low
 
   * New upstream release
