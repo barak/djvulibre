@@ -273,7 +273,7 @@ list(GArray<GUTF8String> &argv)
 	 if (file->is_page())
 	 {
 	    char buffer[128];
-	    sprintf(buffer, "PAGE #%d", file->get_page_num());
+	    sprintf(buffer, "PAGE #%d", file->get_page_num()+1);
 	    printf("%s", buffer);
 	    for(int i=strlen(buffer);i<9;i++)
 	       putchar(' ');
