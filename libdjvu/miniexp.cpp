@@ -1176,6 +1176,7 @@ minilisp_set_input(FILE *f)
   minilisp_ungetc = stdio_ungetc;
 }
 
+extern "C" miniexp_t (*minilisp_macrochar_parser[128])(void);
 miniexp_t (*minilisp_macrochar_parser[128])(void);
 
 static void

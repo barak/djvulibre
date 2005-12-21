@@ -394,8 +394,6 @@ public:
       invocation of this conversion operator. */
   operator const TYPE* () const
     { return ((const TYPE*)data)-minlo; }
-  operator const TYPE* ()  // suppress warning with gcc-2.95
-    { return ((const TYPE*)data)-minlo; }
   // -- ALTERATION
   /** Erases the array contents. All elements in the array are destroyed.  
       The valid subscript range is set to the empty range. */
@@ -1305,13 +1303,6 @@ static inline unsigned int
 hash(const unsigned long & x) 
 { 
   return (unsigned int)x;
-}
-
-/** Hashing function (void *). */
-static inline unsigned int 
-hash(void * const & x) 
-{ 
-  return (unsigned long) x; 
 }
 
 /** Hashing function (const void *). */
