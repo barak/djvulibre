@@ -99,6 +99,8 @@ extern "C" {
 
    Version   Change
    -----------------------------
+     17    Addition of:
+              ddjvu_document_get_pagename()
      16    Addition of miniexp.h and related functions:
               ddjvu_miniexp_release()
               ddjvu_document_get_outline/pagetext/pageanno()
@@ -628,6 +630,16 @@ DDJVUAPI int
 ddjvu_document_get_pagenum(ddjvu_document_t *document);
 
 
+/* ddjvu_document_get_pagename --
+   Returns the name of page <pageno>. There is no need to free the returned
+   string.  It remains allocated as long as the document exists.  Argument
+   <idx> indicates whether one seeks the page id (0), the page name (1), or
+   the page title (2).  This function returns NULL when it gets called before
+   receiving the <m_docinfo> or when an error occurs. */
+
+DDJVUAPI const char *
+ddjvu_document_get_pagename(ddjvu_document_t *document, int pageno, int idx);
+
 /* ddjvu_document_get_pageinfo ---
    Attempts to obtain information about page <pageno>
    without decoding the page. If the information is available,
@@ -1144,11 +1156,9 @@ ddjvu_document_print(ddjvu_document_t *document, FILE *output,
        handle_ddjvu_messages(context, TRUE);
      
    The bundled djvu data is written to file <output>
-   which must be seekable. Arguments <optc> and <optv> 
-   exactly like command line arguments of a program.
-   The only supported option is "-page=<pagespec>".
-   See the man page for <djvups> for more information
-   about page specifications.
+   which must be seekable. Arguments <optc> and <optv>
+   are intended for enabling future extensions 
+   of this function.
 */
 DDJVUAPI ddjvu_job_t *
 ddjvu_document_save(ddjvu_document_t *document, FILE *output, 

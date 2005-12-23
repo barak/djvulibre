@@ -334,13 +334,12 @@ public:
       the user at construction time. Calls to function #read# directly
       access this memory area.  The user must therefore make sure that its
       content remain valid long enough.  */
-  static GP<ByteStream> create_static(
-    void const * const buffer, const size_t size);
+  static GP<ByteStream> create_static(void const *buffer, size_t size);
   
   /** Easy access to preallocated stdin/stdout/stderr bytestreams */
-  static GP<ByteStream> get_stdin(char const * const mode=0);
-  static GP<ByteStream> get_stdout(char const * const mode=0);  
-  static GP<ByteStream> get_stderr(char const * const mode=0);
+  static GP<ByteStream> get_stdin(char const * mode=0);
+  static GP<ByteStream> get_stdout(char const * mode=0);  
+  static GP<ByteStream> get_stderr(char const * mode=0);
 
   /** This is the conventional name for EOF exceptions */
   static const char *EndOfFile;

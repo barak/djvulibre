@@ -184,12 +184,14 @@ size_t
 ParsingByteStream::write(const void *, size_t )
 {
   G_THROW("Cannot write() into a ParsingByteStream");
+  return 0;
 }
 
 long int
 ParsingByteStream::tell() const
 { 
   G_THROW("Cannot tell() a ParsingByteStream");
+  return 0;
 }
 
 inline int 

@@ -23702,8 +23702,8 @@ fi;
   if test x$ac_jpeg = xyes ; then
      test x${JPEG_LIBS+set} != xset && JPEG_LIBS="-ljpeg"
   elif test x$ac_jpeg != xno ; then
-     test x${JPEG_LIBS+set} != xset && JPEG_LIBS="-L$ac_jpeg -ljpeg"
-     test x${JPEG_CFLAGS+set} != xset && JPEG_CFLAGS="-I$ac_jpeg"
+     test x${JPEG_LIBS+set} != xset && JPEG_LIBS="-L$ac_jpeg/lib -ljpeg"
+     test x${JPEG_CFLAGS+set} != xset && JPEG_CFLAGS="-I$ac_jpeg/include"
   fi
   # Try linking
   if test x$ac_jpeg != xno ; then
@@ -23812,8 +23812,8 @@ fi;
   if test x$ac_tiff = xyes ; then
      test x${TIFF_LIBS+set} != xset && TIFF_LIBS="-ltiff"
   elif test x$ac_tiff != xno ; then
-     test x${TIFF_LIBS+set} != xset && TIFF_LIBS="-L$ac_tiff -ltiff"
-     test x${TIFF_CFLAGS+set} != xset && TIFF_CFLAGS="-I$ac_tiff"
+     test x${TIFF_LIBS+set} != xset && TIFF_LIBS="-L$ac_tiff/lib -ltiff"
+     test x${TIFF_CFLAGS+set} != xset && TIFF_CFLAGS="-I$ac_tiff/include"
   fi
   # Try linking
   if test x$ac_tiff != xno ; then

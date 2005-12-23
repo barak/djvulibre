@@ -18,7 +18,7 @@ ddjvuapi.lo: ./ddjvuapi.cpp ../config.h GException.h DjVuGlobal.h \
   GRect.h DjVuPort.h GURL.h DataPool.h DjVuInfo.h IW44Image.h ZPCodec.h \
   DjVuImage.h DjVuFile.h DjVuPalette.h DjVuAnno.h DjVuFileCache.h \
   DjVuDocument.h DjVuMessageLite.h DjVuMessage.h DjVmNav.h DjVuText.h \
-  GMapAreas.h DjVuToPS.h miniexp.h ddjvuapi.h
+  GMapAreas.h DjVuToPS.h miniexp.h ddjvuapi.h DjVmDir.h DjVmDoc.h
 debug.lo: ./debug.cpp ../config.h debug.h GString.h DjVuGlobal.h \
   GContainer.h GException.h GSmartPointer.h ByteStream.h Arrays.h GURL.h \
   GThreads.h

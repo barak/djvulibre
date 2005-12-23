@@ -880,9 +880,13 @@ miniexp_concat(miniexp_t p)
 /* INPUT/OUTPUT                                       */
 /* -------------------------------------------------- */
 
-/* --------- OUTPUT */
+extern "C" { 
+  // SunCC needs this to be defined inside extern "C" { ... }
+  // Beware the difference between extern "C" {...} and extern "C".
+  miniexp_t (*minilisp_macrochar_parser[128])(void); 
+}
 
-int minilisp_print_7bits = 1;
+/* --------- OUTPUT */
 
 static FILE *outputfile;
 
@@ -896,6 +900,8 @@ stdio_puts(const char *s)
 }
 
 int (*minilisp_puts)(const char *s) = stdio_puts;
+
+int minilisp_print_7bits = 1;
 
 void 
 minilisp_set_output(FILE *f)
@@ -1166,6 +1172,7 @@ stdio_ungetc(int c)
 }
 
 int (*minilisp_getc)(void) = stdio_getc;
+
 int (*minilisp_ungetc)(int c) = stdio_ungetc;
 
 void 
@@ -1175,9 +1182,6 @@ minilisp_set_input(FILE *f)
   minilisp_getc = stdio_getc;
   minilisp_ungetc = stdio_ungetc;
 }
-
-extern "C" miniexp_t (*minilisp_macrochar_parser[128])(void);
-miniexp_t (*minilisp_macrochar_parser[128])(void);
 
 static void
 skip_blank(int &c)

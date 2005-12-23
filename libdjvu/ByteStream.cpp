@@ -1196,7 +1196,7 @@ ByteStream::create(FILE * const f,char const * const mode,const bool closeme)
 }
 
 GP<ByteStream>
-ByteStream::create_static(const void * const buffer, size_t sz)
+ByteStream::create_static(const void * buffer, size_t sz)
 {
   return new Static(buffer, sz);
 }

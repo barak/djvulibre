@@ -668,7 +668,7 @@ GBaseString::UTF8ToNative(
 
 /*MBCS*/
 GNativeString
-GBaseString::getUTF82Native( const EscapeMode escape ) const
+GBaseString::getUTF82Native( EscapeMode escape ) const
 { //MBCS cvt
   GNativeString retval;
 

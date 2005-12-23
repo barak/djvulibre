@@ -130,7 +130,7 @@ namespace DJVU {
 
 #if defined(AUTOCONF) && !defined(HAVE_STRERROR)
 # define NEED_STRERROR
-#elif defined(sun) && !defined(__svr4__)
+#elif defined(sun) && !defined(__svr4__) && !defined(__SVR4)
 # define NEED_STRERROR
 #elif defined(REIMPLEMENT_STRERROR)
 # define NEED_STRERROR

@@ -110,6 +110,8 @@ using namespace DJVU;
 #include "DjVuText.h"
 #include "DjVuAnno.h"
 #include "DjVuToPS.h"
+#include "DjVmDir.h"
+#include "DjVmDoc.h"
 
 
 #include "miniexp.h"
@@ -968,9 +970,8 @@ ddjvu_stream_close(ddjvu_document_t *doc,
       if (! pool)
         G_THROW("Unknown stream ID");
       if (stop)
-        pool->stop();
-      else
-        pool->set_eof();
+        pool->stop(true);
+      pool->set_eof();
     }
   G_CATCH(ex)
     {
@@ -1032,6 +1033,34 @@ ddjvu_document_get_pagenum(ddjvu_document_t *document)
     }
   G_ENDCATCH;
   return 1;
+}
+
+const char *
+ddjvu_document_get_pagename(ddjvu_document_t *document, int pageno, int idx)
+{
+  G_TRY
+    {
+      DjVuDocument *doc = document->doc;
+      if (doc && doc->is_init_ok())
+        {
+          GP<DjVmDir> dir = doc->get_djvm_dir();
+          GP<DjVmDir::File> file;
+          if (dir)
+            file = dir->page_to_file(pageno);
+          if (file && idx==0)
+            return (const char*)file->get_load_name();
+          if (file && idx==1)
+            return (const char*)file->get_save_name();
+          if (file && idx==2)
+            return (const char*)file->get_title();
+        }      
+    }
+  G_CATCH(ex)
+    {
+      ERROR(document,ex);
+    }
+  G_ENDCATCH;
+  return 0;
 }
 
 ddjvu_status_t
@@ -2161,9 +2190,17 @@ struct DJVUNS ddjvu_printjob_s : public ddjvu_runnablejob_s
   double progress_high;
 };
 
+bool 
+ddjvu_printjob_s::inherits(const GUTF8String &classname)
+{
+  return (classname == "ddjvu_printjob_s") 
+    || ddjvu_runnablejob_s::inherits(classname);
+}
+
 ddjvu_status_t 
 ddjvu_printjob_s::run()
 {
+  mydoc->doc->wait_for_complete_init();
   progress_low = 0;
   progress_high = 1;
   printer.set_refresh_cb(cbrefresh, (void*)this);
@@ -2172,13 +2209,6 @@ ddjvu_printjob_s::run()
   printer.set_info_cb(cbinfo, (void*)this);
   printer.print(*obs, mydoc->doc, pages);
   return DDJVU_JOB_OK;
-}
-
-bool 
-ddjvu_printjob_s::inherits(const GUTF8String &classname)
-{
-  return (classname == "ddjvu_printjob_s") 
-    || ddjvu_runnablejob_s::inherits(classname);
 }
 
 void
@@ -2472,14 +2502,132 @@ ddjvu_document_print(ddjvu_document_t *document, FILE *output,
 }
 
 // ----------------------------------------
-// Not yet implemented
+// Saving (insufficiently tested)
+
+struct DJVUNS ddjvu_savejob_s : public ddjvu_runnablejob_s
+{
+  GP<ByteStream> obs;
+  virtual ddjvu_status_t run();
+  // virtual port functions:
+  virtual bool inherits(const GUTF8String&);
+  virtual void notify_file_flags_changed(const DjVuFile*, long, long);
+  // data
+  GMonitor monitor;
+};
+
+bool 
+ddjvu_savejob_s::inherits(const GUTF8String &classname)
+{
+  return (classname == "ddjvu_savejob_s") 
+    || ddjvu_runnablejob_s::inherits(classname);
+}
+
+void
+ddjvu_savejob_s::notify_file_flags_changed(const DjVuFile *file, long mask, long)
+{
+  if (mask & (DjVuFile::ALL_DATA_PRESENT ||
+              DjVuFile::DECODE_FAILED || DjVuFile::DECODE_STOPPED ||
+              DjVuFile::STOPPED || DjVuFile::DECODE_STOPPED ))
+    {
+      GMonitorLock lock(&monitor);
+      monitor.signal();
+    }
+}
+
+ddjvu_status_t 
+ddjvu_savejob_s::run()
+{
+  DjVuDocument *doc = mydoc->doc;
+  doc->wait_for_complete_init();
+  // Determine which components to save
+  int ncomp;
+  GArray<GUTF8String> comp_ids;
+  GPArray<DjVuFile> comp_files;
+  if (doc->get_doc_type()==DjVuDocument::BUNDLED ||
+      doc->get_doc_type()==DjVuDocument::INDIRECT)
+    {
+      GP<DjVmDir> dir = doc->get_djvm_dir();
+      ncomp = dir->get_files_num();
+      comp_ids.resize(ncomp - 1);
+      comp_files.resize(ncomp - 1);
+      GPList<DjVmDir::File> flist = dir->get_files_list();
+      GPosition pos=flist;
+      for (int comp=0; comp<ncomp; ++pos, ++comp)
+        comp_ids[comp] = flist[pos]->get_load_name();
+    } 
+  else 
+    { 
+      ncomp = doc->get_pages_num();
+      comp_ids.resize(ncomp - 1);
+      comp_files.resize(ncomp - 1);
+      for (int comp=0; comp<ncomp; comp++)
+        comp_ids[comp] = GUTF8String(comp);
+    }
+  // Monitoring download progress
+  int lo = 0;
+  int hi = 0;
+  get_portcaster()->add_route(doc, this);
+  while (lo < ncomp && !mystop)
+    {
+      int in_progress = 0;
+      GMonitorLock lock(&monitor);
+      while (lo<hi && comp_files[lo]->is_data_present())
+        lo += 1;
+      for (int comp=lo; comp<hi; comp++)
+        if (! comp_files[comp]->is_data_present())
+          in_progress += 1;
+      while (hi<ncomp && in_progress < 2)
+        {
+          comp_files[hi] = doc->get_djvu_file(comp_ids[hi]);
+          in_progress += 1;
+          hi += 1;
+        }
+      if (in_progress > 0)
+        monitor.wait();
+    }
+  if (mystop)
+    G_THROW("STOP");
+  // Saving!
+  doc->write(obs);
+  return DDJVU_JOB_OK;
+}
+
 
 ddjvu_job_t *
 ddjvu_document_save(ddjvu_document_t *document, FILE *output, 
                     int optc, const char * const * optv)
 {
-  return 0;
+  ddjvu_savejob_s *job = 0;
+  G_TRY
+    {
+      job = new ddjvu_savejob_s;
+      ref(job);
+      job->myctx = document->myctx;
+      job->mydoc = document;
+      // parse options
+      while (optc>0)
+        {
+          GNativeString narg(optv[0]);
+          GUTF8String uarg = narg;
+          complain(uarg, "Unrecognized option.");
+          optc -= 1;
+          optv += 1;
+        }
+      // go
+      job->obs = ByteStream::create(output, "wb", false);
+      job->start();
+    }
+  G_CATCH(ex)
+    {
+      if (job) 
+        unref(job);
+      job = 0;
+      ERROR(document, ex);
+    }
+  G_ENDCATCH;
+  return job;
 }
+
 
 
 
