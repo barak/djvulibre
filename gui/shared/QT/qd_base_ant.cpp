@@ -214,11 +214,10 @@ QDBase::createMapAreas(bool allow_draw)
 	 }
       }
    }
-
    for(GPosition pos=map_areas;pos;++pos)
    {
-      map_areas[pos]->attachWindow(pane, &ma_mapper);
-      map_areas[pos]->layout(GRect(0, 0, dimg->get_width(), dimg->get_height()));
+       map_areas[pos]->attachWindow(pane, &ma_mapper);
+       map_areas[pos]->layout(GRect(0, 0, dimg->get_width(), dimg->get_height()));
    }
 }
 
@@ -283,7 +282,6 @@ QDBase::processAnno(bool allow_redraw)
 	    default:
 	       break;
 	 }
-	 
 	 switch(ant->zoom)
 	 {
 	    case DjVuANT::ZOOM_STRETCH:
@@ -300,6 +298,10 @@ QDBase::processAnno(bool allow_redraw)
 		  setZoom(IDC_ZOOM_MIN+ant->zoom, 0, SRC_ANT); do_layout=1;
 	       }
 	 }
+         static int orient2cmd[] = { IDC_ROTATE_0, IDC_ROTATE_90,
+                                     IDC_ROTATE_180, IDC_ROTATE_270 };
+         int rotation = orient2cmd[dimg->get_rotate() & 3];
+         setRotate(rotation,0,SRC_ANT);
       }
 
       u_int32 bg_color=ant->bg_color;

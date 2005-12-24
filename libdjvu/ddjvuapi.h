@@ -101,6 +101,7 @@ extern "C" {
    -----------------------------
      17    Addition of:
               ddjvu_document_get_pagename()
+              ddjvu_document_save()
      16    Addition of miniexp.h and related functions:
               ddjvu_miniexp_release()
               ddjvu_document_get_outline/pagetext/pageanno()
@@ -885,7 +886,7 @@ ddjvu_page_get_long_description(ddjvu_page_t *page);
 
 
 /* ddjvu_page_get_rotation ---
-   Returns the rotation angle for the DjVu page.
+   Returns the rotation angle (counter-clockwise) for the DjVu page.
    The rotation is automatically taken into account
    by <ddjvu_page_render>, <ddjvu_page_get_width>
    and <ddjvu_page_get_height>. */

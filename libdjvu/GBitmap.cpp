@@ -1557,7 +1557,8 @@ GP<GBitmap>
 GBitmap::rotate(int count)
 {
   GP<GBitmap> newbitmap=this;
-  if((count%=4))
+  count = count & 3;
+  if(count)
   {
     if( count & 0x01 )
     {
@@ -1573,7 +1574,7 @@ GBitmap::rotate(int count)
     dbitmap.set_grays(grays);
     switch(count)
     {
-    case 1: // rotate 90 counter clockwise
+    case 3: // rotate 90 counter clockwise
       {
         const int lastrow = dbitmap.rows()-1;
         for(int y=0; y<nrows; y++)
@@ -1601,7 +1602,7 @@ GBitmap::rotate(int count)
         }
       }
       break;
-    case 3: // rotate 270 counter clockwise
+    case 1: // rotate 270 counter clockwise
       {
         const int lastcolumn = dbitmap.columns()-1;
         for(int y=0,ynew=lastcolumn;ynew>=0;y++,ynew--)

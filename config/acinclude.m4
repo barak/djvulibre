@@ -117,6 +117,7 @@ AC_DEFUN(AC_CXX_OPTIMIZE,[
       esac
    else
      AC_CHECK_CXX_OPT([-Wall],[OPTS="$OPTS -Wall"])
+     AC_CHECK_CXX_OPT([-Wno-non-virtual-dtor],[OPTS="$OPTS -Wno-non-virtual-dtor"])
    fi
    case x"$ac_debug" in
 changequote(<<, >>)dnl

@@ -89,7 +89,7 @@ DjVuInfo::DjVuInfo()
 #else
     version(DJVUVERSION),
 #endif
-    dpi(300), gamma(2.2), compressable(false), orientation(GRect::BULRNR)
+    dpi(300), gamma(2.2), orientation(0)
 {
 }
 
@@ -102,8 +102,7 @@ DjVuInfo::decode(ByteStream &bs)
   version = DJVUVERSION;
   dpi = 300;
   gamma = 2.2;
-  compressable=false;
-  orientation=GRect::BULRNR;
+  orientation=0;
   // Read data
   unsigned char buffer[10];
   int  size = bs.readall((void*)buffer, sizeof(buffer));
@@ -129,17 +128,18 @@ DjVuInfo::decode(ByteStream &bs)
     flags = buffer[9];
   // Fixup
   if (gamma<0.3)
-     gamma=0.3;
+    gamma=0.3;
   if (gamma>5.0)
-     gamma=5.0;
+    gamma=5.0;
   if (dpi < 25 || dpi > 6000)
     dpi = 300;
-  if(flags&COMPRESSABLE_FLAG)
-    compressable=true;
-  if(version>=DJVUVERSION_ORIENTATION)
-  {
-    orientation=(GRect::Orientations)(flags&((int)GRect::BOTTOM_UP|(int)GRect::MIRROR|(int)GRect::ROTATE90_CW));
-  }
+  switch (flags & 0x7)
+    {
+    case 6:  orientation=1; break; 
+    case 2:  orientation=2; break; 
+    case 5:  orientation=3; break;
+    default: orientation=0; break;
+    }
 }
 
 void 
@@ -152,11 +152,14 @@ DjVuInfo::encode(ByteStream &bs)
   bs.write8(dpi & 0xff);
   bs.write8(dpi >> 8);
   bs.write8((int)(10.0*gamma+0.5) );
-  unsigned char flags=orientation;
-  if(compressable) 
-  {
-    flags|=COMPRESSABLE_FLAG;
-  }
+  unsigned char flags;
+  switch (orientation) 
+    {
+    default: flags=0; break;
+    case 1:  flags=6; break;
+    case 2:  flags=2; break;
+    case 3:  flags=5; break;
+    }
   bs.write8(flags);
 }
 
@@ -169,24 +172,16 @@ DjVuInfo::get_memory_usage() const
 GUTF8String
 DjVuInfo::get_paramtags(void) const
 {
-  const int angle=GRect::findangle(orientation);
   GUTF8String retval;
-  if(angle)
-  {
-    retval+="<PARAM name=\"ROTATE\" value=\""+GUTF8String(angle)+"\" />\n";
-  }
-  if(orientation == GRect::rotate(angle,GRect::TDLRNR))
-  {
-    retval+="<PARAM name=\"VFLIP\" value=\"true\" />\n";
-  }
+  if(orientation)
+    retval+="<PARAM name=\"ROTATE\" value=\""
+      +GUTF8String(((4-orientation)%4)*90)+"\" />\n";
   if(dpi)
-  {
-    retval+="<PARAM name=\"DPI\" value=\""+GUTF8String(dpi)+"\" />\n";
-  }
+    retval+="<PARAM name=\"DPI\" value=\""
+      +GUTF8String(dpi)+"\" />\n";
   if(gamma)
-  {
-    retval+="<PARAM name=\"GAMMA\" value=\""+GUTF8String(gamma)+"\" />\n";
-  }
+    retval+="<PARAM name=\"GAMMA\" value=\""
+      +GUTF8String(gamma)+"\" />\n";
   return retval;
 }
 

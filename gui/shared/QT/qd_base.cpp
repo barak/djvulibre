@@ -287,7 +287,7 @@ QDBase::setDjVuImage(const GP<DjVuImage> & _dimg, int do_redraw)
    if (mode_src==SRC_ANT) 
      setMode(IDC_DISPLAY_COLOR, 0, SRC_ANT);
    if (rotate_src==SRC_ANT) 
-     setMode(IDC_ROTATE_0, 0, SRC_ANT);
+     setRotate(IDC_ROTATE_0, 0, SRC_ANT);
 
    decodeAnno(false);	// No redraw
    layout(0);		// Disallow redraw

@@ -780,17 +780,10 @@ DjVuFile::can_compress(void) const
 inline void
 DjVuFile::set_can_compress(bool m)
 {
-   if(info)
-   {
-     info->compressable=m;
-   }
    if (m)
-   {
      flags=flags | CAN_COMPRESS;
-   } else
-   {
+   else
      flags=flags & ~CAN_COMPRESS;
-   }
 }
 
 inline void

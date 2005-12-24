@@ -827,10 +827,11 @@ GURL::clear_cgi_arguments(void)
    cgi_value_arr.empty();
 
       // And clear everything past the '?' sign in the URL
-   for(const char *ptr = (const char*)url; *ptr; ptr++)
+   const char * ptrurl = url;
+   for(const char *ptr = ptrurl; *ptr; ptr++)
      if (*ptr=='?')
        {
-         url.setat(ptr-url, 0);
+         url.setat(ptr-ptrurl, 0);
          break;
        }
 }

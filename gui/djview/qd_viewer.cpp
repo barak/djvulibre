@@ -501,7 +501,7 @@ QDViewer::QDViewer(int _in_netscape,
        if (plugin_data.cmd_rotate>0)
          setRotate(plugin_data.cmd_rotate, true, SRC_TAGS);
        if (plugin_data.cmd_zoom<=0)
-         setZoom(IDC_ZOOM_WIDTH, true, SRC_DEFAULT);
+         setZoom(prefs.nDefaultZoom, true, SRC_DEFAULT);
        else 
          setZoom(plugin_data.cmd_zoom, true, SRC_TAGS);
        if (plugin_data.cmd_mode<=0) 
@@ -1012,8 +1012,9 @@ QDViewer::slotNotifyChunkDone(const GP<DjVuPort> &, const GUTF8String &name)
    DEBUG_MSG("name=" << name <<"\n");
    
       // Make sure, that hilite rectangles from OverrideFlags get created
-   if (name=="INFO") createMapAreas(true);
-
+   if (name=="INFO")
+     createMapAreas(true);
+   
       // Process decoded annotations. Note, that we may need to process
       // them later again as new ANTa and ANTz chunks get decoded
    if ((name=="ANTa") || (name=="ANTz") || (name=="FORM:ANNO"))

@@ -163,14 +163,11 @@ public:
       rendering functions can use this information in order to perform color
       correction for the intended display device. */
   double gamma;
-  /** The following boolian values are stored in the last character of the
-      info structure.  Unused bits are reserved for possible future extensions
-      and backwards compatability. */
-  bool compressable;
-  enum {COMPRESSABLE_FLAG=0x80,RESERVED_FLAGS1=0x7f};
 
-  /** We also store the current image orientation as three bits. */
-  GRect::Orientations orientation;
+  /** Image orientation:
+      0: no rotation      1: 90 degrees counter-clockwise
+      2: 180 degrees      3: 270 degrees counter-clockwise */
+  int orientation;
 
      /// Obtain the flags for the default specifications.
   GUTF8String get_paramtags(void) const;

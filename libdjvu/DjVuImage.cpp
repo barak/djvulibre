@@ -1074,16 +1074,14 @@ do_bitmap(const DjVuImage &dimg, BImager get,
 {
     GRect rect=inrect;
     GRect all=inall;
-///* rotate code
-    if( dimg.get_rotate()%4 )
-    {
+    if( dimg.get_rotate() )
+      {
         GRectMapper mapper;
-        mapper.rotate((4-dimg.get_rotate())%4);
+        mapper.rotate(-dimg.get_rotate());
         mapper.map(rect);
         mapper.map(all);
     }
-///* rotate code ends
-
+    
   // Sanity
   if (! ( all.contains(rect.xmin, rect.ymin) &&
           all.contains(rect.xmax-1, rect.ymax-1) ))
@@ -1102,7 +1100,7 @@ do_bitmap(const DjVuImage &dimg, BImager get,
     {
         GP<GBitmap> bm=(dimg.*get)(zrect, red, align);
         if(bm)
-            return bm->rotate((4-dimg.get_rotate())%4);
+            return bm->rotate(dimg.get_rotate());
         else
 	        return NULL;
     }
@@ -1128,7 +1126,7 @@ do_bitmap(const DjVuImage &dimg, BImager get,
   GP<GBitmap> bm = GBitmap::create(zrect.height(), zrect.width(), border);
   bs.scale(srect, *sbm, zrect, *bm);
   if( bm )
-      return bm->rotate((4-dimg.get_rotate())%4);
+      return bm->rotate(dimg.get_rotate());
   else
       return NULL;
 }
@@ -1137,19 +1135,16 @@ static GP<GPixmap>
 do_pixmap(const DjVuImage &dimg, PImager get,
           const GRect &inrect, const GRect &inall, double gamma )
 {
-
-    GRect rect=inrect;
-    GRect all=inall;
-///* rotate code
-    if( dimg.get_rotate()%4 )
+  GRect rect=inrect;
+  GRect all=inall;
+  if( dimg.get_rotate()%4 )
     {
-        GRectMapper mapper;
-        mapper.rotate((4-dimg.get_rotate())%4);
-        mapper.map(rect);
-        mapper.map(all);
+      GRectMapper mapper;
+      mapper.rotate(-dimg.get_rotate());
+      mapper.map(rect);
+      mapper.map(all);
     }
-///* rotate code ends
-
+  
   // Sanity
   if (! ( all.contains(rect.xmin, rect.ymin) &&
           all.contains(rect.xmax-1, rect.ymax-1) ))
@@ -1158,7 +1153,6 @@ do_pixmap(const DjVuImage &dimg, PImager get,
   int red, w=0, h=0, rw=0, rh=0;
   w = dimg.get_real_width();
   h = dimg.get_real_height();
-  
 
   rw = all.width();
   rh = all.height();
@@ -1169,7 +1163,7 @@ do_pixmap(const DjVuImage &dimg, PImager get,
     {
         GP<GPixmap> pm = (dimg.*get)(zrect, red, gamma);
         if( pm ) 
-            return pm->rotate((4-dimg.get_rotate())%4);
+            return pm->rotate(dimg.get_rotate());
         else
             return NULL;
     }
@@ -1196,7 +1190,7 @@ do_pixmap(const DjVuImage &dimg, PImager get,
   GP<GPixmap> pm = GPixmap::create();
   ps.scale(srect, *spm, zrect, *pm);
   if(pm)
-      return pm->rotate((4-dimg.get_rotate())%4);
+      return pm->rotate(dimg.get_rotate());
   else
       return NULL;
 }
@@ -1228,18 +1222,18 @@ DjVuImage::get_fg_pixmap(const GRect &rect, const GRect &all, double gamma) cons
 int 
 DjVuImage::get_rotate() const
 {
-  return (rotate_count<0)?0:rotate_count;
+  return (rotate_count<0) ? 0 : rotate_count;
 }
 
 void
 DjVuImage::init_rotate(const DjVuInfo &info)
 { 
-  rotate_count=((360-GRect::findangle(info.orientation))/90)%4;
+  rotate_count = info.orientation;
 }
 
 void DjVuImage::set_rotate(int count) 
 { 
-  rotate_count=((count%4)+4)%4;
+  rotate_count = count % 4;
 }
 
 GP<DjVuAnno> 
@@ -1250,32 +1244,36 @@ DjVuImage::get_decoded_anno()
     GP<ByteStream> bs=get_anno();
     if( bs )
     {
-        djvuanno->decode(bs);
-       
-        const int rotate_count=get_rotate(); 
-        if( rotate_count % 4 )
+      int rotate_count=get_rotate(); 
+      /// Brain damaged adjustment of annotation 
+      /// coordinates that reflect the orientation
+      /// flag in the info chunk....
+      if (djvuinfo)
+        rotate_count = rotate_count - djvuinfo->orientation;
+      ///decode
+      djvuanno->decode(bs);
+      ///map hyperlinks correctly for rotation           
+      if( rotate_count & 3 )
         {   
-            ///map hyperlinks correctly for rotation           
-            GRect input, output;
-            input = GRect(0,0,get_width(), get_height());
-            output = GRect(0,0,  get_real_width(), get_real_height());
-
-            GRectMapper mapper;
-            mapper.clear();
-            mapper.set_input(input);
-            mapper.set_output(output);               
-            mapper.rotate((4-rotate_count)%4);
-
-            GPList<GMapArea> &list=djvuanno->ant->map_areas;
-            for(GPosition pos=list;pos;++pos)
-            {
-                list[pos]->unmap(mapper);
-            }
+          GRect input, output;
+          input = GRect(0,0,get_width(),get_height());
+          if (rotate_count & 1)
+            output = GRect(0,0,get_height(),get_width());
+          else
+            output = GRect(0,0,get_width(),get_height());
+          GRectMapper mapper;
+          mapper.clear();
+          mapper.set_input(input);
+          mapper.set_output(output);               
+          mapper.rotate(-rotate_count);
+          GPList<GMapArea> &list=djvuanno->ant->map_areas;
+          for(GPosition pos=list;pos;++pos)
+            list[pos]->unmap(mapper);
         }
-        return djvuanno;
+      return djvuanno;
     }
     else
-        return NULL;
+      return NULL;
 }
 
 
@@ -1284,7 +1282,7 @@ DjVuImage::map(GRect &rect) const
 {
     GRect input, output;
     const int rotate_count=get_rotate(); 
-    if(rotate_count%4)
+    if(rotate_count>0)
     {  
         input = GRect(0,0,get_width(), get_height());
         output = GRect(0,0, get_real_width(), get_real_height());
@@ -1293,7 +1291,7 @@ DjVuImage::map(GRect &rect) const
         mapper.clear();
         mapper.set_input(input);
         mapper.set_output(output);               
-        mapper.rotate((4-rotate_count)%4);
+        mapper.rotate(-rotate_count);
         mapper.map(rect);
     }
 }
@@ -1303,7 +1301,7 @@ DjVuImage::unmap(GRect &rect) const
 {
     GRect input, output;
     const int rotate_count=get_rotate(); 
-    if(rotate_count%4)
+    if(rotate_count>0)
     {  
         input = GRect(0,0,get_width(), get_height());
         output = GRect(0,0, get_real_width(), get_real_height());
@@ -1312,7 +1310,7 @@ DjVuImage::unmap(GRect &rect) const
         mapper.clear();
         mapper.set_input(input);
         mapper.set_output(output);               
-        mapper.rotate((4-rotate_count)%4);
+        mapper.rotate(-rotate_count);
         mapper.unmap(rect);
     }
 }
@@ -1322,7 +1320,7 @@ DjVuImage::map(int &x, int &y) const
 {
     GRect input, output;
     const int rotate_count=get_rotate(); 
-    if(rotate_count%4)
+    if(rotate_count>0)
     {  
         input = GRect(0,0,get_width(), get_height());
         output = GRect(0,0, get_real_width(), get_real_height());
@@ -1331,7 +1329,7 @@ DjVuImage::map(int &x, int &y) const
         mapper.clear();
         mapper.set_input(input);
         mapper.set_output(output);               
-        mapper.rotate((4-rotate_count)%4);
+        mapper.rotate(-rotate_count);
         mapper.map(x, y);
     }
 }
@@ -1341,7 +1339,7 @@ DjVuImage::unmap(int &x, int &y) const
 {
     GRect input, output;
     const int rotate_count=get_rotate(); 
-    if(rotate_count%4)
+    if(rotate_count>0)
     {  
         input = GRect(0,0,get_width(), get_height());
         output = GRect(0,0, get_real_width(), get_real_height());
@@ -1350,7 +1348,7 @@ DjVuImage::unmap(int &x, int &y) const
         mapper.clear();
         mapper.set_input(input);
         mapper.set_output(output);               
-        mapper.rotate((4-rotate_count)%4);
+        mapper.rotate(-rotate_count);
         mapper.unmap(x, y);
     }
 }

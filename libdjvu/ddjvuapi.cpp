@@ -1090,7 +1090,7 @@ ddjvu_document_get_pageinfo(ddjvu_document_t *document, int pageno,
                       GP<ByteStream> gbs = iff->get_bytestream();
                       GP<DjVuInfo> info=DjVuInfo::create();
                       info->decode(*gbs);
-                      int rot = ((360-GRect::findangle(info->orientation))/90)%4;
+                      int rot = info->orientation;
                       if (pageinfo)
                         {
                           pageinfo->width = (rot&1) ? info->height : info->width;

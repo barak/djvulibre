@@ -884,9 +884,8 @@ DjVuFile::decode_chunk( const GUTF8String &id, const GP<ByteStream> &gbs,
     if (info->width<0 || info->height<0)
       G_THROW( ERR_MSG("DjVuFile.corrupt_zero") );
     if (info->version >= DJVUVERSION_TOO_NEW)
-      G_THROW( ERR_MSG("DjVuFile.new_version") "\t" STRINGIFY(DJVUVERSION_TOO_NEW) );
-    if(info->compressable)
-      set_can_compress(true);
+      G_THROW( ERR_MSG("DjVuFile.new_version") "\t" 
+               STRINGIFY(DJVUVERSION_TOO_NEW) );
   }
   
   // INCL (inclusion chunk)

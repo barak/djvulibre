@@ -20563,6 +20563,23 @@ echo "${ECHO_T}no" >&6
 
  fi
 
+
+ opt="-Wno-non-virtual-dtor"
+ echo "$as_me:$LINENO: checking if $CXX accepts $opt" >&5
+echo $ECHO_N "checking if $CXX accepts $opt... $ECHO_C" >&6
+ echo 'void f(){}' > conftest.cc
+ if test -z "`${CXX} ${CXXFLAGS} ${OPTS} $opt -c conftest.cc 2>&1`"; then
+    echo "$as_me:$LINENO: result: yes" >&5
+echo "${ECHO_T}yes" >&6
+    rm conftest.*
+    OPTS="$OPTS -Wno-non-virtual-dtor"
+ else
+    echo "$as_me:$LINENO: result: no" >&5
+echo "${ECHO_T}no" >&6
+    rm conftest.*
+
+ fi
+
    fi
    case x"$ac_debug" in
      x[0-9])  OPTS="$OPTS -DDEBUGLVL=$ac_debug" ;;

@@ -1604,7 +1604,8 @@ GPixmap::stencil(const GBitmap *bm,
 GP<GPixmap> GPixmap::rotate(int count)
 {
   GP<GPixmap> newpixmap(this);
-  if((count %= 4))
+  count = count & 3;
+  if(count)
   {
     if( count&0x01)
       newpixmap = new GPixmap(ncolumns, nrows);
@@ -1616,7 +1617,7 @@ GP<GPixmap> GPixmap::rotate(int count)
     GMonitorLock lock(&pixmap_monitor());
     switch(count)
     {
-    case 1: //// rotate 90 counter clockwise
+    case 3: //// rotate 90 counter clockwise
         {
             int lastrow = dpixmap.rows()-1;
 
@@ -1646,7 +1647,7 @@ GP<GPixmap> GPixmap::rotate(int count)
             }
         }
         break;
-    case 3: //// rotate 270 counter clockwise
+    case 1: //// rotate 270 counter clockwise
         {
             int lastcolumn = dpixmap.columns()-1;
 
