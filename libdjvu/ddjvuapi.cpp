@@ -1063,6 +1063,32 @@ ddjvu_document_get_pagename(ddjvu_document_t *document, int pageno, int idx)
   return 0;
 }
 
+int 
+ddjvu_document_check_pagedata(ddjvu_document_t *document, int pageno)
+{
+  G_TRY
+    {
+      DjVuDocument *doc = document->doc;
+      if (doc && doc->is_init_ok())
+        {
+          GP<DjVuFile> file;
+          if (doc->get_doc_type()==DjVuDocument::INDIRECT)
+            file = doc->get_djvu_file(pageno, true);
+          else
+            file = doc->get_djvu_file(pageno, false);            
+          if (file && file->is_all_data_present())
+            return 1;
+        }
+    }
+  G_CATCH(ex)
+    {
+      ERROR(document,ex);
+    }
+  G_ENDCATCH;
+  return 0;
+}
+
+
 ddjvu_status_t
 ddjvu_document_get_pageinfo(ddjvu_document_t *document, int pageno, 
                             ddjvu_pageinfo_t *pageinfo)
@@ -1382,6 +1408,12 @@ ddjvu_page_get_version(ddjvu_page_t *page)
   return DJVUVERSION;
 }
 
+int
+ddjvu_code_get_version(void)
+{
+  return DJVUVERSION;
+}
+
 ddjvu_page_type_t
 ddjvu_page_get_type(ddjvu_page_t *page)
 {
@@ -1446,23 +1478,6 @@ ddjvu_page_get_long_description(ddjvu_page_t *page)
 // ----------------------------------------
 // Rotations
 
-ddjvu_page_rotation_t
-ddjvu_page_get_rotation(ddjvu_page_t *page)
-{
-  ddjvu_page_rotation_t rot = DDJVU_ROTATE_0;
-  G_TRY
-    {
-      if (page && page->img)
-        rot = (ddjvu_page_rotation_t)page->img->get_rotate();
-    }
-  G_CATCH(ex)
-    {
-      ERROR(page, ex);
-    }
-  G_ENDCATCH;
-  return rot;
-}
-
 void
 ddjvu_page_set_rotation(ddjvu_page_t *page,
                         ddjvu_page_rotation_t rot)
@@ -1497,6 +1512,148 @@ ddjvu_page_set_rotation(ddjvu_page_t *page,
       ERROR(page, ex);
     }
   G_ENDCATCH;
+}
+
+ddjvu_page_rotation_t
+ddjvu_page_get_rotation(ddjvu_page_t *page)
+{
+  ddjvu_page_rotation_t rot = DDJVU_ROTATE_0;
+  G_TRY
+    {
+      if (page && page->img)
+        rot = (ddjvu_page_rotation_t)(page->img->get_rotate() & 3);
+    }
+  G_CATCH(ex)
+    {
+      ERROR(page, ex);
+    }
+  G_ENDCATCH;
+  return rot;
+}
+
+ddjvu_page_rotation_t
+ddjvu_page_get_initial_rotation(ddjvu_page_t *page)
+{
+  ddjvu_page_rotation_t rot = DDJVU_ROTATE_0;
+  G_TRY
+    {
+      GP<DjVuInfo> info;
+      if (page && page->img)
+        info = page->img->get_info();
+      if (info)
+        rot = (ddjvu_page_rotation_t)(info->orientation & 3);
+    }
+  G_CATCH(ex)
+    {
+      ERROR(page, ex);
+    }
+  G_ENDCATCH;
+  return rot;
+}
+
+
+// ----------------------------------------
+// Rectangles
+
+static void
+rect2grect(const ddjvu_rect_t *r, GRect &g)
+{
+  g.xmin = r->x;
+  g.ymin = r->y;
+  g.xmax = r->x + r->w;
+  g.ymax = r->y + r->h;
+}
+
+static void
+grect2rect(const GRect &g, ddjvu_rect_t *r)
+{
+  if (g.isempty())
+    {
+      r->x = r->y = 0;
+      r->w = r->h = 0;
+    }
+  else
+    {
+      r->x = g.xmin;
+      r->y = g.ymin;
+      r->w = g.width();
+      r->h = g.height();
+    }
+}
+
+void
+ddjvu_rect_intersect(ddjvu_rect_t *r1, ddjvu_rect_t *r2, ddjvu_rect_t *out)
+{
+  GRect g1,g2,gout;
+  rect2grect(r1,g1);
+  rect2grect(r2,g2);
+  gout.intersect(g1,g2);
+  grect2rect(gout,out);
+}
+
+void
+ddjvu_rect_bound(ddjvu_rect_t *r1, ddjvu_rect_t *r2, ddjvu_rect_t *out)
+{
+  GRect g1,g2,gout;
+  rect2grect(r1,g1);
+  rect2grect(r2,g2);
+  gout.recthull(g1,g2);
+  grect2rect(gout,out);
+}
+
+ddjvu_rectmapper_t *
+ddjvu_rectmapper_create(ddjvu_rect_t *input,
+                        ddjvu_rect_t *output, int count)
+{
+  GRect ginput, goutput;
+  rect2grect(input, ginput);
+  rect2grect(output, goutput);
+  GRectMapper *mapper = new GRectMapper;
+  mapper->set_input(ginput);
+  mapper->set_output(goutput);
+  mapper->rotate(count);
+  return (ddjvu_rectmapper_t*)mapper;
+}
+  
+void 
+ddjvu_rectmapper_release(ddjvu_rectmapper_t *mapper)
+{
+  GRectMapper *gmapper = new GRectMapper;
+  delete gmapper;
+}
+
+void 
+ddjvu_map_point(ddjvu_rectmapper_t *mapper, int *x, int *y)
+{
+  GRectMapper *gmapper = new GRectMapper;
+  gmapper->map(*x,*y);
+}
+
+void 
+ddjvu_map_rect(ddjvu_rectmapper_t *mapper, ddjvu_rect_t *rect)
+{
+  GRect grect;
+  rect2grect(rect,grect);
+  GRectMapper *gmapper = new GRectMapper;
+  gmapper->map(grect);
+  grect2rect(grect,rect);
+}
+
+void 
+ddjvu_unmap_point(ddjvu_rectmapper_t *mapper, int *x, int *y)
+{
+  GRectMapper *gmapper = new GRectMapper;
+  gmapper->unmap(*x,*y);
+}
+
+void 
+ddjvu_unmap_rect(ddjvu_rectmapper_t *mapper, ddjvu_rect_t *rect)
+{
+  GRect grect;
+  rect2grect(rect,grect);
+  GRectMapper *gmapper = new GRectMapper;
+  gmapper->unmap(grect);
+  grect2rect(grect,rect);
 }
 
 
@@ -1852,28 +2009,14 @@ ddjvu_page_render(ddjvu_page_t *page,
     {
       GP<GPixmap> pm;
       GP<GBitmap> bm;
-      GRect prect;
-      GRect rrect;
+      GRect prect, rrect;
+      rect2grect(pagerect, prect);
+      rect2grect(renderrect, rrect);
       if (pixelformat && pixelformat->ytoptobottom)
         {
-          prect.xmin = pagerect->x;
-          prect.xmax = prect.xmin + pagerect->w;
           prect.ymin = renderrect->y + renderrect->h;
           prect.ymax = prect.ymin + pagerect->h;
-          rrect.xmin = renderrect->x;
-          rrect.xmax = rrect.xmin + renderrect->w;
           rrect.ymin = pagerect->y + pagerect->h;
-          rrect.ymax = rrect.ymin + renderrect->h;
-        }
-      else
-        {
-          prect.xmin = pagerect->x;
-          prect.xmax = prect.xmin + pagerect->w;
-          prect.ymin = pagerect->y;
-          prect.ymax = prect.ymin + pagerect->h;
-          rrect.xmin = renderrect->x;
-          rrect.xmax = rrect.xmin + renderrect->w;
-          rrect.ymin = renderrect->y;
           rrect.ymax = rrect.ymin + renderrect->h;
         }
 

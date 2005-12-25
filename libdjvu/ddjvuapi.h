@@ -101,25 +101,31 @@ extern "C" {
    -----------------------------
      17    Addition of:
               ddjvu_document_get_pagename()
-              ddjvu_document_save()
+              ddjvu_document_check_pagedata()
+              ddjvu_page_get_initial_rotation()
+              ddjvu_code_get_version()
+              ddjvu_rectmapper_t and related functions.
+              ddjvu_rect_t functions.
      16    Addition of miniexp.h and related functions:
               ddjvu_miniexp_release()
               ddjvu_document_get_outline/pagetext/pageanno()
-              ddjvu_anno_get_XXX()
+              ddjvu_anno_get_xxx()
      15    Addition of:
               ddjvu_document_get_pageinfo()
               ddjvu_document_print()
      14    Initial version.
 */
 
-#define DDJVUAPI_VERSION 16
+#define DDJVUAPI_VERSION 17
 
-typedef struct ddjvu_context_s  ddjvu_context_t;
-typedef union  ddjvu_message_s  ddjvu_message_t;
-typedef struct ddjvu_job_s      ddjvu_job_t;
-typedef struct ddjvu_document_s ddjvu_document_t;
-typedef struct ddjvu_page_s     ddjvu_page_t;
-typedef struct ddjvu_format_s   ddjvu_format_t;
+typedef struct ddjvu_context_s    ddjvu_context_t;
+typedef union  ddjvu_message_s    ddjvu_message_t;
+typedef struct ddjvu_job_s        ddjvu_job_t;
+typedef struct ddjvu_document_s   ddjvu_document_t;
+typedef struct ddjvu_page_s       ddjvu_page_t;
+typedef struct ddjvu_format_s     ddjvu_format_t;
+typedef struct ddjvu_rect_s       ddjvu_rect_t;
+typedef struct ddjvu_rectmapper_s ddjvu_rectmapper_t;
 
 
 /* GENERAL CONVENTIONS:
@@ -142,7 +148,7 @@ typedef struct ddjvu_format_s   ddjvu_format_t;
    PREREQUISITES:
    - Please read the djvu man page: <"tools/djvu.1">.
    - Please browse the file format specifications 
-     <"doc/djvu3changes.txt"> and <"doc/djvu2spec.djvu">.
+     <"doc/djvu3changes.txt"> and <"doc/djvu3spec.djvu">.
 */
 
   
@@ -641,6 +647,16 @@ ddjvu_document_get_pagenum(ddjvu_document_t *document);
 DDJVUAPI const char *
 ddjvu_document_get_pagename(ddjvu_document_t *document, int pageno, int idx);
 
+
+/* ddjvu_document_check_pagedata ---
+   Returns a non zero result if the page data is already in memory.
+   When this is the case, functions <ddjvu_document_get_pageinfo>, 
+   <ddjvu_document_get_pagetext> and <ddjvu_document_get_pageanno>
+   return the information immediately. */
+
+DDJVUAPI int 
+ddjvu_document_check_pagedata(ddjvu_document_t *document, int pageno);
+
 /* ddjvu_document_get_pageinfo ---
    Attempts to obtain information about page <pageno>
    without decoding the page. If the information is available,
@@ -656,9 +672,6 @@ ddjvu_document_get_pagename(ddjvu_document_t *document, int pageno, int idx);
      handle_ddjvu_messages(ctx, TRUE);
    if (r>=DDJVU_JOB_FAILED)
      signal_error();
-
-   When the djvu document comes from the network, the above idiom 
-   is very slow because it waits until the data for all page is present. 
 */      
 
 typedef struct ddjvu_pageinfo_s {
@@ -670,6 +683,7 @@ typedef struct ddjvu_pageinfo_s {
 DDJVUAPI ddjvu_status_t
 ddjvu_document_get_pageinfo(ddjvu_document_t *document, int pageno, 
                             ddjvu_pageinfo_t *info);
+
 
 
 
@@ -853,6 +867,14 @@ ddjvu_page_get_gamma(ddjvu_page_t *page);
 DDJVUAPI int
 ddjvu_page_get_version(ddjvu_page_t *page);
 
+/* ddjvu_code_get_version ---
+   Returns the version of the djvu file format
+   implemented by this library. More or less graceful 
+   degradation might arise if this is smaller than
+   the number returned by <ddjvu_page_get_version>. */
+
+DDJVUAPI int
+ddjvu_code_get_version(void);
 
 /* ddjvu_page_get_type ---
    Returns the type of the page data.
@@ -885,11 +907,10 @@ DDJVUAPI char *
 ddjvu_page_get_long_description(ddjvu_page_t *page);
 
 
-/* ddjvu_page_get_rotation ---
-   Returns the rotation angle (counter-clockwise) for the DjVu page.
-   The rotation is automatically taken into account
-   by <ddjvu_page_render>, <ddjvu_page_get_width>
-   and <ddjvu_page_get_height>. */
+/* ddjvu_page_set_rotation ---
+   Changes the counter-clockwise rotation angle for a DjVu page.
+   Calling this function before receiving a <m_pageinfo>
+   message has no good effect. */
 
 typedef enum {
   DDJVU_ROTATE_0   = 0,
@@ -898,36 +919,34 @@ typedef enum {
   DDJVU_ROTATE_270 = 3,
 } ddjvu_page_rotation_t;
 
-DDJVUAPI ddjvu_page_rotation_t
-ddjvu_page_get_rotation(ddjvu_page_t *page);
-
-
-/* ddjvu_page_set_rotation ---
-   Changes the rotation angle for a DjVu page.
-   Calling this function before receiving a <m_pageinfo>
-   message has no effect. */
-
 DDJVUAPI void
 ddjvu_page_set_rotation(ddjvu_page_t *page,
                         ddjvu_page_rotation_t rot);
 
+/* ddjvu_page_get_rotation ---
+   Returns the counter-clockwise rotation angle for the DjVu page.
+   The rotation is automatically taken into account
+   by <ddjvu_page_render>, <ddjvu_page_get_width>
+   and <ddjvu_page_get_height>. */
+
+DDJVUAPI ddjvu_page_rotation_t
+ddjvu_page_get_rotation(ddjvu_page_t *page);
+
+/* ddjvu_page_get_initial_rotation ---
+   Returns the page rotation specified by the 
+   orientation flags in the DjVu file. 
+   [brain damage warning] This is useful because
+   maparea coordinates in the annotation chunks
+   are expressed relative to the rotated coordinates
+   whereas text coordinates in the hidden text data
+   are expressed relative to the unrotated coordinates. */
+
+DDJVUAPI ddjvu_page_rotation_t
+ddjvu_page_get_initial_rotation(ddjvu_page_t *page);
+
 
 
 /* ------- RENDER ------- */
-
-
-/* ddjvu_rect_t ---
-   This structure specifies the location of a rectangle.
-   Coordinates are usually expressed in pixels relative to 
-   the BOTTOM LEFT CORNER (but see ddjvu_format_set_y_direction).
-   Members <x> and <y> indicate the position of the bottom left 
-   corner of the rectangle Members <w> and <h> indicate the 
-   width and height of the rectangle. */
-
-typedef struct ddjvu_rect_s {
-  int x, y;
-  unsigned int w, h;
-} ddjvu_rect_t;
 
 
 /* ddjvu_render_mode_t ---
@@ -941,8 +960,6 @@ typedef enum {
   DDJVU_RENDER_BACKGROUND,      /* color background layer */
   DDJVU_RENDER_FOREGROUND,      /* color foreground layer */
 } ddjvu_render_mode_t;
-
-
 
 /* ddjvu_page_render --
    Renders a segment of a page with arbitrary scale.
@@ -975,6 +992,84 @@ ddjvu_page_render(ddjvu_page_t *page,
                   const ddjvu_format_t *pixelformat,
                   unsigned long rowsize,
                   char *imagebuffer );
+
+
+
+
+/* -------------------------------------------------- */
+/* RECTANGLES                                         */
+/* -------------------------------------------------- */
+
+/* ddjvu_rect_t ---
+   This structure specifies the location of a rectangle.
+   Coordinates are usually expressed in pixels relative to 
+   the BOTTOM LEFT CORNER (but see ddjvu_format_set_y_direction).
+   Members <x> and <y> indicate the position of the bottom left 
+   corner of the rectangle Members <w> and <h> indicate the 
+   width and height of the rectangle. */
+
+struct ddjvu_rect_s {
+  int x, y;
+  unsigned int w, h;
+};
+
+/* ddjvu_rect_isempty ---
+   Tests if a rectangle is empty. */
+
+#define ddjvu_rect_isempty(r) (((r)->w==0) && ((r)->h==0))
+
+/* ddjvu_rect_intersect ---
+   Computes the possibly empty intersection 
+   of rectangles <r1> and <r2>. */
+
+DDJVUAPI void 
+ddjvu_rect_intersect(ddjvu_rect_t *r1, ddjvu_rect_t *r2, ddjvu_rect_t *out);
+
+/* ddjvu_rect_bound ---
+   Computes the bounding box of possibly empty
+   rectangles <r1> and <r2>. */
+
+DDJVUAPI void 
+ddjvu_rect_bound(ddjvu_rect_t *r1, ddjvu_rect_t *r2, ddjvu_rect_t *out);
+
+/* ddjvu_rectmapper_create --
+   Creates a <ddjvu_rectmapper_t> data structure 
+   representing an affine coordinate transformation that
+   maps points from rectangle <input> to rectangle <output>.
+   The transformation maintains relative positions relative 
+   to the coordinates of the matching rectangle corners after
+   applying a rotation of <count> quarter turns counter-clockwise. */
+
+DDJVUAPI ddjvu_rectmapper_t *
+ddjvu_rectmapper_create(ddjvu_rect_t *input, ddjvu_rect_t *output, int count);
+
+/* ddjvu_rectmapper_release ---
+   Destroys the <ddjvu_rect_mapper_t> structure
+   returned by <ddjvu_rect_mapper_create>. */
+
+DDJVUAPI void 
+ddjvu_rectmapper_release(ddjvu_rectmapper_t *mapper);
+
+/* ddjvu_map_point, ddjvu_map_rect ---
+   Applies the coordinate transform 
+   to a point or a rectangle */
+
+DDJVUAPI void 
+ddjvu_map_point(ddjvu_rectmapper_t *mapper, int *x, int *y);
+
+DDJVUAPI void 
+ddjvu_map_rect(ddjvu_rectmapper_t *mapper, ddjvu_rect_t *rect);
+
+
+/* ddjvu_unmap_point, ddjvu_unmap_rect ---
+   Applies the inverse coordinate transform 
+   to a point or a rectangle */
+
+DDJVUAPI void 
+ddjvu_unmap_point(ddjvu_rectmapper_t *mapper, int *x, int *y);
+
+DDJVUAPI void 
+ddjvu_unmap_rect(ddjvu_rectmapper_t *mapper, ddjvu_rect_t *rect);
 
 
 
@@ -1147,7 +1242,7 @@ ddjvu_document_print(ddjvu_document_t *document, FILE *output,
                      int optc, const char * const * optv);
 
 
-/* NOT YET IMPLEMENTED ---
+/* ddjvu_document_save ---
    Saves the djvu document as a bundled djvu file.
    This function works asynchronously in a separate thread.
    You can use the following idiom for synchronous operation:
