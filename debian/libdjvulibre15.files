@@ -2,4 +2,3 @@ usr/lib/lib*.so.*
 usr/share/djvu
 usr/share/mime-info/djvu.mime
 usr/share/icons
-usr/share/mimelnk/image
