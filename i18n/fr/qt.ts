@@ -1304,7 +1304,7 @@ en
     <name>QMenuBar</name>
     <message>
         <source>About</source>
-        <translation type="unfinished">(TODO: Trouver les termes Mac)</translation>
+        <translation type="unfinished">A propos</translation>
     </message>
     <message>
         <source>Config</source>
