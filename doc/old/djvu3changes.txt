@@ -682,6 +682,3 @@
  additional chunk "NAVM" located after the "DIRM" chunk.
  The NAVM chunk contains outlines and bookmarks.
  See the files libdjvu/DjVmNav.h and libdjvu.DjVmNav.cpp]
-
-
-    
