@@ -43,7 +43,7 @@ error(const char *msg, miniexp_t v)
     printf("ERROR: %s", msg);
   else
     printf("BREAK");
-  if (v) 
+  if (v)
     {
       printf(": ");
       miniexp_prin(v);
@@ -56,14 +56,14 @@ error(const char *msg, miniexp_t v)
 
 /* ------------ environment */
 
-miniexp_t 
+miniexp_t
 lookup(miniexp_t var, miniexp_t env)
 {
   while (miniexp_consp(env))
     {
       miniexp_t a = miniexp_car(env);
       if (miniexp_car(a) == var)
-        return a;
+	return a;
       env = miniexp_cdr(env);
     }
   return 0;
@@ -104,20 +104,20 @@ static bool break_request = false;
 struct callable_t : public miniobj_t
 {
   MINIOBJ_DECLARE(callable_t,miniobj_t,"callable");
-  virtual miniexp_t call(miniexp_t args, miniexp_t env, 
-                         bool apply=false) = 0;
+  virtual miniexp_t call(miniexp_t args, miniexp_t env,
+			 bool apply=false) = 0;
 };
 
 MINIOBJ_IMPLEMENT(callable_t,miniobj_t,"callable");
 
-miniexp_t 
+miniexp_t
 evaluate(miniexp_t expr, miniexp_t env)
 {
   if (miniexp_symbolp(expr))
     {
       miniexp_t a = lookup(expr,env);
       if (! a)
-        error ("eval: undefined variable", expr);
+	error ("eval: undefined variable", expr);
       return miniexp_cdr(a);
     }
   else if (miniexp_consp(expr))
@@ -126,16 +126,16 @@ evaluate(miniexp_t expr, miniexp_t env)
       minivar_t xs = evaluate(s, env);
       miniobj_t *obj = miniexp_to_obj(xs);
       if (break_request)
-        error(0);
+	error(0);
       if (obj && obj->isa(callable_t::classname))
-        return ((callable_t*)obj)->call(miniexp_cdr(expr), env);
+	return ((callable_t*)obj)->call(miniexp_cdr(expr), env);
       error("apply: cannot apply this object", xs);
     }
-  else 
+  else
     return expr;
 }
 
-miniexp_t 
+miniexp_t
 evaluate_progn(miniexp_t exprs, miniexp_t env)
 {
   minivar_t v;
@@ -172,9 +172,9 @@ evaluate_list(miniexp_t l, miniexp_t env)
     {
       v = evaluate(l, env);
       if (lp)
-        miniexp_rplacd(lp, v);
+	miniexp_rplacd(lp, v);
       else
-        ll = v;
+	ll = v;
     }
   return ll;
 }
@@ -202,7 +202,7 @@ specialform_t::specialform_t(const char *name, fptr_t fptr)
   defvar(s, v);
 }
 
-miniexp_t 
+miniexp_t
 specialform_t::call(miniexp_t args, miniexp_t env, bool)
 {
   return (*fptr)(args, env);
@@ -240,14 +240,14 @@ primitive_t::primitive_t(const char *n, fptr_t f, int a, int o)
   defvar(s, v);
 }
 
-miniexp_t 
+miniexp_t
 primitive_t::call(miniexp_t args, miniexp_t env, bool apply)
 {
   int argc = miniexp_length(args);
   if (argc < this->args)
     error("apply(primitive): not enough arguments");
   if (argc > this->args + this->optargs)
-    error("apply(primitive): too many arguments");        
+    error("apply(primitive): too many arguments");
   minivar_t xargs = apply ? args : evaluate_list(args, env);
   miniexp_t *argv = new miniexp_t[argc];
   miniexp_t a = xargs;
@@ -258,8 +258,8 @@ primitive_t::call(miniexp_t args, miniexp_t env, bool apply)
       a = miniexp_cdr(a);
     }
   minivar_t v;
-  try 
-    { v = (*fptr)(argc, argv, env); } 
+  try
+    { v = (*fptr)(argc, argv, env); }
   catch(...)
     { delete [] argv; throw; }
   delete [] argv;
@@ -292,13 +292,13 @@ public:
 
 MINIOBJ_IMPLEMENT(function_t,callable_t,"function");
 
-void 
+void
 function_t::check_args(miniexp_t a)
 {
  again:
   if (miniexp_symbolp(a) || !a)
     return;
-  if (miniexp_listp(a)) 
+  if (miniexp_listp(a))
     {
       check_args(miniexp_car(a));
       a = miniexp_cdr(a);
@@ -320,7 +320,7 @@ function_t::match_args(miniexp_t a, miniexp_t v, miniexp_t &env)
   if (miniexp_consp(a))
     {
       if (! miniexp_consp(v))
-        error("apply: not enough arguments", a);
+	error("apply: not enough arguments", a);
       match_args(miniexp_car(a), miniexp_car(v), env);
       a = miniexp_cdr(a);
       v = miniexp_cdr(v);
@@ -336,7 +336,7 @@ function_t::function_t(miniexp_t a, miniexp_t b, miniexp_t e)
   check_args(a);
 }
 
-miniexp_t 
+miniexp_t
 function_t::call(miniexp_t args, miniexp_t env, bool apply)
 {
   minivar_t xargs = apply ? args : evaluate_list(args, env);
@@ -345,7 +345,7 @@ function_t::call(miniexp_t args, miniexp_t env, bool apply)
   return evaluate_progn(body, nenv);
 }
 
-void 
+void
 function_t::mark(minilisp_mark_t action)
 {
   action(&args);
@@ -353,7 +353,7 @@ function_t::mark(minilisp_mark_t action)
   action(&env);
 }
 
-miniexp_t 
+miniexp_t
 function_t::funcdef(miniexp_t name)
 {
   if (name)
@@ -383,12 +383,12 @@ public:
 
 MINIOBJ_IMPLEMENT(macrofunction_t,function_t,"macrofunction");
 
-macrofunction_t::macrofunction_t(miniexp_t a, miniexp_t b, miniexp_t e) 
-  : function_t(a,b,e) 
-{ 
+macrofunction_t::macrofunction_t(miniexp_t a, miniexp_t b, miniexp_t e)
+  : function_t(a,b,e)
+{
 }
 
-miniexp_t 
+miniexp_t
 macrofunction_t::call(miniexp_t args, miniexp_t env, bool)
 {
   minivar_t nenv = this->env;
@@ -397,7 +397,7 @@ macrofunction_t::call(miniexp_t args, miniexp_t env, bool)
   return evaluate(e, env);
 }
 
-miniexp_t 
+miniexp_t
 macrofunction_t::funcdef(miniexp_t name)
 {
   if (name)
@@ -415,12 +415,12 @@ macrofunction_t::funcdef(miniexp_t name)
 
 /* ------------ define special forms */
 
-DEFSPECIAL("progn",progn) 
+DEFSPECIAL("progn",progn)
 {
   return evaluate_progn(expr, env);
 }
 
-DEFSPECIAL("list",list) 
+DEFSPECIAL("list",list)
 {
   return evaluate_list(expr, env);
 }
@@ -462,10 +462,10 @@ DEFSPECIAL("let",let)
     {
       miniexp_t a = miniexp_car(v);
       v = miniexp_cdr(v);
-      if (! (miniexp_consp(a) && 
-             miniexp_symbolp(miniexp_car(a)) &&
-             !miniexp_cddr(a)))
-        error("let: syntax error");
+      if (! (miniexp_consp(a) &&
+	     miniexp_symbolp(miniexp_car(a)) &&
+	     !miniexp_cddr(a)))
+	error("let: syntax error");
       w = evaluate(miniexp_cadr(a), env);
       p = miniexp_cons(miniexp_car(a), w);
       nenv = miniexp_cons(p, nenv);
@@ -482,10 +482,10 @@ DEFSPECIAL("letrec",letrec)
     {
       miniexp_t a = miniexp_car(v);
       v = miniexp_cdr(v);
-      if (! (miniexp_consp(a) && 
-             miniexp_symbolp(miniexp_car(a)) &&
-             !miniexp_cddr(a)))
-        error("let: syntax error");
+      if (! (miniexp_consp(a) &&
+	     miniexp_symbolp(miniexp_car(a)) &&
+	     !miniexp_cddr(a)))
+	error("let: syntax error");
       minivar_t p = miniexp_cons(miniexp_car(a), 0);
       nenv = miniexp_cons(p, nenv);
     }
@@ -541,63 +541,63 @@ DEFUN("nullp",nullp,1,0) {
 }
 
 DEFUN("listp",listp,1,0) {
-  return miniexp_listp(argv[0]) ? s_true : 0; 
+  return miniexp_listp(argv[0]) ? s_true : 0;
 }
 
 DEFUN("consp",consp,1,0) {
-  return miniexp_consp(argv[0]) ? s_true : 0; 
+  return miniexp_consp(argv[0]) ? s_true : 0;
 }
 
 DEFUN("numberp",numberp,1,0) {
-  return miniexp_numberp(argv[0]) ? s_true : 0; 
+  return miniexp_numberp(argv[0]) ? s_true : 0;
 }
 
 DEFUN("objectp",objectp,1,0) {
-  return miniexp_objectp(argv[0]) ? s_true : 0; 
+  return miniexp_objectp(argv[0]) ? s_true : 0;
 }
 
 DEFUN("symbolp",symbolp,1,0) {
-  return miniexp_symbolp(argv[0]) ? s_true : 0; 
+  return miniexp_symbolp(argv[0]) ? s_true : 0;
 }
 
 DEFUN("stringp",stringp,1,0) {
-  return miniexp_stringp(argv[0]) ? s_true : 0; 
+  return miniexp_stringp(argv[0]) ? s_true : 0;
 }
 
 DEFUN("classof",classof,1,0) {
-  return miniexp_classof(argv[0]); 
+  return miniexp_classof(argv[0]);
 }
 
 DEFUN("car",car,1,0) {
-  return miniexp_car(argv[0]); 
+  return miniexp_car(argv[0]);
 }
 
 DEFUN("cdr",cdr,1,0) {
-  return miniexp_cdr(argv[0]); 
+  return miniexp_cdr(argv[0]);
 }
 
 DEFUN("caar",caar,1,0) {
-  return miniexp_caar(argv[0]); 
+  return miniexp_caar(argv[0]);
 }
 
 DEFUN("cadr",cadr,1,0) {
-  return miniexp_cadr(argv[0]); 
+  return miniexp_cadr(argv[0]);
 }
 
 DEFUN("cdar",cdar,1,0) {
-  return miniexp_cdar(argv[0]); 
+  return miniexp_cdar(argv[0]);
 }
 
 DEFUN("cddr",cddr,1,0) {
-  return miniexp_cddr(argv[0]); 
+  return miniexp_cddr(argv[0]);
 }
 
 DEFUN("length",length,1,0) {
-  return miniexp_number(miniexp_length(argv[0])); 
+  return miniexp_number(miniexp_length(argv[0]));
 }
 
 DEFUN("reverse",reverse,1,0) {
-  return miniexp_reverse(argv[0]); 
+  return miniexp_reverse(argv[0]);
 }
 
 DEFUN("cons",cons,2,0) {
@@ -627,7 +627,7 @@ DEFUN("+",plus,0,9999) {
   for (int i=0; i<argc; i++)
     {
       if (!miniexp_numberp(argv[i]))
-        error("+: number expected");
+	error("+: number expected");
       s += miniexp_to_int(argv[i]);
     }
   return miniexp_number(s);
@@ -638,7 +638,7 @@ DEFUN("*",times,0,9999) {
   for (int i=0; i<argc; i++)
     {
       if (!miniexp_numberp(argv[i]))
-        error("*: number expected");
+	error("*: number expected");
       s *= miniexp_to_int(argv[i]);
     }
   return miniexp_number(s);
@@ -679,13 +679,13 @@ DEFUN("==",equalequal,2,0) {
   return (argv[0]==argv[1]) ? s_true : 0;
 }
 
-static bool 
+static bool
 equal(miniexp_t a, miniexp_t b)
 {
-  if (a == b) 
+  if (a == b)
     return true;
   else if (miniexp_consp(a) && miniexp_consp(b))
-    return equal(miniexp_car(a),miniexp_car(b)) 
+    return equal(miniexp_car(a),miniexp_car(b))
       &&   equal(miniexp_cdr(a),miniexp_cdr(b));
   else if (miniexp_stringp(a) && miniexp_stringp(b))
     return !strcmp(miniexp_to_str(a), miniexp_to_str(b));
@@ -700,17 +700,17 @@ DEFUN("<>",notequal,2,0) {
   return !equal(argv[0],argv[1]) ? s_true : 0;
 }
 
-static int 
+static int
 compare(miniexp_t a, miniexp_t b)
 {
   if (miniexp_numberp(a) && miniexp_numberp(b))
     {
       int na = miniexp_to_int(a);
       int nb = miniexp_to_int(b);
-      if (na < nb)      
-        return -1;
+      if (na < nb)
+	return -1;
       else if (na > nb)
-        return 1;
+	return 1;
       return 0;
     }
   else if (miniexp_stringp(a) && miniexp_stringp(b))
@@ -753,7 +753,7 @@ DEFUN("substr",substr,2,1) {
   if (argc>2)
     {
       if (! miniexp_numberp(argv[2]))
-        error("substr: number expected", argv[2]);
+	error("substr: number expected", argv[2]);
       f = miniexp_to_int(argv[2]);
       l = (f > l) ? l : (f < 0) ? 0 : f;
     }
@@ -799,7 +799,7 @@ DEFUN("pprint",pprint,1,1) {
   if (argc>1)
     {
       if (! miniexp_numberp(argv[1]))
-        error("pprint: second argument must be number");
+	error("pprint: second argument must be number");
       w = miniexp_to_int(argv[1]);
     }
   return miniexp_pprint(argv[0], w);
@@ -829,14 +829,14 @@ pname_puts(const char *s)
   return x;
 }
 
-static miniexp_t 
+static miniexp_t
 pname(miniexp_t p)
 {
   minivar_t r;
   int (*saved)(const char*) = minilisp_puts;
   pname_data.b = 0;
   pname_data.m = pname_data.l = 0;
-  try 
+  try
     {
       minilisp_puts = pname_puts;
       miniexp_prin(p);
@@ -936,29 +936,29 @@ toplevel(FILE *inp, FILE *out, bool print)
     {
       minivar_t s = miniexp_read();
       if (s == miniexp_dummy)
-        {
-          if (feof(inp))
-            break;
-          printf("ERROR: while parsing\n");
-          continue;
-        }
+	{
+	  if (feof(inp))
+	    break;
+	  printf("ERROR: while parsing\n");
+	  continue;
+	}
       try
-        {
-          break_request = false;
-          minivar_t v = evaluate(s, globalenv);
-          if (print)
-            {
-              printf("= ");
-              miniexp_print(v);
-            }
-        }
+	{
+	  break_request = false;
+	  minivar_t v = evaluate(s, globalenv);
+	  if (print)
+	    {
+	      printf("= ");
+	      miniexp_print(v);
+	    }
+	}
       catch(...)
-        {
-        }
+	{
+	}
     }
 }
 
-miniexp_t 
+miniexp_t
 parse_comment(void)
 {
   int c = minilisp_getc();
@@ -967,7 +967,7 @@ parse_comment(void)
   return miniexp_nil;
 }
 
-miniexp_t 
+miniexp_t
 parse_quote(void)
 {
   minivar_t l = miniexp_read();
@@ -975,19 +975,19 @@ parse_quote(void)
   return miniexp_cons(l,miniexp_nil);
 }
 
-static void 
+static void
 sighandler(int signo)
 {
   break_request = true;
   signal(signo, sighandler);
 }
 
-int 
+int
 main()
 {
   // minilisp_debug(1);
-  minilisp_macrochar_parser[(int)';'] = parse_comment;  
-  minilisp_macrochar_parser[(int)'\''] = parse_quote;  
+  minilisp_macrochar_parser[(int)';'] = parse_comment;
+  minilisp_macrochar_parser[(int)'\''] = parse_quote;
   FILE *f = fopen("minilisp.in","r");
   if (f)
     {
