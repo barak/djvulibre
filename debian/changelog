@@ -4,8 +4,9 @@ djvulibre (3.5.16-2) unstable; urgency=low
   * have -dev package depends on lib and libjpeg62-dev (closes: #343720)
     (thanks to Sebastien Bacher <seb128@canonical.com> via Ubuntu)
   * page numbers 1-based in djvm -l, like -i/-d (closes: #340361)
-  
- --
+  * don't include KDE desktop file x-djvu.desktop in lib (closes: #339638)
+
+ -- Barak A. Pearlmutter <bap@debian.org>  Mon, 26 Dec 2005 19:42:43 +0000
 
 djvulibre (3.5.16-1) unstable; urgency=low
 
