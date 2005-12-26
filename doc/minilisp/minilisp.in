@@ -1,4 +1,4 @@
-;; -*- Lisp -*- 
+;; -*- Lisp -*-
 ;; ---------------------------------------------------------------
 ;; MiniLisp - Very small lisp interpreter to demonstrate MiniExp.
 ;; Copyright (c) 2005  Leon Bottou
@@ -35,7 +35,7 @@
 (defun (copyrev l)
    (let ((r ()))
      (while l
-       (setq r (cons (car l) r)) 
+       (setq r (cons (car l) r))
        (setq l (cdr l)) )
      r ) )
 
@@ -92,8 +92,8 @@
 (defmacro (or . args)
    (let ((r ())
          (a (copyrev args))
-         (f (mlambda(x . b) 
-              (list 'let (list (list 's x)) 
+         (f (mlambda(x . b)
+              (list 'let (list (list 's x))
                  (list 'if 's 's . b) ) )) )
      (while a
         (setq r (list f (car a) r))
@@ -128,5 +128,4 @@
 (defvar set-cdr! rplacd)
 
 (display "MiniLisp, (C) 2005, Leon Bottou.\n"
-         "Available under the GNU Public Licence.\n\n")
-
+         "Available under the GNU General Public Licence.\n\n")
