@@ -480,9 +480,6 @@ public:
        invocation of this conversion operator. */
    operator const TYPE* () const;
    
-#ifndef __MWERKS__ //MCW can't compile
-   operator const TYPE* ();
-#endif  
    /** Insert new elements into an array. This function inserts
        #howmany# elements at position #n# into the array. The initial value #val#
        is copied into the new elements. All array elements previously located at subscripts
@@ -528,15 +525,6 @@ ArrayBaseT<TYPE>::operator TYPE* ()
    ArrayRep * rep=(ArrayRep *) get();
    return &((TYPE *) rep->data)[-rep->minlo];
 }
-
-#ifndef __MWERKS__ //MCW can't compile
-template <class TYPE> inline
-ArrayBaseT<TYPE>::operator const TYPE* ()
-{
-   const ArrayRep * rep=(const ArrayRep *) get();
-   return &((const TYPE *) rep->data)[-rep->minlo];
-}
-#endif
 
 template <class TYPE> inline
 ArrayBaseT<TYPE>::operator const TYPE* () const

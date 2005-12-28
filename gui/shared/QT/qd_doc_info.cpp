@@ -553,7 +553,7 @@ QDDocInfo::slotShowInfo(void)
           const char * ptr;
           while((ptr=strstr(info, "icon\n")))
           {
-            GUTF8String tmp((const char *) info, ptr-info);
+            GUTF8String tmp((const char *)info, ptr-(const char*)info);
             tmp+="icon for page "+GUTF8String(start_page_num++);
             tmp+=ptr+4;
             info=tmp;

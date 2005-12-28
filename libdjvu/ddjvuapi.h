@@ -696,12 +696,13 @@ ddjvu_document_get_pageinfo(ddjvu_document_t *document, int pageno,
    Each page of a document can be accessed by creating a
    <ddjvu_page_t> object with this function.  Argument
    <pageno> indicates the page number, starting with page
-   <0> to <pagenum-1>. This function can be called
-   immediately after creating the <ddjvu_document_t> object.
-   It also initiates the data transfer and the decoding threads 
-   for the specified page.  Various messages will document
-   the progress of these operations. Error messages will be
-   generated if the page does not exists. */
+   <0> to <pagenum-1>. This function may return NULL
+   when called before receiving the <m_docinfo> message.
+   Calling this function also initiates the data transfer 
+   and the decoding threads for the specified page.  
+   Various messages will document the progress of these 
+   operations. Error messages will be generated if 
+   the page does not exists. */
 
 DDJVUAPI ddjvu_page_t *
 ddjvu_page_create_by_pageno(ddjvu_document_t *document,
