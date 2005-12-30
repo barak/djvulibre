@@ -1035,33 +1035,102 @@ ddjvu_document_get_pagenum(ddjvu_document_t *document)
   return 1;
 }
 
-const char *
-ddjvu_document_get_pagename(ddjvu_document_t *document, int pageno, int idx)
+
+int
+ddjvu_document_get_filenum(ddjvu_document_t *document)
 {
   G_TRY
     {
       DjVuDocument *doc = document->doc;
-      if (doc && doc->is_init_ok())
-        {
-          GP<DjVmDir> dir = doc->get_djvm_dir();
-          GP<DjVmDir::File> file;
-          if (dir)
-            file = dir->page_to_file(pageno);
-          if (file && idx==0)
-            return (const char*)file->get_load_name();
-          if (file && idx==1)
-            return (const char*)file->get_save_name();
-          if (file && idx==2)
-            return (const char*)file->get_title();
-        }      
+      if (! (doc && doc->is_init_ok()))
+        return 0;
+      GP<DjVmDir> dir = doc->get_djvm_dir();
+      if (dir)
+        return dir->get_files_num();
     }
   G_CATCH(ex)
     {
       ERROR(document,ex);
     }
   G_ENDCATCH;
-  return 0;
+  return 1;
 }
+
+ddjvu_status_t
+ddjvu_document_get_fileinfo(ddjvu_document_t *document, int fileno, 
+                            ddjvu_fileinfo_t *info)
+{
+  G_TRY
+    {
+      memset(info, 0, sizeof(ddjvu_fileinfo_t));
+      DjVuDocument *doc = document->doc;
+      if (! doc)
+        return DDJVU_JOB_NOTSTARTED;
+      if (! doc->is_init_ok())
+        return document->status();
+      GP<DjVmDir> dir = doc->get_djvm_dir();
+      GP<DjVmDir::File> file = dir->pos_to_file(fileno, &info->pageno);
+      if (! file)
+        G_THROW("Illegal file number");
+      if (file->is_page())
+        info->type = 'P';
+      else if (file->is_thumbnails())
+        info->type = 'T';
+      else if (file->is_shared_anno())
+        info->type = 'S';
+      else
+        info->type = 'I';
+      info->size = file->size;
+      info->id = file->get_load_name();
+      info->name = file->get_save_name();
+      info->title = file->get_title();
+      return DDJVU_JOB_OK;
+    }
+  G_CATCH(ex)
+    {
+      ERROR(document,ex);
+    }
+  G_ENDCATCH;
+  return DDJVU_JOB_FAILED;
+}
+
+int
+ddjvu_document_search_pageno(ddjvu_document_t *document, const char *name)
+{
+  G_TRY
+    {
+      DjVuDocument *doc = document->doc;
+      if (! (doc && doc->is_init_ok()))
+        return -1;
+      GP<DjVmDir> dir = doc->get_djvm_dir();
+      if (! dir)
+        return 0;
+      GP<DjVmDir::File> file;
+      if (! (file = dir->id_to_file(GUTF8String(name))))
+        if (! (file = dir->name_to_file(GUTF8String(name))))
+          if (! (file = dir->title_to_file(GUTF8String(name))))
+            {
+              char *edata=0;
+              long int p = strtol(name, &edata, 10);
+              if (edata!=name && !*edata && p>=0)
+                file = dir->page_to_file(p);
+            }
+      if (file)
+        {
+          int pageno = -1;
+          int fileno = dir->get_file_pos(file);
+          if (dir->pos_to_file(fileno, &pageno))
+            return pageno;
+        }
+    }
+  G_CATCH(ex)
+    {
+      ERROR(document,ex);
+    }
+  G_ENDCATCH;
+  return -1;
+}
+
 
 int 
 ddjvu_document_check_pagedata(ddjvu_document_t *document, int pageno)

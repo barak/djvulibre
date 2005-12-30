@@ -558,9 +558,26 @@ GP<DjVmDir::File>
 DjVmDir::title_to_file(const GUTF8String &title) const
 {
    GCriticalSectionLock lock((GCriticalSection *) &class_lock);
-
    GPosition pos;
    return (title2file.contains(title, pos))?title2file[pos]:(GP<DjVmDir::File>(0));
+}
+
+GP<DjVmDir::File>
+DjVmDir::pos_to_file(int fileno, int *ppageno) const
+{
+  GCriticalSectionLock lock((GCriticalSection *) &class_lock);
+  GPosition pos = files_list;
+  int pageno = 0;
+  while (pos && --fileno >= 0) {
+    if (files_list[pos]->is_page())
+      ++pageno;
+    ++pos;
+  }
+  if (!pos)
+    return 0;
+  if (ppageno)
+    *ppageno = pageno;
+  return files_list[pos];
 }
 
 GPList<DjVmDir::File>
@@ -625,7 +642,8 @@ DjVmDir::get_shared_anno_file(void) const
 int
 DjVmDir::insert_file(const GP<File> & file, int pos_num)
 {
-   DEBUG_MSG("DjVmDir::insert_file(): name='" << file->name << "', pos=" << pos_num << "\n");
+   DEBUG_MSG("DjVmDir::insert_file(): name='" 
+             << file->name << "', pos=" << pos_num << "\n");
    DEBUG_MAKE_INDENT(3);
    
    GCriticalSectionLock lock((GCriticalSection *) &class_lock);
@@ -633,9 +651,9 @@ DjVmDir::insert_file(const GP<File> & file, int pos_num)
    if (pos_num<0)
      pos_num=files_list.size();
 
-      // Modify maps
-//   if (! File::is_legal_id(file->id))
-//     G_THROW( ERR_MSG("DjVmDir.bad_file") "\t" + file->id);
+   //// Modify maps
+   //   if (! File::is_legal_id(file->id))
+   //     G_THROW( ERR_MSG("DjVmDir.bad_file") "\t" + file->id);
    if (id2file.contains(file->id))
      G_THROW( ERR_MSG("DjVmDir.dupl_id2") "\t" + file->id);
    if (name2file.contains(file->name))
@@ -644,7 +662,8 @@ DjVmDir::insert_file(const GP<File> & file, int pos_num)
    id2file[file->id]=file;
    if (file->title.length())
      {
-       if (title2file.contains(file->title))  // duplicate titles may become ok some day
+       if (title2file.contains(file->title))  
+         // duplicate titles may become ok some day
          G_THROW( ERR_MSG("DjVmDir.dupl_title2") "\t" + file->title);
        title2file[file->title]=file;
      }

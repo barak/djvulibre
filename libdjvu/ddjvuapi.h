@@ -100,12 +100,10 @@ extern "C" {
    Version   Change
    -----------------------------
      17    Addition of:
-              ddjvu_document_get_pagename()
-              ddjvu_document_check_pagedata()
-              ddjvu_page_get_initial_rotation()
-              ddjvu_code_get_version()
-              ddjvu_rectmapper_t and related functions.
-              ddjvu_rect_t functions.
+              ddjvu_page_get_initial_rotation(), ddjvu_code_get_version()
+              ddjvu_document_get_filenum(), ddjvu_document_get_fileinfo()
+              ddjvu_document_search_pageno(), ddjvu_document_check_pagedata()
+              ddjvu_rectmapper_t and ddjvu_rect_t functions.
      16    Addition of miniexp.h and related functions:
               ddjvu_miniexp_release()
               ddjvu_document_get_outline/pagetext/pageanno()
@@ -637,25 +635,64 @@ DDJVUAPI int
 ddjvu_document_get_pagenum(ddjvu_document_t *document);
 
 
-/* ddjvu_document_get_pagename --
-   Returns the name of page <pageno>. There is no need to free the returned
-   string.  It remains allocated as long as the document exists.  Argument
-   <idx> indicates whether one seeks the page id (0), the page name (1), or
-   the page title (2).  This function returns NULL when it gets called before
-   receiving the <m_docinfo> or when an error occurs. */
 
-DDJVUAPI const char *
-ddjvu_document_get_pagename(ddjvu_document_t *document, int pageno, int idx);
+/* ------- ADVANCED ------- */
+
+
+/* ddjvu_document_get_filenum --
+   Returns the number of component files.
+   This function might return 1 when called
+   before receiving a <m_docinfo> message */
+   
+DDJVUAPI int
+ddjvu_document_get_filenum(ddjvu_document_t *document);
+
+
+/* ddjvu_document_get_fileinfo --
+   Returns information about component file <fileno>.
+   This function might return <DDJVU_JOB_STARTED> when
+   called before receiving a <m_docinfo> message.
+   String pointers in the returned data structure 
+   might be null. Strings are UTF8 encoded and remain 
+   allocated as long as the ddjvu_document_t object exists.*/
+
+typedef struct ddjvu_fileinfo_s {
+  char  type;                   /* [P]age, [T]humbnails, [I]nclude. */
+  int   pageno;                 /* Zero when not applicable. */
+  int   size;                   /* Zero when unknown. */
+  const char *id;               /* File identifier. */
+  const char *name;             /* Name for indirect documents. */
+  const char *title;            /* Page title. */
+} ddjvu_fileinfo_t;
+
+DDJVUAPI ddjvu_status_t
+ddjvu_document_get_fileinfo(ddjvu_document_t *document, 
+                            int fileno, ddjvu_fileinfo_t *info);
+
+
+/* ddjvu_document_search_pageno ---
+   Searches the page number of the page named <name>. 
+   Argument <name> is an UTF8 encoded string that is
+   matched against the page ids, page names, and page titles.
+   Numerical names are also interpreted as page numbers.
+   This functions returns <-1> when an error occurs,
+   when the page is not found, or when called before
+   receiving a <m_docinfo> message. */
+
+DDJVUAPI int
+ddjvu_document_search_pageno(ddjvu_document_t *document, const char *name);
 
 
 /* ddjvu_document_check_pagedata ---
-   Returns a non zero result if the page data is already in memory.
-   When this is the case, functions <ddjvu_document_get_pageinfo>, 
-   <ddjvu_document_get_pagetext> and <ddjvu_document_get_pageanno>
+   Returns a non zero result if the data for page <pageno>
+   is already in memory. When this is the case, functions 
+   <ddjvu_document_get_pageinfo>, <ddjvu_document_get_pagetext> 
+   and <ddjvu_document_get_pageanno>
    return the information immediately. */
 
 DDJVUAPI int 
 ddjvu_document_check_pagedata(ddjvu_document_t *document, int pageno);
+
 
 /* ddjvu_document_get_pageinfo ---
    Attempts to obtain information about page <pageno>
@@ -675,14 +712,15 @@ ddjvu_document_check_pagedata(ddjvu_document_t *document, int pageno);
 */      
 
 typedef struct ddjvu_pageinfo_s {
-  int width;
-  int height;
-  int dpi;
+  int width;                    /* page width (in pixels) */
+  int height;                   /* page height (in pixels) */
+  int dpi;                      /* page resolution (in dots per inche) */
 } ddjvu_pageinfo_t;
 
 DDJVUAPI ddjvu_status_t
-ddjvu_document_get_pageinfo(ddjvu_document_t *document, int pageno, 
-                            ddjvu_pageinfo_t *info);
+ddjvu_document_get_pageinfo(ddjvu_document_t *document, 
+                            int pageno, ddjvu_pageinfo_t *info);
+
 
 
 
@@ -1017,7 +1055,8 @@ struct ddjvu_rect_s {
 /* ddjvu_rect_isempty ---
    Tests if a rectangle is empty. */
 
-#define ddjvu_rect_isempty(r) (((r)->w==0) && ((r)->h==0))
+#define ddjvu_rect_isempty(r) \
+   (((r)->w==0) && ((r)->h==0))
 
 /* ddjvu_rect_intersect ---
    Computes the possibly empty intersection 
@@ -1212,7 +1251,6 @@ ddjvu_thumbnail_render(ddjvu_document_t *document, int pagenum,
 /* -------------------------------------------------- */
 
 
-
 /* ddjvu_message_t::m_progress ---
    These messages are generated to indicate progress 
    towards the completion of a print or save job. */
@@ -1263,9 +1301,11 @@ ddjvu_document_save(ddjvu_document_t *document, FILE *output,
 
 
 
+
 /* -------------------------------------------------- */
 /* S-EXPRESSIONS                                      */
 /* -------------------------------------------------- */
+
 
 /* DjVu files can contain ancillary information such as
    document outline, hidden text, hyperlinks, and metadata.
