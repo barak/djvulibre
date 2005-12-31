@@ -1141,6 +1141,7 @@ ddjvu_document_check_pagedata(ddjvu_document_t *document, int pageno)
       if (doc && doc->is_init_ok())
         {
           GP<DjVuFile> file;
+          document->pageinfoflag = true;
           if (doc->get_doc_type()==DjVuDocument::INDIRECT)
             file = doc->get_djvu_file(pageno, true);
           else
