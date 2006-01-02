@@ -423,6 +423,10 @@ msg_prep_error(GUTF8String message,
   G_TRY 
     { 
       p->tmp1 = DjVuMessageLite::LookUpUTF8(message);
+      if (message == DataPool::Stop)
+        p->tmp1 = "STOP:" + p->tmp1;
+      else if (message == ByteStream::EndOfFile)
+        p->tmp1 = "EOF:" + p->tmp1;
       p->p.m_error.message = (const char*)(p->tmp1);
     }
   G_CATCH(ex) 
@@ -447,6 +451,10 @@ msg_prep_error(const GException &ex,
   G_TRY 
     { 
       p->tmp1 = DjVuMessageLite::LookUpUTF8(ex.get_cause());
+      if (ex.cmp_cause(DataPool::Stop))
+        p->tmp1 = "STOP:" + p->tmp1;
+      else if (ex.cmp_cause(ByteStream::EndOfFile))
+        p->tmp1 = "EOF:" + p->tmp1;
       p->p.m_error.message = (const char*)(p->tmp1);
       p->p.m_error.function = ex.get_function();
       p->p.m_error.filename = ex.get_file();

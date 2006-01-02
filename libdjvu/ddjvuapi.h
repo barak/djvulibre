@@ -411,7 +411,9 @@ typedef struct ddjvu_message_any_s {
    asynchronously.  Member <message> is the error message.
    Members <function>, <filename> and <lineno>
    indicates the place where the error was detected.
-*/
+   Error messsage start with the string "STOP:" when
+   the error arises from stopping a stream, and "EOF:"
+   when the error arises from a premature end of file. */
 
 struct ddjvu_message_error_s {  /* ddjvu_message_t::m_error */
   ddjvu_message_any_t   any;
