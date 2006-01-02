@@ -1659,26 +1659,6 @@ grect2rect(const GRect &g, ddjvu_rect_t *r)
     }
 }
 
-void
-ddjvu_rect_intersect(ddjvu_rect_t *r1, ddjvu_rect_t *r2, ddjvu_rect_t *out)
-{
-  GRect g1,g2,gout;
-  rect2grect(r1,g1);
-  rect2grect(r2,g2);
-  gout.intersect(g1,g2);
-  grect2rect(gout,out);
-}
-
-void
-ddjvu_rect_bound(ddjvu_rect_t *r1, ddjvu_rect_t *r2, ddjvu_rect_t *out)
-{
-  GRect g1,g2,gout;
-  rect2grect(r1,g1);
-  rect2grect(r2,g2);
-  gout.recthull(g1,g2);
-  grect2rect(gout,out);
-}
-
 ddjvu_rectmapper_t *
 ddjvu_rectmapper_create(ddjvu_rect_t *input,
                         ddjvu_rect_t *output, int count)

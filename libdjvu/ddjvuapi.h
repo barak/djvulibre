@@ -103,11 +103,9 @@ extern "C" {
               ddjvu_page_get_initial_rotation(), ddjvu_code_get_version()
               ddjvu_document_get_filenum(), ddjvu_document_get_fileinfo()
               ddjvu_document_search_pageno(), ddjvu_document_check_pagedata()
-              ddjvu_rectmapper_t and ddjvu_rect_t functions.
-     16    Addition of miniexp.h and related functions:
-              ddjvu_miniexp_release()
-              ddjvu_document_get_outline/pagetext/pageanno()
-              ddjvu_anno_get_xxx()
+              ddjvu_rectmapper_t and related functions.
+     16    Addition of:
+              miniexp.h and related functions.
      15    Addition of:
               ddjvu_document_get_pageinfo()
               ddjvu_document_print()
@@ -934,6 +932,7 @@ typedef enum {
 DDJVUAPI ddjvu_page_type_t
 ddjvu_page_get_type(ddjvu_page_t *page);
 
+
 /* ddjvu_page_get_short_description ---
    ddjvu_page_get_long_description ---
    Return strings describing the DjVu page.
@@ -966,6 +965,7 @@ DDJVUAPI void
 ddjvu_page_set_rotation(ddjvu_page_t *page,
                         ddjvu_page_rotation_t rot);
 
+
 /* ddjvu_page_get_rotation ---
    Returns the counter-clockwise rotation angle for the DjVu page.
    The rotation is automatically taken into account
@@ -974,6 +974,7 @@ ddjvu_page_set_rotation(ddjvu_page_t *page,
 
 DDJVUAPI ddjvu_page_rotation_t
 ddjvu_page_get_rotation(ddjvu_page_t *page);
+
 
 /* ddjvu_page_get_initial_rotation ---
    Returns the page rotation specified by the 
@@ -1003,6 +1004,21 @@ typedef enum {
   DDJVU_RENDER_BACKGROUND,      /* color background layer */
   DDJVU_RENDER_FOREGROUND,      /* color foreground layer */
 } ddjvu_render_mode_t;
+
+
+/* ddjvu_rect_t ---
+   This structure specifies the location of a rectangle.
+   Coordinates are usually expressed in pixels relative to 
+   the BOTTOM LEFT CORNER (but see ddjvu_format_set_y_direction).
+   Members <x> and <y> indicate the position of the bottom left 
+   corner of the rectangle Members <w> and <h> indicate the 
+   width and height of the rectangle. */
+
+struct ddjvu_rect_s {
+  int x, y;
+  unsigned int w, h;
+};
+
 
 /* ddjvu_page_render --
    Renders a segment of a page with arbitrary scale.
@@ -1040,41 +1056,8 @@ ddjvu_page_render(ddjvu_page_t *page,
 
 
 /* -------------------------------------------------- */
-/* RECTANGLES                                         */
+/* COORDINATE TRANSFORMS                              */
 /* -------------------------------------------------- */
-
-/* ddjvu_rect_t ---
-   This structure specifies the location of a rectangle.
-   Coordinates are usually expressed in pixels relative to 
-   the BOTTOM LEFT CORNER (but see ddjvu_format_set_y_direction).
-   Members <x> and <y> indicate the position of the bottom left 
-   corner of the rectangle Members <w> and <h> indicate the 
-   width and height of the rectangle. */
-
-struct ddjvu_rect_s {
-  int x, y;
-  unsigned int w, h;
-};
-
-/* ddjvu_rect_isempty ---
-   Tests if a rectangle is empty. */
-
-#define ddjvu_rect_isempty(r) \
-   (((r)->w==0) && ((r)->h==0))
-
-/* ddjvu_rect_intersect ---
-   Computes the possibly empty intersection 
-   of rectangles <r1> and <r2>. */
-
-DDJVUAPI void 
-ddjvu_rect_intersect(ddjvu_rect_t *r1, ddjvu_rect_t *r2, ddjvu_rect_t *out);
-
-/* ddjvu_rect_bound ---
-   Computes the bounding box of possibly empty
-   rectangles <r1> and <r2>. */
-
-DDJVUAPI void 
-ddjvu_rect_bound(ddjvu_rect_t *r1, ddjvu_rect_t *r2, ddjvu_rect_t *out);
 
 /* ddjvu_rectmapper_create --
    Creates a <ddjvu_rectmapper_t> data structure 
@@ -1082,10 +1065,13 @@ ddjvu_rect_bound(ddjvu_rect_t *r1, ddjvu_rect_t *r2, ddjvu_rect_t *out);
    maps points from rectangle <input> to rectangle <output>.
    The transformation maintains relative positions relative 
    to the coordinates of the matching rectangle corners after
-   applying a rotation of <count> quarter turns counter-clockwise. */
+   applying a rotation of <count> quarter turns counter-clockwise.
+   Calculations are made using integer fractions in order
+   to maintain the highest possible accuracy. */
 
 DDJVUAPI ddjvu_rectmapper_t *
 ddjvu_rectmapper_create(ddjvu_rect_t *input, ddjvu_rect_t *output, int count);
+
 
 /* ddjvu_rectmapper_release ---
    Destroys the <ddjvu_rect_mapper_t> structure
