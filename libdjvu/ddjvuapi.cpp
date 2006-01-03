@@ -1660,8 +1660,7 @@ grect2rect(const GRect &g, ddjvu_rect_t *r)
 }
 
 ddjvu_rectmapper_t *
-ddjvu_rectmapper_create(ddjvu_rect_t *input,
-                        ddjvu_rect_t *output, int count)
+ddjvu_rectmapper_create(ddjvu_rect_t *input, ddjvu_rect_t *output)
 {
   GRect ginput, goutput;
   rect2grect(input, ginput);
@@ -1669,10 +1668,21 @@ ddjvu_rectmapper_create(ddjvu_rect_t *input,
   GRectMapper *mapper = new GRectMapper;
   mapper->set_input(ginput);
   mapper->set_output(goutput);
-  mapper->rotate(count);
   return (ddjvu_rectmapper_t*)mapper;
 }
-  
+
+void
+ddjvu_rectmapper_modify(ddjvu_rectmapper_t *mapper,
+                        int rotation, int mirrorx, int mirrory)
+{
+  GRectMapper *gmapper = (GRectMapper*)mapper;
+  gmapper->rotate(rotation);
+  if (mirrorx & 1)
+    gmapper->mirrorx();
+  if (mirrory & 1)
+    gmapper->mirrory();
+}
+
 void 
 ddjvu_rectmapper_release(ddjvu_rectmapper_t *mapper)
 {

@@ -1063,14 +1063,23 @@ ddjvu_page_render(ddjvu_page_t *page,
    Creates a <ddjvu_rectmapper_t> data structure 
    representing an affine coordinate transformation that
    maps points from rectangle <input> to rectangle <output>.
-   The transformation maintains relative positions relative 
-   to the coordinates of the matching rectangle corners after
-   applying a rotation of <count> quarter turns counter-clockwise.
-   Calculations are made using integer fractions in order
-   to maintain the highest possible accuracy. */
+   The transformation maintains the positions relative 
+   to the coordinates of the rectangle corners. */
 
 DDJVUAPI ddjvu_rectmapper_t *
-ddjvu_rectmapper_create(ddjvu_rect_t *input, ddjvu_rect_t *output, int count);
+ddjvu_rectmapper_create(ddjvu_rect_t *input, ddjvu_rect_t *output);
+
+
+/* ddjvu_rectmapper_modify ---
+   Modifies the coordinate transform <mapper> by redefining
+   which corners of the output rectangle match those of the 
+   input rectangle. This function first applies a counter-clockwise 
+   rotation of <rotation> quarter-turns, and then reverses the X 
+   (resp. Y) coordinates when <mirrorx> (resp. <mirrory>) is non zero. */
+
+DDJVUAPI void
+ddjvu_rectmapper_modify(ddjvu_rectmapper_t *mapper,
+                        int rotation, int mirrorx, int mirrory);
 
 
 /* ddjvu_rectmapper_release ---
