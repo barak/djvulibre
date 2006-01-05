@@ -1666,8 +1666,10 @@ ddjvu_rectmapper_create(ddjvu_rect_t *input, ddjvu_rect_t *output)
   rect2grect(input, ginput);
   rect2grect(output, goutput);
   GRectMapper *mapper = new GRectMapper;
-  mapper->set_input(ginput);
-  mapper->set_output(goutput);
+  if (!ginput.isempty())
+    mapper->set_input(ginput);
+  if (!goutput.isempty())
+    mapper->set_output(goutput);
   return (ddjvu_rectmapper_t*)mapper;
 }
 
@@ -1676,6 +1678,7 @@ ddjvu_rectmapper_modify(ddjvu_rectmapper_t *mapper,
                         int rotation, int mirrorx, int mirrory)
 {
   GRectMapper *gmapper = (GRectMapper*)mapper;
+  if (! gmapper) return;
   gmapper->rotate(rotation);
   if (mirrorx & 1)
     gmapper->mirrorx();
@@ -1687,6 +1690,7 @@ void
 ddjvu_rectmapper_release(ddjvu_rectmapper_t *mapper)
 {
   GRectMapper *gmapper = (GRectMapper*)mapper;
+  if (! gmapper) return;
   delete gmapper;
 }
 
@@ -1694,15 +1698,17 @@ void
 ddjvu_map_point(ddjvu_rectmapper_t *mapper, int *x, int *y)
 {
   GRectMapper *gmapper = (GRectMapper*)mapper;
+  if (! gmapper) return;
   gmapper->map(*x,*y);
 }
 
 void 
 ddjvu_map_rect(ddjvu_rectmapper_t *mapper, ddjvu_rect_t *rect)
 {
+  GRectMapper *gmapper = (GRectMapper*)mapper;
+  if (! gmapper) return;
   GRect grect;
   rect2grect(rect,grect);
-  GRectMapper *gmapper = (GRectMapper*)mapper;
   gmapper->map(grect);
   grect2rect(grect,rect);
 }
@@ -1711,15 +1717,17 @@ void
 ddjvu_unmap_point(ddjvu_rectmapper_t *mapper, int *x, int *y)
 {
   GRectMapper *gmapper = (GRectMapper*)mapper;
+  if (! gmapper) return;
   gmapper->unmap(*x,*y);
 }
 
 void 
 ddjvu_unmap_rect(ddjvu_rectmapper_t *mapper, ddjvu_rect_t *rect)
 {
+  GRectMapper *gmapper = (GRectMapper*)mapper;
+  if (! gmapper) return;
   GRect grect;
   rect2grect(rect,grect);
-  GRectMapper *gmapper = (GRectMapper*)mapper;
   gmapper->unmap(grect);
   grect2rect(grect,rect);
 }
