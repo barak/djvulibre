@@ -1295,17 +1295,13 @@ DjVuANT::encode_raw(void) const
 
       //*** Zoom
    del_all_items(ZOOM_TAG, parser);
-   if (zoom!=ZOOM_UNSPEC)
+   if (zoom>0 || (zoom>=ZOOM_STRETCH && zoom<=ZOOM_PAGE))
    {
       buffer="(" ZOOM_TAG " ";
-      const int i=1-zoom;
-      if((i>=0)&& (i<zoom_strings_size))
-      {
-        buffer+=zoom_strings[i];
-      }else
-      {
-        buffer+="d"+GUTF8String(zoom);
-      }
+      if (zoom < 0)
+        buffer += zoom_strings[-zoom];
+      else
+        buffer += "d"+GUTF8String(zoom);
       buffer+=")";
       parser.parse(buffer);
    }
