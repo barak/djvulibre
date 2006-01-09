@@ -156,6 +156,7 @@ struct DJVUNS ddjvu_context_s : public GPEnabled
   GMonitor monitor;
   GP<DjVuFileCache> cache;
   GPList<ddjvu_message_p> mlist;
+  GP<ddjvu_message_p> mpeeked;
   int uniqueid;
   ddjvu_message_callback_t callbackfun;
   void *callbackarg;
@@ -207,7 +208,6 @@ struct DJVUNS ddjvu_page_s : public ddjvu_job_s
   ddjvu_job_t *job;
   bool pageinfoflag;            // was the first m_pageinfo sent?
   bool pagedoneflag;            // was the final m_pageinfo sent?
-  bool redisplayflag;           // did we receive a redisplay notification?
   // virtual job functions:
   virtual ddjvu_status_t status();
   virtual void release();
@@ -384,14 +384,12 @@ msg_push(const ddjvu_message_any_t &head,
 {
   ddjvu_context_t *ctx = head.context;
   if (! msg) msg = new ddjvu_message_p;
-  msg->p.m_any = head;
-  {
-    GMonitorLock lock(&ctx->monitor);
-    ctx->mlist.append(msg);
-    ctx->monitor.broadcast();
-  }
+  msg->p.m_any = head; 
+  GMonitorLock lock(&ctx->monitor);
   if (ctx->callbackfun) 
     (*ctx->callbackfun)(ctx, ctx->callbackarg);
+  ctx->mlist.append(msg);
+  ctx->monitor.broadcast();
 }
 
 static void
@@ -423,10 +421,6 @@ msg_prep_error(GUTF8String message,
   G_TRY 
     { 
       p->tmp1 = DjVuMessageLite::LookUpUTF8(message);
-      if (message == DataPool::Stop)
-        p->tmp1 = "STOP:" + p->tmp1;
-      else if (message == ByteStream::EndOfFile)
-        p->tmp1 = "EOF:" + p->tmp1;
       p->p.m_error.message = (const char*)(p->tmp1);
     }
   G_CATCH(ex) 
@@ -451,10 +445,6 @@ msg_prep_error(const GException &ex,
   G_TRY 
     { 
       p->tmp1 = DjVuMessageLite::LookUpUTF8(ex.get_cause());
-      if (ex.cmp_cause(DataPool::Stop))
-        p->tmp1 = "STOP:" + p->tmp1;
-      else if (ex.cmp_cause(ByteStream::EndOfFile))
-        p->tmp1 = "EOF:" + p->tmp1;
       p->p.m_error.message = (const char*)(p->tmp1);
       p->p.m_error.function = ex.get_function();
       p->p.m_error.filename = ex.get_file();
@@ -666,8 +656,9 @@ ddjvu_message_peek(ddjvu_context_t *ctx)
     {
       GMonitorLock lock(&ctx->monitor);
       GPosition p = ctx->mlist;
-      if (p) 
-        return &ctx->mlist[p]->p;
+      ctx->mpeeked = (p) ? ctx->mlist[p] : 0;
+      if (ctx->mpeeked) 
+        return &ctx->mpeeked->p;
     }
   G_CATCH(ex)
     {
@@ -685,8 +676,9 @@ ddjvu_message_wait(ddjvu_context_t *ctx)
       while (! ctx->mlist.size())
         ctx->monitor.wait();
       GPosition p = ctx->mlist;
-      if (p) 
-        return &ctx->mlist[p]->p;
+      ctx->mpeeked = (p) ? ctx->mlist[p] : 0;
+      if (ctx->mpeeked) 
+        return &ctx->mpeeked->p;
     }
   G_CATCH(ex)
     {
@@ -1145,11 +1137,11 @@ ddjvu_document_check_pagedata(ddjvu_document_t *document, int pageno)
 {
   G_TRY
     {
+      document->pageinfoflag = true;
       DjVuDocument *doc = document->doc;
       if (doc && doc->is_init_ok())
         {
           GP<DjVuFile> file;
-          document->pageinfoflag = true;
           if (doc->get_doc_type()==DjVuDocument::INDIRECT)
             file = doc->get_djvu_file(pageno, true);
           else
@@ -1197,8 +1189,10 @@ ddjvu_document_get_pageinfo(ddjvu_document_t *document, int pageno,
                       int rot = info->orientation;
                       if (pageinfo)
                         {
-                          pageinfo->width = (rot&1) ? info->height : info->width;
-                          pageinfo->height = (rot&1) ? info->width : info->height;
+                          pageinfo->width = 
+                            (rot&1) ? info->height : info->width;
+                          pageinfo->height = 
+                            (rot&1) ? info->width : info->height;
                           pageinfo->dpi = info->dpi;
                         }
                       return DDJVU_JOB_OK;
@@ -1206,13 +1200,15 @@ ddjvu_document_get_pageinfo(ddjvu_document_t *document, int pageno,
                 }
               else if (chkid == "FORM:BM44" || chkid == "FORM:PM44")
                 {
-                  while (iff->get_chunk(chkid) && chkid!="BM44" && chkid!="PM44")
+                  while (iff->get_chunk(chkid) && 
+                         chkid!="BM44" && chkid!="PM44")
                     iff->close_chunk();
                   if (chkid=="BM44" || chkid=="PM44")
                     {
                       GP<ByteStream> gbs = iff->get_bytestream();
                       if (gbs->read8() == 0)
                         {
+                          gbs->read8();
                           gbs->read8();
                           gbs->read8();
                           unsigned char xhi = gbs->read8();
@@ -1261,11 +1257,7 @@ ddjvu_page_create(ddjvu_document_t *document, ddjvu_job_t *job,
       p->userdata = 0;
       p->pageinfoflag = false;
       p->pagedoneflag = false;
-      p->redisplayflag = false;
-      if (job)
-        p->job = job;
-      else
-        p->job = job = p;
+      p->job = job = ((job) ? job : p);
       if (pageid)
         p->img = doc->get_page(GNativeString(pageid), false, job);
       else
@@ -1374,19 +1366,24 @@ void
 ddjvu_page_s::notify_relayout(const DjVuImage *dimg)
 {
   GMonitorLock lock(&monitor);
-  if (! img || pageinfoflag) return;
-  msg_push(xhead(DDJVU_PAGEINFO, this));
-  pageinfoflag = true;
-  msg_push(xhead(DDJVU_RELAYOUT, this));
-  if ( redisplayflag )
-    notify_redisplay(img);
+  if (img && !pageinfoflag)
+    {
+      msg_push(xhead(DDJVU_PAGEINFO, this));
+      msg_push(xhead(DDJVU_RELAYOUT, this));
+      pageinfoflag = true;
+    }
 }
 
 void 
 ddjvu_page_s::notify_redisplay(const DjVuImage *dimg)
 {
   GMonitorLock lock(&monitor);
-  redisplayflag = true;
+  if (img && !pageinfoflag)
+    {
+      msg_push(xhead(DDJVU_PAGEINFO, this));
+      msg_push(xhead(DDJVU_RELAYOUT, this));
+      pageinfoflag = true;
+    }
   if (img && pageinfoflag)
     msg_push(xhead(DDJVU_REDISPLAY, this));
 }
@@ -1568,17 +1565,8 @@ ddjvu_page_set_rotation(ddjvu_page_t *page,
         case DDJVU_ROTATE_90:
         case DDJVU_ROTATE_180:
         case DDJVU_ROTATE_270:
-          if (page && page->img && page->pageinfoflag)
-            {
-              int old = page->img->get_rotate();
-              if (old != (int)rot)
-                {
-                  page->img->set_rotate((int)rot);
-                  msg_push(xhead(DDJVU_RELAYOUT, page));
-                  if (page->redisplayflag)
-                    msg_push(xhead(DDJVU_REDISPLAY, page));
-                }
-            }
+          if (page && page->img && page->img->get_info())
+            page->img->set_rotate((int)rot);
           break;
         default:
           G_THROW("Illegal ddjvu rotation code");
@@ -2437,7 +2425,7 @@ ddjvu_printjob_s::cbrefresh(void *data)
   if (self->mystop)
     {
       msg_push(xhead(DDJVU_INFO,self), msg_prep_info("Print job stopped"));
-      G_THROW("STOP");
+      G_THROW(DataPool::Stop);
     }
 }
 

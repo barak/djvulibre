@@ -408,10 +408,7 @@ typedef struct ddjvu_message_any_s {
    reported as error messages because they can occur
    asynchronously.  Member <message> is the error message.
    Members <function>, <filename> and <lineno>
-   indicates the place where the error was detected.
-   Error messsage start with the string "STOP:" when
-   the error arises from stopping a stream, and "EOF:"
-   when the error arises from a premature end of file. */
+   indicates the place where the error was detected. */
 
 struct ddjvu_message_error_s {  /* ddjvu_message_t::m_error */
   ddjvu_message_any_t   any;
@@ -601,7 +598,8 @@ ddjvu_stream_close(ddjvu_document_t *document,
    The <m_docinfo> message indicates that basic information
    about the document has been obtained and decoded.
    Not much can be done before this happens.
- */
+   Call <ddjvu_document_decoding_status> to determine
+   whether the operation was successful. */
 
 struct ddjvu_message_docinfo_s {
   ddjvu_message_any_t  any;
@@ -810,7 +808,7 @@ ddjvu_page_job(ddjvu_page_t *page);
      before any <m_relayout> or <m_redisplay> message,
    - when the page decoding thread terminates.
    You can distinguish both cases using 
-   function ddjvu_page_decoding_done().
+   function ddjvu_page_decoding_status().
    Messages <m_pageinfo> are also generated as a consequence of 
    functions such as <ddjvu_document_get_pageinfo>. 
    The field <m_any.page> of such message is null.
