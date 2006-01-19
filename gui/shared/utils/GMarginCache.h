@@ -307,7 +307,7 @@ GMarginCache<TPixmap>::nextRectToCache(int maxpixels, GRect & grect)
    
    if (outer_rect.isempty())
    {
-      int width=(int) sqrt(maxpixels*doc_width/doc_height);
+      int width=(int) sqrt((double)(maxpixels*doc_width/doc_height));
       if (!width) width++;
       int height=maxpixels/width;
       if (!height) height++;

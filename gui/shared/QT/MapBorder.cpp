@@ -329,7 +329,7 @@ MapOval::ma_generatePieces(void)
    if (!oval->get_rmin()) return;
    
    int last_x=xc, last_y=yc;
-   int points=(int) (2*Pi*sqrt(oval->get_rmax()))+1;
+   int points=(int) (2*Pi*sqrt((double)(oval->get_rmax())))+1;
    TArray<int> xx(points-1), yy(points-1);
    int i, cnt=0;
    for(i=0;i<points;i++)

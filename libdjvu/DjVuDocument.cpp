@@ -283,17 +283,23 @@ DjVuDocument::static_init_thread(void * cl_data)
   G_TRY {
     th->init_thread();
   } G_CATCH(exc) {
-    th->flags|=DjVuDocument::DOC_INIT_FAILED;
+    G_TRY {
+      int changed = DjVuDocument::DOC_INIT_FAILED;
+      th->flags |= changed;
+      get_portcaster()->notify_doc_flags_changed(th, changed, 0);
+    } G_CATCH_ALL {
+    } G_ENDCATCH;
     G_TRY {
       th->check_unnamed_files();
       if (!exc.cmp_cause(ByteStream::EndOfFile) && th->verbose_eof)
-        get_portcaster()->notify_error(th, ERR_MSG("DjVuDocument.init_eof") );
+        get_portcaster()->notify_error(th, ERR_MSG("DjVuDocument.init_eof"));
       else if (!exc.cmp_cause(DataPool::Stop))
-        get_portcaster()->notify_status(th, ERR_MSG("DjVuDocument.stopped") );
+        get_portcaster()->notify_status(th, ERR_MSG("DjVuDocument.stopped"));
       else
         get_portcaster()->notify_error(th, exc.get_cause());
-    } G_CATCH_ALL {} G_ENDCATCH;
-    th->init_thread_flags|=FINISHED;
+    } G_CATCH_ALL {
+    } G_ENDCATCH;
+    th->init_thread_flags |= FINISHED;
   } G_ENDCATCH;
 }
 
@@ -319,9 +325,7 @@ DjVuDocument::init_thread(void)
    if (size < 0)
      G_THROW( ERR_MSG("DjVuDocument.no_file") );
    if (size<8)
-   {
      G_THROW( ERR_MSG("DjVuDocument.not_DjVu") );
-   }
    if (chkid=="FORM:DJVM")
    {
      DEBUG_MSG("Got DJVM document here\n");
@@ -344,7 +348,8 @@ DjVuDocument::init_thread(void)
              doc_type=INDIRECT;
            }
 	 flags|=DOC_TYPE_KNOWN | DOC_DIR_KNOWN;
-	 pcaster->notify_doc_flags_changed(this, DOC_TYPE_KNOWN | DOC_DIR_KNOWN, 0);
+	 pcaster->notify_doc_flags_changed(this, 
+                                           DOC_TYPE_KNOWN | DOC_DIR_KNOWN, 0);
 	 check_unnamed_files();
          
          /* Check for NAVM */
@@ -384,7 +389,8 @@ DjVuDocument::init_thread(void)
              int offset;
              size=iff.get_chunk(chkid, &offset);
              if (size==0) G_THROW( ERR_MSG("DjVuDocument.no_page") );
-             if (chkid=="FORM:DJVU" || chkid=="FORM:PM44" || chkid=="FORM:BM44")
+             if (chkid=="FORM:DJVU" || 
+                 chkid=="FORM:PM44" || chkid=="FORM:BM44")
                {
                  DEBUG_MSG("Got 1st page offset=" << offset << "\n");
                  first_page_offset=offset;
@@ -415,7 +421,7 @@ DjVuDocument::init_thread(void)
        // DJVU format
        DEBUG_MSG("Got DJVU OLD_INDEXED or SINGLE_PAGE document here.\n");
        doc_type=SINGLE_PAGE;
-       flags|=DOC_TYPE_KNOWN;
+       flags |= DOC_TYPE_KNOWN;
        pcaster->notify_doc_flags_changed(this, DOC_TYPE_KNOWN, 0);
        check_unnamed_files();
      }
@@ -449,7 +455,7 @@ DjVuDocument::init_thread(void)
        check_unnamed_files();
      }
    
-   flags|=DOC_INIT_OK;
+   flags |= DOC_INIT_OK;
    pcaster->notify_doc_flags_changed(this, DOC_INIT_OK, 0);
    check_unnamed_files();
    init_thread_flags|=FINISHED;

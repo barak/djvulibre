@@ -1110,7 +1110,7 @@ do_bitmap(const DjVuImage &dimg, BImager get,
          (rw*red*3 < w || rh*red*3 < h) )
       break;
   // Setup bitmap scaler
-  if (! (w && h)) return 0;
+  if (w<=0 || h<=0) return 0;
   GP<GBitmapScaler> gbs=GBitmapScaler::create();
   GBitmapScaler &bs=*gbs;
   bs.set_input_size( (w+red-1)/red, (h+red-1)/red );
@@ -1175,7 +1175,7 @@ do_pixmap(const DjVuImage &dimg, PImager get,
          (rw*red*3 < w || rh*red*3 < h) )
       break;
   // Setup pixmap scaler
-  if (w<0 || h<0) return 0;
+  if (w<=0 || h<=0) return 0;
   GP<GPixmapScaler> gps=GPixmapScaler::create();
   GPixmapScaler &ps=*gps;
   ps.set_input_size( (w+red-1)/red, (h+red-1)/red );

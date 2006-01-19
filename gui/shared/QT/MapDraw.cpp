@@ -371,7 +371,7 @@ MapDraw::drawOval(GPixmap & pm, const GRect & grect, u_int32 color)
    pix.y=iy=(int) rint(fy);
    drawOvalPixel(pix);
 
-   a2=a/sqrt(2);
+   a2=a/sqrt(2.0);
 
       // Integrate ~1/8 of the oval (y>x>0)
    for(ix++;ix<a2;ix++)

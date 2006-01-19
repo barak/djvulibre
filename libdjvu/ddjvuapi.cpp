@@ -338,9 +338,10 @@ ddjvu_context_create(const char *programname)
   G_TRY
     {
       setlocale(LC_ALL,"");
-      DjVuMessage::use_language();
       if (programname)
         djvu_programname(programname);
+      DjVuMessage::use_language();
+      DjVuMessageLite::create();
       ctx = new ddjvu_context_s;
       ref(ctx);
       ctx->uniqueid = 0;
@@ -548,7 +549,9 @@ ddjvu_job_s::~ddjvu_job_s()
       GPosition p = ctx->mlist;
       while (p) {
         GPosition s = p; ++p;
-        if (ctx->mlist[s]->p.m_any.job == this)
+        if (ctx->mlist[s]->p.m_any.job == this ||
+            ctx->mlist[s]->p.m_any.document == this ||
+            ctx->mlist[s]->p.m_any.page == this )
           ctx->mlist.del(s);
       }
     }
@@ -655,10 +658,14 @@ ddjvu_message_peek(ddjvu_context_t *ctx)
   G_TRY
     {
       GMonitorLock lock(&ctx->monitor);
+      if (ctx->mpeeked)
+        return &ctx->mpeeked->p;        
       GPosition p = ctx->mlist;
-      ctx->mpeeked = (p) ? ctx->mlist[p] : 0;
-      if (ctx->mpeeked) 
-        return &ctx->mpeeked->p;
+      if (! p)
+        return 0;
+      ctx->mpeeked = ctx->mlist[p];
+      ctx->mlist.del(p);
+      return &ctx->mpeeked->p;        
     }
   G_CATCH(ex)
     {
@@ -673,12 +680,16 @@ ddjvu_message_wait(ddjvu_context_t *ctx)
   G_TRY
     {
       GMonitorLock lock(&ctx->monitor);
+      if (ctx->mpeeked)
+        return &ctx->mpeeked->p;        
       while (! ctx->mlist.size())
         ctx->monitor.wait();
       GPosition p = ctx->mlist;
-      ctx->mpeeked = (p) ? ctx->mlist[p] : 0;
-      if (ctx->mpeeked) 
-        return &ctx->mpeeked->p;
+      if (! p)
+        return 0;
+      ctx->mpeeked = ctx->mlist[p];
+      ctx->mlist.del(p);
+      return &ctx->mpeeked->p;        
     }
   G_CATCH(ex)
     {
@@ -693,9 +704,7 @@ ddjvu_message_pop(ddjvu_context_t *ctx)
   G_TRY
     {
       GMonitorLock lock(&ctx->monitor);
-      GPosition p = ctx->mlist;
-      if (p) 
-        ctx->mlist.del(p);
+      ctx->mpeeked = 0;
     }
   G_CATCH(ex)
     {
