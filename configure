@@ -26666,7 +26666,7 @@ fi;
 
    if test $ac_desktopfiles != no
    then
-       # kde-config
+       # kde-config, kde-version
        KDE_CONFIG=
        # Extract the first word of "kde-config", so it can be a program name with args.
 set dummy kde-config; ac_word=$2
@@ -26855,10 +26855,19 @@ echo "${ECHO_T}${dtop_applnk:-no}" >&6
        # dtop_mimelnk
        echo "$as_me:$LINENO: checking for KDE mimetype directory" >&5
 echo $ECHO_N "checking for KDE mimetype directory... $ECHO_C" >&6
+       cause=no
        if test -x "$KDE_CONFIG" ; then
            dtop_mimelnk=`$KDE_CONFIG --expandvars --install mime`
+           case "`$KDE_CONFIG --version | grep KDE`" in
+              *3.[5-9]*) dtop_mimelnk=''; cause='no need (kde>=3.5)' ;;
+              *) ;;
+           esac
        elif test -d "/usr/share/mimelnk" ; then
            dtop_mimelnk="/usr/share/mimelnk"
+       fi
+       if test "${kde_version-0}" -ge 343 ; then
+           dtop_mimelnk=""
+           cause="no (kde>=3.4.5)"
        fi
 
     xdir="`eval echo \"$libdir\"`"
@@ -26870,8 +26879,8 @@ echo $ECHO_N "checking for KDE mimetype directory... $ECHO_C" >&6
     xdir="`eval echo \"$prefix\"`"
     dtop_mimelnk=`echo $dtop_mimelnk | sed -e 's:^'"$xdir"'/:${prefix}/:'`
 
-       echo "$as_me:$LINENO: result: ${dtop_mimelnk:-no}" >&5
-echo "${ECHO_T}${dtop_mimelnk:-no}" >&6
+       echo "$as_me:$LINENO: result: ${dtop_mimelnk:-$cause}" >&5
+echo "${ECHO_T}${dtop_mimelnk:-$cause}" >&6
    fi
 
 

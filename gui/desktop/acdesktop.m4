@@ -64,7 +64,7 @@ AC_DEFUN([AC_FIND_DESKTOP_DIRS],[
 
    if test $ac_desktopfiles != no 
    then
-       # kde-config
+       # kde-config, kde-version
        KDE_CONFIG=
        AC_PATH_PROG(KDE_CONFIG, kde-config)
 
@@ -137,13 +137,24 @@ AC_DEFUN([AC_FIND_DESKTOP_DIRS],[
 
        # dtop_mimelnk
        AC_MSG_CHECKING([for KDE mimetype directory])
+       cause=no
        if test -x "$KDE_CONFIG" ; then
            dtop_mimelnk=`$KDE_CONFIG --expandvars --install mime`
+           case "`$KDE_CONFIG --version | grep KDE`" in
+changequote(<<, >>)dnl
+              *3.[5-9]*) dtop_mimelnk=''; cause='no need (kde>=3.5)' ;;
+              *) ;;
+changequote([, ])dnl 
+           esac
        elif test -d "/usr/share/mimelnk" ; then
            dtop_mimelnk="/usr/share/mimelnk"
        fi
+       if test "${kde_version-0}" -ge 343 ; then
+           dtop_mimelnk=""
+           cause="no (kde>=3.4.5)"
+       fi
        AC_VARIFY(dtop_mimelnk)
-       AC_MSG_RESULT(${dtop_mimelnk:-no})
+       AC_MSG_RESULT(${dtop_mimelnk:-$cause})
    fi
 
    AC_SUBST(dtop_applications)
