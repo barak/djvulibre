@@ -70,7 +70,9 @@ AC_DEFUN([AC_FIND_DESKTOP_DIRS],[
 
        # dtop_menu
        AC_MSG_CHECKING([for Debian menu directory])
-       if test -d /etc/menu-methods -a -d /usr/lib/menu ; then
+       if test -d /etc/menu-methods -a -d /usr/share/menu ; then
+           dtop_menu="/usr/share/menu"
+       elif test -d /etc/menu-methods -a -d /usr/lib/menu ; then
            dtop_menu="/usr/lib/menu"
        fi
        AC_VARIFY(dtop_menu)
