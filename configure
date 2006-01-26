@@ -26711,7 +26711,9 @@ fi
        # dtop_menu
        echo "$as_me:$LINENO: checking for Debian menu directory" >&5
 echo $ECHO_N "checking for Debian menu directory... $ECHO_C" >&6
-       if test -d /etc/menu-methods -a -d /usr/lib/menu ; then
+       if test -d /etc/menu-methods -a -d /usr/share/menu ; then
+           dtop_menu="/usr/share/menu"
+       elif test -d /etc/menu-methods -a -d /usr/lib/menu ; then
            dtop_menu="/usr/lib/menu"
        fi
 
