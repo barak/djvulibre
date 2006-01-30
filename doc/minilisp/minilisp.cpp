@@ -805,57 +805,15 @@ DEFUN("pprint",pprint,1,1) {
   return miniexp_pprint(argv[0], w);
 }
 
-static struct {
-  char *b;
-  int l;
-  int m;
-} pname_data;
-
-static int
-pname_puts(const char *s)
-{
-  int x = strlen(s);
-  if (pname_data.l + x >= pname_data.m)
+DEFUN("pname",pname,1,1) {
+  int w = 0;
+  if (argc > 1)
     {
-      int nm = pname_data.l + x + 256;
-      char *nb = new char[nm+1];
-      memcpy(nb, pname_data.b, pname_data.l);
-      delete [] pname_data.b;
-      pname_data.m = nm;
-      pname_data.b = nb;
+      if (! miniexp_numberp(argv[1]))
+	error("pprint: second argument must be number");
+      w = miniexp_to_int(argv[1]);
     }
-  strcpy(pname_data.b + pname_data.l, s);
-  pname_data.l += x;
-  return x;
-}
-
-static miniexp_t
-pname(miniexp_t p)
-{
-  minivar_t r;
-  int (*saved)(const char*) = minilisp_puts;
-  pname_data.b = 0;
-  pname_data.m = pname_data.l = 0;
-  try
-    {
-      minilisp_puts = pname_puts;
-      miniexp_prin(p);
-      minilisp_puts = saved;
-      r = miniexp_string(pname_data.b);
-      delete [] pname_data.b;
-      pname_data.b = 0;
-    }
-  catch(...)
-    {
-      minilisp_puts = saved;
-      delete [] pname_data.b;
-      pname_data.b = 0;
-    }
-  return r;
-}
-
-DEFUN("pname",pname,1,0) {
-  return pname(argv[0]);
+  return miniexp_pname(argv[0],w);
 }
 
 DEFUN("gc",gc,0,0) {
@@ -906,7 +864,8 @@ DEFUN("display",display,0,9999) {
   for (int i=0; i<argc; i++)
     {
       minivar_t v = argv[i];
-      if (! miniexp_stringp(v)) v = pname(v);
+      if (! miniexp_stringp(v)) 
+        v = miniexp_pname(v, 0);
       minilisp_puts(miniexp_to_str(v));
     }
   return 0;

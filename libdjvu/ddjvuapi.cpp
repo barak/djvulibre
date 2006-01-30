@@ -1738,6 +1738,7 @@ struct DJVUNS ddjvu_format_s
   ddjvu_format_style_t style;
   uint32_t rgb[3][256];
   uint32_t palette[6*6*6];
+  uint32_t xorval;
   double gamma;
   char ditherbits;
   bool rtoptobottom;
@@ -1777,7 +1778,7 @@ ddjvu_format_create(ddjvu_format_style_t style,
       {
         if (sizeof(uint16_t)!=2 || sizeof(uint32_t)!=4)
           return fmt_error(fmt);
-        if (nargs!=3 || !args)
+        if (!args || nargs<3 || nargs>4)
           return fmt_error(fmt);
         for (int j=0; j<3; j++)
           {
@@ -1790,6 +1791,8 @@ ddjvu_format_create(ddjvu_format_style_t style,
             for (int i=0; i<256; i++)
               fmt->rgb[j][i] = (mask & ((int)((i*mask+127.0)/255.0)))<<shift;
           }
+        if (nargs >= 4)
+          fmt->xorval = args[3];
         break;
       }
     case DDJVU_FORMAT_PALETTE8:
@@ -1858,6 +1861,7 @@ fmt_convert_row(const GPixel *p, int w,
                 const ddjvu_format_t *fmt, char *buf)
 {
   const uint32_t (*r)[256] = fmt->rgb;
+  const uint32_t xorval = fmt->xorval;
   switch(fmt->style)
     {
     case DDJVU_FORMAT_BGR24:    /* truecolor 24 bits in BGR order */
@@ -1877,7 +1881,7 @@ fmt_convert_row(const GPixel *p, int w,
       {
         uint16_t *b = (uint16_t*)buf;
         while (--w >= 0) {
-          b[0]=(r[0][p->r]+r[1][p->g]+r[2][p->b]); 
+          b[0]=(r[0][p->r]|r[1][p->g]|r[2][p->b])^xorval; 
           b+=1; p+=1; 
         }
         break;
@@ -1886,7 +1890,7 @@ fmt_convert_row(const GPixel *p, int w,
       {
         uint32_t *b = (uint32_t*)buf;
         while (--w >= 0) {
-          b[0]=(r[0][p->r]+r[1][p->g]+r[2][p->b]); 
+          b[0]=(r[0][p->r]|r[1][p->g]|r[2][p->b])^xorval; 
           b+=1; p+=1; 
         }
         break;
@@ -1956,6 +1960,7 @@ fmt_convert_row(unsigned char *p, unsigned char *g, int w,
                 const ddjvu_format_t *fmt, char *buf)
 {
   const uint32_t (*r)[256] = fmt->rgb;
+  const uint32_t xorval = fmt->xorval;
   switch(fmt->style)
     {
     case DDJVU_FORMAT_BGR24:    /* truecolor 24 bits in BGR order */
@@ -1972,7 +1977,7 @@ fmt_convert_row(unsigned char *p, unsigned char *g, int w,
         uint16_t *b = (uint16_t*)buf;
         while (--w >= 0) {
           unsigned char x = g[*p];
-          b[0]=(r[0][x]+r[1][x]+r[2][x]); 
+          b[0]=(r[0][x]|r[1][x]|r[2][x])^xorval; 
           b+=1; p+=1; 
         }
         break;
@@ -1982,7 +1987,7 @@ fmt_convert_row(unsigned char *p, unsigned char *g, int w,
         uint32_t *b = (uint32_t*)buf;
         while (--w >= 0) {
           unsigned char x = g[*p];
-          b[0]=(r[0][x]+r[1][x]+r[2][x]); 
+          b[0]=(r[0][x]|r[1][x]|r[2][x])^xorval; 
           b+=1; p+=1; 
         }
         break;
@@ -2119,6 +2124,8 @@ ddjvu_page_render(ddjvu_page_t *page,
               break;
             case DDJVU_RENDER_FOREGROUND:
               pm = img->get_fg_pixmap(rrect, prect, pixelformat->gamma);
+              if (! pm) 
+                bm = img->get_bitmap(rrect, prect);
               break;
             }
         }
@@ -3181,12 +3188,17 @@ anno_sub(ByteStream *bs, miniexp_t &result)
   anno_dat.blen = 0;
   anno_dat.state = 0;
   anno_dat.eof = false;
+  int (*saved_getc)(void) = minilisp_getc;
+  int (*saved_ungetc)(int) = minilisp_ungetc;
+  // Process
   minilisp_getc = anno_getc;
   minilisp_ungetc = anno_ungetc;
-  // Process
   while (* anno_dat.s )
     if ((a = miniexp_read()) != miniexp_dummy)
       result = miniexp_cons(a, result);
+  // Restore
+  minilisp_getc = saved_getc;
+  minilisp_ungetc = saved_ungetc;
 }
 
 miniexp_t

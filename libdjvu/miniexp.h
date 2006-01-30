@@ -490,6 +490,16 @@ MINILISPAPI miniexp_t miniexp_print(miniexp_t p);
 MINILISPAPI miniexp_t miniexp_pprin(miniexp_t p, int width);
 MINILISPAPI miniexp_t miniexp_pprint(miniexp_t p, int width);
 
+/* miniexp_pname --
+   Returns a string containing the textual representation
+   of a minilisp expression. Set argument <width> to zero
+   to output a single line, or to a positive value to
+   perform pretty line breaks for this intended number of columns.
+   These functions can cause a garbage collection to occur.
+   It works by temporarily redefining <minilisp_puts>. */
+
+MINILISPAPI miniexp_t miniexp_pname(miniexp_t p, int width);
+
 /* minilisp_print_7bits --
    When this flag is set, all non ascii characters 
    in strings are escaped in octal. */

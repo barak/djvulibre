@@ -1150,6 +1150,60 @@ miniexp_pprint(miniexp_t p, int width)
   return p;
 }
 
+/* --------- PNAME */
+
+static struct { 
+  char *b; int l; int m; 
+} pname_data;
+
+static int
+pname_puts(const char *s)
+{
+  int x = strlen(s);
+  if (pname_data.l + x >= pname_data.m)
+    {
+      int nm = pname_data.l + x + 256;
+      char *nb = new char[nm+1];
+      memcpy(nb, pname_data.b, pname_data.l);
+      delete [] pname_data.b;
+      pname_data.m = nm;
+      pname_data.b = nb;
+    }
+  strcpy(pname_data.b + pname_data.l, s);
+  pname_data.l += x;
+  return x;
+}
+
+miniexp_t 
+miniexp_pname(miniexp_t p, int width)
+{
+  minivar_t r;
+  int (*saved)(const char*) = minilisp_puts;
+  pname_data.b = 0;
+  pname_data.m = pname_data.l = 0;
+  try
+    {
+      minilisp_puts = pname_puts;
+      if (width > 0)
+        miniexp_pprin(p, width);
+      else
+        miniexp_prin(p);
+      minilisp_puts = saved;
+      r = miniexp_string(pname_data.b);
+      delete [] pname_data.b;
+      pname_data.b = 0;
+    }
+  catch(...)
+    {
+      minilisp_puts = saved;
+      delete [] pname_data.b;
+      pname_data.b = 0;
+    }
+  return r;
+}
+
+
+
 /* --------- INPUT */
 
 static FILE *inputfile;

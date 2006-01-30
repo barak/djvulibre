@@ -1136,9 +1136,10 @@ typedef enum {
    Argument <style> describes the generic pixel format.
    Argument <args> is an array of <nargs> unsigned ints
    providing additionnal information:
-   - When style is <RGBMASK*>, argument <nargs> must be <3>
-     and array <args> contains three contiguous bit masks for 
-     the red, green, and blue components of each pixel.
+   - When style is <RGBMASK*>, argument <nargs> must be <3> or <4>.
+     The three first entries of array <args> are three contiguous 
+     bit masks for the red, green, and blue components of each pixel.
+     The resulting color is then xored with the optional fourth entry.
    - When style is <PALETTE*>, argument <nargs> must be <216>
      and array <args> contains the 6*6*6 entries of a web
      color cube.
