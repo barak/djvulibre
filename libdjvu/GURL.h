@@ -278,10 +278,10 @@ public:
       //@}
 
       /// Returns TRUE if #gurl1# and #gurl2# are the same
-   bool	GURL::operator==(const GURL & gurl2) const;
+   bool	operator==(const GURL & gurl2) const;
 
       /// Returns TRUE if #gurl1# and #gurl2# are different
-   bool	GURL::operator!=(const GURL & gurl2) const;
+   bool	operator!=(const GURL & gurl2) const;
 
       /// Assignment operator
    GURL &	operator=(const GURL & url);

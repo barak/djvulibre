@@ -242,7 +242,7 @@ public:
       and writes it to the specified stream. */
   void formatmessage( const char *fmt, ... );
   /** Looks up the message and writes it to the specified stream. */
-  void ByteStream::writemessage( const char *message );
+  void writemessage( const char *message );
   /** Writes a one-byte integer to a ByteStream. */
   void write8 (unsigned int card8);
   /** Writes a two-bytes integer to a ByteStream.
