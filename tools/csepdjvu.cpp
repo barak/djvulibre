@@ -1167,7 +1167,7 @@ Comments::parse_comment_line(BufferByteStream &bs)
              bs.skip(" \t") && bs.read_pair(mark->dx,mark->dy) &&
              bs.skip(" \t") && bs.read_geometry(mark->r) &&
              bs.skip(" \t") && bs.read_ps_string(mark->s) ) )
-        G_THROW("msepdjvu: corrupted file (syntax error in text comment)");
+        G_THROW("csepdjvu: corrupted file (syntax error in text comment)");
       textmark(mark);
       return true;
     }
