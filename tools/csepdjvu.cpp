@@ -332,7 +332,19 @@ BufferByteStream::read_pair(int &x, int &y)
 {
   int c;
   x = y = 0;
-  return read_integer(x) && expect(c, ":") && read_integer(y);
+  expect(c, "-");
+  if (! read_integer(x)) 
+    return false;
+  if (c == '-') 
+    x = -x;
+  if (! expect(c, ":"))
+    return false;
+  expect(c, "-");
+  if (! read_integer(y)) 
+    return false;
+  if (c == '-')
+    y = -y;
+  return true;
 }
 
 bool 
