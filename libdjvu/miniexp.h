@@ -119,13 +119,13 @@ MINILISPAPI miniexp_t miniexp_symbol(const char *name);
 /* miniexp_nil --
    The empty list. */
 
-const miniexp_t miniexp_nil = (miniexp_t)(size_t)0;
+#define miniexp_nil ((miniexp_t)(size_t)0)
 
 /* miniexp_dummy --
    An invalid expression used to represent
    various exceptional conditions. */
 
-const miniexp_t miniexp_dummy = (miniexp_t)(size_t)2;
+#define miniexp_dummy ((miniexp_t)(size_t)2)
 
 /* miniexp_listp --
    Tests if an expression is either a pair or the empty list. */   
