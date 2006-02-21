@@ -1,0 +1,77 @@
+Microsoft Developer Studio Workspace File, Format Version 6.00
+# WARNING: DO NOT EDIT OR DELETE THIS WORKSPACE FILE!
+
+###############################################################################
+
+Project: "djvutoxml"=".\djvutoxml.dsp" - Package Owner=<4>
+
+Package=<5>
+{{{
+}}}
+
+Package=<4>
+{{{
+    Begin Project Dependency
+    Project_Dep_Name libdjvu
+    End Project Dependency
+}}}
+
+###############################################################################
+
+Project: "djvuxmlparser"=".\djvuxmlparser.dsp" - Package Owner=<4>
+
+Package=<5>
+{{{
+}}}
+
+Package=<4>
+{{{
+    Begin Project Dependency
+    Project_Dep_Name libdjvu
+    End Project Dependency
+}}}
+
+###############################################################################
+
+Project: "libdjvu"="..\libdjvu\libdjvu\libdjvu.dsp" - Package Owner=<4>
+
+Package=<5>
+{{{
+}}}
+
+Package=<4>
+{{{
+}}}
+
+###############################################################################
+
+Project: "xmltools"=".\xmltools\xmltools.dsp" - Package Owner=<4>
+
+Package=<5>
+{{{
+}}}
+
+Package=<4>
+{{{
+    Begin Project Dependency
+    Project_Dep_Name djvutoxml
+    End Project Dependency
+    Begin Project Dependency
+    Project_Dep_Name djvuxmlparser
+    End Project Dependency
+}}}
+
+###############################################################################
+
+Global:
+
+Package=<5>
+{{{
+}}}
+
+Package=<3>
+{{{
+}}}
+
+###############################################################################
+

@@ -152,7 +152,7 @@ public:
   /** Returns the area of the rectangle. */
   int  area() const;
   /** Returns true if the rectangle is empty. */
-  int  isempty() const;
+  bool  isempty() const;
   /** Returns true if the rectangle contains pixel (#x#,#y#).  A rectangle
       contains all pixels with horizontal pixel coordinates in range #xmin#
       (inclusive) to #xmax# (exclusive) and vertical coordinates #ymin#
@@ -263,7 +263,7 @@ public:
       corners in the canonical rectangle representation.  Variable #rect# is
       overwritten with the new rectangle coordinates. */
   void unmap(GRect &rect);
-private:
+public:
   // GRatio
   struct GRatio {
     GRatio ();
@@ -271,6 +271,7 @@ private:
     int p;
     int q;
   };
+private:
   // Data
   GRect rectFrom;
   GRect rectTo;
@@ -314,7 +315,7 @@ GRect::height() const
   return ymax - ymin;
 }
 
-inline int 
+inline bool 
 GRect::isempty() const
 {
   return (xmin>=xmax || ymin>=ymax);

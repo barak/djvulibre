@@ -384,7 +384,9 @@ main(int argc, char ** argv)
                   "<!DOCTYPE HTML PUBLIC \"-//IETF//DTD HTML 2.0//EN\">\n"
                   "<HTML><HEAD><TITLE>400 Error</TITLE></HEAD><BODY>\n"
                   "<H1>%s</H1>The requested URL '%s' cannot be processed.<P>\n"
+#ifdef DJVULIBRE_VERSION
                   "<HR><ADDRESS>djvuserve/DjVuLibre-" DJVULIBRE_VERSION "</ADDRESS>\n"
+#endif
                   "</BODY></HTML>\n",
                   (const char *) cause,
                   (const char *) g().pathinfo );
@@ -396,5 +398,7 @@ main(int argc, char ** argv)
       exit(10);
     }
   G_ENDCATCH;
-  exit(0);
+  if(1) // always exit
+    exit(0);
+  return 0; // make windows happy
 }

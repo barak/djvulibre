@@ -64,7 +64,7 @@
 #include <fcntl.h>
 #include <errno.h>
 
-#include "libdjvu/ddjvuapi.h"
+#include "ddjvuapi.h"
 
 #if defined(WIN32) || defined(__CYGWIN32__)
 # include <io.h>

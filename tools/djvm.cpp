@@ -316,5 +316,8 @@ main(int argc, char ** argv)
       exc.perror();
       exit(1);
    } G_ENDCATCH;
-   exit(0);
+   if(1) // always exit
+     exit(0);
+   return 0; // make windows happy...
 }
+

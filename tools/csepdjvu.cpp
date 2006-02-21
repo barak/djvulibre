@@ -1271,7 +1271,8 @@ Comments::textflush(void)
       // compute word list
       GP<TxtMark> word;
       GPList<TxtMark> words;
-      for (GPosition p=lastline; p; ++p)
+	  { // extra nesting for windows
+        for (GPosition p=lastline; p; ++p)
         {
           TxtMark *mark = lastline[p];
           if (word && mark->inter > wordsep) 
@@ -1292,6 +1293,7 @@ Comments::textflush(void)
               word->r.recthull(word->r, mark->r);
             }
         }
+	  }
       if (word)
         {
           if (! allspaces(word->s))

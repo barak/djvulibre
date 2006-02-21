@@ -349,7 +349,7 @@ ddjvu_context_create(const char *programname)
       ctx->callbackarg = 0;
       ctx->cache = DjVuFileCache::create();
     }
-  G_CATCH(ex)
+  G_CATCH_ALL
     {
       if (ctx)
         unref(ctx);
@@ -367,7 +367,7 @@ ddjvu_context_release(ddjvu_context_t *ctx)
       if (ctx)
         unref(ctx);
     }
-  G_CATCH(ex)
+  G_CATCH_ALL
     {
     }
   G_ENDCATCH;
@@ -401,7 +401,7 @@ msg_push_nothrow(const ddjvu_message_any_t &head,
     {
       msg_push(head, msg);
     }
-  G_CATCH(ex)
+  G_CATCH_ALL
     {
     }
   G_ENDCATCH;
@@ -424,7 +424,7 @@ msg_prep_error(GUTF8String message,
       p->tmp1 = DjVuMessageLite::LookUpUTF8(message);
       p->p.m_error.message = (const char*)(p->tmp1);
     }
-  G_CATCH(ex) 
+  G_CATCH_ALL 
     {
     } 
   G_ENDCATCH;
@@ -451,7 +451,7 @@ msg_prep_error(const GException &ex,
       p->p.m_error.filename = ex.get_file();
       p->p.m_error.lineno = ex.get_line();
     }
-  G_CATCH(exc) 
+  G_CATCH_ALL 
     {
     } 
   G_ENDCATCH;
@@ -472,11 +472,11 @@ msg_prep_info(GUTF8String message)
 
 
 #ifdef __GNUG__
-# define ERROR(x, m) \
+# define ERROR1(x, m) \
     msg_push_nothrow(xhead(DDJVU_ERROR,x),\
                      msg_prep_error(m,__func__,__FILE__,__LINE__))
 #else
-# define ERROR(x, m) \
+# define ERROR1(x, m) \
     msg_push_nothrow(xhead(DDJVU_ERROR,x),\
                      msg_prep_error(m,0,__FILE__,__LINE__))
 #endif
@@ -497,7 +497,7 @@ ddjvu_cache_set_size(ddjvu_context_t *ctx,
     }
   G_CATCH(ex) 
     {
-      ERROR(ctx, ex);
+      ERROR1(ctx, ex);
     }
   G_ENDCATCH;
 }
@@ -513,7 +513,7 @@ ddjvu_cache_get_size(ddjvu_context_t *ctx)
     }
   G_CATCH(ex) 
     { 
-      ERROR(ctx, ex);
+      ERROR1(ctx, ex);
     }
   G_ENDCATCH;
   return 0;
@@ -526,11 +526,14 @@ ddjvu_cache_clear(ddjvu_context_t *ctx)
     {
       GMonitorLock lock(&ctx->monitor);
       if (ctx->cache)
-        return ctx->cache->clear();
+      {
+        ctx->cache->clear();
+        return;
+      }
     }
   G_CATCH(ex)
     {
-      ERROR(ctx, ex);
+      ERROR1(ctx, ex);
     }
   G_ENDCATCH;
  }
@@ -555,7 +558,7 @@ ddjvu_job_s::~ddjvu_job_s()
           ctx->mlist.del(s);
       }
     }
-  G_CATCH()
+  G_CATCH_ALL
     {
     }
   G_ENDCATCH;
@@ -594,7 +597,7 @@ ddjvu_job_release(ddjvu_job_t *job)
       job->userdata = 0;
       unref(job);
     }
-  G_CATCH(ex)
+  G_CATCH_ALL
     {
     }
   G_ENDCATCH;
@@ -611,7 +614,7 @@ ddjvu_job_status(ddjvu_job_t *job)
     }
   G_CATCH(ex)
     {
-      ERROR(job, ex);
+      ERROR1(job, ex);
     }
   G_ENDCATCH;
   return DDJVU_JOB_FAILED;
@@ -627,7 +630,7 @@ ddjvu_job_stop(ddjvu_job_t *job)
     }
   G_CATCH(ex)
     {
-      ERROR(job, ex);
+      ERROR1(job, ex);
     }
   G_ENDCATCH;
 }
@@ -667,7 +670,7 @@ ddjvu_message_peek(ddjvu_context_t *ctx)
       ctx->mlist.del(p);
       return &ctx->mpeeked->p;        
     }
-  G_CATCH(ex)
+  G_CATCH_ALL
     {
     }
   G_ENDCATCH;
@@ -691,7 +694,7 @@ ddjvu_message_wait(ddjvu_context_t *ctx)
       ctx->mlist.del(p);
       return &ctx->mpeeked->p;        
     }
-  G_CATCH(ex)
+  G_CATCH_ALL
     {
     }
   G_ENDCATCH;
@@ -706,7 +709,7 @@ ddjvu_message_pop(ddjvu_context_t *ctx)
       GMonitorLock lock(&ctx->monitor);
       ctx->mpeeked = 0;
     }
-  G_CATCH(ex)
+  G_CATCH_ALL
     {
     }
   G_ENDCATCH;
@@ -884,7 +887,7 @@ ddjvu_document_create(ddjvu_context_t *ctx,
       if (d) 
         unref(d);
       d = 0;
-      ERROR(ctx, ex);
+      ERROR1(ctx, ex);
     }
   G_ENDCATCH;
   return d;
@@ -920,7 +923,7 @@ ddjvu_document_create_by_filename(ddjvu_context_t *ctx,
       if (d)
         unref(d);
       d = 0;
-      ERROR(ctx, ex);
+      ERROR1(ctx, ex);
     }
   G_ENDCATCH;
   return d;
@@ -958,7 +961,7 @@ ddjvu_stream_write(ddjvu_document_t *doc,
     }
   G_CATCH(ex)
     {
-      ERROR(doc,ex);
+      ERROR1(doc,ex);
     }
   G_ENDCATCH;
 }
@@ -984,7 +987,7 @@ ddjvu_stream_close(ddjvu_document_t *doc,
     }
   G_CATCH(ex)
     {
-      ERROR(doc, ex);
+      ERROR1(doc, ex);
     }
   G_ENDCATCH;
 }
@@ -1021,7 +1024,7 @@ ddjvu_document_get_type(ddjvu_document_t *document)
     }
   G_CATCH(ex)
     {
-      ERROR(document,ex);
+      ERROR1(document,ex);
     }
   G_ENDCATCH;
   return DDJVU_DOCTYPE_UNKNOWN;
@@ -1038,7 +1041,7 @@ ddjvu_document_get_pagenum(ddjvu_document_t *document)
     }
   G_CATCH(ex)
     {
-      ERROR(document,ex);
+      ERROR1(document,ex);
     }
   G_ENDCATCH;
   return 1;
@@ -1059,7 +1062,7 @@ ddjvu_document_get_filenum(ddjvu_document_t *document)
     }
   G_CATCH(ex)
     {
-      ERROR(document,ex);
+      ERROR1(document,ex);
     }
   G_ENDCATCH;
   return 1;
@@ -1097,7 +1100,7 @@ ddjvu_document_get_fileinfo(ddjvu_document_t *document, int fileno,
     }
   G_CATCH(ex)
     {
-      ERROR(document,ex);
+      ERROR1(document,ex);
     }
   G_ENDCATCH;
   return DDJVU_JOB_FAILED;
@@ -1134,7 +1137,7 @@ ddjvu_document_search_pageno(ddjvu_document_t *document, const char *name)
     }
   G_CATCH(ex)
     {
-      ERROR(document,ex);
+      ERROR1(document,ex);
     }
   G_ENDCATCH;
   return -1;
@@ -1161,7 +1164,7 @@ ddjvu_document_check_pagedata(ddjvu_document_t *document, int pageno)
     }
   G_CATCH(ex)
     {
-      ERROR(document,ex);
+      ERROR1(document,ex);
     }
   G_ENDCATCH;
   return 0;
@@ -1239,7 +1242,7 @@ ddjvu_document_get_pageinfo(ddjvu_document_t *document, int pageno,
     }
   G_CATCH(ex)
     {
-      ERROR(document, ex);
+      ERROR1(document, ex);
     }
   G_ENDCATCH;
   return DDJVU_JOB_FAILED;
@@ -1277,7 +1280,7 @@ ddjvu_page_create(ddjvu_document_t *document, ddjvu_job_t *job,
       if (p)
         unref(p);
       p = 0;
-      ERROR(document, ex);
+      ERROR1(document, ex);
     }
   G_ENDCATCH;
   return p;
@@ -1422,7 +1425,7 @@ ddjvu_page_get_width(ddjvu_page_t *page)
     }
   G_CATCH(ex)
     {
-      ERROR(page, ex);
+      ERROR1(page, ex);
     }
   G_ENDCATCH;
   return 0;
@@ -1438,7 +1441,7 @@ ddjvu_page_get_height(ddjvu_page_t *page)
     }
   G_CATCH(ex)
     {
-      ERROR(page, ex);
+      ERROR1(page, ex);
     }
   G_ENDCATCH;
   return 0;
@@ -1454,7 +1457,7 @@ ddjvu_page_get_resolution(ddjvu_page_t *page)
     }
   G_CATCH(ex)
     {
-      ERROR(page, ex);
+      ERROR1(page, ex);
     }
   G_ENDCATCH;
   return 0;
@@ -1470,7 +1473,7 @@ ddjvu_page_get_gamma(ddjvu_page_t *page)
     }
   G_CATCH(ex)
     {
-      ERROR(page, ex);
+      ERROR1(page, ex);
     }
   G_ENDCATCH;
   return 2.2;
@@ -1486,7 +1489,7 @@ ddjvu_page_get_version(ddjvu_page_t *page)
     }
   G_CATCH(ex)
     {
-      ERROR(page, ex);
+      ERROR1(page, ex);
     }
   G_ENDCATCH;
   return DJVUVERSION;
@@ -1514,7 +1517,7 @@ ddjvu_page_get_type(ddjvu_page_t *page)
     }
   G_CATCH(ex)
     {
-      ERROR(page, ex);
+      ERROR1(page, ex);
     }
   G_ENDCATCH;
   return DDJVU_PAGETYPE_UNKNOWN;
@@ -1533,7 +1536,7 @@ ddjvu_page_get_short_description(ddjvu_page_t *page)
     }
   G_CATCH(ex)
     {
-      ERROR(page, ex);
+      ERROR1(page, ex);
     }
   G_ENDCATCH;
   return 0;
@@ -1552,7 +1555,7 @@ ddjvu_page_get_long_description(ddjvu_page_t *page)
     }
   G_CATCH(ex)
     {
-      ERROR(page, ex);
+      ERROR1(page, ex);
     }
   G_ENDCATCH;
   return 0;
@@ -1584,7 +1587,7 @@ ddjvu_page_set_rotation(ddjvu_page_t *page,
     }
   G_CATCH(ex)
     {
-      ERROR(page, ex);
+      ERROR1(page, ex);
     }
   G_ENDCATCH;
 }
@@ -1600,7 +1603,7 @@ ddjvu_page_get_rotation(ddjvu_page_t *page)
     }
   G_CATCH(ex)
     {
-      ERROR(page, ex);
+      ERROR1(page, ex);
     }
   G_ENDCATCH;
   return rot;
@@ -1620,7 +1623,7 @@ ddjvu_page_get_initial_rotation(ddjvu_page_t *page)
     }
   G_CATCH(ex)
     {
-      ERROR(page, ex);
+      ERROR1(page, ex);
     }
   G_ENDCATCH;
   return rot;
@@ -1780,7 +1783,8 @@ ddjvu_format_create(ddjvu_format_style_t style,
           return fmt_error(fmt);
         if (!args || nargs<3 || nargs>4)
           return fmt_error(fmt);
-        for (int j=0; j<3; j++)
+        { // extra nesting for windows
+          for (int j=0; j<3; j++)
           {
             int shift = 0;
             uint32_t mask = args[j];
@@ -1791,6 +1795,7 @@ ddjvu_format_create(ddjvu_format_style_t style,
             for (int i=0; i<256; i++)
               fmt->rgb[j][i] = (mask & ((int)((i*mask+127.0)/255.0)))<<shift;
           }
+        }
         if (nargs >= 4)
           fmt->xorval = args[3];
         break;
@@ -1799,16 +1804,20 @@ ddjvu_format_create(ddjvu_format_style_t style,
       {
         if (nargs!=6*6*6 || !args)
           return fmt_error(fmt);
-        for (int k=0; k<6*6*6; k++)
-          fmt->palette[k] = args[k];
-        int j=0;
-        for(int i=0; i<6; i++)
-          for(; j < (i+1)*0x33 - 0x19 && j<256; j++)
+        { // extra nesting for windows
+          for (int k=0; k<6*6*6; k++)
+            fmt->palette[k] = args[k];
+        }
+        { // extra nesting for windows
+          int j=0;
+          for(int i=0; i<6; i++)
+            for(; j < (i+1)*0x33 - 0x19 && j<256; j++)
             {
               fmt->rgb[0][j] = i * 6 * 6;
               fmt->rgb[1][j] = i * 6;
               fmt->rgb[2][j] = i;
             }
+        }
         break;
       }
     case DDJVU_FORMAT_RGB24:
@@ -2145,7 +2154,7 @@ ddjvu_page_render(ddjvu_page_t *page,
     }
   G_CATCH(ex)
     {
-      ERROR(page, ex);
+      ERROR1(page, ex);
     }
   G_ENDCATCH;
   return 0;
@@ -2172,7 +2181,7 @@ ddjvu_thumbnail_p::callback(void *cldata)
               thumb->data.resize(0,size-1);
               pool->get_data( (void*)(char*)thumb->data, 0, size);
             }
-          G_CATCH(ex)
+          G_CATCH_ALL
             {
               thumb->data.empty();
               G_RETHROW;
@@ -2224,7 +2233,7 @@ ddjvu_thumbnail_status(ddjvu_document_t *document, int pagenum, int start)
     }
   G_CATCH(ex)
     {
-      ERROR(document, ex);
+      ERROR1(document, ex);
     }
   G_ENDCATCH;
   return DDJVU_JOB_FAILED;
@@ -2281,7 +2290,7 @@ ddjvu_thumbnail_render(ddjvu_document_t *document, int pagenum,
     }
   G_CATCH(ex)
     {
-      ERROR(document, ex);
+      ERROR1(document, ex);
     }
   G_ENDCATCH;
   return FALSE;
@@ -2357,7 +2366,7 @@ ddjvu_runnablejob_s::cbstart(void *arg)
       self->progress(0);
       r = self->run();
     }
-  G_CATCH(ex)
+  G_CATCH_ALL
     {
       r = DDJVU_JOB_FAILED;
       if (self && self->mystop)
@@ -2718,7 +2727,7 @@ ddjvu_document_print(ddjvu_document_t *document, FILE *output,
       if (job) 
         unref(job);
       job = 0;
-      ERROR(document, ex);
+      ERROR1(document, ex);
     }
   G_ENDCATCH;
   return job;
@@ -2783,8 +2792,10 @@ ddjvu_savejob_s::run()
       ncomp = doc->get_pages_num();
       comp_ids.resize(ncomp - 1);
       comp_files.resize(ncomp - 1);
-      for (int comp=0; comp<ncomp; comp++)
-        comp_ids[comp] = GUTF8String(comp);
+      { // extra nesting for windows
+        for (int comp=0; comp<ncomp; comp++)
+          comp_ids[comp] = GUTF8String(comp);
+      }
     }
   // Monitoring download progress
   int lo = 0;
@@ -2796,9 +2807,11 @@ ddjvu_savejob_s::run()
       GMonitorLock lock(&monitor);
       while (lo<hi && comp_files[lo]->is_data_present())
         lo += 1;
-      for (int comp=lo; comp<hi; comp++)
-        if (! comp_files[comp]->is_data_present())
-          in_progress += 1;
+      { // extra nesting for windows
+        for (int comp=lo; comp<hi; comp++)
+          if (! comp_files[comp]->is_data_present())
+            in_progress += 1;
+      }
       while (hi<ncomp && in_progress < 2)
         {
           comp_files[hi] = doc->get_djvu_file(comp_ids[hi]);
@@ -2845,7 +2858,7 @@ ddjvu_document_save(ddjvu_document_t *document, FILE *output,
       if (job) 
         unref(job);
       job = 0;
-      ERROR(document, ex);
+      ERROR1(document, ex);
     }
   G_ENDCATCH;
   return job;
@@ -2872,9 +2885,11 @@ miniexp_status(ddjvu_status_t status)
 static void
 miniexp_protect(ddjvu_document_t *document, miniexp_t expr)
 {
-  for(miniexp_t p=document->protect; miniexp_consp(p); p=miniexp_cdr(p))
-    if (miniexp_car(p) == expr)
-      return;
+  { // extra nesting for windows
+    for(miniexp_t p=document->protect; miniexp_consp(p); p=miniexp_cdr(p))
+      if (miniexp_car(p) == expr)
+        return;
+  }
   if (miniexp_consp(expr) || miniexp_objectp(expr))
     document->protect = miniexp_cons(expr, document->protect);
 }
@@ -2944,7 +2959,7 @@ ddjvu_document_get_outline(ddjvu_document_t *document)
     }
   G_CATCH(ex)
     {
-      ERROR(document, ex);
+      ERROR1(document, ex);
     }
   G_ENDCATCH;
   return miniexp_status(DDJVU_JOB_FAILED);
@@ -2980,9 +2995,11 @@ pagetext_sub(const GP<DjVuTXT> &txt, DjVuTXT::Zone &zone,
   minivar_t p;
   minivar_t a;
   bool gather = zone.children.isempty();
-  for (GPosition pos=zone.children; pos; ++pos)
-    if (zone.children[pos].ztype > detail)
-      gather = true;
+  { // extra nesting for windows
+    for (GPosition pos=zone.children; pos; ++pos)
+      if (zone.children[pos].ztype > detail)
+        gather = true;
+  }
   if (gather)
     {
       const char *data = (const char*)(txt->textUTF8) + zone.text_start;
@@ -3037,9 +3054,11 @@ ddjvu_document_get_pagetext(ddjvu_document_t *document, int pageno,
             return miniexp_nil;
           minivar_t result;
           DjVuTXT::ZoneType detail = DjVuTXT::CHARACTER;
-          for (int i=0; zone_names[i].name; i++)
-            if (maxdetail && !strcmp(maxdetail, zone_names[i].name))
-              detail = zone_names[i].ztype;
+          { // extra nesting for windows
+            for (int i=0; zone_names[i].name; i++)
+              if (maxdetail && !strcmp(maxdetail, zone_names[i].name))
+                detail = zone_names[i].ztype;
+          }
           result = pagetext_sub(txt, txt->page_zone, detail);
           miniexp_protect(document, result);
           return result;
@@ -3047,7 +3066,7 @@ ddjvu_document_get_pagetext(ddjvu_document_t *document, int pageno,
     }
   G_CATCH(ex)
     {
-      ERROR(document, ex);
+      ERROR1(document, ex);
     }
   G_ENDCATCH;
   return miniexp_status(DDJVU_JOB_FAILED);
@@ -3117,8 +3136,10 @@ anno_getc(void)
     {
       anno_dat.blen--;
       char c = anno_dat.buf[0];
-      for (int i=0; i<anno_dat.blen; i++)
-        anno_dat.buf[i] = anno_dat.buf[i+1];
+      { // extra nesting for windows
+        for (int i=0; i<anno_dat.blen; i++)
+          anno_dat.buf[i] = anno_dat.buf[i+1];
+      }
       return c;
     }
   if (! *anno_dat.s)
@@ -3165,8 +3186,10 @@ anno_ungetc(int c)
     return EOF;
   if (anno_dat.blen>=(int)sizeof(anno_dat.buf))
     return EOF;
-  for (int i=anno_dat.blen; i>0; i--)
-    anno_dat.buf[i] = anno_dat.buf[i-1];
+  { // extra nesting for windows
+    for (int i=anno_dat.blen; i>0; i--)
+      anno_dat.buf[i] = anno_dat.buf[i-1];
+  }
   anno_dat.blen += 1;
   anno_dat.buf[0] = c;
   return c;
@@ -3182,7 +3205,7 @@ anno_sub(ByteStream *bs, miniexp_t &result)
   while ((length=bs->read(buffer, sizeof(buffer))))
     raw += GUTF8String(buffer, length);
   // Prepare 
-  minivar_t a;
+  miniexp_t a;
   anno_dat.s = (const char*)raw;
   anno_dat.compat = anno_compat(anno_dat.s);
   anno_dat.blen = 0;
@@ -3248,7 +3271,7 @@ ddjvu_document_get_pageanno(ddjvu_document_t *document, int pageno)
     }
   G_CATCH(ex)
     {
-      ERROR(document, ex);
+      ERROR1(document, ex);
     }
   G_ENDCATCH;
   return miniexp_status(DDJVU_JOB_FAILED);
@@ -3360,8 +3383,10 @@ ddjvu_anno_get_metadata_keys(miniexp_t p)
   miniexp_t *k = (miniexp_t*)malloc((1+i)*sizeof(miniexp_t));
   if (! k) return 0;
   i = 0;
-  for (GPosition p=m; p; ++p)
-    k[i++] = m.key(p);
+  { // extra nesting for windows
+    for (GPosition p=m; p; ++p)
+      k[i++] = m.key(p);
+  }
   k[i] = 0;
   return k;
 }

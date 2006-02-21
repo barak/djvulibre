@@ -232,7 +232,8 @@ DjVuPalette::compute_palette(int maxcolors, int minboxsize)
   int sum = 0;
   int ncolors = 0;
   GTArray<PData> pdata;
-  for (GPosition p = *hist; p; ++p)
+  { // extra nesting for windows
+    for (GPosition p = *hist; p; ++p)
     {
       pdata.touch(ncolors);
       PData &data = pdata[ncolors++];
@@ -243,6 +244,7 @@ DjVuPalette::compute_palette(int maxcolors, int minboxsize)
       data.w = (*hist)[p];
       sum += data.w;
     }
+  }
   // Create first box
   GList<PBox> boxes;
   PBox newbox;
@@ -268,7 +270,8 @@ DjVuPalette::compute_palette(int maxcolors, int minboxsize)
       pmax[0] = pmin[0] = splitbox.data->p[0];
       pmax[1] = pmin[1] = splitbox.data->p[1];
       pmax[2] = pmin[2] = splitbox.data->p[2];
-      for (int j=1; j<splitbox.colors; j++)
+      { // extra nesting for windows
+        for (int j=1; j<splitbox.colors; j++)
         {
           pmax[0] = umax(pmax[0], splitbox.data[j].p[0]);
           pmax[1] = umax(pmax[1], splitbox.data[j].p[1]);
@@ -277,6 +280,7 @@ DjVuPalette::compute_palette(int maxcolors, int minboxsize)
           pmin[1] = umin(pmin[1], splitbox.data[j].p[1]);
           pmin[2] = umin(pmin[2], splitbox.data[j].p[2]);
         }
+      }
       // Determine split direction and sort
       int bl = pmax[0]-pmin[0]; 
       int gl = pmax[1]-pmin[1];
@@ -316,7 +320,8 @@ DjVuPalette::compute_palette(int maxcolors, int minboxsize)
   ncolors = 0;
   palette.empty();
   palette.resize(0,boxes.size()-1);
-  for (GPosition p=boxes; p; ++p)
+  { // extra nesting for windows
+    for (GPosition p=boxes; p; ++p)
     {
       PBox &box = boxes[p];
       // Compute box representative color
@@ -336,6 +341,7 @@ DjVuPalette::compute_palette(int maxcolors, int minboxsize)
       color.p[2] = (unsigned char) fmin(255, rsum/box.sum);
       color.p[3] = ( color.p[0]*BMUL + color.p[1]*GMUL + color.p[2]*RMUL) / SMUL;
     }
+  }
   // Save dominant color
   PColor dcolor = palette[0];
   // Sort palette colors in luminance order
@@ -355,12 +361,14 @@ DjVuPalette::compute_pixmap_palette(const GPixmap &pm, int ncolors, int minboxsi
 {
   // Prepare histogram
   histogram_clear();
-  for (int j=0; j<(int)pm.rows(); j++)
+  { // extra nesting for windows
+    for (int j=0; j<(int)pm.rows(); j++)
     {
       const GPixel *p = pm[j];
       for (int i=0; i<(int)pm.columns(); i++)
         histogram_add(p[i], 1);
     }
+  }
   // Compute palette
   return compute_palette(ncolors, minboxsize);
 }
@@ -391,7 +399,8 @@ DjVuPalette::color_to_index_slow(const unsigned char *bgr)
   // Should be able to do better
   int found = 0;
   int founddist = 3*256*256;
-  for (int i=0; i<ncolors; i++)
+  { // extra nesting for windows
+    for (int i=0; i<ncolors; i++)
     {
       int bd = bgr[0] - pal[i].p[0];
       int gd = bgr[1] - pal[i].p[1];
@@ -403,6 +412,7 @@ DjVuPalette::color_to_index_slow(const unsigned char *bgr)
           founddist = dist;
         }
     }
+  }
   // Store in pmap
   if (pmap && pmap->size()<0x8000)
     {
@@ -419,12 +429,14 @@ DjVuPalette::color_to_index_slow(const unsigned char *bgr)
 void 
 DjVuPalette::quantize(GPixmap &pm)
 {
-  for (int j=0; j<(int)pm.rows(); j++)
+  { // extra nesting for windows
+    for (int j=0; j<(int)pm.rows(); j++)
     {
       GPixel *p = pm[j];
       for (int i=0; i<(int)pm.columns(); i++)
         index_to_color(color_to_index(p[i]), p[i]);
     }
+  }
 }
 
 int 
@@ -475,7 +487,8 @@ void
 DjVuPalette::encode_rgb_entries(ByteStream &bs) const
 {
   const int palettesize = palette.size();
-  for (int c=0; c<palettesize; c++)
+  { // extra nesting for windows
+    for (int c=0; c<palettesize; c++)
     {
       unsigned char p[3];
       p[2] = palette[c].p[0];
@@ -483,6 +496,7 @@ DjVuPalette::encode_rgb_entries(ByteStream &bs) const
       p[0] = palette[c].p[2];
       bs.writall((const void*)p, 3);
     }
+  }
 }
 
 void 
@@ -497,7 +511,8 @@ DjVuPalette::encode(GP<ByteStream> gbs) const
   bs.write8(version);
   // Code palette
   bs.write16(palettesize);
-  for (int c=0; c<palettesize; c++)
+  { // extra nesting for windows
+    for (int c=0; c<palettesize; c++)
     {
       unsigned char p[3];
       p[0] = palette[c].p[0];
@@ -505,6 +520,7 @@ DjVuPalette::encode(GP<ByteStream> gbs) const
       p[2] = palette[c].p[2];
       bs.writall((const void*)p, 3);
     }
+  }
   // Code colordata
   if (datasize > 0)
     {
@@ -520,7 +536,8 @@ void
 DjVuPalette::decode_rgb_entries(ByteStream &bs, const int palettesize)
 {
   palette.resize(0,palettesize-1);
-  for (int c=0; c<palettesize; c++)
+  { // extra nesting for windows
+    for (int c=0; c<palettesize; c++)
     {
       unsigned char p[3];
       bs.readall((void*)p, 3);
@@ -529,6 +546,7 @@ DjVuPalette::decode_rgb_entries(ByteStream &bs, const int palettesize)
       palette[c].p[2] = p[0];
       palette[c].p[3] = (p[0]*BMUL+p[1]*GMUL+p[2]*RMUL)/SMUL;
     }
+  }
 }
 
 void 
@@ -550,7 +568,8 @@ DjVuPalette::decode(GP<ByteStream> gbs)
   if (palettesize<0 || palettesize>MAXPALETTESIZE)
     G_THROW( ERR_MSG("DjVuPalette.bad_palette") );
   palette.resize(0,palettesize-1);
-  for (int c=0; c<palettesize; c++)
+  { // extra nesting for windows
+    for (int c=0; c<palettesize; c++)
     {
       unsigned char p[3];
       bs.readall((void*)p, 3);
@@ -559,6 +578,7 @@ DjVuPalette::decode(GP<ByteStream> gbs)
       palette[c].p[2] = p[2];
       palette[c].p[3] = (p[0]*BMUL+p[1]*GMUL+p[2]*RMUL)/SMUL;
     }
+  }
   // Code data
   if (version & 0x80)
     {
@@ -568,13 +588,15 @@ DjVuPalette::decode(GP<ByteStream> gbs)
       colordata.resize(0,datasize-1);
       GP<ByteStream> gbsb=BSByteStream::create(gbs);
       ByteStream &bsb=*gbsb;
-      for (int d=0; d<datasize; d++)
+      { // extra nesting for windows
+        for (int d=0; d<datasize; d++)
         {
           short s = bsb.read16();
           if (s<0 || s>=palettesize)
             G_THROW( ERR_MSG("DjVuPalette.bad_palette") );        
           colordata[d] = s;
         }
+      }
     }
 }
 

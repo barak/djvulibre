@@ -266,11 +266,13 @@ ParsingByteStream::get_utf8_token(bool skipseparator, bool compat)
               else if (c>='0' && c<='7')
                 {
                   int x = 0;
-                  for (int i=0; i<3 && c>='0' && c<='7'; i++) 
+                  { // extra nesting for windows
+                    for (int i=0; i<3 && c>='0' && c<='7'; i++) 
                     {
                       x = x * 8 + c - '0';
                       c = get();
                     }
+                  }
                   unget(c);
                   c = x;
                 }
@@ -278,9 +280,13 @@ ParsingByteStream::get_utf8_token(bool skipseparator, bool compat)
                 {
                   char *tr1 = "tnrbfva";
                   char *tr2 = "\t\n\r\b\f\013\007";
-                  for (int i=0; tr1[i]; i++)
-                    if (c == tr1[i])
-                      c = tr2[i];
+                  { // extra nesting for windows
+                    for (int i=0; tr1[i]; i++)
+                    {
+                      if (c == tr1[i])
+                        c = tr2[i];
+                    }
+                  }
                 }
             }
           if (c != EOF)
@@ -364,8 +370,10 @@ get_data_from_file(const char *cmd, ParsingByteStream &pbs, ByteStream &out)
             }
           else
             {
-              for (char *m=skip; m<s; m++)
-                out.write8(*m);
+              { // extra nesting for windows
+                for (char *m=skip; m<s; m++)
+                  out.write8(*m);
+              }
               s = skip;
               state = 0;
               if (c == '\n')
@@ -418,9 +426,11 @@ print_c_string(const char *data, int length,
           static char *tr1 = "\"\\tnrbf";
           static char *tr2 = "\"\\\t\n\r\b\f";
           sprintf(buf,"\\%03o", (int)(((unsigned char*)data)[0]));
-          for (int i=0; tr2[i]; i++)
-            if (*(char*)data == tr2[i])
-              buf[1] = tr1[i];
+          { // extra nesting for windows
+            for (int i=0; tr2[i]; i++)
+              if (*(char*)data == tr2[i])
+                buf[1] = tr1[i];
+          }
           if (buf[1]<'0' || buf[1]>'3')
             buf[2] = 0;
           out.write(buf, ((buf[2]) ? 4 : 2));
@@ -436,7 +446,8 @@ command_ls(ParsingByteStream &)
 {
   int pagenum = 0;
   GPList<DjVmDir::File> lst = g().doc->get_djvm_dir()->get_files_list();
-  for (GPosition p=lst; p; ++p) 
+  { // extra nesting for windows
+    for (GPosition p=lst; p; ++p) 
     {
       GP<DjVmDir::File> f = lst[p];
       if (f->is_page())
@@ -452,6 +463,7 @@ command_ls(ParsingByteStream &)
       GUTF8String id = f->get_load_name();
       fprintf(stdout,"%8d  %s\n", f->size, (const char*)(GNativeString)id);
     }
+  }
   if (g().doc->get_thumbnails_num() == g().doc->get_pages_num())
     fprintf(stdout,"     T %8s  %s\n", "", "<thumbnails>");
 }
@@ -461,12 +473,14 @@ command_n(ParsingByteStream &)
 {
   int pagenum = 0;
   GPList<DjVmDir::File> lst = g().doc->get_djvm_dir()->get_files_list();
-  for (GPosition p=lst; p; ++p) 
+  { // extra nesting for windows
+    for (GPosition p=lst; p; ++p) 
     {
       GP<DjVmDir::File> f = lst[p];
       if (f->is_page())
         ++pagenum;
     }
+  }
   fprintf(stdout,"%d\n", pagenum); 
 }
 
@@ -523,7 +537,8 @@ void
 command_size(ParsingByteStream &)
 {
   GPList<DjVmDir::File> &lst = g().selected;
-  for (GPosition p=lst; p; ++p)
+  { // extra nesting for windows
+    for (GPosition p=lst; p; ++p)
     {
       if (lst[p]->is_page())
         {
@@ -532,6 +547,7 @@ command_size(ParsingByteStream &)
           print_size(f);
         }
     }
+  }
 }
 
 static void
@@ -648,7 +664,8 @@ command_showsel(ParsingByteStream &)
 {
   int pagenum = 0;
   GPList<DjVmDir::File> &lst = g().selected;
-  for (GPosition p=lst; p; ++p) 
+  { // extra nesting for windows
+    for (GPosition p=lst; p; ++p) 
     {
       GP<DjVmDir::File> f = lst[p];
       if (f->is_page())
@@ -664,6 +681,7 @@ command_showsel(ParsingByteStream &)
       GUTF8String id = f->get_load_name();
       fprintf(stdout,"%8d  %s\n", f->size, (const char*)(GNativeString)id);
     }
+  }
   if (g().doc->get_thumbnails_num() == g().doc->get_pages_num())
     fprintf(stdout,"     T %8s  %s\n", "", "<thumbnails>");
 }
@@ -859,12 +877,14 @@ void
 command_remove_ant(ParsingByteStream &)
 {
   GPList<DjVmDir::File> & lst = g().selected;
-  for (GPosition p=lst; p; ++p)
+  { // extra nesting for windows
+    for (GPosition p=lst; p; ++p)
     {
       GUTF8String id = lst[p]->get_load_name();
       const GP<DjVuFile> f(g().doc->get_djvu_file(id));
       file_remove_ant(f, id);
     }
+  }
 }
 
 void
@@ -903,7 +923,8 @@ print_meta(IFFByteStream &iff, ByteStream &out)
       }
       if (ok)
         {
-          for (GPosition pos=ant->metadata; pos; ++pos)
+          { // extra nesting for windows
+            for (GPosition pos=ant->metadata; pos; ++pos)
             { 
               GUTF8String tmp;
               tmp=ant->metadata.key(pos);
@@ -913,6 +934,7 @@ print_meta(IFFByteStream &iff, ByteStream &out)
               print_c_string((const char*)tmp, tmp.length(), out);
               out.write8('\n');
             }
+          }
         }
       iff.close_chunk();
     }
@@ -951,7 +973,8 @@ modify_meta(const GP<DjVuFile> &f,
   if (newmeta && !newmeta->isempty())
     {
       newant->writestring(GUTF8String("(metadata"));
-      for (GPosition pos=newmeta->firstpos(); pos; ++pos)
+      { // extra nesting for windows
+        for (GPosition pos=newmeta->firstpos(); pos; ++pos)
         {
           GUTF8String key = newmeta->key(pos); 
           GUTF8String val = (*newmeta)[pos];
@@ -962,6 +985,7 @@ modify_meta(const GP<DjVuFile> &f,
                          *newant, true);
           newant->write(")",1);
         }
+      }
       newant->write(" )\n",3);
       changed = true;
     }
@@ -998,12 +1022,14 @@ void
 command_remove_meta(ParsingByteStream &)
 {
   GPList<DjVmDir::File> &lst = g().selected;
-  for (GPosition p=lst; p; ++p)
+  { // extra nesting for windows
+    for (GPosition p=lst; p; ++p)
     {
       GUTF8String id = lst[p]->get_load_name();
       const GP<DjVuFile> f(g().doc->get_djvu_file(id));
       file_remove_meta(f, id);
     }
+  }
 }
 
 void
@@ -1171,8 +1197,9 @@ command_print_txt(ParsingByteStream &)
 {
   const GP<ByteStream> out = ByteStream::create("w");
   GPList<DjVmDir::File> &lst = g().selected;
-  for (GPosition p=lst; p; ++p)
-    if (lst[p]->is_page())
+  { // extra nesting for windows
+    for (GPosition p=lst; p; ++p)
+      if (lst[p]->is_page())
       {
         GUTF8String id = lst[p]->get_load_name();
         const GP<DjVuFile> f(g().doc->get_djvu_file(id));
@@ -1182,6 +1209,7 @@ command_print_txt(ParsingByteStream &)
         else
           out->write("(page 0 0 0 0 \"\")\n",18);
       }
+  }
 }
 
 void
@@ -1190,7 +1218,8 @@ command_print_pure_txt(ParsingByteStream &)
   const GP<ByteStream> out = ByteStream::create("w");
   GP<DjVuTXT> txt;
   GPList<DjVmDir::File> &lst = g().selected;
-  for (GPosition p=lst; p; ++p)
+  { // extra nesting for windows
+    for (GPosition p=lst; p; ++p)
     {
       GUTF8String id = lst[p]->get_load_name();
       const GP<DjVuFile> f(g().doc->get_djvu_file(id));
@@ -1201,6 +1230,7 @@ command_print_pure_txt(ParsingByteStream &)
         }
       out->write("\f",1);
     }
+  }
 }
 
 static void
@@ -1236,12 +1266,14 @@ void
 command_remove_txt(ParsingByteStream &)
 {
   GPList<DjVmDir::File> &lst = g().selected;
-  for (GPosition p=lst; p; ++p)
+  { // extra nesting for windows
+    for (GPosition p=lst; p; ++p)
     {
       GUTF8String id = lst[p]->get_load_name();
       const GP<DjVuFile> f(g().doc->get_djvu_file(id));
       file_remove_txt(f, id);
     }
+  }
 }
 
 void
@@ -1425,12 +1457,14 @@ command_output_ant(ParsingByteStream &)
       const char *pre = "select; remove-ant\n";
       out->write(pre, strlen(pre));
       GPList<DjVmDir::File> &lst = g().selected;
-      for (GPosition p=lst; p; ++p)
+      { // extra nesting for windows
+        for (GPosition p=lst; p; ++p)
         {
           GUTF8String id = lst[p]->get_load_name();
           const GP<DjVuFile> f(g().doc->get_djvu_file(id));
           output(f, out, 1, id);
         }
+      }
     }
 }
 
@@ -1447,12 +1481,14 @@ command_output_txt(ParsingByteStream &)
       const char *pre = "select; remove-txt\n";
       out->write(pre, strlen(pre));
       GPList<DjVmDir::File> &lst = g().selected;
-      for (GPosition p=lst; p; ++p)
+      { // extra nesting for windows
+        for (GPosition p=lst; p; ++p)
         {
           GUTF8String id = lst[p]->get_load_name();
           const GP<DjVuFile> f(g().doc->get_djvu_file(id));
           output(f, out, 2, id);
         }
+      }
     }
 }
 
@@ -1469,12 +1505,14 @@ command_output_all(ParsingByteStream &)
       const char *pre = "select; remove-ant; remove-txt\n";
       out->write(pre, strlen(pre));
       GPList<DjVmDir::File> &lst = g().selected;
-      for (GPosition p=lst; p; ++p)
+      { // extra nesting for windows
+        for (GPosition p=lst; p; ++p)
         {
           GUTF8String id = lst[p]->get_load_name();
           const GP<DjVuFile> f(g().doc->get_djvu_file(id));
           output(f, out, 3, id);
         }
+      }
     }
 }
 
@@ -1487,15 +1525,19 @@ print_outline_sub(const GP<DjVmNav> &nav, int &pos, int count,
   while (count > 0 && pos < nav->getBookMarkCount())
     {
       out->write("\n",1);
-      for (int i=0; i<indent; i++)
-        out->write(" ",1);
+      { // extra nesting for windows
+        for (int i=0; i<indent; i++)
+          out->write(" ",1);
+      }
       nav->getBookMark(entry, pos++);
       out->write("(",2);
       str = entry->displayname;
       print_c_string(str, str.length(), *out);
       out->write("\n ",2);
-      for (int i=0; i<indent; i++)
-        out->write(" ",1);
+      { // extra nesting for windows
+        for (int i=0; i<indent; i++)
+          out->write(" ",1);
+      }
       str = entry->url;
       print_c_string(str, str.length(), *out);
       print_outline_sub(nav, pos, entry->count, out, indent+1);
@@ -1895,21 +1937,23 @@ main(int argc, char **argv)
   djvu_programname(argv[0]);
   G_TRY
      {
-      for (int i=1; i<argc; i++)
-        if (!strcmp(argv[i],"-v"))
-          verbose = true;
-        else if (!strcmp(argv[i],"-s"))
-          save = true; 
-        else if (!strcmp(argv[i],"-n"))
-          nosave = true;
-        else if (!strcmp(argv[i],"-f") && i+1<argc && !g().cmdbs) 
-          g().cmdbs = ByteStream::create(GURL::Filename::UTF8(argv[++i]), "r");
-        else if (!strcmp(argv[i],"-e") && !g().cmdbs && ++i<argc) 
-          g().cmdbs = ByteStream::create_static(argv[i],strlen(argv[i]));
-        else if (argv[i][0] != '-' && !g().djvufile)
-          g().djvufile = argv[i];
-        else
-          usage();
+      { // extra nesting for windows
+        for (int i=1; i<argc; i++)
+          if (!strcmp(argv[i],"-v"))
+            verbose = true;
+          else if (!strcmp(argv[i],"-s"))
+            save = true; 
+          else if (!strcmp(argv[i],"-n"))
+            nosave = true;
+          else if (!strcmp(argv[i],"-f") && i+1<argc && !g().cmdbs) 
+            g().cmdbs = ByteStream::create(GURL::Filename::UTF8(argv[++i]), "r");
+          else if (!strcmp(argv[i],"-e") && !g().cmdbs && ++i<argc) 
+            g().cmdbs = ByteStream::create_static(argv[i],strlen(argv[i]));
+          else if (argv[i][0] != '-' && !g().djvufile)
+            g().djvufile = argv[i];
+          else
+            usage();
+      }
       if (!g().djvufile)
         usage();
       // Open file

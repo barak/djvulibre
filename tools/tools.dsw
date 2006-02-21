@@ -1,0 +1,311 @@
+Microsoft Developer Studio Workspace File, Format Version 6.00
+# WARNING: DO NOT EDIT OR DELETE THIS WORKSPACE FILE!
+
+###############################################################################
+
+Project: "bzz"=".\bzz.dsp" - Package Owner=<4>
+
+Package=<5>
+{{{
+}}}
+
+Package=<4>
+{{{
+    Begin Project Dependency
+    Project_Dep_Name libdjvu
+    End Project Dependency
+}}}
+
+###############################################################################
+
+Project: "c44"=".\c44.dsp" - Package Owner=<4>
+
+Package=<5>
+{{{
+}}}
+
+Package=<4>
+{{{
+    Begin Project Dependency
+    Project_Dep_Name libdjvu
+    End Project Dependency
+}}}
+
+###############################################################################
+
+Project: "cjb2"=".\cjb2.dsp" - Package Owner=<4>
+
+Package=<5>
+{{{
+}}}
+
+Package=<4>
+{{{
+    Begin Project Dependency
+    Project_Dep_Name libdjvu
+    End Project Dependency
+}}}
+
+###############################################################################
+
+Project: "cpaldjvu"=".\cpaldjvu.dsp" - Package Owner=<4>
+
+Package=<5>
+{{{
+}}}
+
+Package=<4>
+{{{
+    Begin Project Dependency
+    Project_Dep_Name libdjvu
+    End Project Dependency
+}}}
+
+###############################################################################
+
+Project: "csepdjvu"=".\csepdjvu.dsp" - Package Owner=<4>
+
+Package=<5>
+{{{
+}}}
+
+Package=<4>
+{{{
+    Begin Project Dependency
+    Project_Dep_Name libdjvu
+    End Project Dependency
+}}}
+
+###############################################################################
+
+Project: "ddjvu"=".\ddjvu.dsp" - Package Owner=<4>
+
+Package=<5>
+{{{
+}}}
+
+Package=<4>
+{{{
+    Begin Project Dependency
+    Project_Dep_Name libdjvu
+    End Project Dependency
+}}}
+
+###############################################################################
+
+Project: "djvm"=".\djvm.dsp" - Package Owner=<4>
+
+Package=<5>
+{{{
+}}}
+
+Package=<4>
+{{{
+    Begin Project Dependency
+    Project_Dep_Name libdjvu
+    End Project Dependency
+}}}
+
+###############################################################################
+
+Project: "djvmcvt"=".\djvmcvt.dsp" - Package Owner=<4>
+
+Package=<5>
+{{{
+}}}
+
+Package=<4>
+{{{
+    Begin Project Dependency
+    Project_Dep_Name libdjvu
+    End Project Dependency
+}}}
+
+###############################################################################
+
+Project: "djvudump"=".\djvudump.dsp" - Package Owner=<4>
+
+Package=<5>
+{{{
+}}}
+
+Package=<4>
+{{{
+    Begin Project Dependency
+    Project_Dep_Name libdjvu
+    End Project Dependency
+}}}
+
+###############################################################################
+
+Project: "djvuextract"=".\djvuextract.dsp" - Package Owner=<4>
+
+Package=<5>
+{{{
+}}}
+
+Package=<4>
+{{{
+    Begin Project Dependency
+    Project_Dep_Name libdjvu
+    End Project Dependency
+}}}
+
+###############################################################################
+
+Project: "djvumake"=".\djvumake.dsp" - Package Owner=<4>
+
+Package=<5>
+{{{
+}}}
+
+Package=<4>
+{{{
+    Begin Project Dependency
+    Project_Dep_Name libdjvu
+    End Project Dependency
+}}}
+
+###############################################################################
+
+Project: "djvups"=".\djvups.dsp" - Package Owner=<4>
+
+Package=<5>
+{{{
+}}}
+
+Package=<4>
+{{{
+    Begin Project Dependency
+    Project_Dep_Name libdjvu
+    End Project Dependency
+}}}
+
+###############################################################################
+
+Project: "djvused"=".\djvused.dsp" - Package Owner=<4>
+
+Package=<5>
+{{{
+}}}
+
+Package=<4>
+{{{
+    Begin Project Dependency
+    Project_Dep_Name libdjvu
+    End Project Dependency
+}}}
+
+###############################################################################
+
+Project: "djvuserve"=".\djvuserve.dsp" - Package Owner=<4>
+
+Package=<5>
+{{{
+}}}
+
+Package=<4>
+{{{
+    Begin Project Dependency
+    Project_Dep_Name libdjvu
+    End Project Dependency
+}}}
+
+###############################################################################
+
+Project: "djvutxt"=".\djvutxt.dsp" - Package Owner=<4>
+
+Package=<5>
+{{{
+}}}
+
+Package=<4>
+{{{
+    Begin Project Dependency
+    Project_Dep_Name libdjvu
+    End Project Dependency
+}}}
+
+###############################################################################
+
+Project: "libdjvu"="..\libdjvu\libdjvu\libdjvu.dsp" - Package Owner=<4>
+
+Package=<5>
+{{{
+}}}
+
+Package=<4>
+{{{
+}}}
+
+###############################################################################
+
+Project: "tools"=".\tools\tools.dsp" - Package Owner=<4>
+
+Package=<5>
+{{{
+}}}
+
+Package=<4>
+{{{
+    Begin Project Dependency
+    Project_Dep_Name bzz
+    End Project Dependency
+    Begin Project Dependency
+    Project_Dep_Name c44
+    End Project Dependency
+    Begin Project Dependency
+    Project_Dep_Name cjb2
+    End Project Dependency
+    Begin Project Dependency
+    Project_Dep_Name cpaldjvu
+    End Project Dependency
+    Begin Project Dependency
+    Project_Dep_Name csepdjvu
+    End Project Dependency
+    Begin Project Dependency
+    Project_Dep_Name ddjvu
+    End Project Dependency
+    Begin Project Dependency
+    Project_Dep_Name djvm
+    End Project Dependency
+    Begin Project Dependency
+    Project_Dep_Name djvmcvt
+    End Project Dependency
+    Begin Project Dependency
+    Project_Dep_Name djvudump
+    End Project Dependency
+    Begin Project Dependency
+    Project_Dep_Name djvuextract
+    End Project Dependency
+    Begin Project Dependency
+    Project_Dep_Name djvumake
+    End Project Dependency
+    Begin Project Dependency
+    Project_Dep_Name djvups
+    End Project Dependency
+    Begin Project Dependency
+    Project_Dep_Name djvused
+    End Project Dependency
+    Begin Project Dependency
+    Project_Dep_Name djvuserve
+    End Project Dependency
+    Begin Project Dependency
+    Project_Dep_Name djvutxt
+    End Project Dependency
+}}}
+
+###############################################################################
+
+Global:
+
+Package=<5>
+{{{
+}}}
+
+Package=<3>
+{{{
+}}}
+
+###############################################################################
+

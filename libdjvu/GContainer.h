@@ -747,7 +747,7 @@ public:
   GListBase & operator= (const GListBase & gl);
   GPosition firstpos() const { return GPosition(head.next, (void*)this); }
   GPosition lastpos() const { return GPosition(head.prev, (void*)this); }
-  int isempty() const { return nelem==0; };
+  bool isempty() const { return nelem==0; };
   GPosition nth(unsigned int n) const;
   void empty();
 };
@@ -843,7 +843,7 @@ public:
   // -- TEST
   /** Tests whether a list is empty.  
       Returns a non zero value if the list contains no elements. */
-  int isempty() const 
+  bool isempty() const 
     { return this->nelem==0; }
   /** Compares two lists. Returns a non zero value if and only if both lists
       contain the same elements (as tested by #TYPE::operator==(const TYPE&)#
@@ -1156,7 +1156,7 @@ public:
     { return firstpos(); }    
   /** Tests whether the associative map is empty.  
       Returns a non zero value if and only if the map contains zero entries. */
-  int isempty() const
+  bool isempty() const
     { return this->nelems==0; }
   /** Searches an entry for key #key#.  If the map contains an entry whose key
       is equal to #key# according to #KTYPE::operator==(const KTYPE&)#, this

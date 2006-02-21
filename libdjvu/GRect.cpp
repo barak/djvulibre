@@ -107,8 +107,8 @@ iswap(int &x, int &y)
 int 
 operator==(const GRect & r1, const GRect & r2)
 {
-  int isempty1 = r1.isempty();
-  int isempty2 = r2.isempty();
+  bool isempty1 = r1.isempty();
+  bool isempty2 = r2.isempty();
   if (isempty1 || isempty2)
     if (isempty1 && isempty2)
       return 1;
