@@ -1,3 +1,11 @@
+NEW IN VERSION 3.5.17
+---------------------
+- Minor enhancement of DDJVUAPI
+- Compiles with the SunCC compiler.
+- Command line utilities compile under WIN32 
+  using MSVC using the provided project files.
+- Minor bug fixes in csepdjvu text extraction.
+
 NEW IN VERSION 3.5.16
 ---------------------
 - Shared library build system updates.
