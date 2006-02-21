@@ -573,11 +573,15 @@ class miniobj_t {
   virtual miniexp_t classof() const = 0;
   /* isa -- tests if this is an instance of <classname>. */
   virtual bool isa(miniexp_t classname) const;
-  
+
   /* --- optional stuff --- */
   /* mark: iterates over miniexps contained by this object
      for garbage collecting purposes. */
+#ifdef WIN32
+  virtual void mark(minilisp_mark_t) {}
+#else
   virtual void mark(minilisp_mark_t);
+#endif
 
   /* pname: returns a printable name for this object.
      The caller must deallocate the result with delete[]. */
