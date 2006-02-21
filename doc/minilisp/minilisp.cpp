@@ -851,7 +851,7 @@ DEFUN("apply",apply,2,0) {
   miniobj_t *obj = miniexp_to_obj(argv[0]);
   if (obj && obj->isa(callable_t::classname))
     return ((callable_t*)obj)->call(argv[1], env, true);
-      error("apply: cannot apply this object", argv[0]);
+  error("apply: cannot apply this object", argv[0]);
 }
 
 DEFUN("error",error,1,1) {
