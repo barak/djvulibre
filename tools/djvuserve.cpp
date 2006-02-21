@@ -398,7 +398,6 @@ main(int argc, char ** argv)
       exit(10);
     }
   G_ENDCATCH;
-  if(1) // always exit
-    exit(0);
-  return 0; // make windows happy
+  // return code zero
+  return 0;
 }

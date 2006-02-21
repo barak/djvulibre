@@ -74,7 +74,7 @@
 # include <sys/time.h>
 #endif
 
-#include "ddjvuapi.h"
+#include "libdjvu/ddjvuapi.h"
 
 #if defined(WIN32) || defined(__CYGWIN32__)
 # include <io.h>

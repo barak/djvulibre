@@ -451,8 +451,8 @@ minilisp_release_gc_lock(miniexp_t x)
 void 
 minilisp_gc(void)
 {
-  int i=0;
-  for (; i<recentsize; i++)
+  int i;
+  for (i=0; i<recentsize; i++)
     gc.recent[i] = 0;
   gc_run();
 }
@@ -678,12 +678,10 @@ miniobj_t::isa(miniexp_t) const
   return false;
 }
 
-#ifndef WIN32
-void
+void 
 miniobj_t::mark(minilisp_mark_t)
 {
 }
-#endif
 
 char *
 miniobj_t::pname() const
@@ -1448,7 +1446,7 @@ read_miniexp(int &c)
                     break;
                 }
               p = read_miniexp(c);
-              if (p == (minivar_t)miniexp_dummy)
+              if ((miniexp_t)p == miniexp_dummy)
                 return miniexp_dummy;
               *where = miniexp_cons(p, miniexp_nil);
               where = &cdr(*where);

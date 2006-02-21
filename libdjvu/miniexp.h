@@ -577,11 +577,8 @@ class miniobj_t {
   /* --- optional stuff --- */
   /* mark: iterates over miniexps contained by this object
      for garbage collecting purposes. */
-#ifdef WIN32
-  virtual void mark(minilisp_mark_t) {}
-#else
-  virtual void mark(minilisp_mark_t action);
-#endif
+  virtual void mark(minilisp_mark_t);
+
   /* pname: returns a printable name for this object.
      The caller must deallocate the result with delete[]. */
   virtual char *pname() const;
