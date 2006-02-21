@@ -678,12 +678,10 @@ miniobj_t::isa(miniexp_t) const
   return false;
 }
 
-#ifndef WIN32
 void 
-miniobj_t::mark(minilisp_mark_t)
+miniobj_t::mark(minilisp_mark_t*)
 {
 }
-#endif
 
 char *
 miniobj_t::pname() const
