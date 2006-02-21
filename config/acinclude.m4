@@ -707,6 +707,15 @@ AC_DEFUN([AC_PATH_QT],
                       break 3
                   fi
               done
+              for l in libqt.dll.a libqt-mt.dll.a libqt-mt.la libqt.a libqt-mt.a; do
+                  if test -r $d/$lib/$n/$lib/$l ; then
+                      QT_CFLAGS="-I$d/include/$n"
+                      QT_LIBS="-L$d/$lib/$n/$lib -lqt"
+                      QTDIR=$d/$lib/$n
+                      ac_has_qt="cygwin-style Qt install"
+                      break 3
+                  fi
+              done
               for l in libqt.so libqt-mt.so libqt-mt.dylib libqt.a libqt-mt.a; do
                   if test -r $d/$lib/$l ; then
                       QT_CFLAGS="-I$d/include/$n"
