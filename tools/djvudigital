@@ -149,6 +149,7 @@ djvutext=
 infile=
 outfile=
 run=
+sepfile=
 
 for n
 do
@@ -178,6 +179,9 @@ do
           ;;
       --dryrun)
           run=echo
+          ;;
+      --sepfile)
+          sepfile=yes
           ;;
       --quiet|--q)
           gsverbosity='-q'
@@ -284,7 +288,12 @@ then
             ;;
        esac
     done
-    outfile="$outfile.djvu"
+    if [ "$sepfile" = "yes" ] 
+    then
+      outfile="$outfile.sep"
+    else
+      outfile="$outfile.djvu"
+    fi
 fi
 
 # Step 5 -- execute command
@@ -294,17 +303,23 @@ then
     test -z "$run" && echo "DJVUDIGITAL --- DjVuLibre-3.5"
 fi
 
-backend="$csepdjvu -d "'"'"$dpi"'"'" $csepverbosity $csepargs - "'"'"$outfile"'"'
+if [ "$sepfile" = "yes" ] 
+then
+  backend="$outfile"
+else
+  backend="|$csepdjvu -d "'"'"$dpi"'"'
+  backend="$backend $csepverbosity $csepargs - "'"'"$outfile"'"'
+fi
 
 
 case "$infile" in
     *.gz|*.GZ)
         gzip -d -c "$infile" | \
         $run $gsdjvu "-r$dpi" $gsverbosity $gsprinted $gsepsf \
-            "-sOutputFile=|$backend" $gsarg0 $gsarg1 $gsarg2 -_ -c quit
+            "-sOutputFile=$backend" $gsarg0 $gsarg1 $gsarg2 -_ -c quit
         ;;
     *)
         $run $gsdjvu "-r$dpi" $gsverbosity $gsprinted $gsepsf \
-            "-sOutputFile=|$backend" $gsarg0 $gsarg1 $gsarg2 -f "$infile" -c quit
+            "-sOutputFile=$backend" $gsarg0 $gsarg1 $gsarg2 -f "$infile" -c quit
         ;;
 esac
