@@ -364,10 +364,11 @@ gc_run(void)
         clear_marks(b);
       // mark
       minivar_t::mark(gc_mark);
-      { // extra nesting for windows
-        for (int i=0; i<recentsize; i++)
-          gc_mark((miniexp_t*)&gc.recent[i]);
-      }
+      for (int i=0; i<recentsize; i++)
+        {
+          miniexp_t p = (miniexp_t)gc.recent[i];
+          gc_mark(&p);
+        }
       // sweep
       gc.objs_free = gc.pairs_free = 0;
       gc.objs_freelist = gc.pairs_freelist = 0;
