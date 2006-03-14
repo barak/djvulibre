@@ -136,6 +136,82 @@ namespace DJVU {
 
 
 // ------------------------------------------------------------
+// HASH FUNCTIONS
+// ------------------------------------------------------------
+
+
+/** @name Hash functions
+    These functions let you use template class \Ref{GMap} with the
+    corresponding elementary types. The returned hash code may be reduced to
+    an arbitrary range by computing its remainder modulo the upper bound of
+    the range.
+    @memo Hash functions for elementary types. */
+//@{
+
+/** Hashing function (unsigned int). */
+static inline unsigned int 
+hash(const unsigned int & x) 
+{ 
+  return x; 
+}
+
+/** Hashing function (int). */
+static inline unsigned int 
+hash(const int & x) 
+{ 
+  return (unsigned int)x;
+}
+
+/** Hashing function (long). */
+static inline unsigned int
+hash(const long & x) 
+{ 
+  return (unsigned int)x;
+}
+
+/** Hashing function (unsigned long). */
+static inline unsigned int
+hash(const unsigned long & x) 
+{ 
+  return (unsigned int)x;
+}
+
+/** Hashing function (const void *). */
+static inline unsigned int 
+hash(const void * const & x) 
+{ 
+  return (unsigned long) x; 
+}
+
+/** Hashing function (float). */
+static inline unsigned int
+hash(const float & x) 
+{ 
+  // optimizer will get rid of unnecessary code  
+  unsigned int *addr = (unsigned int*)&x;
+  if (sizeof(float)<2*sizeof(unsigned int))
+    return addr[0];
+  else
+    return addr[0]^addr[1];
+}
+
+/** Hashing function (double). */
+static inline unsigned int
+hash(const double & x) 
+{ 
+  // optimizer will get rid of unnecessary code
+  unsigned int *addr = (unsigned int*)&x;
+  if (sizeof(double)<2*sizeof(unsigned int))
+    return addr[0];
+  else if (sizeof(double)<4*sizeof(unsigned int))
+    return addr[0]^addr[1];
+  else
+    return addr[0]^addr[1]^addr[2]^addr[3];    
+}
+
+
+
+// ------------------------------------------------------------
 // HELPER CLASSES
 // ------------------------------------------------------------
 
@@ -332,7 +408,6 @@ public:
 protected:
   const Traits &traits;
   void  *data;
-  GPBufferBase gdata;
   int   minlo;
   int   maxhi;
   int   lobound;
@@ -1263,80 +1338,6 @@ public:
     { GSetBase::operator=(r); return *this; }
 };
 
-
-// ------------------------------------------------------------
-// HASH FUNCTIONS
-// ------------------------------------------------------------
-
-
-/** @name Hash functions
-    These functions let you use template class \Ref{GMap} with the
-    corresponding elementary types. The returned hash code may be reduced to
-    an arbitrary range by computing its remainder modulo the upper bound of
-    the range.
-    @memo Hash functions for elementary types. */
-//@{
-
-/** Hashing function (unsigned int). */
-static inline unsigned int 
-hash(const unsigned int & x) 
-{ 
-  return x; 
-}
-
-/** Hashing function (int). */
-static inline unsigned int 
-hash(const int & x) 
-{ 
-  return (unsigned int)x;
-}
-
-/** Hashing function (long). */
-static inline unsigned int
-hash(const long & x) 
-{ 
-  return (unsigned int)x;
-}
-
-/** Hashing function (unsigned long). */
-static inline unsigned int
-hash(const unsigned long & x) 
-{ 
-  return (unsigned int)x;
-}
-
-/** Hashing function (const void *). */
-static inline unsigned int 
-hash(const void * const & x) 
-{ 
-  return (unsigned long) x; 
-}
-
-/** Hashing function (float). */
-static inline unsigned int
-hash(const float & x) 
-{ 
-  // optimizer will get rid of unnecessary code  
-  unsigned int *addr = (unsigned int*)&x;
-  if (sizeof(float)<2*sizeof(unsigned int))
-    return addr[0];
-  else
-    return addr[0]^addr[1];
-}
-
-/** Hashing function (double). */
-static inline unsigned int
-hash(const double & x) 
-{ 
-  // optimizer will get rid of unnecessary code
-  unsigned int *addr = (unsigned int*)&x;
-  if (sizeof(double)<2*sizeof(unsigned int))
-    return addr[0];
-  else if (sizeof(double)<4*sizeof(unsigned int))
-    return addr[0]^addr[1];
-  else
-    return addr[0]^addr[1]^addr[2]^addr[3];    
-}
 
 
 //@}

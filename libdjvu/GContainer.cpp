@@ -78,13 +78,12 @@ namespace DJVU {
 
 
 GArrayBase::GArrayBase(const GArrayBase &ref)
-  : traits(ref.traits),
-    gdata(data,0,1),
+  : traits(ref.traits), data(0),
     minlo(ref.minlo), maxhi(ref.maxhi),
     lobound(ref.lobound), hibound(ref.hibound)
 {
   if (maxhi >= minlo)
-    gdata.resize(traits.size * (maxhi - minlo + 1),1);
+    data = ::operator new(traits.size * (maxhi - minlo + 1));
   if (hibound >= lobound)
     traits.copy(traits.lea(data, lobound-minlo), 
                 traits.lea(ref.data, lobound-minlo),
@@ -93,8 +92,7 @@ GArrayBase::GArrayBase(const GArrayBase &ref)
 
 
 GArrayBase::GArrayBase(const GCONT Traits &traits)
-  : traits(traits),
-    gdata(data,0,1),
+  : traits(traits), data(0),
     minlo(0), maxhi(-1),
     lobound(0), hibound(-1)
 {
@@ -102,8 +100,7 @@ GArrayBase::GArrayBase(const GCONT Traits &traits)
 
 
 GArrayBase::GArrayBase(const GCONT Traits &traits, int lobound, int hibound)
-  : traits(traits),
-    gdata(data,0,1),
+  : traits(traits), data(0),
     minlo(0), maxhi(-1),
     lobound(0), hibound(-1)
 {
@@ -183,7 +180,8 @@ GArrayBase::resize(int lo, int hi)
       if (hibound >= lobound)
         traits.fini( traits.lea(data, lobound-minlo), hibound-lobound+1 );
       if (data)
-        gdata.resize(0,1);
+        ::operator delete (data);
+      data = 0;
       lobound = minlo = 0;
       hibound = maxhi = -1;
       return;
@@ -220,27 +218,36 @@ GArrayBase::resize(int lo, int hi)
   int beg = lo;
   int end = hi;
   int bytesize = traits.size * (nmaxhi-nminlo+1);
-  void *ndata;
-  GPBufferBase gndata(ndata,bytesize,1);
+  void *ndata = ::operator new(bytesize);
 #if GCONTAINER_ZERO_FILL
   memset(ndata, 0, bytesize);  // slower but cleaner
 #endif
-  if (lo < lobound)
-    { traits.init( traits.lea(ndata,lo-nminlo), lobound-lo ); beg=lobound; }
-  else if (lobound < lo)
-    { traits.fini( traits.lea(data,lobound-minlo), lo-lobound); }
-  if (hibound < hi)
-    { traits.init( traits.lea(ndata,hibound-nminlo+1), hi-hibound ); end=hibound; }
-  else if (hi < hibound)
-    { traits.fini( traits.lea(data, hi-minlo+1), hibound-hi ); }
-  if (end >= beg)
-    { traits.copy( traits.lea(ndata, beg-nminlo), 
-                   traits.lea(data, beg-minlo),
-                   end-beg+1, 1 ); }
+  G_TRY
+    {
+      if (lo < lobound)
+        { traits.init( traits.lea(ndata,lo-nminlo), lobound-lo ); beg=lobound; }
+      else if (lobound < lo)
+        { traits.fini( traits.lea(data,lobound-minlo), lo-lobound); }
+      if (hibound < hi)
+        { traits.init( traits.lea(ndata,hibound-nminlo+1), hi-hibound ); end=hibound; }
+      else if (hi < hibound)
+        { traits.fini( traits.lea(data, hi-minlo+1), hibound-hi ); }
+      if (end >= beg)
+        { traits.copy( traits.lea(ndata, beg-nminlo), 
+                       traits.lea(data, beg-minlo),
+                       end-beg+1, 1 ); }
+    }
+  G_CATCH_ALL
+    {
+      if (ndata)
+        ::operator delete(ndata);
+      G_RETHROW;
+    }
+  G_ENDCATCH;
   // free and replace
-  void *tmp=data;
-  data=ndata;
-  ndata=tmp;
+  if (data) 
+    ::operator delete(data);
+  data = ndata;
   minlo = nminlo;
   maxhi = nmaxhi;
   lobound = lo;
@@ -304,17 +311,28 @@ GArrayBase::ins(int n, const void *src, int howmany)
       while (nmaxhi < hibound+howmany)
         nmaxhi += (nmaxhi < 8 ? 8 : (nmaxhi > 32768 ? 32768 : nmaxhi));
       int bytesize = traits.size * (nmaxhi-minlo+1);
-      void *ndata; //  = operator new (bytesize);
-      GPBufferBase gndata(ndata,bytesize,1);
-      memset(ndata, 0, bytesize);  // slower but cleaner
-      if (hibound >= lobound)
-        traits.copy( traits.lea(ndata, lobound-minlo),
-                     traits.lea(data, lobound-minlo),
-                     hibound-lobound+1, 1 );
-      maxhi = nmaxhi;
-      void *tmp=data;
+      void *ndata = ::operator new (bytesize);
+#if GCONTAINER_ZERO_FILL
+      memset(ndata, 0, bytesize);
+#endif
+      G_TRY
+        {
+          if (hibound >= lobound)
+            traits.copy( traits.lea(ndata, lobound-minlo),
+                         traits.lea(data, lobound-minlo),
+                         hibound-lobound+1, 1 );
+        }
+      G_CATCH_ALL
+        {
+          if (ndata)
+            ::operator delete (ndata);
+          G_RETHROW;
+        }
+      G_ENDCATCH;
+      if (data)
+        ::operator delete(data);
       data = ndata;
-      ndata=tmp;
+      maxhi = nmaxhi;
     }
   // Shift data
   int elsize = traits.size;

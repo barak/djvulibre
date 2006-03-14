@@ -64,15 +64,17 @@
 #endif
 
 
-#include "int_types.h"
 #include "GContainer.h"
 #include "GString.h"
+
+#include "int_types.h"
+
 
 class ColorDB
 {
 private:
-   static GMap<u_int32, int>	* c32_to_num;
-   static GMap<GUTF8String, int>	* string_to_num;
+   static GMap<u_int32, int>	 *c32_to_num;
+   static GMap<GUTF8String, int> *string_to_num;
    
    static void	InitializeMaps(void);
 public:
