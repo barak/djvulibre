@@ -559,6 +559,7 @@ QDViewerShell::QDViewerShell(QWidget * parent, const char * name)
    vlay->addWidget(status_frame);
    QHBoxLayout * flay=new QHBoxLayout(status_frame, 2, 0);
    status_bar=new QLabel(tr("Status bar"), status_frame, "status_bar");
+   status_bar->setSizePolicy(QSizePolicy(QSizePolicy::Ignored, QSizePolicy::Preferred));
    status_bar->setFrameStyle(QFrame::Panel | QFrame::Sunken);
    status_bar->setFixedHeight(status_bar->sizeHint().height());
    status_bar->setAlignment(AlignVCenter | AlignLeft);
