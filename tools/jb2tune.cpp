@@ -372,7 +372,7 @@ void
 tune_jb2image_lossless(JB2Image *jimg)
 {
   int nshapes = jimg->get_shape_count();
-  GTArray<MatchData> lib(nshapes);
+  GArray<MatchData> lib(nshapes);
   compute_matchdata_lossless(jimg, lib);
   tune_jb2image(jimg, lib, false);
 }
@@ -386,7 +386,7 @@ void
 tune_jb2image_lossy(JB2Image *jimg, int dpi, int aggression)
 {
   int nshapes = jimg->get_shape_count();
-  GTArray<MatchData> lib(nshapes);
+  GArray<MatchData> lib(nshapes);
 
   mdjvu_matcher_options_t options = mdjvu_matcher_options_create();
   mdjvu_set_aggression(options, aggression);
