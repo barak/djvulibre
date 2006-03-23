@@ -199,6 +199,7 @@ install-data: FORCE
 depend: ${MOCINCS} FORCE
 	( for n in ${CPP_SOURCES} ; do \
 	  ${CXX} -MM ${CXXFLAGS} $$n || exit ; done ) > Makefile.dep
+	${top_srcdir}/etc/makefixdep Makefile.dep
 
 clean: FORCE
 	-${RM} 2>/dev/null ${PROGRAM}
