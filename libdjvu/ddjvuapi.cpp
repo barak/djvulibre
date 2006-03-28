@@ -168,7 +168,8 @@ struct DJVUNS ddjvu_job_s : public DjVuPort
   void *userdata;
   GP<ddjvu_context_s> myctx;
   GP<ddjvu_document_s> mydoc;
-  virtual ~ddjvu_job_s();
+  bool released;
+  ddjvu_job_s();
   // virtual port functions:
   virtual bool inherits(const GUTF8String&);
   virtual bool notify_error(const DjVuPort*, const GUTF8String&);  
@@ -384,9 +385,14 @@ msg_push(const ddjvu_message_any_t &head,
          GP<ddjvu_message_p> msg = 0)
 {
   ddjvu_context_t *ctx = head.context;
-  if (! msg) msg = new ddjvu_message_p;
+  if (! msg) 
+    msg = new ddjvu_message_p;
   msg->p.m_any = head; 
   GMonitorLock lock(&ctx->monitor);
+  if ((head.document && head.document->released) ||
+      (head.page && head.page->released) ||
+      (head.job && head.job->released) )
+    return;
   if (ctx->callbackfun) 
     (*ctx->callbackfun)(ctx, ctx->callbackarg);
   ctx->mlist.append(msg);
@@ -542,26 +548,9 @@ ddjvu_cache_clear(ddjvu_context_t *ctx)
 // ----------------------------------------
 // Jobs
 
-ddjvu_job_s::~ddjvu_job_s()
+ddjvu_job_s::ddjvu_job_s()
+  : userdata(0), released(false)
 {
-  G_TRY
-    {
-      ddjvu_context_t *ctx = myctx;
-      if (!ctx) return;
-      GMonitorLock lock(&ctx->monitor);
-      GPosition p = ctx->mlist;
-      while (p) {
-        GPosition s = p; ++p;
-        if (ctx->mlist[s]->p.m_any.job == this ||
-            ctx->mlist[s]->p.m_any.document == this ||
-            ctx->mlist[s]->p.m_any.page == this )
-          ctx->mlist.del(s);
-      }
-    }
-  G_CATCH_ALL
-    {
-    }
-  G_ENDCATCH;
 }
 
 bool
@@ -585,7 +574,6 @@ ddjvu_job_s::notify_status(const DjVuPort *p, const GUTF8String &m)
   return true;
 }
 
-
 void
 ddjvu_job_release(ddjvu_job_t *job)
 {
@@ -595,6 +583,22 @@ ddjvu_job_release(ddjvu_job_t *job)
         return;
       job->release();
       job->userdata = 0;
+      job->released = true;
+      // clean all messages
+      ddjvu_context_t *ctx = job->myctx;
+      if (ctx)
+        {
+          GMonitorLock lock(&ctx->monitor);
+          GPosition p = ctx->mlist;
+          while (p) {
+            GPosition s = p; ++p;
+            if (ctx->mlist[s]->p.m_any.job == job ||
+                ctx->mlist[s]->p.m_any.document == job ||
+                ctx->mlist[s]->p.m_any.page == job )
+              ctx->mlist.del(s);
+          }
+        }
+      // decrement reference counter
       unref(job);
     }
   G_CATCH_ALL
@@ -865,7 +869,6 @@ ddjvu_document_create(ddjvu_context_t *ctx,
       d->pageinfoflag = false;
       d->myctx = ctx;
       d->mydoc = 0;
-      d->userdata = 0;
       d->doc = DjVuDocument::create_noinit();
       if (url)
         {
@@ -914,7 +917,6 @@ ddjvu_document_create_by_filename(ddjvu_context_t *ctx,
       d->docinfoflag = false;
       d->myctx = ctx;
       d->mydoc = 0;
-      d->userdata = 0;
       d->doc = DjVuDocument::create_noinit();
       d->doc->start_init(gurl, d, xcache);
     }
@@ -1266,7 +1268,6 @@ ddjvu_page_create(ddjvu_document_t *document, ddjvu_job_t *job,
       GMonitorLock lock(&p->monitor);
       p->myctx = document->myctx;
       p->mydoc = document;
-      p->userdata = 0;
       p->pageinfoflag = false;
       p->pagedoneflag = false;
       p->job = job = ((job) ? job : p);
