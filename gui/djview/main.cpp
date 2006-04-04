@@ -215,7 +215,7 @@ main(int argc, char ** argv)
     {
       // Scans remaining arguments
       bool full_screen = false;
-      int page_num = 0;
+      GUTF8String page_id;
       GUTF8String file_name;
       for (i=1; i<argc; i++)
         {
@@ -230,18 +230,18 @@ main(int argc, char ** argv)
             arg = argv[++i];
           else if (!strcmp(arg,"-page") && i<argc-1)
             {
-              if (page_num)
+              if (!!page_id)
                 DjVuPrintError(QDJView::tr("djview: warning: "
-                                  "duplicate page specification\n"));
-              page_num = atoi(argv[++i]);
+                                           "duplicate page specification\n"));
+              page_id = argv[++i];
               continue;
             }
           else if (!strncmp(arg,"-page=",6) && i<argc-1)
             {
-              if (page_num)
+              if (!!page_id)
                 DjVuPrintError(QDJView::tr("djview: warning: "
-                                  "duplicate page specification\n"));
-              page_num = atoi(arg+6);
+                                           "duplicate page specification\n"));
+              page_id = arg+6;
               continue;
             }
           else if (!strcmp(arg,"-fullscreen") ||
@@ -276,13 +276,9 @@ main(int argc, char ** argv)
             DjVuPrintError(QDJView::tr("djview: warning: "
                               "duplicate filename specification\n"));
         }
-      if (page_num < 0)
+      if (!!page_id && !file_name)
         DjVuPrintError(QDJView::tr("djview: warning: "
-                          "illegal page number\n"));
-      if (page_num > 0 && !file_name)
-        DjVuPrintError(QDJView::tr("djview: warning: "
-                          "page specification without a file name\n"));
-      
+                                   "page specification without a file name\n"));
       // We are ready to fly
       DjVuPrefs prefs;
       get_file_cache()->set_max_size(prefs.pcacheSize*1024*1024);
@@ -300,13 +296,13 @@ main(int argc, char ** argv)
           GURL url = GURL::Filename::UTF8(file_name);
           if (!url.is_local_file_url())
             G_THROW(ERR_MSG("main.cant_display_remote"));
-          if (page_num > 0)
+          if (!!page_id)
             {
               // Get rid of page specification via '#'
               if (url.hash_argument().length())
                 url.clear_hash_argument();
               // And append new page selector
-              url.add_djvu_cgi_argument("PAGE", GUTF8String(page_num));
+              url.add_djvu_cgi_argument("page", page_id);
             }
           shell->openURL(url);
           

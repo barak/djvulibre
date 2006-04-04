@@ -128,22 +128,28 @@ QDViewerShell::openURL(const GURL & url)
              + GUTF8String("\t")
              +(GUTF8String) url);
 
+   QDViewer::PluginData plugin_data;
    GUTF8String fname="-";
    GURL clean_url;
-
+   
    if (!url.is_empty())
-   {
-      clean_url=url;
-      clean_url.clear_all_arguments();
-      fname=clean_url.UTF8Filename();
-   }
-
+     {
+       clean_url=url;
+       clean_url.clear_all_arguments();
+       fname=clean_url.UTF8Filename();
+       
+       DArray<GUTF8String> cgi_names=url.djvu_cgi_names();
+       DArray<GUTF8String> cgi_values=url.djvu_cgi_values();
+       if (cgi_names.size()>0)
+         plugin_data.parse(cgi_names, cgi_values);
+     }
+   
    try
-   {
-      char ch;
-      GP<ByteStream> gstr=ByteStream::create(GURL::Filename::UTF8(fname),"rb");
-      gstr->read(&ch, 1);
-   } 
+     {
+       char ch;
+       GP<ByteStream> gstr=ByteStream::create(GURL::Filename::UTF8(fname),"rb");
+       gstr->read(&ch, 1);
+     } 
    catch(...)
      {
        QCString msg = tr("Failed to open file '%1' for reading").
@@ -153,52 +159,53 @@ QDViewerShell::openURL(const GURL & url)
    
    if (fname!="-") 
      QeFileDialog::lastLoadDir=QFileInfo(QStringFromGString(fname)).dirPath();
-
+   
    try
-   {
-      main->raiseWidget(wpaper);
-      
-      if (djvu)
-      {
-	 djvu->detach();
-	 djvu=0;
-      }
-      djvu=new DjVuViewer(0, QDViewer::PluginData());
-      connect(djvu, SIGNAL(sigShowStatus(const QString &)),
-	      this, SLOT(slotShowStatus(const QString &)));
-      connect(djvu, SIGNAL(sigGetURL(const GURL &, const GUTF8String &)),
-	      this, SLOT(slotGetURL(const GURL &, const GUTF8String &)));
-
-      djvu->attach(vparent);
-      main->raiseWidget(vparent);
-
-      DataPool::load_file(clean_url);
-      GP<DataPool> pool=DataPool::create(clean_url);
-
-	 // Pass the pool to the DjVuViewer
-      djvu->newStream(clean_url, pool);
-      slotAboutToShowMenu();
-      QDViewer * viewer = djvu->getQDViewer();
-      if (viewer)
-        {
-          connect(viewer, SIGNAL(sigQueryFullScreen(bool &)),
-                  this, SLOT(slotQueryFullScreen(bool &)));
-          connect(viewer, SIGNAL(sigToggleFullScreen(void)),
-                  this, SLOT(slotToggleFullScreen(void)));
-        }
-
-   } catch(const GException & exc)
-   {
-      main->raiseWidget(wpaper);
-      if (djvu)
-      {
-	 djvu->detach();
-	 djvu=0;
-      }
-      slotShowStatus(tr(START_STATUS));
-      slotAboutToShowMenu();
-      throw;
-   }
+     {
+       main->raiseWidget(wpaper);
+       
+       if (djvu)
+         {
+           djvu->detach();
+           djvu=0;
+         }
+       djvu=new DjVuViewer(0, plugin_data);
+       connect(djvu, SIGNAL(sigShowStatus(const QString &)),
+               this, SLOT(slotShowStatus(const QString &)));
+       connect(djvu, SIGNAL(sigGetURL(const GURL &, const GUTF8String &)),
+               this, SLOT(slotGetURL(const GURL &, const GUTF8String &)));
+       
+       djvu->attach(vparent);
+       main->raiseWidget(vparent);
+       
+       DataPool::load_file(clean_url);
+       GP<DataPool> pool=DataPool::create(clean_url);
+       
+       // Pass the pool to the DjVuViewer
+       djvu->newStream(clean_url, pool);
+       slotAboutToShowMenu();
+       QDViewer * viewer = djvu->getQDViewer();
+       if (viewer)
+         {
+           connect(viewer, SIGNAL(sigQueryFullScreen(bool &)),
+                   this, SLOT(slotQueryFullScreen(bool &)));
+           connect(viewer, SIGNAL(sigToggleFullScreen(void)),
+                   this, SLOT(slotToggleFullScreen(void)));
+         }
+       
+     } 
+   catch(const GException & exc)
+     {
+       main->raiseWidget(wpaper);
+       if (djvu)
+         {
+           djvu->detach();
+           djvu=0;
+         }
+       slotShowStatus(tr(START_STATUS));
+       slotAboutToShowMenu();
+       throw;
+     }
 }
 
 QDViewerShell *

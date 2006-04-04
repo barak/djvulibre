@@ -460,8 +460,15 @@ command_ls(ParsingByteStream &)
         fprintf(stdout,"     A ");
       else
         fprintf(stdout,"     ? ");
-      GUTF8String id = f->get_load_name();
-      fprintf(stdout,"%8d  %s\n", f->size, (const char*)(GNativeString)id);
+      GNativeString id = f->get_load_name();
+      fprintf(stdout,"%8d  %s", f->size, (const char*)(GNativeString)id);
+      GNativeString name = f->get_save_name();
+      if (name != id)
+        fprintf(stdout," F=%s", (const char*)name);
+      GNativeString title = f->get_title();
+      if (title != id && f->is_page())
+        fprintf(stdout," T=%s", (const char*)title);
+      fprintf(stdout,"\n");
     }
   }
   if (g().doc->get_thumbnails_num() == g().doc->get_pages_num())
@@ -678,13 +685,38 @@ command_showsel(ParsingByteStream &)
         fprintf(stdout,"     A ");
       else
         fprintf(stdout,"     ? ");
-      GUTF8String id = f->get_load_name();
-      fprintf(stdout,"%8d  %s\n", f->size, (const char*)(GNativeString)id);
+      GNativeString id = f->get_load_name();
+      fprintf(stdout,"%8d  %s", f->size, (const char*)(GNativeString)id);
+      GNativeString name = f->get_save_name();
+      if (name != id)
+        fprintf(stdout," F=%s", (const char*)name);
+      GNativeString title = f->get_title();
+      if (title != id && f->is_page())
+        fprintf(stdout," T=%s", (const char*)title);
+      fprintf(stdout,"\n");
     }
   }
   if (g().doc->get_thumbnails_num() == g().doc->get_pages_num())
     fprintf(stdout,"     T %8s  %s\n", "", "<thumbnails>");
 }
+
+void
+command_set_page_title(ParsingByteStream &pbs)
+{
+  if (! g().file)
+    verror("must select a single page first");
+  GUTF8String fname = pbs.get_native_token();
+  if (! fname)
+    verror("must provide a name");
+  GPList<DjVmDir::File> &lst = g().selected;
+  GPosition pos = lst;
+  if (! lst[pos]->is_page())
+    verror("component file is not a page");
+  g().doc->set_file_title(g().fileid, fname);
+  vprint("set-page-title: modified \"%s\"", (const char*)(GNativeString)g().fileid);
+  modified = true;
+}
+
 
 #define DELMETA     1
 #define CHKCOMPAT   2
@@ -1783,6 +1815,7 @@ command_help(void)
           "   remove-txt             -- removes hidden text\n"
           " _ remove-outline         -- removes outline (bookmarks)\n"
           " _ remove-thumbnails      -- removes all thumbnails\n"
+          " . set-page-title <title> -- sets an alternate page title\n"
           " . save-page <name>       -- saves selected page/file as is\n"
           " . save-page-with <name>  -- saves selected page/file, inserting all included files\n"
           " _ save-bundled <name>    -- saves as bundled document under fname\n"
@@ -1845,6 +1878,7 @@ static GMap<GUTF8String,CommandFunc> &command_map() {
     xcommand_map["remove-meta"] = command_remove_meta;
     xcommand_map["remove-txt"] = command_remove_txt;
     xcommand_map["remove-thumbnails"] = command_remove_thumbnails;
+    xcommand_map["set-page-title"] = command_set_page_title;
     xcommand_map["save-page"] = command_save_page;
     xcommand_map["save-page-with"] = command_save_page_with;
     xcommand_map["save-bundled"] = command_save_bundled;

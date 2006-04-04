@@ -590,13 +590,25 @@ ddjvu_job_release(ddjvu_job_t *job)
         {
           GMonitorLock lock(&ctx->monitor);
           GPosition p = ctx->mlist;
-          while (p) {
-            GPosition s = p; ++p;
-            if (ctx->mlist[s]->p.m_any.job == job ||
-                ctx->mlist[s]->p.m_any.document == job ||
-                ctx->mlist[s]->p.m_any.page == job )
-              ctx->mlist.del(s);
-          }
+          while (p) 
+            {
+              GPosition s = p; ++p;
+              if (ctx->mlist[s]->p.m_any.job == job ||
+                  ctx->mlist[s]->p.m_any.document == job ||
+                  ctx->mlist[s]->p.m_any.page == job )
+                ctx->mlist.del(s);
+            }
+          // cleanup pointers in current message as well.
+          if (ctx->mpeeked)
+            {
+              ddjvu_message_t *m = &ctx->mpeeked->p;
+              if (m->m_any.job == job)       
+                m->m_any.job = 0;
+              if (m->m_any.document == job)
+                m->m_any.document = 0;
+              if (m->m_any.page == job)
+                m->m_any.page = 0;
+            }
         }
       // decrement reference counter
       unref(job);
@@ -672,7 +684,7 @@ ddjvu_message_peek(ddjvu_context_t *ctx)
         return 0;
       ctx->mpeeked = ctx->mlist[p];
       ctx->mlist.del(p);
-      return &ctx->mpeeked->p;        
+      return &ctx->mpeeked->p;
     }
   G_CATCH_ALL
     {

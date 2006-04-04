@@ -346,7 +346,8 @@ ddjvu_job_get_user_data(ddjvu_job_t *job);
    data field.  This does not cause the job to stop executing.
    The calling program should no longer reference this object.
    The object itself will be destroyed as soon as no 
-   other object or thread needs it. */
+   other object or thread needs it. 
+*/
 
 DDJVUAPI void
 ddjvu_job_release(ddjvu_job_t *job);
@@ -391,7 +392,12 @@ typedef enum {
    messages.  Member <tag> indicates the kind of message.
    Members <context>, <document>, <page>, and <job> indicate 
    the origin of the message.  These fields contain null
-   pointers when they are not relevant. */
+   pointers when they are not relevant.
+   These fields are also cleared when the corresponding
+   object is released with <ddjvu_{job,page,document}_release>.
+   If the message has not yet been passed to the user 
+   with <ddjvu_message_{peek,wait}>, it is silently 
+   removed from the message queue. */
 
 typedef struct ddjvu_message_any_s {
   ddjvu_message_tag_t   tag;
