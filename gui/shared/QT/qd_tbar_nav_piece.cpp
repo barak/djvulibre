@@ -62,6 +62,8 @@
 #endif
 
 #include "DjVuDocument.h"
+#include "DjVmDir.h"
+
 #include "qd_tbar_nav_piece.h"
 #include "debug.h"
 #include "qlib.h"
@@ -76,56 +78,6 @@
 #include <qtooltip.h>
 
 
-
-//****************************************************************************
-//****************************** QDValidator *********************************
-//****************************************************************************
-
-class QDValidator : public QValidator
-{
-public:
-   virtual void		fixup(QString &);
-#ifdef QT1
-   virtual State	validate(QString &, int &);
-#else
-   virtual State	validate(QString &, int &) const;
-#endif
-   
-   QDValidator(QComboBox * parent, const char * name=0) :
-	 QValidator(parent, name) {};
-};
-
-void
-QDValidator::fixup(QString & str)
-{
-#ifdef QT1
-   str.detach();
-#else
-   str.truncate(0);
-#endif
-   QComboBox * menu=(QComboBox *) parent();
-   menu->setEditText(str=menu->text(menu->currentItem()));
-}
-
-QValidator::State
-QDValidator::validate(QString & input, int & pos)
-#ifndef QT1
-const
-#endif
-{
-   if (!input.length()) return Valid;
-   
-   bool status;
-   int page=input.toInt(&status)-1;
-   if (!status) return Invalid;
-
-   if (page<0) return Invalid;
-
-   QComboBox * menu=(QComboBox *) parent();
-   if (page>=menu->count()) return Invalid;
-   
-   return Acceptable;
-}
 
 //****************************************************************************
 //****************************** QDTBarNavPiece ******************************
@@ -147,12 +99,9 @@ QDTBarNavPiece::QDTBarNavPiece(QWidget * toolbar) : QDTBarPiece(toolbar)
      qdtoolbar_child=TRUE;
    else
      qdtoolbar_child=FALSE;
-      
-   page_menu=new QComboBox(TRUE, toolbar, "page_menu");
-   page_menu->setInsertionPolicy(QComboBox::NoInsertion);
-   page_menu->setValidator(new QDValidator(page_menu));
-   connect(page_menu, SIGNAL(activated(const QString &)),
-	   this, SLOT(slotPage(const QString &)));
+   
+   page_menu=new QComboBox(FALSE, toolbar, "page_menu");
+   connect(page_menu, SIGNAL(activated(int)), this, SLOT(slotPage(int)));
    QToolTip::add(page_menu, tr("Page"));
 
    fpage_butt=new QDToolButton(*CINData::get("ppm_vfpage"), true,
@@ -211,9 +160,11 @@ QDTBarNavPiece::setOptions(int opts)
 }
 
 void
-QDTBarNavPiece::update(int page_num, int pages_num, 
+QDTBarNavPiece::update(int page_num, GP<DjVuDocument> doc, 
                        bool back, bool forw)
 {
+  int pages_num = (doc) ? doc->get_pages_num() : 0;
+  
   if (!qdtoolbar_child || pages_num>1)
     {
       if (! active)
@@ -221,15 +172,32 @@ QDTBarNavPiece::update(int page_num, int pages_num,
           active = true;
           setOptions(options);
         }
+      // Generate or regenerate page title/number menu as needed.
       if (page_menu->count()!=pages_num) 
         page_menu->clear();
       if (!page_menu->count())
         {
-          for(int i=0;i<pages_num;i++)
+          // Set menu contents
+          int pagenum = 0;
+          GPList<DjVmDir::File> lst = doc->get_djvm_dir()->get_files_list();
+          for (GPosition p=lst; p; ++p) 
             {
-              char buffer[128];
-              sprintf(buffer, "%d", i+1);
-              page_menu->insertItem(buffer);
+              char buffer[64];
+              GP<DjVmDir::File> f = lst[p];
+              if (!f->is_page())
+                continue;
+              ++pagenum;
+              GNativeString id = f->get_load_name();
+              GNativeString title = f->get_title();
+              if (title != id) 
+                {
+                  page_menu->insertItem(QStringFromGString(title));
+                } 
+              else 
+                {
+                  sprintf(buffer, "%d", pagenum);
+                  page_menu->insertItem(buffer);               
+                }
             }
         }
       page_menu->setCurrentItem(page_num);
@@ -258,10 +226,9 @@ QDTBarNavPiece::update(int page_num, int pages_num,
 }
 
 void
-QDTBarNavPiece::slotPage( const QString & qpage_str)
+QDTBarNavPiece::slotPage(int pageno)
 {
-  const char * const page_str=qpage_str;
-  emit sigGotoPage(atoi(page_str)-1);
+  emit sigGotoPage(pageno);
 }
 
 void

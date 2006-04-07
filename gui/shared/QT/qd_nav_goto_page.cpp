@@ -65,6 +65,7 @@
 
 #include "DjVuDocument.h"
 #include "DjVuImage.h"
+#include "DjVmDir.h"
 
 #include "qd_nav_goto_page.h"
 
@@ -74,53 +75,6 @@
 #include <qpushbutton.h>
 
 
-
-class QDPageNumVal : public QValidator
-{
-public:
-   virtual void		fixup(QString &);
-#ifdef QT1
-   virtual State	validate(QString &, int &);
-#else
-   virtual State	validate(QString &, int &) const;
-#endif
-
-   QDPageNumVal(QComboBox * parent, const char * name=0) :
-   QValidator(parent, name) {};
-};
-
-void
-QDPageNumVal::fixup(QString & str)
-{
-#ifdef QT1
-   str.detach();
-#else
-   str.truncate(0);
-#endif
-
-   QComboBox * menu=(QComboBox *) parent();
-   menu->setEditText(str=menu->text(menu->currentItem()));
-}
-
-QDPageNumVal::State
-QDPageNumVal::validate(QString & input, int & pos)
-#ifndef QT1
-const
-#endif
-{
-   if (!input.length()) return Valid;
-   
-   bool status;
-   int page=input.toInt(&status)-1;
-   if (!status) return Invalid;
-
-   if (page<0) return Invalid;
-
-   QComboBox * menu=(QComboBox *) parent();
-   if (page>=menu->count()) return Invalid;
-   
-   return Acceptable;
-}
 
 int
 QDNavGotoPage::getPageNum(void) const
@@ -144,11 +98,10 @@ QDNavGotoPage::QDNavGotoPage(GP<DjVuDocument> &doc,
    vlay->addLayout(hlay);
    QLabel * label=new QLabel(tr("Goto page"), start, "goto_label");
    hlay->addWidget(label);
-   menu=new QComboBox(TRUE, start, "goto_menu");
+   menu=new QComboBox(FALSE, start, "goto_menu");
    menu->setInsertionPolicy(QComboBox::NoInsertion);
-   menu->setValidator(new QDPageNumVal(menu));
    hlay->addWidget(menu);
-
+   
       // Create the buttons
    hlay=new QHBoxLayout(10);
    vlay->addLayout(hlay);
@@ -156,21 +109,37 @@ QDNavGotoPage::QDNavGotoPage(GP<DjVuDocument> &doc,
    QPushButton * ok_butt=new QPushButton(tr("&OK"), start, "ok_butt");
    ok_butt->setDefault(TRUE);
    hlay->addWidget(ok_butt);
-   QPushButton * cancel_butt=new QPushButton(tr("&Cancel"), start, "cancel_butt");
+   QPushButton * cancel_butt=new QPushButton(tr("&Cancel"), 
+                                             start, "cancel_butt");
    hlay->addWidget(cancel_butt);
-
-      // Set menu contents
-   int cur_page=doc->url_to_page(dimg->get_djvu_file()->get_url());
-   int pages=doc->get_pages_num();
-   for(int i=0;i<pages;i++)
-   {
-      char buffer[64];
-      sprintf(buffer, "%d", i+1);
-      menu->insertItem(buffer);
-   };
+   
+   // Set menu contents
+   int pagenum = 0;
+   int cur_page = doc->url_to_page(dimg->get_djvu_file()->get_url());
+   GPList<DjVmDir::File> lst = doc->get_djvm_dir()->get_files_list();
+   for (GPosition p=lst; p; ++p) 
+     {
+       char buffer[64];
+       GP<DjVmDir::File> f = lst[p];
+       if (!f->is_page())
+         continue;
+       
+       ++pagenum;
+       GNativeString id = f->get_load_name();
+       GNativeString title = f->get_title();
+       if (title != id) 
+         {
+           menu->insertItem(QStringFromGString(title));
+         } 
+       else 
+         {
+           sprintf(buffer, "%d", pagenum);
+           menu->insertItem(buffer);               
+         }
+     }
    menu->setCurrentItem(cur_page);
    
-      // Connect signals
+   // Connect signals
    connect(ok_butt, SIGNAL(clicked(void)), this, SLOT(accept(void)));
    connect(cancel_butt, SIGNAL(clicked(void)), this, SLOT(reject(void)));
 }

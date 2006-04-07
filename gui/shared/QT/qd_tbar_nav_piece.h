@@ -65,6 +65,8 @@
 
 
 #include "qd_toolbar.h"
+#include "GSmartPointer.h"
+#include "DjVuDocument.h"
 
 class QDTBarNavPiece : public QDTBarPiece
 {
@@ -78,7 +80,7 @@ private:
   class QDToolButton	* fpage_butt, * lpage_butt;
   class QDToolButton	* back_butt, * forw_butt;
 private slots:
-  void		slotPage(const QString &);
+  void		slotPage(int);
   void		slotPage(void);
 protected:
   signals:
@@ -87,7 +89,7 @@ protected:
 public:
   virtual void	setEnabled(bool en);
   virtual void	setOptions(int opts);
-  void		update(int page_num, int pages_num,
+  void		update(int page_num, GP<DjVuDocument> doc,
                        bool back=false, bool forw=false);
    
   QDTBarNavPiece(QWidget * toolbar);

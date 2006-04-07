@@ -1755,12 +1755,11 @@ QDViewer::updateToolBar(void)
      if (dimg)
        {
          int doc_page=djvu_doc->url_to_page(dimg->get_djvu_file()->get_url());
-         int doc_pages=djvu_doc->get_pages_num();
-         nav_tbar->update(doc_page, doc_pages, hundo.size(), hredo.size());
+         nav_tbar->update(doc_page, djvu_doc, hundo.size(), hredo.size());
        } 
      else
        {
-         nav_tbar->update(-1, 0, false, false);
+         nav_tbar->update(-1, djvu_doc, false, false);
        }
 }
 
