@@ -883,17 +883,18 @@ QDViewer::setDjVuDocument(GP<DjVuDocument> & doc, const GUTF8String &qkey_in)
    djvu_doc=doc;
    pcaster->add_route(djvu_doc, doc_port.getPort());
 
-   // Check if the key_in contains number, and if so - decrement it
+   // Check the page key
+   GUTF8String key = qkey_in;
    GP<DjVuImage> new_dimg;
-   GUTF8String key=qkey_in;
-   if ( key.length() && key.is_int() )
-   {
-      int page=key.toInt();
-      if ( page>0 ) --page;
-      new_dimg=doc->get_page(page, false, page_port.getPort());
-   }
-   else
-      new_dimg=doc->get_page(key, false, page_port.getPort());
+   if (key[0] != '=')
+     new_dimg = doc->get_page(key, false, page_port.getPort());
+   if (! new_dimg)
+     {
+       if (key[0] == '=')
+         key = GUTF8String(((const char*)key)+1);
+       if (key.is_int())
+         new_dimg=doc->get_page(key.toInt()-1, false, page_port.getPort());
+     }
    
    if (!new_dimg) 
      {
@@ -1254,27 +1255,28 @@ QDViewer::getURL(const GUTF8String &url_in,
            char base = 0;
            const char *s = (const char*)url_in + 1;
            const char *q = s;
-           if (*q == '+' || *q == '-')
+           if (*q == '+' || *q == '-' || *q == '=')
              base = *q++;
-           GUTF8String str = q;
-           if (str.is_int())
+           if (! base)
+             url = djvu_doc->id_to_url(s);
+           if (url.is_empty())
              {
-               int n = str.toInt();
-               if (base=='+')
-                 n = doc_page + n;
-               else if (base=='-')
-                 n = doc_page - n;
-               else
-                 n = n - 1;
-               if (n >= doc_pages)
-                 n = doc_pages - 1;
-               if (n < 0)
-                 n = 0;
-               url = djvu_doc->page_to_url(n);
-             }
-           else
-             {
-               url = djvu_doc->id_to_url(s);
+               GUTF8String str = q;
+               if (str.is_int())
+                 {
+                   int n = str.toInt();
+                   if (base=='+')
+                     n = doc_page + n;
+                   else if (base=='-')
+                     n = doc_page - n;
+                   else
+                     n = n - 1;
+                   if (n >= doc_pages)
+                     n = doc_pages - 1;
+                   if (n < 0)
+                     n = 0;
+                   url = djvu_doc->page_to_url(n);
+                 }
              }
          } 
        catch(const GException & exc)

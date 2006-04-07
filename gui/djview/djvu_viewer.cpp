@@ -257,11 +257,12 @@ DjVuViewer::detach(void)
    {
       GP<DjVuImage> dimg=viewer->getDjVuImage();
       if (dimg && document && document->is_init_complete())
-      {
-	 GURL url=dimg->get_djvu_file()->get_url();
-	 int page_num=document->url_to_page(url);
-	 if (page_num>=0) plugin_data.page_id=GUTF8String(page_num+1);
-      }
+        {
+          GURL url=dimg->get_djvu_file()->get_url();
+          int page_num=document->url_to_page(url);
+          if (page_num>=0) 
+            plugin_data.page_id.format("=%d", page_num+1);
+        }
       plugin_data.saved=viewer->getSavedData();
       viewer->parentWidget()->removeEventFilter(this);
       qeApp->killWidget(viewer); viewer=0;
