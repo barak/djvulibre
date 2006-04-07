@@ -100,8 +100,12 @@ QDTBarNavPiece::QDTBarNavPiece(QWidget * toolbar) : QDTBarPiece(toolbar)
    else
      qdtoolbar_child=FALSE;
    
-   page_menu=new QComboBox(FALSE, toolbar, "page_menu");
-   connect(page_menu, SIGNAL(activated(int)), this, SLOT(slotPage(int)));
+   page_menu=new QComboBox(TRUE, toolbar, "page_menu");
+   page_menu->setInsertionPolicy(QComboBox::NoInsertion);
+   page_menu->setAutoCompletion(true);
+ 
+   connect(page_menu, SIGNAL(activated(const QString&)), 
+           this, SLOT(slotPage(const QString&)));
    QToolTip::add(page_menu, tr("Page"));
 
    fpage_butt=new QDToolButton(*CINData::get("ppm_vfpage"), true,
@@ -226,9 +230,28 @@ QDTBarNavPiece::update(int page_num, GP<DjVuDocument> doc,
 }
 
 void
-QDTBarNavPiece::slotPage(int pageno)
+QDTBarNavPiece::slotPage(const QString &text)
 {
-  emit sigGotoPage(pageno);
+  int index = page_menu->currentItem();
+  if (index < 0 || index >= page_menu->count() ||
+      page_menu->text(index) != text)
+    {
+      int i;
+      printf("%d/%d %s %s\n", 
+             index, page_menu->count(),
+             (const char *)page_menu->text(index), 
+             (const char *)text);
+      for (i = 0; i<page_menu->count(); i++)
+        if (page_menu->text(i) == text)
+          break;
+      if (i>=0 && i<page_menu->count())
+        index = i;
+      printf("%d/%d %s %s\n", 
+             i, page_menu->count(),
+             (const char *)page_menu->text(index), 
+             (const char *)text);
+    }
+  emit sigGotoPage(index);
 }
 
 void

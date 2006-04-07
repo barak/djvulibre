@@ -80,7 +80,7 @@ private:
   class QDToolButton	* fpage_butt, * lpage_butt;
   class QDToolButton	* back_butt, * forw_butt;
 private slots:
-  void		slotPage(int);
+  void		slotPage(const QString&);
   void		slotPage(void);
 protected:
   signals:
