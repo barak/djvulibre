@@ -83,6 +83,28 @@ transferring unnecessary pages over the network.
 See 
 .BR djvu(1)
 for more information.
+.PP
+Furthermore 
+.B djvuserve 
+searches certain keywords among the
+.SM CGI 
+arguments of the 
+.SM URL.
+The keyword
+.B bundled
+forces serving a bundled document using
+.IP "" 3
+.IB http "" ://server /cgi\(enbin/djvuserve/ dir/doc.djvu ?bundled
+.PP
+The keyword
+.B download
+inserts a content disposition 
+.SM HTTP
+header that suggests to display a save dialog
+instead of displaying the document.
+.IP "" 3
+.IB http "" ://server /cgi\(enbin/djvuserve/ dir/doc.djvu ?download
+.PP
 
 .SH USING DJVUSERVE AS A HANDLER
 
