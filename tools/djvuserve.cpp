@@ -159,9 +159,11 @@ fprintdate(FILE *f, const char *fmt, const time_t *tim)
 }
 
 void
-headers(const struct stat *statbuf)
+headers(const struct stat *statbuf, const char *fname = 0)
 {
   fprintf(stdout,"Content-Type: image/x.djvu\n");
+  if (fname)
+    fprintf(stdout,"Content-Disposition: attachment; filename=\"%s\"\n", fname);
   fprintf(stdout,"Content-Length: %ld\n", (long)statbuf->st_size);
   time_t tim = time(0) + 360 * 24 * 3600;
   fprintdate(stdout, "Last-Modified: %s\n", &statbuf->st_mtime);
@@ -204,8 +206,17 @@ djvuserver_file(GURL pathurl)
   if (stat((const char *)fname, &statbuf) < 0)
     G_THROW(strerror(errno));
   
+  bool bundled = false;
+  bool download = false;
+  for (int i=0; i<pathurl.cgi_arguments(); i++)
+    if (pathurl.cgi_name(i) == "bundled")
+      bundled = true;
+    else if (pathurl.cgi_name(i) == "download" ||
+             pathurl.cgi_name(i) == "bundle" /* compat */ )
+      download = bundled = true;
+  
   // Is this a bundled file?
-  if (is_djvu_file_bundled(pathurl))
+  if (is_djvu_file_bundled(pathurl) && !bundled)
     {
       // It is bundled
       GUTF8String id = pathurl.name();
@@ -216,7 +227,10 @@ djvuserver_file(GURL pathurl)
       return;
     }
   // Push the file
-  headers(&statbuf);
+  if (download)
+    headers(&statbuf, pathurl.fname());
+  else
+    headers(&statbuf);
   if (head) 
     return;
   fprintf(stdout,"\n");
