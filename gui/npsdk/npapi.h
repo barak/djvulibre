@@ -36,21 +36,13 @@
 typedef unsigned short uint16;
 #endif
 #ifndef _UINT32
-#if defined(__alpha) || defined(__x86_64)
-typedef unsigned int uint32;
-#else /* __alpha */
-typedef unsigned long uint32;
-#endif /* __alpha */
+typedef unsigned int uint32; /* Modified by LB. */
 #endif
 #ifndef _INT16
 typedef short int16;
 #endif
 #ifndef _INT32
-#if defined(__alpha) || defined(__x86_64)
-typedef int int32;
-#else /* __alpha */
-typedef long int32;
-#endif /* __alpha */
+typedef int int32; /* Modified by LB. */
 #endif
 
 #ifndef FALSE
