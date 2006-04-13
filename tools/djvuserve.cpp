@@ -199,21 +199,12 @@ is_djvu_file_bundled(GURL &pathurl)
 }
 
 void 
-djvuserver_file(GURL pathurl)
+djvuserver_file(GURL pathurl, bool bundled, bool download)
 {
   GNativeString fname = pathurl.NativeFilename();
   struct stat statbuf;
   if (stat((const char *)fname, &statbuf) < 0)
     G_THROW(strerror(errno));
-  
-  bool bundled = false;
-  bool download = false;
-  for (int i=0; i<pathurl.cgi_arguments(); i++)
-    if (pathurl.cgi_name(i) == "bundled")
-      bundled = true;
-    else if (pathurl.cgi_name(i) == "download" ||
-             pathurl.cgi_name(i) == "bundle" /* compat */ )
-      download = bundled = true;
   
   // Is this a bundled file?
   if (is_djvu_file_bundled(pathurl) && !bundled)
@@ -335,6 +326,28 @@ djvuserver_component(GURL pathurl, GUTF8String id)
   out->copy(*bsin, frec->size);
 }
 
+
+bool
+search_cgi_arg(const char *name)
+{
+  const char *s = g().querystring;
+  int l = strlen(name);
+  if (*s == '?')
+    s += 1;
+  while (*s)
+    {
+      if (! strncmp(s, name, l))
+        if (s[l]=='&' || s[l]=='=' || s[l]==0)
+          return true;
+      while (*s && *s != '&')
+        s += 1;
+      if (*s == '&')
+        s += 1;
+    }
+  return false;
+}
+
+
 int
 main(int argc, char ** argv)
 {
@@ -344,6 +357,8 @@ main(int argc, char ** argv)
   G_TRY 
     {
       // Obtain path
+      bool bundled = false;
+      bool download = false;
       if (argc == 1)
         {
           cgi = true;
@@ -355,6 +370,11 @@ main(int argc, char ** argv)
             G_THROW("No path information");
           g().requestmethod = GNativeString(getenv("REQUEST_METHOD"));
           g().querystring = GUTF8String(getenv("QUERY_STRING"));
+          printf("%s\n", (const char*)g().querystring);
+          if (search_cgi_arg("bundled"))
+            bundled = true;
+          if (search_cgi_arg("download") || search_cgi_arg("bundle"))
+            bundled = download = true;
         }
       else if (argc == 2)
         {
@@ -373,7 +393,7 @@ main(int argc, char ** argv)
       GURL pathurl = GURL::Filename::UTF8(g().pathtranslated);
       if (pathurl.is_file())
         {
-          djvuserver_file(pathurl);
+          djvuserver_file(pathurl, bundled, download);
         }
       else
         {
