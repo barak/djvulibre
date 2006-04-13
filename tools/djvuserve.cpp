@@ -370,7 +370,6 @@ main(int argc, char ** argv)
             G_THROW("No path information");
           g().requestmethod = GNativeString(getenv("REQUEST_METHOD"));
           g().querystring = GUTF8String(getenv("QUERY_STRING"));
-          printf("%s\n", (const char*)g().querystring);
           if (search_cgi_arg("bundled"))
             bundled = true;
           if (search_cgi_arg("download") || search_cgi_arg("bundle"))
@@ -401,10 +400,12 @@ main(int argc, char ** argv)
           pathurl = pathurl.base();
           if (! pathurl.is_file())
             G_THROW("File not found");
-          if (id == "index" || id == "index.djvu")
-            djvuserver_directory(pathurl);
-          else
+          if (id != "index" && id != "index.djvu")
             djvuserver_component(pathurl, id);
+          else if (bundled)
+            djvuserver_file(pathurl, bundled, download);
+          else
+            djvuserver_directory(pathurl);
         }
     }
   G_CATCH(ex)
