@@ -463,27 +463,31 @@ void
 GPixmap::init(ByteStream &bs)
 {
   // Read header
-  int raw = 0;
-  char magic[2];
-  magic[0] = magic[1] = 0;
-  bs.readall((void*)magic, sizeof(magic));
-  if (magic[0]=='P' && magic[1]=='3')
-  {
-    raw = 0;
-  }else if (magic[0]=='P' && magic[1]=='6')
-  {
-    raw = 1;
-  }else
-  {
+  bool raw = false;
+  bool grey = false;
+  int magic = bs.read16();
+  switch (magic)
+    {
+    case ('P'<<8)+'2':
+      grey = true;
+      break;
+    case ('P'<<8)+'3':
+      break;
+    case ('P'<<8)+'5':
+      raw = grey = true;
+    case ('P'<<8)+'6':
+      raw = true;
+      break;
+    default:
 #ifdef NEED_JPEG_DECODER
-    bs.seek(0L);
-    JPEGDecoder::decode(bs,*this);
-    return;
-#else // NEED_JPEG_DECODER
-  
-    G_THROW( ERR_MSG("GPixmap.unk_PPM") );
-#endif // NEED_JPEG_DECODER
-  }
+      bs.seek(0L);
+      JPEGDecoder::decode(bs,*this);
+      return;
+#else
+      
+      G_THROW( ERR_MSG("GPixmap.unk_PPM") );
+#endif
+    }
   // Read image size
   char lookahead = '\n';
   int acolumns = read_integer(lookahead, bs);
@@ -493,53 +497,71 @@ GPixmap::init(ByteStream &bs)
     G_THROW("Cannot read PPM with depth greater than 24 bits.");
   init(arows, acolumns, 0);
   // Read image data
-  if (raw)
-  {
-    GTArray<unsigned char> line(ncolumns*3);
-    for (int y=nrows-1; y>=0; y--) 
-      {
-        GPixel *p = (*this)[y];
-        unsigned char *rgb = &line[0];
-        if ( bs.readall((void*)rgb, ncolumns*3) < (size_t)(ncolumns*3))
-          G_THROW( ByteStream::EndOfFile );
-        for (int x=0; x<ncolumns; x+=1, rgb+=3)
-          {
-            p[x].r = rgb[0];
-            p[x].g = rgb[1];
-            p[x].b = rgb[2];
-          }
-      }
-  }
-  else
-  {
-    for (int y=nrows-1; y>=0; y--) 
+  if (raw && grey)
     {
-      GPixel *p = (*this)[y];
-      for (int x=0; x<ncolumns; x++)
-      {
-        p[x].r = read_integer(lookahead, bs);
-        p[x].g = read_integer(lookahead, bs);
-        p[x].b = read_integer(lookahead, bs);
-      }
+      GTArray<unsigned char> line(ncolumns);
+      for (int y=nrows-1; y>=0; y--) 
+        {
+          GPixel *p = (*this)[y];
+          unsigned char *g = &line[0];
+          if ( bs.readall((void*)g, ncolumns) < (size_t)(ncolumns))
+            G_THROW( ByteStream::EndOfFile );
+          for (int x=0; x<ncolumns; x+=1, g+=1)
+            p[x].r = p[x].g = p[x].b = g[0];
+        }
     }
-  }
+  else if (raw)
+    {
+      GTArray<unsigned char> line(ncolumns*3);
+      for (int y=nrows-1; y>=0; y--) 
+        {
+          GPixel *p = (*this)[y];
+          unsigned char *rgb = &line[0];
+          if ( bs.readall((void*)rgb, ncolumns*3) < (size_t)(ncolumns*3))
+            G_THROW( ByteStream::EndOfFile );
+          for (int x=0; x<ncolumns; x+=1, rgb+=3)
+            {
+              p[x].r = rgb[0];
+              p[x].g = rgb[1];
+              p[x].b = rgb[2];
+            }
+        }
+    }
+  else
+    {
+      for (int y=nrows-1; y>=0; y--) 
+        {
+          GPixel *p = (*this)[y];
+          for (int x=0; x<ncolumns; x++)
+            if (grey)
+              {
+                p[x].g = p[x].b = p[x].r = read_integer(lookahead, bs);
+              }
+            else
+              {
+                p[x].r = read_integer(lookahead, bs);
+                p[x].g = read_integer(lookahead, bs);
+                p[x].b = read_integer(lookahead, bs);
+              }
+        }
+    }
   // Process small values of maxval
   if (maxval>0 && maxval<255)
-  {
-    char table[256];
-    for (int i=0; i<256; i++)
-      table[i] = (i<maxval ? (255*i + maxval/2) / maxval : 255);
-    for (int y=0; y<nrows; y++)
     {
-      GPixel *p = (*this)[y];
-      for (int x=0; x<ncolumns; x++)
-      {
-        p[x].r = table[p[x].r];
-        p[x].g = table[p[x].g];
-        p[x].b = table[p[x].b];
-      }
+      char table[256];
+      for (int i=0; i<256; i++)
+        table[i] = (i<maxval ? (255*i + maxval/2) / maxval : 255);
+      for (int y=0; y<nrows; y++)
+        {
+          GPixel *p = (*this)[y];
+          for (int x=0; x<ncolumns; x++)
+            {
+              p[x].r = table[p[x].r];
+              p[x].g = table[p[x].g];
+              p[x].b = table[p[x].b];
+            }
+        }
     }
-  }
 }
 
 
