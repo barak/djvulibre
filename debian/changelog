@@ -1,3 +1,14 @@
+djvulibre (3.5.17-1) unstable; urgency=low
+
+  * New upstream release
+  * Upstream GCC-4.1 fixes (closes: #358206)
+  * Upstream "djvudigital --words" fix (closes: #364316)
+  * Many NMUs merged earlier, still fixed (closes: #320582, #320621)
+      (closes: #320656, #320794, #321244, #321406, #321509, #321652)
+      (closes: #322600, #322882, #321107, #322773)
+
+ -- Barak A. Pearlmutter <bap@debian.org>  Thu, 27 Apr 2006 18:11:37 -0400
+
 djvulibre (3.5.16-2) unstable; urgency=low
 
   * update to newly broken debian X libraries ... broken apart, that is
