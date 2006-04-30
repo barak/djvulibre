@@ -1138,8 +1138,8 @@ ddjvu_document_search_pageno(ddjvu_document_t *document, const char *name)
             {
               char *edata=0;
               long int p = strtol(name, &edata, 10);
-              if (edata!=name && !*edata && p>=0)
-                file = dir->page_to_file(p);
+              if (edata!=name && !*edata && p>=1)
+                file = dir->page_to_file(p-1);
             }
       if (file)
         {
