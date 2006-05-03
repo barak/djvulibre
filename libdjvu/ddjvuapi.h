@@ -658,7 +658,12 @@ ddjvu_document_get_filenum(ddjvu_document_t *document);
    called before receiving a <m_docinfo> message.
    String pointers in the returned data structure 
    might be null. Strings are UTF8 encoded and remain 
-   allocated as long as the ddjvu_document_t object exists.*/
+   allocated as long as the ddjvu_document_t object exists.
+   Starting with DDJVUAPI version 18, 
+   calling <ddjvu_document_get_pageinfo> with <pageno> set to -1
+   returns information about the document header.
+   The only relevant field is the header size. */
+
 
 typedef struct ddjvu_fileinfo_s {
   char  type;                   /* [P]age, [T]humbnails, [I]nclude. */

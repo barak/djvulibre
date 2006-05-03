@@ -1098,9 +1098,32 @@ ddjvu_document_get_fileinfo(ddjvu_document_t *document, int fileno,
         return DDJVU_JOB_NOTSTARTED;
       if (! doc->is_init_ok())
         return document->status();
-      int doc_type = doc->get_doc_type();
-      if (doc_type != DjVuDocument::BUNDLED &&
-          doc_type != DjVuDocument::INDIRECT )
+      int type = doc->get_doc_type();
+      if (fileno == -1)
+        {
+          info->type = 'H';
+          info->pageno = -1;
+          info->id = info->name = info->title = 0;
+          info->size = 0;
+          // measure header size
+          if (type == DjVuDocument::INDIRECT)
+            {
+              info->size = doc->get_init_data_pool()->get_length();
+              if (info->size <= 0)
+                return DDJVU_JOB_FAILED;
+            }
+          else if (type == DjVuDocument::BUNDLED)
+            {
+              GP<DjVmDir> dir = doc->get_djvm_dir();
+              GP<DjVmDir::File> file = dir->pos_to_file(0);
+              if (! file)
+                return DDJVU_JOB_FAILED;
+              info->size = file->offset;
+            }
+          return DDJVU_JOB_OK;          
+        }
+      else if ( type != DjVuDocument::BUNDLED &&
+                type != DjVuDocument::INDIRECT )
         {
           if (fileno<0 || fileno>=doc->get_pages_num())
             G_THROW("Illegal file number");
@@ -1108,7 +1131,7 @@ ddjvu_document_get_fileinfo(ddjvu_document_t *document, int fileno,
           info->pageno = fileno;
           info->id = info->name = info->title = 0;
           info->size = -1;
-          if (doc_type != DjVuDocument::SINGLE_PAGE)
+          if (type != DjVuDocument::SINGLE_PAGE)
             return DDJVU_JOB_OK;
           // try harder finding the size for a single page
           GP<DjVuFile> file = doc->get_djvu_file(fileno);
@@ -1116,24 +1139,27 @@ ddjvu_document_get_fileinfo(ddjvu_document_t *document, int fileno,
           info->size = (pool) ? pool->get_length() : -1;
           return DDJVU_JOB_OK;
         }
-      GP<DjVmDir> dir = doc->get_djvm_dir();
-      GP<DjVmDir::File> file = dir->pos_to_file(fileno, &info->pageno);
-      if (! file)
-        G_THROW("Illegal file number");
-      info->type = 'I';
-      if (file->is_page())
-        info->type = 'P';
       else
-        info->pageno = -1;
-      if (file->is_thumbnails())
-        info->type = 'T';
-      if (file->is_shared_anno())
-        info->type = 'S';
-      info->size = file->size;
-      info->id = file->get_load_name();
-      info->name = file->get_save_name();
-      info->title = file->get_title();
-      return DDJVU_JOB_OK;
+        {
+          GP<DjVmDir> dir = doc->get_djvm_dir();
+          GP<DjVmDir::File> file = dir->pos_to_file(fileno, &info->pageno);
+          if (! file)
+            G_THROW("Illegal file number");
+          info->type = 'I';
+          if (file->is_page())
+            info->type = 'P';
+          else
+            info->pageno = -1;
+          if (file->is_thumbnails())
+            info->type = 'T';
+          if (file->is_shared_anno())
+            info->type = 'S';
+          info->size = file->size;
+          info->id = file->get_load_name();
+          info->name = file->get_save_name();
+          info->title = file->get_title();
+          return DDJVU_JOB_OK;
+        }
     }
   G_CATCH(ex)
     {
