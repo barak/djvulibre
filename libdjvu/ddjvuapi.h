@@ -662,8 +662,8 @@ ddjvu_document_get_filenum(ddjvu_document_t *document);
 
 typedef struct ddjvu_fileinfo_s {
   char  type;                   /* [P]age, [T]humbnails, [I]nclude. */
-  int   pageno;                 /* Zero when not applicable. */
-  int   size;                   /* Zero when unknown. */
+  int   pageno;                 /* Negative when not applicable. */
+  int   size;                   /* Negative when unknown. */
   const char *id;               /* File identifier. */
   const char *name;             /* Name for indirect documents. */
   const char *title;            /* Page title. */

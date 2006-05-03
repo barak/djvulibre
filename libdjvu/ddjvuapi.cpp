@@ -1106,22 +1106,29 @@ ddjvu_document_get_fileinfo(ddjvu_document_t *document, int fileno,
             G_THROW("Illegal file number");
           info->type = 'P';
           info->pageno = fileno;
-          info->size = 0;
           info->id = info->name = info->title = 0;
+          info->size = -1;
+          if (doc_type != DjVuDocument::SINGLE_PAGE)
+            return DDJVU_JOB_OK;
+          // try harder finding the size for a single page
+          GP<DjVuFile> file = doc->get_djvu_file(fileno);
+          GP<DataPool> pool = (file) ? file->get_init_data_pool() : 0;
+          info->size = (pool) ? pool->get_length() : -1;
           return DDJVU_JOB_OK;
         }
       GP<DjVmDir> dir = doc->get_djvm_dir();
       GP<DjVmDir::File> file = dir->pos_to_file(fileno, &info->pageno);
       if (! file)
         G_THROW("Illegal file number");
+      info->type = 'I';
       if (file->is_page())
         info->type = 'P';
-      else if (file->is_thumbnails())
-        info->type = 'T';
-      else if (file->is_shared_anno())
-        info->type = 'S';
       else
-        info->type = 'I';
+        info->pageno = -1;
+      if (file->is_thumbnails())
+        info->type = 'T';
+      if (file->is_shared_anno())
+        info->type = 'S';
       info->size = file->size;
       info->id = file->get_load_name();
       info->name = file->get_save_name();
