@@ -645,7 +645,7 @@ ddjvu_document_get_pagenum(ddjvu_document_t *document);
 
 /* ddjvu_document_get_filenum --
    Returns the number of component files.
-   This function might return 1 when called
+   This function might return 0 when called
    before receiving a <m_docinfo> message */
    
 DDJVUAPI int

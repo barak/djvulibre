@@ -1070,6 +1070,10 @@ ddjvu_document_get_filenum(ddjvu_document_t *document)
       DjVuDocument *doc = document->doc;
       if (! (doc && doc->is_init_ok()))
         return 0;
+      int doc_type = doc->get_doc_type();
+      if (doc_type != DjVuDocument::BUNDLED &&
+          doc_type != DjVuDocument::INDIRECT )
+        return doc->get_pages_num();
       GP<DjVmDir> dir = doc->get_djvm_dir();
       if (dir)
         return dir->get_files_num();
@@ -1079,7 +1083,7 @@ ddjvu_document_get_filenum(ddjvu_document_t *document)
       ERROR1(document,ex);
     }
   G_ENDCATCH;
-  return 1;
+  return 0;
 }
 
 ddjvu_status_t
@@ -1094,6 +1098,18 @@ ddjvu_document_get_fileinfo(ddjvu_document_t *document, int fileno,
         return DDJVU_JOB_NOTSTARTED;
       if (! doc->is_init_ok())
         return document->status();
+      int doc_type = doc->get_doc_type();
+      if (doc_type != DjVuDocument::BUNDLED &&
+          doc_type != DjVuDocument::INDIRECT )
+        {
+          if (fileno<0 || fileno>=doc->get_pages_num())
+            G_THROW("Illegal file number");
+          info->type = 'P';
+          info->pageno = fileno;
+          info->size = 0;
+          info->id = info->name = info->title = 0;
+          return DDJVU_JOB_OK;
+        }
       GP<DjVmDir> dir = doc->get_djvm_dir();
       GP<DjVmDir::File> file = dir->pos_to_file(fileno, &info->pageno);
       if (! file)
