@@ -99,14 +99,21 @@ extern "C" {
 
    Version   Change
    -----------------------------
-     17    Addition of:
+     18    Added:
+              ddjvu_document_get_{anno,pagedump,filedump}()
+           Modifed (binary compatible):
+              ddjvu_document_get_{fileinfo,pageinfo}()   
+           Deprecated:
+              ddjvu_document_search_pageno()
+              ddjvu_page_get_{short,long}_description()
+     17    Added:
               ddjvu_page_get_initial_rotation(), ddjvu_code_get_version()
-              ddjvu_document_get_filenum(), ddjvu_document_get_fileinfo()
-              ddjvu_document_search_pageno(), ddjvu_document_check_pagedata()
+              ddjvu_document_{get_filenum,get_fileinfo}}()
+              ddjvu_document_{search_pageno,check_pagedata}()
               ddjvu_rectmapper_t and related functions.
-     16    Addition of:
+     16    Added:
               miniexp.h and related functions.
-     15    Addition of:
+     15    Added:
               ddjvu_document_get_pageinfo()
               ddjvu_document_print()
      14    Initial version.
@@ -659,11 +666,11 @@ ddjvu_document_get_filenum(ddjvu_document_t *document);
    String pointers in the returned data structure 
    might be null. Strings are UTF8 encoded and remain 
    allocated as long as the ddjvu_document_t object exists.
-   Starting with DDJVUAPI version 18, 
-   calling <ddjvu_document_get_pageinfo> with <pageno> set to -1
-   returns information about the document header.
-   The only relevant field is the header size. */
 
+   Changes for ddjvuapi=18
+   - Redefined as a macro passing the structure size.
+   - Setting <pageno=-1> returns the size of the document header.
+*/
 
 typedef struct ddjvu_fileinfo_s {
   char  type;                   /* [P]age, [T]humbnails, [I]nclude. */
@@ -674,22 +681,17 @@ typedef struct ddjvu_fileinfo_s {
   const char *title;            /* Page title. */
 } ddjvu_fileinfo_t;
 
+#define ddjvu_document_get_fileinfo(d,f,i) \
+   ddjvu_document_get_fileinfo_imp(d,f,i,sizeof(ddjvu_fileinfo_t))
+
 DDJVUAPI ddjvu_status_t
-ddjvu_document_get_fileinfo(ddjvu_document_t *document, 
-                            int fileno, ddjvu_fileinfo_t *info);
+ddjvu_document_get_fileinfo_imp(ddjvu_document_t *document, int fileno, 
+                                ddjvu_fileinfo_t *info, unsigned int infosz);
 
 
-/* ddjvu_document_search_pageno ---
-   Searches the page number of the page named <name>. 
-   Argument <name> is an UTF8 encoded string that is
-   matched against the page ids, page names, and page titles.
-   Numerical names are also interpreted as page numbers.
-   This functions returns <-1> when an error occurs,
-   when the page is not found, or when called before
-   receiving a <m_docinfo> message. */
+/* ddjvu_document_search_pageno --- DEPRECATED. */
 
-DDJVUAPI int
-ddjvu_document_search_pageno(ddjvu_document_t *document, const char *name);
+DDJVUAPI int ddjvu_document_search_pageno(ddjvu_document_t*, const char*);
 
 
 /* ddjvu_document_check_pagedata ---
@@ -720,18 +722,54 @@ ddjvu_document_check_pagedata(ddjvu_document_t *document, int pageno);
      handle_ddjvu_messages(ctx, TRUE);
    if (r>=DDJVU_JOB_FAILED)
      signal_error();
+
+   Changes for ddjvuapi=18
+   - Redefined as a macro passing the structure size.
+   - Added fields 'rotation' and 'version'.
 */      
 
 typedef struct ddjvu_pageinfo_s {
   int width;                    /* page width (in pixels) */
   int height;                   /* page height (in pixels) */
   int dpi;                      /* page resolution (in dots per inche) */
+  int rotation;                 /* initial page orientation */
+  int version;                  /* page version */
 } ddjvu_pageinfo_t;
 
-DDJVUAPI ddjvu_status_t
-ddjvu_document_get_pageinfo(ddjvu_document_t *document, 
-                            int pageno, ddjvu_pageinfo_t *info);
+#define ddjvu_document_get_pageinfo(d,p,i) \
+   ddjvu_document_get_pageinfo_imp(d,p,i,sizeof(ddjvu_pageinfo_t))
 
+DDJVUAPI ddjvu_status_t
+ddjvu_document_get_pageinfo_imp(ddjvu_document_t *document, int pageno, 
+                                ddjvu_pageinfo_t *info, unsigned int infosz );
+
+
+
+
+/* ddjvu_document_get_pagedump --
+   This function returns a textual description of the contents 
+   of page <pageno> using the same format as command <djvudump>. 
+   The returned string must be deallocated using <free()>.
+   It returns <0> when the information is not yet available. 
+   It may then cause then the emission of <m_pageinfo> 
+   messages with null <m_any.page>.
+*/   
+
+DDJVUAPI char *
+ddjvu_document_get_pagedump(ddjvu_document_t *document, int pageno);
+
+
+/* ddjvu_document_get_filedump --
+   This function returns a textual description of the contents 
+   of file <fileno> using the same format as command <djvudump>. 
+   The returned string must be deallocated using <free()>.
+   It returns <0> when the information is not yet available. 
+   It may then cause then the emission of <m_pageinfo> 
+   messages with null <m_any.page>.
+*/   
+
+DDJVUAPI char *
+ddjvu_document_get_pagedump(ddjvu_document_t *document, int pageno);
 
 
 
@@ -942,20 +980,10 @@ DDJVUAPI ddjvu_page_type_t
 ddjvu_page_get_type(ddjvu_page_t *page);
 
 
-/* ddjvu_page_get_short_description ---
-   ddjvu_page_get_long_description ---
-   Return strings describing the DjVu page.
-   The returned string must be freed with the C function <free>.
-   The short description is a one liner suitable for a status bar.
-   The long description lists all the decoded chunks.
-   These strings are updated during the decoding process.
-   Their value might change until the decoding terminates. */
+/* ddjvu_page_get_{short,long}_description --- DEPRECATED */
 
-DDJVUAPI char *
-ddjvu_page_get_short_description(ddjvu_page_t *page);
-
-DDJVUAPI char *
-ddjvu_page_get_long_description(ddjvu_page_t *page);
+DDJVUAPI char *ddjvu_page_get_short_description(ddjvu_page_t *);
+DDJVUAPI char *ddjvu_page_get_long_description(ddjvu_page_t *);
 
 
 /* ddjvu_page_set_rotation ---
@@ -1372,6 +1400,21 @@ ddjvu_miniexp_release(ddjvu_document_t *document, miniexp_t expr);
 
 DDJVUAPI miniexp_t
 ddjvu_document_get_outline(ddjvu_document_t *document);
+
+
+/* ddjvu_document_get_anno --
+   This function returns the document-wide annotations.
+   This corresponds to a proposed change in the djvu format.
+   This function returns <miniexp_dummy> is the information
+   is not yet available. It may then cause the emission 
+   of <m_pageinfo> messages with null <m_any.page>.
+   When no new-style document-wide annotations are available
+   and <compat> is true, this function searches a shared 
+   annotation chunk and returns its contents.
+*/   
+
+DDJVUAPI miniexp_t
+ddjvu_document_get_anno(ddjvu_document_t *document, int compat);
 
 
 /* ddjvu_document_get_pagetext -- 

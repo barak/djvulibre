@@ -1044,6 +1044,7 @@ ddjvu_document_get_type(ddjvu_document_t *document)
   return DDJVU_DOCTYPE_UNKNOWN;
 }
 
+
 int
 ddjvu_document_get_pagenum(ddjvu_document_t *document)
 {
@@ -1086,13 +1087,30 @@ ddjvu_document_get_filenum(ddjvu_document_t *document)
   return 0;
 }
 
+
+#undef ddjvu_document_get_fileinfo
+
+extern "C" DDJVUAPI ddjvu_status_t
+ddjvu_document_get_fileinfo(ddjvu_document_t *d, int f, ddjvu_fileinfo_t *i);
+
 ddjvu_status_t
-ddjvu_document_get_fileinfo(ddjvu_document_t *document, int fileno, 
-                            ddjvu_fileinfo_t *info)
+ddjvu_document_get_fileinfo(ddjvu_document_t *d, int f, ddjvu_fileinfo_t *i)
 {
+  // for binary backward compatibility with ddjvuapi=17
+  struct info17_s { char t; int p,s; const char *d, *n, *l; };
+  return ddjvu_document_get_fileinfo_imp(d,f,i,sizeof(info17_s));
+}
+
+ddjvu_status_t
+ddjvu_document_get_fileinfo_imp(ddjvu_document_t *document, int fileno, 
+                                ddjvu_fileinfo_t *info, 
+                                unsigned int infosz )
+{
+  struct info17_s { char t; int p,s; const char *d, *n, *l; };
+  
   G_TRY
     {
-      memset(info, 0, sizeof(ddjvu_fileinfo_t));
+      memset(info, 0, infosz);
       DjVuDocument *doc = document->doc;
       if (! doc)
         return DDJVU_JOB_NOTSTARTED;
@@ -1169,6 +1187,7 @@ ddjvu_document_get_fileinfo(ddjvu_document_t *document, int fileno,
   return DDJVU_JOB_FAILED;
 }
 
+
 int
 ddjvu_document_search_pageno(ddjvu_document_t *document, const char *name)
 {
@@ -1234,12 +1253,29 @@ ddjvu_document_check_pagedata(ddjvu_document_t *document, int pageno)
 }
 
 
+#undef ddjvu_document_get_pageinfo
+
+extern "C" DDJVUAPI ddjvu_status_t
+ddjvu_document_get_pageinfo(ddjvu_document_t *d, int p, ddjvu_pageinfo_t *i);
+
 ddjvu_status_t
-ddjvu_document_get_pageinfo(ddjvu_document_t *document, int pageno, 
-                            ddjvu_pageinfo_t *pageinfo)
+ddjvu_document_get_pageinfo(ddjvu_document_t *d, int p, ddjvu_pageinfo_t *i)
 {
+  // for binary backward compatibility with ddjvuapi<=17
+  struct info17_s { int w; int h; int d; };
+  return ddjvu_document_get_pageinfo_imp(d,p,i,sizeof(struct info17_s));
+}
+
+ddjvu_status_t
+ddjvu_document_get_pageinfo_imp(ddjvu_document_t *document, int pageno, 
+                                ddjvu_pageinfo_t *pageinfo, 
+                                unsigned int infosz)
+{
+  struct info17_s { int w; int h; int d; };
+
   G_TRY
     {
+      memset(pageinfo, 0, infosz);
       DjVuDocument *doc = document->doc;
       if (doc)
         {
@@ -1262,13 +1298,18 @@ ddjvu_document_get_pageinfo(ddjvu_document_t *document, int pageno,
                       GP<DjVuInfo> info=DjVuInfo::create();
                       info->decode(*gbs);
                       int rot = info->orientation;
+                      int w = (rot&1) ? info->height : info->width;
+                      int h = (rot&1) ? info->width : info->height;
                       if (pageinfo)
                         {
-                          pageinfo->width = 
-                            (rot&1) ? info->height : info->width;
-                          pageinfo->height = 
-                            (rot&1) ? info->width : info->height;
+                          pageinfo->width = w;
+                          pageinfo->height = h;
                           pageinfo->dpi = info->dpi;
+                          if (infosz > sizeof(struct info17_s))
+                            {
+                              pageinfo->rotation = rot;
+                              pageinfo->version = info->version;
+                            }
                         }
                       return DDJVU_JOB_OK;
                     }
@@ -1284,8 +1325,8 @@ ddjvu_document_get_pageinfo(ddjvu_document_t *document, int pageno,
                       if (gbs->read8() == 0)
                         {
                           gbs->read8();
-                          gbs->read8();
-                          gbs->read8();
+                          unsigned char vhi = gbs->read8();
+                          unsigned char vlo = gbs->read8();
                           unsigned char xhi = gbs->read8();
                           unsigned char xlo = gbs->read8();
                           unsigned char yhi = gbs->read8();
@@ -1295,8 +1336,13 @@ ddjvu_document_get_pageinfo(ddjvu_document_t *document, int pageno,
                               pageinfo->width = (xhi<<8)+xlo;
                               pageinfo->height = (yhi<<8)+ylo;
                               pageinfo->dpi = 100;
+                              if (infosz > sizeof(struct info17_s))
+                                {
+                                  pageinfo->rotation = 0;
+                                  pageinfo->version = (vhi<<8)+vlo;
+                                }
+                              return DDJVU_JOB_OK;
                             }
-                          return DDJVU_JOB_OK;
                         }
                     }
                 }
@@ -1310,6 +1356,70 @@ ddjvu_document_get_pageinfo(ddjvu_document_t *document, int pageno,
   G_ENDCATCH;
   return DDJVU_JOB_FAILED;
 }
+
+
+static char *
+get_file_dump(DjVuFile *file)
+{
+  // TODO
+  return 0;
+}
+
+char *
+ddjvu_document_get_pagedump(ddjvu_document_t *document, int pageno)
+{
+  G_TRY
+    {
+      DjVuDocument *doc = document->doc;
+      if (doc)
+        {
+          document->pageinfoflag = true;
+          GP<DjVuFile> file = doc->get_djvu_file(pageno);
+          if (file && file->is_all_data_present())
+            return get_file_dump(file);
+        }
+    }
+  G_CATCH(ex)
+    {
+      ERROR1(document, ex);
+    }
+  G_ENDCATCH;
+  return 0;
+}
+
+
+char *
+ddjvu_document_get_filedump(ddjvu_document_t *document, int fileno)
+{
+  G_TRY
+    {
+      DjVuDocument *doc = document->doc;
+      if (doc)
+        {
+          GP<DjVuFile> file;
+          int type = doc->get_doc_type();
+          if ( type != DjVuDocument::BUNDLED &&
+               type != DjVuDocument::INDIRECT )
+            file = doc->get_djvu_file(fileno);
+          else
+            {
+              GP<DjVmDir> dir = doc->get_djvm_dir();
+              GP<DjVmDir::File> fdesc = dir->pos_to_file(fileno);
+              if (fdesc)
+                file = doc->get_djvu_file(fdesc->get_load_name());
+            }
+          if (file && file->is_all_data_present())
+            return get_file_dump(file);
+        }
+    }
+  G_CATCH(ex)
+    {
+      ERROR1(document, ex);
+    }
+  G_ENDCATCH;
+  return 0;
+}
+
 
 
 // ----------------------------------------
@@ -3028,6 +3138,8 @@ ddjvu_document_get_outline(ddjvu_document_t *document)
 }
 
 
+
+
 // ----------------------------------------
 // S-Expressions (text)
 
@@ -3286,6 +3398,43 @@ anno_sub(ByteStream *bs, miniexp_t &result)
   minilisp_ungetc = saved_ungetc;
 }
 
+static miniexp_t
+get_file_anno(DjVuFile *file)
+{
+  // Make sure all data is present
+  if (! file || ! file->is_all_data_present())
+    {
+      if (file->is_data_present())
+        {
+          if (! file->are_incl_files_created())
+            file->process_incl_chunks();
+          if (! file->are_incl_files_created())
+            return miniexp_status(DDJVU_JOB_FAILED);
+        }
+      return miniexp_dummy;
+    }
+  // Access annotation data
+  GP<ByteStream> annobs = file->get_merged_anno();
+  if (! (annobs && annobs->size()))
+    return miniexp_nil;
+  GP<IFFByteStream> iff = IFFByteStream::create(annobs);
+  GUTF8String chkid;
+  minivar_t result;
+  while (iff->get_chunk(chkid))
+    {
+      GP<ByteStream> bs;
+      if (chkid == "ANTa") 
+        bs = iff->get_bytestream();
+      else if (chkid == "ANTz")
+        bs = BSByteStream::create(iff->get_bytestream());
+      if (bs)
+        anno_sub(bs, result);
+      iff->close_chunk();
+    }
+  return miniexp_reverse(result);
+  return result;
+}
+
 miniexp_t
 ddjvu_document_get_pageanno(ddjvu_document_t *document, int pageno)
 {
@@ -3295,39 +3444,9 @@ ddjvu_document_get_pageanno(ddjvu_document_t *document, int pageno)
       if (doc)
         {
           document->pageinfoflag = true;
-          GP<DjVuFile> file = doc->get_djvu_file(pageno);
-          // Make sure all data is present
-          if (! file || ! file->is_all_data_present())
-            {
-              if (file->is_data_present())
-                {
-                  if (! file->are_incl_files_created())
-                    file->process_incl_chunks();
-                  if (! file->are_incl_files_created())
-                    return miniexp_status(DDJVU_JOB_FAILED);
-                }
-              return miniexp_dummy;
-            }
-          // Access annotation data
-          GP<ByteStream> annobs = file->get_merged_anno();
-          if (! (annobs && annobs->size()))
-            return miniexp_nil;
-          minivar_t result;
-          GP<IFFByteStream> iff = IFFByteStream::create(annobs);
-          GUTF8String chkid;
-          while (iff->get_chunk(chkid))
-            {
-              GP<ByteStream> bs;
-              if (chkid == "ANTa") 
-                bs = iff->get_bytestream();
-              else if (chkid == "ANTz")
-                bs = BSByteStream::create(iff->get_bytestream());
-              if (bs)
-                anno_sub(bs, result);
-              iff->close_chunk();
-            }
-          result = miniexp_reverse(result);
-          miniexp_protect(document, result);
+          minivar_t result = get_file_anno( doc->get_djvu_file(pageno) );
+          if (miniexp_consp(result))
+            miniexp_protect(document, result);
           return result;
         }
     }
@@ -3338,6 +3457,23 @@ ddjvu_document_get_pageanno(ddjvu_document_t *document, int pageno)
   G_ENDCATCH;
   return miniexp_status(DDJVU_JOB_FAILED);
 }
+
+
+miniexp_t
+ddjvu_document_get_anno(ddjvu_document_t *document, int compat)
+{
+  G_TRY
+    {
+      // TODO
+    }
+  G_CATCH(ex)
+    {
+      ERROR1(document, ex);
+    }
+  G_ENDCATCH;
+  return miniexp_nil;
+}
+
 
 
 
