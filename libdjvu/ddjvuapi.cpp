@@ -1075,7 +1075,7 @@ ddjvu_document_get_filenum(ddjvu_document_t *document)
       if (! (doc && doc->is_init_ok()))
         return 0;
       int doc_type = doc->get_doc_type();
-      if (doc_type == DjVuDocument::BUNDLED &&
+      if (doc_type == DjVuDocument::BUNDLED ||
           doc_type == DjVuDocument::INDIRECT )
         {
           GP<DjVmDir> dir = doc->get_djvm_dir();
@@ -1127,7 +1127,7 @@ ddjvu_document_get_fileinfo_imp(ddjvu_document_t *document, int fileno,
       if (! doc->is_init_ok())
         return document->status();
       int type = doc->get_doc_type();
-      if ( type == DjVuDocument::BUNDLED &&
+      if ( type == DjVuDocument::BUNDLED ||
            type == DjVuDocument::INDIRECT )
         {
           GP<DjVmDir> dir = doc->get_djvm_dir();
@@ -3278,6 +3278,7 @@ ddjvu_document_get_pagetext(ddjvu_document_t *document, int pageno,
 // characters or illegal backslash sequences. Function <anno_getc()> then 
 // creates the proper escapes on the fly.
 
+
 static struct {
   const char *s;
   char buf[8];
@@ -3286,6 +3287,7 @@ static struct {
   bool compat;
   bool eof;
 } anno_dat;
+
 
 static bool
 anno_compat(const char *s)
@@ -3318,6 +3320,7 @@ anno_compat(const char *s)
     }
   return compat;
 }
+
 
 static int
 anno_getc(void)
@@ -3369,6 +3372,7 @@ anno_getc(void)
   return c;
 }
 
+
 static int
 anno_ungetc(int c)
 {
@@ -3384,6 +3388,7 @@ anno_ungetc(int c)
   anno_dat.buf[0] = c;
   return c;
 }
+
 
 static void
 anno_sub(ByteStream *bs, miniexp_t &result)
@@ -3414,23 +3419,10 @@ anno_sub(ByteStream *bs, miniexp_t &result)
   minilisp_ungetc = saved_ungetc;
 }
 
+
 static miniexp_t
-get_file_anno(DjVuFile *file)
+get_bytestream_anno(GP<ByteStream> annobs)
 {
-  // Make sure all data is present
-  if (! file || ! file->is_all_data_present())
-    {
-      if (file->is_data_present())
-        {
-          if (! file->are_incl_files_created())
-            file->process_incl_chunks();
-          if (! file->are_incl_files_created())
-            return miniexp_status(DDJVU_JOB_FAILED);
-        }
-      return miniexp_dummy;
-    }
-  // Access annotation data
-  GP<ByteStream> annobs = file->get_merged_anno();
   if (! (annobs && annobs->size()))
     return miniexp_nil;
   GP<IFFByteStream> iff = IFFByteStream::create(annobs);
@@ -3448,8 +3440,28 @@ get_file_anno(DjVuFile *file)
       iff->close_chunk();
     }
   return miniexp_reverse(result);
-  return result;
 }
+
+
+static miniexp_t
+get_file_anno(GP<DjVuFile> file)
+{
+  // Make sure all data is present
+  if (! file || ! file->is_all_data_present())
+    {
+      if (file && file->is_data_present())
+        {
+          if (! file->are_incl_files_created())
+            file->process_incl_chunks();
+          if (! file->are_incl_files_created())
+            return miniexp_status(DDJVU_JOB_FAILED);
+        }
+      return miniexp_dummy;
+    }
+  // Access annotation data
+  return get_bytestream_anno(file->get_merged_anno());
+}
+
 
 miniexp_t
 ddjvu_document_get_pageanno(ddjvu_document_t *document, int pageno)
@@ -3480,7 +3492,41 @@ ddjvu_document_get_anno(ddjvu_document_t *document, int compat)
 {
   G_TRY
     {
-      // TODO
+      DjVuDocument *doc = document->doc;
+      if (doc)
+        {
+#if EXPERIMENTAL_DOCUMENT_ANNOTATIONS
+          // not yet implemented
+          GP<ByteStream> anno = doc->get_document_anno();
+          if (anno)
+            return get_bytestream_anno(anno);
+#endif
+          if (compat)
+            {
+              // look for shared annotations
+              int doc_type = doc->get_doc_type();
+              if (doc_type != DjVuDocument::BUNDLED &&
+                  doc_type != DjVuDocument::INDIRECT )
+                return miniexp_nil;
+              GP<DjVmDir> dir = doc->get_djvm_dir();
+              int filenum = dir->get_files_num();
+              GP<DjVmDir::File> fdesc;
+              for (int i=0; i<filenum; i++)
+                {
+                  GP<DjVmDir::File> f = dir->pos_to_file(i);
+                  if (!f->is_shared_anno())
+                    continue;
+                  if (fdesc)
+                    return miniexp_nil;
+                  fdesc = f;
+                }
+              if (fdesc)
+                {
+                  GUTF8String id = fdesc->get_load_name();
+                  return get_file_anno(doc->get_djvu_file(id));
+                }
+            }
+        }
     }
   G_CATCH(ex)
     {
