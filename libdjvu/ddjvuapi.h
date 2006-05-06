@@ -119,7 +119,9 @@ extern "C" {
      14    Initial version.
 */
 
-#define DDJVUAPI_VERSION 17
+#define DDJVUAPI_VERSION 18  // INCOMPLETE!
+
+
 
 typedef struct ddjvu_context_s    ddjvu_context_t;
 typedef union  ddjvu_message_s    ddjvu_message_t;
@@ -669,7 +671,6 @@ ddjvu_document_get_filenum(ddjvu_document_t *document);
 
    Changes for ddjvuapi=18
    - Redefined as a macro passing the structure size.
-   - Setting <pageno=-1> returns the size of the document header.
 */
 
 typedef struct ddjvu_fileinfo_s {

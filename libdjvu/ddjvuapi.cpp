@@ -104,6 +104,7 @@ using namespace DJVU;
 #include "DjVuImage.h"
 #include "DjVuFileCache.h"
 #include "DjVuDocument.h"
+#include "DjVuDumpHelper.h"
 #include "DjVuMessageLite.h"
 #include "DjVuMessage.h"
 #include "DjVmNav.h"
@@ -111,6 +112,8 @@ using namespace DJVU;
 #include "DjVuAnno.h"
 #include "DjVuToPS.h"
 #include "DjVmDir.h"
+#include "DjVmDir0.h"
+#include "DjVuNavDir.h"
 #include "DjVmDoc.h"
 
 
@@ -1072,12 +1075,19 @@ ddjvu_document_get_filenum(ddjvu_document_t *document)
       if (! (doc && doc->is_init_ok()))
         return 0;
       int doc_type = doc->get_doc_type();
-      if (doc_type != DjVuDocument::BUNDLED &&
-          doc_type != DjVuDocument::INDIRECT )
+      if (doc_type == DjVuDocument::BUNDLED &&
+          doc_type == DjVuDocument::INDIRECT )
+        {
+          GP<DjVmDir> dir = doc->get_djvm_dir();
+          return dir->get_files_num();
+        }
+      else if (doc_type == DjVuDocument::OLD_BUNDLED)
+        {
+          GP<DjVmDir0> dir0 = doc->get_djvm_dir0();
+          return dir0->get_files_num();
+        }
+      else 
         return doc->get_pages_num();
-      GP<DjVmDir> dir = doc->get_djvm_dir();
-      if (dir)
-        return dir->get_files_num();
     }
   G_CATCH(ex)
     {
@@ -1117,47 +1127,8 @@ ddjvu_document_get_fileinfo_imp(ddjvu_document_t *document, int fileno,
       if (! doc->is_init_ok())
         return document->status();
       int type = doc->get_doc_type();
-      if (fileno == -1)
-        {
-          info->type = 'H';
-          info->pageno = -1;
-          info->id = info->name = info->title = 0;
-          info->size = 0;
-          // measure header size
-          if (type == DjVuDocument::INDIRECT)
-            {
-              info->size = doc->get_init_data_pool()->get_length();
-              if (info->size <= 0)
-                return DDJVU_JOB_FAILED;
-            }
-          else if (type == DjVuDocument::BUNDLED)
-            {
-              GP<DjVmDir> dir = doc->get_djvm_dir();
-              GP<DjVmDir::File> file = dir->pos_to_file(0);
-              if (! file)
-                return DDJVU_JOB_FAILED;
-              info->size = file->offset;
-            }
-          return DDJVU_JOB_OK;          
-        }
-      else if ( type != DjVuDocument::BUNDLED &&
-                type != DjVuDocument::INDIRECT )
-        {
-          if (fileno<0 || fileno>=doc->get_pages_num())
-            G_THROW("Illegal file number");
-          info->type = 'P';
-          info->pageno = fileno;
-          info->id = info->name = info->title = 0;
-          info->size = -1;
-          if (type != DjVuDocument::SINGLE_PAGE)
-            return DDJVU_JOB_OK;
-          // try harder finding the size for a single page
-          GP<DjVuFile> file = doc->get_djvu_file(fileno);
-          GP<DataPool> pool = (file) ? file->get_init_data_pool() : 0;
-          info->size = (pool) ? pool->get_length() : -1;
-          return DDJVU_JOB_OK;
-        }
-      else
+      if ( type == DjVuDocument::BUNDLED &&
+           type == DjVuDocument::INDIRECT )
         {
           GP<DjVmDir> dir = doc->get_djvm_dir();
           GP<DjVmDir::File> file = dir->pos_to_file(fileno, &info->pageno);
@@ -1176,6 +1147,39 @@ ddjvu_document_get_fileinfo_imp(ddjvu_document_t *document, int fileno,
           info->id = file->get_load_name();
           info->name = file->get_save_name();
           info->title = file->get_title();
+          return DDJVU_JOB_OK;
+        }
+      else if (type == DjVuDocument::OLD_BUNDLED)
+        {
+          GP<DjVmDir0> dir0 = doc->get_djvm_dir0();
+          GP<DjVuNavDir> nav = doc->get_nav_dir();
+          GP<DjVmDir0::FileRec> frec = dir0->get_file(fileno);
+          if (! frec)
+            G_THROW("Illegal file number");
+          info->size = frec->size;
+          info->id = (const char*) frec->name;
+          info->name = info->title = info->id;
+          if (! nav)
+            return DDJVU_JOB_STARTED;
+          else if (nav->name_to_page(frec->name) >= 0)
+            info->type = 'P';
+          else
+            info->type = 'I';
+          return DDJVU_JOB_OK;
+        }
+      else 
+        {
+          if (fileno<0 || fileno>=doc->get_pages_num())
+            G_THROW("Illegal file number");
+          info->type = 'P';
+          info->pageno = fileno;
+          info->size = -1;
+          GP<DjVuNavDir> nav = doc->get_nav_dir();
+          info->id = (nav) ? (const char *) nav->page_to_name(fileno) : 0;
+          info->name = info->title = info->id;
+          GP<DjVuFile> file = doc->get_djvu_file(fileno, true);
+          GP<DataPool> pool = (file) ? file->get_init_data_pool() : 0;
+          info->size = (pool) ? pool->get_length() : -1;
           return DDJVU_JOB_OK;
         }
     }
@@ -1361,9 +1365,21 @@ ddjvu_document_get_pageinfo_imp(ddjvu_document_t *document, int pageno,
 static char *
 get_file_dump(DjVuFile *file)
 {
-  // TODO
+  DjVuDumpHelper dumper;
+  GP<DataPool> pool = file->get_init_data_pool();
+  GP<ByteStream> str = dumper.dump(pool);
+  int size = str->size();
+  char *buffer;
+  if ((size = str->size()) > 0 && (buffer = (char*)malloc(size+1)))
+    {
+      str->seek(0);
+      int len = str->readall(buffer, size);
+      buffer[len] = 0;
+      return buffer;
+    }
   return 0;
 }
+
 
 char *
 ddjvu_document_get_pagedump(ddjvu_document_t *document, int pageno)
