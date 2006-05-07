@@ -112,7 +112,8 @@ install-pkgconfig: FORCE
 
 depend: FORCE
 	for n in ${srcdir}/*.cpp ; do \
-	  ${CXX} -MM ${CXXFLAGS} $$n ; \
+	  ${CXX} -MM ${CXXFLAGS} $$n | \
+	    sed -e 's/^\([^.]*\)\.o:/\1.lo \1.o:/'; \
 	done > Makefile.dep
 
 clean: FORCE

@@ -531,10 +531,10 @@ ddjvu_document_job(ddjvu_document_t *document);
    
 #define ddjvu_document_decoding_status(document) \
    ddjvu_job_status(ddjvu_document_job(document))
-#define ddjvu_document_decoding_done(page) \
-    (ddjvu_document_decoding_status(page) >= DDJVU_JOB_OK)
-#define ddjvu_document_decoding_error(page) \
-    (ddjvu_document_decoding_status(page) >= DDJVU_JOB_FAILED)
+#define ddjvu_document_decoding_done(document) \
+   (ddjvu_document_decoding_status(document) >= DDJVU_JOB_OK)
+#define ddjvu_document_decoding_error(document) \
+   (ddjvu_document_decoding_status(document) >= DDJVU_JOB_FAILED)
 
 
 /* ------- STREAMS ------- */
@@ -770,7 +770,7 @@ ddjvu_document_get_pagedump(ddjvu_document_t *document, int pageno);
 */   
 
 DDJVUAPI char *
-ddjvu_document_get_pagedump(ddjvu_document_t *document, int pageno);
+ddjvu_document_get_filedump(ddjvu_document_t *document, int pageno);
 
 
 
