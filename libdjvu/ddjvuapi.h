@@ -748,7 +748,7 @@ ddjvu_document_get_pageinfo_imp(ddjvu_document_t *document, int pageno,
 
 
 /* ddjvu_document_get_pagedump --
-   This function returns a textual description of the contents 
+   This function returns a UTF8 encoded text describing the contents 
    of page <pageno> using the same format as command <djvudump>. 
    The returned string must be deallocated using <free()>.
    It returns <0> when the information is not yet available. 
@@ -761,7 +761,7 @@ ddjvu_document_get_pagedump(ddjvu_document_t *document, int pageno);
 
 
 /* ddjvu_document_get_filedump --
-   This function returns a textual description of the contents 
+   This function returns a UTF8 encoded text describing the contents 
    of file <fileno> using the same format as command <djvudump>. 
    The returned string must be deallocated using <free()>.
    It returns <0> when the information is not yet available. 
