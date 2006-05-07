@@ -204,8 +204,7 @@ struct DJVUNS ddjvu_document_s : public ddjvu_job_s
   virtual bool notify_status(const DjVuPort*, const GUTF8String&);
   virtual void notify_doc_flags_changed(const DjVuDocument*, long, long);
   virtual GP<DataPool> request_data(const DjVuPort*, const GURL&);
-  static void static_trigger_cb(void *);
-  void trigger_cb(void);
+  static void callback(void *);
 };
 
 struct DJVUNS ddjvu_page_s : public ddjvu_job_s
@@ -766,7 +765,7 @@ ddjvu_document_s::release()
   for (p = streams; p; ++p)
     {
       GP<DataPool> pool = streams[p];
-      pool->del_trigger(static_trigger_cb, (void*)this);
+      pool->del_trigger(callback, (void*)this);
       pool->stop();
     }
 }
@@ -823,19 +822,11 @@ ddjvu_document_s::notify_doc_flags_changed(const DjVuDocument *, long, long)
 
 
 void 
-ddjvu_document_s::static_trigger_cb(void *arg)
+ddjvu_document_s::callback(void *arg)
 {
   ddjvu_document_t *doc = (ddjvu_document_t *)arg;
-  if (doc) 
-    doc->trigger_cb();
-}
-
-
-void 
-ddjvu_document_s::trigger_cb(void)
-{
-  if (pageinfoflag && !fileflag)
-    msg_push(xhead(DDJVU_PAGEINFO, this));
+  if (doc && doc->pageinfoflag && !doc->fileflag) 
+    msg_push(xhead(DDJVU_PAGEINFO, doc));
 }
 
 
@@ -866,7 +857,7 @@ ddjvu_document_s::request_data(const DjVuPort *p, const GURL &url)
       else
         pool = streams[(streamid = 0)];
       names[name] = streamid;
-      pool->add_trigger(-1, static_trigger_cb, (void*)this);
+      pool->add_trigger(-1, callback, (void*)this);
       // build message
       GP<ddjvu_message_p> p = new ddjvu_message_p;
       p->p.m_newstream.streamid = streamid;
