@@ -187,6 +187,7 @@ struct DJVUNS ddjvu_document_s : public ddjvu_job_s
 {
   GP<DjVuDocument> doc;
   GPMap<int,DataPool> streams;
+  GMap<GUTF8String, int> names;
   GPMap<int,ddjvu_thumbnail_p> thumbnails;
   int streamid;
   bool fileflag;
@@ -202,8 +203,9 @@ struct DJVUNS ddjvu_document_s : public ddjvu_job_s
   virtual bool notify_error(const DjVuPort*, const GUTF8String&);  
   virtual bool notify_status(const DjVuPort*, const GUTF8String&);
   virtual void notify_doc_flags_changed(const DjVuDocument*, long, long);
-  virtual void notify_file_flags_changed(const DjVuFile*, long, long);
   virtual GP<DataPool> request_data(const DjVuPort*, const GURL&);
+  static void static_trigger_cb(void *);
+  void trigger_cb(void);
 };
 
 struct DJVUNS ddjvu_page_s : public ddjvu_job_s
@@ -762,7 +764,11 @@ ddjvu_document_s::release()
         thumb->pool->del_trigger(ddjvu_thumbnail_p::callback, (void*)thumb);
     }
   for (p = streams; p; ++p)
-    streams[p]->stop();
+    {
+      GP<DataPool> pool = streams[p];
+      pool->del_trigger(static_trigger_cb, (void*)this);
+      pool->stop();
+    }
 }
 
 ddjvu_status_t
@@ -815,37 +821,56 @@ ddjvu_document_s::notify_doc_flags_changed(const DjVuDocument *, long, long)
   }
 }
 
+
 void 
-ddjvu_document_s::notify_file_flags_changed(const DjVuFile*, long s, long)
+ddjvu_document_s::static_trigger_cb(void *arg)
+{
+  ddjvu_document_t *doc = (ddjvu_document_t *)arg;
+  if (doc) 
+    doc->trigger_cb();
+}
+
+
+void 
+ddjvu_document_s::trigger_cb(void)
 {
   if (pageinfoflag && !fileflag)
-    if (s & DjVuFile::ALL_DATA_PRESENT)
-      msg_push(xhead(DDJVU_PAGEINFO, this));
+    msg_push(xhead(DDJVU_PAGEINFO, this));
 }
+
 
 GP<DataPool> 
 ddjvu_document_s::request_data(const DjVuPort *p, const GURL &url)
 {
+  // Note: the following line try to restore
+  //       the bytes stored in the djvu file
+  //       despite LT's i18n and gurl classes.
+  GUTF8String name = (const char*)url.fname(); 
   GMonitorLock lock(&monitor);
   GP<DataPool> pool;
-  if (fileflag)
+  if (names.contains(name))
+    {
+      int streamid = names[name];
+      return streams[streamid];
+    }
+  else if (fileflag)
     {
       if (doc && url.is_local_file_url())
         return DataPool::create(url);
     }
   else if (doc)
     {
+      // prepare pool
       if (++streamid > 0)
         streams[streamid] = pool = DataPool::create();
       else
         pool = streams[(streamid = 0)];
+      names[name] = streamid;
+      pool->add_trigger(-1, static_trigger_cb, (void*)this);
       // build message
       GP<ddjvu_message_p> p = new ddjvu_message_p;
       p->p.m_newstream.streamid = streamid;
-      // Note: the following line try to restore
-      //       the bytes stored in the djvu file
-      //       despite LT's i18n and gurl classes.
-      p->tmp1 = (const char*)url.fname(); 
+      p->tmp1 = name;
       p->p.m_newstream.name = (const char*)(p->tmp1);
       p->p.m_newstream.url = 0;
       if (urlflag)
@@ -1244,7 +1269,7 @@ ddjvu_document_check_pagedata(ddjvu_document_t *document, int pageno)
             file = doc->get_djvu_file(pageno, true);
           else
             file = doc->get_djvu_file(pageno, false);            
-          if (file && file->is_all_data_present())
+          if (file && file->is_data_present())
             return 1;
         }
     }
@@ -1391,7 +1416,7 @@ ddjvu_document_get_pagedump(ddjvu_document_t *document, int pageno)
         {
           document->pageinfoflag = true;
           GP<DjVuFile> file = doc->get_djvu_file(pageno);
-          if (file && file->is_all_data_present())
+          if (file && file->is_data_present())
             return get_file_dump(file);
         }
     }
@@ -1424,7 +1449,8 @@ ddjvu_document_get_filedump(ddjvu_document_t *document, int fileno)
               if (fdesc)
                 file = doc->get_djvu_file(fdesc->get_load_name());
             }
-          if (file && file->is_all_data_present())
+          document->pageinfoflag = true;
+          if (file && file->is_data_present())
             return get_file_dump(file);
         }
     }
