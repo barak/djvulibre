@@ -1478,7 +1478,7 @@ ddjvu_document_get_pageanno(ddjvu_document_t *document, int pageno);
    Parse the annotations and extracts the desired 
    background color as a color string ("#FFFFFF"). 
    See <(background ...)> in the djvused man page.
-   This function zero if this information is not specified. */
+   Returns zero if this information is not specified. */
 
 DDJVUAPI const char *
 ddjvu_anno_get_bgcolor(miniexp_t annotations);
@@ -1487,7 +1487,7 @@ ddjvu_anno_get_bgcolor(miniexp_t annotations);
 /* ddjvu_anno_get_zoom --
    Parse the annotations and extracts the desired zoom factor.
    See <(zoom ...)> in the djvused man page.
-   This function zero if this information is not specified. */
+   Returns zero if this information is not specified. */
 
 DDJVUAPI const char *
 ddjvu_anno_get_zoom(miniexp_t annotations);
@@ -1496,7 +1496,7 @@ ddjvu_anno_get_zoom(miniexp_t annotations);
 /* ddjvu_anno_get_mode --
    Parse the annotations and extracts the desired display mode.
    See <(mode ...)> in the djvused man page.
-   This function zero if this information is not specified. */
+   Returns zero if this information is not specified. */
 
 DDJVUAPI const char *
 ddjvu_anno_get_mode(miniexp_t annotations);
@@ -1506,7 +1506,7 @@ ddjvu_anno_get_mode(miniexp_t annotations);
    Parse the annotations and extracts how the page
    image should be aligned horizontally.
    See <(align ...)> in the djvused man page.
-   This function zero if this information is not specified. */
+   Returns zero if this information is not specified. */
 
 DDJVUAPI const char *
 ddjvu_anno_get_horizalign(miniexp_t annotations);
@@ -1516,7 +1516,7 @@ ddjvu_anno_get_horizalign(miniexp_t annotations);
    Parse the annotations and extracts how the page
    image should be aligned vertically.
    See <(align ...)> in the djvused man page.
-   This function zero if this information is not specified. */
+   Returns zero if this information is not specified. */
 
 DDJVUAPI const char *
 ddjvu_anno_get_vertalign(miniexp_t annotations);
