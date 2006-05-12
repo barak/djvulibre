@@ -36,7 +36,15 @@ extern "C" {
 /* -------------------------------------------------- */
 
 /* miniexp_t -- 
-   Opaque pointer type representing a lisp expression. */
+   Opaque pointer type representing a lisp expression,
+   also known as s-expression. 
+   S-expressions can be viewed as a simple and powerful 
+   alternative to XML.  DjVu uses s-expressions to handle
+   annotations. Both the decoding api <ddjvuapi.h> and 
+   program <djvused> use s-expressions to describe the 
+   hidden text information and the navigation 
+   information */
+
 
 typedef struct miniexp_s* miniexp_t;
 
