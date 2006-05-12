@@ -698,11 +698,11 @@ DDJVUAPI int ddjvu_document_search_pageno(ddjvu_document_t*, const char*);
 /* ddjvu_document_check_pagedata ---
    Returns a non zero result if the data for page <pageno>
    is already in memory. When this is the case, functions 
-   <ddjvu_document_get_pageinfo>, <ddjvu_document_get_pagetext> 
-   and <ddjvu_document_get_pageanno> return the information immediately.
+   <ddjvu_document_get_pageinfo> and <ddjvu_document_get_pagetext> 
+   return the information immediately.
    This function causes the emission of <m_pageinfo> messages 
-   with zero in the <m_any.page> field.
-*/
+   with zero in the <m_any.page> field whenever a new file
+   is completely downloaded. */
 
 DDJVUAPI int 
 ddjvu_document_check_pagedata(ddjvu_document_t *document, int pageno);
@@ -770,7 +770,7 @@ ddjvu_document_get_pagedump(ddjvu_document_t *document, int pageno);
 */   
 
 DDJVUAPI char *
-ddjvu_document_get_filedump(ddjvu_document_t *document, int pageno);
+ddjvu_document_get_filedump(ddjvu_document_t *document, int fileno);
 
 
 
