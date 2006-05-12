@@ -1272,8 +1272,8 @@ struct ddjvu_message_thumbnail_s { /* ddjvu_message_t::m_thumbnail */
    of BYTES from one row to the next in the buffer.
    This function returns <FALSE> when no thumbnail is available.
    Otherwise it returns <TRUE>, adjusts <*wptr> and <*hptr> to 
-   reflect the thumbnail size, and writes the pixel data into 
-   the image buffer. */
+   reflect the thumbnail size, and, if the pointer <imagebuffer>
+   is non zero, writes the pixel data into the image buffer. */
 
 DDJVUAPI int
 ddjvu_thumbnail_render(ddjvu_document_t *document, int pagenum, 
@@ -1366,8 +1366,9 @@ ddjvu_document_save(ddjvu_document_t *document, FILE *output,
    The same definition also appears in 
    file <"libdjvu/miniexp.h">. */
 
+#ifndef MINIEXP_H
 typedef struct miniexp_s* miniexp_t;
-
+#endif
 
 /* ddjvu_miniexp_release -- 
    This function controls the allocation of the
