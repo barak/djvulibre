@@ -464,7 +464,7 @@ GBitmapScaler::scale( const GRect &provided_input, const GBitmap &input,
       {
         // Prepare for side effects
         lbuffer[0]   = lbuffer[1];
-        lbuffer[bufw] = lbuffer[bufw];
+        lbuffer[bufw] = lbuffer[bufw-1];
         unsigned char *line = lbuffer+1-required_red.xmin;
         unsigned char *dest  = output[y-desired_output.ymin];
         // Loop horizontally
@@ -668,7 +668,7 @@ GPixmapScaler::scale( const GRect &provided_input, const GPixmap &input,
       {
         // Prepare for side effects
         lbuffer[0]   = lbuffer[1];
-        lbuffer[bufw] = lbuffer[bufw];
+        lbuffer[bufw] = lbuffer[bufw-1];
         GPixel *line = lbuffer+1-required_red.xmin;
         GPixel *dest  = output[y-desired_output.ymin];
         // Loop horizontally
