@@ -1506,9 +1506,12 @@ DjVuFile::decode_ndir(GMap<GURL, void *> & map)
     IFFByteStream &iff=*giff;
     if (!iff.get_chunk(chkid)) 
       REPORT_EOF(true)
-      
+
     int chunks=0;
     int last_chunk=0;
+#ifndef SLOW_BUT_EXACT_DETECTION_OF_NDIR
+    int found_incl=0;
+#endif
     G_TRY
     {
       int chunks_left=(recover_errors>SKIP_PAGES)?chunks_number:(-1);
@@ -1523,6 +1526,12 @@ DjVuFile::decode_ndir(GMap<GURL, void *> & map)
           dir=d;
           break;
         }
+#ifndef SLOW_BUT_EXACT_DETECTION_OF_NDIR
+        if (chkid=="INCL")
+          found_incl = 1;
+        if (chunks>2 && !found_incl && !data_pool->is_eof())
+          return 0;
+#endif
         iff.seek_close_chunk();
       }
       if ((!dir)&&(chunks_number < 0)) chunks_number=last_chunk;
