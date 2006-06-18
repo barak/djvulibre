@@ -11,6 +11,7 @@
 DEB_HOST_GNU_TYPE   ?= $(shell dpkg-architecture -qDEB_HOST_GNU_TYPE)
 DEB_BUILD_GNU_TYPE  ?= $(shell dpkg-architecture -qDEB_BUILD_GNU_TYPE)
 
+SHELL=/bin/bash
 
 CFLAGS=-Wall -Wno-non-virtual-dtor # fix for m68k GCC 4.0 breakpage
 ifneq (,$(findstring debug,$(DEB_BUILD_OPTIONS)))
