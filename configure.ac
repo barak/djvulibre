@@ -147,7 +147,7 @@ AC_CHECK_TYPES(mbstate_t,,,[#include "wchar.h"])
 
 AC_FUNC_MMAP
 AC_FUNC_FORK
-AC_CHECK_FUNCS(wcrtomb iswspace)
+AC_CHECK_FUNCS(wcrtomb iswspace setenv)
 AC_CHECK_FUNCS(putc_unlocked strerror vsnprintf)
 AC_CHECK_FUNCS(gethostname iconv strftime getpwuid)
 

@@ -83,6 +83,7 @@
 #endif
 #include <signal.h>
 #include <stdio.h>
+#include <stdlib.h>
 
 #include <X11/Xlib.h>
 #include <X11/Xutil.h>
@@ -282,6 +283,13 @@ InitializeQT(int &argc, char ** argv)
 
    // QT and X11 error handlers
    InstallErrorHandlers();
+
+   // Make sure Xgl does not select transparent visuals
+#if HAVE_SETENV
+   setenv("XLIB_SKIP_ARGB_VISUALS", "1", 1);
+#else
+   putenv("XLIB_SKIP_ARGB_VISUALS=1");
+#endif
 
    // initialize application
    QApplication::setColorSpec( QApplication::ManyColor );
