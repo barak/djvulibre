@@ -41,14 +41,15 @@ You might never notice the difference.
 --------
 
 The graphical user interface of the viewer relies on the Qt library
-from TrollTech <http://www.trolltech.com>.  The command line tools 
+from TrollTech <http://www.trolltech.com>. The command line tools 
 do not rely on Qt and can be compiled independently.
 
 The source code of the Qt library can be downloaded from 
-<ftp://ftp.trolltech.com/qt/source/qt-x11-2.3.1.tar.gz>.
+<ftp://ftp.trolltech.com/qt/source/qt-x11-3.3.6.tar.gz>.
 
-Avoid versions earlier than 2.2.0.
-Suggested versions are 2.3.1 and 3.1+
+Avoid versions earlier than Qt-2.2.0.
+The suggested version is Qt-3.3.6
+Qt-4 support is under development.
 
 
 1.4 - THREADS
