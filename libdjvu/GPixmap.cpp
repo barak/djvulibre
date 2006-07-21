@@ -490,41 +490,72 @@ GPixmap::init(ByteStream &bs)
     }
   // Read image size
   char lookahead = '\n';
+  int bytesperrow = 0;
+  int bytespercomp = 1;
   int acolumns = read_integer(lookahead, bs);
   int arows = read_integer(lookahead, bs);
   int maxval = read_integer(lookahead, bs);
+  if (maxval > 65535)
+    G_THROW("Cannot read PPM with depth greater than 48 bits.");
   if (maxval > 255)
-    G_THROW("Cannot read PPM with depth greater than 24 bits.");
+    bytespercomp = 2;
   init(arows, acolumns, 0);
+  // Prepare ramp
+  GTArray<unsigned char> ramp;
+  int maxbin = 1 << (8 * bytespercomp);
+  ramp.resize(0, maxbin-1);
+  for (int i=0; i<maxbin; i++)
+    ramp[i] = (i<maxval ? (255*i + maxval/2) / maxval : 255);
+  unsigned char *bramp = ramp;
   // Read image data
   if (raw && grey)
     {
-      GTArray<unsigned char> line(ncolumns);
+      bytesperrow = ncolumns * bytespercomp;
+      GTArray<unsigned char> line(bytesperrow);
       for (int y=nrows-1; y>=0; y--) 
         {
           GPixel *p = (*this)[y];
           unsigned char *g = &line[0];
-          if ( bs.readall((void*)g, ncolumns) < (size_t)(ncolumns))
+          if ( bs.readall((void*)g, bytesperrow) < (size_t)bytesperrow)
             G_THROW( ByteStream::EndOfFile );
-          for (int x=0; x<ncolumns; x+=1, g+=1)
-            p[x].r = p[x].g = p[x].b = g[0];
+          if (bytespercomp <= 1)
+            {
+              for (int x=0; x<ncolumns; x+=1, g+=1)
+                p[x].r = p[x].g = p[x].b = bramp[g[0]];
+            }
+          else
+            {
+              for (int x=0; x<ncolumns; x+=1, g+=2)
+                p[x].r = p[x].g = p[x].b = bramp[g[0]*256+g[1]];
+            }
         }
     }
   else if (raw)
     {
-      GTArray<unsigned char> line(ncolumns*3);
+      bytesperrow = ncolumns * bytespercomp * 3;
+      GTArray<unsigned char> line(bytesperrow);
       for (int y=nrows-1; y>=0; y--) 
         {
           GPixel *p = (*this)[y];
           unsigned char *rgb = &line[0];
-          if ( bs.readall((void*)rgb, ncolumns*3) < (size_t)(ncolumns*3))
+          if ( bs.readall((void*)rgb, bytesperrow) < (size_t)bytesperrow)
             G_THROW( ByteStream::EndOfFile );
-          for (int x=0; x<ncolumns; x+=1, rgb+=3)
+          if (bytespercomp <= 1)
             {
-              p[x].r = rgb[0];
-              p[x].g = rgb[1];
-              p[x].b = rgb[2];
+              for (int x=0; x<ncolumns; x+=1, rgb+=3)
+                {
+                  p[x].r = bramp[rgb[0]];
+                  p[x].g = bramp[rgb[1]];
+                  p[x].b = bramp[rgb[2]];
+                }
             }
+          else
+            for (int x=0; x<ncolumns; x+=1, rgb+=6)
+              {
+                p[x].r = bramp[rgb[0]*256+rgb[1]];
+                p[x].g = bramp[rgb[2]*256+rgb[3]];
+                p[x].b = bramp[rgb[4]*256+rgb[5]];
+              }
         }
     }
   else
@@ -535,31 +566,14 @@ GPixmap::init(ByteStream &bs)
           for (int x=0; x<ncolumns; x++)
             if (grey)
               {
-                p[x].g = p[x].b = p[x].r = read_integer(lookahead, bs);
+                p[x].g = p[x].b = p[x].r = ramp[read_integer(lookahead, bs)];
               }
             else
               {
-                p[x].r = read_integer(lookahead, bs);
-                p[x].g = read_integer(lookahead, bs);
-                p[x].b = read_integer(lookahead, bs);
+                p[x].r = ramp[read_integer(lookahead, bs)];
+                p[x].g = ramp[read_integer(lookahead, bs)];
+                p[x].b = ramp[read_integer(lookahead, bs)];
               }
-        }
-    }
-  // Process small values of maxval
-  if (maxval>0 && maxval<255)
-    {
-      char table[256];
-      for (int i=0; i<256; i++)
-        table[i] = (i<maxval ? (255*i + maxval/2) / maxval : 255);
-      for (int y=0; y<nrows; y++)
-        {
-          GPixel *p = (*this)[y];
-          for (int x=0; x<ncolumns; x++)
-            {
-              p[x].r = table[p[x].r];
-              p[x].g = table[p[x].g];
-              p[x].b = table[p[x].b];
-            }
         }
     }
 }

@@ -481,9 +481,9 @@ private:
   int encode(unsigned char *&pruns,GPBuffer<unsigned char> &gpruns) const;
   void decode(unsigned char *runs);
   void read_pbm_text(ByteStream &ref); 
-  void read_pgm_text(ByteStream &ref); 
+  void read_pgm_text(ByteStream &ref, int maxval); 
   void read_pbm_raw(ByteStream &ref); 
-  void read_pgm_raw(ByteStream &ref); 
+  void read_pgm_raw(ByteStream &ref, int maxval); 
   void read_rle_raw(ByteStream &ref); 
   static void append_long_run(unsigned char *&data, int count);
   static void append_line(unsigned char *&data,const unsigned char *row,
