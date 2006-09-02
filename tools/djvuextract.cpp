@@ -131,35 +131,6 @@ struct SecondaryHeader {
 } secondary;
 
 
-void
-display_info_chunk(GP<ByteStream> ibs, const GURL &url)
-{
-  ibs->seek(0);
-  GP<IFFByteStream> giff=IFFByteStream::create(ibs);
-  IFFByteStream &iff=*giff;
-  GUTF8String chkid;
-  if (! iff.get_chunk(chkid))
-    G_THROW("Malformed DJVU file");
-  if (chkid != "FORM:DJVU" && chkid != "FORM:DJVI" )
-    G_THROW("This is not a layered DJVU file");
-  // Search info chunk
-  while (iff.get_chunk(chkid))
-    {
-      if (chkid=="INFO")
-        {
-          if (iff.get_bytestream()->readall((void*)&djvuinfo,sizeof(djvuinfo)) < sizeof(djvuinfo))
-            G_THROW("Cannot read INFO chunk");
-          DjVuPrintErrorUTF8("%s: (%d x %d) version %d\n", 
-                  (const char *)url, 
-                  (djvuinfo.width_hi<<8)+djvuinfo.width_lo, 
-                  (djvuinfo.height_hi<<8)+djvuinfo.height_lo,
-                  djvuinfo.version );
-        }
-      iff.close_chunk();
-    }
-}
-
-
 static void
 extract_chunk(GP<ByteStream> ibs, const GUTF8String &id, GP<ByteStream> out)
 {
@@ -278,8 +249,6 @@ main(int argc, char **argv)
         G_THROW("Decoding failed. Nothing can be done.");        
       GP<DjVuFile> file=doc->get_djvu_file(page_num);
       GP<ByteStream> pibs = file->get_djvu_bytestream(false, false);
-      // Search info chunk
-      display_info_chunk(pibs, url1);
       // Extract required chunks
       for (i=2; i<argc; i++)
         {

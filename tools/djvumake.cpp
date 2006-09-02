@@ -787,70 +787,49 @@ main(int argc, char **argv)
 ////////////////////////////////////////
 
 
-// -- Returns a dilated version of a bitmap
+// -- Returns a dilated version of a bitmap with the same size
 
 static GP<GBitmap> 
 dilate8(const GBitmap *p_bm)
 {
   const GBitmap& bm = *p_bm;
-  GP<GBitmap> p_newbm = GBitmap::create(bm.rows()+2,bm.columns()+2); 
+  GP<GBitmap> p_newbm = GBitmap::create(bm.rows(),bm.columns(),1);
   GBitmap& newbm = *p_newbm;
-  for(unsigned int y=0; y<bm.rows(); y++)
+  int nrows = bm.rows();
+  int ncols = bm.columns();
+  for(int y=0; y<nrows; y++)
     {
-      for(unsigned int x=0; x<bm.columns(); x++)
+      const unsigned char *bmrow = bm[y];
+      unsigned char *nbmprow = (y-1>=0) ? newbm[y-1] : 0;
+      unsigned char *nbmrow = newbm[y];
+      unsigned char *nbmnrow = (y+1<nrows) ? newbm[y+1] : 0;
+      for(int x=0; x<ncols; x++)
         {
-          if(bm[y][x]) 
+          if(bmrow[x]) 
             {
               // Set all the 8-neighborhood to black
-              newbm[y][x]=1;
-              newbm[y][x+1]=1;
-              newbm[y][x+2]=1;
-              newbm[y+1][x]=1;
-              newbm[y+1][x+1]=1;
-              newbm[y+1][x+2]=1;
-              newbm[y+2][x]=1;
-              newbm[y+2][x+1]=1;
-              newbm[y+2][x+2]=1;
+              if (nbmprow)
+                {
+                  nbmprow[x-1]=1;
+                  nbmprow[x]=1;
+                  nbmprow[x-1]=1;
+                }
+              nbmrow[x-1]=1;
+              nbmrow[x]=1;
+              nbmrow[x+1]=1;
+              if (nbmnrow)
+                {
+                  nbmnrow[x-1]=1;
+                  nbmnrow[x]=1;
+                  nbmnrow[x+1]=1;
+                }
             }
         }
     }
   return p_newbm;
 }
 
-
-// -- Returns a dilated version of a jb2image
-
-GP<JB2Image> 
-dilate8(const JB2Image *im)
-{
-  int i;
-  GP<JB2Image> newim = JB2Image::create();
-  newim->set_dimension(im->get_width(),im->get_height());
-  for(i=0; i<im->get_shape_count(); i++)
-    {
-      const JB2Shape &shape = im->get_shape(i);
-      JB2Shape newshape;
-      newshape.parent = shape.parent;
-      if (shape.bits) 
-        newshape.bits = dilate8(shape.bits);
-      else
-        newshape.bits = 0;
-      newim->add_shape(newshape);
-    }
-  for(i=0; i<im->get_blit_count(); i++)
-    {
-      const JB2Blit* blit = im->get_blit(i);
-      JB2Blit newblit;
-      newblit.bottom = blit->bottom - 1;
-      newblit.left = blit->left - 1;
-      newblit.shapeno = blit->shapeno;
-      newim->add_blit(newblit);
-    }
-  return newim;
-}
-
-
-// -- Returns an eroded version of a bitmap
+// -- Returns a smaller eroded version of a bitmap
 
 static GP<GBitmap> 
 erode8(const GBitmap *p_bm)
@@ -879,7 +858,7 @@ erode8(const GBitmap *p_bm)
 }
 
 
-// -- Returns an eroded version of a jb2image
+// -- Returns a smaller eroded version of a jb2image
 
 GP<JB2Image> 
 erode8(const JB2Image *im)
@@ -1020,11 +999,10 @@ void
 processBackground(const GPixmap* image, const JB2Image *mask,
                   GPixmap& subsampled_image, GBitmap& subsampled_mask)
 {
-  GP<JB2Image> dilated_mask1 = dilate8(mask);
-  GP<JB2Image> dilated_mask2 = dilate8(dilated_mask1);
-  maskedSubsample(image, dilated_mask2->get_bitmap(),
-                  subsampled_image, subsampled_mask, 
-                  3, 0);   // background subsample is 3 (300dpi->100dpi)
+  GP<GBitmap> b = mask->get_bitmap();
+  b = dilate8(b);
+  b = dilate8(b);
+  maskedSubsample(image, b, subsampled_image, subsampled_mask, 3, 0);
 }
 
 
