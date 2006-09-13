@@ -1,0 +1,1051 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 42;
+	objects = {
+
+/* Begin PBXBuildFile section */
+		41C10D980AB296AA00411F5B /* Arrays.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 41C10D260AB296AA00411F5B /* Arrays.cpp */; };
+		41C10D9A0AB296AA00411F5B /* BSByteStream.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 41C10D280AB296AA00411F5B /* BSByteStream.cpp */; };
+		41C10D9C0AB296AA00411F5B /* BSEncodeByteStream.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 41C10D2A0AB296AA00411F5B /* BSEncodeByteStream.cpp */; };
+		41C10D9D0AB296AA00411F5B /* ByteStream.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 41C10D2B0AB296AA00411F5B /* ByteStream.cpp */; };
+		41C10D9F0AB296AA00411F5B /* DataPool.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 41C10D2D0AB296AA00411F5B /* DataPool.cpp */; };
+		41C10DA10AB296AA00411F5B /* ddjvuapi.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 41C10D2F0AB296AA00411F5B /* ddjvuapi.cpp */; };
+		41C10DA50AB296AA00411F5B /* debug.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 41C10D330AB296AA00411F5B /* debug.cpp */; };
+		41C10DA70AB296AA00411F5B /* DjVmDir.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 41C10D350AB296AA00411F5B /* DjVmDir.cpp */; };
+		41C10DA90AB296AA00411F5B /* DjVmDir0.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 41C10D370AB296AA00411F5B /* DjVmDir0.cpp */; };
+		41C10DAB0AB296AA00411F5B /* DjVmDoc.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 41C10D390AB296AA00411F5B /* DjVmDoc.cpp */; };
+		41C10DAD0AB296AA00411F5B /* DjVmNav.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 41C10D3B0AB296AA00411F5B /* DjVmNav.cpp */; };
+		41C10DAF0AB296AA00411F5B /* DjVuAnno.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 41C10D3D0AB296AA00411F5B /* DjVuAnno.cpp */; };
+		41C10DB10AB296AA00411F5B /* DjVuDocEditor.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 41C10D3F0AB296AA00411F5B /* DjVuDocEditor.cpp */; };
+		41C10DB30AB296AA00411F5B /* DjVuDocument.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 41C10D410AB296AA00411F5B /* DjVuDocument.cpp */; };
+		41C10DB50AB296AA00411F5B /* DjVuDumpHelper.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 41C10D430AB296AA00411F5B /* DjVuDumpHelper.cpp */; };
+		41C10DB70AB296AA00411F5B /* DjVuErrorList.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 41C10D450AB296AA00411F5B /* DjVuErrorList.cpp */; };
+		41C10DB90AB296AA00411F5B /* DjVuFile.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 41C10D470AB296AA00411F5B /* DjVuFile.cpp */; };
+		41C10DBB0AB296AA00411F5B /* DjVuFileCache.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 41C10D490AB296AA00411F5B /* DjVuFileCache.cpp */; };
+		41C10DBD0AB296AA00411F5B /* DjVuGlobal.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 41C10D4B0AB296AA00411F5B /* DjVuGlobal.cpp */; };
+		41C10DBF0AB296AA00411F5B /* DjVuGlobalMemory.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 41C10D4D0AB296AA00411F5B /* DjVuGlobalMemory.cpp */; };
+		41C10DC00AB296AA00411F5B /* DjVuImage.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 41C10D4E0AB296AA00411F5B /* DjVuImage.cpp */; };
+		41C10DC20AB296AA00411F5B /* DjVuInfo.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 41C10D500AB296AA00411F5B /* DjVuInfo.cpp */; };
+		41C10DC40AB296AA00411F5B /* DjVuMessage.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 41C10D520AB296AA00411F5B /* DjVuMessage.cpp */; };
+		41C10DC60AB296AA00411F5B /* DjVuMessageLite.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 41C10D540AB296AA00411F5B /* DjVuMessageLite.cpp */; };
+		41C10DC80AB296AA00411F5B /* DjVuNavDir.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 41C10D560AB296AA00411F5B /* DjVuNavDir.cpp */; };
+		41C10DCA0AB296AA00411F5B /* DjVuPalette.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 41C10D580AB296AA00411F5B /* DjVuPalette.cpp */; };
+		41C10DCC0AB296AA00411F5B /* DjVuPort.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 41C10D5A0AB296AA00411F5B /* DjVuPort.cpp */; };
+		41C10DCE0AB296AA00411F5B /* DjVuText.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 41C10D5C0AB296AA00411F5B /* DjVuText.cpp */; };
+		41C10DD00AB296AA00411F5B /* DjVuToPS.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 41C10D5E0AB296AA00411F5B /* DjVuToPS.cpp */; };
+		41C10DD20AB296AA00411F5B /* GBitmap.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 41C10D600AB296AA00411F5B /* GBitmap.cpp */; };
+		41C10DD40AB296AA00411F5B /* GContainer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 41C10D620AB296AA00411F5B /* GContainer.cpp */; };
+		41C10DD60AB296AA00411F5B /* GException.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 41C10D640AB296AA00411F5B /* GException.cpp */; };
+		41C10DD80AB296AA00411F5B /* GIFFManager.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 41C10D660AB296AA00411F5B /* GIFFManager.cpp */; };
+		41C10DDA0AB296AA00411F5B /* GMapAreas.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 41C10D680AB296AA00411F5B /* GMapAreas.cpp */; };
+		41C10DDC0AB296AA00411F5B /* GOS.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 41C10D6A0AB296AA00411F5B /* GOS.cpp */; };
+		41C10DDE0AB296AA00411F5B /* GPixmap.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 41C10D6C0AB296AA00411F5B /* GPixmap.cpp */; };
+		41C10DE00AB296AA00411F5B /* GRect.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 41C10D6E0AB296AA00411F5B /* GRect.cpp */; };
+		41C10DE20AB296AA00411F5B /* GScaler.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 41C10D700AB296AA00411F5B /* GScaler.cpp */; };
+		41C10DE40AB296AA00411F5B /* GSmartPointer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 41C10D720AB296AA00411F5B /* GSmartPointer.cpp */; };
+		41C10DE60AB296AA00411F5B /* GString.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 41C10D740AB296AA00411F5B /* GString.cpp */; };
+		41C10DE80AB296AA00411F5B /* GThreads.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 41C10D760AB296AA00411F5B /* GThreads.cpp */; };
+		41C10DEA0AB296AA00411F5B /* GUnicode.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 41C10D780AB296AA00411F5B /* GUnicode.cpp */; };
+		41C10DEB0AB296AA00411F5B /* GURL.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 41C10D790AB296AA00411F5B /* GURL.cpp */; };
+		41C10DED0AB296AA00411F5B /* IFFByteStream.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 41C10D7B0AB296AA00411F5B /* IFFByteStream.cpp */; };
+		41C10DEF0AB296AA00411F5B /* IW44EncodeCodec.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 41C10D7D0AB296AA00411F5B /* IW44EncodeCodec.cpp */; };
+		41C10DF00AB296AA00411F5B /* IW44Image.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 41C10D7E0AB296AA00411F5B /* IW44Image.cpp */; };
+		41C10DF20AB296AA00411F5B /* JB2EncodeCodec.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 41C10D800AB296AA00411F5B /* JB2EncodeCodec.cpp */; };
+		41C10DF30AB296AA00411F5B /* JB2Image.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 41C10D810AB296AA00411F5B /* JB2Image.cpp */; };
+		41C10DF50AB296AA00411F5B /* JPEGDecoder.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 41C10D830AB296AA00411F5B /* JPEGDecoder.cpp */; };
+		41C10DFA0AB296AA00411F5B /* miniexp.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 41C10D880AB296AA00411F5B /* miniexp.cpp */; };
+		41C10DFC0AB296AA00411F5B /* MMRDecoder.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 41C10D8A0AB296AA00411F5B /* MMRDecoder.cpp */; };
+		41C10DFE0AB296AA00411F5B /* MMX.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 41C10D8C0AB296AA00411F5B /* MMX.cpp */; };
+		41C10E010AB296AA00411F5B /* UnicodeByteStream.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 41C10D8F0AB296AA00411F5B /* UnicodeByteStream.cpp */; };
+		41C10E030AB296AA00411F5B /* XMLParser.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 41C10D910AB296AA00411F5B /* XMLParser.cpp */; };
+		41C10E050AB296AA00411F5B /* XMLTags.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 41C10D930AB296AA00411F5B /* XMLTags.cpp */; };
+		41C10E070AB296AA00411F5B /* ZPCodec.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 41C10D950AB296AA00411F5B /* ZPCodec.cpp */; };
+		41C10E140AB312C200411F5B /* miniexp.h in Headers */ = {isa = PBXBuildFile; fileRef = 41C10D890AB296AA00411F5B /* miniexp.h */; };
+		41C10E150AB312E300411F5B /* ddjvuapi.h in Headers */ = {isa = PBXBuildFile; fileRef = 41C10D300AB296AA00411F5B /* ddjvuapi.h */; };
+		41C111FE0AB52B4600411F5B /* GMapAreas.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 41C10D680AB296AA00411F5B /* GMapAreas.cpp */; };
+		41C111FF0AB52B4600411F5B /* GException.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 41C10D640AB296AA00411F5B /* GException.cpp */; };
+		41C112000AB52B4600411F5B /* DjVuGlobalMemory.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 41C10D4D0AB296AA00411F5B /* DjVuGlobalMemory.cpp */; };
+		41C112010AB52B4600411F5B /* ByteStream.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 41C10D2B0AB296AA00411F5B /* ByteStream.cpp */; };
+		41C112020AB52B4600411F5B /* Arrays.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 41C10D260AB296AA00411F5B /* Arrays.cpp */; };
+		41C112030AB52B4600411F5B /* DjVmDir.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 41C10D350AB296AA00411F5B /* DjVmDir.cpp */; };
+		41C112040AB52B4600411F5B /* ZPCodec.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 41C10D950AB296AA00411F5B /* ZPCodec.cpp */; };
+		41C112050AB52B4600411F5B /* miniexp.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 41C10D880AB296AA00411F5B /* miniexp.cpp */; };
+		41C112060AB52B4600411F5B /* GScaler.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 41C10D700AB296AA00411F5B /* GScaler.cpp */; };
+		41C112070AB52B4600411F5B /* GThreads.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 41C10D760AB296AA00411F5B /* GThreads.cpp */; };
+		41C112080AB52B4600411F5B /* debug.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 41C10D330AB296AA00411F5B /* debug.cpp */; };
+		41C112090AB52B4600411F5B /* GBitmap.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 41C10D600AB296AA00411F5B /* GBitmap.cpp */; };
+		41C1120A0AB52B4600411F5B /* DjVuMessage.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 41C10D520AB296AA00411F5B /* DjVuMessage.cpp */; };
+		41C1120B0AB52B4600411F5B /* XMLTags.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 41C10D930AB296AA00411F5B /* XMLTags.cpp */; };
+		41C1120C0AB52B4600411F5B /* DjVuInfo.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 41C10D500AB296AA00411F5B /* DjVuInfo.cpp */; };
+		41C1120D0AB52B4600411F5B /* XMLParser.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 41C10D910AB296AA00411F5B /* XMLParser.cpp */; };
+		41C1120E0AB52B4600411F5B /* DjVmNav.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 41C10D3B0AB296AA00411F5B /* DjVmNav.cpp */; };
+		41C1120F0AB52B4600411F5B /* DjVuToPS.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 41C10D5E0AB296AA00411F5B /* DjVuToPS.cpp */; };
+		41C112100AB52B4600411F5B /* JB2EncodeCodec.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 41C10D800AB296AA00411F5B /* JB2EncodeCodec.cpp */; };
+		41C112110AB52B4600411F5B /* DjVuDumpHelper.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 41C10D430AB296AA00411F5B /* DjVuDumpHelper.cpp */; };
+		41C112120AB52B4600411F5B /* GURL.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 41C10D790AB296AA00411F5B /* GURL.cpp */; };
+		41C112130AB52B4600411F5B /* JB2Image.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 41C10D810AB296AA00411F5B /* JB2Image.cpp */; };
+		41C112140AB52B4600411F5B /* DataPool.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 41C10D2D0AB296AA00411F5B /* DataPool.cpp */; };
+		41C112150AB52B4600411F5B /* DjVuFile.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 41C10D470AB296AA00411F5B /* DjVuFile.cpp */; };
+		41C112160AB52B4600411F5B /* IW44EncodeCodec.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 41C10D7D0AB296AA00411F5B /* IW44EncodeCodec.cpp */; };
+		41C112170AB52B4600411F5B /* DjVmDir0.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 41C10D370AB296AA00411F5B /* DjVmDir0.cpp */; };
+		41C112180AB52B4600411F5B /* DjVuAnno.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 41C10D3D0AB296AA00411F5B /* DjVuAnno.cpp */; };
+		41C112190AB52B4600411F5B /* DjVuPort.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 41C10D5A0AB296AA00411F5B /* DjVuPort.cpp */; };
+		41C1121A0AB52B4600411F5B /* BSByteStream.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 41C10D280AB296AA00411F5B /* BSByteStream.cpp */; };
+		41C1121B0AB52B4600411F5B /* GSmartPointer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 41C10D720AB296AA00411F5B /* GSmartPointer.cpp */; };
+		41C1121C0AB52B4600411F5B /* DjVuText.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 41C10D5C0AB296AA00411F5B /* DjVuText.cpp */; };
+		41C1121D0AB52B4600411F5B /* DjVuNavDir.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 41C10D560AB296AA00411F5B /* DjVuNavDir.cpp */; };
+		41C1121E0AB52B4600411F5B /* GUnicode.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 41C10D780AB296AA00411F5B /* GUnicode.cpp */; };
+		41C1121F0AB52B4600411F5B /* DjVuGlobal.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 41C10D4B0AB296AA00411F5B /* DjVuGlobal.cpp */; };
+		41C112200AB52B4600411F5B /* GIFFManager.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 41C10D660AB296AA00411F5B /* GIFFManager.cpp */; };
+		41C112210AB52B4600411F5B /* DjVuMessageLite.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 41C10D540AB296AA00411F5B /* DjVuMessageLite.cpp */; };
+		41C112220AB52B4600411F5B /* DjVuFileCache.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 41C10D490AB296AA00411F5B /* DjVuFileCache.cpp */; };
+		41C112230AB52B4600411F5B /* DjVmDoc.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 41C10D390AB296AA00411F5B /* DjVmDoc.cpp */; };
+		41C112240AB52B4600411F5B /* DjVuErrorList.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 41C10D450AB296AA00411F5B /* DjVuErrorList.cpp */; };
+		41C112250AB52B4600411F5B /* DjVuDocEditor.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 41C10D3F0AB296AA00411F5B /* DjVuDocEditor.cpp */; };
+		41C112260AB52B4600411F5B /* JPEGDecoder.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 41C10D830AB296AA00411F5B /* JPEGDecoder.cpp */; };
+		41C112270AB52B4600411F5B /* GContainer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 41C10D620AB296AA00411F5B /* GContainer.cpp */; };
+		41C112280AB52B4600411F5B /* GRect.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 41C10D6E0AB296AA00411F5B /* GRect.cpp */; };
+		41C112290AB52B4600411F5B /* UnicodeByteStream.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 41C10D8F0AB296AA00411F5B /* UnicodeByteStream.cpp */; };
+		41C1122A0AB52B4600411F5B /* IW44Image.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 41C10D7E0AB296AA00411F5B /* IW44Image.cpp */; };
+		41C1122B0AB52B4600411F5B /* BSEncodeByteStream.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 41C10D2A0AB296AA00411F5B /* BSEncodeByteStream.cpp */; };
+		41C1122C0AB52B4600411F5B /* GString.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 41C10D740AB296AA00411F5B /* GString.cpp */; };
+		41C1122D0AB52B4600411F5B /* MMRDecoder.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 41C10D8A0AB296AA00411F5B /* MMRDecoder.cpp */; };
+		41C1122E0AB52B4600411F5B /* DjVuPalette.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 41C10D580AB296AA00411F5B /* DjVuPalette.cpp */; };
+		41C1122F0AB52B4600411F5B /* ddjvuapi.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 41C10D2F0AB296AA00411F5B /* ddjvuapi.cpp */; };
+		41C112300AB52B4600411F5B /* DjVuDocument.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 41C10D410AB296AA00411F5B /* DjVuDocument.cpp */; };
+		41C112310AB52B4600411F5B /* MMX.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 41C10D8C0AB296AA00411F5B /* MMX.cpp */; };
+		41C112320AB52B4600411F5B /* GPixmap.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 41C10D6C0AB296AA00411F5B /* GPixmap.cpp */; };
+		41C112330AB52B4600411F5B /* GOS.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 41C10D6A0AB296AA00411F5B /* GOS.cpp */; };
+		41C112340AB52B4600411F5B /* DjVuImage.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 41C10D4E0AB296AA00411F5B /* DjVuImage.cpp */; };
+		41C112350AB52B4600411F5B /* IFFByteStream.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 41C10D7B0AB296AA00411F5B /* IFFByteStream.cpp */; };
+		41C1126D0AB52E8C00411F5B /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = 41C112620AB52E8C00411F5B /* InfoPlist.strings */; };
+		41C1126E0AB52E8C00411F5B /* schema.strings in Resources */ = {isa = PBXBuildFile; fileRef = 41C112640AB52E8C00411F5B /* schema.strings */; };
+		41C1126F0AB52E8C00411F5B /* GetMetadataForFile.m in Sources */ = {isa = PBXBuildFile; fileRef = 41C112660AB52E8C00411F5B /* GetMetadataForFile.m */; };
+		41C112710AB52E8C00411F5B /* main.c in Sources */ = {isa = PBXBuildFile; fileRef = 41C112680AB52E8C00411F5B /* main.c */; };
+		41C112720AB52E8C00411F5B /* schema.xml in Resources */ = {isa = PBXBuildFile; fileRef = 41C112690AB52E8C00411F5B /* schema.xml */; };
+		41C1128B0AB5301C00411F5B /* CoreFoundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 41C112880AB5301C00411F5B /* CoreFoundation.framework */; };
+		41C1128C0AB5301C00411F5B /* CoreServices.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 41C112890AB5301C00411F5B /* CoreServices.framework */; };
+		41C1128D0AB5301C00411F5B /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 41C1128A0AB5301C00411F5B /* Foundation.framework */; };
+		41C112910AB5304B00411F5B /* libdjvulibre.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 41C112900AB5304B00411F5B /* libdjvulibre.a */; };
+		41C112C30AB5381A00411F5B /* libiconv.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 41C112C20AB5381A00411F5B /* libiconv.dylib */; };
+/* End PBXBuildFile section */
+
+/* Begin PBXContainerItemProxy section */
+		41C112850AB52FB300411F5B /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 41C10D090AB294CB00411F5B /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 41C111E20AB5292400411F5B;
+			remoteInfo = "Static Library";
+		};
+/* End PBXContainerItemProxy section */
+
+/* Begin PBXFileReference section */
+		4154B95D0AB7C86D00865C24 /* any2djvu */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.sh; path = any2djvu; sourceTree = "<group>"; };
+		4154B95E0AB7C86D00865C24 /* any2djvu.1 */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.man; path = any2djvu.1; sourceTree = "<group>"; };
+		4154B95F0AB7C86D00865C24 /* bzz.1 */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.man; path = bzz.1; sourceTree = "<group>"; };
+		4154B9600AB7C86D00865C24 /* bzz.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = bzz.cpp; sourceTree = "<group>"; };
+		4154B9620AB7C86D00865C24 /* c44.1 */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.man; path = c44.1; sourceTree = "<group>"; };
+		4154B9630AB7C86D00865C24 /* c44.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = c44.cpp; sourceTree = "<group>"; };
+		4154B9650AB7C86D00865C24 /* cjb2.1 */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.man; path = cjb2.1; sourceTree = "<group>"; };
+		4154B9660AB7C86D00865C24 /* cjb2.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = cjb2.cpp; sourceTree = "<group>"; };
+		4154B9680AB7C86D00865C24 /* cpaldjvu.1 */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.man; path = cpaldjvu.1; sourceTree = "<group>"; };
+		4154B9690AB7C86D00865C24 /* cpaldjvu.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = cpaldjvu.cpp; sourceTree = "<group>"; };
+		4154B96B0AB7C86D00865C24 /* csepdjvu.1 */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.man; path = csepdjvu.1; sourceTree = "<group>"; };
+		4154B96C0AB7C86D00865C24 /* csepdjvu.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = csepdjvu.cpp; sourceTree = "<group>"; };
+		4154B96E0AB7C86D00865C24 /* ddjvu.1 */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.man; path = ddjvu.1; sourceTree = "<group>"; };
+		4154B96F0AB7C86D00865C24 /* ddjvu.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ddjvu.cpp; sourceTree = "<group>"; };
+		4154B9710AB7C86D00865C24 /* djvm.1 */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.man; path = djvm.1; sourceTree = "<group>"; };
+		4154B9720AB7C86D00865C24 /* djvm.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = djvm.cpp; sourceTree = "<group>"; };
+		4154B9740AB7C86D00865C24 /* djvmcvt.1 */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.man; path = djvmcvt.1; sourceTree = "<group>"; };
+		4154B9750AB7C86D00865C24 /* djvmcvt.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = djvmcvt.cpp; sourceTree = "<group>"; };
+		4154B9770AB7C86D00865C24 /* djvu.1 */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.man; path = djvu.1; sourceTree = "<group>"; };
+		4154B9780AB7C86D00865C24 /* djvudigital */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.sh; path = djvudigital; sourceTree = "<group>"; };
+		4154B9790AB7C86D00865C24 /* djvudigital.1 */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.man; path = djvudigital.1; sourceTree = "<group>"; };
+		4154B97A0AB7C86D00865C24 /* djvudump.1 */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.man; path = djvudump.1; sourceTree = "<group>"; };
+		4154B97B0AB7C86D00865C24 /* djvudump.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = djvudump.cpp; sourceTree = "<group>"; };
+		4154B97D0AB7C86D00865C24 /* djvuextract.1 */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.man; path = djvuextract.1; sourceTree = "<group>"; };
+		4154B97E0AB7C86D00865C24 /* djvuextract.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = djvuextract.cpp; sourceTree = "<group>"; };
+		4154B9800AB7C86D00865C24 /* djvumake.1 */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.man; path = djvumake.1; sourceTree = "<group>"; };
+		4154B9810AB7C86D00865C24 /* djvumake.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = djvumake.cpp; sourceTree = "<group>"; };
+		4154B9830AB7C86D00865C24 /* djvups.1 */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.man; path = djvups.1; sourceTree = "<group>"; };
+		4154B9840AB7C86E00865C24 /* djvups.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = djvups.cpp; sourceTree = "<group>"; };
+		4154B9860AB7C86E00865C24 /* djvused.1 */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.man; path = djvused.1; sourceTree = "<group>"; };
+		4154B9870AB7C86E00865C24 /* djvused.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = djvused.cpp; sourceTree = "<group>"; };
+		4154B9890AB7C86E00865C24 /* djvuserve.1 */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.man; path = djvuserve.1; sourceTree = "<group>"; };
+		4154B98A0AB7C86E00865C24 /* djvuserve.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = djvuserve.cpp; sourceTree = "<group>"; };
+		4154B98C0AB7C86E00865C24 /* djvutxt.1 */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.man; path = djvutxt.1; sourceTree = "<group>"; };
+		4154B98D0AB7C86E00865C24 /* djvutxt.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = djvutxt.cpp; sourceTree = "<group>"; };
+		4154B9910AB7C86E00865C24 /* classify.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = classify.cpp; sourceTree = "<group>"; };
+		4154B9920AB7C86E00865C24 /* classify.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = classify.h; sourceTree = "<group>"; };
+		4154B9930AB7C86E00865C24 /* cuts.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = cuts.cpp; sourceTree = "<group>"; };
+		4154B9940AB7C86E00865C24 /* frames.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = frames.cpp; sourceTree = "<group>"; };
+		4154B9980AB7C86E00865C24 /* mdjvucfg.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = mdjvucfg.h; sourceTree = "<group>"; };
+		4154B9990AB7C86E00865C24 /* minidjvu.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = minidjvu.h; sourceTree = "<group>"; };
+		4154B99A0AB7C86E00865C24 /* patterns.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = patterns.cpp; sourceTree = "<group>"; };
+		4154B99B0AB7C86E00865C24 /* patterns.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = patterns.h; sourceTree = "<group>"; };
+		4154B99C0AB7C86E00865C24 /* README */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = README; sourceTree = "<group>"; };
+		4154B99D0AB7C86E00865C24 /* jb2tune.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = jb2tune.cpp; sourceTree = "<group>"; };
+		4154B99E0AB7C86E00865C24 /* jb2tune.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = jb2tune.h; sourceTree = "<group>"; };
+		41C10D1B0AB2956C00411F5B /* DjVuLibre.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = DjVuLibre.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		41C10D1D0AB2956C00411F5B /* DjVuLibre-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.xml; path = "DjVuLibre-Info.plist"; sourceTree = "<group>"; };
+		41C10D260AB296AA00411F5B /* Arrays.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Arrays.cpp; sourceTree = "<group>"; };
+		41C10D270AB296AA00411F5B /* Arrays.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Arrays.h; sourceTree = "<group>"; };
+		41C10D280AB296AA00411F5B /* BSByteStream.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = BSByteStream.cpp; sourceTree = "<group>"; };
+		41C10D290AB296AA00411F5B /* BSByteStream.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BSByteStream.h; sourceTree = "<group>"; };
+		41C10D2A0AB296AA00411F5B /* BSEncodeByteStream.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = BSEncodeByteStream.cpp; sourceTree = "<group>"; };
+		41C10D2B0AB296AA00411F5B /* ByteStream.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ByteStream.cpp; sourceTree = "<group>"; };
+		41C10D2C0AB296AA00411F5B /* ByteStream.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ByteStream.h; sourceTree = "<group>"; };
+		41C10D2D0AB296AA00411F5B /* DataPool.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = DataPool.cpp; sourceTree = "<group>"; };
+		41C10D2E0AB296AA00411F5B /* DataPool.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DataPool.h; sourceTree = "<group>"; };
+		41C10D2F0AB296AA00411F5B /* ddjvuapi.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ddjvuapi.cpp; sourceTree = "<group>"; };
+		41C10D300AB296AA00411F5B /* ddjvuapi.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ddjvuapi.h; sourceTree = "<group>"; };
+		41C10D330AB296AA00411F5B /* debug.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = debug.cpp; sourceTree = "<group>"; };
+		41C10D340AB296AA00411F5B /* debug.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = debug.h; sourceTree = "<group>"; };
+		41C10D350AB296AA00411F5B /* DjVmDir.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = DjVmDir.cpp; sourceTree = "<group>"; };
+		41C10D360AB296AA00411F5B /* DjVmDir.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DjVmDir.h; sourceTree = "<group>"; };
+		41C10D370AB296AA00411F5B /* DjVmDir0.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = DjVmDir0.cpp; sourceTree = "<group>"; };
+		41C10D380AB296AA00411F5B /* DjVmDir0.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DjVmDir0.h; sourceTree = "<group>"; };
+		41C10D390AB296AA00411F5B /* DjVmDoc.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = DjVmDoc.cpp; sourceTree = "<group>"; };
+		41C10D3A0AB296AA00411F5B /* DjVmDoc.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DjVmDoc.h; sourceTree = "<group>"; };
+		41C10D3B0AB296AA00411F5B /* DjVmNav.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = DjVmNav.cpp; sourceTree = "<group>"; };
+		41C10D3C0AB296AA00411F5B /* DjVmNav.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DjVmNav.h; sourceTree = "<group>"; };
+		41C10D3D0AB296AA00411F5B /* DjVuAnno.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = DjVuAnno.cpp; sourceTree = "<group>"; };
+		41C10D3E0AB296AA00411F5B /* DjVuAnno.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DjVuAnno.h; sourceTree = "<group>"; };
+		41C10D3F0AB296AA00411F5B /* DjVuDocEditor.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = DjVuDocEditor.cpp; sourceTree = "<group>"; };
+		41C10D400AB296AA00411F5B /* DjVuDocEditor.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DjVuDocEditor.h; sourceTree = "<group>"; };
+		41C10D410AB296AA00411F5B /* DjVuDocument.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = DjVuDocument.cpp; sourceTree = "<group>"; };
+		41C10D420AB296AA00411F5B /* DjVuDocument.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DjVuDocument.h; sourceTree = "<group>"; };
+		41C10D430AB296AA00411F5B /* DjVuDumpHelper.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = DjVuDumpHelper.cpp; sourceTree = "<group>"; };
+		41C10D440AB296AA00411F5B /* DjVuDumpHelper.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DjVuDumpHelper.h; sourceTree = "<group>"; };
+		41C10D450AB296AA00411F5B /* DjVuErrorList.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = DjVuErrorList.cpp; sourceTree = "<group>"; };
+		41C10D460AB296AA00411F5B /* DjVuErrorList.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DjVuErrorList.h; sourceTree = "<group>"; };
+		41C10D470AB296AA00411F5B /* DjVuFile.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = DjVuFile.cpp; sourceTree = "<group>"; };
+		41C10D480AB296AA00411F5B /* DjVuFile.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DjVuFile.h; sourceTree = "<group>"; };
+		41C10D490AB296AA00411F5B /* DjVuFileCache.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = DjVuFileCache.cpp; sourceTree = "<group>"; };
+		41C10D4A0AB296AA00411F5B /* DjVuFileCache.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DjVuFileCache.h; sourceTree = "<group>"; };
+		41C10D4B0AB296AA00411F5B /* DjVuGlobal.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = DjVuGlobal.cpp; sourceTree = "<group>"; };
+		41C10D4C0AB296AA00411F5B /* DjVuGlobal.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DjVuGlobal.h; sourceTree = "<group>"; };
+		41C10D4D0AB296AA00411F5B /* DjVuGlobalMemory.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = DjVuGlobalMemory.cpp; sourceTree = "<group>"; };
+		41C10D4E0AB296AA00411F5B /* DjVuImage.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = DjVuImage.cpp; sourceTree = "<group>"; };
+		41C10D4F0AB296AA00411F5B /* DjVuImage.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DjVuImage.h; sourceTree = "<group>"; };
+		41C10D500AB296AA00411F5B /* DjVuInfo.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = DjVuInfo.cpp; sourceTree = "<group>"; };
+		41C10D510AB296AA00411F5B /* DjVuInfo.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DjVuInfo.h; sourceTree = "<group>"; };
+		41C10D520AB296AA00411F5B /* DjVuMessage.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = DjVuMessage.cpp; sourceTree = "<group>"; };
+		41C10D530AB296AA00411F5B /* DjVuMessage.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DjVuMessage.h; sourceTree = "<group>"; };
+		41C10D540AB296AA00411F5B /* DjVuMessageLite.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = DjVuMessageLite.cpp; sourceTree = "<group>"; };
+		41C10D550AB296AA00411F5B /* DjVuMessageLite.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DjVuMessageLite.h; sourceTree = "<group>"; };
+		41C10D560AB296AA00411F5B /* DjVuNavDir.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = DjVuNavDir.cpp; sourceTree = "<group>"; };
+		41C10D570AB296AA00411F5B /* DjVuNavDir.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DjVuNavDir.h; sourceTree = "<group>"; };
+		41C10D580AB296AA00411F5B /* DjVuPalette.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = DjVuPalette.cpp; sourceTree = "<group>"; };
+		41C10D590AB296AA00411F5B /* DjVuPalette.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DjVuPalette.h; sourceTree = "<group>"; };
+		41C10D5A0AB296AA00411F5B /* DjVuPort.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = DjVuPort.cpp; sourceTree = "<group>"; };
+		41C10D5B0AB296AA00411F5B /* DjVuPort.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DjVuPort.h; sourceTree = "<group>"; };
+		41C10D5C0AB296AA00411F5B /* DjVuText.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = DjVuText.cpp; sourceTree = "<group>"; };
+		41C10D5D0AB296AA00411F5B /* DjVuText.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DjVuText.h; sourceTree = "<group>"; };
+		41C10D5E0AB296AA00411F5B /* DjVuToPS.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = DjVuToPS.cpp; sourceTree = "<group>"; };
+		41C10D5F0AB296AA00411F5B /* DjVuToPS.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DjVuToPS.h; sourceTree = "<group>"; };
+		41C10D600AB296AA00411F5B /* GBitmap.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = GBitmap.cpp; sourceTree = "<group>"; };
+		41C10D610AB296AA00411F5B /* GBitmap.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GBitmap.h; sourceTree = "<group>"; };
+		41C10D620AB296AA00411F5B /* GContainer.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = GContainer.cpp; sourceTree = "<group>"; };
+		41C10D630AB296AA00411F5B /* GContainer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GContainer.h; sourceTree = "<group>"; };
+		41C10D640AB296AA00411F5B /* GException.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = GException.cpp; sourceTree = "<group>"; };
+		41C10D650AB296AA00411F5B /* GException.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GException.h; sourceTree = "<group>"; };
+		41C10D660AB296AA00411F5B /* GIFFManager.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = GIFFManager.cpp; sourceTree = "<group>"; };
+		41C10D670AB296AA00411F5B /* GIFFManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GIFFManager.h; sourceTree = "<group>"; };
+		41C10D680AB296AA00411F5B /* GMapAreas.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = GMapAreas.cpp; sourceTree = "<group>"; };
+		41C10D690AB296AA00411F5B /* GMapAreas.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GMapAreas.h; sourceTree = "<group>"; };
+		41C10D6A0AB296AA00411F5B /* GOS.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = GOS.cpp; sourceTree = "<group>"; };
+		41C10D6B0AB296AA00411F5B /* GOS.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GOS.h; sourceTree = "<group>"; };
+		41C10D6C0AB296AA00411F5B /* GPixmap.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = GPixmap.cpp; sourceTree = "<group>"; };
+		41C10D6D0AB296AA00411F5B /* GPixmap.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GPixmap.h; sourceTree = "<group>"; };
+		41C10D6E0AB296AA00411F5B /* GRect.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = GRect.cpp; sourceTree = "<group>"; };
+		41C10D6F0AB296AA00411F5B /* GRect.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GRect.h; sourceTree = "<group>"; };
+		41C10D700AB296AA00411F5B /* GScaler.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = GScaler.cpp; sourceTree = "<group>"; };
+		41C10D710AB296AA00411F5B /* GScaler.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GScaler.h; sourceTree = "<group>"; };
+		41C10D720AB296AA00411F5B /* GSmartPointer.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = GSmartPointer.cpp; sourceTree = "<group>"; };
+		41C10D730AB296AA00411F5B /* GSmartPointer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GSmartPointer.h; sourceTree = "<group>"; };
+		41C10D740AB296AA00411F5B /* GString.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = GString.cpp; sourceTree = "<group>"; };
+		41C10D750AB296AA00411F5B /* GString.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GString.h; sourceTree = "<group>"; };
+		41C10D760AB296AA00411F5B /* GThreads.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = GThreads.cpp; sourceTree = "<group>"; };
+		41C10D770AB296AA00411F5B /* GThreads.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GThreads.h; sourceTree = "<group>"; };
+		41C10D780AB296AA00411F5B /* GUnicode.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = GUnicode.cpp; sourceTree = "<group>"; };
+		41C10D790AB296AA00411F5B /* GURL.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = GURL.cpp; sourceTree = "<group>"; };
+		41C10D7A0AB296AA00411F5B /* GURL.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GURL.h; sourceTree = "<group>"; };
+		41C10D7B0AB296AA00411F5B /* IFFByteStream.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = IFFByteStream.cpp; sourceTree = "<group>"; };
+		41C10D7C0AB296AA00411F5B /* IFFByteStream.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = IFFByteStream.h; sourceTree = "<group>"; };
+		41C10D7D0AB296AA00411F5B /* IW44EncodeCodec.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = IW44EncodeCodec.cpp; sourceTree = "<group>"; };
+		41C10D7E0AB296AA00411F5B /* IW44Image.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = IW44Image.cpp; sourceTree = "<group>"; };
+		41C10D7F0AB296AA00411F5B /* IW44Image.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = IW44Image.h; sourceTree = "<group>"; };
+		41C10D800AB296AA00411F5B /* JB2EncodeCodec.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JB2EncodeCodec.cpp; sourceTree = "<group>"; };
+		41C10D810AB296AA00411F5B /* JB2Image.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JB2Image.cpp; sourceTree = "<group>"; };
+		41C10D820AB296AA00411F5B /* JB2Image.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JB2Image.h; sourceTree = "<group>"; };
+		41C10D830AB296AA00411F5B /* JPEGDecoder.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JPEGDecoder.cpp; sourceTree = "<group>"; };
+		41C10D840AB296AA00411F5B /* JPEGDecoder.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JPEGDecoder.h; sourceTree = "<group>"; };
+		41C10D880AB296AA00411F5B /* miniexp.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = miniexp.cpp; sourceTree = "<group>"; };
+		41C10D890AB296AA00411F5B /* miniexp.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = miniexp.h; sourceTree = "<group>"; };
+		41C10D8A0AB296AA00411F5B /* MMRDecoder.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = MMRDecoder.cpp; sourceTree = "<group>"; };
+		41C10D8B0AB296AA00411F5B /* MMRDecoder.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MMRDecoder.h; sourceTree = "<group>"; };
+		41C10D8C0AB296AA00411F5B /* MMX.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = MMX.cpp; sourceTree = "<group>"; };
+		41C10D8D0AB296AA00411F5B /* MMX.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MMX.h; sourceTree = "<group>"; };
+		41C10D8E0AB296AA00411F5B /* Template.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Template.h; sourceTree = "<group>"; };
+		41C10D8F0AB296AA00411F5B /* UnicodeByteStream.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = UnicodeByteStream.cpp; sourceTree = "<group>"; };
+		41C10D900AB296AA00411F5B /* UnicodeByteStream.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UnicodeByteStream.h; sourceTree = "<group>"; };
+		41C10D910AB296AA00411F5B /* XMLParser.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = XMLParser.cpp; sourceTree = "<group>"; };
+		41C10D920AB296AA00411F5B /* XMLParser.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = XMLParser.h; sourceTree = "<group>"; };
+		41C10D930AB296AA00411F5B /* XMLTags.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = XMLTags.cpp; sourceTree = "<group>"; };
+		41C10D940AB296AA00411F5B /* XMLTags.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = XMLTags.h; sourceTree = "<group>"; };
+		41C10D950AB296AA00411F5B /* ZPCodec.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ZPCodec.cpp; sourceTree = "<group>"; };
+		41C10D960AB296AA00411F5B /* ZPCodec.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ZPCodec.h; sourceTree = "<group>"; };
+		41C10E2E0AB322B000411F5B /* mkconfig.sh */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.sh; path = mkconfig.sh; sourceTree = "<group>"; };
+		41C110EB0AB4A4CF00411F5B /* config.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = config.h; path = ../../config.h; sourceTree = SOURCE_ROOT; };
+		41C111200AB4AA9B00411F5B /* debug.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; path = debug.xcconfig; sourceTree = "<group>"; };
+		41C111BA0AB523CF00411F5B /* release.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; path = release.xcconfig; sourceTree = "<group>"; };
+		41C111BB0AB523CF00411F5B /* VersionConfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = VersionConfig; sourceTree = "<group>"; };
+		41C111E30AB5292400411F5B /* libdjvulibre.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libdjvulibre.a; sourceTree = BUILT_PRODUCTS_DIR; };
+		41C112550AB52DF400411F5B /* DjVu.mdimporter */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = DjVu.mdimporter; sourceTree = BUILT_PRODUCTS_DIR; };
+		41C112630AB52E8C00411F5B /* English */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.strings; name = English; path = English.lproj/InfoPlist.strings; sourceTree = "<group>"; };
+		41C112650AB52E8C00411F5B /* English */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.strings; name = English; path = English.lproj/schema.strings; sourceTree = "<group>"; };
+		41C112660AB52E8C00411F5B /* GetMetadataForFile.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = GetMetadataForFile.m; sourceTree = "<group>"; };
+		41C112670AB52E8C00411F5B /* DjVu_mdimporter-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xml; path = "DjVu_mdimporter-Info.plist"; sourceTree = SOURCE_ROOT; };
+		41C112680AB52E8C00411F5B /* main.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = main.c; sourceTree = "<group>"; };
+		41C112690AB52E8C00411F5B /* schema.xml */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xml; path = schema.xml; sourceTree = "<group>"; };
+		41C112880AB5301C00411F5B /* CoreFoundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreFoundation.framework; path = /System/Library/Frameworks/CoreFoundation.framework; sourceTree = "<absolute>"; };
+		41C112890AB5301C00411F5B /* CoreServices.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreServices.framework; path = /System/Library/Frameworks/CoreServices.framework; sourceTree = "<absolute>"; };
+		41C1128A0AB5301C00411F5B /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = /System/Library/Frameworks/Foundation.framework; sourceTree = "<absolute>"; };
+		41C112900AB5304B00411F5B /* libdjvulibre.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libdjvulibre.a; path = ../Debug/libdjvulibre.a; sourceTree = BUILT_PRODUCTS_DIR; };
+		41C112C20AB5381A00411F5B /* libiconv.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libiconv.dylib; path = /usr/lib/libiconv.dylib; sourceTree = "<absolute>"; };
+		41C112DB0AB62B8D00411F5B /* System.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = System.framework; path = /System/Library/Frameworks/System.framework; sourceTree = "<absolute>"; };
+/* End PBXFileReference section */
+
+/* Begin PBXFrameworksBuildPhase section */
+		41C10D190AB2956C00411F5B /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		41C111E10AB5292400411F5B /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		41C112530AB52DF400411F5B /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				41C1128B0AB5301C00411F5B /* CoreFoundation.framework in Frameworks */,
+				41C1128C0AB5301C00411F5B /* CoreServices.framework in Frameworks */,
+				41C1128D0AB5301C00411F5B /* Foundation.framework in Frameworks */,
+				41C112910AB5304B00411F5B /* libdjvulibre.a in Frameworks */,
+				41C112C30AB5381A00411F5B /* libiconv.dylib in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXFrameworksBuildPhase section */
+
+/* Begin PBXGroup section */
+		4154B95B0AB7C86D00865C24 /* tools */ = {
+			isa = PBXGroup;
+			children = (
+				4154B9A60AB7C8AF00865C24 /* man */,
+				4154B95D0AB7C86D00865C24 /* any2djvu */,
+				4154B9600AB7C86D00865C24 /* bzz.cpp */,
+				4154B9630AB7C86D00865C24 /* c44.cpp */,
+				4154B9660AB7C86D00865C24 /* cjb2.cpp */,
+				4154B9690AB7C86D00865C24 /* cpaldjvu.cpp */,
+				4154B96C0AB7C86D00865C24 /* csepdjvu.cpp */,
+				4154B96F0AB7C86D00865C24 /* ddjvu.cpp */,
+				4154B9720AB7C86D00865C24 /* djvm.cpp */,
+				4154B9750AB7C86D00865C24 /* djvmcvt.cpp */,
+				4154B9780AB7C86D00865C24 /* djvudigital */,
+				4154B97B0AB7C86D00865C24 /* djvudump.cpp */,
+				4154B97E0AB7C86D00865C24 /* djvuextract.cpp */,
+				4154B9810AB7C86D00865C24 /* djvumake.cpp */,
+				4154B9840AB7C86E00865C24 /* djvups.cpp */,
+				4154B9870AB7C86E00865C24 /* djvused.cpp */,
+				4154B98A0AB7C86E00865C24 /* djvuserve.cpp */,
+				4154B98D0AB7C86E00865C24 /* djvutxt.cpp */,
+				4154B98F0AB7C86E00865C24 /* jb2cmp */,
+				4154B99D0AB7C86E00865C24 /* jb2tune.cpp */,
+				4154B99E0AB7C86E00865C24 /* jb2tune.h */,
+			);
+			name = tools;
+			path = ../../tools;
+			sourceTree = SOURCE_ROOT;
+		};
+		4154B98F0AB7C86E00865C24 /* jb2cmp */ = {
+			isa = PBXGroup;
+			children = (
+				4154B9910AB7C86E00865C24 /* classify.cpp */,
+				4154B9920AB7C86E00865C24 /* classify.h */,
+				4154B9930AB7C86E00865C24 /* cuts.cpp */,
+				4154B9940AB7C86E00865C24 /* frames.cpp */,
+				4154B9980AB7C86E00865C24 /* mdjvucfg.h */,
+				4154B9990AB7C86E00865C24 /* minidjvu.h */,
+				4154B99A0AB7C86E00865C24 /* patterns.cpp */,
+				4154B99B0AB7C86E00865C24 /* patterns.h */,
+				4154B99C0AB7C86E00865C24 /* README */,
+			);
+			path = jb2cmp;
+			sourceTree = "<group>";
+		};
+		4154B9A60AB7C8AF00865C24 /* man */ = {
+			isa = PBXGroup;
+			children = (
+				4154B95E0AB7C86D00865C24 /* any2djvu.1 */,
+				4154B95F0AB7C86D00865C24 /* bzz.1 */,
+				4154B9620AB7C86D00865C24 /* c44.1 */,
+				4154B9650AB7C86D00865C24 /* cjb2.1 */,
+				4154B9680AB7C86D00865C24 /* cpaldjvu.1 */,
+				4154B96B0AB7C86D00865C24 /* csepdjvu.1 */,
+				4154B96E0AB7C86D00865C24 /* ddjvu.1 */,
+				4154B9710AB7C86D00865C24 /* djvm.1 */,
+				4154B9740AB7C86D00865C24 /* djvmcvt.1 */,
+				4154B9770AB7C86D00865C24 /* djvu.1 */,
+				4154B9790AB7C86D00865C24 /* djvudigital.1 */,
+				4154B97A0AB7C86D00865C24 /* djvudump.1 */,
+				4154B97D0AB7C86D00865C24 /* djvuextract.1 */,
+				4154B9800AB7C86D00865C24 /* djvumake.1 */,
+				4154B9830AB7C86D00865C24 /* djvups.1 */,
+				4154B9860AB7C86E00865C24 /* djvused.1 */,
+				4154B9890AB7C86E00865C24 /* djvuserve.1 */,
+				4154B98C0AB7C86E00865C24 /* djvutxt.1 */,
+			);
+			name = man;
+			sourceTree = "<group>";
+		};
+		41C10D070AB294CB00411F5B = {
+			isa = PBXGroup;
+			children = (
+				41C10E1E0AB314D800411F5B /* config */,
+				41C10D240AB296AA00411F5B /* libdjvu */,
+				4154B95B0AB7C86D00865C24 /* tools */,
+				41C112600AB52E8C00411F5B /* mdimporter */,
+				41C10D1C0AB2956C00411F5B /* Products */,
+				41C10D1D0AB2956C00411F5B /* DjVuLibre-Info.plist */,
+			);
+			sourceTree = "<group>";
+		};
+		41C10D1C0AB2956C00411F5B /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				41C10D1B0AB2956C00411F5B /* DjVuLibre.framework */,
+				41C111E30AB5292400411F5B /* libdjvulibre.a */,
+				41C112550AB52DF400411F5B /* DjVu.mdimporter */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		41C10D240AB296AA00411F5B /* libdjvu */ = {
+			isa = PBXGroup;
+			children = (
+				41C10D260AB296AA00411F5B /* Arrays.cpp */,
+				41C10D270AB296AA00411F5B /* Arrays.h */,
+				41C10D280AB296AA00411F5B /* BSByteStream.cpp */,
+				41C10D290AB296AA00411F5B /* BSByteStream.h */,
+				41C10D2A0AB296AA00411F5B /* BSEncodeByteStream.cpp */,
+				41C10D2B0AB296AA00411F5B /* ByteStream.cpp */,
+				41C10D2C0AB296AA00411F5B /* ByteStream.h */,
+				41C10D2D0AB296AA00411F5B /* DataPool.cpp */,
+				41C10D2E0AB296AA00411F5B /* DataPool.h */,
+				41C10D2F0AB296AA00411F5B /* ddjvuapi.cpp */,
+				41C10D300AB296AA00411F5B /* ddjvuapi.h */,
+				41C10D330AB296AA00411F5B /* debug.cpp */,
+				41C10D340AB296AA00411F5B /* debug.h */,
+				41C10D350AB296AA00411F5B /* DjVmDir.cpp */,
+				41C10D360AB296AA00411F5B /* DjVmDir.h */,
+				41C10D370AB296AA00411F5B /* DjVmDir0.cpp */,
+				41C10D380AB296AA00411F5B /* DjVmDir0.h */,
+				41C10D390AB296AA00411F5B /* DjVmDoc.cpp */,
+				41C10D3A0AB296AA00411F5B /* DjVmDoc.h */,
+				41C10D3B0AB296AA00411F5B /* DjVmNav.cpp */,
+				41C10D3C0AB296AA00411F5B /* DjVmNav.h */,
+				41C10D3D0AB296AA00411F5B /* DjVuAnno.cpp */,
+				41C10D3E0AB296AA00411F5B /* DjVuAnno.h */,
+				41C10D3F0AB296AA00411F5B /* DjVuDocEditor.cpp */,
+				41C10D400AB296AA00411F5B /* DjVuDocEditor.h */,
+				41C10D410AB296AA00411F5B /* DjVuDocument.cpp */,
+				41C10D420AB296AA00411F5B /* DjVuDocument.h */,
+				41C10D430AB296AA00411F5B /* DjVuDumpHelper.cpp */,
+				41C10D440AB296AA00411F5B /* DjVuDumpHelper.h */,
+				41C10D450AB296AA00411F5B /* DjVuErrorList.cpp */,
+				41C10D460AB296AA00411F5B /* DjVuErrorList.h */,
+				41C10D470AB296AA00411F5B /* DjVuFile.cpp */,
+				41C10D480AB296AA00411F5B /* DjVuFile.h */,
+				41C10D490AB296AA00411F5B /* DjVuFileCache.cpp */,
+				41C10D4A0AB296AA00411F5B /* DjVuFileCache.h */,
+				41C10D4B0AB296AA00411F5B /* DjVuGlobal.cpp */,
+				41C10D4C0AB296AA00411F5B /* DjVuGlobal.h */,
+				41C10D4D0AB296AA00411F5B /* DjVuGlobalMemory.cpp */,
+				41C10D4E0AB296AA00411F5B /* DjVuImage.cpp */,
+				41C10D4F0AB296AA00411F5B /* DjVuImage.h */,
+				41C10D500AB296AA00411F5B /* DjVuInfo.cpp */,
+				41C10D510AB296AA00411F5B /* DjVuInfo.h */,
+				41C10D520AB296AA00411F5B /* DjVuMessage.cpp */,
+				41C10D530AB296AA00411F5B /* DjVuMessage.h */,
+				41C10D540AB296AA00411F5B /* DjVuMessageLite.cpp */,
+				41C10D550AB296AA00411F5B /* DjVuMessageLite.h */,
+				41C10D560AB296AA00411F5B /* DjVuNavDir.cpp */,
+				41C10D570AB296AA00411F5B /* DjVuNavDir.h */,
+				41C10D580AB296AA00411F5B /* DjVuPalette.cpp */,
+				41C10D590AB296AA00411F5B /* DjVuPalette.h */,
+				41C10D5A0AB296AA00411F5B /* DjVuPort.cpp */,
+				41C10D5B0AB296AA00411F5B /* DjVuPort.h */,
+				41C10D5C0AB296AA00411F5B /* DjVuText.cpp */,
+				41C10D5D0AB296AA00411F5B /* DjVuText.h */,
+				41C10D5E0AB296AA00411F5B /* DjVuToPS.cpp */,
+				41C10D5F0AB296AA00411F5B /* DjVuToPS.h */,
+				41C10D600AB296AA00411F5B /* GBitmap.cpp */,
+				41C10D610AB296AA00411F5B /* GBitmap.h */,
+				41C10D620AB296AA00411F5B /* GContainer.cpp */,
+				41C10D630AB296AA00411F5B /* GContainer.h */,
+				41C10D640AB296AA00411F5B /* GException.cpp */,
+				41C10D650AB296AA00411F5B /* GException.h */,
+				41C10D660AB296AA00411F5B /* GIFFManager.cpp */,
+				41C10D670AB296AA00411F5B /* GIFFManager.h */,
+				41C10D680AB296AA00411F5B /* GMapAreas.cpp */,
+				41C10D690AB296AA00411F5B /* GMapAreas.h */,
+				41C10D6A0AB296AA00411F5B /* GOS.cpp */,
+				41C10D6B0AB296AA00411F5B /* GOS.h */,
+				41C10D6C0AB296AA00411F5B /* GPixmap.cpp */,
+				41C10D6D0AB296AA00411F5B /* GPixmap.h */,
+				41C10D6E0AB296AA00411F5B /* GRect.cpp */,
+				41C10D6F0AB296AA00411F5B /* GRect.h */,
+				41C10D700AB296AA00411F5B /* GScaler.cpp */,
+				41C10D710AB296AA00411F5B /* GScaler.h */,
+				41C10D720AB296AA00411F5B /* GSmartPointer.cpp */,
+				41C10D730AB296AA00411F5B /* GSmartPointer.h */,
+				41C10D740AB296AA00411F5B /* GString.cpp */,
+				41C10D750AB296AA00411F5B /* GString.h */,
+				41C10D760AB296AA00411F5B /* GThreads.cpp */,
+				41C10D770AB296AA00411F5B /* GThreads.h */,
+				41C10D780AB296AA00411F5B /* GUnicode.cpp */,
+				41C10D790AB296AA00411F5B /* GURL.cpp */,
+				41C10D7A0AB296AA00411F5B /* GURL.h */,
+				41C10D7B0AB296AA00411F5B /* IFFByteStream.cpp */,
+				41C10D7C0AB296AA00411F5B /* IFFByteStream.h */,
+				41C10D7D0AB296AA00411F5B /* IW44EncodeCodec.cpp */,
+				41C10D7E0AB296AA00411F5B /* IW44Image.cpp */,
+				41C10D7F0AB296AA00411F5B /* IW44Image.h */,
+				41C10D800AB296AA00411F5B /* JB2EncodeCodec.cpp */,
+				41C10D810AB296AA00411F5B /* JB2Image.cpp */,
+				41C10D820AB296AA00411F5B /* JB2Image.h */,
+				41C10D830AB296AA00411F5B /* JPEGDecoder.cpp */,
+				41C10D840AB296AA00411F5B /* JPEGDecoder.h */,
+				41C10D880AB296AA00411F5B /* miniexp.cpp */,
+				41C10D890AB296AA00411F5B /* miniexp.h */,
+				41C10D8A0AB296AA00411F5B /* MMRDecoder.cpp */,
+				41C10D8B0AB296AA00411F5B /* MMRDecoder.h */,
+				41C10D8C0AB296AA00411F5B /* MMX.cpp */,
+				41C10D8D0AB296AA00411F5B /* MMX.h */,
+				41C10D8E0AB296AA00411F5B /* Template.h */,
+				41C10D8F0AB296AA00411F5B /* UnicodeByteStream.cpp */,
+				41C10D900AB296AA00411F5B /* UnicodeByteStream.h */,
+				41C10D910AB296AA00411F5B /* XMLParser.cpp */,
+				41C10D920AB296AA00411F5B /* XMLParser.h */,
+				41C10D930AB296AA00411F5B /* XMLTags.cpp */,
+				41C10D940AB296AA00411F5B /* XMLTags.h */,
+				41C10D950AB296AA00411F5B /* ZPCodec.cpp */,
+				41C10D960AB296AA00411F5B /* ZPCodec.h */,
+			);
+			name = libdjvu;
+			path = ../../libdjvu;
+			sourceTree = SOURCE_ROOT;
+		};
+		41C10E1E0AB314D800411F5B /* config */ = {
+			isa = PBXGroup;
+			children = (
+				41C10E2E0AB322B000411F5B /* mkconfig.sh */,
+				41C110EB0AB4A4CF00411F5B /* config.h */,
+				41C111BB0AB523CF00411F5B /* VersionConfig */,
+				41C111200AB4AA9B00411F5B /* debug.xcconfig */,
+				41C111BA0AB523CF00411F5B /* release.xcconfig */,
+			);
+			name = config;
+			sourceTree = "<group>";
+		};
+		41C112600AB52E8C00411F5B /* mdimporter */ = {
+			isa = PBXGroup;
+			children = (
+				41C112750AB52EA200411F5B /* Source */,
+				41C112760AB52EB600411F5B /* Resources */,
+				41C112870AB52FDC00411F5B /* External Frameworks and Libraries */,
+			);
+			path = mdimporter;
+			sourceTree = "<group>";
+		};
+		41C112750AB52EA200411F5B /* Source */ = {
+			isa = PBXGroup;
+			children = (
+				41C112660AB52E8C00411F5B /* GetMetadataForFile.m */,
+				41C112680AB52E8C00411F5B /* main.c */,
+			);
+			name = Source;
+			sourceTree = "<group>";
+		};
+		41C112760AB52EB600411F5B /* Resources */ = {
+			isa = PBXGroup;
+			children = (
+				41C112620AB52E8C00411F5B /* InfoPlist.strings */,
+				41C112640AB52E8C00411F5B /* schema.strings */,
+				41C112670AB52E8C00411F5B /* DjVu_mdimporter-Info.plist */,
+				41C112690AB52E8C00411F5B /* schema.xml */,
+			);
+			name = Resources;
+			sourceTree = "<group>";
+		};
+		41C112870AB52FDC00411F5B /* External Frameworks and Libraries */ = {
+			isa = PBXGroup;
+			children = (
+				41C112C20AB5381A00411F5B /* libiconv.dylib */,
+				41C112900AB5304B00411F5B /* libdjvulibre.a */,
+				41C112880AB5301C00411F5B /* CoreFoundation.framework */,
+				41C112890AB5301C00411F5B /* CoreServices.framework */,
+				41C1128A0AB5301C00411F5B /* Foundation.framework */,
+				41C112DB0AB62B8D00411F5B /* System.framework */,
+			);
+			name = "External Frameworks and Libraries";
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
+
+/* Begin PBXHeadersBuildPhase section */
+		41C10D160AB2956C00411F5B /* Headers */ = {
+			isa = PBXHeadersBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				41C10E150AB312E300411F5B /* ddjvuapi.h in Headers */,
+				41C10E140AB312C200411F5B /* miniexp.h in Headers */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		41C111DF0AB5292400411F5B /* Headers */ = {
+			isa = PBXHeadersBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXHeadersBuildPhase section */
+
+/* Begin PBXNativeTarget section */
+		41C10D1A0AB2956C00411F5B /* DjVuLibre */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 41C10D1F0AB2956D00411F5B /* Build configuration list for PBXNativeTarget "DjVuLibre" */;
+			buildPhases = (
+				41C10D160AB2956C00411F5B /* Headers */,
+				41C10D170AB2956C00411F5B /* Resources */,
+				41C10D180AB2956C00411F5B /* Sources */,
+				41C10D190AB2956C00411F5B /* Frameworks */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = DjVuLibre;
+			productName = DjVuLibre;
+			productReference = 41C10D1B0AB2956C00411F5B /* DjVuLibre.framework */;
+			productType = "com.apple.product-type.framework";
+		};
+		41C111E20AB5292400411F5B /* Static Library */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 41C111E60AB5295500411F5B /* Build configuration list for PBXNativeTarget "Static Library" */;
+			buildPhases = (
+				41C111DF0AB5292400411F5B /* Headers */,
+				41C111E00AB5292400411F5B /* Sources */,
+				41C111E10AB5292400411F5B /* Frameworks */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = "Static Library";
+			productName = "Static Library";
+			productReference = 41C111E30AB5292400411F5B /* libdjvulibre.a */;
+			productType = "com.apple.product-type.library.static";
+		};
+		41C112540AB52DF400411F5B /* DjVu.mdimporter */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 41C112570AB52DF400411F5B /* Build configuration list for PBXNativeTarget "DjVu.mdimporter" */;
+			buildPhases = (
+				41C112510AB52DF400411F5B /* Resources */,
+				41C112520AB52DF400411F5B /* Sources */,
+				41C112530AB52DF400411F5B /* Frameworks */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				41C112860AB52FB300411F5B /* PBXTargetDependency */,
+			);
+			name = DjVu.mdimporter;
+			productName = DjVu.mdimporter;
+			productReference = 41C112550AB52DF400411F5B /* DjVu.mdimporter */;
+			productType = "com.apple.product-type.bundle";
+		};
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		41C10D090AB294CB00411F5B /* Project object */ = {
+			isa = PBXProject;
+			buildConfigurationList = 41C10D0A0AB294CB00411F5B /* Build configuration list for PBXProject "DjVuLibre" */;
+			hasScannedForEncodings = 0;
+			mainGroup = 41C10D070AB294CB00411F5B;
+			productRefGroup = 41C10D1C0AB2956C00411F5B /* Products */;
+			projectDirPath = "";
+			projectRoot = "";
+			targets = (
+				41C10D1A0AB2956C00411F5B /* DjVuLibre */,
+				41C111E20AB5292400411F5B /* Static Library */,
+				41C112540AB52DF400411F5B /* DjVu.mdimporter */,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin PBXResourcesBuildPhase section */
+		41C10D170AB2956C00411F5B /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		41C112510AB52DF400411F5B /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				41C1126D0AB52E8C00411F5B /* InfoPlist.strings in Resources */,
+				41C1126E0AB52E8C00411F5B /* schema.strings in Resources */,
+				41C112720AB52E8C00411F5B /* schema.xml in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXResourcesBuildPhase section */
+
+/* Begin PBXSourcesBuildPhase section */
+		41C10D180AB2956C00411F5B /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				41C10D980AB296AA00411F5B /* Arrays.cpp in Sources */,
+				41C10D9A0AB296AA00411F5B /* BSByteStream.cpp in Sources */,
+				41C10D9C0AB296AA00411F5B /* BSEncodeByteStream.cpp in Sources */,
+				41C10D9D0AB296AA00411F5B /* ByteStream.cpp in Sources */,
+				41C10D9F0AB296AA00411F5B /* DataPool.cpp in Sources */,
+				41C10DA10AB296AA00411F5B /* ddjvuapi.cpp in Sources */,
+				41C10DA50AB296AA00411F5B /* debug.cpp in Sources */,
+				41C10DA70AB296AA00411F5B /* DjVmDir.cpp in Sources */,
+				41C10DA90AB296AA00411F5B /* DjVmDir0.cpp in Sources */,
+				41C10DAB0AB296AA00411F5B /* DjVmDoc.cpp in Sources */,
+				41C10DAD0AB296AA00411F5B /* DjVmNav.cpp in Sources */,
+				41C10DAF0AB296AA00411F5B /* DjVuAnno.cpp in Sources */,
+				41C10DB10AB296AA00411F5B /* DjVuDocEditor.cpp in Sources */,
+				41C10DB30AB296AA00411F5B /* DjVuDocument.cpp in Sources */,
+				41C10DB50AB296AA00411F5B /* DjVuDumpHelper.cpp in Sources */,
+				41C10DB70AB296AA00411F5B /* DjVuErrorList.cpp in Sources */,
+				41C10DB90AB296AA00411F5B /* DjVuFile.cpp in Sources */,
+				41C10DBB0AB296AA00411F5B /* DjVuFileCache.cpp in Sources */,
+				41C10DBD0AB296AA00411F5B /* DjVuGlobal.cpp in Sources */,
+				41C10DBF0AB296AA00411F5B /* DjVuGlobalMemory.cpp in Sources */,
+				41C10DC00AB296AA00411F5B /* DjVuImage.cpp in Sources */,
+				41C10DC20AB296AA00411F5B /* DjVuInfo.cpp in Sources */,
+				41C10DC40AB296AA00411F5B /* DjVuMessage.cpp in Sources */,
+				41C10DC60AB296AA00411F5B /* DjVuMessageLite.cpp in Sources */,
+				41C10DC80AB296AA00411F5B /* DjVuNavDir.cpp in Sources */,
+				41C10DCA0AB296AA00411F5B /* DjVuPalette.cpp in Sources */,
+				41C10DCC0AB296AA00411F5B /* DjVuPort.cpp in Sources */,
+				41C10DCE0AB296AA00411F5B /* DjVuText.cpp in Sources */,
+				41C10DD00AB296AA00411F5B /* DjVuToPS.cpp in Sources */,
+				41C10DD20AB296AA00411F5B /* GBitmap.cpp in Sources */,
+				41C10DD40AB296AA00411F5B /* GContainer.cpp in Sources */,
+				41C10DD60AB296AA00411F5B /* GException.cpp in Sources */,
+				41C10DD80AB296AA00411F5B /* GIFFManager.cpp in Sources */,
+				41C10DDA0AB296AA00411F5B /* GMapAreas.cpp in Sources */,
+				41C10DDC0AB296AA00411F5B /* GOS.cpp in Sources */,
+				41C10DDE0AB296AA00411F5B /* GPixmap.cpp in Sources */,
+				41C10DE00AB296AA00411F5B /* GRect.cpp in Sources */,
+				41C10DE20AB296AA00411F5B /* GScaler.cpp in Sources */,
+				41C10DE40AB296AA00411F5B /* GSmartPointer.cpp in Sources */,
+				41C10DE60AB296AA00411F5B /* GString.cpp in Sources */,
+				41C10DE80AB296AA00411F5B /* GThreads.cpp in Sources */,
+				41C10DEA0AB296AA00411F5B /* GUnicode.cpp in Sources */,
+				41C10DEB0AB296AA00411F5B /* GURL.cpp in Sources */,
+				41C10DED0AB296AA00411F5B /* IFFByteStream.cpp in Sources */,
+				41C10DEF0AB296AA00411F5B /* IW44EncodeCodec.cpp in Sources */,
+				41C10DF00AB296AA00411F5B /* IW44Image.cpp in Sources */,
+				41C10DF20AB296AA00411F5B /* JB2EncodeCodec.cpp in Sources */,
+				41C10DF30AB296AA00411F5B /* JB2Image.cpp in Sources */,
+				41C10DF50AB296AA00411F5B /* JPEGDecoder.cpp in Sources */,
+				41C10DFA0AB296AA00411F5B /* miniexp.cpp in Sources */,
+				41C10DFC0AB296AA00411F5B /* MMRDecoder.cpp in Sources */,
+				41C10DFE0AB296AA00411F5B /* MMX.cpp in Sources */,
+				41C10E010AB296AA00411F5B /* UnicodeByteStream.cpp in Sources */,
+				41C10E030AB296AA00411F5B /* XMLParser.cpp in Sources */,
+				41C10E050AB296AA00411F5B /* XMLTags.cpp in Sources */,
+				41C10E070AB296AA00411F5B /* ZPCodec.cpp in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		41C111E00AB5292400411F5B /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				41C111FE0AB52B4600411F5B /* GMapAreas.cpp in Sources */,
+				41C111FF0AB52B4600411F5B /* GException.cpp in Sources */,
+				41C112000AB52B4600411F5B /* DjVuGlobalMemory.cpp in Sources */,
+				41C112010AB52B4600411F5B /* ByteStream.cpp in Sources */,
+				41C112020AB52B4600411F5B /* Arrays.cpp in Sources */,
+				41C112030AB52B4600411F5B /* DjVmDir.cpp in Sources */,
+				41C112040AB52B4600411F5B /* ZPCodec.cpp in Sources */,
+				41C112050AB52B4600411F5B /* miniexp.cpp in Sources */,
+				41C112060AB52B4600411F5B /* GScaler.cpp in Sources */,
+				41C112070AB52B4600411F5B /* GThreads.cpp in Sources */,
+				41C112080AB52B4600411F5B /* debug.cpp in Sources */,
+				41C112090AB52B4600411F5B /* GBitmap.cpp in Sources */,
+				41C1120A0AB52B4600411F5B /* DjVuMessage.cpp in Sources */,
+				41C1120B0AB52B4600411F5B /* XMLTags.cpp in Sources */,
+				41C1120C0AB52B4600411F5B /* DjVuInfo.cpp in Sources */,
+				41C1120D0AB52B4600411F5B /* XMLParser.cpp in Sources */,
+				41C1120E0AB52B4600411F5B /* DjVmNav.cpp in Sources */,
+				41C1120F0AB52B4600411F5B /* DjVuToPS.cpp in Sources */,
+				41C112100AB52B4600411F5B /* JB2EncodeCodec.cpp in Sources */,
+				41C112110AB52B4600411F5B /* DjVuDumpHelper.cpp in Sources */,
+				41C112120AB52B4600411F5B /* GURL.cpp in Sources */,
+				41C112130AB52B4600411F5B /* JB2Image.cpp in Sources */,
+				41C112140AB52B4600411F5B /* DataPool.cpp in Sources */,
+				41C112150AB52B4600411F5B /* DjVuFile.cpp in Sources */,
+				41C112160AB52B4600411F5B /* IW44EncodeCodec.cpp in Sources */,
+				41C112170AB52B4600411F5B /* DjVmDir0.cpp in Sources */,
+				41C112180AB52B4600411F5B /* DjVuAnno.cpp in Sources */,
+				41C112190AB52B4600411F5B /* DjVuPort.cpp in Sources */,
+				41C1121A0AB52B4600411F5B /* BSByteStream.cpp in Sources */,
+				41C1121B0AB52B4600411F5B /* GSmartPointer.cpp in Sources */,
+				41C1121C0AB52B4600411F5B /* DjVuText.cpp in Sources */,
+				41C1121D0AB52B4600411F5B /* DjVuNavDir.cpp in Sources */,
+				41C1121E0AB52B4600411F5B /* GUnicode.cpp in Sources */,
+				41C1121F0AB52B4600411F5B /* DjVuGlobal.cpp in Sources */,
+				41C112200AB52B4600411F5B /* GIFFManager.cpp in Sources */,
+				41C112210AB52B4600411F5B /* DjVuMessageLite.cpp in Sources */,
+				41C112220AB52B4600411F5B /* DjVuFileCache.cpp in Sources */,
+				41C112230AB52B4600411F5B /* DjVmDoc.cpp in Sources */,
+				41C112240AB52B4600411F5B /* DjVuErrorList.cpp in Sources */,
+				41C112250AB52B4600411F5B /* DjVuDocEditor.cpp in Sources */,
+				41C112260AB52B4600411F5B /* JPEGDecoder.cpp in Sources */,
+				41C112270AB52B4600411F5B /* GContainer.cpp in Sources */,
+				41C112280AB52B4600411F5B /* GRect.cpp in Sources */,
+				41C112290AB52B4600411F5B /* UnicodeByteStream.cpp in Sources */,
+				41C1122A0AB52B4600411F5B /* IW44Image.cpp in Sources */,
+				41C1122B0AB52B4600411F5B /* BSEncodeByteStream.cpp in Sources */,
+				41C1122C0AB52B4600411F5B /* GString.cpp in Sources */,
+				41C1122D0AB52B4600411F5B /* MMRDecoder.cpp in Sources */,
+				41C1122E0AB52B4600411F5B /* DjVuPalette.cpp in Sources */,
+				41C1122F0AB52B4600411F5B /* ddjvuapi.cpp in Sources */,
+				41C112300AB52B4600411F5B /* DjVuDocument.cpp in Sources */,
+				41C112310AB52B4600411F5B /* MMX.cpp in Sources */,
+				41C112320AB52B4600411F5B /* GPixmap.cpp in Sources */,
+				41C112330AB52B4600411F5B /* GOS.cpp in Sources */,
+				41C112340AB52B4600411F5B /* DjVuImage.cpp in Sources */,
+				41C112350AB52B4600411F5B /* IFFByteStream.cpp in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		41C112520AB52DF400411F5B /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				41C1126F0AB52E8C00411F5B /* GetMetadataForFile.m in Sources */,
+				41C112710AB52E8C00411F5B /* main.c in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXSourcesBuildPhase section */
+
+/* Begin PBXTargetDependency section */
+		41C112860AB52FB300411F5B /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 41C111E20AB5292400411F5B /* Static Library */;
+			targetProxy = 41C112850AB52FB300411F5B /* PBXContainerItemProxy */;
+		};
+/* End PBXTargetDependency section */
+
+/* Begin PBXVariantGroup section */
+		41C112620AB52E8C00411F5B /* InfoPlist.strings */ = {
+			isa = PBXVariantGroup;
+			children = (
+				41C112630AB52E8C00411F5B /* English */,
+			);
+			name = InfoPlist.strings;
+			sourceTree = "<group>";
+		};
+		41C112640AB52E8C00411F5B /* schema.strings */ = {
+			isa = PBXVariantGroup;
+			children = (
+				41C112650AB52E8C00411F5B /* English */,
+			);
+			name = schema.strings;
+			sourceTree = "<group>";
+		};
+/* End PBXVariantGroup section */
+
+/* Begin XCBuildConfiguration section */
+		41C10D0B0AB294CB00411F5B /* Debug */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = 41C111200AB4AA9B00411F5B /* debug.xcconfig */;
+			buildSettings = {
+				COPY_PHASE_STRIP = NO;
+			};
+			name = Debug;
+		};
+		41C10D0C0AB294CB00411F5B /* Release */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = 41C111BA0AB523CF00411F5B /* release.xcconfig */;
+			buildSettings = {
+				COPY_PHASE_STRIP = YES;
+			};
+			name = Release;
+		};
+		41C10D200AB2956D00411F5B /* Debug */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = 41C111200AB4AA9B00411F5B /* debug.xcconfig */;
+			buildSettings = {
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_ENABLE_FIX_AND_CONTINUE = YES;
+				GCC_MODEL_TUNING = G5;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				INFOPLIST_FILE = "DjVuLibre-Info.plist";
+				INSTALL_PATH = /Library/Frameworks;
+				OTHER_LDFLAGS = (
+					"$(VersionLDFLAGS)",
+					"-liconv",
+				);
+				PRODUCT_NAME = DjVuLibre;
+			};
+			name = Debug;
+		};
+		41C10D210AB2956D00411F5B /* Release */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = 41C111BA0AB523CF00411F5B /* release.xcconfig */;
+			buildSettings = {
+				GCC_MODEL_TUNING = G5;
+				INFOPLIST_FILE = "DjVuLibre-Info.plist";
+				INSTALL_PATH = /Library/Frameworks;
+				OTHER_LDFLAGS = (
+					"$(VersionLDFLAGS)",
+					"-liconv",
+				);
+				PRODUCT_NAME = DjVuLibre;
+			};
+			name = Release;
+		};
+		41C111E70AB5295500411F5B /* Debug */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = 41C111200AB4AA9B00411F5B /* debug.xcconfig */;
+			buildSettings = {
+				COPY_PHASE_STRIP = NO;
+				GCC_ENABLE_FIX_AND_CONTINUE = YES;
+				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
+				GCC_MODEL_TUNING = G5;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				INSTALL_PATH = /usr/local/lib;
+				PRODUCT_NAME = djvulibre;
+				STANDARD_C_PLUS_PLUS_LIBRARY_TYPE = static;
+			};
+			name = Debug;
+		};
+		41C111E80AB5295500411F5B /* Release */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = 41C111BA0AB523CF00411F5B /* release.xcconfig */;
+			buildSettings = {
+				COPY_PHASE_STRIP = YES;
+				GCC_ENABLE_FIX_AND_CONTINUE = NO;
+				GCC_GENERATE_DEBUGGING_SYMBOLS = NO;
+				GCC_MODEL_TUNING = G5;
+				INSTALL_PATH = /usr/local/lib;
+				PREBINDING = NO;
+				PRODUCT_NAME = djvulibre;
+				STANDARD_C_PLUS_PLUS_LIBRARY_TYPE = static;
+				ZERO_LINK = NO;
+			};
+			name = Release;
+		};
+		41C112580AB52DF400411F5B /* Debug */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = 41C111200AB4AA9B00411F5B /* debug.xcconfig */;
+			buildSettings = {
+				GCC_ENABLE_FIX_AND_CONTINUE = YES;
+				GCC_MODEL_TUNING = G5;
+				INFOPLIST_FILE = "DjVu_mdimporter-Info.plist";
+				INSTALL_PATH = /Library/Spotlight;
+				OTHER_CFLAGS = "-I$(SOURCE_ROOT)/../..";
+				OTHER_LDFLAGS = "";
+				PRODUCT_NAME = DjVu;
+				STANDARD_C_PLUS_PLUS_LIBRARY_TYPE = static;
+				WRAPPER_EXTENSION = mdimporter;
+			};
+			name = Debug;
+		};
+		41C112590AB52DF400411F5B /* Release */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = 41C111BA0AB523CF00411F5B /* release.xcconfig */;
+			buildSettings = {
+				GCC_ENABLE_FIX_AND_CONTINUE = NO;
+				GCC_MODEL_TUNING = G5;
+				INFOPLIST_FILE = "DjVu_mdimporter-Info.plist";
+				INSTALL_PATH = /Library/Spotlight;
+				OTHER_CFLAGS = "-I$(SOURCE_ROOT)/../..";
+				OTHER_LDFLAGS = "";
+				PRODUCT_NAME = DjVu;
+				STANDARD_C_PLUS_PLUS_LIBRARY_TYPE = static;
+				WRAPPER_EXTENSION = mdimporter;
+			};
+			name = Release;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		41C10D0A0AB294CB00411F5B /* Build configuration list for PBXProject "DjVuLibre" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				41C10D0B0AB294CB00411F5B /* Debug */,
+				41C10D0C0AB294CB00411F5B /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Debug;
+		};
+		41C10D1F0AB2956D00411F5B /* Build configuration list for PBXNativeTarget "DjVuLibre" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				41C10D200AB2956D00411F5B /* Debug */,
+				41C10D210AB2956D00411F5B /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Debug;
+		};
+		41C111E60AB5295500411F5B /* Build configuration list for PBXNativeTarget "Static Library" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				41C111E70AB5295500411F5B /* Debug */,
+				41C111E80AB5295500411F5B /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Debug;
+		};
+		41C112570AB52DF400411F5B /* Build configuration list for PBXNativeTarget "DjVu.mdimporter" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				41C112580AB52DF400411F5B /* Debug */,
+				41C112590AB52DF400411F5B /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Debug;
+		};
+/* End XCConfigurationList section */
+	};
+	rootObject = 41C10D090AB294CB00411F5B /* Project object */;
+}

@@ -1,0 +1,30 @@
+
+1- How to build on Mac OS X
+===========================
+
+The Mac OS X version of djvulibre can be built in one of two ways:
+
+- the Unix way
+- the Xcode way
+
+These instructions are to help setup and build djvulibre for a multi-architecture binary (ppc, i386).  Your milage with the following configure options may very in getting a Universal (note: libjpeg.a and libtiff.a are installed universal on the machine this was tested with)--also note that the defaults recommended by Apple's documentation for porting Unix sources don't always work:
+
+./configure \
+   --enable-xmltools \
+   --with-jpeg=/usr/local \
+   --with-tiff=/usr/local \
+   --enable-static \
+   CFLAGS="-isysroot /Developer/SDKs/MacOSX10.4u.sdk -arch ppc -arch i386" \
+   CXXFLAGS="-isysroot /Developer/SDKs/MacOSX10.4u.sdk -arch ppc -arch i386" \
+   LDFLAGS="-Wl,-syslibroot,/Developer/SDKs/MacOSX10.4u.sdk -arch ppc -arch i386"
+
+
+The option that works for local builds (you'll have to lipo things together if you chose this route) is:
+
+./configure \
+ --enable-xmltools --enable-static \
+ --with-jpeg=/usr/local --with-tiff=/usr/local
+
+
+Or you can just open the macosx/DjVuLibre/DjVuLibre.xcodeproj and build everything that way (some modification may be required for pre-Tiger distributions).
+
