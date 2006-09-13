@@ -6,6 +6,20 @@
 	objectVersion = 42;
 	objects = {
 
+/* Begin PBXAggregateTarget section */
+		41AF91880AB7DE3300771123 /* mkconfig */ = {
+			isa = PBXAggregateTarget;
+			buildConfigurationList = 41AF918C0AB7DE5000771123 /* Build configuration list for PBXAggregateTarget "mkconfig" */;
+			buildPhases = (
+				41AF91870AB7DE3300771123 /* ShellScript */,
+			);
+			dependencies = (
+			);
+			name = mkconfig;
+			productName = mkconfig;
+		};
+/* End PBXAggregateTarget section */
+
 /* Begin PBXBuildFile section */
 		41C10D980AB296AA00411F5B /* Arrays.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 41C10D260AB296AA00411F5B /* Arrays.cpp */; };
 		41C10D9A0AB296AA00411F5B /* BSByteStream.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 41C10D280AB296AA00411F5B /* BSByteStream.cpp */; };
@@ -134,6 +148,20 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
+		41AF91A10AB7DFFF00771123 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 41C10D090AB294CB00411F5B /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 41AF91880AB7DE3300771123 /* mkconfig */;
+			remoteInfo = mkconfig;
+		};
+		41AF91A50AB7E00800771123 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 41C10D090AB294CB00411F5B /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 41AF91880AB7DE3300771123 /* mkconfig */;
+			remoteInfo = mkconfig;
+		};
 		41C112850AB52FB300411F5B /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = 41C10D090AB294CB00411F5B /* Project object */;
@@ -190,6 +218,10 @@
 		4154B99C0AB7C86E00865C24 /* README */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = README; sourceTree = "<group>"; };
 		4154B99D0AB7C86E00865C24 /* jb2tune.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = jb2tune.cpp; sourceTree = "<group>"; };
 		4154B99E0AB7C86E00865C24 /* jb2tune.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = jb2tune.h; sourceTree = "<group>"; };
+		41AF91B10AB7E04600771123 /* djvutoxml.1 */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.man; path = djvutoxml.1; sourceTree = "<group>"; };
+		41AF91B20AB7E04600771123 /* djvutoxml.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = djvutoxml.cpp; sourceTree = "<group>"; };
+		41AF91B50AB7E04600771123 /* djvuxmlparser.1 */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.man; path = djvuxmlparser.1; sourceTree = "<group>"; };
+		41AF91B60AB7E04600771123 /* djvuxmlparser.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = djvuxmlparser.cpp; sourceTree = "<group>"; };
 		41C10D1B0AB2956C00411F5B /* DjVuLibre.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = DjVuLibre.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		41C10D1D0AB2956C00411F5B /* DjVuLibre-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.xml; path = "DjVuLibre-Info.plist"; sourceTree = "<group>"; };
 		41C10D260AB296AA00411F5B /* Arrays.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Arrays.cpp; sourceTree = "<group>"; };
@@ -421,12 +453,33 @@
 			name = man;
 			sourceTree = "<group>";
 		};
+		41AF91AC0AB7E04600771123 /* xmltools */ = {
+			isa = PBXGroup;
+			children = (
+				41AF91BC0AB7E06E00771123 /* man */,
+				41AF91B20AB7E04600771123 /* djvutoxml.cpp */,
+				41AF91B60AB7E04600771123 /* djvuxmlparser.cpp */,
+			);
+			name = xmltools;
+			path = ../../xmltools;
+			sourceTree = SOURCE_ROOT;
+		};
+		41AF91BC0AB7E06E00771123 /* man */ = {
+			isa = PBXGroup;
+			children = (
+				41AF91B10AB7E04600771123 /* djvutoxml.1 */,
+				41AF91B50AB7E04600771123 /* djvuxmlparser.1 */,
+			);
+			name = man;
+			sourceTree = "<group>";
+		};
 		41C10D070AB294CB00411F5B = {
 			isa = PBXGroup;
 			children = (
 				41C10E1E0AB314D800411F5B /* config */,
 				41C10D240AB296AA00411F5B /* libdjvu */,
 				4154B95B0AB7C86D00865C24 /* tools */,
+				41AF91AC0AB7E04600771123 /* xmltools */,
 				41C112600AB52E8C00411F5B /* mdimporter */,
 				41C10D1C0AB2956C00411F5B /* Products */,
 				41C10D1D0AB2956C00411F5B /* DjVuLibre-Info.plist */,
@@ -648,6 +701,7 @@
 			buildRules = (
 			);
 			dependencies = (
+				41AF91A20AB7DFFF00771123 /* PBXTargetDependency */,
 			);
 			name = DjVuLibre;
 			productName = DjVuLibre;
@@ -665,6 +719,7 @@
 			buildRules = (
 			);
 			dependencies = (
+				41AF91A60AB7E00800771123 /* PBXTargetDependency */,
 			);
 			name = "Static Library";
 			productName = "Static Library";
@@ -701,6 +756,7 @@
 			projectDirPath = "";
 			projectRoot = "";
 			targets = (
+				41AF91880AB7DE3300771123 /* mkconfig */,
 				41C10D1A0AB2956C00411F5B /* DjVuLibre */,
 				41C111E20AB5292400411F5B /* Static Library */,
 				41C112540AB52DF400411F5B /* DjVu.mdimporter */,
@@ -727,6 +783,24 @@
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXResourcesBuildPhase section */
+
+/* Begin PBXShellScriptBuildPhase section */
+		41AF91870AB7DE3300771123 /* ShellScript */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+			);
+			outputPaths = (
+				"$(SOURCE_ROOT)/../../config.h",
+				"$(SOURCE_ROOT)/VersionConfig",
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "echo \" \"\necho \"Configuring djvulibre for Mac OS X targets\"\necho \" \"\n\necho \"cd $SOURCE_ROOT; mkconfig.sh\"\ncd $SOURCE_ROOT; /bin/sh mkconfig.sh\n\nexit 0";
+		};
+/* End PBXShellScriptBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
 		41C10D180AB2956C00411F5B /* Sources */ = {
@@ -867,6 +941,16 @@
 /* End PBXSourcesBuildPhase section */
 
 /* Begin PBXTargetDependency section */
+		41AF91A20AB7DFFF00771123 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 41AF91880AB7DE3300771123 /* mkconfig */;
+			targetProxy = 41AF91A10AB7DFFF00771123 /* PBXContainerItemProxy */;
+		};
+		41AF91A60AB7E00800771123 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 41AF91880AB7DE3300771123 /* mkconfig */;
+			targetProxy = 41AF91A50AB7E00800771123 /* PBXContainerItemProxy */;
+		};
 		41C112860AB52FB300411F5B /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
 			target = 41C111E20AB5292400411F5B /* Static Library */;
@@ -894,6 +978,28 @@
 /* End PBXVariantGroup section */
 
 /* Begin XCBuildConfiguration section */
+		41AF918D0AB7DE5000771123 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				COPY_PHASE_STRIP = NO;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				PRODUCT_NAME = mkconfig;
+			};
+			name = Debug;
+		};
+		41AF918E0AB7DE5000771123 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				COPY_PHASE_STRIP = YES;
+				GCC_ENABLE_FIX_AND_CONTINUE = NO;
+				GCC_GENERATE_DEBUGGING_SYMBOLS = NO;
+				PRODUCT_NAME = mkconfig;
+				ZERO_LINK = NO;
+			};
+			name = Release;
+		};
 		41C10D0B0AB294CB00411F5B /* Debug */ = {
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = 41C111200AB4AA9B00411F5B /* debug.xcconfig */;
@@ -1009,6 +1115,15 @@
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
+		41AF918C0AB7DE5000771123 /* Build configuration list for PBXAggregateTarget "mkconfig" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				41AF918D0AB7DE5000771123 /* Debug */,
+				41AF918E0AB7DE5000771123 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Debug;
+		};
 		41C10D0A0AB294CB00411F5B /* Build configuration list for PBXProject "DjVuLibre" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (

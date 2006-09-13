@@ -25,8 +25,8 @@ fi
     if [ "x$withtiff" != "x" ]; then
         ltiff="-ltiff"
     fi
-    if [ "x$SRCROOT" != "x" ]; then
-        cd $SRCROOT
+    if [ "x$SOURCE_ROOT" != "x" ]; then
+        cd $SOURCE_ROOT
     fi
     if [ -e VersionConfig ]; then
         mv VersionConfig _VersionConfig
@@ -46,5 +46,5 @@ fi
     if [ "x$ltiff" != "x" ]; then
         a="$a $ltiff"
     fi
-    echo "VersionLDFLAGS = $a" >> VersionConfig
+    echo "VersionLDFLAGS = $a" >> $SOURCE_ROOT/VersionConfig
 )
