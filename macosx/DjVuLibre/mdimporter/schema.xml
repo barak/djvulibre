@@ -10,8 +10,6 @@
     </note>
 
     <types>
-        <type name="public.data">
-        </type>
         <type name="org.djvulibre.djvu">
             <note>
                 The keys that this metadata importer handles.
@@ -36,6 +34,29 @@
             </displayattrs>
         </type>
         <type name="com.lizardtech.djvu">
+            <note>
+                The keys that this metadata importer handles.
+            </note>
+            <allattrs>
+                kMDItemTextContent
+                kMDItemContentType
+                kMDItemNumberOfPages
+                kMDItemPixelHeight
+                kMDItemPixelWidth
+                kMDItemPageHeight
+                kMDItemPageWidth
+                kMDItemVersion
+                kMDItemOrientation
+            </allattrs>
+            <displayattrs>
+                kMDItemContentType
+                kMDItemNumberOfPages
+                kMDItemPageHeight
+                kMDItemPageWidth
+                kMDItemVersion
+            </displayattrs>
+        </type>
+        <type name="public.djvu">
             <note>
                 The keys that this metadata importer handles.
             </note>

@@ -26,14 +26,13 @@
 			<array>
 				<string>com.lizardtech.djvu</string>
 				<string>org.djvulibre.djvu</string>
-				<string>public.data</string>
 			</array>
 		</dict>
 	</array>
 	<key>CFBundleExecutable</key>
 	<string>${EXECUTABLE_NAME}</string>
 	<key>CFBundleGetInfoString</key>
-	<string>0.8.0, Copyright Corpus Callosum Corporation 2006</string>
+	<string>${MDIMPORTER_VERSION}, Copyright Corpus Callosum Corporation 2006</string>
 	<key>CFBundleIconFile</key>
 	<string></string>
 	<key>CFBundleIdentifier</key>
@@ -45,7 +44,7 @@
 	<key>CFBundlePackageType</key>
 	<string>BNDL</string>
 	<key>CFBundleShortVersionString</key>
-	<string>0.8.0</string>
+	<string>${MDIMPORTER_VERSION}</string>
 	<key>CFBundleSignature</key>
 	<string>????</string>
 	<key>CFBundleVersion</key>
@@ -74,15 +73,41 @@
 			<key>UTTypeConformsTo</key>
 			<array>
 				<string>org.djvulibre.djvu</string>
-				<string>public.data</string>
-				<string>public.content</string>
+				<string>public.composite-content</string>
+				<string>public.image</string>
+				<string>public.djvu</string>
+			</array>
+			<key>UTTypeDescription</key>
+			<string>DjVu File</string>
+			<key>UTTypeIdentifier</key>
+			<string>org.djvulibre.djvu</string>
+			<key>UTTypeReferenceURL</key>
+			<string>http://www.djvulibre.org/</string>
+			<key>UTTypeTagSpecification</key>
+			<dict>
+				<key>public.filename-extension</key>
+				<array>
+					<string>djvu</string>
+					<string>djv</string>
+				</array>
+				<key>public.mime-type</key>
+				<array>
+					<string>image/x.djvu</string>
+					<string>image/djvu</string>
+					<string>image/djv</string>
+				</array>
+			</dict>
+		</dict>
+		<dict>
+			<key>UTTypeConformsTo</key>
+			<array>
 				<string>public.composite-content</string>
 				<string>public.image</string>
 			</array>
 			<key>UTTypeDescription</key>
 			<string>DjVu File</string>
 			<key>UTTypeIdentifier</key>
-			<string>org.djvulibre.djvu</string>
+            <string>public.djvu</string>
 			<key>UTTypeReferenceURL</key>
 			<string>http://www.djvulibre.org/</string>
 			<key>UTTypeTagSpecification</key>
@@ -107,9 +132,6 @@
 			<key>UTTypeConformsTo</key>
 			<array>
 				<string>com.lizardtech.djvu</string>
-				<string>public.data</string>
-				<string>public.content</string>
-				<string>public.item</string>
 			</array>
 			<key>UTTypeDescription</key>
 			<string>DjVu File</string>
