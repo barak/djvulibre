@@ -2,8 +2,9 @@ djvulibre (3.5.17-2) unstable; urgency=low
 
   * Raise debhelper dependency verion (closes: #374051)
   * Defeat bashism detector by explicit SHELL=bash (closes: #374265)
+  * hotwire debian/rules to use -O0 on alpha (closes: #387291)
 
- -- Barak A. Pearlmutter <bap@debian.org>  Sun, 18 Jun 2006 21:11:40 +0100
+ -- Barak A. Pearlmutter <bap@debian.org>  Thu, 14 Sep 2006 19:45:21 +0100
 
 djvulibre (3.5.17-1) unstable; urgency=low
 
