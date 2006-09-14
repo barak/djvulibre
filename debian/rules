@@ -25,6 +25,8 @@ endif
 
 ifeq ($(DEB_HOST_GNU_TYPE),m68k-linux-gnu) # fix for m68k GCC 4.0 breakpage
 	CFLAGS += -O2
+else ifeq ($(DEB_HOST_GNU_TYPE),alpha-linux-gnu) # alpha GCC 4.1 issue
+	CFLAGS += -O0
 else
 	CFLAGS += -O3
 endif
@@ -92,10 +94,10 @@ install: build
 	ln -sf ../../$(plug) debian/tmp/usr/lib/mozilla/plugins/
 	mkdir --parents      debian/tmp/usr/lib/mozilla-firefox/plugins
 	ln -sf ../../$(plug) debian/tmp/usr/lib/mozilla-firefox/plugins/
-	mv debian/tmp/usr/share/menu/djview.menu debian/tmp/usr/share/menu/djview
-	cmp debian/tmp/usr/share/{pixmaps,icons/hicolor/48x48/mimetypes}/djvu.png \
-		&& ln -sf ../icons/hicolor/48x48/mimetypes/djvu.png	\
-			debian/tmp/usr/share/pixmaps/djvu.png
+	cp --preserve=timestamps gui/desktop/djview.menu debian/
+#	cmp debian/tmp/usr/share/{pixmaps,icons/hicolor/48x48/mimetypes}/djvu.png \
+#		&& ln -sf ../icons/hicolor/48x48/mimetypes/djvu.png	\
+#			debian/tmp/usr/share/pixmaps/djvu.png
 #	mkdir --parents debian/tmp/usr/include/djvu/
 #	cp libdjvu/*.h  debian/tmp/usr/include/djvu/
 
