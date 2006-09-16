@@ -271,7 +271,7 @@
 			isa = PBXContainerItemProxy;
 			containerPortal = 41C10D090AB294CB00411F5B /* Project object */;
 			proxyType = 1;
-			remoteGlobalIDString = 41C112540AB52DF400411F5B /* DjVu.mdimporter */;
+			remoteGlobalIDString = 41C112540AB52DF400411F5B;
 			remoteInfo = DjVu.mdimporter;
 		};
 		41AF91A10AB7DFFF00771123 /* PBXContainerItemProxy */ = {

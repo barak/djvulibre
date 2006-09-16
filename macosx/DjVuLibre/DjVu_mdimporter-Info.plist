@@ -14,9 +14,11 @@
 			</array>
 			<key>CFBundleTypeMIMETypes</key>
 			<array>
-				<string>image/x.djvu</string>
-				<string>image/djvum</string>
+				<string>image/djvu</string>
 				<string>image/djv</string>
+				<string>image/x.djvu</string>
+				<string>image/x-djvu</string>
+				<string>image/vnd.djvu</string>
 			</array>
 			<key>CFBundleTypeName</key>
 			<string>DjVu file</string>
@@ -24,8 +26,8 @@
 			<string>MDImporter</string>
 			<key>LSItemContentTypes</key>
 			<array>
+				<string>org.djvuzone.djvulibre.djvu</string>
 				<string>com.lizardtech.djvu</string>
-				<string>org.djvulibre.djvu</string>
 			</array>
 		</dict>
 	</array>
@@ -36,23 +38,19 @@
 	<key>CFBundleIconFile</key>
 	<string></string>
 	<key>CFBundleIdentifier</key>
-	<string>org.djvulibre.djvu.search.spotlight</string>
+	<string>org.djvuzone.djvulibre.MDImporter.DjVu</string>
 	<key>CFBundleInfoDictionaryVersion</key>
 	<string>6.0</string>
 	<key>CFBundleName</key>
-	<string>${PRODUCT_NAME}</string>
-	<key>CFBundlePackageType</key>
-	<string>BNDL</string>
+	<string>${PRODUCT_NAME} Importer for Spotlight</string>
 	<key>CFBundleShortVersionString</key>
 	<string>${MDIMPORTER_VERSION}</string>
-	<key>CFBundleSignature</key>
-	<string>????</string>
 	<key>CFBundleVersion</key>
-	<string>3.5.17</string>
+	<string>${DYLIB_CURRENT_VERSION}</string>
 	<key>CFPlugInDynamicRegisterFunction</key>
 	<string></string>
 	<key>CFPlugInDynamicRegistration</key>
-	<false/>
+	<string>NO</string>
 	<key>CFPlugInFactories</key>
 	<dict>
 		<key>200A2D97-B602-4FAB-84DA-18DE40383D7C</key>
@@ -72,19 +70,23 @@
 		<dict>
 			<key>UTTypeConformsTo</key>
 			<array>
-				<string>org.djvulibre.djvu</string>
+				<string>org.djvuzone.djvulibre.djvu</string>
+				<string>com.lizardtech.djvu</string>
 				<string>public.composite-content</string>
-				<string>public.image</string>
-				<string>public.djvu</string>
+				<string>public.data</string>
 			</array>
 			<key>UTTypeDescription</key>
 			<string>DjVu File</string>
 			<key>UTTypeIdentifier</key>
-			<string>org.djvulibre.djvu</string>
+			<string>org.djvuzone.djvulibre.djvu</string>
 			<key>UTTypeReferenceURL</key>
-			<string>http://www.djvulibre.org/</string>
+			<string>http://djvulibre.djvuzone.org/</string>
 			<key>UTTypeTagSpecification</key>
 			<dict>
+<!--
+				<key>com.apple.ostype</key>
+				<string>DJVU</string>
+-->
 				<key>public.filename-extension</key>
 				<array>
 					<string>djvu</string>
@@ -93,50 +95,28 @@
 				<key>public.mime-type</key>
 				<array>
 					<string>image/x.djvu</string>
+					<string>image/x-djvu</string>
+					<string>image/vnd.djvu</string>
 					<string>image/djvu</string>
 					<string>image/djv</string>
 				</array>
 			</dict>
 		</dict>
-		<dict>
-			<key>UTTypeConformsTo</key>
-			<array>
-				<string>public.composite-content</string>
-				<string>public.image</string>
-			</array>
-			<key>UTTypeDescription</key>
-			<string>DjVu File</string>
-			<key>UTTypeIdentifier</key>
-            <string>public.djvu</string>
-			<key>UTTypeReferenceURL</key>
-			<string>http://www.djvulibre.org/</string>
-			<key>UTTypeTagSpecification</key>
-			<dict>
-				<key>public.filename-extension</key>
-				<array>
-					<string>djvu</string>
-					<string>djv</string>
-				</array>
-				<key>public.mime-type</key>
-				<array>
-					<string>image/x.djvu</string>
-					<string>image/djvu</string>
-					<string>image/djv</string>
-				</array>
-			</dict>
-		</dict>
-    </array>
-    <key>UTImportedTypeDeclarations</key>
-    <array>
+	</array>
+	<key>UTImportedTypeDeclarations</key>
+	<array>
 		<dict>
 			<key>UTTypeConformsTo</key>
 			<array>
 				<string>com.lizardtech.djvu</string>
+				<string>org.djvuzone.djvulibre.djvu</string>
+				<string>public.composite-content</string>
+				<string>public.data</string>
 			</array>
 			<key>UTTypeDescription</key>
 			<string>DjVu File</string>
 			<key>UTTypeIdentifier</key>
-            <string>com.lizardtech.djvu</string>
+			<string>com.lizardtech.djvu</string>
 			<key>UTTypeReferenceURL</key>
 			<string>http://www.lizardtech.com/</string>
 			<key>UTTypeTagSpecification</key>
@@ -148,9 +128,7 @@
 				</array>
 				<key>public.mime-type</key>
 				<array>
-					<string>image/x.djvu</string>
-					<string>image/djvu</string>
-					<string>image/djv</string>
+					<string>image/vnd.djvu</string>
 				</array>
 			</dict>
 		</dict>

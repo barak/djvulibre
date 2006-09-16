@@ -16,7 +16,6 @@
 #include <stdarg.h>
 
 #include "libdjvu/miniexp.h"
-// #define miniexp_t mminiexp_t
 #include "libdjvu/ddjvuapi.h"
 
 ddjvu_context_t *ctx;
@@ -39,7 +38,7 @@ handle(int wait)
                 if (msg->m_error.filename)
                     NSLog(@"'%s:%d'",
                             msg->m_error.filename, msg->m_error.lineno);
-                    // pop();
+                    return;
                 break; // never gets here
             default:
                 break;
@@ -47,19 +46,6 @@ handle(int wait)
         ddjvu_message_pop(ctx);
     }
 }
-
-/*
-void
-die(fmt, ...)
-{
-    handle(FALSE);
-    va_list args;
-    va_start(args, fmt);
-    NSLogv(fmt, args);
-    va_end(args);
-    goto pop; // exit (10)
-}
-*/
 
 #pragma mark -
 void
@@ -144,10 +130,14 @@ Boolean GetMetadataForFile(void* thisInterface,
         if ([buf length])
             [dictionary setObject:buf forKey:(NSString *)kMDItemTextContent];            
         
-        // this could be public.djvu or org.djvulibre.djvu
-        // but we still need to pick up the files from com.lizardtech.djvu
-        [dictionary setObject:@"com.lizardtech.djvu" forKey:(NSString *)kMDItemContentType];
-
+        // this could be com.lizardtech.djvu or org.djvuzone.djvulibre.djvu
+        // either way still needs to pick up the files from com.lizardtech.djvu
+        // seems that public.djvu keeps getting picked up
+        /*
+        if (kCFCompareEqualTo != CFStringCompare(contentTypeUTI, CFSTR("com.lizardtech.djvu"), kCFCompareCaseInsensitive))
+            [dictionary setObject:@"org.djvuzone.djvulibre.djvu" forKey:(NSString *)kMDItemContentType];
+         */
+        
         while ((r = ddjvu_document_get_pageinfo(doc, 0, &info)) < DDJVU_JOB_OK)
             handle(TRUE);
         if (r >= DDJVU_JOB_FAILED)
@@ -174,6 +164,8 @@ Boolean GetMetadataForFile(void* thisInterface,
             Values are 0 is "Landscape" or 1 is "Portrait"
         */
         DjAddIntKey(!(info.rotation), kMDItemOrientation);
+        
+        [dictionary setObject:@"DjVu File" forKey:(NSString *)kMDItemKind];
         
         // implement in next release ---
         // kMDItemDescription
