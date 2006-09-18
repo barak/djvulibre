@@ -1,0 +1,11 @@
+
+(NOT) BUILDING DJVIEW WITH QT4
+==============================
+
+The version of djview distributed with 
+djvulibre-3.5 does not support Qt4.
+Use a recent version of Qt3 instead.
+
+There is an experimental Qt4 viewer in the works.
+See http://djvu.cvs.sourceforge.net/djvu/djview
+
