@@ -12,14 +12,6 @@
 				<string>djvu</string>
 				<string>djv</string>
 			</array>
-			<key>CFBundleTypeMIMETypes</key>
-			<array>
-				<string>image/djvu</string>
-				<string>image/djv</string>
-				<string>image/x.djvu</string>
-				<string>image/x-djvu</string>
-				<string>image/vnd.djvu</string>
-			</array>
 			<key>CFBundleTypeName</key>
 			<string>DjVu file</string>
 			<key>CFBundleTypeRole</key>
@@ -28,6 +20,7 @@
 			<array>
 				<string>org.djvuzone.djvulibre.djvu</string>
 				<string>com.lizardtech.djvu</string>
+				<string>public.djvu</string>
 			</array>
 		</dict>
 	</array>
@@ -35,8 +28,6 @@
 	<string>${EXECUTABLE_NAME}</string>
 	<key>CFBundleGetInfoString</key>
 	<string>${MDIMPORTER_VERSION}, Copyright Corpus Callosum Corporation 2006</string>
-	<key>CFBundleIconFile</key>
-	<string></string>
 	<key>CFBundleIdentifier</key>
 	<string>org.djvuzone.djvulibre.MDImporter.DjVu</string>
 	<key>CFBundleInfoDictionaryVersion</key>
@@ -72,6 +63,7 @@
 			<array>
 				<string>org.djvuzone.djvulibre.djvu</string>
 				<string>com.lizardtech.djvu</string>
+				<string>public.djvu</string>
 				<string>public.composite-content</string>
 				<string>public.data</string>
 			</array>
@@ -83,22 +75,10 @@
 			<string>http://djvulibre.djvuzone.org/</string>
 			<key>UTTypeTagSpecification</key>
 			<dict>
-<!--
-				<key>com.apple.ostype</key>
-				<string>DJVU</string>
--->
 				<key>public.filename-extension</key>
 				<array>
 					<string>djvu</string>
 					<string>djv</string>
-				</array>
-				<key>public.mime-type</key>
-				<array>
-					<string>image/x.djvu</string>
-					<string>image/x-djvu</string>
-					<string>image/vnd.djvu</string>
-					<string>image/djvu</string>
-					<string>image/djv</string>
 				</array>
 			</dict>
 		</dict>
@@ -110,6 +90,7 @@
 			<array>
 				<string>com.lizardtech.djvu</string>
 				<string>org.djvuzone.djvulibre.djvu</string>
+				<string>public.djvu</string>
 				<string>public.composite-content</string>
 				<string>public.data</string>
 			</array>
@@ -125,10 +106,6 @@
 				<array>
 					<string>djvu</string>
 					<string>djv</string>
-				</array>
-				<key>public.mime-type</key>
-				<array>
-					<string>image/vnd.djvu</string>
 				</array>
 			</dict>
 		</dict>

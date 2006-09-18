@@ -167,6 +167,12 @@ Boolean GetMetadataForFile(void* thisInterface,
         
         [dictionary setObject:@"DjVu File" forKey:(NSString *)kMDItemKind];
         
+        // we really want these to show up as documents, not images in Spotlight
+        NSMutableArray *typeTree = [dictionary objectForKey:@"kMDItemContentTypeTree"];
+        if (typeTree && [typeTree containsObject:@"public.image"]) {
+            [typeTree removeObject:@"public.image"];
+        }
+        
         // implement in next release ---
         // kMDItemDescription
         // kMDItemCodecs ??
