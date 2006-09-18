@@ -1,0 +1,15 @@
+
+1- How to build on Windows
+===========================
+
+There are many ways.
+
+- Using Cygwin: 
+  The 'configure && make && make install' method should work.
+
+- Using Microsoft Visual Studio: 
+  You might have success using the 
+  project files tools/tools.dsw
+  and xmltools/xmltools.dsw.
+
+
