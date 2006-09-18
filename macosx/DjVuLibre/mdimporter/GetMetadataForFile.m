@@ -127,8 +127,16 @@ Boolean GetMetadataForFile(void* thisInterface,
                 mdprint(buf, expr);
         }
         
-        if ([buf length])
+        if ([buf length]) {
+            // if it has searchable text content... it's really not just an image
+            // we really want these to show up as documents
+            NSMutableArray *typeTree = [dictionary objectForKey:@"kMDItemContentTypeTree"];
+            if (typeTree && [typeTree containsObject:@"public.image"]) {
+                [typeTree removeObject:@"public.image"];
+            }
+            
             [dictionary setObject:buf forKey:(NSString *)kMDItemTextContent];            
+        }
         
         // this could be com.lizardtech.djvu or org.djvuzone.djvulibre.djvu
         // either way still needs to pick up the files from com.lizardtech.djvu
@@ -136,6 +144,13 @@ Boolean GetMetadataForFile(void* thisInterface,
         /*
         if (kCFCompareEqualTo != CFStringCompare(contentTypeUTI, CFSTR("com.lizardtech.djvu"), kCFCompareCaseInsensitive))
             [dictionary setObject:@"org.djvuzone.djvulibre.djvu" forKey:(NSString *)kMDItemContentType];
+         
+        // this is cheat that would purge the 'public.djvu' but then we need to
+        // figure out what to do about the actual kMDItemContentType to use
+        NSString *contentType = [dictionary objectForKey:(NSString*)kMDItemContentType];
+        if (contentType && [contentType isEqualToString:@"public.djvu"]) {
+            [dictionary removeObjectForKey:(NSString*)kMDItemContentType];
+        }
          */
         
         while ((r = ddjvu_document_get_pageinfo(doc, 0, &info)) < DDJVU_JOB_OK)
@@ -166,13 +181,7 @@ Boolean GetMetadataForFile(void* thisInterface,
         DjAddIntKey(!(info.rotation), kMDItemOrientation);
         
         [dictionary setObject:@"DjVu File" forKey:(NSString *)kMDItemKind];
-        
-        // we really want these to show up as documents, not images in Spotlight
-        NSMutableArray *typeTree = [dictionary objectForKey:@"kMDItemContentTypeTree"];
-        if (typeTree && [typeTree containsObject:@"public.image"]) {
-            [typeTree removeObject:@"public.image"];
-        }
-        
+                
         // implement in next release ---
         // kMDItemDescription
         // kMDItemCodecs ??

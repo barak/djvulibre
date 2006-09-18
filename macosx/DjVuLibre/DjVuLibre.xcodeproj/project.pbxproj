@@ -264,7 +264,6 @@
 		41C1128D0AB5301C00411F5B /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 41C1128A0AB5301C00411F5B /* Foundation.framework */; };
 		41C112910AB5304B00411F5B /* libdjvulibre.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 41C112900AB5304B00411F5B /* libdjvulibre.a */; };
 		41C112C30AB5381A00411F5B /* libiconv.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 41C112C20AB5381A00411F5B /* libiconv.dylib */; };
-		41EA1AD30ABE26B400588F71 /* DjVu.icns in Resources */ = {isa = PBXBuildFile; fileRef = 41EA1AD20ABE26B400588F71 /* DjVu.icns */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -823,7 +822,6 @@
 		41C112900AB5304B00411F5B /* libdjvulibre.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libdjvulibre.a; path = ../Debug/libdjvulibre.a; sourceTree = BUILT_PRODUCTS_DIR; };
 		41C112C20AB5381A00411F5B /* libiconv.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libiconv.dylib; path = /usr/lib/libiconv.dylib; sourceTree = "<absolute>"; };
 		41C112DB0AB62B8D00411F5B /* System.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = System.framework; path = /System/Library/Frameworks/System.framework; sourceTree = "<absolute>"; };
-		41EA1AD20ABE26B400588F71 /* DjVu.icns */ = {isa = PBXFileReference; lastKnownFileType = image.icns; name = DjVu.icns; path = ../../../djview/src/images/DjVu.icns; sourceTree = SOURCE_ROOT; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -1304,7 +1302,6 @@
 		41C112760AB52EB600411F5B /* Resources */ = {
 			isa = PBXGroup;
 			children = (
-				41EA1AD20ABE26B400588F71 /* DjVu.icns */,
 				41C112620AB52E8C00411F5B /* InfoPlist.strings */,
 				41C112640AB52E8C00411F5B /* schema.strings */,
 				41C112670AB52E8C00411F5B /* DjVu_mdimporter-Info.plist */,
@@ -1783,7 +1780,6 @@
 				41C1126D0AB52E8C00411F5B /* InfoPlist.strings in Resources */,
 				41C1126E0AB52E8C00411F5B /* schema.strings in Resources */,
 				41C112720AB52E8C00411F5B /* schema.xml in Resources */,
-				41EA1AD30ABE26B400588F71 /* DjVu.icns in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
