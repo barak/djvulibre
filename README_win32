@@ -2,8 +2,6 @@
 1- How to build on Windows
 ===========================
 
-There are many ways.
-
 - Using Cygwin: 
   The 'configure && make && make install' method should work.
 
