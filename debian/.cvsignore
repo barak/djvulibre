@@ -1,6 +1,7 @@
 *.debhelper
 *.substvars
 djview
+djview.menu
 djvulibre-bin
 djvulibre-plugin
 djvuserve
