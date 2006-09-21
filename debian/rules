@@ -13,19 +13,25 @@ DEB_BUILD_GNU_TYPE  ?= $(shell dpkg-architecture -qDEB_BUILD_GNU_TYPE)
 
 SHELL=/bin/bash
 
-CFLAGS=-Wall -Wno-non-virtual-dtor # fix for m68k GCC 4.0 breakpage
+ifeq ($(DEB_HOST_GNU_TYPE),m68k-linux-gnu) # m68k GCC 4.0 breakage
+	CFLAGS = -Wall -Wno-non-virtual-dtor
+else
+	CFLAGS = -Wall
+endif
+
 ifneq (,$(findstring debug,$(DEB_BUILD_OPTIONS)))
 	CFLAGS += -g
 else
 	CFLAGS += -DNDEBUG
 endif
+
 ifeq (,$(findstring nostrip,$(DEB_BUILD_OPTIONS)))
 	INSTALL_PROGRAM += -s
 endif
 
-ifeq ($(DEB_HOST_GNU_TYPE),m68k-linux-gnu) # fix for m68k GCC 4.0 breakpage
+ifeq ($(DEB_HOST_GNU_TYPE),m68k-linux-gnu) # m68k GCC 4.0 breakage
 	CFLAGS += -O2
-else ifeq ($(DEB_HOST_GNU_TYPE),alpha-linux-gnu) # alpha GCC 4.1 issue
+else ifeq ($(DEB_HOST_GNU_TYPE),alpha-linux-gnu) # alpha GCC 4.1/4.2 breakage
 	CFLAGS += -O0
 else
 	CFLAGS += -O3
@@ -43,9 +49,9 @@ config.status: configure
 build: build-stamp
 build-stamp: config.status
 	dh_testdir
-	test -e tools/jb2cmp/mdjvucfg.h || touch tools/jb2cmp/mdjvucfg.h
+	touch --no-create tools/jb2cmp/mdjvucfg.h
 	$(MAKE) -k depend	# otherwise a missing Makefile.dep blows up
-	$(MAKE) OPTS="$(CFLAGS)" # OPTS="-hotwire -compiler -options" # fix for m68k GCC 4.0 breakpage
+	$(MAKE) OPTS="$(CFLAGS)" # hotwire compiler options
 	touch build-stamp
 
 clean:
@@ -56,7 +62,7 @@ clean:
 	  cp -f /usr/share/misc/config.sub config/config.sub
 	-test -r /usr/share/misc/config.guess && \
 	  cp -f /usr/share/misc/config.guess config/config.guess
-	dh_clean
+	dh_clean debian/djview.menu
 # sleazy hack to avoid
 #  dpkg-source: cannot represent change to XXX: binary file contents changed
 # for XXX in
@@ -72,7 +78,7 @@ plug=$(plugsubdir)/nsdejavu.so
 
 install: build
 	dh_testdir
-	dh_clean -k
+	dh_clean -k debian/djview.menu
 	dh_installdirs
 	$(MAKE) install							\
 		DESTDIR=$(CURDIR)/debian/tmp				\
@@ -85,7 +91,6 @@ install: build
 		dtop_application_registry='$${datadir}/application-registry' \
 		dtop_mimelnk='$${kdedatadir}/mimelnk'			\
 		dtop_menu='$${prefix}/share/menu'
-#	-chrpath --delete debian/tmp/usr/bin/*
 	chmod +x debian/tmp/usr/bin/any2djvu
 	mkdir --parents debian/tmp/usr/lib/cgi-bin
 	cp --preserve=timestamps debian/djvuserve.sh debian/tmp/usr/lib/cgi-bin/djvuserve
@@ -94,6 +99,7 @@ install: build
 	ln -sf ../../$(plug) debian/tmp/usr/lib/mozilla/plugins/
 	mkdir --parents      debian/tmp/usr/lib/mozilla-firefox/plugins
 	ln -sf ../../$(plug) debian/tmp/usr/lib/mozilla-firefox/plugins/
+	-rm debian/tmp/usr/share/menu/djview.menu
 	cp --preserve=timestamps gui/desktop/djview.menu debian/
 #	cmp debian/tmp/usr/share/{pixmaps,icons/hicolor/48x48/mimetypes}/djvu.png \
 #		&& ln -sf ../icons/hicolor/48x48/mimetypes/djvu.png	\
@@ -127,7 +133,7 @@ binary-arch: build install
 	dh_strip
 	dh_compress --exclude=.djvu
 	dh_fixperms
-	dh_makeshlibs --exclude=/plugins -V
+	dh_makeshlibs --exclude=/plugins --version-info 'libdjvulibre15 (= $${Source-Version})'
 	dh_installdeb
 #	dh_perl
 	dh_shlibdeps -L libdjvulibre15 -l debian/libdjvulibre15/usr/lib
