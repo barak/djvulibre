@@ -3,6 +3,5 @@ usr/share/man/man1/djview.1
 usr/share/man/*/man1/djview.1
 usr/share/application-registry/djvu.applications
 usr/share/mime-info/djvu.keys
-usr/share/menu/djview
 usr/share/applications/djview.desktop
 usr/share/pixmaps
