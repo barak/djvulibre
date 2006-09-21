@@ -1,11 +1,23 @@
-djvulibre (3.5.17-2) unstable; urgency=low
+djvulibre (3.5.17-2) unstable; urgency=medium
 
+  * Include minor upstream mods
   * Raise debhelper dependency verion (closes: #374051)
-  * Defeat bashism detector by explicit SHELL=bash (closes: #374265)
-  * hotwire debian/rules to use -O0 on alpha (closes: #387291)
-  * integrate minor upstream mods
+  * Silence bashism detector with debian/rules SHELL=bash (closes: #374265)
+  * Hotwire debian/rules to use -O0 on alpha (closes: #387291, #386032)
+  * Tiny debian build simplifications/fixes, eg remove debian/shlibs.local
+  * Use soul-rotting roff hyphenation manipulation commands to fix problem
+    underlying "cannot adjust line" warning for long URL in
+    xmltools/djvuxml.1.in thus curing the cause but not the symptom
 
- -- Barak A. Pearlmutter <bap@debian.org>  Thu, 14 Sep 2006 19:45:21 +0100
+ -- Barak A. Pearlmutter <bap@debian.org>  Thu, 21 Sep 2006 02:42:46 +0100
+
+djvulibre (3.5.17-1.1) unstable; urgency=medium
+
+  * Non-maintainer upload.
+  * On alpha, build GString.cpp with -O0 to work around a bug in GCC 4.1/4.2.
+    Fixes FTBFS. (Closes: #386032)
+
+ -- Steinar H. Gunderson <sesse@debian.org>  Wed, 13 Sep 2006 14:24:52 +0200
 
 djvulibre (3.5.17-1) unstable; urgency=low
 
@@ -21,7 +33,7 @@ djvulibre (3.5.17-1) unstable; urgency=low
 djvulibre (3.5.16-2) unstable; urgency=low
 
   * update to newly broken debian X libraries ... broken apart, that is
-  * have -dev package depends on lib and libjpeg62-dev (closes: #343720)
+  * have -dev package depend on lib and libjpeg62-dev (closes: #343720)
     (thanks to Sebastien Bacher <seb128@canonical.com> via Ubuntu)
   * page numbers 1-based in djvm -l, like -i/-d (closes: #340361)
   * don't include KDE desktop file x-djvu.desktop in lib (closes: #339638)
