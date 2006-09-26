@@ -1,6 +1,5 @@
 djvulibre (3.5.17-3) unstable; urgency=medium
 
-  * Minor upstream mods
   * Generate non-eroneous, and reasonably loose, shlibs (closes: #389382)
   * Use very tight version dependencies between generated packages
 
