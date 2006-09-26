@@ -1,3 +1,11 @@
+djvulibre (3.5.17-3) unstable; urgency=medium
+
+  * Minor upstream mods
+  * Generate non-eroneous, and reasonably loose, shlibs (closes: #389382)
+  * Use very tight version dependencies between generated packages
+
+ -- Barak A. Pearlmutter <bap@debian.org>  Mon, 25 Sep 2006 22:27:09 +0100
+
 djvulibre (3.5.17-2) unstable; urgency=medium
 
   * Include minor upstream mods
