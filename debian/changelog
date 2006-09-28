@@ -1,3 +1,9 @@
+djvulibre (3.5.17-4) unstable; urgency=low
+
+  * Debian standards rev
+
+ --
+
 djvulibre (3.5.17-3) unstable; urgency=medium
 
   * Generate non-eroneous, and reasonably loose, shlibs (closes: #389382)
