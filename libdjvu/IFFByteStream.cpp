@@ -82,9 +82,11 @@ namespace DJVU {
 
 // Constructor
 IFFByteStream::IFFByteStream(const GP<ByteStream> &xbs,const int xpos)
-: ByteStream::Wrapper(xbs), has_magic(false), ctx(0), dir(0)
+  : ByteStream::Wrapper(xbs), ctx(0), dir(0)
 {
   offset = seekto = xpos;
+  has_magic_att = false;
+  has_magic_sdjv = false;
 }
 
 // Destructor
@@ -210,11 +212,21 @@ IFFByteStream::get_chunk(GUTF8String &chkid, int *rawoffsetptr, int *rawsizeptr)
     if (bytes==0 && !ctx)
       return 0;
     if (bytes != 4)
-      G_THROW( ByteStream::EndOfFile );
-    if(buffer[0] != 0x41 || buffer[1] != 0x54 ||
-       buffer[2] != 0x26 || buffer[3] != 0x54 )
+      G_THROW(ByteStream::EndOfFile);
+    if (buffer[0] == 'S' && buffer[1] == 'D' &&
+        buffer[2] == 'J' && buffer[3] == 'V' )
+      {
+        has_magic_sdjv = true;
+        continue;
+      }
+    else if (buffer[0] == 'A' && buffer[1] == 'T' &&
+             buffer[2] == '&' && buffer[3] == 'T' )
+      {
+        has_magic_att=true;
+        continue;
+      }
+    else
       break;
-    has_magic=true;
   }
   
   // Read chunk size

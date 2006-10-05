@@ -1208,9 +1208,12 @@ DjVuFile::decode_chunk( const GUTF8String &id, const GP<ByteStream> &gbs,
       iffout.put_chunk(id);
       iffout.copy(achunk);
       iffout.close_chunk();
-//      desc.format( ERR_MSG("DjVuFile.text") );
     }
-
+  else if (chkid == "CELX")
+    {
+      G_THROW( ERR_MSG("DjVuFile.securedjvu") );
+    }
+  
   // Return description
   return desc;
 }

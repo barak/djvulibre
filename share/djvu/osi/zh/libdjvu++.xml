@@ -206,7 +206,9 @@
 <MESSAGE name="DjVuFile.djvu_header" number="12552" value="DJVU 图像 (%1!d!x%2!d!, %3!d! dpi) 版本 %4!d!:&#10;" />
 <MESSAGE name="DjVuFile.IW44_header" number="12553" value="IW44 图像 (%1!d!x%2!d!, %3!d! dpi):&#10;" />
 <MESSAGE name="DjVuFile.ratio" number="12554" value="&#10;压缩率: %1!0.f! (%2!0.1f! Kb)" />
-
+<MESSAGE name="DjVuFile.securedjvu" number="12555">
+Incompatible file (so-called "Secure DjVu".)
+</MESSAGE>
 <MESSAGE name="DjVuGlobalMemory.exhausted" number="12600" value="[%0!s!] 内存耗尽" />
 <MESSAGE name="DjVuGlobal.not_compatible" number="12700" value="[%0!s!] DjVuProgress 与 multithreading不兼容。" />
 <MESSAGE name="DjVuImage.bad_call" number="12800" value="[%0!s!] DjVuImage::decode 不应在 DjVuImage::connect之后调用。" />

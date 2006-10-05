@@ -597,6 +597,9 @@ In einem mehrseitigen Dokument ist nur eine Datei mit Kommentaren zulässig.
   value="IW44 Bild (%1!d!x%2!d!, %3!d! dpi):&#10;" />
 <MESSAGE name="DjVuFile.ratio" number="12554"
   value="&#10;Komprimierungsverhältins: %1!0.f! (%2!0.1f! KB)" />
+<MESSAGE name="DjVuFile.securedjvu" number="12555">
+Incompatible file (so-called "Secure DjVu".)
+</MESSAGE>
 <MESSAGE name="DjVuGlobalMemory.exhausted" number="12600">
 [1-%0!05u!] Speicher ausgelastet.
 </MESSAGE>

@@ -274,9 +274,12 @@ public:
       the stream is not valid for use after comparing, regardless of the
       result. */
   bool compare(IFFByteStream &iff);
-  /** #has_magic# is true if the stream has the DjVu file magic.
-   */
-  bool has_magic;
+  /** #has_magic_att# is true if the stream has 
+      the DjVu magic 'AT&T' marker. */
+  bool has_magic_att;
+  /** #has_magic_sdjv# is true if the stream has 
+      the Celartem magic 'SDJV' marker. */
+  bool has_magic_sdjv;
 private:
   // private datatype
   struct IFFContext

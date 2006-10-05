@@ -594,6 +594,9 @@ Un document multipage ne peut contenir qu&apos;un seul fichier de ce type.
   value="Image IW44 (%1!d!x%2!d!, %3!d! ppp):&#10;" />
 <MESSAGE name="DjVuFile.ratio" number="12554"
   value="&#10;Taux de compression: %1!0.f! (%2!0.1f! Ko)" />
+<MESSAGE name="DjVuFile.securedjvu" number="12555">
+Incompatible file (so-called "Secure DjVu".)
+</MESSAGE>
 <MESSAGE name="DjVuGlobalMemory.exhausted" number="12600">
 [1-%0!05u!] Mémoire insuffisante
 </MESSAGE>

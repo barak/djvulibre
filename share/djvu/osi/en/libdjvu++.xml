@@ -597,6 +597,9 @@ There may be only one such file in a multipage document.
   value="IW44 Image (%1!d!x%2!d!, %3!d! dpi):&#10;" />
 <MESSAGE name="DjVuFile.ratio" number="12554"
   value="&#10;Compression ratio: %1!0.f! (%2!0.1f! Kb)" />
+<MESSAGE name="DjVuFile.securedjvu" number="12555">
+Incompatible file (so-called "Secure DjVu".)
+</MESSAGE>
 <MESSAGE name="DjVuGlobalMemory.exhausted" number="12600">
 [1-%0!05u!] Memory Exhausted.
 </MESSAGE>

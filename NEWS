@@ -3,8 +3,8 @@ NEW IN VERSION 3.5.18
 - Various enhancement of DDJVUAPI.
 - Partial support for page titles instead of page numbers.
 - Clarification of metadata information.
-- Bug fix in djvumake.
-- [.....]
+- Fixed djvumake mask separation feature.
+- Bitterly complain when given a so-called "secure" djvu file.
 
 
 NEW IN VERSION 3.5.17

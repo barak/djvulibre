@@ -683,6 +683,8 @@ ddjvu_message_peek(ddjvu_context_t *ctx)
       GMonitorLock lock(&ctx->monitor);
       if (ctx->mpeeked)
         return &ctx->mpeeked->p;        
+      if (! ctx->mlist.size())
+        ctx->monitor.wait(0);
       GPosition p = ctx->mlist;
       if (! p)
         return 0;

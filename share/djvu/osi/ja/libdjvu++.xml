@@ -391,6 +391,9 @@
   value="IW44 Image (%1!d!x%2!d!, %3!d! dpi):&#10;" />
 <MESSAGE name="DjVuFile.ratio" number="12554"
   value="&#10;圧縮比率： %1!0.f! (%2!0.1f! Kb)" />
+<MESSAGE name="DjVuFile.securedjvu" number="12555">
+Incompatible file (so-called "Secure DjVu".)
+</MESSAGE>
 <MESSAGE name="DjVuGlobalMemory.exhausted" number="12600"
   value="[%0!05u!] メモリが使い尽くされました。" />
 <MESSAGE name="DjVuGlobal.not_compatible" number="12700"

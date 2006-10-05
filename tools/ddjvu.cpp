@@ -501,6 +501,9 @@ dopage(int pageno)
     die(i18n("Cannot access page %d."), pageno);
   while (! ddjvu_page_decoding_done(page))
     handle(TRUE);
+  if (ddjvu_page_decoding_error(page))
+    die(i18n("Cannot decode page %d."), pageno);
+  
   timingdata[1] = ticks();
   /* Open files */
   if (flag_format == 't') 

@@ -381,7 +381,7 @@ GMonitor::wait(unsigned long timeout)
 
 
 // ----------------------------------------
-// MACTHREADS IMPLEMENTATION (from Praveen)
+// MACTHREADS IMPLEMENTATION (obsolete)
 // ----------------------------------------
 
 #if THREADMODEL==MACTHREADS
@@ -622,7 +622,8 @@ GMonitor::wait(unsigned long timeout)
 {
   // Timeouts are not used for anything important.
   // Just ignore the timeout and wait the regular way.
-  wait();
+  if (timeout > 0)
+    wait();
 }
 
 #endif
