@@ -10,8 +10,8 @@ To install:
     /usr/bin/mdimport -r /Library/Spotlight/DjVu.mdimporter
 
 
-The importer is based on the lastest stable build of djvulibre--3.5.17 at the
-time of compilaion.  It is deployed as a universal binary for ppc and i386
+The importer is based on the latest stable build of djvulibre--3.5.17 at the
+time of compilation.  It is deployed as a universal binary for ppc and i386
 machines.
 
 Further information on DjVu and DjVuLibre, including source, can be found at
