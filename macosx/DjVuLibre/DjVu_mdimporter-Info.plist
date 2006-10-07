@@ -75,6 +75,8 @@
 			<string>http://djvulibre.djvuzone.org/</string>
 			<key>UTTypeTagSpecification</key>
 			<dict>
+				<key>com.apple.ostype</key>
+				<string>AT&amp;T</string>
 				<key>public.filename-extension</key>
 				<array>
 					<string>djvu</string>
@@ -102,6 +104,8 @@
 			<string>http://www.lizardtech.com/</string>
 			<key>UTTypeTagSpecification</key>
 			<dict>
+				<key>com.apple.ostype</key>
+				<string>AT&amp;T</string>
 				<key>public.filename-extension</key>
 				<array>
 					<string>djvu</string>
