@@ -907,6 +907,7 @@ ddjvu_document_create(ddjvu_context_t *ctx,
       if (url)
         {
           GURL gurl = GUTF8String(url);
+          gurl.clear_djvu_cgi_arguments();
           d->urlflag = true;
           d->doc->start_init(gurl, d, xcache);
         }

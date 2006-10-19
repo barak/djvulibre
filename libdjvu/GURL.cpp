@@ -1203,24 +1203,37 @@ GURL::GURL(const GUTF8String &xurl,const GURL &codebase)
   : validurl(false)
 {
   if(GURL::UTF8(xurl).is_valid())
-  {
-    url=xurl;
-  }else
-  {
-    const char *c=xurl;
-    if(c[0] == slash)
     {
-      GURL base(codebase);
-      for(GURL newbase=base.base();newbase!=base;newbase=base.base())
-      {
-        base=newbase;
-      }
-      url=base.get_string(true)+GURL::encode_reserved(xurl);
-    }else
-    {
-      url=beautify_path(codebase.get_string(true)+GUTF8String(slash)+GURL::encode_reserved(xurl));
+      url=xurl;
     }
-  }
+  else
+    {
+      // split codebase
+      const char *buffer = codebase;
+      GUTF8String all(buffer);
+      GUTF8String suffix;
+      GUTF8String path;
+      GUTF8String prefix;
+      const int protocol_length=GURL::protocol(all).length();
+      const char *start = buffer + pathname_start(all,protocol_length);
+      if (start > buffer)
+        prefix = GUTF8String(buffer, start-buffer);
+      const char *ptr = start;
+      while (*ptr && !is_argument(ptr))
+        ptr++;
+      if (*ptr)
+        suffix = GUTF8String(ptr);
+      if (ptr > start)
+        path = GUTF8String(start, ptr-start);
+      // append xurl to path
+      const char *c = xurl;
+      if(c[0] == slash)
+        path = GURL::encode_reserved(xurl);
+      else
+        path = path + GUTF8String(slash)+GURL::encode_reserved(xurl);
+      // construct url
+      url = beautify_path(prefix + path + suffix);
+    }
 }
 
 GURL::Native::Native(const GNativeString &xurl)
