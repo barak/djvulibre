@@ -109,6 +109,9 @@
 /* Define to Qt version if available */
 #undef HAVE_QT
 
+/* Define to 1 if you have the `setenv' function. */
+#undef HAVE_SETENV
+
 /* define if the compiler comes with standard includes */
 #undef HAVE_STDINCLUDES
 
@@ -229,9 +232,12 @@
 #undef vfork
 
 
+
 /* - Miscellaneous */
 #define AUTOCONF 1
-#define UNIX 1
+#if defined(__CYGWIN32__) || !defined(WIN32)
+# define UNIX 1
+#endif
 
 /* - BOOL */
 #if !defined(HAVE_BOOL) && !defined(bool)

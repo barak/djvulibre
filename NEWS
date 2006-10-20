@@ -5,12 +5,14 @@ NEW IN VERSION 3.5.18
 - Clarification of metadata information.
 - Fixed djvumake mask separation feature.
 - Bitterly complain when given a so-called "secure" djvu file.
+- Fixed handling of urls with cgi arguments
+- Fixed bug related to caching and ddjvuapi
 
 
 NEW IN VERSION 3.5.17
 ---------------------
 - Various enhancement of DDJVUAPI
-- Compiles with the GCC-4.1.
+- Compiles with GCC-4.1.
 - Compiles with the SunCC compiler.
 - Command line utilities compile under WIN32 
   using MSVC using the provided project files.

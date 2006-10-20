@@ -119,7 +119,7 @@ extern "C" {
      14    Initial version.
 */
 
-#define DDJVUAPI_VERSION 18  // INCOMPLETE!
+#define DDJVUAPI_VERSION 18
 
 
 
