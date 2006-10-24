@@ -409,7 +409,7 @@ There may be only one such file in a multipage document.
 [1-%0!05u!] File &apos;%1!s!&apos; is not in this bundle.
 </MESSAGE>
 <MESSAGE name="DjVuDocument.init_eof" number="12413">
-[1-%0!05u!] Unexpected end of file encountered during document initialization.
+[1-%0!05u!] Unexpected End Of File encountered during document initialization.
 </MESSAGE>
 <MESSAGE name="DjVuDocument.init_not_done" number="12414">
 [1-%0!05u!] Document has not been completely initialized yet.
@@ -723,7 +723,7 @@ mode.
 [1-%0!05u!] Can&apos;t print more than one page in EPS format.
 </MESSAGE>
 <MESSAGE name="EOF" number="13400">
-Unexpected End Of file.
+Unexpected End Of File.
 </MESSAGE>
 <MESSAGE name="Error" number="13500">
 Error: %1!s!.

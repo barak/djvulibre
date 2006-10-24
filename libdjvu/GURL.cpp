@@ -929,7 +929,6 @@ GURL::base(void) const
 {
    const GUTF8String xurl(get_string());
    const int protocol_length=protocol(xurl).length();
-   const int xurl_length=xurl.length();
    const char * const url_ptr=xurl;
    const char * ptr, * xslash;
    ptr=xslash=url_ptr+protocol_length+1;
@@ -945,36 +944,32 @@ GURL::base(void) const
      }
      if(xslash[0] != '/')
      {
-       xslash=url_ptr+xurl_length;
+       xslash=ptr;
      }
    }
-   return GURL::UTF8(
-// ifdef WIN32
-// (*(xslash-1) == colon)?
-//   (GUTF8String(xurl,(int)(xslash-url_ptr))+"/" ):
-// endif
-     (GUTF8String(xurl,(int)(xslash-url_ptr))+"/"));
+   return GURL::UTF8(GUTF8String(xurl,(int)(xslash-url_ptr))+"/"+ptr);
 }
 
 bool
 GURL::operator==(const GURL & gurl2) const
 {
-  bool retval=false;
   const GUTF8String g1(get_string());
-  const int g1_length=g1.length();
   const GUTF8String g2(gurl2.get_string());
-  const int g2_length=g2.length();
-  if(g1_length == g2_length) // exactly equal
-  {
-	retval=(g1==g2);
-  }else if(g1_length+1 == g2_length) // g1 is g2 with a slash at the end
-  {
-    retval=(g2[g1_length] == '/')&&!g1.cmp(g2,g1_length);
-  }else if(g2_length+1 == g1_length)  // g2 is g1 with a slash at the end
-  {
-    retval=(g1[g2_length] == '/')&&!g1.cmp(g2,g2_length);
-  }
-  return retval;
+  const char *s1 = (const char*)g1;
+  const char *s2 = (const char*)g2;
+  int n1=0;
+  int n2=0;
+  while (s1[n1] && !is_argument(s1+n1))
+    n1 += 1;
+  while (s2[n2] && !is_argument(s2+n2))
+    n2 += 1;
+  if (n1 == n2)
+    return !strcmp(s1+n1,s2+n2) && !strncmp(s1,s2,n1);
+  if (n1 == n2+1 && s1[n2]=='/')
+    return !strcmp(s1+n1,s2+n2) && !strncmp(s1,s2,n2);
+  if (n2 == n1+1 && s2[n1]=='/')
+    return !strcmp(s1+n1,s2+n2) && !strncmp(s1,s2,n1);    
+  return false;
 }
 
 GUTF8String
