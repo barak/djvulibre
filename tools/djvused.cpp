@@ -1562,7 +1562,7 @@ print_outline_sub(const GP<DjVmNav> &nav, int &pos, int count,
           out->write(" ",1);
       }
       nav->getBookMark(entry, pos++);
-      out->write("(",2);
+      out->write("(",1);
       str = entry->displayname;
       print_c_string(str, str.length(), *out);
       out->write("\n ",2);
