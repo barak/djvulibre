@@ -1103,8 +1103,7 @@ DjVuDocument::process_threqs(void)
           IFFByteStream &iff=*giff;
           GUTF8String chkid;
           if (!iff.get_chunk(chkid) || chkid!="FORM:THUM")
-            G_THROW( ERR_MSG("DjVuDocument.bad_thumb") );
-          
+            G_THROW( ERR_MSG("DjVuDocument.bad_thumb") );          
           for(int i=0;i<req->thumb_chunk;i++)
           {
             if (!iff.get_chunk(chkid)) 
@@ -1124,7 +1123,6 @@ DjVuDocument::process_threqs(void)
           // Also add this file to cache so that we won't have
           // to download it next time
           add_to_cache(req->thumb_file);
-          
           req->thumb_file=0;
           req->image_file=0;
           remove=true;

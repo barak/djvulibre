@@ -2395,7 +2395,6 @@ ddjvu_thumbnail_p::callback(void *cldata)
           G_CATCH_ALL
             {
               thumb->data.empty();
-              G_RETHROW;
             }
           G_ENDCATCH;
           if (thumb->document->doc)
@@ -2413,28 +2412,31 @@ ddjvu_thumbnail_status(ddjvu_document_t *document, int pagenum, int start)
 {
   G_TRY
     {
-      GMonitorLock lock(&document->monitor);
-      GPosition p = document->thumbnails.contains(pagenum);
       GP<ddjvu_thumbnail_p> thumb;
-      if (p)
+      DjVuDocument* doc = document->doc;
+      if (doc)
         {
-          thumb = document->thumbnails[p];
-        } 
-      else
+          GMonitorLock lock(&document->monitor);
+          GPosition p = document->thumbnails.contains(pagenum);
+          if (p)
+            thumb = document->thumbnails[p];
+        }
+      if (!thumb && doc)
         {
-          DjVuDocument *doc = document->doc;
           GP<DataPool> pool = doc->get_thumbnail(pagenum, !start);
           if (pool)
             {
+              GMonitorLock lock(&document->monitor);
               thumb = new ddjvu_thumbnail_p;
               thumb->document = document;
               thumb->pagenum = pagenum;
               thumb->pool = pool;
               document->thumbnails[pagenum] = thumb;
-              pool->add_trigger(-1, ddjvu_thumbnail_p::callback, 
-                                (void*)(ddjvu_thumbnail_p*)thumb);
             }
-        }
+          if (thumb)
+            pool->add_trigger(-1, ddjvu_thumbnail_p::callback, 
+                              (void*)(ddjvu_thumbnail_p*)thumb);
+        } 
       if (! thumb)
         return DDJVU_JOB_NOTSTARTED;        
       else if (thumb->pool)
