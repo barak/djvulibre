@@ -2968,11 +2968,12 @@ ddjvu_savejob_s::inherits(const GUTF8String &classname)
 }
 
 void
-ddjvu_savejob_s::notify_file_flags_changed(const DjVuFile *file, long mask, long)
+ddjvu_savejob_s::notify_file_flags_changed(const DjVuFile *file, 
+                                           long mask, long)
 {
-  if (mask & (DjVuFile::ALL_DATA_PRESENT ||
-              DjVuFile::DECODE_FAILED || DjVuFile::DECODE_STOPPED ||
-              DjVuFile::STOPPED || DjVuFile::DECODE_STOPPED ))
+  if (mask & (DjVuFile::ALL_DATA_PRESENT | DjVuFile::DATA_PRESENT |
+              DjVuFile::DECODE_FAILED | DjVuFile::DECODE_STOPPED |
+              DjVuFile::STOPPED | DjVuFile::DECODE_STOPPED ))
     {
       GMonitorLock lock(&monitor);
       monitor.signal();
@@ -3005,10 +3006,8 @@ ddjvu_savejob_s::run()
       ncomp = doc->get_pages_num();
       comp_ids.resize(ncomp - 1);
       comp_files.resize(ncomp - 1);
-      { // extra nesting for windows
-        for (int comp=0; comp<ncomp; comp++)
-          comp_ids[comp] = GUTF8String(comp);
-      }
+      for (int comp=0; comp<ncomp; comp++)
+        comp_ids[comp] = GUTF8String(comp);
     }
   // Monitoring download progress
   int lo = 0;
@@ -3020,15 +3019,15 @@ ddjvu_savejob_s::run()
       GMonitorLock lock(&monitor);
       while (lo<hi && comp_files[lo]->is_data_present())
         lo += 1;
-      { // extra nesting for windows
-        for (int comp=lo; comp<hi; comp++)
-          if (! comp_files[comp]->is_data_present())
-            in_progress += 1;
-      }
+      progress(lo*100/ncomp);
+      for (int comp=lo; comp<hi; comp++)
+        if (! comp_files[comp]->is_data_present())
+          in_progress += 1;
       while (hi<ncomp && in_progress < 2)
         {
           comp_files[hi] = doc->get_djvu_file(comp_ids[hi]);
-          in_progress += 1;
+          if (! comp_files[hi]->is_data_present())
+            in_progress += 1;
           hi += 1;
         }
       if (in_progress > 0)
