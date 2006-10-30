@@ -1330,8 +1330,10 @@ ddjvu_document_print(ddjvu_document_t *document, FILE *output,
      
    The bundled djvu data is written to file <output>
    which must be seekable. Arguments <optc> and <optv>
-   are intended for enabling future extensions 
-   of this function.
+   are specify saving options. The only recognized option
+   is "-pages=<pagespec>" to specify a subset of pages
+   using the same syntax as program <ddjvu>.
+   Reordering or duplicating pages is prohibited. 
 */
 DDJVUAPI ddjvu_job_t *
 ddjvu_document_save(ddjvu_document_t *document, FILE *output, 

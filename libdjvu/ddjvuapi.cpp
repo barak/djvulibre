@@ -2576,8 +2576,17 @@ ddjvu_runnablejob_s::cbstart(void *arg)
   ddjvu_status_t r;
   G_TRY
     {
-      self->progress(0);
-      r = self->run();
+      G_TRY
+        {
+          self->progress(0);
+          r = self->run();
+        }
+      G_CATCH(ex)
+        {
+          ERROR1(self, ex);
+          G_RETHROW;
+        }
+      G_ENDCATCH;
     }
   G_CATCH_ALL
     {
@@ -2952,12 +2961,19 @@ ddjvu_document_print(ddjvu_document_t *document, FILE *output,
 struct DJVUNS ddjvu_savejob_s : public ddjvu_runnablejob_s
 {
   GP<ByteStream> obs;
+  GUTF8String pages;
+  GTArray<char> comp_flags;
+  GArray<GUTF8String> comp_ids;
+  GPArray<DjVuFile> comp_files;
+  GMonitor monitor;
+  // thread routine
   virtual ddjvu_status_t run();
   // virtual port functions:
   virtual bool inherits(const GUTF8String&);
   virtual void notify_file_flags_changed(const DjVuFile*, long, long);
-  // data
-  GMonitor monitor;
+  // helpers
+  bool parse_pagespec(const char *s, int npages, bool *flags);
+  void mark_included_files(DjVuFile *file);
 };
 
 bool 
@@ -2980,63 +2996,224 @@ ddjvu_savejob_s::notify_file_flags_changed(const DjVuFile *file,
     }
 }
 
+bool
+ddjvu_savejob_s::parse_pagespec(const char *s, int npages, bool *flags)
+{
+  int spec = 0;
+  int both = 1;
+  int start_page = 1;
+  int end_page = npages;
+  int pageno;
+  char *p = (char*)s;
+  while (*p)
+    {
+      spec = 0;
+      while (*p==' ')
+        p += 1;
+      if (! *p)
+        break;
+      if (*p>='0' && *p<='9') {
+        end_page = strtol(p, &p, 10);
+        spec = 1;
+      } else if (*p=='$') {
+        spec = 1;
+        end_page = npages;
+        p += 1;
+      } else if (both) {
+        end_page = 1;
+      } else {
+        end_page = npages;
+      }
+      while (*p==' ')
+        p += 1;
+      if (both) {
+        start_page = end_page;
+        if (*p == '-') {
+          p += 1;
+          both = 0;
+          continue;
+        }
+      }
+      both = 1;
+      while (*p==' ')
+        p += 1;
+      if (*p && *p != ',')
+        return false;
+      if (*p == ',')
+        p += 1;
+      if (! spec)
+        return false;
+      if (end_page < 0)
+        end_page = 0;
+      if (start_page < 0)
+        start_page = 0;
+      if (end_page > npages)
+        end_page = npages;
+      if (start_page > npages)
+        start_page = npages;
+      if (start_page <= end_page)
+        for(pageno=start_page; pageno<=end_page; pageno++)
+          flags[pageno-1] = true;
+      else
+        for(pageno=start_page; pageno>=end_page; pageno--)
+          flags[pageno-1] = true;
+    }
+  if (!spec)
+    return false;
+  return true;
+}
+
+void 
+ddjvu_savejob_s::mark_included_files(DjVuFile *file)
+{
+  GP<DataPool> pool = file->get_init_data_pool();
+  GP<ByteStream> str(pool->get_stream());
+  GP<IFFByteStream> iff(IFFByteStream::create(str));
+  GUTF8String chkid;
+  if (!iff->get_chunk(chkid)) 
+    return;
+  while (iff->get_chunk(chkid))
+    {
+      if (chkid == "INCL")
+        {
+          GP<ByteStream> incl = iff->get_bytestream();
+          GUTF8String fileid;
+          char buffer[1024];
+          int length;
+          while((length=incl->read(buffer, 1024)))
+            fileid += GUTF8String(buffer, length);
+          for (int i=0; i<comp_ids.size(); i++)
+            if (fileid == comp_ids[i] && !comp_flags[i])
+              comp_flags[i] = 1;
+        }
+      iff->close_chunk();
+    }
+  iff->close_chunk();
+  pool->clear_stream();
+}
+
 ddjvu_status_t 
 ddjvu_savejob_s::run()
 {
   DjVuDocument *doc = mydoc->doc;
   doc->wait_for_complete_init();
-  // Determine which components to save
-  int ncomp;
-  GArray<GUTF8String> comp_ids;
-  GPArray<DjVuFile> comp_files;
+
+  // Determine which pages to save
+  int npages = doc->get_pages_num();
+  GTArray<bool> page_flags(0, npages-1);
+  if (!pages)
+    {
+      for (int pageno=0; pageno<npages; pageno++)
+        page_flags[pageno] = true;
+    }
+  else
+    {
+      const char *s = pages;
+      while (*s && *s!='=')
+        s += 1;
+      for (int pageno=0; pageno<npages; pageno++)
+        page_flags[pageno] = false;
+      if ((*s != '=') || !parse_pagespec(s+1, npages, (bool*)page_flags))
+        complain(pages,"Illegal page specification");
+    }
+  
+  // Determine which component files to save
+  int ncomps;
   if (doc->get_doc_type()==DjVuDocument::BUNDLED ||
       doc->get_doc_type()==DjVuDocument::INDIRECT)
     {
       GP<DjVmDir> dir = doc->get_djvm_dir();
-      ncomp = dir->get_files_num();
-      comp_ids.resize(ncomp - 1);
-      comp_files.resize(ncomp - 1);
+      ncomps = dir->get_files_num();
+      comp_ids.resize(ncomps - 1);
+      comp_flags.resize(ncomps - 1);
+      comp_files.resize(ncomps - 1);
+      int pageno = 0;
       GPList<DjVmDir::File> flist = dir->get_files_list();
       GPosition pos=flist;
-      for (int comp=0; comp<ncomp; ++pos, ++comp)
-        comp_ids[comp] = flist[pos]->get_load_name();
-    } 
-  else 
-    { 
-      ncomp = doc->get_pages_num();
-      comp_ids.resize(ncomp - 1);
-      comp_files.resize(ncomp - 1);
-      for (int comp=0; comp<ncomp; comp++)
-        comp_ids[comp] = GUTF8String(comp);
+      for (int comp=0; comp<ncomps; ++pos, ++comp)
+        {
+          DjVmDir::File *file = flist[pos];
+          comp_ids[comp] = file->get_load_name();
+          comp_flags[comp] = 0;
+          if (file->is_page() && page_flags[pageno++])
+            comp_flags[comp] = 1;
+        }
     }
-  // Monitoring download progress
-  int lo = 0;
-  int hi = 0;
-  get_portcaster()->add_route(doc, this);
-  while (lo < ncomp && !mystop)
+  else
     {
+      ncomps = npages;
+      comp_flags.resize(ncomps - 1);
+      comp_files.resize(ncomps - 1);
+      for (int comp=0; comp<ncomps; ++comp)
+        comp_flags[comp] = page_flags[comp];
+    }
+  
+  // Download
+  get_portcaster()->add_route(doc, this);
+  while (!mystop)
+    {
+      int comp;
+      int wanted = 0;
+      int loaded = 0;
       int in_progress = 0;
       GMonitorLock lock(&monitor);
-      while (lo<hi && comp_files[lo]->is_data_present())
-        lo += 1;
-      progress(lo*100/ncomp);
-      for (int comp=lo; comp<hi; comp++)
-        if (! comp_files[comp]->is_data_present())
-          in_progress += 1;
-      while (hi<ncomp && in_progress < 2)
-        {
-          comp_files[hi] = doc->get_djvu_file(comp_ids[hi]);
-          if (! comp_files[hi]->is_data_present())
-            in_progress += 1;
-          hi += 1;
-        }
+      for (comp=0; comp<ncomps; comp++)
+        if (comp_files[comp] && comp_flags[comp] == 2)
+          if (comp_files[comp]->is_data_present())
+            {
+              mark_included_files(comp_files[comp]);
+              comp_flags[comp] = 3;
+            }
+      for (comp=0; comp<ncomps; comp++)
+        if (comp_flags[comp])
+          {
+            wanted += 1;
+            if (comp_flags[comp] > 2)
+              loaded += 1;
+            else if (comp_flags[comp] == 2)
+              in_progress += 1;
+          }
+      progress(loaded * 100 / wanted);
+      if (loaded == wanted)
+        break;
+      for (comp=0; comp<ncomps && in_progress < 2; comp++)
+        if (comp_flags[comp] == 1)
+          {
+            comp_flags[comp] = 2;
+            if (comp_ids.size() > 0)
+              comp_files[comp] = doc->get_djvu_file(comp_ids[comp]);
+            else
+              comp_files[comp] = doc->get_djvu_file(comp);
+            if (!comp_files[comp]->is_data_present())
+              in_progress += 1;
+          }
       if (in_progress > 0)
         monitor.wait();
     }
   if (mystop)
     G_THROW("STOP");
   // Saving!
-  doc->write(obs);
+  GP<DjVmDoc> djvm;
+  if (! pages)
+    {
+      djvm = doc->get_djvm_doc();
+    }
+  else
+    {
+      djvm = DjVmDoc::create();
+      GP<DjVmDir> dir = doc->get_djvm_dir();
+      GPList<DjVmDir::File> flist = dir->get_files_list();
+      GPosition pos=flist;
+      for (int comp=0; comp<ncomps; ++pos, ++comp)
+        if (comp_flags[comp])
+          {
+            GP<DjVmDir::File> f = new DjVmDir::File(*flist[pos]);
+            GP<DjVuFile> file = comp_files[comp];
+            GP<DataPool> data = file->get_init_data_pool();
+            djvm->insert_file(f, data);
+          }
+    }
+  djvm->write(obs);
   return DDJVU_JOB_OK;
 }
 
@@ -3057,7 +3234,22 @@ ddjvu_document_save(ddjvu_document_t *document, FILE *output,
         {
           GNativeString narg(optv[0]);
           GUTF8String uarg = narg;
-          complain(uarg, "Unrecognized option.");
+          const char *s1 = (const char*)narg;
+          if (s1[0] == '-') s1++;
+          if (s1[0] == '-') s1++;
+          // separate arguments
+          if (!strncmp(s1, "page=", 5) ||
+              !strncmp(s1, "pages=", 6) )
+            {
+              if (job->pages.length())
+                complain(uarg,"multiple page specifications");
+              job->pages = uarg;
+            }
+          else
+            {
+              complain(uarg, "Unrecognized option.");
+            }
+          // next option
           optc -= 1;
           optv += 1;
         }
