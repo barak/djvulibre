@@ -1136,11 +1136,12 @@ ddjvu_document_get_fileinfo_imp(ddjvu_document_t *document, int fileno,
                                 ddjvu_fileinfo_t *info, 
                                 unsigned int infosz )
 {
-  struct info17_s { char t; int p,s; const char *d, *n, *l; };
-  
   G_TRY
     {
+      ddjvu_fileinfo_t myinfo;
       memset(info, 0, infosz);
+      if (infosz > sizeof(myinfo))
+        return DDJVU_JOB_FAILED;
       DjVuDocument *doc = document->doc;
       if (! doc)
         return DDJVU_JOB_NOTSTARTED;
@@ -1151,22 +1152,23 @@ ddjvu_document_get_fileinfo_imp(ddjvu_document_t *document, int fileno,
            type == DjVuDocument::INDIRECT )
         {
           GP<DjVmDir> dir = doc->get_djvm_dir();
-          GP<DjVmDir::File> file = dir->pos_to_file(fileno, &info->pageno);
+          GP<DjVmDir::File> file = dir->pos_to_file(fileno, &myinfo.pageno);
           if (! file)
             G_THROW("Illegal file number");
-          info->type = 'I';
+          myinfo.type = 'I';
           if (file->is_page())
-            info->type = 'P';
+            myinfo.type = 'P';
           else
-            info->pageno = -1;
+            myinfo.pageno = -1;
           if (file->is_thumbnails())
-            info->type = 'T';
+            myinfo.type = 'T';
           if (file->is_shared_anno())
-            info->type = 'S';
-          info->size = file->size;
-          info->id = file->get_load_name();
-          info->name = file->get_save_name();
-          info->title = file->get_title();
+            myinfo.type = 'S';
+          myinfo.size = file->size;
+          myinfo.id = file->get_load_name();
+          myinfo.name = file->get_save_name();
+          myinfo.title = file->get_title();
+          memcpy(info, &myinfo, infosz);
           return DDJVU_JOB_OK;
         }
       else if (type == DjVuDocument::OLD_BUNDLED)
@@ -1176,30 +1178,32 @@ ddjvu_document_get_fileinfo_imp(ddjvu_document_t *document, int fileno,
           GP<DjVmDir0::FileRec> frec = dir0->get_file(fileno);
           if (! frec)
             G_THROW("Illegal file number");
-          info->size = frec->size;
-          info->id = (const char*) frec->name;
-          info->name = info->title = info->id;
+          myinfo.size = frec->size;
+          myinfo.id = (const char*) frec->name;
+          myinfo.name = myinfo.title = myinfo.id;
           if (! nav)
             return DDJVU_JOB_STARTED;
           else if (nav->name_to_page(frec->name) >= 0)
-            info->type = 'P';
+            myinfo.type = 'P';
           else
-            info->type = 'I';
+            myinfo.type = 'I';
+          memcpy(info, &myinfo, infosz);
           return DDJVU_JOB_OK;
         }
       else 
         {
           if (fileno<0 || fileno>=doc->get_pages_num())
             G_THROW("Illegal file number");
-          info->type = 'P';
-          info->pageno = fileno;
-          info->size = -1;
+          myinfo.type = 'P';
+          myinfo.pageno = fileno;
+          myinfo.size = -1;
           GP<DjVuNavDir> nav = doc->get_nav_dir();
-          info->id = (nav) ? (const char *) nav->page_to_name(fileno) : 0;
-          info->name = info->title = info->id;
+          myinfo.id = (nav) ? (const char *) nav->page_to_name(fileno) : 0;
+          myinfo.name = myinfo.title = myinfo.id;
           GP<DjVuFile> file = doc->get_djvu_file(fileno, true);
           GP<DataPool> pool = (file) ? file->get_init_data_pool() : 0;
-          info->size = (pool) ? pool->get_length() : -1;
+          myinfo.size = (pool) ? pool->get_length() : -1;
+          memcpy(info, &myinfo, infosz);
           return DDJVU_JOB_OK;
         }
     }
@@ -1295,11 +1299,12 @@ ddjvu_document_get_pageinfo_imp(ddjvu_document_t *document, int pageno,
                                 ddjvu_pageinfo_t *pageinfo, 
                                 unsigned int infosz)
 {
-  struct info17_s { int w; int h; int d; };
-
   G_TRY
     {
+      ddjvu_pageinfo_t myinfo;
       memset(pageinfo, 0, infosz);
+      if (infosz > sizeof(myinfo))
+        return DDJVU_JOB_FAILED;
       DjVuDocument *doc = document->doc;
       if (doc)
         {
@@ -1322,19 +1327,12 @@ ddjvu_document_get_pageinfo_imp(ddjvu_document_t *document, int pageno,
                       GP<DjVuInfo> info=DjVuInfo::create();
                       info->decode(*gbs);
                       int rot = info->orientation;
-                      int w = (rot&1) ? info->height : info->width;
-                      int h = (rot&1) ? info->width : info->height;
-                      if (pageinfo)
-                        {
-                          pageinfo->width = w;
-                          pageinfo->height = h;
-                          pageinfo->dpi = info->dpi;
-                          if (infosz > sizeof(struct info17_s))
-                            {
-                              pageinfo->rotation = rot;
-                              pageinfo->version = info->version;
-                            }
-                        }
+                      myinfo.rotation = rot;
+                      myinfo.width = (rot&1) ? info->height : info->width;
+                      myinfo.height = (rot&1) ? info->width : info->height;
+                      myinfo.dpi = info->dpi;
+                      myinfo.version = info->version;
+                      memcpy(pageinfo, &myinfo, infosz);
                       return DDJVU_JOB_OK;
                     }
                 }
@@ -1355,18 +1353,12 @@ ddjvu_document_get_pageinfo_imp(ddjvu_document_t *document, int pageno,
                           unsigned char xlo = gbs->read8();
                           unsigned char yhi = gbs->read8();
                           unsigned char ylo = gbs->read8();
-                          if (pageinfo)
-                            {
-                              pageinfo->width = (xhi<<8)+xlo;
-                              pageinfo->height = (yhi<<8)+ylo;
-                              pageinfo->dpi = 100;
-                              if (infosz > sizeof(struct info17_s))
-                                {
-                                  pageinfo->rotation = 0;
-                                  pageinfo->version = (vhi<<8)+vlo;
-                                }
-                              return DDJVU_JOB_OK;
-                            }
+                          myinfo.width = (xhi<<8)+xlo;
+                          myinfo.height = (yhi<<8)+ylo;
+                          myinfo.dpi = 100;
+                          myinfo.rotation = 0;
+                          myinfo.version = (vhi<<8)+vlo;
+                          memcpy(pageinfo, &myinfo, infosz);
                         }
                     }
                 }
