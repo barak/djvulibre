@@ -765,16 +765,15 @@ DataPool::create(const GP<ByteStream> &gstr)
   GP<DataPool> retval=pool;
   pool->init();
 
-      // It's nice to have IFF data analyzed in this case too.
+  // It's nice to have IFF data analyzed in this case too.
   pool->add_trigger(0, 32, static_trigger_cb, pool);
 
-  pool->data=gstr->duplicate();
-  pool->added_data(0,pool->data->size());   
-//  char buffer[1024];
-//  int length;
-//  while((length=str.read(buffer, 1024)))
-//     pool->add_data(buffer, length);
+  char buffer[1024];
+  int length;
+  while((length=gstr->read(buffer, 1024)))
+    pool->add_data(buffer, length);
   pool->set_eof();
+
   return retval;
 }
 
@@ -936,18 +935,10 @@ DataPool::connect(const GURL &furl_in, int start_in, int length_in)
         length=0;
       else if (length<0 || start+length>=file_size)
         length=file_size-start;
-
+      
       eof_flag=true;
-
-      if(str->is_static())
-      {
-        data=str;
-        added_data(0,length);
-      }else 
-      {
-        data=0;
-      }
-
+      data=0;
+      
       FCPools::get()->add_pool(furl, this);
 
       wake_up_all_readers();
@@ -1155,28 +1146,14 @@ DataPool::get_data(void * buffer, int offset, int sz, int level)
            G_CATCH(exc) 
              {
                pool->clear_stream(true);
-               if ((exc.get_cause() != GUTF8String( ERR_MSG("DataPool.reenter") ) ) || level)
+               if ((exc.get_cause() != GUTF8String( ERR_MSG("DataPool.reenter") ) ) 
+                   || level)
                  G_RETHROW;
              } G_ENDCATCH;
            pool->clear_stream(true);
            return retval;
          }
      }
-   else if(data && data->is_static() && eof_flag)
-     { 
-       DEBUG_MSG("DataPool::get_data(): static\n");
-       DEBUG_MAKE_INDENT(3);
-       // We're not connected to anybody => handle the data
-       int size=block_list->get_range(offset, sz);
-       if (size>0)
-         {
-           // Hooray! Some data is there
-           GCriticalSectionLock lock(&data_lock);
-           data->seek(offset, SEEK_SET);
-           return data->readall(buffer, size);
-         }
-       return 0;
-     } 
    else if (furl.is_local_file_url())
      {
        DEBUG_MSG("DataPool::get_data(): from file\n");
@@ -1425,17 +1402,16 @@ DataPool::load_file(void)
          FCPools::get()->del_pool(furl, this);
          furl=GURL();
 
-         const GP<ByteStream> gbs=f->stream;
+         const GP<ByteStream> gbs = f->stream;
          gbs->seek(0, SEEK_SET);
-         data=gbs->duplicate();
-         added_data(0,data->size());   
+         
+         char buffer[1024];
+         int length;
+         while((length = f->stream->read(buffer, 1024)))
+           add_data(buffer, length);
          set_eof();
-//         char buffer[1024];
-//         int length;
-//         while((length=f->stream->read(buffer, 1024)))
-//	         add_data(buffer, length);
-	      // No need to set EOF. It should already be set.
-        OpenFiles::get()->stream_released(f->stream, this);
+         
+         OpenFiles::get()->stream_released(f->stream, this);
       }
       fstream=0;
    } else DEBUG_MSG("Not connected\n");
@@ -1794,15 +1770,7 @@ DataPool::close_all(void)
 GP<ByteStream>
 DataPool::get_stream(void)
 {
-  if(data && data->is_static())
-  {
-    GCriticalSectionLock lock(&data_lock);
-    data->seek(0, SEEK_SET);
-    return data->duplicate(length);
-  }else
-  {
-    return new PoolByteStream(this);
-  }
+  return new PoolByteStream(this);
 }
 
 

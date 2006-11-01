@@ -457,7 +457,7 @@ DjVuDocEditor::insert_file(const GURL &file_url, const GUTF8String &parent_id,
      file_pool=source->request_data(source, file_url);
      if(source != this)
      {
-       file_pool=DataPool::create(file_pool->get_stream()->duplicate());
+       file_pool=DataPool::create(file_pool->get_stream());
      }
    }
    if(file_pool && file_url && DjVuDocument::djvu_import_codec)
