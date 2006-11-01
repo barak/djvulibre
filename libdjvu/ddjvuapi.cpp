@@ -3147,40 +3147,49 @@ ddjvu_savejob_s::run()
       int comp;
       int wanted = 0;
       int loaded = 0;
-      int in_progress = 0;
-      GMonitorLock lock(&monitor);
+      int asked = 0;
       for (comp=0; comp<ncomps; comp++)
-        if (comp_files[comp] && comp_flags[comp] == 2)
-          if (comp_files[comp]->is_data_present())
+        {
+          int flags = comp_flags[comp];
+          if (flags > 2)
+            loaded += 1;
+          else if (flags < 2)
+            continue;
+          else if (!comp_files[comp]->is_data_present())
+            asked += 1;
+          else 
             {
+              comp_flags[comp] += 1;
               mark_included_files(comp_files[comp]);
-              comp_flags[comp] = 3;
-            }
+            } 
+        }
       for (comp=0; comp<ncomps; comp++)
-        if (comp_flags[comp])
-          {
-            wanted += 1;
-            if (comp_flags[comp] > 2)
-              loaded += 1;
-            else if (comp_flags[comp] == 2)
-              in_progress += 1;
-          }
+        if (comp_flags[comp] > 0)
+          wanted += 1;
       progress(loaded * 100 / wanted);
-      if (loaded == wanted)
+      if (wanted == loaded)
         break;
-      for (comp=0; comp<ncomps && in_progress < 2; comp++)
+      for (comp=0; comp<ncomps && asked < 2; comp++)
         if (comp_flags[comp] == 1)
           {
-            comp_flags[comp] = 2;
             if (comp_ids.size() > 0)
               comp_files[comp] = doc->get_djvu_file(comp_ids[comp]);
             else
               comp_files[comp] = doc->get_djvu_file(comp);
-            if (!comp_files[comp]->is_data_present())
-              in_progress += 1;
+            comp_flags[comp] += 1;
+            if (comp_files[comp]->is_data_present())
+              comp_flags[comp] += 1;
+            else
+              asked += 1;
           }
-      if (in_progress > 0)
-        monitor.wait();
+      GMonitorLock lock(&monitor);
+      for (comp=0; comp<ncomps; comp++)
+        if (comp_flags[comp] == 2)
+          if (! comp_files[comp]->is_data_present())
+            {
+              monitor.wait();
+              break;
+            }
     }
   if (mystop)
     G_THROW("STOP");
