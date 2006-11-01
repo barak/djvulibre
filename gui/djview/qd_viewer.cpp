@@ -1286,7 +1286,7 @@ QDViewer::getURL(const GUTF8String &url_in,
      } 
    else
      {
-       GURL base = dimg->get_djvu_file()->get_url().base();
+       GURL base = djvu_doc->get_init_url().base();
        base.clear_all_arguments();
        url=GURL::UTF8(url_in,base);
      }
