@@ -45,7 +45,7 @@ with version greater than some constant use the new convention.
 
 Each page in a DjVu document is identified by three strings named
 the ID, the NAME, and the TITLE. The semantic distinction between
-these three strings is no longer very clear. The current software
+these three strings is no longer very clear. DjVu libraries
 does not work consistently when these strings are different.  See
 the comment in the table, section 8.3.2.2 of the specification.
 
@@ -55,6 +55,53 @@ should be used to display friendly page names. The djvused program
 now features a command 'set-page-title' to install a TITLE different
 from the ID string. The djview program then displays and recognizes
 these page titles in lieu of the sequential page numbers.
+
+Things get complicated when some page titles are purely numerical.
+For instance, the page titled "4" might not be the fourth page of 
+the document, and there might be many pages titled "4".
+The djview4 viewer (in preparation) uses the following rules:
+
+3.1- PAGE REFERENCES IN MAPAREA LINKS
+
+Page references in hyperlink annotations 
+always start with the character "#".
+
+"#X":  If X is numerical, go to the X-th page.
+       Otherwise, search page with TITLE "X".
+       Otherwise, search a page with NAME "X".
+       Otherwise, search a page with ID "X".
+
+"#=X": First search a page with TITLE "X".
+       Otherwise, if X is numerical, go to the X-th page.
+       Otherwise, search a page with NAME "X".
+       Otherwise, search a page with ID "X".
+
+"#+N": If N is numerical, go N pages forward.
+
+"#-N": If N is numerical, go N pages backward.
+
+Title searches progress forward from the page containing 
+the hyperlink and wrap around the end of the document.
+The first matching page is selected.
+
+
+3.2- DJVU CGI ARGUMENT "PAGE="
+
+The meaning of the djvu cgi argument "page=" 
+depends whether the first character is a "#" symbol.
+
+"...?djvuopts&page=#X":  
+    If X is numerical, go to the X-th page.
+    If X is not numerical, search a page with TITLE "X".
+    Otherwise search a page with NAME "X".
+    Otherwise search a page with ID "X".
+
+"...?djvuopts&page=X":
+    First search a page with TITLE "X".
+    Otherwise, if X is numerical, go to the X-th page.
+    Otherwise, search a page with NAME "X".
+    Otherwise, search a page with ID "X".
+
 
 
 4- METADATA ANNOTATIONS
@@ -85,7 +132,7 @@ This scheme has a potential drawback. Since the shared annotations
 is included by all pages, the document wide metadata also appears as
 page metadata for all pages. This might not be adequate for some
 uses. As a workaround, the djview4 viewer (in preparation) only
-displays the page metadata that differ from the document metadata.
+displays page metadata that differ from the document metadata.
 
 A more definitive answer would be the definition of a document
 annotation chunk located after the DIRM chunk and before any
