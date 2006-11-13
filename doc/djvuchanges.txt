@@ -38,7 +38,7 @@ escape sequences in the annotation chunk.  If any illegal sequence
 is found, the Lizardtech rule is used instead of the DjVuLibre rule.
 It is expected that Lizardtech will at some point adopt the improved
 DjVuLibre rules. We will then be able to state that all DjVu files
-with version greater than some constant use the
+with version greater than some constant use the new convention.
 
 
 3- PAGE TITLES
