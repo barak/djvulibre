@@ -292,11 +292,11 @@ protected:
   GPixel *get_line(int, const GRect &, const GRect &, const GPixmap &);
   // Temporaries
   GPixel *lbuffer;
-  GPBufferBase glbuffer;
+  GPBuffer<GPixel> glbuffer;
   GPixel *p1;
-  GPBufferBase gp1;
+  GPBuffer<GPixel> gp1;
   GPixel *p2;
-  GPBufferBase gp2;
+  GPBuffer<GPixel> gp2;
   int    l1;
   int    l2;
 };

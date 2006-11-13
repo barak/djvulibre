@@ -497,17 +497,17 @@ GBitmapScaler::scale( const GRect &provided_input, const GBitmap &input,
 
 
 GPixmapScaler::GPixmapScaler()
-  : glbuffer((void *&)lbuffer,0,sizeof(GPixel)), 
-    gp1((void *&)p1,0,sizeof(GPixel)), 
-    gp2((void *&)p2,0,sizeof(GPixel))
+  : glbuffer(lbuffer,0), 
+    gp1(p1,0), 
+    gp2(p2,0)
 {
 }
 
 
 GPixmapScaler::GPixmapScaler(int inw, int inh, int outw, int outh)
-  : glbuffer((void *&)lbuffer,0,sizeof(GPixel)), 
-    gp1((void *&)p1,0,sizeof(GPixel)), 
-    gp2((void *&)p2,0,sizeof(GPixel))
+  : glbuffer(lbuffer,0), 
+    gp1(p1,0), 
+    gp2(p2,0)
 {
   set_input_size(inw, inh);
   set_output_size(outw, outh);
@@ -612,16 +612,16 @@ GPixmapScaler::scale( const GRect &provided_input, const GPixmap &input,
       desired_output.height() != (int)output.rows() )
     output.init(desired_output.height(), desired_output.width());
   // Prepare temp stuff 
-  gp1.resize(0,sizeof(GPixel));
-  gp2.resize(0,sizeof(GPixel));
-  glbuffer.resize(0,sizeof(GPixel));
+  gp1.resize(0);
+  gp2.resize(0);
+  glbuffer.resize(0);
   prepare_interp();
   const int bufw = required_red.width();
-  glbuffer.resize(bufw+2,sizeof(GPixel));
+  glbuffer.resize(bufw+2);
   if (xshift>0 || yshift>0)
     {
-      gp1.resize(bufw,sizeof(GPixel));
-      gp2.resize(bufw,sizeof(GPixel));
+      gp1.resize(bufw);
+      gp2.resize(bufw);
       l1 = l2 = -1;
     }
   // Loop on output lines
@@ -690,9 +690,9 @@ GPixmapScaler::scale( const GRect &provided_input, const GPixmap &input,
       }
     }
   // Free temporaries
-  gp1.resize(0,sizeof(GPixel));
-  gp2.resize(0,sizeof(GPixel));
-  glbuffer.resize(0,sizeof(GPixel));
+  gp1.resize(0);
+  gp2.resize(0);
+  glbuffer.resize(0);
 }
 
 
