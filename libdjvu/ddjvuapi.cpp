@@ -894,12 +894,13 @@ ddjvu_document_s::want_pageinfo()
           GP<DataPool> pool;
           {
             GMonitorLock lock(&monitor);
-            pool = streams[0];
+            if (streams.contains(0))
+              pool = streams[0];
           }
-          if (doctype == DjVuDocument::BUNDLED)
+          if (pool && doctype == DjVuDocument::BUNDLED)
             {
               GP<DjVmDir> dir = doc->get_djvm_dir();
-              if (dir && pool)
+              if (dir)
                 for (int i=0; i<dir->get_files_num(); i++)
                   {
                     GP<DjVmDir::File> f = dir->pos_to_file(i);
@@ -907,10 +908,10 @@ ddjvu_document_s::want_pageinfo()
                       pool->add_trigger(f->offset, f->size, callback, (void*)this );
                   }
             }
-          else if (doctype == DjVuDocument::OLD_BUNDLED)
+          else if (pool && doctype == DjVuDocument::OLD_BUNDLED)
             {
               GP<DjVmDir0> dir = doc->get_djvm_dir0();
-              if (dir && pool)
+              if (dir)
                 for (int i=0; i<dir->get_files_num(); i++)
                   {
                     GP<DjVmDir0::FileRec> f = dir->get_file(i);
