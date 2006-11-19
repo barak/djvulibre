@@ -768,8 +768,9 @@ ddjvu_document_s::release()
   for (p = streams; p; ++p)
     {
       GP<DataPool> pool = streams[p];
-      pool->del_trigger(callback, (void*)this);
-      if (! pool->is_eof())
+      if (pool)
+        pool->del_trigger(callback, (void*)this);
+      if (pool && !pool->is_eof())
         pool->stop();
     }
 }
