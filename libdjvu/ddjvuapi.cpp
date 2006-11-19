@@ -205,6 +205,7 @@ struct DJVUNS ddjvu_document_s : public ddjvu_job_s
   virtual void notify_doc_flags_changed(const DjVuDocument*, long, long);
   virtual GP<DataPool> request_data(const DjVuPort*, const GURL&);
   static void callback(void *);
+  bool want_pageinfo(void);
 };
 
 struct DJVUNS ddjvu_page_s : public ddjvu_job_s
@@ -879,6 +880,49 @@ ddjvu_document_s::request_data(const DjVuPort *p, const GURL &url)
 }
 
 
+bool
+ddjvu_document_s::want_pageinfo()
+{
+  if (doc && docinfoflag && !pageinfoflag)
+    {
+      pageinfoflag = true;
+      int doctype = doc->get_doc_type();
+      if (doctype == DjVuDocument::BUNDLED ||
+          doctype == DjVuDocument::OLD_BUNDLED )
+        {
+          GP<DataPool> pool;
+          {
+            GMonitorLock lock(&monitor);
+            pool = streams[0];
+          }
+          if (doctype == DjVuDocument::BUNDLED)
+            {
+              GP<DjVmDir> dir = doc->get_djvm_dir();
+              if (dir && pool)
+                for (int i=0; i<dir->get_files_num(); i++)
+                  {
+                    GP<DjVmDir::File> f = dir->pos_to_file(i);
+                    if (! pool->has_data(f->offset, f->size))
+                      pool->add_trigger(f->offset, f->size, callback, (void*)this );
+                  }
+            }
+          else if (doctype == DjVuDocument::OLD_BUNDLED)
+            {
+              GP<DjVmDir0> dir = doc->get_djvm_dir0();
+              if (dir && pool)
+                for (int i=0; i<dir->get_files_num(); i++)
+                  {
+                    GP<DjVmDir0::FileRec> f = dir->get_file(i);
+                    if (! pool->has_data(f->offset, f->size))
+                      pool->add_trigger(f->offset, f->size, callback, (void*)this );
+                  }
+            }
+        }
+    }
+  return pageinfoflag;
+}
+
+
 // ----------------------------------------
 // Documents
 
@@ -1254,12 +1298,13 @@ ddjvu_document_search_pageno(ddjvu_document_t *document, const char *name)
 }
 
 
+
 int 
 ddjvu_document_check_pagedata(ddjvu_document_t *document, int pageno)
 {
   G_TRY
     {
-      document->pageinfoflag = true;
+      document->want_pageinfo();
       DjVuDocument *doc = document->doc;
       if (doc && doc->is_init_ok())
         {
@@ -1317,7 +1362,7 @@ ddjvu_document_get_pageinfo_imp(ddjvu_document_t *document, int pageno,
       DjVuDocument *doc = document->doc;
       if (doc)
         {
-          document->pageinfoflag = true;
+          document->want_pageinfo();
           GP<DjVuFile> file = doc->get_djvu_file(pageno);
           if (! file || ! file->is_data_present() )
             return DDJVU_JOB_STARTED;
@@ -1410,7 +1455,7 @@ ddjvu_document_get_pagedump(ddjvu_document_t *document, int pageno)
       DjVuDocument *doc = document->doc;
       if (doc)
         {
-          document->pageinfoflag = true;
+          document->want_pageinfo();
           GP<DjVuFile> file = doc->get_djvu_file(pageno);
           if (file && file->is_data_present())
             return get_file_dump(file);
@@ -1431,6 +1476,7 @@ ddjvu_document_get_filedump(ddjvu_document_t *document, int fileno)
   G_TRY
     {
       DjVuDocument *doc = document->doc;
+      document->want_pageinfo();
       if (doc)
         {
           GP<DjVuFile> file;
@@ -1445,7 +1491,6 @@ ddjvu_document_get_filedump(ddjvu_document_t *document, int fileno)
               if (fdesc)
                 file = doc->get_djvu_file(fdesc->get_load_name());
             }
-          document->pageinfoflag = true;
           if (file && file->is_data_present())
             return get_file_dump(file);
         }

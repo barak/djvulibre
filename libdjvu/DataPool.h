@@ -508,7 +508,6 @@ public:
 	  @param callback Function to call
 	  @param cl_data Argument to pass to the callback when it's called. */
    void		add_trigger(int start, int length,
-//			    void (* callback)(GP<GPEnabled> &), GP<GPEnabled> cl_data);
 			    void (* callback)(void *), void * cl_data);
 
       /** Associates the specified {\em trigger callback} with the
@@ -518,14 +517,15 @@ public:
 	  The callback will be called when there is data available for
 	  every offset from #0# to #thresh#, if #thresh# is positive, or
 	  when #EOF# condition has been set otherwise. */
-//   void		add_trigger(int thresh, void (* callback)(GP<GPEnabled> &), GP<GPEnabled> cl_data);
-   void		add_trigger(int thresh, void (* callback)(void *), void * cl_data);
+
+   void		add_trigger(int thresh, 
+                            void (* callback)(void *), void * cl_data);
 
       /** Use this function to unregister callbacks, which are no longer
 	  needed. {\bf Note!} It's important to do it when the client
 	  is about to be destroyed. */
    void		del_trigger(void (* callback)(void *), void *  cl_data);
-//   void		del_trigger(void (* callback)(GP<GPEnabled> &), GP<GPEnabled>  cl_data);
+
       //@}
 
       /** Loads data from the file into memory. This function is only useful
@@ -554,6 +554,8 @@ public:
       /** Useful in comparing data pools.  Returns true if dirived from
           same URL or bytestream. */
    bool simple_compare(DataPool &pool) const;
+
+
 private:
    bool		eof_flag;
    bool		stop_flag;

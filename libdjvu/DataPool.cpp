@@ -1478,7 +1478,6 @@ DataPool::check_triggers(void)
 }
 
 void
-// DataPool::add_trigger(int thresh, void (* callback)(GP<GPEnabled> &), GP<GPEnabled> cl_data)
 DataPool::add_trigger(int thresh, void (* callback)(void *), void * cl_data)
 {
   if (thresh>=0)
@@ -1489,7 +1488,6 @@ DataPool::add_trigger(int thresh, void (* callback)(void *), void * cl_data)
 
 void
 DataPool::add_trigger(int tstart, int tlength,
-//		      void (* callback)(GP<GPEnabled> &), GP<GPEnabled> cl_data)
 		      void (* callback)(void *), void * cl_data)
 {
    DEBUG_MSG("DataPool::add_trigger(): start=" << tstart <<
@@ -1512,15 +1510,17 @@ DataPool::add_trigger(int tstart, int tlength,
 	    pool->add_trigger(start+tstart, tlength, callback, cl_data);
 	    GCriticalSectionLock lock(&triggers_lock);
 	    triggers_list.append(trigger);
-	 } else if (!furl.is_local_file_url())
+	 } 
+         else if (!furl.is_local_file_url())
 	 {
 	       // We're not connected to anything and maintain our own data
 	    if (tlength>=0 && block_list->get_bytes(tstart, tlength)==tlength)
 	       call_callback(callback, cl_data);
 	    else
 	    {
-	       GCriticalSectionLock lock(&triggers_lock);
-	       triggers_list.append(new Trigger(tstart, tlength, callback, cl_data));
+              GP<Trigger> trigger=new Trigger(tstart, tlength, callback, cl_data);
+              GCriticalSectionLock lock(&triggers_lock);
+              triggers_list.append(trigger);
 	    }
 	 }
       }
@@ -1528,7 +1528,6 @@ DataPool::add_trigger(int tstart, int tlength,
 }
 
 void
-// DataPool::del_trigger(void (* callback)(GP<GPEnabled> &), GP<GPEnabled> cl_data)
 DataPool::del_trigger(void (* callback)(void *), void * cl_data)
 {
    DEBUG_MSG("DataPool::del_trigger(): func=" << (void *) callback << "\n");
@@ -1635,6 +1634,9 @@ DataPool::analyze_iff(void)
       DEBUG_MSG("Got size=" << size << ", length=" << length << "\n");
    }
 }
+
+
+
 
 
 //****************************************************************************
