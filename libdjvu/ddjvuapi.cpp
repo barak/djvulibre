@@ -1263,11 +1263,20 @@ ddjvu_document_check_pagedata(ddjvu_document_t *document, int pageno)
       DjVuDocument *doc = document->doc;
       if (doc && doc->is_init_ok())
         {
-          GP<DjVuFile> file;
+          bool dontcreate = false;
           if (doc->get_doc_type()==DjVuDocument::INDIRECT)
-            file = doc->get_djvu_file(pageno, true);
-          else
-            file = doc->get_djvu_file(pageno, false);            
+            {
+              dontcreate = true;
+              GURL url = doc->page_to_url(pageno);
+              if (! url.is_empty())
+                {
+                  GUTF8String name = (const char*)url.fname();
+                  GMonitorLock lock(&document->monitor);
+                  if (document->names.contains(name))
+                    dontcreate = false;
+                }
+            }
+          GP<DjVuFile> file = doc->get_djvu_file(pageno, dontcreate);
           if (file && file->is_data_present())
             return 1;
         }
