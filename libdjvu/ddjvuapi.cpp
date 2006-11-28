@@ -3003,8 +3003,10 @@ ddjvu_document_print(ddjvu_document_t *document, FILE *output,
   return job;
 }
 
+
+
 // ----------------------------------------
-// Saving (insufficiently tested)
+// Saving
 
 struct DJVUNS ddjvu_savejob_s : public ddjvu_runnablejob_s
 {
@@ -3163,6 +3165,9 @@ ddjvu_savejob_s::run()
         page_flags[pageno] = false;
       if ((*s != '=') || !parse_pagespec(s+1, npages, (bool*)page_flags))
         complain(pages,"Illegal page specification");
+      if (doc->get_doc_type()==DjVuDocument::OLD_BUNDLED ||
+          doc->get_doc_type()==DjVuDocument::OLD_INDEXED )
+        complain(pages,"Saving subsets of obsolete formats is not supported");
     }
   
   // Determine which component files to save
@@ -3233,9 +3238,7 @@ ddjvu_savejob_s::run()
             else
               comp_files[comp] = doc->get_djvu_file(comp);
             comp_flags[comp] += 1;
-            if (comp_files[comp]->is_data_present())
-              comp_flags[comp] += 1;
-            else
+            if (!comp_files[comp]->is_data_present())
               asked += 1;
           }
       GMonitorLock lock(&monitor);
@@ -3261,14 +3264,21 @@ ddjvu_savejob_s::run()
       GP<DjVmDir> dir = doc->get_djvm_dir();
       GPList<DjVmDir::File> flist = dir->get_files_list();
       GPosition pos=flist;
+      int pageno = 0;
       for (int comp=0; comp<ncomps; ++pos, ++comp)
-        if (comp_flags[comp])
-          {
-            GP<DjVmDir::File> f = new DjVmDir::File(*flist[pos]);
-            GP<DjVuFile> file = comp_files[comp];
-            GP<DataPool> data = file->get_init_data_pool();
-            djvm->insert_file(f, data);
-          }
+        {
+          if (flist[pos]->is_page())
+            pageno += 1;
+          if (comp_flags[comp])
+            {
+              GP<DjVmDir::File> f = new DjVmDir::File(*flist[pos]);
+              if (f->is_page() && f->get_save_name()==f->get_title())
+                f->set_title(GUTF8String(pageno));
+              GP<DjVuFile> file = comp_files[comp];
+              GP<DataPool> data = file->get_init_data_pool();
+              djvm->insert_file(f, data);
+            }
+        }
     }
   djvm->write(obs);
   return DDJVU_JOB_OK;

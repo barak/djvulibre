@@ -237,19 +237,11 @@ QDTBarNavPiece::slotPage(const QString &text)
       page_menu->text(index) != text)
     {
       int i;
-      printf("%d/%d %s %s\n", 
-             index, page_menu->count(),
-             (const char *)page_menu->text(index), 
-             (const char *)text);
       for (i = 0; i<page_menu->count(); i++)
         if (page_menu->text(i) == text)
           break;
       if (i>=0 && i<page_menu->count())
         index = i;
-      printf("%d/%d %s %s\n", 
-             i, page_menu->count(),
-             (const char *)page_menu->text(index), 
-             (const char *)text);
     }
   emit sigGotoPage(index);
 }

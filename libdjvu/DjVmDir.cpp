@@ -781,19 +781,8 @@ DjVmDir::set_file_title(const GUTF8String &id, const GUTF8String &title)
 {
    DEBUG_MSG("DjVmDir::set_file_title(): id='" << id << "', title='" << title << "'\n");
    DEBUG_MAKE_INDENT(3);
-   
    GCriticalSectionLock lock((GCriticalSection *) &class_lock);
-
    GPosition pos;
-   
-      // First see, if the title is unique
-   for(pos=files_list;pos;++pos)
-   {
-      GP<File> file=files_list[pos];
-      if (file->id!=id && file->title==title)
-        G_THROW( ERR_MSG("DjVmDir.title_in_use") "\t" + GUTF8String(title));
-   }
-
       // Check if ID is valid
    if (!id2file.contains(id, pos))
       G_THROW( ERR_MSG("DjVmDir.no_info") "\t" + GUTF8String(id));

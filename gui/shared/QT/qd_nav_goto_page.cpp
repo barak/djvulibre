@@ -79,10 +79,9 @@
 int
 QDNavGotoPage::getPageNum(void) const
 {
-      // We can't use menu->currentItem() here because it won't work when
-      // user presses "Enter" in the menu
-   return atoi(menu->currentText())-1;
+  return menu->currentItem();
 }
+
 
 QDNavGotoPage::QDNavGotoPage(GP<DjVuDocument> &doc,
 			     DjVuImage * dimg,

@@ -886,11 +886,11 @@ QDViewer::setDjVuDocument(GP<DjVuDocument> & doc, const GUTF8String &qkey_in)
    // Check the page key
    GUTF8String key = qkey_in;
    GP<DjVuImage> new_dimg;
-   if (key[0] != '=')
+   if (key[0] != '$')
      new_dimg = doc->get_page(key, false, page_port.getPort());
    if (! new_dimg)
      {
-       if (key[0] == '=')
+       if (key[0] == '$')
          key = GUTF8String(((const char*)key)+1);
        if (key.is_int())
          new_dimg=doc->get_page(key.toInt()-1, false, page_port.getPort());
