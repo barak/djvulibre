@@ -71,19 +71,13 @@ The djview4 viewer (in preparation) uses the following rules:
 Page references in hyperlink annotations 
 always start with the character "#".
 
-"#X":  If X is numerical, go to the X-th page.
-       Otherwise, search page with TITLE "X".
-       Otherwise, search a page with NAME "X".
-       Otherwise, search a page with ID "X".
-
-"#=X": First search a page with TITLE "X".
+"#$N": If N is numerical, go to page number N.
+"#+N": If N is numerical, go N pages forward.
+"#-N": If N is numerical, go N pages backward.
+"#X":  Search a page with title "X".
        Otherwise, if X is numerical, go to the X-th page.
        Otherwise, search a page with NAME "X".
        Otherwise, search a page with ID "X".
-
-"#+N": If N is numerical, go N pages forward.
-
-"#-N": If N is numerical, go N pages backward.
 
 Title searches progress forward from the page containing 
 the hyperlink and wrap around the end of the document.
@@ -95,11 +89,8 @@ The first matching page is selected.
 The meaning of the djvu cgi argument "page=" 
 depends whether the first character is a "#" symbol.
 
-"...?djvuopts&page=#X":  
-    If X is numerical, go to the X-th page.
-    If X is not numerical, search a page with TITLE "X".
-    Otherwise search a page with NAME "X".
-    Otherwise search a page with ID "X".
+"...?djvuopts&page=$N":  
+    If N is numerical, go to page number N.
 
 "...?djvuopts&page=X":
     First search a page with TITLE "X".
