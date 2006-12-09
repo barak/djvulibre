@@ -3251,7 +3251,7 @@ ddjvu_savejob_s::run()
             }
     }
   if (mystop)
-    G_THROW("STOP");
+    G_THROW(DataPool::Stop);
   // Saving!
   GP<DjVmDoc> djvm;
   if (! pages)
