@@ -3011,10 +3011,12 @@ ddjvu_document_print(ddjvu_document_t *document, FILE *output,
 struct DJVUNS ddjvu_savejob_s : public ddjvu_runnablejob_s
 {
   GP<ByteStream> obs;
-  GUTF8String pages;
-  GTArray<char> comp_flags;
+  GURL           odir;  
+  GUTF8String    oname;
+  GUTF8String    pages;
+  GTArray<char>       comp_flags;
   GArray<GUTF8String> comp_ids;
-  GPArray<DjVuFile> comp_files;
+  GPArray<DjVuFile>   comp_files;
   GMonitor monitor;
   // thread routine
   virtual ddjvu_status_t run();
@@ -3280,7 +3282,10 @@ ddjvu_savejob_s::run()
             }
         }
     }
-  djvm->write(obs);
+  if (obs)
+    djvm->write(obs);
+  else if (odir.is_valid() && oname.length() > 0)
+    djvm->expand(odir, oname);
   return DDJVU_JOB_OK;
 }
 
@@ -3296,6 +3301,7 @@ ddjvu_document_save(ddjvu_document_t *document, FILE *output,
       ref(job);
       job->myctx = document->myctx;
       job->mydoc = document;
+      bool indirect = false;
       // parse options
       while (optc>0)
         {
@@ -3312,6 +3318,13 @@ ddjvu_document_save(ddjvu_document_t *document, FILE *output,
                 complain(uarg,"multiple page specifications");
               job->pages = uarg;
             }
+          else if (!strncmp(s1, "indirect=", 9))
+            {
+              GURL oname = GURL::Filename::UTF8(s1 + 9);
+              job->odir = oname.base();
+              job->oname = oname.fname();
+              indirect = true;
+            }
           else
             {
               complain(uarg, "Unrecognized option.");
@@ -3321,7 +3334,7 @@ ddjvu_document_save(ddjvu_document_t *document, FILE *output,
           optv += 1;
         }
       // go
-      job->obs = ByteStream::create(output, "wb", false);
+      job->obs = (indirect) ? 0 : ByteStream::create(output, "wb", false);
       job->start();
     }
   G_CATCH(ex)

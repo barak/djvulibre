@@ -103,6 +103,7 @@ extern "C" {
               ddjvu_document_get_{anno,pagedump,filedump}()
            Modifed (binary compatible):
               ddjvu_document_get_{fileinfo,pageinfo}()   
+              ddjvu_document_save() [--pages, --indirect=]
            Deprecated:
               ddjvu_document_search_pageno()
               ddjvu_page_get_{short,long}_description()
@@ -1330,10 +1331,15 @@ ddjvu_document_print(ddjvu_document_t *document, FILE *output,
      
    The bundled djvu data is written to file <output>
    which must be seekable. Arguments <optc> and <optv>
-   are specify saving options. The only recognized option
-   is "-pages=<pagespec>" to specify a subset of pages
-   using the same syntax as program <ddjvu>.
-   Reordering or duplicating pages is prohibited. 
+   can be used to pass the following options:
+   * Option "-pages=<pagespec>" specify a subset of pages
+     using the same syntax as program <ddjvu>.
+     Reordering or duplicating pages is prohibited. 
+   * Option "-indirect=<filename>" causes the creation
+     of an indirect document with index file <filename>
+     and auxilliary files in the same directory.
+     When this option is specified, the argument <output>
+     is ignored and should be NULL.
 */
 DDJVUAPI ddjvu_job_t *
 ddjvu_document_save(ddjvu_document_t *document, FILE *output, 
