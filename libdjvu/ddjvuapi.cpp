@@ -2834,9 +2834,9 @@ ddjvu_document_print(ddjvu_document_t *document, FILE *output,
             {
               if (arg == "a" || arg == "auto" )
                 options.set_orientation(DjVuToPS::Options::AUTO);
-              if (arg == "l" || arg == "landscape" )
+              else if (arg == "l" || arg == "landscape" )
                 options.set_orientation(DjVuToPS::Options::LANDSCAPE);
-              if (arg == "p" || arg == "portrait" )
+              else if (arg == "p" || arg == "portrait" )
                 options.set_orientation(DjVuToPS::Options::PORTRAIT);
               else
                 complain(uarg,"Invalid orientation. Use \"auto\", "
