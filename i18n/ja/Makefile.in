@@ -29,7 +29,7 @@ mandir = @mandir@
 
 LANGCODE=dummy
 man= ${DESTDIR}${mandir}/${LANGCODE}/man1
-qm= ${DESTDIR}${datadir}/djvu/osi/${LANGCODE}
+qm= ${DESTDIR}${datadir}/djvu/djview3/${LANGCODE}
 
 QMFILES = qt.qm djview.qm
 

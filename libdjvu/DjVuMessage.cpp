@@ -118,10 +118,9 @@ static const char localestring[]="locale";
 
 
 // directory names for searching messages
-static const char opensourcedir[]="osi";
 #ifdef AUTOCONF
-static const char DjVuDataDir[] = DIR_DATADIR "/djvu";
-static const char ModuleDjVuDir[] ="share/djvu";
+static const char DjVuDataDir[] = DIR_DATADIR "/djvu/osi";
+static const char ModuleDjVuDir[] ="share/djvu/osi";
 #else /* !AUTOCONF */
 static const char ModuleDjVuDir[] ="profiles";
 #endif /* !AUTOCONF */
@@ -262,8 +261,7 @@ appendPath(const GURL &url,
            GMap<GUTF8String,void *> &map,
            GList<GURL> &list)
 {
-  if( !url.is_empty() 
-      && !map.contains(url.get_string()) && url.is_dir() )
+  if( !url.is_empty() && !map.contains(url.get_string()) )
     {
       map[url.get_string()]=0;
       list.append(url);
@@ -352,7 +350,6 @@ DjVuMessage::GetProfilePaths(void)
       }
     } 
     GList<GURL> localepaths;
-    GList<GURL> osilocalepaths;
 
     // Need to do it the right way!
     GUTF8String defaultlocale = getenv("LANGUAGE");
@@ -393,9 +390,6 @@ DjVuMessage::GetProfilePaths(void)
                   path=GURL::UTF8(src,paths[pos]);
                   if(path.is_dir())
                     localepaths.append(path);
-                  path=GURL::UTF8(GUTF8String(opensourcedir)+"/"+src,paths[pos]);
-                  if(path.is_dir())
-                    osilocalepaths.append(path);
                 }
               }
               // We don't need to check anymore language files.
@@ -404,19 +398,12 @@ DjVuMessage::GetProfilePaths(void)
             }
           }
           if(!pos)
-          {
-            for(pos=paths;pos;++pos)
             {
+            for(pos=paths;pos;++pos)
+              {
               path=GURL::UTF8(sublocale,paths[pos]);
               if(path.is_dir())
-              {
                 localepaths.append(path);
-              }
-              path=GURL::UTF8(GUTF8String(opensourcedir)+"/"+sublocale,paths[pos]);
-              if(path.is_dir())
-              {
-                osilocalepaths.append(path);
-              }
             }
           }
         }
@@ -429,13 +416,6 @@ DjVuMessage::GetProfilePaths(void)
       appendPath(localepaths[pos],pathsmap,realpaths);
     for(pos=paths;pos;++pos)
       appendPath(paths[pos],pathsmap,realpaths);
-    for(pos=osilocalepaths;pos;++pos)
-      appendPath(osilocalepaths[pos],pathsmap,realpaths);
-    for(pos=paths;pos;++pos)
-      {
-        path=GURL::UTF8(opensourcedir,paths[pos]);
-        appendPath(path,pathsmap,realpaths);
-      }
   }
   return realpaths;
 }

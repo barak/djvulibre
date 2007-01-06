@@ -44,7 +44,7 @@ Please check section "Browser Compatibility"
 for instructions on how to enable the
 DjVu browser plugin.
 Both the standalone viewer
-.B djview
+.B djview3
 and the DjVu browser plugin
 .B NSDEJAVUSO
 offer similar features.
@@ -52,7 +52,7 @@ The DjVu browser plugin in fact is wrapper that invokes the standalone viewer
 program in remote control mode.  This man pages describes those features
 that are specific to the browser plugin.  Additional information can
 be found in the
-.BR djview (1)
+.BR djview3 (1)
 man page.
 
 .SH MIME TYPES AND EXTENSIONS
@@ -398,7 +398,7 @@ file that comes with the Netscape distribution.
 Also check option
 .B -fix
 of program
-.BR djview .
+.BR djview3 .
 .PP
 .SS Netscape 6
 .PP
@@ -487,4 +487,4 @@ L\('eon Bottou <leonb@users.sourceforge.net>.
 .SH SEE ALSO
 .BR djvu (1),
 .BR ddjvu (1),
-.BR djview (1)
+.BR djview3 (1)

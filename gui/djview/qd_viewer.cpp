@@ -1549,9 +1549,9 @@ QDViewer::slotHelp(void)
        try
          {
            GURL helpurl;
-           helpurl = getDjVuDataFile(DJVIEW_HELP_DJVU);
+           helpurl = getDjViewDataFile(DJVIEW_HELP_DJVU);
            if ( helpurl.is_empty() )
-             helpurl = getDjVuDataFile(DJVIEW_HELP_HTML);
+             helpurl = getDjViewDataFile(DJVIEW_HELP_HTML);
            if ( helpurl.is_empty() )
              helpurl = GURL::UTF8(GUTF8String(DJVIEW_HELP_URL));
            

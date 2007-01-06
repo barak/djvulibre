@@ -174,27 +174,26 @@ install: install-bin install-man install-data
 install-bin: ${PROGRAM} FORCE
 	${INSTALL} -d ${DESTDIR}${bindir}
 	${LIBTOOL} --mode=install \
-	  ${INSTALL_PROGRAM} -s ${PROGRAM} ${DESTDIR}${bindir}
+	  ${INSTALL_PROGRAM} -s ${PROGRAM} \
+          ${DESTDIR}${bindir}/djview3
+	( cd ${DESTDIR}${bindir} ; \
+          ${LN_S} djview3 djview )
 
 install-man: FORCE
 	${INSTALL} -d ${DESTDIR}${mandir}/man1
-	${INSTALL_DATA} ${srcdir}/djview.1 ${DESTDIR}${mandir}/man1
+	${INSTALL_DATA} ${srcdir}/djview.1 \
+	   ${DESTDIR}${mandir}/man1/djview3.1
+	( cd ${DESTDIR}${mandir}/man1 ; \
+          ${LN_S} djview3.1 djview.1 )
 
 install-data: FORCE
-	${INSTALL} -d ${DESTDIR}${datadir}/djvu/osi
-	-for l in ${LANGUAGES} ; do \
-	  ${INSTALL} -d ${DESTDIR}${datadir}/djvu/osi/$$l ;\
-	  for p in ${LANGFILES} ; do \
-	    test -r i18n/$$l/$$p.qm && \
-	     ${INSTALL_DATA} i18n/$$l/$$p.qm \
-	       ${DESTDIR}${datadir}/djvu/osi/$$l ;\
-	done ; done
+	${INSTALL} -d ${DESTDIR}${datadir}/djvu/djview3
 	-test -r ${srcdir}/djview_help.djvu && \
 	  ${INSTALL_DATA} ${srcdir}/djview_help.djvu \
-	    ${DESTDIR}${datadir}/djvu/osi
+	    ${DESTDIR}${datadir}/djvu/djview3
 	-test -r ${srcdir}/djview_help.html && \
 	  ${INSTALL_DATA} ${srcdir}/djview_help.html \
-	    ${DESTDIR}${datadir}/djvu/osi
+	    ${DESTDIR}${datadir}/djvu/djview3
 
 depend: ${MOCINCS} FORCE
 	( for n in ${CPP_SOURCES} ; do \

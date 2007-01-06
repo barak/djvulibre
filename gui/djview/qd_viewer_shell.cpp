@@ -229,7 +229,7 @@ QDViewerShell::about(void)
 void
 QDViewerShell::help(void)
 {
-  GURL helpurl = getDjVuDataFile(DJVIEW_HELP_DJVU);
+  GURL helpurl = getDjViewDataFile(DJVIEW_HELP_DJVU);
   if (helpurl.is_empty() )
     {
       QString mesg = 
@@ -550,7 +550,7 @@ QDViewerShell::QDViewerShell(QWidget * parent, const char * name)
    menu->insertSeparator();
    QPopupMenu * help_pane=new QPopupMenu(this);
    help_pane->insertItem(tr("&About"), IDC_ABOUT_DEJAVU);
-   GURL helpurl = getDjVuDataFile(DJVIEW_HELP_DJVU);
+   GURL helpurl = getDjViewDataFile(DJVIEW_HELP_DJVU);
    if (! helpurl.is_empty() )
      help_pane->insertItem(tr("&Help"), IDC_HELP_DEJAVU);
    connect(help_pane, SIGNAL(aboutToShow(void)), this, SLOT(slotAboutToShowMenu(void)));

@@ -130,10 +130,31 @@ getExecDir(void)
 }
 
 GURL 
-getDjVuDataFile(const char *fname)
+getDjViewDataFile(const char *fname)
 {
   GList<GURL> paths = DjVuMessage::GetProfilePaths();
   GUTF8String file = fname;
+
+  // end hack alert
+  static const char *osi = "/osi/";
+  static const char *djview3 = "/djview3/";
+  for (GPosition pos=paths; pos; ++pos)
+    {
+      GURL url = GURL(file, paths[pos]);
+      GUTF8String urls = (const char*)url;
+      int pos = urls.search(osi);
+      if (pos >= 0)
+        {
+          GUTF8String urlx;
+          urlx += urls.substr(0, pos);
+          urlx += djview3;
+          urlx += urls.substr(pos+strlen(osi), -1);
+          GURL url = GURL::UTF8(urlx);
+          if (url.is_file())
+            return url;
+        }
+    }
+  // end hack alert
   for (GPosition pos=paths; pos; ++pos)
     {
       GURL url = GURL(file, paths[pos]);

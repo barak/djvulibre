@@ -68,6 +68,6 @@
 #include "GURL.h"
 
 GURL getExecDir(void);
-GURL getDjVuDataFile(const char *fname);
+GURL getDjViewDataFile(const char *fname);
 
 #endif

@@ -61,12 +61,18 @@ find %{buildroot}%{_libdir} -name "*.so*" -exec chmod 755 {} \;
 # Quick cleanup of the docs
 rm -rf doc/CVS 2>/dev/null || :
 
+# Remove symlinks to djview when there are alternatives
+if test -x /usr/sbin/update-alternatives ; then
+  for n in %{buildroot}%{_bindir}/djview \ 
+           %{buildroot}%{_mandir}/man1/djview.1 
+  do
+    test -h $n && rm $n
+  done
+fi
+
 # Compute file list
 find %{buildroot} \( -type f -o -type l \) \
-| sed -e 's:^%{buildroot}::' \
-| grep -v '^%{_mandir}/' \
-| grep -v '^%{_datadir}/djvu/osi/' \
-> files.list
+  | sed -e 's:^%{buildroot}::' > files.list
 
 %clean
 rm -rf %{buildroot}
@@ -74,6 +80,12 @@ rm -rf %{buildroot}
 %post 
 # LIBS: Run ldconfig
 /sbin/ldconfig
+# ALTERNATIVES
+if test -x /usr/sbin/update-alternatives ; then
+  /usr/sbin/update-alternatives \
+    --install %{_bindir}/djview djview ${_bindir}/djview3 103 \
+    --slave %{_mandir}/man1/djview.1 djview.1 ${_mandir}/man1/djview3.1
+fi
 # MENU: For debian-style menu systems
 if test -x /usr/bin/update-menus; then /usr/bin/update-menus; fi
 # HACK: Create links to nsdejavu.so in mozilla dirs
@@ -95,6 +107,11 @@ if test -x /usr/bin/update-menus; then /usr/bin/update-menus; fi
   fi ; done ; fi ) 2>/dev/null || true
 # MENU: For debian-style menu systems
 if test -x /usr/bin/update-menus; then /usr/bin/update-menus; fi
+# ALTERNATIVES
+if test -x /usr/sbin/update-alternatives ; then
+  /usr/sbin/update-alternatives \
+    --remove djview %{_bindir}/djview
+fi
 # LIBS: Run ldconfig
 /sbin/ldconfig
 
@@ -106,17 +123,11 @@ if test -x /usr/bin/update-menus; then /usr/bin/update-menus; fi
 %dir %{_datadir}/djvu
 %dir %{_datadir}/djvu/osi
 %dir %{_datadir}/djvu/pubtext
-%{_datadir}/djvu/osi/en
-%lang(ja) %{_datadir}/djvu/osi/ja*
-%lang(fr) %{_datadir}/djvu/osi/fr*
-%lang(de) %{_datadir}/djvu/osi/de*
-%lang(zh) %{_datadir}/djvu/osi/zh*
-%{_mandir}/man?
-%lang(ja) %{_mandir}/ja*
-%lang(fr) %{_mandir}/fr*
-%lang(de) %{_mandir}/de*
+%dir %{_datadir}/djvu/djview3
 
 %changelog
+* Sat Jan 06, 2007 Leon Bottou <leon@bottou.org> 3.5.18-1
+- Updated to 3.5.18-1
 * Mon Oct 31 2005 Leon Bottou <leon@bottou.org> 3.5.16-1
 - Updated to 3.5.16-1
 * Wed Jul  6 2005 Leon Bottou <leon@bottou.org> 3.5.15-1
