@@ -37,7 +37,7 @@ MANFILES_STD = bzz.1 c44.1 cjb2.1 cpaldjvu.1 csepdjvu.1 \
                ddjvu.1 djvm.1 djvmcvt.1 djvu.1 djvudump.1 \
                djvuextract.1 djvumake.1 djvups.1 djvused.1 \
                djvuserve.1 djvutxt.1
-@GUI_YES@MANFILES_GUI = nsdejavu.1 djview.1
+@GUI_YES@MANFILES_GUI = nsdejavu.1 djview3.1
 @GUI_NO@MANFILES_GUI =
 MANFILES= ${MANFILES_STD} ${MANFILES_GUI}
 
