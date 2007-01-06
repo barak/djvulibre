@@ -63,16 +63,19 @@ rm -rf doc/CVS 2>/dev/null || :
 
 # Remove symlinks to djview when there are alternatives
 if test -x /usr/sbin/update-alternatives ; then
-  for n in %{buildroot}%{_bindir}/djview \ 
-           %{buildroot}%{_mandir}/man1/djview.1 
-  do
-    test -h $n && rm $n
-  done
+  test -h %{buildroot}%{_bindir}/djview \
+    && rm %{buildroot}%{_bindir}/djview
+  test -h %{buildroot}%{_mandir}/man1/djview.1 \
+    && rm %{buildroot}%{_mandir}/man1/djview.1
 fi
 
 # Compute file list
 find %{buildroot} \( -type f -o -type l \) \
-  | sed -e 's:^%{buildroot}::' > files.list
+ | sed -e 's:^%{buildroot}::' \
+ | grep -v '^%{_mandir}/' \
+ | grep -v '^%{_datadir}/djvu/osi/' \
+ | grep -v '^%{_datadir}/djvu/djview3/' \
+ > files.list
 
 %clean
 rm -rf %{buildroot}
@@ -82,9 +85,11 @@ rm -rf %{buildroot}
 /sbin/ldconfig
 # ALTERNATIVES
 if test -x /usr/sbin/update-alternatives ; then
+  m1=`ls -1 %{_mandir}/man1/djview3.* | head -1`
+  m2=`echo $m1 | sed -e 's/djview3/djview/'`
   /usr/sbin/update-alternatives \
-    --install %{_bindir}/djview djview ${_bindir}/djview3 103 \
-    --slave %{_mandir}/man1/djview.1 djview.1 ${_mandir}/man1/djview3.1
+    --install %{_bindir}/djview djview %{_bindir}/djview3 103 \
+    --slave $m2 `basename $m2` $m1
 fi
 # MENU: For debian-style menu systems
 if test -x /usr/bin/update-menus; then /usr/bin/update-menus; fi
@@ -110,7 +115,7 @@ if test -x /usr/bin/update-menus; then /usr/bin/update-menus; fi
 # ALTERNATIVES
 if test -x /usr/sbin/update-alternatives ; then
   /usr/sbin/update-alternatives \
-    --remove djview %{_bindir}/djview
+    --remove djview %{_bindir}/djview3
 fi
 # LIBS: Run ldconfig
 /sbin/ldconfig
@@ -124,9 +129,20 @@ fi
 %dir %{_datadir}/djvu/osi
 %dir %{_datadir}/djvu/pubtext
 %dir %{_datadir}/djvu/djview3
+%{_mandir}/man?
+%lang(ja) %{_mandir}/ja*
+%lang(fr) %{_mandir}/fr*
+%lang(de) %{_mandir}/de*
+%{_datadir}/djvu/osi/languages.xml
+%{_datadir}/djvu/osi/en*
+%lang(ja) %{_datadir}/djvu/*/ja*
+%lang(fr) %{_datadir}/djvu/*/fr*
+%lang(de) %{_datadir}/djvu/*/de*
+%lang(zh) %{_datadir}/djvu/*/zh*
+
 
 %changelog
-* Sat Jan 06, 2007 Leon Bottou <leon@bottou.org> 3.5.18-1
+* Sat Jan 06 2007 Leon Bottou <leon@bottou.org> 3.5.18-1
 - Updated to 3.5.18-1
 * Mon Oct 31 2005 Leon Bottou <leon@bottou.org> 3.5.16-1
 - Updated to 3.5.16-1
