@@ -1,6 +1,8 @@
 #! /bin/sh
 
 # Manually added, not by dh_installmenu
-if [ -x "`which update-menus 2>/dev/null`" ]; then update-menus ; fi
+if [ -x "`which update-menus 2>/dev/null`" ]; then 
+  update-menus 
+fi
 
 #DEBHELPER#

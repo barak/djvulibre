@@ -1,6 +1,7 @@
-usr/bin/djview
-usr/share/man/man1/djview.1
-usr/share/man/*/man1/djview.1
+usr/bin/djview3
+usr/share/djvu/djview3
+usr/share/man/man1/djview3.1
+usr/share/man/*/man1/djview3.1
 usr/share/application-registry/djvu.applications
 usr/share/mime-info/djvu.keys
 usr/share/applications/djview.desktop

@@ -101,11 +101,8 @@ install: build
 	ln -sf ../../$(plug) debian/tmp/usr/lib/mozilla-firefox/plugins/
 	-rm debian/tmp/usr/share/menu/djview.menu
 	cp --preserve=timestamps gui/desktop/djview.menu debian/
-#	cmp debian/tmp/usr/share/{pixmaps,icons/hicolor/48x48/mimetypes}/djvu.png \
-#		&& ln -sf ../icons/hicolor/48x48/mimetypes/djvu.png	\
-#			debian/tmp/usr/share/pixmaps/djvu.png
-#	mkdir --parents debian/tmp/usr/include/djvu/
-#	cp libdjvu/*.h  debian/tmp/usr/include/djvu/
+	-rm debian/tmp/usr/bin/djview
+	-rm debian/tmp/usr/share/man/man1/djview.1
 
 # Build architecture-independent files here.
 binary-indep: build install

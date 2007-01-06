@@ -1,6 +1,17 @@
 #! /bin/sh
 
 # Manually added, not by dh_installmenu
-if [ "$1" = "configure" ] && [ -x /usr/bin/update-menus ]; then update-menus ; fi
+if [ "$1" = "configure" ] && [ -x /usr/bin/update-menus ] ; then 
+  update-menus 
+fi
+
+# Alternatives
+if [ "$1" = "configure" ] && [ -x /usr/sbin/update-alternatives ] ; then
+  m1=`ls -1 /usr/share/man/man1/djview3.* | head -1`
+  m2=`echo $m1 | sed -e 's/djview3/djview/'`
+  /usr/sbin/update-alternatives --quiet \
+    --install /usr/bin/djview djview /usr/bin/djview3 103 \
+    --slave $m2 `basename $m2` $m1
+fi
 
 #DEBHELPER#

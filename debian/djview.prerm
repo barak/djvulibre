@@ -1,0 +1,9 @@
+#! /bin/sh
+
+# Alternatives
+if [ "$1" = "remove" ] && [ -x /usr/sbin/update-alternatives ] ; then
+  /usr/sbin/update-alternatives --quiet \
+    --remove djview /usr/bin/djview3
+fi
+
+#DEBHELPER#

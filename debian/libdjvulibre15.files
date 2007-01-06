@@ -1,4 +1,4 @@
 usr/lib/lib*.so.*
-usr/share/djvu
+usr/share/djvu/osi
 usr/share/mime-info/djvu.mime
 usr/share/icons
