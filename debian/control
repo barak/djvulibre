@@ -66,7 +66,7 @@ Package: djvulibre-bin
 Section: graphics
 Architecture: any
 Depends: curl, ${shlibs:Depends}
-Suggests: djview
+Suggests: djview | djview4
 Description: Utilities for the DjVu image format
  Executables including utilities for conversion between DjVu and other
  formats.
