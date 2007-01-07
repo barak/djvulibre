@@ -52,12 +52,29 @@
 //C- +------------------------------------------------------------------
 */
 
-#ifdef HAVE_CONFIG_H
 #include "config.h"
+
+#ifndef DJVIEW_NAME
+# define DJVIEW_NAME "djview"
 #endif
 
-#include "names.h"
-#include "version.h"
+#ifndef DJVIEW4_NAME
+# define DJVIEW4_NAME "djview4"
+#endif
+
+#ifndef DJVIEW3_NAME
+# define DJVIEW3_NAME "djview3"
+#endif
+
+#ifndef LIBRARY_NAME
+# if defined(hpux)
+#  define LIBRARY_NAME    "nsdejavu.sl"
+# elif defined(WIN32) || defined(__CYGWIN32__)
+#  define LIBRARY_NAME    "nsdejavu.dll"
+# else
+#  define LIBRARY_NAME    "nsdejavu.so"
+# endif
+#endif
 
 #include <stdlib.h>
 #include <stdio.h>
@@ -68,37 +85,35 @@
 #include <errno.h>
 #include <signal.h>
 #include <ctype.h>
-#ifdef HAVE_UNISTD_H
-#include <unistd.h>
+#if HAVE_UNISTD_H
+# include <unistd.h>
 #endif
-#ifdef TIME_WITH_SYS_TIME
+#if TIME_WITH_SYS_TIME
 # include <sys/time.h>
 # include <time.h>
+#elif HAVE_SYS_TIME_H
+# include <sys/time.h>
 #else
-# ifdef HAVE_SYS_TIME_H
-#  include <sys/time.h>
-# else
-#  include <time.h>
-# endif
+# include <time.h>
 #endif
-#ifdef HAVE_SYS_WAIT_H
+#if HAVE_SYS_WAIT_H
 # include <sys/wait.h>
 #else
 # include <wait.h>
 #endif
-#ifndef HAVE_WORKING_VFORK
+#if !HAVE_WORKING_VFORK
 # define vfork fork
 #endif
 #ifndef MAXPATHLEN
-#ifdef _MAX_PATH
-#define MAXPATHLEN _MAX_PATH
-#else
-#define MAXPATHLEN 1024
-#endif
+# ifdef _MAX_PATH
+#  define MAXPATHLEN _MAX_PATH
+# else
+#  define MAXPATHLEN 1024
+# endif
 #endif
 #if ( MAXPATHLEN < 1024 )
-#undef MAXPATHLEN
-#define MAXPATHLEN 1024
+# undef MAXPATHLEN
+# define MAXPATHLEN 1024
 #endif
 
 #define XP_UNIX 1
@@ -110,10 +125,10 @@
 #include <X11/Shell.h>
 
 #ifndef TRUE
-#define TRUE 1
+# define TRUE 1
 #endif
 #ifndef FALSE
-#define FALSE 0
+# define FALSE 0
 #endif
 
 
@@ -208,13 +223,21 @@ Write(int fd, const void * buffer, int length)
 {
   int size = length;
   const char *ptr = (const char*)buffer;
+#if HAVE_SIGACTION
   sigset_t new_mask, old_mask;
   struct sigaction new_action, old_action;
+#else
+  void *oldhandler;
+#endif
   int res;
 
+#if HAVE_SIGACTION
   sigemptyset(&new_mask);
   sigaddset(&new_mask, SIGPIPE);
   sigprocmask(SIG_BLOCK, &new_mask, &old_mask);
+#else
+  oldhandler = signal(SIGPIPE, SIG_IGN);
+#endif
   while(size>0)
     {
       errno = 0;
@@ -226,12 +249,16 @@ Write(int fd, const void * buffer, int length)
       size-=res; 
       ptr+=res;
     }
+#if HAVE_SIGACTION
   sigaction(SIGPIPE, 0, &new_action);
   new_action.sa_handler=SIG_IGN;
   new_action.sa_flags=SA_NODEFER;
   sigaction(SIGPIPE, &new_action, &old_action);
   sigprocmask(SIG_SETMASK, &old_mask, 0);
   sigaction(SIGPIPE, &old_action, 0);
+#else
+  signal(SIGPIPE, oldhandler);
+#endif
   if (size > 0)
     return -1;
   return 0;
@@ -548,7 +575,7 @@ get_plugin_path(strpool *pool)
 {
   const char *env;
   const char *dir;
-  // MOZ_PLUGIN_PATH
+  /* MOZ_PLUGIN_PATH */
   if ((env = getenv("MOZ_PLUGIN_PATH"))) {
     while ((dir = pathelem(pool, &env))) {
       const char *lib = strconcat(pool, dir, "/", LIBRARY_NAME, 0);
@@ -556,7 +583,7 @@ get_plugin_path(strpool *pool)
         return lib;
     }
   }
-  // NPX_PLUGIN_PATH
+  /* NPX_PLUGIN_PATH */
   if ((env = getenv("NPX_PLUGIN_PATH"))) {
     while ((dir = pathelem(pool, &env))) {
       const char *lib = strconcat(pool, dir, "/", LIBRARY_NAME, 0);
@@ -564,7 +591,7 @@ get_plugin_path(strpool *pool)
         return lib;
     }
   }
-  // $HOME/.{mozilla,netscape}/plugins
+  /* $HOME/.{mozilla,netscape}/plugins */
   if ((env = getenv("HOME"))) {
     const char *lib;
     lib = strconcat(pool, env, "/.mozilla/plugins/", LIBRARY_NAME, 0);
@@ -574,13 +601,13 @@ get_plugin_path(strpool *pool)
     if (is_file(lib))
       return lib;
   }
-  // MOZILLA_HOME
+  /* MOZILLA_HOME */
   if ((env = getenv("MOZILLA_HOME"))) {
     const char *lib = strconcat(pool, env, "/plugins/", LIBRARY_NAME, 0);
     if (is_file(lib))
       return lib;
   }
-  // OTHER
+  /* OTHER */
   env = stdpath;
   while ((dir = pathelem(pool, &env))) {
     const char *lib = strconcat(pool, dir, "/", LIBRARY_NAME, 0);
@@ -610,49 +637,53 @@ GetPluginPath(void)
 static const char *
 get_viewer_path(strpool *pool)
 {
-  const char *env;
-  const char *dir;
-  const char *test;
+  int i;
+  const char *env = 0;
+  const char *envs = 0;
+  static const char *djview[] = { DJVIEW_NAME, DJVIEW4_NAME, DJVIEW3_NAME, 0 };
   /* Environment variable NPX_DJVIEW overrides everything */
   if ((env = getenv("NPX_DJVIEW")))
     if (is_executable(env))
       return env;
-  /* Try relative to plugin path */
-  if ((env = GetPluginPath())) {
-    const char *envs = follow_symlinks(pool, env);
-#ifdef AUTOCONF
-    dir = dirname(pool, envs);
-    test = strconcat(pool, dir, "/../../../bin/", DJVIEW_NAME, 0);
-    if (is_executable(test))
-      return test;
-    test = strconcat(pool, dir, "/../../bin/", DJVIEW_NAME, 0);
-    if (is_executable(test))
-      return test;
-#else /* ! AUTOCONF */
-    dir = dirname(pool, env);
-    test = strconcat(pool, dir, "/../DjVu/", DJVIEW_NAME,0);
-    if (is_executable(test))
-      return test;
-    dir = dirname(pool, envs);
-    test = strconcat(pool, dir, "/../DjVu/", DJVIEW_NAME,0);
-    if (is_executable(test))
-      return test;
-#endif
-  }
-  /* Try ${bindir} */
-#ifdef AUTOCONF
-#ifdef DIR_BINDIR
-  test = strconcat(pool,DIR_BINDIR,"/",DJVIEW_NAME,0);
-  if (is_executable(test))
-    return test;
-#endif
-#endif
-  /* Try in the shell path */
-  if ((env = getenv("PATH")))
-    while ((dir = pathelem(pool, &env))) {
-      test = strconcat(pool, dir, "/", DJVIEW_NAME, 0);
+  /* Locate plugin path */
+  if ((env = GetPluginPath()))
+    envs = follow_symlinks(pool, env);
+  /* Try the following names */
+  for (i=0; djview[i]; i++)
+    {
+      const char *dir;
+      const char *test;
+      if (envs) {
+        /* Try relative to plugin path */
+        dir = dirname(pool, envs);
+        test = strconcat(pool, dir, "/../../../bin/", djview[i], 0);
+        if (is_executable(test))
+          return test;
+        test = strconcat(pool, dir, "/../../bin/", djview[i], 0);
+        if (is_executable(test))
+          return test;
+        dir = dirname(pool, env);
+        test = strconcat(pool, dir, "/../DjVu/", djview[i],0);
+        if (is_executable(test))
+          return test;
+        dir = dirname(pool, envs);
+        test = strconcat(pool, dir, "/../DjVu/", djview[i],0);
+        if (is_executable(test))
+          return test;
+      }
+      /* Try ${bindir} */
+#if defined(DIR_BINDIR)
+      test = strconcat(pool,DIR_BINDIR,"/",djview[i],0);
       if (is_executable(test))
         return test;
+#endif
+      /* Try in the shell path */
+      if ((env = getenv("PATH")))
+        while ((dir = pathelem(pool, &env))) {
+          test = strconcat(pool, dir, "/", djview[i], 0);
+          if (is_executable(test))
+            return test;
+        }
     }
   /* Deep trouble */
   return 0;
@@ -1009,7 +1040,7 @@ static DelayedRequestList	delayed_requests;
 static int		pipe_read = -1;
 static int              pipe_write = -1;
 static int              rev_pipe = -1;
-static u_long		white, black;
+static unsigned long	white, black;
 static Colormap         colormap;
 static GC		text_gc;
 static XFontStruct	*font10, *font12, *font14, *font18, *fixed_font;
@@ -1017,7 +1048,7 @@ static XFontStruct	*font10, *font12, *font14, *font18, *fixed_font;
 typedef struct
 {
   int pipe_read, pipe_write, rev_pipe;
-  u_long white, black;
+  unsigned long white, black;
   Colormap colormap;
   GC text_gc;
   XFontStruct *font10, *font12, *font14, *font18, *fixed_font;
@@ -1455,7 +1486,7 @@ CopyColormap(Display *displ, Visual *visual, Screen *screen, Colormap cmap)
            is Netscape's.  Otherwise the screen may flash. */
         XSync(displ, False);
         XInstallColormap(displ, colormap);
-        // Cleanup
+        /* Cleanup */
         if (colors)
           free(colors);
         if (pixels)
@@ -1471,12 +1502,6 @@ CopyColormap(Display *displ, Visual *visual, Screen *screen, Colormap cmap)
 /*******************************************************************************
 ************************************* Utilities ********************************
 *******************************************************************************/
-
-static inline int
-max(int x, int y)
-{
-  return x<y ? y : x;
-}
 
 static int
 IsConnectionOK(int handshake)
@@ -1588,7 +1613,7 @@ Attach(Display * displ, Window window, void * id)
   const char *text="DjVu plugin is being loaded. Please stand by...";
   XtAppContext app_context;  
   Dimension width, height;
-  u_long back_color;
+  unsigned long back_color;
   XColor cell;
   
   XSync(displ, False);
@@ -1624,7 +1649,7 @@ Attach(Display * displ, Window window, void * id)
   /* Process colormap */
   if (!colormap)
     {
-      // Allocating black and white colors
+      /* Allocating black and white colors */
       XColor white_screen, white_exact;
       XColor black_screen, black_exact;
       XAllocNamedColor(displ, cmap, "white", &white_screen, &white_exact);
@@ -1685,7 +1710,7 @@ Attach(Display * displ, Window window, void * id)
       if (fixed_font && XTextWidth(fixed_font, text, strlen(text))*6<=width*5)
         font=fixed_font;
     }
-  // Paint the drawing area and display "Stand by..." message
+  /* Paint the drawing area and display "Stand by..." message */
   XtVaSetValues(widget, XtNforeground, black, XtNbackground, white, NULL);
   if (font && text_gc)
     {
@@ -1803,10 +1828,10 @@ StartProgram(void)
       for(s=8;s<1024;s++) 
         close(s);
       
-      // This is needed for RedHat's version of Netscape.
+      /* This is needed for RedHat's version of Netscape. */
       UnsetVariable("LD_PRELOAD");
       UnsetVariable("XNLSPATH");
-      // This is needed to disable session management in Qt
+      /* This is needed to disable session management in Qt */
       UnsetVariable("SESSION_MANAGER");      
       
       /* Old autoinstaller fails to set the "executable" flag. */
@@ -1824,7 +1849,7 @@ StartProgram(void)
       _exit(1);
     }
   
-  // Parent
+  /* Parent */
   close(_pipe_write);
   close(_pipe_read);
   close(_rev_pipe);
@@ -1947,7 +1972,7 @@ NPP_Destroy(NPP np_inst, NPSavedData ** save)
   
   if (map_lookup(&instance, id, &inst) < 0)
     return NPERR_INVALID_INSTANCE_ERROR;
-  // Detach the main window, if not already detached
+  /* Detach the main window, if not already detached */
   NPP_SetWindow(np_inst, 0);
   map_remove(&instance, id);
   np_inst->pdata=0;
@@ -2200,24 +2225,22 @@ NPP_GetValue(void *future, NPPVariable variable, void *value)
    switch (variable)
      {
      case NPPVpluginNameString:
-#ifdef DJVULIBRE_VERSION
-       *((char **)value) = "DjVuLibre-" DJVIEW_VERSION_STR;
-#else
-       *((char **)value) = "DjVu " DJVIEW_VERSION_STR;
+#if defined(DJVIEW_VERSION_STR)
+       *((char **)value) = "DjView-" DJVIEW_VERSION_STR;
+#elif defined(DJVULIBRE_VERSION)
+       *((char **)value) = "DjVuLibre-" DJVULIBRE_VERSION;
 #endif
        break;
      case NPPVpluginDescriptionString:
      *((char **)value) =
-#ifdef DJVULIBRE_VERSION
-       "This is the <a href=\"http://www.sourceforge.net/projects/djvu\">"
-       "DjvuLibre-" DJVULIBRE_VERSION "</a> version of the DjVu plugin.<br>"
-       "More information can be found at "
-       "<a href=\"http://www.lizardtech.com\">LizardTech, Inc.</a> "
-       "and <a href=\"http://www.djvuzone.org\">DjVuZone</a>.";
-#else
-       "Seems to be the DjVu-" DJVIEW_VERSION_STR " browser plug-in\n"
-       "Check with <a href=\"http://www.lizardtech.com\">LizardTech, Inc.</a>\n";
+#if defined(DJVIEW_VERSION_STR)
+       "This is the <a href=\"http://djvu.sourceforge.net\">"
+       "DjView-" DJVIEW_VERSION_STR "</a> version of the DjVu plugin.<br>"
+#elif defined(DJVULIBRE_VERSION)
+       "This is the <a href=\"http://djvu.sourceforge.net\">"
+       "DjVuLibre-" DJVULIBRE_VERSION "</a> version of the DjVu plugin.<br>"
 #endif
+       "See <a href=\"http://djvu.sourceforge.net\">DjVuLibre</a>.";
      break;
      default:
        err = NPERR_GENERIC_ERROR;

@@ -21,7 +21,7 @@
 .\" You should have received a copy of the GNU General Public
 .\" License along with this manual. Otherwise check the web site
 .\" of the Free Software Foundation at http://www.fsf.org.
-.TH NSDEJAVU 1 "10/19/2002" "DjVuLibre-3.5" "DjVuLibre-3.5"
+.TH NSDEJAVU 1 "1/4/2006" "DjVuLibre-3.5" "DjVuLibre-3.5"
 .de SS
 .SH \\0\\0\\0\\$*
 ..
@@ -43,20 +43,24 @@ of support for Netscape plugins.
 Please check section "Browser Compatibility"
 for instructions on how to enable the
 DjVu browser plugin.
-Both the standalone viewer
-.B djview3
-and the DjVu browser plugin
-.B NSDEJAVUSO
-offer similar features.
-The DjVu browser plugin in fact is wrapper that invokes the standalone viewer
-program in remote control mode.  This man pages describes those features
-that are specific to the browser plugin.  Additional information can
-be found in the
-.BR djview3 (1)
-man page.
+
+The DjVuLibre browser plugin works by invoking
+a standalone viewer with the special command line option
+.BR -netscape .
+The plugin first searches a program named
+.BR djview .
+If this program cannot be found,
+it searches for
+.BR djview4
+and finally
+.BR djview3.
+It is always possible to override this search strategy
+by setting the environment variable
+.B NPX_DJVIEW
+to the full path of the desired executable.
+
 
 .SH MIME TYPES AND EXTENSIONS
-
 Typing the
 .SM URL
 of a recognized DjVu document in your web browser
@@ -67,19 +71,22 @@ is in fact a DjVu document.
 Web server normally provide a
 .SM MIME
 type to web browsers.
-The official MIME type for DjVu documents is
+The official 
+.SM MIME 
+type for DjVu documents is
 .BR image/vnd.djvu .
 For compatibility with ancient versions of the
 DjVu viewer, it is common to use instead the
-experimental MIME type
+experimental 
+.SM MIME 
+type
 .B image/x-djvu
 or
 .BR image/x.djvu .
-Web servers should be configured to send the proper
-MIME type for DjVu documents. See the DjVu tutorial
-for more information (
-.B http://www.djvuzone.org/support/tutorial/
-).
+Web servers should be configured to send the 
+proper
+.SM MIME 
+type for DjVu documents. 
 Most web browsers also recognize files ending with
 .B .djvu
 or
@@ -87,11 +94,11 @@ or
 as DjVu files.
 
 An easy way to check if an http server is giving an appropriate
-content-type is to invoke the following command with a URL
-corresponding to a DjVu file on the server, such as
-.BR http://nips.djvuzone.org/djvu/nips13/AgueraFairhallBialek.djvu .
+content-type is to invoke the following command with a 
+.SM URL
+corresponding to an actual DjVu file on the server.
 .IP "" 2
-.BI "wget --debug --output-document=/dev/null " URL " 2>&1 | grep Content-Type"
+.BI "curl -u " URL " | grep Content-Type"
 .PP
 The result should be one of the following, preferably the first.
 .IP "" 2
@@ -101,10 +108,12 @@ The result should be one of the following, preferably the first.
 .br
 .B Content-Type: image/x-djvu
 .PP
-Any other MIME type indicates a server misconfiguration.
+Any other 
+.SM MIME 
+type indicates a server misconfiguration.
+
 
 .SH CGI-STYLE FLAGS
-
 The behavior of the DjVu browser plugin can be specified by
 by augmenting the
 .SM URL
@@ -113,53 +122,25 @@ using a syntax similar to that used by the
 programs.
 This syntax is described by the following template:
 .IP "" 3
-.BI "http://server/dir/file.djvu?djvuopts&" "keyword=value" "&" "keyword=value" "&" "..."
+.BI "http://.../file.djvu?djvuopts&" "keyword=value" "&" "keyword=value" "&" "..."
 .PP
 The DjVu browser plugin only recognizes keywords that appear
 after the word
 .BR djvuopts .
-Unrecognized keywords are silently ignored.
-The following keywords are recognized:
+The keywords recognized by each viewer
+are listed in the man pages for
+.BR djview3 (1)
+and
+.BR djview4 (1)
+Unrecognized keywords are ignored.
+The most common keywords are:
 .TP
-.BI passive
-Cause the image to be displayed in a manner similar to an ordinary web image.
-The default zoom factor is changed to "Fit Page".
-The toolbar, the pop-up menu, the scroll bar, and the
-keyboard shortcuts are disabled.
-The default is no.
-.TP
-.BI scrollbars=(yes|no)
-Enable or disable the presence of scroll bars when the full
-image size exceeds the plugin window size.  The default is yes.
-.TP
-.BI menu=(yes|no)
-Enable or disable the pop-up menu.
-The pop-up menu is enabled by default.
-.TP
-.BI keyboard=(yes|no)
-Enable or disable the DjVu plugin keyboard shortcuts.
-The default is yes (enabled).
-.TP
-.BI frame=(yes|no)
-Enable or disable the display of a thin gray frame around the DjVu image.
-Keyboard shortcuts are enabled by default.
-.TP
-.BI links=(yes|no)
-Enable or disable hyper-links in the DjVu image.
-Hyper-links are enabled by default.
-.TP
-.BI logo=(yes|no)
-Enable or disable the display of the DjVu log while the plug-in
-is downloading data.  This is enabled by default.
-.TP
-.BI page= pagenum
+.BI page= pagenum_or_pagename
 Specify the initial page to be displayed.
 Page numbers are numbered from 1.
 .TP
 .BI zoom= zoomfactor
 Specify the initial zoom factor.
-Unless the toolbar, pop-up menu and keyboard are disabled,
-the user will be able to change the zoom factor.
 Legal values for
 .I zoomfactor
 are shown in the below:
@@ -178,168 +159,19 @@ width	Select the "fit width" mode.
 page	Select the "fit page" mode.
 stretch	Stretch the image to the plugin window size.
 .TE
-.PP
-.TP
-.BI mode= modespec
-Specify the initial display mode.
-Unless the toolbar and pop-up menu are disabled,
-the user will be able to change it.
-Legal values for
-.I modespec
-are shown in the below:
-.br
-.TS
-center,box;
-lfB l
-lfB l
-lfB l
-lfB l
-.
-color	Display the color image.
-bw	Display the foreground mask only.
-fore	Display the foreground only.
-back	Display the background only.
-.TE
-.PP
-.TP
-.BI hor_align= keyword
-Specify the horizontal position of the page in the viewer window.
-(This does not specify what part of the page will be shown, but rather
-how margins will be laid out around the page in the plugin window.)
-Argument
-.I keyword
-must be
-.BR left ,
-.BR center ,
-or
-.BR right .
-.TP
-.BI ver_align= keyword
-Specify the vertical position of the page in the viewer window.
-(This does not specify what part of the page will be shown, but rather
-how margins will be laid out around the page in the plugin window.)
-Argument
-.I keyword
-must be
-.BR top ,
-.BR center ,
-or
-.BR bottom .
-.TP
-.BI toolbar= keyword {(,|+|-) keyword }
-Controls the appearance and the contents of the toolbar.
-The argument of option
-.B toolbar
-is composed of a number of keywords separated
-by characters comma, plus or minus.
-The appearance of the toolbar is controlled by keywords
-placed before the first occurrence of a character plus
-or minus. The following keywords are recognized in
-this context:
-.br
-.TS
-center,box;
-lfB l
-lfB l
-lfB l
-lfB l
-lfB l
-.
-no	Disable toolbar.
-always	Disable toolbar "autohide" mode.
-auto	Enable toolbar "autohide" mode.
-top	Place toolbar along top edge (not implemented).
-bottom	Place toolbar along bottom edge.
-.TE
-.IP ""
-The contents of the toolbar is controlled by keywords
-placed after the first occurrence of a
-character plus or minus.
-Each keyword adds (after a plus) or remove (after a minus)
-a particular toolbar button or group of buttons.
-The initial content of the toolbar is determined
-by the first occurrence of a character plus or minus.
-When this is a plus
-the toolbar is initially empty.
-When this is a minus
-the toolbar is initially full.
-The following keywords are recognized:
-.br
-.TS
-center,box;
-lfB l
-lfB l
-lfB l
-lfB l
-lfB l
-lfB l
-lfB l
-lfB l
-lfB l
-lfB l
-lfB l
-lfB l
-lfB l
-.
-fore,back,color,bw	for the display mode selection tool.
-rescombo	for the zoom selection tool.
-zoom	for the zoom buttons.
-pan	for the panning mode button.
-zoomsel	for the zooming mode button.
-textsel	for the text selection mode button.
-rotate	for the image rotation buttons.
-search	for the text search button.
-save	for the save button.
-print	for the print button.
-pagecombo	for the page selection tool.
-firstlast	for the first-page and last-page buttons.
-prevnext	for the previous- and next-page buttons.
-backforw	for the back and forward buttons.
-.TE
-.PP
-.TP
-.BI highlight= x , y , w , h [, color ]
-Display a highlighted rectangle at the specified coordinates and with the
-specified color.  Coordinates
-.IR x ", " y ", " w ", and " h
-are measured in document image coordinates (not screen coordinates).
-The origin is set at the bottom left corner of the image.  The color
-.I color
-must be given in hexadecimal
-.SM RRGGBB
-format.
-Omitting the color argument means to use
-.SM XOR
-highlighting.  Multiple highlighted zone can be specified.
-.TP
-.BI rotate=(0|90|180|270)
-Rotate the djvu image by the specified angle expressed
-in degrees counter-clockwise.
-.TP
-.BI print=(yes|no)
-Enable or disable printing the djvu image.
-Printing is enabled by default.
-.TP
-.BI cache=(yes|no)
-Enable or disable the caching of fully decoded pages of the document.
-Caching is on by default.  Caching of documents whose
-.SM URL
-does not contain extension
-.BE .djvu " or " .djv
-is off by default.
 
-.SH EMBEDDING DJVU IMAGES
 
-A good way to integrate DjVu content on your web page is to use the
-.SM EMBED
-directive of the
+.SH EMBEDDING DJVU IMAGES IN HTML PAGES
+You can integrate DjVu content on an
 .SM HTML
-language.
-An advantage of this method is that it will work even if your web server
-does not support the DjVu
+web page with the
+.SM <embed>
+tag.
+This method is that it will work even if your web 
+server does not support the DjVu
 .SM MIME
 type.
-Furthermore, the
+The
 .SM CGI
 style flags can be directly used as attributes of the
 .SM EMBED
@@ -350,21 +182,22 @@ Here is an example:
 .br
 .B "\0\0\0\0\0\0\0\0\0 width=""100%"" height=""100%"""
 .br
-.B "\0\0\0\0\0\0\0\0\0 passive=yes zoom=stretch >
+.B "\0\0\0\0\0\0\0\0\0 page=iii zoom=stretch >
 .B </embed>
 .PP
+
 
 .SH BROWSER COMPATIBILITY
 The DjVu browser plugin has been tested with
 several popular web browsers:
-.SS Netscape 4
+.SS NETSCAPE 4
 .PP
 The DjVu browser plugin is normally installed in directory
 .BR /usr/local/lib/netscape/plugins .
 This is sufficient to enable the DjVu browser plugin
 because Netscape 4 always searches this directory for
 plugins.
-You might have to first remove previous version of the DjVu plugin.
+You might have to first remove previous version of the DjVuLibre plugin.
 Selecting menu
 .B "Help->About Plugins"
 in
@@ -373,24 +206,24 @@ displays the current list of plugins.
 Previous versions of the plugin might be installed in one of
 the following locations:
 .IP "" 2
-.B "$HOME/.netscape/plugins/NSDEJAVUSO"
+.B "$HOME/.netscape/plugins/nsdejavu.so"
 .br
-.B "/usr/lib/netscape/plugins/NSDEJAVUSO"
+.B "/usr/lib/netscape/plugins/nsdejavu.so"
 .br
-.B "/opt/netscape/plugins/NSDEJAVUSO"
+.B "/opt/netscape/plugins/nsdejavu.so"
 .PP
 More complicated cases can be solved by creating a symbolic
 link into your personal plugin directory:
 .IP "" 2
 .B "cd $HOME/.netscape/plugins"
 .br
-.B "ln -s LIBDIR/netscape/plugins/NSDEJAVUSO ."
+.B "ln -s /usr/lib/netscape/plugins/nsdejavu.so ."
 .PP
 You must not copy
-.B NSDEJAVUSO
+.B nsdejavu.so
 but create a symbolic link.  This is necessary
 because
-.B NSDEJAVUSO
+.B nsdejavu.so
 first locates its normal installation directory by following the symbolic
 link.  The Netscape plugin search rules are explained in the
 .B README
@@ -400,9 +233,9 @@ Also check option
 of program
 .BR djview3 .
 .PP
-.SS Netscape 6
+.SS NETSCAPE 6
 .PP
-The DjVu plugin works nicely with Netscape 6.1 or better.
+The DjVuLibre plugin works nicely with Netscape 6.1 or better.
 It seems that Netscape 6 only recognize plugins installed inside
 its own plugin directory.  This can be done using a symbolic link.
 Let us assume that Netscape 6 is installed in
@@ -411,49 +244,47 @@ The following commands should do the trick:
 .IP "" 2
 .BI "cd " "/usr/local/netscape6" "/plugins"
 .br
-.B "ln -s LIBDIR/netscape/plugins/NSDEJAVUSO ."
+.B "ln -s /usr/lib/netscape/plugins/nsdejavu.so ."
 .PP
-.SS Mozilla
+.SS MOZILLA
 .PP
-The DjVu plugin works nicely with Mozilla 0.9.5 or better.
+The DjVuLibre plugin works nicely with Mozilla 0.9.5 or better.
 You must establish a link from the Mozilla plugin directory.
 Assuming that Mozilla is installed under
 .IR /usr/lib/mozilla-1.1 :
 .IP "" 2
 .BI "cd " "/usr/lib/mozilla-1.1" "/plugins"
 .br
-.B "ln -s LIBDIR/netscape/plugins/NSDEJAVUSO ."
+.B "ln -s /usr/lib/netscape/plugins/nsdejavu.so ."
 .PP
 You can then restart
 .B mozilla
 and select menu
 .B "Help->About Plugins" to check
-whether the DjVu plugin is properly recognized.
+whether the DjVuLibre plugin is properly recognized.
 .PP
-.SS Galeon
+.SS GALEON
 .PP
 Galeon internally uses the Mozilla rendering engine.
 Install the plugin for Mozilla and it should also
 work for Galeon.
 .PP
-.SS Mozilla Firebird
+.SS FIREFOX
 .PP
-The DjVu plugin works nicely with Mozilla Firebird 0.6.1 or better.
-You must establish a link from the Firebird plugin directory.
-Assuming that Mozilla is installed under
-.IR /usr/lib/mozilla-firebird :
+The DjVuLibre plugin works nicely with Firefox or better.
+You must establish a link from the Firefox plugin directory.
+Assuming that Firefox is installed under
+.IR /usr/lib/mozilla-firefox :
 .IP "" 2
-.BI "cd " "/usr/lib/mozilla-firebird" "/plugins"
+.BI "cd " "/usr/lib/mozilla-firefox" "/plugins"
 .br
-.B "ln -s LIBDIR/netscape/plugins/NSDEJAVUSO ."
+.B "ln -s /usr/lib/netscape/plugins/nsdejavu.so ."
 .PP
-.SS Konqueror
+.SS KONQUEROR
 .PP
-The DjVu plugin works with
+The DjVuLibre plugin works with
 .SM KDE-2.2
 or better.
-Some problems have been reported with DjVu images
-embedded in web pages.
 You must first make sure that
 .B konqueror
 recognizes the DjVU plugin.
@@ -462,7 +293,7 @@ In Konqueror, select
 When the dialog appears, select the icon
 .BR "Netscape Plugins" .
 Make sure that directory
-.B "LIBDIR/netscape/plugins"
+.B "/usr/lib/netscape/plugins"
 appears in the list of plugin directories.
 Then press button
 .BR "Scan for new plugins" .
@@ -470,12 +301,12 @@ Clicking the
 .B "Plugins"
 tab button should display a list of recognized plugins.
 Check that
-.B "NSDEJAVUSO"
+.B "nsdejavu.so"
 appears there.
 .PP
-.SS Opera
+.SS OPERA
 .PP
-The DjVu plugin works with Opera-6 or better.
+The DjVuLibre plugin works with Opera-6.
 As explained in the Opera software support pages,
 you must have the OpenMotif libraries installed.
 
@@ -487,4 +318,5 @@ L\('eon Bottou <leonb@users.sourceforge.net>.
 .SH SEE ALSO
 .BR djvu (1),
 .BR ddjvu (1),
+.BR djview4 (1)
 .BR djview3 (1)
