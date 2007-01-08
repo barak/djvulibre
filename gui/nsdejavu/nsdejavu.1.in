@@ -175,15 +175,20 @@ The
 .SM CGI
 style flags can be directly used as attributes of the
 .SM EMBED
+or
+.SM OBJECT
 tag.
-Here is an example:
+The following example should work on all platforms:
 .IP "" 3
-.B "<embed src=""myfile.djvu"" type=""image/x-djvu"""
+.B "<object data=""myfile.djvu"" type=""image/x-djvu"""
 .br
 .B "\0\0\0\0\0\0\0\0\0 width=""100%"" height=""100%"""
 .br
 .B "\0\0\0\0\0\0\0\0\0 page=iii zoom=stretch >
-.B </embed>
+.br
+.B "\0 DjVu plugin is not installed
+.br
+.B "</object>
 .PP
 
 
