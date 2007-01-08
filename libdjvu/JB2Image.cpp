@@ -581,8 +581,7 @@ JB2Dict::JB2Codec::init_library(JB2Dict &jim)
     {
       shape2lib[i] = i;
       lib2shape[i] = i;
-      JB2Shape &jshp = jim.get_shape(i);
-      libinfo[i].compute_bounding_box(*(jshp.bits));
+      jim.get_bounding_box(i, libinfo[i]);
     }
 }
 
@@ -1060,19 +1059,24 @@ JB2Dict::JB2Codec::Decode::code(const GP<JB2Dict> &gjim)
     G_THROW( ERR_MSG("JB2Image.bad_number") );
   }
   JB2Dict &jim=*gjim;
-      // -------------------------
-      // THIS IS THE DECODING PART
-      // -------------------------
-      int rectype;
-      JB2Shape tmpshape;
-      do
-        {
-          code_record(rectype, gjim, &tmpshape);        
-        } 
-      while(rectype != END_OF_DATA);
-      if (!gotstartrecordp)
-        G_THROW( ERR_MSG("JB2Image.no_start") );
-      jim.compress();
+  // -------------------------
+  // THIS IS THE DECODING PART
+  // -------------------------
+  int rectype;
+  JB2Shape tmpshape;
+  do {
+    code_record(rectype, gjim, &tmpshape);        
+  } while(rectype != END_OF_DATA);
+  if (!gotstartrecordp)
+    G_THROW( ERR_MSG("JB2Image.no_start") );
+  // cache bounding boxes
+  int nshapes = jim.get_shape_count();
+  int ishapes = jim.get_inherited_shape_count();
+  jim.boxes.resize(0, nshapes-ishapes-1);
+  for (int i = ishapes; i < nshapes; i++)
+    jim.boxes[i-ishapes] = libinfo[i];
+  // compress
+  jim.compress();
 }
 
 
@@ -1362,26 +1366,18 @@ JB2Dict::JB2Codec::Decode::code(const GP<JB2Image> &gjim)
 ////////////////////////////////////////
 
 void 
-JB2Dict::JB2Codec::LibRect::compute_bounding_box(const GBitmap &bm)
+JB2Dict::LibRect::compute_bounding_box(const GBitmap &bm)
 {
-  // Copy shared bitmaps to avoid surious uncompress
-  const GBitmap *cbm = &bm;
-  GP<GBitmap> copybm;
-  if (bm.monitor() && bm.is_compressed())
-    {
-      GMonitorLock lock(bm.monitor());
-      copybm = GBitmap::create();
-      copybm->init(bm);
-      cbm = copybm;
-    }
+  // Avoid trouble
+  GMonitorLock lock(bm.monitor());
   // Get size
-  const int w = cbm->columns();
-  const int h = cbm->rows();
-  const int s = cbm->rowsize();
+  const int w = bm.columns();
+  const int h = bm.rows();
+  const int s = bm.rowsize();
   // Right border
   for(right=w-1;right >= 0;--right)
     {
-      unsigned char const *p = (*cbm)[0] + right;
+      unsigned char const *p = bm[0] + right;
       unsigned char const * const pe = p+(s*h);
       for (;(p<pe)&&(!*p);p+=s)
       	continue;
@@ -1391,7 +1387,7 @@ JB2Dict::JB2Codec::LibRect::compute_bounding_box(const GBitmap &bm)
   // Top border
   for(top=h-1;top >= 0;--top)
     {
-      unsigned char const *p = (*cbm)[top];
+      unsigned char const *p = bm[top];
       unsigned char const * const pe = p+w;
       for (;(p<pe)&&(!*p); ++p)
       	continue;
@@ -1401,7 +1397,7 @@ JB2Dict::JB2Codec::LibRect::compute_bounding_box(const GBitmap &bm)
   // Left border
   for (left=0;left <= right;++left)
     {
-      unsigned char const *p = (*cbm)[0] + left;
+      unsigned char const *p = bm[0] + left;
       unsigned char const * const pe=p+(s*h);
       for (;(p<pe)&&(!*p);p+=s)
       	continue;
@@ -1411,7 +1407,7 @@ JB2Dict::JB2Codec::LibRect::compute_bounding_box(const GBitmap &bm)
   // Bottom border
   for(bottom=0;bottom <= top;++bottom)
     {
-      unsigned char const *p = (*cbm)[bottom];
+      unsigned char const *p = bm[bottom];
       unsigned char const * const pe = p+w;
       for (;(p<pe)&&(!*p); ++p)
       	continue;
@@ -1419,6 +1415,27 @@ JB2Dict::JB2Codec::LibRect::compute_bounding_box(const GBitmap &bm)
         break;
     }
 }
+
+
+void
+JB2Dict::get_bounding_box(int shapeno, LibRect &dest)
+{
+  if (shapeno < inherited_shapes && inherited_dict)
+    {
+      inherited_dict->get_bounding_box(shapeno, dest);
+    }
+  else if (shapeno >= inherited_shapes &&
+           shapeno < inherited_shapes + boxes.size())
+    {
+      dest = boxes[shapeno - inherited_shapes];
+    }
+  else
+    {
+      JB2Shape &jshp = get_shape(shapeno);
+      dest.compute_bounding_box(*(jshp.bits));
+    }
+}
+
 
 GP<JB2Dict>
 JB2Dict::create(void)

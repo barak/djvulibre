@@ -321,11 +321,18 @@ public:
   /** Comment string coded by JB2 file. */
   GUTF8String comment;
 
+
 private:
   int inherited_shapes;
   GP<JB2Dict> inherited_dict;
   GArray<JB2Shape> shapes;
-  
+
+  struct LibRect {
+    int top,left,right,bottom;
+    void compute_bounding_box(const GBitmap &cbm);
+  };
+  GTArray<LibRect> boxes;
+  void get_bounding_box(int shapeno, LibRect &dest);
 };
 
 /** Main JB2 data structure.  Each #JB2Image# consists of an array of shapes
@@ -595,11 +602,6 @@ public:
   class Decode;
   class Encode;
   typedef unsigned int NumContext;
-  struct LibRect
-  {
-    int top,left,right,bottom;
-    void compute_bounding_box(const GBitmap &cbm);
-  };
   virtual ~JB2Codec();
 protected:
   // Constructors
