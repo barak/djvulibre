@@ -126,58 +126,6 @@ and
 and attempt to reconstruct sensible DjVu entries.
 This is sometimes useful to make the DjVu plugin work.
 
-.SH USAGE
-
-Most features can be accessed using the menus, the toolbar, or the pop-up menu.
-The pop-up menu is shown when the right mouse button is depressed over a DjVu
-image.  The toolbar is usually located at the bottom of a DjVu image.  The
-preference dialog provides the option to disable to toolbar or set the
-"auto-hide" mode.
-
-The following keyboard shortcuts are recognized:
-.PP
-.TS
-center,box;
-lfB lfB
-l l
-l l
-l l
-l l
-l l
-l l
-l l
-l l
-l l
-l l
-l l
-l l
-l l
-l l
-l l
-l l
-.
-Key	Action
-=
-1,2, and 3	Change zoom to to 100%, 200% and 300% respectively.
-Up, Down, Left, Right	Scroll the image in the given direction.
-Home	Display top left corner of the image.
-End	Display bottom right corner of the image.
-Control+Home	Go to the beginning of the multi-page document.
-Control+End	Go to the end of the multi-page document.
-Space, Return	Scroll down or go to next page.
-Backspace	Scroll up or go to previous page.
-Page Down	Go to the next page.
-Page Up	Go to the previous page.
-+, -	Zoom in and out.
-W	Select the "Fit Width" zooming mode.
-P	Select the "Fit Page" zooming mode.
-G	Display the "Goto page" dialog box.
-F, F3, CTRL+F	Search the hidden text layer.
-CTRL	Show the magnifier lens.
-.TE
-.PP
-
-
 .SH USING DJVIEW3 AS A BROWSER PLUGIN
 
 The djvulibre browser plugin works by invoking
@@ -411,10 +359,14 @@ does not contain extension
 .BE .djvu " or " .djv
 is off by default.
 .PP
-The same options can be specified as flags in the 
+The same options can be specified as parameters of 
+.SM EMBED
+or
+.SM OBJECT
+tags in a
 .SM HTML
-.BR <embed> 
-tag. See
+file.
+See
 .BR nsdejavu (1)
 for more details.
 
