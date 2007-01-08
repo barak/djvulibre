@@ -174,23 +174,33 @@ type.
 The
 .SM CGI
 style flags can be directly used as attributes of the
-.SM EMBED
-or
-.SM OBJECT
-tag.
-The following example should work on all platforms:
+embedding tag.
+The following example shows the W3C standard syntax with the
+.SM OBJECT 
+tag:
 .IP "" 3
 .B "<object data=""myfile.djvu"" type=""image/x-djvu"""
 .br
+.B "\0\0\0\0\0\0\0\0\0 width=""100%"" height=""100%"" >"
+.br
+.B "\0\0\0 <param name=""page"" value=""iii"">"
+.br
+.B "\0\0\0 <param name=""zoom"" value=""stretch"">"
+.br
+.B "\0\0\0 This browser cannot render djvu data."
+.br
+.B "</object>"
+.PP
+And this is the customary syntax with the
+.SM EMBED
+tag:
+.IP "" 3
+.B "<embed src=""myfile.djvu"" type=""image/x-djvu"""
+.br
 .B "\0\0\0\0\0\0\0\0\0 width=""100%"" height=""100%"""
 .br
-.B "\0\0\0\0\0\0\0\0\0 page=iii zoom=stretch >
-.br
-.B "\0 DjVu plugin is not installed
-.br
-.B "</object>
+.B "\0\0\0\0\0\0\0\0\0 page=""iii"" zoom=""stretch"" >"
 .PP
-
 
 .SH BROWSER COMPATIBILITY
 The DjVu browser plugin has been tested with
