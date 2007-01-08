@@ -199,7 +199,7 @@ tag:
 .br
 .B "\0\0\0\0\0\0\0\0\0 width=""100%"" height=""100%"""
 .br
-.B "\0\0\0\0\0\0\0\0\0 page=""iii"" zoom=""stretch"" >"
+.B "\0\0\0\0\0\0\0\0\0 page=""iii"" zoom=""stretch""></embed>"
 .PP
 
 .SH BROWSER COMPATIBILITY
