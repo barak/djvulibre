@@ -174,17 +174,13 @@ install: install-bin install-man install-data
 install-bin: ${PROGRAM} FORCE
 	${INSTALL} -d ${DESTDIR}${bindir}
 	${LIBTOOL} --mode=install \
-	  ${INSTALL_PROGRAM} -s ${PROGRAM} \
-          ${DESTDIR}${bindir}/djview3
-	( cd ${DESTDIR}${bindir} ; \
-          ${LN_S} djview3 djview )
+	  ${INSTALL_PROGRAM} -s ${PROGRAM} ${DESTDIR}${bindir}/djview3
+	cd ${DESTDIR}${bindir} && ${LN_S} djview3 djview || true
 
 install-man: FORCE
 	${INSTALL} -d ${DESTDIR}${mandir}/man1
-	${INSTALL_DATA} ${srcdir}/djview.1 \
-	   ${DESTDIR}${mandir}/man1/djview3.1
-	( cd ${DESTDIR}${mandir}/man1 ; \
-          ${LN_S} djview3.1 djview.1 )
+	${INSTALL_DATA} ${srcdir}/djview.1 ${DESTDIR}${mandir}/man1/djview3.1
+	cd ${DESTDIR}${mandir}/man1 && ${LN_S} djview3.1 djview.1 || true
 
 install-data: FORCE
 	${INSTALL} -d ${DESTDIR}${datadir}/djvu/djview3
