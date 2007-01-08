@@ -263,6 +263,8 @@ public:
   /** Decodes run-length encoded bitmaps and recreate the pixel array.
       This function is usually called by #operator[]# when needed. */
   void uncompress();
+  /** Returns non zero if bitmap is compressed. */
+  int is_compressed() const;
   /** Returns the number of bytes allocated for this image. */
   unsigned int get_memory_usage() const;
   /** Returns a possibly null pointer to a \Ref{GMonitor} for this bitmap.
@@ -564,10 +566,17 @@ GBitmap::get_grays() const
   return grays;
 }
 
+inline int
+GBitmap::is_compressed() const
+{
+  return (bytes) ? 0 : 1;
+}
+
 inline unsigned char *
 GBitmap::operator[](int row) 
 {
-  if (!bytes) uncompress();
+  if (!bytes) 
+    uncompress();
   if (row<0 || row>=nrows) {
 #ifndef NDEBUG
     if (zerosize < bytes_per_row + border)
@@ -581,7 +590,8 @@ GBitmap::operator[](int row)
 inline const unsigned char *
 GBitmap::operator[](int row) const
 {
-  if (!bytes) ((GBitmap*)this)->uncompress();
+  if (!bytes) 
+    ((GBitmap*)this)->uncompress();
   if (row<0 || row>=nrows) {
 #ifndef NDEBUG
     if (zerosize < bytes_per_row + border)

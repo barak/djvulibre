@@ -470,7 +470,7 @@ JB2Dict::JB2Codec::CodeNum(int low, int high, NumContext *pctx, int v)
   bool negative=false;
   int cutoff;
   // Check
-  if (pctx && ((int)*pctx >= cur_ncell))
+  if (!pctx || ((int)*pctx >= cur_ncell))
     G_THROW( ERR_MSG("JB2Image.bad_numcontext") );
   // Start all phases
   cutoff = 0;
@@ -1364,16 +1364,24 @@ JB2Dict::JB2Codec::Decode::code(const GP<JB2Image> &gjim)
 void 
 JB2Dict::JB2Codec::LibRect::compute_bounding_box(const GBitmap &bm)
 {
-  // First lock the stuff.
-  GMonitorLock lock(bm.monitor());
+  // Copy shared bitmaps to avoid surious uncompress
+  const GBitmap *cbm = &bm;
+  GP<GBitmap> copybm;
+  if (bm.monitor() && bm.is_compressed())
+    {
+      GMonitorLock lock(bm.monitor());
+      copybm = GBitmap::create();
+      copybm->init(bm);
+      cbm = copybm;
+    }
   // Get size
-  const int w = bm.columns();
-  const int h = bm.rows();
-  const int s = bm.rowsize();
+  const int w = cbm->columns();
+  const int h = cbm->rows();
+  const int s = cbm->rowsize();
   // Right border
   for(right=w-1;right >= 0;--right)
     {
-      unsigned char const *p = bm[0] + right;
+      unsigned char const *p = (*cbm)[0] + right;
       unsigned char const * const pe = p+(s*h);
       for (;(p<pe)&&(!*p);p+=s)
       	continue;
@@ -1383,7 +1391,7 @@ JB2Dict::JB2Codec::LibRect::compute_bounding_box(const GBitmap &bm)
   // Top border
   for(top=h-1;top >= 0;--top)
     {
-      unsigned char const *p = bm[top];
+      unsigned char const *p = (*cbm)[top];
       unsigned char const * const pe = p+w;
       for (;(p<pe)&&(!*p); ++p)
       	continue;
@@ -1393,7 +1401,7 @@ JB2Dict::JB2Codec::LibRect::compute_bounding_box(const GBitmap &bm)
   // Left border
   for (left=0;left <= right;++left)
     {
-      unsigned char const *p = bm[0] + left;
+      unsigned char const *p = (*cbm)[0] + left;
       unsigned char const * const pe=p+(s*h);
       for (;(p<pe)&&(!*p);p+=s)
       	continue;
@@ -1403,7 +1411,7 @@ JB2Dict::JB2Codec::LibRect::compute_bounding_box(const GBitmap &bm)
   // Bottom border
   for(bottom=0;bottom <= top;++bottom)
     {
-      unsigned char const *p = bm[bottom];
+      unsigned char const *p = (*cbm)[bottom];
       unsigned char const * const pe = p+w;
       for (;(p<pe)&&(!*p); ++p)
       	continue;
