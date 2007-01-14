@@ -108,7 +108,7 @@ echo-djview-xdg: FORCE
 	-@echo "Run ${datadir_djview}/register-djview-menu install"
 	-@echo " to register the djview3 menu entries."
 
-# -------- clean
+# -------- misc
 
 clean: FORCE
 	-${RM} 2>/dev/null register-djvu-mime register-djview-menu
@@ -116,6 +116,7 @@ clean: FORCE
 distclean: clean 
 	-${RM} -r 2>/dev/null Makefile *.rpo ii_files
 
+depend:
 
 FORCE:
 
