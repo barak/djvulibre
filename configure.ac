@@ -259,20 +259,64 @@ AC_SUBST(I18N_YES)
 AC_SUBST(I18N_NO)   
 
 
-# Locate desktop files (gui/desktop/acdesktop.m4)
-if test $ac_enable_djview != no 
-then
-    AC_FIND_DESKTOP_DIRS
+
+# ----------------------------------------
+# Xdg Portland tools
+# ----------------------------------------
+
+# Check compilation of xmltools
+ac_desktopfiles=no
+AC_ARG_ENABLE(desktopfiles,
+        AC_HELP_STRING([--enable-desktopfiles],
+            [Run scripts to install icons and menu files (default: no).]),
+        [ac_desktopfiles=$enableval])
+
+AC_PATH_PROG(XDG_MIME, xdg-mime)
+AC_PATH_PROG(XDG_ICON_RESOURCE, xdg-icon-resource)
+AC_PATH_PROG(XDG_DESKTOP_MENU, xdg-desktop-menu)
+if test -x ${XDG_MIME} && \
+   test -x ${XDG_ICON_RESOURCE} && \
+   test -x ${XDG_DESKTOP_MENU}
+then 
+  true
+elif test $ac_desktopfiles != no ; then
+  ac_desktopfiles = no
+  AC_MSG_WARN([Cannot find the Xdg Portland tools.
+--------------------------------------------------------
+*** The Xdg Portland tools <http://portland.freedesktop.org>.
+*** are required to register the mime type and menu entries.
+*** You can install these tools later and then run the scripts
+*** ${datadir}/djvu/osi/desktop/register-djvu-mimetype, and
+*** ${datadir}/djvu/djview3/desktop/register-djview3-menu.
+--------------------------------------------------------])
+else
+  AC_MSG_WARN([Cannot find the Xdg Portland tools.
+--------------------------------------------------------
+*** You will not be able to use the scripts
+*** ${datadir}/djvu/osi/desktop/register-djvu-mimetype, and
+*** ${datadir}/djvu/djview3/desktop/register-djview3-menu.
+*** without first installing the Xdg Portland tools
+*** available at <http://portland.freedesktop.org>.
+--------------------------------------------------------])
 fi
 
+if test ${ac_desktopfiles} != no ; then
+  RUNXDG_YES=''
+  RUNXDG_NO='#'
+else
+  RUNXDG_YES='#'
+  RUNXDG_NO=''
+fi
+AC_SUBST(RUNXDG_YES)
+AC_SUBST(RUNXDG_NO)
+
+
+
 
 # ----------------------------------------
-# Extra
+# Flags for NSDEJAVU.SO
 # ----------------------------------------
 
-
-# -----------
-# What flags should be used to compile nsdejavu.so
 
 NSDEJAVU_CFLAGS=
 NSDEJAVU_LIBS=
@@ -301,7 +345,12 @@ if test -z "$INSTALL_SHLIB" ; then
 fi
 AC_SUBST(INSTALL_SHLIB)
 
-# -----------
+
+
+# ----------------------------------------
+# Compiler version check
+# ----------------------------------------
+
 # Work around broken compilers with the famous LPR0 bug
 if test x$ac_shared_libdjvu != xno && test x$GXX = xyes; then
     AC_MSG_CHECKING([if $CXX has the LPR0 bug])
@@ -316,7 +365,6 @@ if test x$ac_shared_libdjvu != xno && test x$GXX = xyes; then
     fi
 fi
 
-# -----------
 # What compiler are we using ?
 if test x$GXX != xyes ; then
   AC_MSG_WARN([The recommended c++ compiler is g++.])
@@ -393,7 +441,12 @@ changequote([, ])dnl
   fi
 fi
 
-# -----------
+
+
+# ----------------------------------------
+# Qt version check
+# ----------------------------------------
+
 # What version of QT are we using
 if test x${qt_version+set} = xset ; then
   if test "$qt_version" -lt 200 ; then
@@ -420,7 +473,6 @@ AC_CONFIG_FILES(tools/Makefile)
 AC_CONFIG_FILES(tools/jb2cmp/Makefile)
 AC_CONFIG_FILES(xmltools/Makefile)
 AC_CONFIG_FILES(gui/Makefile)
-AC_CONFIG_FILES(gui/desktop/Makefile)
 AC_CONFIG_FILES(gui/bin2cpp/Makefile)
 AC_CONFIG_FILES(gui/djview/Makefile)
 AC_CONFIG_FILES(gui/nsdejavu/Makefile)
@@ -428,6 +480,8 @@ AC_CONFIG_FILES(i18n/Makefile)
 AC_CONFIG_FILES(i18n/ja/Makefile)
 AC_CONFIG_FILES(i18n/de/Makefile)
 AC_CONFIG_FILES(i18n/fr/Makefile)
+AC_CONFIG_FILES(desktopfiles/Makefile)
+
 # Go
 AC_OUTPUT
 

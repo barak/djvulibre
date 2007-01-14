@@ -465,7 +465,7 @@ ac_includes_default="\
 # include <unistd.h>
 #endif"
 
-ac_subst_vars='SHELL PATH_SEPARATOR PACKAGE_NAME PACKAGE_TARNAME PACKAGE_VERSION PACKAGE_STRING PACKAGE_BUGREPORT exec_prefix prefix program_transform_name bindir sbindir libexecdir datadir sysconfdir sharedstatedir localstatedir libdir includedir oldincludedir infodir mandir build_alias host_alias target_alias DEFS ECHO_C ECHO_N ECHO_T LIBS build build_cpu build_vendor build_os host host_cpu host_vendor host_os LIBDJVU_VER SET_MAKE LN_S RM AR TOUCH MKDIR INSTALL_PROGRAM INSTALL_SCRIPT INSTALL_DATA CC CFLAGS LDFLAGS CPPFLAGS ac_ct_CC EXEEXT OBJEXT EGREP ECHO ac_ct_AR RANLIB ac_ct_RANLIB STRIP ac_ct_STRIP CPP CXX CXXFLAGS ac_ct_CXX CXXCPP F77 FFLAGS ac_ct_F77 LIBTOOL LIBTOOL_DEPS OPTS CXXRPOFLAGS RPO_YES RPO_NO JPEG_LIBS JPEG_CFLAGS TIFF_LIBS TIFF_CFLAGS PTHREAD_LIBS PTHREAD_CFLAGS THREAD_LIBS THREAD_CFLAGS X_CFLAGS X_PRE_LIBS X_LIBS X_EXTRA_LIBS QTDIR QT_CFLAGS QT_LIBS MOC UIC LUPDATE LRELEASE XML_YES XML_NO GUI_YES GUI_NO LINGUAS I18N_YES I18N_NO KDE_CONFIG dtop_applications dtop_icons dtop_pixmaps dtop_mime_info dtop_application_registry dtop_applnk dtop_mimelnk dtop_menu NSDEJAVU_CFLAGS NSDEJAVU_LIBS INSTALL_SHLIB LIBOBJS LTLIBOBJS'
+ac_subst_vars='SHELL PATH_SEPARATOR PACKAGE_NAME PACKAGE_TARNAME PACKAGE_VERSION PACKAGE_STRING PACKAGE_BUGREPORT exec_prefix prefix program_transform_name bindir sbindir libexecdir datadir sysconfdir sharedstatedir localstatedir libdir includedir oldincludedir infodir mandir build_alias host_alias target_alias DEFS ECHO_C ECHO_N ECHO_T LIBS build build_cpu build_vendor build_os host host_cpu host_vendor host_os LIBDJVU_VER SET_MAKE LN_S RM AR TOUCH MKDIR INSTALL_PROGRAM INSTALL_SCRIPT INSTALL_DATA CC CFLAGS LDFLAGS CPPFLAGS ac_ct_CC EXEEXT OBJEXT EGREP ECHO ac_ct_AR RANLIB ac_ct_RANLIB STRIP ac_ct_STRIP CPP CXX CXXFLAGS ac_ct_CXX CXXCPP F77 FFLAGS ac_ct_F77 LIBTOOL LIBTOOL_DEPS OPTS CXXRPOFLAGS RPO_YES RPO_NO JPEG_LIBS JPEG_CFLAGS TIFF_LIBS TIFF_CFLAGS PTHREAD_LIBS PTHREAD_CFLAGS THREAD_LIBS THREAD_CFLAGS X_CFLAGS X_PRE_LIBS X_LIBS X_EXTRA_LIBS QTDIR QT_CFLAGS QT_LIBS MOC UIC LUPDATE LRELEASE XML_YES XML_NO GUI_YES GUI_NO LINGUAS I18N_YES I18N_NO XDG_MIME XDG_ICON_RESOURCE XDG_DESKTOP_MENU RUNXDG_YES RUNXDG_NO NSDEJAVU_CFLAGS NSDEJAVU_LIBS INSTALL_SHLIB LIBOBJS LTLIBOBJS'
 ac_subst_files=''
 
 # Initialize some variables set by options.
@@ -1083,8 +1083,8 @@ Optional Features:
   --enable-xmltools       enable compilation of the djvu xml tools.
   --enable-djview         enable compilation of djview (default).
   --enable-i18n           enable compilation of locales (default:all).
-  --enable-desktopfiles   Install icons and menu files (default: only when
-                          prefix=/usr).
+  --enable-desktopfiles   Run scripts to install icons and menu files
+                          (default: no).
 
 Optional Packages:
   --with-PACKAGE[=ARG]    use PACKAGE [ARG=yes]
@@ -26656,44 +26656,29 @@ fi
 
 
 
-# Locate desktop files (gui/desktop/acdesktop.m4)
-if test $ac_enable_djview != no
-then
 
-   if test "${prefix}" == "/usr" ; then
-     ac_desktopfiles=yes
-   else
-     ac_desktopfiles=no
-   fi
-   # Check whether --enable-desktopfiles or --disable-desktopfiles was given.
+# ----------------------------------------
+# Xdg Portland tools
+# ----------------------------------------
+
+# Check compilation of xmltools
+ac_desktopfiles=no
+# Check whether --enable-desktopfiles or --disable-desktopfiles was given.
 if test "${enable_desktopfiles+set}" = set; then
   enableval="$enable_desktopfiles"
   ac_desktopfiles=$enableval
 fi;
 
-   dtop_applications=          # XDG menu entries
-   dtop_icons=                 # KDE-style icon directories
-   dtop_pixmaps=               # Gnome-style icon directories
-   dtop_mime_info=             # Gnome mime database
-   dtop_application_registry=  # Gnome mime associations
-   dtop_applnk=                # KDE menu entries (KDE<3.2)
-   dtop_mimelnk=               # KDE mime database
-   dtop_menu=                  # DEBIAN menus
-
-   if test $ac_desktopfiles != no
-   then
-       # kde-config, kde-version
-       KDE_CONFIG=
-       # Extract the first word of "kde-config", so it can be a program name with args.
-set dummy kde-config; ac_word=$2
+# Extract the first word of "xdg-mime", so it can be a program name with args.
+set dummy xdg-mime; ac_word=$2
 echo "$as_me:$LINENO: checking for $ac_word" >&5
 echo $ECHO_N "checking for $ac_word... $ECHO_C" >&6
-if test "${ac_cv_path_KDE_CONFIG+set}" = set; then
+if test "${ac_cv_path_XDG_MIME+set}" = set; then
   echo $ECHO_N "(cached) $ECHO_C" >&6
 else
-  case $KDE_CONFIG in
+  case $XDG_MIME in
   [\\/]* | ?:[\\/]*)
-  ac_cv_path_KDE_CONFIG="$KDE_CONFIG" # Let the user override the test with a path.
+  ac_cv_path_XDG_MIME="$XDG_MIME" # Let the user override the test with a path.
   ;;
   *)
   as_save_IFS=$IFS; IFS=$PATH_SEPARATOR
@@ -26703,7 +26688,7 @@ do
   test -z "$as_dir" && as_dir=.
   for ac_exec_ext in '' $ac_executable_extensions; do
   if $as_executable_p "$as_dir/$ac_word$ac_exec_ext"; then
-    ac_cv_path_KDE_CONFIG="$as_dir/$ac_word$ac_exec_ext"
+    ac_cv_path_XDG_MIME="$as_dir/$ac_word$ac_exec_ext"
     echo "$as_me:$LINENO: found $as_dir/$ac_word$ac_exec_ext" >&5
     break 2
   fi
@@ -26713,211 +26698,153 @@ done
   ;;
 esac
 fi
-KDE_CONFIG=$ac_cv_path_KDE_CONFIG
+XDG_MIME=$ac_cv_path_XDG_MIME
 
-if test -n "$KDE_CONFIG"; then
-  echo "$as_me:$LINENO: result: $KDE_CONFIG" >&5
-echo "${ECHO_T}$KDE_CONFIG" >&6
+if test -n "$XDG_MIME"; then
+  echo "$as_me:$LINENO: result: $XDG_MIME" >&5
+echo "${ECHO_T}$XDG_MIME" >&6
 else
   echo "$as_me:$LINENO: result: no" >&5
 echo "${ECHO_T}no" >&6
 fi
 
+# Extract the first word of "xdg-icon-resource", so it can be a program name with args.
+set dummy xdg-icon-resource; ac_word=$2
+echo "$as_me:$LINENO: checking for $ac_word" >&5
+echo $ECHO_N "checking for $ac_word... $ECHO_C" >&6
+if test "${ac_cv_path_XDG_ICON_RESOURCE+set}" = set; then
+  echo $ECHO_N "(cached) $ECHO_C" >&6
+else
+  case $XDG_ICON_RESOURCE in
+  [\\/]* | ?:[\\/]*)
+  ac_cv_path_XDG_ICON_RESOURCE="$XDG_ICON_RESOURCE" # Let the user override the test with a path.
+  ;;
+  *)
+  as_save_IFS=$IFS; IFS=$PATH_SEPARATOR
+for as_dir in $PATH
+do
+  IFS=$as_save_IFS
+  test -z "$as_dir" && as_dir=.
+  for ac_exec_ext in '' $ac_executable_extensions; do
+  if $as_executable_p "$as_dir/$ac_word$ac_exec_ext"; then
+    ac_cv_path_XDG_ICON_RESOURCE="$as_dir/$ac_word$ac_exec_ext"
+    echo "$as_me:$LINENO: found $as_dir/$ac_word$ac_exec_ext" >&5
+    break 2
+  fi
+done
+done
 
-       # dtop_menu
-       echo "$as_me:$LINENO: checking for Debian menu directory" >&5
-echo $ECHO_N "checking for Debian menu directory... $ECHO_C" >&6
-       if test -d /etc/menu-methods -a -d /usr/share/menu ; then
-           dtop_menu="/usr/share/menu"
-       elif test -d /etc/menu-methods -a -d /usr/lib/menu ; then
-           dtop_menu="/usr/lib/menu"
-       fi
+  ;;
+esac
+fi
+XDG_ICON_RESOURCE=$ac_cv_path_XDG_ICON_RESOURCE
 
-    xdir="`eval echo \"$libdir\"`"
-    dtop_menu=`echo $dtop_menu | sed -e 's:^'"$xdir"'/:${libdir}/:'`
-    xdir="`eval echo \"$datadir\"`"
-    dtop_menu=`echo $dtop_menu | sed -e 's:^'"$xdir"'/:${datadir}/:'`
-    xdir="`eval echo \"$bindir\"`"
-    dtop_menu=`echo $dtop_menu | sed -e 's:^'"$xdir"'/:${bindir}/:'`
-    xdir="`eval echo \"$prefix\"`"
-    dtop_menu=`echo $dtop_menu | sed -e 's:^'"$xdir"'/:${prefix}/:'`
+if test -n "$XDG_ICON_RESOURCE"; then
+  echo "$as_me:$LINENO: result: $XDG_ICON_RESOURCE" >&5
+echo "${ECHO_T}$XDG_ICON_RESOURCE" >&6
+else
+  echo "$as_me:$LINENO: result: no" >&5
+echo "${ECHO_T}no" >&6
+fi
 
-       echo "$as_me:$LINENO: result: ${dtop_menu:-no}" >&5
-echo "${ECHO_T}${dtop_menu:-no}" >&6
+# Extract the first word of "xdg-desktop-menu", so it can be a program name with args.
+set dummy xdg-desktop-menu; ac_word=$2
+echo "$as_me:$LINENO: checking for $ac_word" >&5
+echo $ECHO_N "checking for $ac_word... $ECHO_C" >&6
+if test "${ac_cv_path_XDG_DESKTOP_MENU+set}" = set; then
+  echo $ECHO_N "(cached) $ECHO_C" >&6
+else
+  case $XDG_DESKTOP_MENU in
+  [\\/]* | ?:[\\/]*)
+  ac_cv_path_XDG_DESKTOP_MENU="$XDG_DESKTOP_MENU" # Let the user override the test with a path.
+  ;;
+  *)
+  as_save_IFS=$IFS; IFS=$PATH_SEPARATOR
+for as_dir in $PATH
+do
+  IFS=$as_save_IFS
+  test -z "$as_dir" && as_dir=.
+  for ac_exec_ext in '' $ac_executable_extensions; do
+  if $as_executable_p "$as_dir/$ac_word$ac_exec_ext"; then
+    ac_cv_path_XDG_DESKTOP_MENU="$as_dir/$ac_word$ac_exec_ext"
+    echo "$as_me:$LINENO: found $as_dir/$ac_word$ac_exec_ext" >&5
+    break 2
+  fi
+done
+done
 
-       # dtop_applications
-       echo "$as_me:$LINENO: checking for XDG menu directory" >&5
-echo $ECHO_N "checking for XDG menu directory... $ECHO_C" >&6
-       if test -d /usr/share/applications ; then
-           if test -r /etc/xdg/menus/applications.menu ||
-              test -r /etc/X11/desktop-menus/applications.menu ; then
-                dtop_applications="/usr/share/applications"
-           fi
-       fi
+  ;;
+esac
+fi
+XDG_DESKTOP_MENU=$ac_cv_path_XDG_DESKTOP_MENU
 
-    xdir="`eval echo \"$libdir\"`"
-    dtop_applications=`echo $dtop_applications | sed -e 's:^'"$xdir"'/:${libdir}/:'`
-    xdir="`eval echo \"$datadir\"`"
-    dtop_applications=`echo $dtop_applications | sed -e 's:^'"$xdir"'/:${datadir}/:'`
-    xdir="`eval echo \"$bindir\"`"
-    dtop_applications=`echo $dtop_applications | sed -e 's:^'"$xdir"'/:${bindir}/:'`
-    xdir="`eval echo \"$prefix\"`"
-    dtop_applications=`echo $dtop_applications | sed -e 's:^'"$xdir"'/:${prefix}/:'`
+if test -n "$XDG_DESKTOP_MENU"; then
+  echo "$as_me:$LINENO: result: $XDG_DESKTOP_MENU" >&5
+echo "${ECHO_T}$XDG_DESKTOP_MENU" >&6
+else
+  echo "$as_me:$LINENO: result: no" >&5
+echo "${ECHO_T}no" >&6
+fi
 
-       echo "$as_me:$LINENO: result: ${dtop_applications:-no}" >&5
-echo "${ECHO_T}${dtop_applications:-no}" >&6
+if test -x ${XDG_MIME} && \
+   test -x ${XDG_ICON_RESOURCE} && \
+   test -x ${XDG_DESKTOP_MENU}
+then
+  true
+elif test $ac_desktopfiles != no ; then
+  ac_desktopfiles = no
+  { echo "$as_me:$LINENO: WARNING: Cannot find the Xdg Portland tools.
+--------------------------------------------------------
+*** The Xdg Portland tools <http://portland.freedesktop.org>.
+*** are required to register the mime type and menu entries.
+*** You can install these tools later and then run the scripts
+*** ${datadir}/djvu/osi/desktop/register-djvu-mimetype, and
+*** ${datadir}/djvu/djview3/desktop/register-djview3-menu.
+--------------------------------------------------------" >&5
+echo "$as_me: WARNING: Cannot find the Xdg Portland tools.
+--------------------------------------------------------
+*** The Xdg Portland tools <http://portland.freedesktop.org>.
+*** are required to register the mime type and menu entries.
+*** You can install these tools later and then run the scripts
+*** ${datadir}/djvu/osi/desktop/register-djvu-mimetype, and
+*** ${datadir}/djvu/djview3/desktop/register-djview3-menu.
+--------------------------------------------------------" >&2;}
+else
+  { echo "$as_me:$LINENO: WARNING: Cannot find the Xdg Portland tools.
+--------------------------------------------------------
+*** You will not be able to use the scripts
+*** ${datadir}/djvu/osi/desktop/register-djvu-mimetype, and
+*** ${datadir}/djvu/djview3/desktop/register-djview3-menu.
+*** without first installing the Xdg Portland tools
+*** available at <http://portland.freedesktop.org>.
+--------------------------------------------------------" >&5
+echo "$as_me: WARNING: Cannot find the Xdg Portland tools.
+--------------------------------------------------------
+*** You will not be able to use the scripts
+*** ${datadir}/djvu/osi/desktop/register-djvu-mimetype, and
+*** ${datadir}/djvu/djview3/desktop/register-djview3-menu.
+*** without first installing the Xdg Portland tools
+*** available at <http://portland.freedesktop.org>.
+--------------------------------------------------------" >&2;}
+fi
 
-       # dtop_pixmaps
-       echo "$as_me:$LINENO: checking for Gnome icon directory" >&5
-echo $ECHO_N "checking for Gnome icon directory... $ECHO_C" >&6
-       if test -d "/usr/share/pixmaps" ; then
-           dtop_pixmaps="/usr/share/pixmaps"
-       fi
-
-    xdir="`eval echo \"$libdir\"`"
-    dtop_pixmaps=`echo $dtop_pixmaps | sed -e 's:^'"$xdir"'/:${libdir}/:'`
-    xdir="`eval echo \"$datadir\"`"
-    dtop_pixmaps=`echo $dtop_pixmaps | sed -e 's:^'"$xdir"'/:${datadir}/:'`
-    xdir="`eval echo \"$bindir\"`"
-    dtop_pixmaps=`echo $dtop_pixmaps | sed -e 's:^'"$xdir"'/:${bindir}/:'`
-    xdir="`eval echo \"$prefix\"`"
-    dtop_pixmaps=`echo $dtop_pixmaps | sed -e 's:^'"$xdir"'/:${prefix}/:'`
-
-       echo "$as_me:$LINENO: result: ${dtop_pixmaps:-no}" >&5
-echo "${ECHO_T}${dtop_pixmaps:-no}" >&6
-
-       # dtop_mime_info
-       echo "$as_me:$LINENO: checking for Gnome mimetype directory" >&5
-echo $ECHO_N "checking for Gnome mimetype directory... $ECHO_C" >&6
-       if test -d "/usr/share/mime-info" ; then
-           dtop_mime_info="/usr/share/mime-info"
-       fi
-
-    xdir="`eval echo \"$libdir\"`"
-    dtop_mime_info=`echo $dtop_mime_info | sed -e 's:^'"$xdir"'/:${libdir}/:'`
-    xdir="`eval echo \"$datadir\"`"
-    dtop_mime_info=`echo $dtop_mime_info | sed -e 's:^'"$xdir"'/:${datadir}/:'`
-    xdir="`eval echo \"$bindir\"`"
-    dtop_mime_info=`echo $dtop_mime_info | sed -e 's:^'"$xdir"'/:${bindir}/:'`
-    xdir="`eval echo \"$prefix\"`"
-    dtop_mime_info=`echo $dtop_mime_info | sed -e 's:^'"$xdir"'/:${prefix}/:'`
-
-       echo "$as_me:$LINENO: result: ${dtop_mime_info:-no}" >&5
-echo "${ECHO_T}${dtop_mime_info:-no}" >&6
-
-       # dtop_application_registry
-       echo "$as_me:$LINENO: checking for Gnome association directory" >&5
-echo $ECHO_N "checking for Gnome association directory... $ECHO_C" >&6
-       if test -d "/usr/share/application-registry" ; then
-           dtop_application_registry="/usr/share/application-registry"
-       fi
-
-    xdir="`eval echo \"$libdir\"`"
-    dtop_application_registry=`echo $dtop_application_registry | sed -e 's:^'"$xdir"'/:${libdir}/:'`
-    xdir="`eval echo \"$datadir\"`"
-    dtop_application_registry=`echo $dtop_application_registry | sed -e 's:^'"$xdir"'/:${datadir}/:'`
-    xdir="`eval echo \"$bindir\"`"
-    dtop_application_registry=`echo $dtop_application_registry | sed -e 's:^'"$xdir"'/:${bindir}/:'`
-    xdir="`eval echo \"$prefix\"`"
-    dtop_application_registry=`echo $dtop_application_registry | sed -e 's:^'"$xdir"'/:${prefix}/:'`
-
-       echo "$as_me:$LINENO: result: ${dtop_application_registry:-no}" >&5
-echo "${ECHO_T}${dtop_application_registry:-no}" >&6
-
-       # dtop_icons
-       echo "$as_me:$LINENO: checking for KDE icon directory" >&5
-echo $ECHO_N "checking for KDE icon directory... $ECHO_C" >&6
-       if test -x "$KDE_CONFIG" ; then
-           dtop_icons=`$KDE_CONFIG --expandvars --install icon`
-       elif test -d "/usr/share/icons" ; then
-           dtop_icons="/usr/share/icons"
-       fi
-
-    xdir="`eval echo \"$libdir\"`"
-    dtop_icons=`echo $dtop_icons | sed -e 's:^'"$xdir"'/:${libdir}/:'`
-    xdir="`eval echo \"$datadir\"`"
-    dtop_icons=`echo $dtop_icons | sed -e 's:^'"$xdir"'/:${datadir}/:'`
-    xdir="`eval echo \"$bindir\"`"
-    dtop_icons=`echo $dtop_icons | sed -e 's:^'"$xdir"'/:${bindir}/:'`
-    xdir="`eval echo \"$prefix\"`"
-    dtop_icons=`echo $dtop_icons | sed -e 's:^'"$xdir"'/:${prefix}/:'`
-
-       echo "$as_me:$LINENO: result: ${dtop_icons:-no}" >&5
-echo "${ECHO_T}${dtop_icons:-no}" >&6
-
-       # dtop_applnk
-       if test -z "$dtop_menu" -a -z "$dtop_applications" ; then
-           echo "$as_me:$LINENO: checking for KDE menu directory" >&5
-echo $ECHO_N "checking for KDE menu directory... $ECHO_C" >&6
-           if test -x "$KDE_CONFIG" ; then
-               dtop_applnk=`$KDE_CONFIG --expandvars --install apps`
-           elif test -d "/usr/share/applnk" ; then
-               dtop_applnk="/usr/share/applnk"
-           fi
-
-    xdir="`eval echo \"$libdir\"`"
-    dtop_applnk=`echo $dtop_applnk | sed -e 's:^'"$xdir"'/:${libdir}/:'`
-    xdir="`eval echo \"$datadir\"`"
-    dtop_applnk=`echo $dtop_applnk | sed -e 's:^'"$xdir"'/:${datadir}/:'`
-    xdir="`eval echo \"$bindir\"`"
-    dtop_applnk=`echo $dtop_applnk | sed -e 's:^'"$xdir"'/:${bindir}/:'`
-    xdir="`eval echo \"$prefix\"`"
-    dtop_applnk=`echo $dtop_applnk | sed -e 's:^'"$xdir"'/:${prefix}/:'`
-
-           echo "$as_me:$LINENO: result: ${dtop_applnk:-no}" >&5
-echo "${ECHO_T}${dtop_applnk:-no}" >&6
-       fi
-
-       # dtop_mimelnk
-       echo "$as_me:$LINENO: checking for KDE mimetype directory" >&5
-echo $ECHO_N "checking for KDE mimetype directory... $ECHO_C" >&6
-       cause=no
-       if test -x "$KDE_CONFIG" ; then
-           dtop_mimelnk=`$KDE_CONFIG --expandvars --install mime`
-           case "`$KDE_CONFIG --version | grep KDE`" in
-              *3.[5-9]*) dtop_mimelnk=''; cause='no need (kde>=3.5)' ;;
-              *) ;;
-           esac
-       elif test -d "/usr/share/mimelnk" ; then
-           dtop_mimelnk="/usr/share/mimelnk"
-       fi
-       if test "${kde_version-0}" -ge 343 ; then
-           dtop_mimelnk=""
-           cause="no (kde>=3.4.5)"
-       fi
-
-    xdir="`eval echo \"$libdir\"`"
-    dtop_mimelnk=`echo $dtop_mimelnk | sed -e 's:^'"$xdir"'/:${libdir}/:'`
-    xdir="`eval echo \"$datadir\"`"
-    dtop_mimelnk=`echo $dtop_mimelnk | sed -e 's:^'"$xdir"'/:${datadir}/:'`
-    xdir="`eval echo \"$bindir\"`"
-    dtop_mimelnk=`echo $dtop_mimelnk | sed -e 's:^'"$xdir"'/:${bindir}/:'`
-    xdir="`eval echo \"$prefix\"`"
-    dtop_mimelnk=`echo $dtop_mimelnk | sed -e 's:^'"$xdir"'/:${prefix}/:'`
-
-       echo "$as_me:$LINENO: result: ${dtop_mimelnk:-$cause}" >&5
-echo "${ECHO_T}${dtop_mimelnk:-$cause}" >&6
-   fi
-
-
-
-
-
-
-
-
-
-
+if test ${ac_desktopfiles} != no ; then
+  RUNXDG_YES=''
+  RUNXDG_NO='#'
+else
+  RUNXDG_YES='#'
+  RUNXDG_NO=''
 fi
 
 
-# ----------------------------------------
-# Extra
-# ----------------------------------------
 
 
-# -----------
-# What flags should be used to compile nsdejavu.so
+
+
+# ----------------------------------------
+# Flags for NSDEJAVU.SO
+# ----------------------------------------
+
 
 NSDEJAVU_CFLAGS=
 NSDEJAVU_LIBS=
@@ -26946,7 +26873,12 @@ if test -z "$INSTALL_SHLIB" ; then
 fi
 
 
-# -----------
+
+
+# ----------------------------------------
+# Compiler version check
+# ----------------------------------------
+
 # Work around broken compilers with the famous LPR0 bug
 if test x$ac_shared_libdjvu != xno && test x$GXX = xyes; then
     echo "$as_me:$LINENO: checking if $CXX has the LPR0 bug" >&5
@@ -26964,7 +26896,6 @@ echo "${ECHO_T}yes" >&6
     fi
 fi
 
-# -----------
 # What compiler are we using ?
 if test x$GXX != xyes ; then
   { echo "$as_me:$LINENO: WARNING: The recommended c++ compiler is g++." >&5
@@ -27058,7 +26989,12 @@ _ACEOF
   fi
 fi
 
-# -----------
+
+
+# ----------------------------------------
+# Qt version check
+# ----------------------------------------
+
 # What version of QT are we using
 if test x${qt_version+set} = xset ; then
   if test "$qt_version" -lt 200 ; then
@@ -27142,8 +27078,6 @@ _ACEOF
 
           ac_config_files="$ac_config_files gui/Makefile"
 
-          ac_config_files="$ac_config_files gui/desktop/Makefile"
-
           ac_config_files="$ac_config_files gui/bin2cpp/Makefile"
 
           ac_config_files="$ac_config_files gui/djview/Makefile"
@@ -27157,6 +27091,9 @@ _ACEOF
           ac_config_files="$ac_config_files i18n/de/Makefile"
 
           ac_config_files="$ac_config_files i18n/fr/Makefile"
+
+          ac_config_files="$ac_config_files desktopfiles/Makefile"
+
 
 # Go
 cat >confcache <<\_ACEOF
@@ -27691,7 +27628,6 @@ do
   "tools/jb2cmp/Makefile" ) CONFIG_FILES="$CONFIG_FILES tools/jb2cmp/Makefile" ;;
   "xmltools/Makefile" ) CONFIG_FILES="$CONFIG_FILES xmltools/Makefile" ;;
   "gui/Makefile" ) CONFIG_FILES="$CONFIG_FILES gui/Makefile" ;;
-  "gui/desktop/Makefile" ) CONFIG_FILES="$CONFIG_FILES gui/desktop/Makefile" ;;
   "gui/bin2cpp/Makefile" ) CONFIG_FILES="$CONFIG_FILES gui/bin2cpp/Makefile" ;;
   "gui/djview/Makefile" ) CONFIG_FILES="$CONFIG_FILES gui/djview/Makefile" ;;
   "gui/nsdejavu/Makefile" ) CONFIG_FILES="$CONFIG_FILES gui/nsdejavu/Makefile" ;;
@@ -27699,6 +27635,7 @@ do
   "i18n/ja/Makefile" ) CONFIG_FILES="$CONFIG_FILES i18n/ja/Makefile" ;;
   "i18n/de/Makefile" ) CONFIG_FILES="$CONFIG_FILES i18n/de/Makefile" ;;
   "i18n/fr/Makefile" ) CONFIG_FILES="$CONFIG_FILES i18n/fr/Makefile" ;;
+  "desktopfiles/Makefile" ) CONFIG_FILES="$CONFIG_FILES desktopfiles/Makefile" ;;
   "config.h" ) CONFIG_HEADERS="$CONFIG_HEADERS config.h:config/config.h.in" ;;
   *) { { echo "$as_me:$LINENO: error: invalid argument: $ac_config_target" >&5
 echo "$as_me: error: invalid argument: $ac_config_target" >&2;}
@@ -27856,15 +27793,11 @@ s,@GUI_NO@,$GUI_NO,;t t
 s,@LINGUAS@,$LINGUAS,;t t
 s,@I18N_YES@,$I18N_YES,;t t
 s,@I18N_NO@,$I18N_NO,;t t
-s,@KDE_CONFIG@,$KDE_CONFIG,;t t
-s,@dtop_applications@,$dtop_applications,;t t
-s,@dtop_icons@,$dtop_icons,;t t
-s,@dtop_pixmaps@,$dtop_pixmaps,;t t
-s,@dtop_mime_info@,$dtop_mime_info,;t t
-s,@dtop_application_registry@,$dtop_application_registry,;t t
-s,@dtop_applnk@,$dtop_applnk,;t t
-s,@dtop_mimelnk@,$dtop_mimelnk,;t t
-s,@dtop_menu@,$dtop_menu,;t t
+s,@XDG_MIME@,$XDG_MIME,;t t
+s,@XDG_ICON_RESOURCE@,$XDG_ICON_RESOURCE,;t t
+s,@XDG_DESKTOP_MENU@,$XDG_DESKTOP_MENU,;t t
+s,@RUNXDG_YES@,$RUNXDG_YES,;t t
+s,@RUNXDG_NO@,$RUNXDG_NO,;t t
 s,@NSDEJAVU_CFLAGS@,$NSDEJAVU_CFLAGS,;t t
 s,@NSDEJAVU_LIBS@,$NSDEJAVU_LIBS,;t t
 s,@INSTALL_SHLIB@,$INSTALL_SHLIB,;t t
