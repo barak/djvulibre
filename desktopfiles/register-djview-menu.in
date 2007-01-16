@@ -57,12 +57,12 @@ export XDG_DATA_DIR
 # proceed
 case "$1" in
 install)
-   ${xdg_icon_resource} install --context mimetypes \
+   ${xdg_icon_resource} install --context apps \
        --size 32 ./hi32-djview3.png djvulibre-djview3
    ${xdg_desktop_menu} install ./djvulibre-djview3.desktop
    ;;
 uninstall)
-   ${xdg_icon_resource} uninstall --context mimetypes djvulibre-djview3
+   ${xdg_icon_resource} uninstall --context apps djvulibre-djview3
    ${xdg_desktop_menu} uninstall djvulibre-djview3.desktop
    ;;
 *)
