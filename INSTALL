@@ -97,9 +97,12 @@ configuration script.  A complete list can be obtained by typing
 
 * Option "--enable-desktopfiles[=(yes|no)]"
 
-  Selecting this option installs icons and menu entries
-  compatible with several desktop environments such as KDE or GNOME.  
-  This is enabled by default when ${prefix} is /usr.
+  This option is deprecated. 
+  Packagers should instead call the scripts 
+   /usr/share/djvu/osi/desktop/register-djvu-mime and
+   /usr/share/djvu/osi/desktop/register-djview-menu
+  in their postinstall/preremove scripts in order
+  to setup the xdg mime type database and menu entries.
 
 * Option "--enable-i18n[=(yes|no|languages)]"
 
