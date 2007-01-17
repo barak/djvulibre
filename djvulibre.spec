@@ -69,14 +69,6 @@ if test -x /usr/sbin/update-alternatives ; then
     && rm %{buildroot}%{_mandir}/man1/djview.1
 fi
 
-# Compute file list
-find %{buildroot} \( -type f -o -type l \) \
- | sed -e 's:^%{buildroot}::' \
- | grep -v '^%{_mandir}/' \
- | grep -v '^%{_datadir}/djvu/osi/' \
- | grep -v '^%{_datadir}/djvu/djview3/' \
- > files.list
-
 %clean
 rm -rf %{buildroot}
 
@@ -91,8 +83,12 @@ if test -x /usr/sbin/update-alternatives ; then
     --install %{_bindir}/djview djview %{_bindir}/djview3 103 \
     --slave $m2 `basename $m2` $m1
 fi
-# MENU: For debian-style menu systems
-if test -x /usr/bin/update-menus; then /usr/bin/update-menus; fi
+# MIME TYPES
+test -x /usr/share/djvu/osi/desktop/register-djvu-mime &&
+  /usr/share/djvu/osi/desktop/register-djvu-mime install 2>/dev/null
+# MENU
+test -x /usr/share/djvu/djview3/desktop/register-djview-menu &&
+  /usr/share/djvu/djview3/desktop/register-djview-menu install 2>/dev/null
 # HACK: Create links to nsdejavu.so in mozilla dirs
 ( for n in %{_prefix}/lib/mozilla*  ; do \
   if [ -d $n ] ; then \
@@ -110,39 +106,31 @@ if test -x /usr/bin/update-menus; then /usr/bin/update-menus; fi
      rm $n/plugins/nsdejavu.so ; \
      rmdir $n/plugins ; \
   fi ; done ; fi ) 2>/dev/null || true
-# MENU: For debian-style menu systems
-if test -x /usr/bin/update-menus; then /usr/bin/update-menus; fi
+# MENU
+test -x /usr/share/djvu/djview3/desktop/register-djview-menu &&
+  /usr/share/djvu/djview3/desktop/register-djview-menu uninstall 2>/dev/null
+# MIME TYPES
+test -x /usr/share/djvu/osi/desktop/register-djvu-mime &&
+  /usr/share/djvu/osi/desktop/register-djvu-mime uninstall 2>/dev/null
 # ALTERNATIVES
 if test -x /usr/sbin/update-alternatives ; then
-  /usr/sbin/update-alternatives \
-    --remove djview %{_bindir}/djview3
+  /usr/sbin/update-alternatives --remove djview %{_bindir}/djview3
 fi
 # LIBS: Run ldconfig
 /sbin/ldconfig
 
-%files -f files.list
+%files
 %defattr(-, root, root)
 %doc README COPYRIGHT COPYING INSTALL NEWS TODO doc
-%dir %{_libdir}/netscape
-%dir %{_includedir}/libdjvu
-%dir %{_datadir}/djvu
-%dir %{_datadir}/djvu/osi
-%dir %{_datadir}/djvu/pubtext
-%dir %{_datadir}/djvu/djview3
-%{_mandir}/man?
-%lang(ja) %{_mandir}/ja*
-%lang(fr) %{_mandir}/fr*
-%lang(de) %{_mandir}/de*
-%{_datadir}/djvu/osi/languages.xml
-%{_datadir}/djvu/osi/en*
-%lang(ja) %{_datadir}/djvu/*/ja*
-%lang(fr) %{_datadir}/djvu/*/fr*
-%lang(de) %{_datadir}/djvu/*/de*
-%lang(zh) %{_datadir}/djvu/*/zh*
-
+%{_bindir}
+%{_libdir}
+%{_includedir}/libdjvu
+%{_datadir}/djvu
+%{_mandir}
 
 %changelog
-* Sat Jan 06 2007 Leon Bottou <leon@bottou.org> 3.5.18-1
+* Tue Jan 15 2007 Leon Bottou <leon@bottou.org> 3.5.18-1
+- Use xdg scripts to install mime types and menu entries
 - Updated to 3.5.18-1
 * Mon Oct 31 2005 Leon Bottou <leon@bottou.org> 3.5.16-1
 - Updated to 3.5.16-1
