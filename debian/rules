@@ -61,14 +61,12 @@ clean:
 	  cp -f /usr/share/misc/config.sub config/config.sub
 	-test -r /usr/share/misc/config.guess && \
 	  cp -f /usr/share/misc/config.guess config/config.guess
-	dh_clean debian/djview.menu
 
 plugsubdir=netscape/plugins-libc6
 plug=$(plugsubdir)/nsdejavu.so
 
 install: build
 	dh_testdir
-	dh_clean -k debian/djview.menu
 	dh_installdirs
 	$(MAKE) install	\
 		DESTDIR=$(CURDIR)/debian/tmp \
