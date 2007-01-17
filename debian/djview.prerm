@@ -2,12 +2,13 @@
 
 # Alternatives
 if [ "$1" = "remove" ] && [ -x /usr/sbin/update-alternatives ] ; then
-  /usr/sbin/update-alternatives --quiet \
-    --remove djview /usr/bin/djview3
+  /usr/sbin/update-alternatives --quiet --remove djview /usr/bin/djview3
 fi
 
 # XDG menu entries
-test -x /usr/share/djvu/djview3/desktop/register-djview-menu &&
+if [ "$1" = "remove" ] && 
+   [ -x /usr/share/djvu/djview3/desktop/register-djview-menu ] ; then
   /usr/share/djvu/djview3/desktop/register-djview-menu uninstall
+fi
 
 #DEBHELPER#

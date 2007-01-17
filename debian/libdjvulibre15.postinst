@@ -1,7 +1,9 @@
 #! /bin/sh
 
 # Register mime types (xdg)
-test -x /usr/share/djvu/osi/desktop/register-djvu-mime &&
+if [ "$1" = "configure" ] && 
+   [ -x /usr/share/djvu/osi/desktop/register-djvu-mime ] ; then
   /usr/share/djvu/osi/desktop/register-djvu-mime install
+fi
 
 #DEBHELPER#
