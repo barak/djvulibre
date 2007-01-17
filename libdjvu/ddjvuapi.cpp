@@ -1311,7 +1311,8 @@ ddjvu_document_check_pagedata(ddjvu_document_t *document, int pageno)
       if (doc && doc->is_init_ok())
         {
           bool dontcreate = false;
-          if (doc->get_doc_type()==DjVuDocument::INDIRECT)
+          if (doc->get_doc_type() == DjVuDocument::INDIRECT ||
+              doc->get_doc_type() == DjVuDocument::OLD_INDEXED )
             {
               dontcreate = true;
               GURL url = doc->page_to_url(pageno);
