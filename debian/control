@@ -27,7 +27,7 @@ Description: Development files for the DjVu image format
 Package: libdjvulibre15
 Section: libs
 Architecture: any
-Depends: ${shlibs:Depends}
+Depends: ${shlibs:Depends}, xdg-utils
 Conflicts: libdjvulibre1
 Replaces: libdjvulibre1
 Description: Runtime support for the DjVu image format
@@ -36,7 +36,7 @@ Description: Runtime support for the DjVu image format
 Package: djview
 Section: graphics
 Architecture: any
-Depends: ${shlibs:Depends}
+Depends: ${shlibs:Depends}, xdg-utils
 Suggests: djvulibre-bin
 Description: Viewer for the DjVu image format
  DjVu viewer djview.

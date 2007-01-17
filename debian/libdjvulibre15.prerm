@@ -1,0 +1,7 @@
+#! /bin/sh
+
+# Unregister mime types (xdg)
+test -x /usr/share/djvu/osi/desktop/register-djvu-mime &&
+  /usr/share/djvu/osi/desktop/register-djvu-mime uninstall
+
+#DEBHELPER#

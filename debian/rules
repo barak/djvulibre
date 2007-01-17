@@ -42,7 +42,6 @@ config.status: configure
 	./configure --host=$(DEB_HOST_GNU_TYPE)		\
 		    --build=$(DEB_BUILD_GNU_TYPE)	\
 		    --prefix=/usr			\
-		    --enable-desktopfiles		\
 		    --mandir=\$${prefix}/share/man	\
 		    --infodir=\$${prefix}/share/info
 
@@ -63,15 +62,6 @@ clean:
 	-test -r /usr/share/misc/config.guess && \
 	  cp -f /usr/share/misc/config.guess config/config.guess
 	dh_clean debian/djview.menu
-# sleazy hack to avoid
-#  dpkg-source: cannot represent change to XXX: binary file contents changed
-# for XXX in
-#  mac/DjVuFilter/DjVu.icns
-#  mac/DjVuFilter/English.lproj/InfoPlist.strings
-#  mac/DjVuFilter/English.lproj/Localizable.strings
-#  tools/jb2cmp.djvu
-#	-rm -r mac
-#	-rm tools/jb2cmp.djvu
 
 plugsubdir=netscape/plugins-libc6
 plug=$(plugsubdir)/nsdejavu.so
@@ -80,27 +70,18 @@ install: build
 	dh_testdir
 	dh_clean -k debian/djview.menu
 	dh_installdirs
-	$(MAKE) install							\
-		DESTDIR=$(CURDIR)/debian/tmp				\
-		plugindir=/usr/lib/$(plugsubdir)			\
-		kdedatadir='$${datadir}'				\
-		dtop_applications='$${prefix}/share/applications'	\
-		dtop_icons='$${kdedatadir}/icons'			\
-		dtop_pixmaps='$${datadir}/pixmaps'			\
-		dtop_mime_info='$${datadir}/mime-info'			\
-		dtop_application_registry='$${datadir}/application-registry' \
-		dtop_mimelnk='$${kdedatadir}/mimelnk'			\
-		dtop_menu='$${prefix}/share/menu'
+	$(MAKE) install	\
+		DESTDIR=$(CURDIR)/debian/tmp \
+		plugindir=/usr/lib/$(plugsubdir)
 	chmod +x debian/tmp/usr/bin/any2djvu
 	mkdir --parents debian/tmp/usr/lib/cgi-bin
-	cp --preserve=timestamps debian/djvuserve.sh debian/tmp/usr/lib/cgi-bin/djvuserve
+	cp --preserve=timestamps debian/djvuserve.sh \
+		debian/tmp/usr/lib/cgi-bin/djvuserve
 	chmod +x debian/tmp/usr/lib/cgi-bin/djvuserve
 	mkdir --parents      debian/tmp/usr/lib/mozilla/plugins
 	ln -sf ../../$(plug) debian/tmp/usr/lib/mozilla/plugins/
 	mkdir --parents      debian/tmp/usr/lib/mozilla-firefox/plugins
 	ln -sf ../../$(plug) debian/tmp/usr/lib/mozilla-firefox/plugins/
-	-rm debian/tmp/usr/share/menu/djview.menu
-	cp --preserve=timestamps gui/desktop/djview.menu debian/
 	-rm debian/tmp/usr/bin/djview
 	-rm debian/tmp/usr/share/man/man1/djview.1
 

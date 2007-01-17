@@ -1,9 +1,8 @@
 #! /bin/sh
 
-# Manually added, not by dh_installmenu
-if [ "$1" = "configure" ] && [ -x /usr/bin/update-menus ] ; then 
-  update-menus 
-fi
+# Register menu entries (non debian menus)
+test -x /usr/share/djvu/djview3/desktop/register-djview-menu &&
+  /usr/share/djvu/djview3/desktop/register-djview-menu install
 
 # Alternatives
 if [ "$1" = "configure" ] && [ -x /usr/sbin/update-alternatives ] ; then

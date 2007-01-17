@@ -1,5 +1,3 @@
 usr/lib/lib*.so.*
 usr/share/djvu/osi
 usr/share/djvu/pubtext
-usr/share/mime-info/djvu.mime
-usr/share/icons

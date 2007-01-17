@@ -1,4 +1,0 @@
-Things that need to be done:
-
- - break out djvuserve into its own package, which installs it as a
-   CGI script and activated appropriate hooks into apache
