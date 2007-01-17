@@ -548,6 +548,7 @@ struct IW44Image::Alloc // DJVU_CLASS
 {
   Alloc *next;
   short data[IWALLOCSIZE];
+  Alloc(Alloc *n);
 };
 
 //---------------------------------------------------------------
@@ -619,19 +620,26 @@ IW44Image::Map::~Map()
   delete [] blocks;
 }
 
+
+IW44Image::Alloc::Alloc(Alloc *n)
+  : next(n) 
+{ 
+  // see note in IW44Image::Map::alloc
+  memset(data, 0, sizeof(data)); 
+}
+
 short *
 IW44Image::Map::alloc(int n)
 {
   if (top+n > IWALLOCSIZE)
     {
-      IW44Image::Alloc *n = new IW44Image::Alloc;
-      n->next = chain;
-      chain = n;
+      // note: everything is cleared long before we use it
+      // in order to avoid the need for a memory fence.
+      chain = new IW44Image::Alloc(chain);
       top = 0;
     }
   short *ans = chain->data + top;
   top += n;
-  memset((void*)ans, 0, sizeof(short)*n);
   return ans;
 }
 
