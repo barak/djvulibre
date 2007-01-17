@@ -1,12 +1,16 @@
 NEW IN VERSION 3.5.18
 ---------------------
+- Renamed djview as djview3.
 - Various enhancement of DDJVUAPI.
 - Partial support for page titles instead of page numbers.
 - Clarification of metadata information.
 - Fixed djvumake mask separation feature.
-- Bitterly complain when given a so-called "secure" djvu file.
+- Complain when given a so-called "secure" djvu file.
 - Fixed handling of urls with cgi arguments
 - Fixed bug related to caching and ddjvuapi
+- Reorganized ${datadir}/djvu
+- Provide scripts in ${datadir}/djvu/*/desktop to register
+  the djvu mime types and the djview menu entries.
 
 
 NEW IN VERSION 3.5.17
