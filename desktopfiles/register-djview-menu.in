@@ -33,7 +33,7 @@ fi
 # check presence of xdg utils
 test -x ${xdg_mime} || xdg_mime=`which xdg-mime`
 test -x ${xdg_icon_resource} || xdg_icon_resource=`which xdg-icon-resource`
-test -x ${xdg_desktop_menu} || xdg_desktop_menu=`which xdg-icon-resource`
+test -x ${xdg_desktop_menu} || xdg_desktop_menu=`which xdg-desktop_menu`
 
 if test -x ${xdg_mime} &&
    test -x ${xdg_icon_resource} &&
