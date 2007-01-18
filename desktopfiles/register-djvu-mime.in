@@ -17,12 +17,13 @@
 xdg_mime=XDG_MIME
 xdg_icon_resource=XDG_ICON_RESOURCE
 xdg_desktop_menu=XDG_DESKTOP_MENU
+datadir=DATADIR
 mydir=MYDIR
 
 # test directory
 if test -d "$mydir" 
 then
-  cd ${mydir}
+  cd $mydir
 else
   echo 1>&2 "Unable to find directory ${mydir}"
   exit 10
@@ -32,7 +33,7 @@ fi
 # check presence of xdg utils
 test -x ${xdg_mime} || xdg_mime=`which xdg-mime`
 test -x ${xdg_icon_resource} || xdg_icon_resource=`which xdg-icon-resource`
-test -x ${xdg_desktop_menu} || xdg_desktop_menu=`which xdg-desktop_menu`
+test -x ${xdg_desktop_menu} || xdg_desktop_menu=`which xdg-desktop-menu`
 
 if test -x ${xdg_mime} &&
    test -x ${xdg_icon_resource} &&
@@ -47,9 +48,9 @@ else
 fi
 
 if test -n "$XDG_DATA_DIR" ; then
-    XDG_DATA_DIR="$DATADIR:$XDG_DATA_DIR"
+    XDG_DATA_DIR="$datadir:$XDG_DATA_DIR"
 else
-    XDG_DATA_DIR="$DATADIR:/usr/local/share:/usr/share"
+    XDG_DATA_DIR="$datadir:/usr/local/share:/usr/share"
 fi
 export XDG_DATA_DIR
 
