@@ -62,7 +62,8 @@ install)
    ${xdg_desktop_menu} install ./djvulibre-djview3.desktop
    ;;
 uninstall)
-   ${xdg_icon_resource} uninstall --context apps djvulibre-djview3
+   ${xdg_icon_resource} uninstall --context apps \
+       --size 32 djvulibre-djview3
    ${xdg_desktop_menu} uninstall djvulibre-djview3.desktop
    ;;
 *)
