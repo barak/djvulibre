@@ -5,3 +5,4 @@ doc/*.djvu
 doc/*.txt
 doc/DjVmNav*
 doc/GMapAreas*
+share/djvu/pubtext
