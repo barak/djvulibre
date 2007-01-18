@@ -2,7 +2,7 @@ Source: djvulibre
 Section: web
 Priority: optional
 Maintainer: Barak A. Pearlmutter <bap@debian.org>
-Build-Depends: debhelper (>= 5), libx11-dev | xlibs-dev, libxext-dev | xlibs-dev, libxt-dev | xlibs-dev, x-dev | xlibs-dev, libqt3-mt-dev (>= 3:3.3.4-4), libjpeg62-dev | libjpeg-dev, libtiff4-dev | libtiff3g-dev | libtiff-dev
+Build-Depends: debhelper (>= 5), libx11-dev | xlibs-dev, libxext-dev | xlibs-dev, libxt-dev | xlibs-dev, x-dev | xlibs-dev, libqt3-mt-dev (>= 3:3.3.4-4), libjpeg62-dev | libjpeg-dev, libtiff4-dev | libtiff3g-dev | libtiff-dev, xdg-utils
 Standards-Version: 3.7.2.1
 
 Package: libdjvulibre-dev
