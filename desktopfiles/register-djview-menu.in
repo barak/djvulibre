@@ -47,12 +47,12 @@ else
    exit 10
 fi
 
-if test -n "$XDG_DATA_DIR" ; then
-    XDG_DATA_DIR="$datadir:$XDG_DATA_DIR"
+if test -n "$XDG_DATA_DIRS" ; then
+    XDG_DATA_DIRS="$datadir:$XDG_DATA_DIRS"
 else
-    XDG_DATA_DIR="$datadir:/usr/local/share/:/usr/share/"
+    XDG_DATA_DIRS="$datadir:/usr/local/share/:/usr/share/"
 fi
-export XDG_DATA_DIR
+export XDG_DATA_DIRS
 
 # proceed
 case "$1" in
