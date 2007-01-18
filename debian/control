@@ -38,6 +38,7 @@ Section: graphics
 Architecture: any
 Depends: ${shlibs:Depends}, xdg-utils
 Suggests: djvulibre-bin
+Recommends: djvulibre-plugin
 Description: Viewer for the DjVu image format
  DjVu viewer djview.
 
