@@ -31,13 +31,13 @@ fi
 
 
 # check presence of xdg utils
-test -n ${xdg_mime} || xdg_mime=`which xdg-mime`
-test -n ${xdg_icon_resource} || xdg_icon_resource=`which xdg-icon-resource`
-test -n ${xdg_desktop_menu} || xdg_desktop_menu=`which xdg-desktop-menu`
+test -n "$xdg_mime" || xdg_mime=`which xdg-mime`
+test -n "$xdg_icon_resource" || xdg_icon_resource=`which xdg-icon-resource`
+test -n "$xdg_desktop_menu" || xdg_desktop_menu=`which xdg-desktop-menu`
 
-if test -x ${xdg_mime} &&
-   test -x ${xdg_icon_resource} &&
-   test -x ${xdg_desktop_menu} 
+if test -x "$xdg_mime" &&
+   test -x "$xdg_icon_resource" &&
+   test -x "$xdg_desktop_menu" 
 then
    true
 else
@@ -57,14 +57,14 @@ export XDG_DATA_DIRS
 # proceed
 case "$1" in
 install)
-   ${xdg_icon_resource} install --context apps \
+   "$xdg_icon_resource" install --context apps \
        --size 32 ./hi32-djview3.png djvulibre-djview3
-   ${xdg_desktop_menu} install ./djvulibre-djview3.desktop
+   "$xdg_desktop_menu" install ./djvulibre-djview3.desktop
    ;;
 uninstall)
-   ${xdg_icon_resource} uninstall --context apps \
+   "$xdg_icon_resource" uninstall --context apps \
        --size 32 djvulibre-djview3
-   ${xdg_desktop_menu} uninstall djvulibre-djview3.desktop
+   "$xdg_desktop_menu" uninstall djvulibre-djview3.desktop
    ;;
 *)
    echo 1>&2 "Usage: $0 {install|uninstall}"
