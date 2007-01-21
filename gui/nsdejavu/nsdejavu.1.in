@@ -114,7 +114,7 @@ type indicates a server misconfiguration.
 
 
 .SH CGI-STYLE FLAGS
-The behavior of the DjVu browser plugin can be specified by
+The behavior of the DjVu browser plugin can be specified
 by augmenting the
 .SM URL
 using a syntax similar to that used by the
