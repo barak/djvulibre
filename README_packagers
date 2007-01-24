@@ -1,0 +1,99 @@
+
+
+PACKAGING CHANGES FOR VERSION 3.5.18
+====================================
+
+
+
+1- DJVIEW BECOMES DJVIEW3
+-------------------------
+
+The following changes have been 
+made in order to accomodate 
+the new djview4 viewer.
+
+Djview4 comes as a separate source tarball
+since it only relies on the public api files:
+  /usr/include/libdjvu/ddjvuapi.h
+  /usr/include/libdjvu/miniexp.h
+
+The Qt3 based viewer packaged with 
+djvulibre-3.5 is now called djview3
+and will be phased out when Qt3 will
+be considered obsolete.
+
+The command 'make install' now installs
+the viewer as ${bindir}/djview3 and
+its man page as ${mandir}/man1/djview3.1.
+It also creates (but does not overwrite)
+symbolic links named ${bindir}/djview
+and ${mandir}/man1/djview3.1.
+Packagers are encouraged to delete 
+these fixed symbolic links and use
+instead the update-alternatives method
+when available.
+
+The DjVu browser plugin ${plugindir}/nsdejavu.so
+works by invoking a DjVu viewer as a slave process.
+It searches viewers named 'djview', 'djview4' 
+or 'djview3' in that order. Therefore the 
+alternative link ${bindir}/djview also determines
+which viewer is used as a browser plugin.
+
+
+
+2- REORGANIZATION IN ${DATADIR}/DJVU.
+-------------------------------------
+
+Files in the directory ${datadir}/djvu
+have been reorganized more rationally.
+* ${datadir}/djvu/osi 
+    contains the files needed by the library.
+* ${datadir}/djvu/djview3
+    contains the files needed by djview3.
+* ${datadir}/djvu/pubtext
+    contains some documentation files.
+
+
+
+3- ICONS, MIMETYPES, MENU ENTRIES.
+----------------------------------
+
+Previous version of djvulibre were relying on
+complicated scripts to setup the djvu icons,
+the djvu mime types, and menu entries for
+the djview3 program.
+
+This is no longer the case.
+Command 'make install' no longer install these files.
+Instead it creates scripts named
+  ${datadir}/osi/desktop/register-djvu-mime, and
+  ${datadir}/osi/djview3/register-djview-menu.
+to install/uninstall the djvu mime type and
+the djview3 menu entries with their respective
+icons.
+
+These scripts are designed to be invoked
+during the postinstall or prerm phases
+of the installation.  They require the
+presence of the XDG Portland tools 
+  xdg-icon-resource, 
+  xdg-mime, and
+  xdg-desktop-menu.
+
+
+
+4- PACKAGING FILES.
+-------------------
+
+The file djvulibre.spec distributed with djvulibre
+has been drastically simplified since most of
+its complexity was related to finding the location
+of the icon files, mime type files, and menu files.
+
+
+The debian directory contains the actual debian 
+packaging files maintained by Barak Pealmutter.
+This is a good example of splitting the djvulibre
+install into many smaller packages.
+
