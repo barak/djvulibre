@@ -49,6 +49,7 @@ DjVulibre-3.5 contains:
 
 %build
 %configure
+make depend
 make
 
 %install
