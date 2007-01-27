@@ -1,4 +1,4 @@
-%define release 1
+%define release 2
 %define version 3.5.18
 
 Summary: DjVu viewers, encoders and utilities.
@@ -98,27 +98,36 @@ test -x /usr/share/djvu/djview3/desktop/register-djview-menu &&
    test -h $n/plugins/nsdejavu.so && rm $n/plugins/nsdejavu.so ; \
    ln -s ../../netscape/plugins/nsdejavu.so $n/plugins/nsdejavu.so ; \
  fi ; done ) 2>/dev/null || true
+exit 0
 
-%postun 
-# HACK: Remove links to nsdejavu.so in all mozilla dirs
-( if [ ! -r %{_prefix}/lib/netscape/plugins/nsdejavu.so ] ; then \
-   for n in %{_prefix}/lib/mozilla* ; do \
-    if [ -h $n/plugins/nsdejavu.so ] ; then \
-     rm $n/plugins/nsdejavu.so ; \
-     rmdir $n/plugins ; \
-  fi ; done ; fi ) 2>/dev/null || true
-# MENU
-test -x /usr/share/djvu/djview3/desktop/register-djview-menu &&
-  /usr/share/djvu/djview3/desktop/register-djview-menu uninstall 2>/dev/null
-# MIME TYPES
-test -x /usr/share/djvu/osi/desktop/register-djvu-mime &&
-  /usr/share/djvu/osi/desktop/register-djvu-mime uninstall 2>/dev/null
-# ALTERNATIVES
-if test -x /usr/sbin/update-alternatives ; then
-  /usr/sbin/update-alternatives --remove djview %{_bindir}/djview3
+%preun
+if test "$1" = 0 ; then 
+ # HACK: Remove links to nsdejavu.so in all mozilla dirs
+ ( if [ ! -r %{_prefix}/lib/netscape/plugins/nsdejavu.so ] ; then \
+    for n in %{_prefix}/lib/mozilla* ; do \
+     if [ -h $n/plugins/nsdejavu.so ] ; then \
+      rm $n/plugins/nsdejavu.so ; \
+      rmdir $n/plugins ; \
+   fi ; done ; fi ) 2>/dev/null || true
+ # MENU
+ test -x /usr/share/djvu/djview3/desktop/register-djview-menu &&
+   /usr/share/djvu/djview3/desktop/register-djview-menu uninstall 2>/dev/null
+ # MIME TYPES
+ test -x /usr/share/djvu/osi/desktop/register-djvu-mime &&
+   /usr/share/djvu/osi/desktop/register-djvu-mime uninstall 2>/dev/null
+ # ALTERNATIVES
+ if test -x /usr/sbin/update-alternatives ; then
+   /usr/sbin/update-alternatives --remove djview %{_bindir}/djview3
+ fi
 fi
+exit 0
+
+
+%postun
 # LIBS: Run ldconfig
 /sbin/ldconfig
+exit 0
+
 
 %files
 %defattr(-, root, root)
@@ -130,6 +139,8 @@ fi
 %{_mandir}
 
 %changelog
+* Sat Jan 15 2007 Leon Bottou <leon@bottou.org> 3.5.18-2
+- changed postun as preun
 * Tue Jan 15 2007 Leon Bottou <leon@bottou.org> 3.5.18-1
 - Use xdg scripts to install mime types and menu entries
 - Updated to 3.5.18-1
