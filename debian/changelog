@@ -1,11 +1,9 @@
 djvulibre (3.5.18-1) unstable; urgency=low
 
-    Set up alternatives for djview; move stuff in /usr/share/djvu/.
-  * Cleanup of the desktop menu and mimetype files.
-  * Tentative changes for renaming program djview as djview3,
-  * Todo: maybe rename package djvulibre-plugin as djview3-plugin.
-  * Debian standards rev (Barak)
-  * *** STILL IN PROGRESS ***
+  * Move stuff in /usr/share/djvu/.
+  * Cleanup desktop menu and mimetype files.
+  * Renaming program djview to djview3, registered via update-alternatives.
+  * Debian standards rev.
   
  -- Leon Bottou <leon@bottou.org>  Sat, 05 Jan 2007 14:04:00 -0500
 
