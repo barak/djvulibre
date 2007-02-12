@@ -317,10 +317,9 @@ render(ddjvu_page_t *page)
           && TIFFFindCODEC(COMPRESSION_CCITT_T6))
         compression = COMPRESSION_CCITT_T6;
       else if (style!=DDJVU_FORMAT_MSBTOLSB && flag_quality>0 
-               && TIFFFindCODEC(COMPRESSION_JPEG)) {
+               && TIFFFindCODEC(COMPRESSION_JPEG))
         compression = COMPRESSION_JPEG;
-        style = DDJVU_FORMAT_RGB24;
-      } else if (TIFFFindCODEC(COMPRESSION_PACKBITS))
+      else if (TIFFFindCODEC(COMPRESSION_PACKBITS))
         compression = COMPRESSION_PACKBITS;
       break;
 #endif      
