@@ -1,30 +1,17 @@
 djvutoxml.o: djvutoxml.cpp ../config.h ../libdjvu/DjVuDocument.h \
-  ../libdjvu/DjVuPort.h ../libdjvu/GThreads.h ../libdjvu/DjVuGlobal.h \
-  ../libdjvu/GException.h ../libdjvu/DjVuGlobal.h ../libdjvu/GURL.h \
-  ../libdjvu/GString.h ../libdjvu/DjVuGlobal.h ../libdjvu/GContainer.h \
-  ../libdjvu/GException.h ../libdjvu/GSmartPointer.h \
-  ../libdjvu/DjVuGlobal.h ../libdjvu/Arrays.h ../libdjvu/GException.h \
-  ../libdjvu/GSmartPointer.h ../libdjvu/GThreads.h ../libdjvu/GOS.h \
-  ../libdjvu/DjVuGlobal.h ../libdjvu/GString.h ../libdjvu/DjVuMessage.h \
-  ../libdjvu/DjVuMessageLite.h ../libdjvu/GString.h \
-  ../libdjvu/ByteStream.h ../libdjvu/Arrays.h ../libdjvu/DjVuAnno.h \
-  ../libdjvu/GString.h ../libdjvu/DjVuText.h ../libdjvu/GMapAreas.h \
-  ../libdjvu/GSmartPointer.h ../libdjvu/GContainer.h ../libdjvu/GString.h \
-  ../libdjvu/GRect.h ../libdjvu/DjVuGlobal.h ../libdjvu/GURL.h \
-  ../libdjvu/DjVuImage.h ../libdjvu/DjVuFile.h ../libdjvu/DjVuInfo.h \
-  ../libdjvu/GSmartPointer.h ../libdjvu/GRect.h ../libdjvu/DjVuPalette.h \
-  ../libdjvu/GContainer.h ../libdjvu/GPixmap.h ../libdjvu/GSmartPointer.h \
-  ../libdjvu/DjVuPort.h ../libdjvu/DjVuAnno.h ../libdjvu/GRect.h \
-  ../libdjvu/debug.h
+  ../config.h ../libdjvu/DjVuPort.h ../libdjvu/GThreads.h \
+  ../libdjvu/DjVuGlobal.h ../libdjvu/GException.h ../libdjvu/GURL.h \
+  ../libdjvu/GString.h ../libdjvu/GContainer.h ../libdjvu/GSmartPointer.h \
+  ../libdjvu/Arrays.h ../libdjvu/GOS.h ../libdjvu/DjVuMessage.h \
+  ../libdjvu/DjVuMessageLite.h ../libdjvu/ByteStream.h \
+  ../libdjvu/DjVuAnno.h ../libdjvu/DjVuText.h ../libdjvu/GMapAreas.h \
+  ../libdjvu/GRect.h ../libdjvu/DjVuImage.h ../libdjvu/DjVuFile.h \
+  ../libdjvu/DjVuInfo.h ../libdjvu/DjVuPalette.h ../libdjvu/GPixmap.h \
+  ../libdjvu/DjVuAnno.h ../libdjvu/debug.h
 djvuxmlparser.o: djvuxmlparser.cpp ../config.h ../libdjvu/XMLParser.h \
-  ../libdjvu/GContainer.h ../libdjvu/GException.h ../libdjvu/DjVuGlobal.h \
-  ../libdjvu/GSmartPointer.h ../libdjvu/DjVuGlobal.h ../libdjvu/GURL.h \
-  ../libdjvu/GString.h ../libdjvu/DjVuGlobal.h ../libdjvu/GContainer.h \
-  ../libdjvu/Arrays.h ../libdjvu/GException.h ../libdjvu/GSmartPointer.h \
-  ../libdjvu/GThreads.h ../libdjvu/DjVuGlobal.h ../libdjvu/GException.h \
-  ../libdjvu/XMLTags.h ../libdjvu/GContainer.h ../libdjvu/GString.h \
-  ../libdjvu/GOS.h ../libdjvu/DjVuGlobal.h ../libdjvu/GString.h \
-  ../libdjvu/DjVuDocument.h ../libdjvu/DjVuPort.h ../libdjvu/GThreads.h \
-  ../libdjvu/GURL.h ../libdjvu/ByteStream.h ../libdjvu/Arrays.h \
-  ../libdjvu/DjVuMessage.h ../libdjvu/DjVuMessageLite.h \
-  ../libdjvu/GString.h
+  ../config.h ../libdjvu/GContainer.h ../libdjvu/GException.h \
+  ../libdjvu/DjVuGlobal.h ../libdjvu/GSmartPointer.h ../libdjvu/GURL.h \
+  ../libdjvu/GString.h ../libdjvu/Arrays.h ../libdjvu/GThreads.h \
+  ../libdjvu/XMLTags.h ../libdjvu/GOS.h ../libdjvu/GURL.h \
+  ../libdjvu/DjVuDocument.h ../libdjvu/DjVuPort.h ../libdjvu/ByteStream.h \
+  ../libdjvu/DjVuMessage.h ../libdjvu/DjVuMessageLite.h

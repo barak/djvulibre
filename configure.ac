@@ -261,16 +261,16 @@ AC_SUBST(I18N_NO)
 
 
 # ----------------------------------------
-# Xdg Portland tools
+# Desktop files
 # ----------------------------------------
 
-# Check compilation of xmltools
-ac_desktopfiles=no
+ac_desktopfiles=yes
 AC_ARG_ENABLE(desktopfiles,
-        AC_HELP_STRING([--enable-desktopfiles],
-            [Run scripts to install icons and menu files (default: no).]),
-        [ac_desktopfiles=$enableval])
+    AC_HELP_STRING([--enable-desktopfiles],
+        [Install scripts to register icons and menus (default: yes.)]),
+    [ac_desktopfiles=$enableval])
 
+# Check for xdg tools
 AC_PATH_PROG(XDG_MIME, xdg-mime)
 AC_PATH_PROG(XDG_ICON_RESOURCE, xdg-icon-resource)
 AC_PATH_PROG(XDG_DESKTOP_MENU, xdg-desktop-menu)
@@ -279,38 +279,26 @@ if test -x ${XDG_MIME} && \
    test -x ${XDG_DESKTOP_MENU}
 then 
   true
-elif test $ac_desktopfiles != no ; then
-  ac_desktopfiles = no
+elif test "$ac_desktopfiles" = yes ; then
+  ac_desktopfiles=no
   AC_MSG_WARN([Cannot find the Xdg Portland tools.
 --------------------------------------------------------
-*** The Xdg Portland tools <http://portland.freedesktop.org>.
-*** are required to register the mime type and menu entries.
-*** You can install these tools later and then run the scripts
+*** The scripts to register icons and menus 
 *** ${datadir}/djvu/osi/desktop/register-djvu-mimetype, and
-*** ${datadir}/djvu/djview3/desktop/register-djview3-menu.
---------------------------------------------------------])
-else
-  AC_MSG_WARN([Cannot find the Xdg Portland tools.
---------------------------------------------------------
-*** You will not be able to use the scripts
-*** ${datadir}/djvu/osi/desktop/register-djvu-mimetype, and
-*** ${datadir}/djvu/djview3/desktop/register-djview3-menu.
-*** without first installing the Xdg Portland tools
-*** available at <http://portland.freedesktop.org>.
+*** ${datadir}/djvu/djview3/desktop/register-djview3-menu
+*** will not be installed.
 --------------------------------------------------------])
 fi
 
 if test ${ac_desktopfiles} != no ; then
-  RUNXDG_YES=''
-  RUNXDG_NO='#'
+  DESKTOP_YES=''
+  DESKTOP_NO='#'
 else
-  RUNXDG_YES='#'
-  RUNXDG_NO=''
+  DESKTOP_YES='#'
+  DESKTOP_NO=''
 fi
-AC_SUBST(RUNXDG_YES)
-AC_SUBST(RUNXDG_NO)
-
-
+AC_SUBST(DESKTOP_YES)
+AC_SUBST(DESKTOP_NO)
 
 
 # ----------------------------------------

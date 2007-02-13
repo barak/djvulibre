@@ -44,7 +44,7 @@ SUBDIRS = ${SUBDIRS_FIRST} ${SUBDIRS_XML} \
 world: all
 	@echo "Congratulations: the compilation was successful!"
 
-all install depend clean: FORCE
+all depend clean: FORCE
 	for d in ${SUBDIRS} ; \
 	  do ( cd $$d && ${MAKE} $@ ) || exit ; done
 
@@ -54,9 +54,39 @@ distclean: FORCE
 	-${RM} config.h config.log config.status
 	-${RM} libtool
 
-install-desktop-files: FORCE
-	@echo "*** No need to do 'make install-desktop-files'."
-	@echo "*** Use 'configure --enable-desktopfiles' instead"
+# Modularized install
+
+install: install-libdjvu
+
+install: install-utils
+
+install-utils: install-tools
+
+@XML_YES@install-utils: install-xmltools
+
+@GUI_YES@install: install-gui
+
+@I18N_YES@install: install-i18n
+
+@DESKTOP_YES@install: install-desktopfiles
+
+install-libdjvu: FORCE
+	( cd libdjvu && ${MAKE} install )
+
+install-tools: FORCE
+	( cd tools && ${MAKE} install )
+
+install-xmltools: FORCE
+	( cd xmltools && ${MAKE} install )
+
+install-gui: FORCE
+	( cd gui && ${MAKE} install )
+
+install-i18n: FORCE
+	( cd i18n && ${MAKE} install )
+
+install-desktopfiles: FORCE
+	( cd desktopfiles && ${MAKE} install )
 
 libtool: ${LIBTOOL_DEPS} configure.ac
 	${SHELL} ./config.status --recheck

@@ -1,5 +1,4 @@
-nsdejavu.o: nsdejavu.c ../../config.h ../../gui/shared/res/names.h \
-  ../../gui/shared/res/version.h ../../gui/npsdk/npapi.h \
+nsdejavu.o: nsdejavu.c ../../config.h ../../gui/npsdk/npapi.h \
   ../../gui/npsdk/jri.h ../../gui/npsdk/jritypes.h \
   ../../gui/npsdk/jri_md.h ../../gui/npsdk/npunix.c \
-  ../../gui/npsdk/npapi.h ../../gui/npsdk/npupp.h ../../gui/npsdk/jri.h
+  ../../gui/npsdk/npapi.h ../../gui/npsdk/npupp.h

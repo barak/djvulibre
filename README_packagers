@@ -66,20 +66,55 @@ the djview3 program.
 
 This is no longer the case.
 Command 'make install' no longer install these files.
-Instead it creates scripts named
+
+Instead the configure script checks for the
+presence of the XDG Portland tools
+  xdg-icon-resource, xdg-mime, and xdg-desktop-menu.
+If these tools are found, it installs scripts named
   ${datadir}/osi/desktop/register-djvu-mime, and
   ${datadir}/osi/djview3/register-djview-menu.
-to install/uninstall the djvu mime type and
-the djview3 menu entries with their respective
-icons.
-
+to install/uninstall the djvu mime type and the djview3 
+menu entries with their respective icons.
 These scripts are designed to be invoked
 during the postinstall or prerm phases
-of the installation.  They require the
-presence of the XDG Portland tools 
-  xdg-icon-resource, 
-  xdg-mime, and
-  xdg-desktop-menu.
+of the installation. 
+
+You can use the configure 
+option '--disable-desktopfiles'
+to prevent the installation of these scripts
+and of their associated files. 
+
+
+
+4- MODULARIZED INSTALL
+----------------------
+
+The makefile provides fine grain installation targets. 
+
+* make install-libdjvu
+        Installs the djvulibre library and its associated files
+* make install-utils
+        Installs the executable utilities (tools. xmltools)
+* make install-gui
+        Installs djview3 and nsdejavu.
+* make install-i18n
+        Installs translated man pages (japanese only)
+        and the djview3 localization files.
+* make install-desktopfiles
+        Installs the scripts to register mime types, icons
+        and menu entries. 
+
+Command 'make-install' usually runs all these targets.
+However, configure options
+  --disable-xmltools,
+  --disable-gui,
+  --disable-i18n, and
+  --disable-desktopfiles
+make sure that 'make install' does not invoke
+the corresponding install targets.
+These targets are also disabled if the 
+necessary programs and libraries are not found.
+
 
 
 
