@@ -184,8 +184,8 @@ AC_PATH_QT(,
 # Check compilation of xmltools
 ac_enable_xmltools=yes
 AC_ARG_ENABLE(xmltools,
-   AC_HELP_STRING([--enable-xmltools],
-                  [enable compilation of the djvu xml tools.]),
+   AC_HELP_STRING([--disable-xmltools],
+                  [Do not compile the djvu xml tools.]),
    [ac_enable_xmltools=$enableval])
 if test x$ac_enable_xmltools != xno ; then
    XML_YES=''
@@ -200,8 +200,8 @@ AC_SUBST(XML_NO)
 
 # Check compilation of djview
 AC_ARG_ENABLE(djview,
-   AC_HELP_STRING([--enable-djview],
-                  [enable compilation of djview (default).]),
+   AC_HELP_STRING([--disable-djview],
+                  [Disable the compilation of djview.]),
    [ac_enable_djview=$enableval], 
    [ac_enable_djview=yes] ) 
 if test x$ac_enable_djview != xno ; then
@@ -229,8 +229,8 @@ AC_SUBST(GUI_NO)
 
 # Check compilation of i18n files.
 AC_ARG_ENABLE(i18n,
-   AC_HELP_STRING([--enable-i18n],
-                  [enable compilation of locales (default:all).]),
+   AC_HELP_STRING([--disable-i18n],
+                  [Do not prepare the localization files.]),
    [ac_enable_i18n=$enableval], 
    [ac_enable_i18n=all] ) 
 if test "$ac_enable_i18n" != xno ; then
@@ -266,8 +266,8 @@ AC_SUBST(I18N_NO)
 
 ac_desktopfiles=yes
 AC_ARG_ENABLE(desktopfiles,
-    AC_HELP_STRING([--enable-desktopfiles],
-        [Install scripts to register icons and menus (default: yes.)]),
+    AC_HELP_STRING([--disable-desktopfiles],
+        [Do not install scripts to register icons and menus.]),
     [ac_desktopfiles=$enableval])
 
 # Check for xdg tools

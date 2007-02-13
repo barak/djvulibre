@@ -107,7 +107,7 @@ The makefile provides fine grain installation targets.
 Command 'make-install' usually runs all these targets.
 However, configure options
   --disable-xmltools,
-  --disable-gui,
+  --disable-djview,
   --disable-i18n, and
   --disable-desktopfiles
 make sure that 'make install' does not invoke
