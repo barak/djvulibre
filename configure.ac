@@ -279,7 +279,7 @@ if test -x ${XDG_MIME} && \
    test -x ${XDG_DESKTOP_MENU}
 then 
   true
-elif test "$ac_desktopfiles" = yes ; then
+elif test "$ac_desktopfiles" != no ; then
   ac_desktopfiles=no
   AC_MSG_WARN([Cannot find the Xdg Portland tools.
 --------------------------------------------------------
