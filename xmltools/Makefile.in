@@ -50,8 +50,8 @@ LIBDJVU = ${top_builddir}/libdjvu/libdjvulibre.la
 INCS = -I${top_builddir} -I${top_srcdir}/libdjvu -I${srcdir}
 FLAGS = ${DEFS} ${INCS} ${OPTS} ${JPEG_CFLAGS} ${THREAD_CFLAGS}
 LIBS= @LDFLAGS@ ${JPEG_LIBS} ${THREAD_LIBS} @LIBS@
-CFLAGS = @CPPFLAGS@ @CFLAGS@ ${FLAGS}
-CXXFLAGS = @CPPFLAGS@ @CXXFLAGS@ ${CXXRPOFLAGS} ${FLAGS}
+CFLAGS = ${FLAGS} @CPPFLAGS@ @CFLAGS@ 
+CXXFLAGS = ${FLAGS} ${CXXRPOFLAGS} @CPPFLAGS@ @CXXFLAGS@ 
 
 PROGRAMS = djvutoxml djvuxmlparser 
 
