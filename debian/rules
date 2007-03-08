@@ -42,6 +42,7 @@ config.status: configure
 	./configure --host=$(DEB_HOST_GNU_TYPE)		\
 		    --build=$(DEB_BUILD_GNU_TYPE)	\
 		    --prefix=/usr			\
+		    --disable-desktopfiles              \
 		    --mandir=\$${prefix}/share/man	\
 		    --infodir=\$${prefix}/share/info
 
@@ -82,6 +83,29 @@ install: build
 	ln -sf ../../$(plug) debian/tmp/usr/lib/mozilla-firefox/plugins/
 	-rm debian/tmp/usr/bin/djview
 	-rm debian/tmp/usr/share/man/man1/djview.1
+	@echo "install djvu icon and mime types"
+	mkdir --parents debian/tmp/usr/share/icons/hicolor/22x22/mimetypes
+	install --mode=644 ${CURDIR}/desktopfiles/hi22-djvu.png \
+	  debian/tmp/usr/share/icons/hicolor/22x22/mimetypes/image-vnd.djvu.mime.png
+	mkdir --parents debian/tmp/usr/share/icons/hicolor/32x32/mimetypes
+	install --mode=644 ${CURDIR}/desktopfiles/hi32-djvu.png \
+	  debian/tmp/usr/share/icons/hicolor/32x32/mimetypes/image-vnd.djvu.mime.png
+	mkdir --parents debian/tmp/usr/share/icons/hicolor/48x48/mimetypes
+	install --mode=644 ${CURDIR}/desktopfiles/hi48-djvu.png \
+	  debian/tmp/usr/share/icons/hicolor/48x48/mimetypes/image-vnd.djvu.mime.png
+	mkdir --parents debian/tmp/usr/share/mime/packages
+	install --mode=644 ${CURDIR}/desktopfiles/djvulibre-mime.xml \
+	  debian/tmp/usr/share/mime/packages	
+	mkdir --parents debian/tmp/usr/share/mimelnk/image
+	install --mode=644 ${CURDIR}/desktopfiles/vnd.djvu.desktop \
+	  debian/tmp/usr/share/mimelnk/image
+	@echo "install djview3 icon and menu"
+	mkdir --parents debian/tmp/usr/share/icons/hicolor/32x32/apps
+	install --mode=644 debian/djvulibre-djview3.xpm \
+	  debian/tmp/usr/share/icons/hicolor/32x32/apps
+	mkdir --parents debian/tmp/usr/share/applications
+	install --mode=644 ${CURDIR}/desktopfiles/djvulibre-djview3.desktop \
+	  debian/tmp/usr/share/applications
 
 # Build architecture-independent files here.
 binary-indep: build install

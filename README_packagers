@@ -75,14 +75,10 @@ If these tools are found, it installs scripts named
   ${datadir}/osi/djview3/register-djview-menu.
 to install/uninstall the djvu mime type and the djview3 
 menu entries with their respective icons.
-These scripts are designed to be invoked
-during the postinstall or prerm phases
-of the installation. 
 
-You can use the configure 
-option '--disable-desktopfiles'
-to prevent the installation of these scripts
-and of their associated files. 
+You can use the configure option '--disable-desktopfiles' 
+to prevent the installation of these scripts and 
+of their associated files. See "desktopfiles/README".
 
 
 

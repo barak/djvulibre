@@ -2,8 +2,8 @@
 
 # Register menu entries (non debian menus)
 if [ "$1" = "configure" ] && 
-   [ -x /usr/share/djvu/djview3/desktop/register-djview-menu ] ; then
-  /usr/share/djvu/djview3/desktop/register-djview-menu install
+   [ -x /usr/bin/update-desktop-database ] ; then
+  /usr/bin/update-desktop-database
 fi
 
 # Alternatives

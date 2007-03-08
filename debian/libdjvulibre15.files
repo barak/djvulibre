@@ -1,2 +1,5 @@
 usr/lib/lib*.so.*
 usr/share/djvu/osi
+usr/share/mime
+usr/share/mimelnk
+usr/share/icons/hicolor/*/mimetypes
