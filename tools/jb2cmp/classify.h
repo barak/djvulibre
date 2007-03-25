@@ -30,7 +30,8 @@
  * | 6,058,214 and patents pending.
  * |
  * | This software is subject to, and may be distributed under, the
- * | GNU General Public License, Version 2. The license should have
+ * | GNU General Public License, either Version 2 of the license,
+ * | or (at your option) any later version. The license should have
  * | accompanied the software or you may obtain a copy of the license
  * | from the Free Software Foundation at http://www.fsf.org .
  * |

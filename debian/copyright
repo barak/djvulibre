@@ -59,7 +59,8 @@ upstream source code.
  Copyright (c) 2001  AT&T
 
  This software is subject to, and may be distributed under, the
- GNU General Public License, Version 2. The license should have
+ GNU General Public License, either Version 2 of the license,
+ or (at your option) any later version. The license should have
  accompanied the software or you may obtain a copy of the license
  from the Free Software Foundation at http://www.fsf.org .
 
@@ -68,10 +69,10 @@ upstream source code.
  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  GNU General Public License for more details.
 
- DjVuLibre-3.5 is derived from the DjVu(r) Reference Library
- distributed by Lizardtech Software.  On July 19th 2002, Lizardtech
- Software authorized us to replace the original DjVu(r) Reference
- Library notice by the following text (see doc/lizard2002.djvu):
+ DjVuLibre-3.5 is derived from the DjVu(r) Reference Library from
+ Lizardtech Software.  Lizardtech Software has authorized us to
+ replace the original DjVu(r) Reference Library notice by the following
+ text (see doc/lizard2002.djvu and doc/lizardtech2007.djvu):
 
   ------------------------------------------------------------------
  | DjVu (r) Reference Library (v. 3.5)
@@ -80,7 +81,8 @@ upstream source code.
  | 6,058,214 and patents pending.
  |
  | This software is subject to, and may be distributed under, the
- | GNU General Public License, Version 2. The license should have
+ | GNU General Public License, either Version 2 of the license,
+ | or (at your option) any later version. The license should have
  | accompanied the software or you may obtain a copy of the license
  | from the Free Software Foundation at http://www.fsf.org .
  |

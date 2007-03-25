@@ -5,7 +5,8 @@
 //C- Copyright (c) 2001  AT&T
 //C-
 //C- This software is subject to, and may be distributed under, the
-//C- GNU General Public License, Version 2. The license should have
+//C- GNU General Public License, either Version 2 of the license,
+//C- or (at your option) any later version. The license should have
 //C- accompanied the software or you may obtain a copy of the license
 //C- from the Free Software Foundation at http://www.fsf.org .
 //C-
@@ -14,10 +15,10 @@
 //C- MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 //C- GNU General Public License for more details.
 //C- 
-//C- DjVuLibre-3.5 is derived from the DjVu(r) Reference Library
-//C- distributed by Lizardtech Software.  On July 19th 2002, Lizardtech 
-//C- Software authorized us to replace the original DjVu(r) Reference 
-//C- Library notice by the following text (see doc/lizard2002.djvu):
+//C- DjVuLibre-3.5 is derived from the DjVu(r) Reference Library from
+//C- Lizardtech Software.  Lizardtech Software has authorized us to
+//C- replace the original DjVu(r) Reference Library notice by the following
+//C- text (see doc/lizard2002.djvu and doc/lizardtech2007.djvu):
 //C-
 //C-  ------------------------------------------------------------------
 //C- | DjVu (r) Reference Library (v. 3.5)
@@ -26,7 +27,8 @@
 //C- | 6,058,214 and patents pending.
 //C- |
 //C- | This software is subject to, and may be distributed under, the
-//C- | GNU General Public License, Version 2. The license should have
+//C- | GNU General Public License, either Version 2 of the license,
+//C- | or (at your option) any later version. The license should have
 //C- | accompanied the software or you may obtain a copy of the license
 //C- | from the Free Software Foundation at http://www.fsf.org .
 //C- |
