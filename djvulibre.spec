@@ -1,5 +1,5 @@
-%define release 2
-%define version 3.5.18
+%define release 1
+%define version 3.5.19
 
 Summary: DjVu viewers, encoders and utilities.
 Name: djvulibre
