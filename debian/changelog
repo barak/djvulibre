@@ -1,6 +1,6 @@
 djvulibre (3.5.19-1) unstable; urgency=low
 
-  * Track upstream changes.
+  * Track upstream changes (closes: #412316)
   * Move stuff in /usr/share/djvu/.
   * Cleanup desktop menu and mimetype files.
   * Manually install mime types, icons, and menu entries.

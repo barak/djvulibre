@@ -531,7 +531,7 @@ create_bg44_chunk(IFFByteStream &iff, char *ckid, GUTF8String filespec)
       if (chkid != "FORM:PM44" && chkid != "FORM:BM44")
         G_THROW("djvumake: BG44 file has incorrect format (wrong IFF header)");        
       if (i>=0)
-        filespec = i+(const char *)filespec;
+        filespec = i+1+(const char *)filespec;
       else 
         filespec = "99";
     }
