@@ -1,3 +1,10 @@
+djvulibre (3.5.19-1) unstable; urgency=low
+
+  * License change (GPL either v2 or any later version).
+  * Manually install mime types, icons, and menu entries.
+
+ -- Barak A. Pearlmutter <bap@debian.org>  Sun, 25 Mar 2007 22:46:43 +0000
+
 djvulibre (3.5.18-1) unstable; urgency=low
 
   * Move stuff in /usr/share/djvu/.
