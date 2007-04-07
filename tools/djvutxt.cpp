@@ -54,199 +54,274 @@
 //C- +------------------------------------------------------------------
 // 
 // $Id$
-// $Name$
+
+
+/* Program djvutxt has been rewritten to use the ddjvuapi only.
+ */
 
 #ifdef HAVE_CONFIG_H
 # include "config.h"
 #endif
-#if NEED_GNUG_PRAGMAS
-# pragma implementation
-#endif
 
-// DJVUTXT -- DjVu TXT extractor
-
-/** @name djvutxt
-
-    {\bf Synopsis}
-    \begin{verbatim}
-        djvutxt [--page <page_num>] <djvu_file_in> [<txt_file_out>]
-    \end{verbatim}
-
-    {\bf Description} --- File #"djvutxt.cpp"# illustrates how to use
-    \Ref{DjVuDocument}, \Ref{DjVuImage}, \Ref{DjVuText>, and \Ref{DjVuTXT}
-    to retrieve textual information stored inside a #TXT*# chunk of a DjVu
-    document.
-
-    #TXT*# chunks should have been created with the help of an OCR
-    engine, and are used to allow indexing and searching of the DjVu
-    document. The chunks contain the ASCII text itself, and layout information
-    allowing the DjVu plugins to highlight found text.
-
-    This utility can be used to extract text from #TXT*# chunks and
-    output it to a file or standard output.
-    
-    {\bf Arguments}:
-    \begin{itemize}
-       \item {\bf <djvu_file_in>} - Name of input DjVu file.
-       \item {\bf <txt_file_out>} - Name of the file where ASCII text
-             will be stored. #-# means standard output.
-    \end{itemize}
-
-    {\bf --page} option can be used to select a particular page from the
-    {\bf <djvu_file_in>} for processing.
-    
-    @memo #TXT*# chunks extractor
-    @author
-    Andrei Erofeev <eaf@geocities.com> -- initial implementation
-    @version
-    #$Id$# */
-//@{
-//@}
-
-
-#include "DjVuDocument.h"
-#include "ByteStream.h"
-#include "DjVuText.h"
-#include "DjVuImage.h"
-#include "GString.h"
-#include "GOS.h"
-#include "DjVuMessage.h"
-
-#include <locale.h>
-#include <stdio.h>
 #include <stdlib.h>
-#include <sys/stat.h>
+#include <stdio.h>
+#include <stdarg.h>
+#include <string.h>
+#include <locale.h>
+#include <fcntl.h>
+#include <errno.h>
 
-static const char * progname;
+#include "libdjvu/miniexp.h"
+#include "libdjvu/ddjvuapi.h"
 
-static void
-usage(void)
-{
-   DjVuPrintErrorUTF8(
-#ifdef DJVULIBRE_VERSION
-          "DJVUTXT --- DjVuLibre-" DJVULIBRE_VERSION "\n"
+
+/* Some day we'll redo i18n right. */
+#ifndef i18n
+# define i18n(x) (x)
+# define I18N(x) (x)
 #endif
-          "Extracts hidden text from Djvu files\n"
-          "\n"
-          "Usage: %s [--page <page_num>] <djvu_file_in> [<txt_file_out>]\n"
-          "Decode and output to <txt_file_out> ASCII text from\n"
-          "every TXT* (TXTa or TXTz) chunk found in the source <djvu_file_in>\n"
-          "DjVu document. These chunks should have been generated with\n"
-          "the help of an OCR engine, and encoded using capabilities provided by\n"
-          "this library.\n\n", progname);
+
+
+/* Options */
+const char *inputfilename = 0;
+const char *outputfilename = 0;
+const char *detail = 0;
+const char *pagespec = 0;
+
+ddjvu_context_t *ctx;
+ddjvu_document_t *doc;
+
+
+void
+handle(int wait)
+{
+  const ddjvu_message_t *msg;
+  if (!ctx)
+    return;
+  if (wait)
+    msg = ddjvu_message_wait(ctx);
+  while ((msg = ddjvu_message_peek(ctx)))
+    {
+      switch(msg->m_any.tag)
+        {
+        case DDJVU_ERROR:
+          fprintf(stderr,"ddjvu: %s\n", msg->m_error.message);
+          if (msg->m_error.filename)
+            fprintf(stderr,"ddjvu: '%s:%d'\n", 
+                    msg->m_error.filename, msg->m_error.lineno);
+          exit(10);
+        default:
+          break;
+        }
+      ddjvu_message_pop(ctx);
+    }
 }
 
-static void
-doPage(const GP<DjVuDocument> & doc, int page_num,
-       ByteStream & str_out)
+
+void 
+die(const char *fmt, ...)
 {
-   GP<DjVuFile> file=doc->get_djvu_file(page_num);
-   if (!file)
-      G_THROW("Failed to retrieve document page.");
-   GP<ByteStream> text_str=file->get_text();
-   if (text_str)
-   {
-      GP<DjVuText> text=DjVuText::create();
-      text->decode(text_str);
-      GP<DjVuTXT> txt=text->txt;
-      if (txt)
-      {
-        str_out.write((const char *) txt->textUTF8,
-		       txt->textUTF8.length());
-      }
-   }
+  /* Handling messages might give a better error message */
+  handle(FALSE);
+  /* Print */
+  va_list args;
+  fprintf(stderr,"djvutxt: ");
+  va_start(args, fmt);
+  vfprintf(stderr, fmt, args);
+  va_end(args);
+  fprintf(stderr,"\n");
+  /* Terminates */
+  exit(10);
 }
+
+
+void
+dopage(int pageno)
+{
+  miniexp_t r = miniexp_nil;
+  const char *lvl = (detail) ? detail : "page";
+  while ((r = ddjvu_document_get_pagetext(doc, pageno-1, lvl)) == miniexp_dummy)
+    handle(TRUE);
+  if (detail)
+    miniexp_pprint(r, 72);
+  else if ((r = miniexp_nth(5, r)) && miniexp_stringp(r))
+    printf("%s\n\f", miniexp_to_str(r));
+}
+
+
+void
+parse_pagespec(const char *s, int max_page, void (*dopage)(int))
+{
+  static char *err = I18N("invalid page specification: %s");
+  int spec = 0;
+  int both = 1;
+  int start_page = 1;
+  int end_page = max_page;
+  int pageno;
+  char *p = (char*)s;
+  while (*p)
+    {
+      spec = 0;
+      while (*p==' ')
+        p += 1;
+      if (! *p)
+        break;
+      if (*p>='0' && *p<='9') {
+        end_page = strtol(p, &p, 10);
+        spec = 1;
+      } else if (*p=='$') {
+        spec = 1;
+        end_page = max_page;
+        p += 1;
+      } else if (both) {
+        end_page = 1;
+      } else {
+        end_page = max_page;
+      }
+      while (*p==' ')
+        p += 1;
+      if (both) {
+        start_page = end_page;
+        if (*p == '-') {
+          p += 1;
+          both = 0;
+          continue;
+        }
+      }
+      both = 1;
+      while (*p==' ')
+        p += 1;
+      if (*p && *p != ',')
+        die(i18n(err), s);
+      if (*p == ',')
+        p += 1;
+      if (! spec)
+        die(i18n(err), s);
+      if (end_page < 0)
+        end_page = 0;
+      if (start_page < 0)
+        start_page = 0;
+      if (end_page > max_page)
+        end_page = max_page;
+      if (start_page > max_page)
+        start_page = max_page;
+      if (start_page <= end_page)
+        for(pageno=start_page; pageno<=end_page; pageno++)
+          (*dopage)(pageno);
+      else
+        for(pageno=start_page; pageno>=end_page; pageno--)
+          (*dopage)(pageno);
+    }
+  if (! spec)
+    die(i18n(err), s);
+}
+
+
+void
+usage()
+{
+#ifdef DJVULIBRE_VERSION
+  fprintf(stderr, "DDJVU --- DjVuLibre-" DJVULIBRE_VERSION "\n");
+#endif
+  fprintf(stderr, "%s",
+    i18n("DjVu text extraction utility\n\n"
+         "Usage: djvutxt [options] <djvufile> [<outputfile>]\n\n"
+         "Options:\n"
+         " -page=PAGESPEC    Selects page(s) to be decoded.\n"
+         " -detail=KEYWORD   Outputs text location. Keyword \"page\", \"region\"\n"
+         "                   \"para\", \"line\", \"word\", or \"char\" specify\n"
+         "                   the maximum detail level. Unrecognized keywords\n"
+         "                   are interpreted as \"char\".\n") );
+}
+
 
 int
-main(int argc, char ** argv)
+main(int argc, char **argv)
 {
-  setlocale(LC_ALL,"");
-  djvu_programname(argv[0]);
-  GArray<GUTF8String> dargv(0,argc-1);
-  for(int i=0;i<argc;++i)
-    dargv[i]=GNativeString(argv[i]);
-  progname=dargv[0]=GOS::basename(dargv[0]);
-
-   G_TRY {
-      GUTF8String name_in, name_out;
-      int page_num=-1;
-
-      for(int i=1;i<argc;i++)
-      {
-	 if ( (dargv[i] == GUTF8String("-")) || dargv[i][0]!='-')
-	 {
-	    if (!name_in.length())
-	    {
-	       if (dargv[i] == GUTF8String( "-"))
-	       {
-		  DjVuPrintErrorUTF8("%s","Can't read from standard input.\n\n");
-		  usage();
-		  exit(1);
-	       } else name_in=dargv[i];
-	    } else
-	    {
-	       if (!name_out.length())
-		  name_out=dargv[i];
-	       else
-	       {
-		  usage();
-		  exit(1);
-	       }
-	    }
-	 } else
-	 {
-	    if (dargv[i][0]=='-' && dargv[i][1]=='-')
-	       dargv[i]=(const char*)dargv[i]; //1+(const char *)dargv[i];
-	    if (dargv[i] == GUTF8String("--page"))
-	    {
-	       if (i+1>=argc)
-	       {
-		  DjVuPrintErrorUTF8("%s","--page option must be followed by a number.\n\n");
-		  usage();
-		  exit(1);
-	       }
-	       i++;
-	       page_num=dargv[i].toInt() - 1;//atoi(dargv[i])-1;
-	       if (page_num<0)
-	       {
-		  DjVuPrintErrorUTF8("%s","Page number must be positive.\n\n");
-		  usage();
-		  exit(1);
-	       }
-	    } else if (dargv[i] == GUTF8String("--help"))
-	    {
-	       usage();
-	       exit(1);
-	    } else
+  /* Parse options */
+  int i;
+  for (i=1; i<argc; i++)
+    {
+      char *s = argv[i];
+      if (s[0] == '-' && s[1] != 0)
+        {
+          char buf[32];
+          const char *opt = s;
+          const char *arg = strchr(opt, '=');
+          if (*opt == '-')
+            opt += 1;
+          if (*opt == '-')
+            opt += 1;
+          if (arg)
             {
-               DjVuPrintErrorUTF8("Unrecognized option '%s' encountered.\n\n", (const char *)dargv[i]);
+              int l = arg - opt;
+              if (l > (int)sizeof(buf) - 1)
+                l = sizeof(buf) - 1;
+              strncpy(buf, opt, l);
+              buf[l] = 0;
+              opt = buf;
+              arg += 1;
             }
-	 }
-      }
-
-      if (name_in.length()==0)
-      {
-	 DjVuPrintErrorUTF8("%s","The name of the input file is missing.\n\n");
-	 usage();
-	 exit(1);
-      }
-      if (name_out.length()==0)
-	 name_out="-";
-
-      GP<DjVuDocument> doc=DjVuDocument::create_wait(GURL::Filename::UTF8(name_in));
-      GP<ByteStream> gstr_out=ByteStream::create(GURL::Filename::UTF8(name_out), "w");
-      ByteStream &str_out=*gstr_out;
-      if (page_num<0)
-	 for(page_num=0;page_num<doc->get_pages_num();page_num++)
-	    doPage(doc, page_num, str_out);
+          
+          if (!strcmp(opt,"page") || 
+              !strcmp(opt,"pages") )
+            {
+              if (!arg && i<argc)
+                arg = argv[i++];
+              if (!arg)
+                die(i18n("option %s needs an argument."), s);
+              if (pagespec)
+                fprintf(stderr,i18n("warning: duplicate option --page=...\n"));
+              pagespec = arg;
+            }
+          else if (!strcmp(opt, "detail"))
+            {
+              if (!arg)
+                arg = "char";
+              if (detail)
+                fprintf(stderr,i18n("warning: duplicate option --detail.\n"));
+              detail = arg;
+            }
+          else
+            die(i18n("unrecognized option %s."), s);
+        }
+      else if (!inputfilename)
+        inputfilename = s;
+      else if (! outputfilename)
+        outputfilename = s;
       else
-	 doPage(doc, page_num, str_out);
-   } G_CATCH(exc) {
-      exc.perror();
-      exit(1);
-   } G_ENDCATCH;
-   exit(0);
-#ifdef WIN32
-   return 0;
-#endif
+        usage();
+    }
+  
+  /* Defaults */
+  if (! inputfilename)
+    usage();
+  if (outputfilename)
+    if (! freopen(outputfilename, "w", stdout))
+      die(i18n("cannot open output file %s."), outputfilename);
+  if (! pagespec)
+    pagespec = "1-$";
+  
+  /* Create context and document */
+  if (! (ctx = ddjvu_context_create(argv[0])))
+    die(i18n("Cannot create djvu context."));
+  if (! (doc = ddjvu_document_create_by_filename(ctx, inputfilename, TRUE)))
+    die(i18n("Cannot open djvu document '%s'."), inputfilename);
+  while (! ddjvu_document_decoding_done(doc))
+    handle(TRUE);
+  
+  /* Process all pages */
+  i = ddjvu_document_get_pagenum(doc);
+  parse_pagespec(pagespec, i, dopage);
+  
+  /* Close */
+  if (doc)
+    ddjvu_document_release(doc);
+  if (ctx)
+    ddjvu_context_release(ctx);
+
+  /* Return */
+  minilisp_finish();  
+  return 0;
 }
+

@@ -27,7 +27,7 @@
 djvutxt \- Extract the hidden text from DjVu documents.
 
 .SH SYNOPSIS
-.BI "djvutxt [-page " "pagenum" "] " "inputdjvufile" " [" outputtxtfile "]"
+.BI "djvutxt [" options "] " "inputdjvufile" " [" outputtxtfile "]"
 
 .SH DESCRIPTION
 Program 
@@ -45,11 +45,41 @@ optical character recognition software.
 
 .SH OPTIONS
 .TP
-.BI "-page " "pagenum"
-Select a page in a multipage document.
-Without this option, 
+.BI "-page=" "pagespec"
+Specify which pages should be processed.
+When this option is not specified,
+the text of all pages of the documents is
+concatenated into the output file.
+The page specification
+.I pagespec 
+contains one or more comma-separated page ranges.
+A page range is either a page number, 
+or two page numbers separated by a dash.
+For instance, specification
+.BR "1-10" 
+outputs pages 1 to 10, and specification
+.BR "1,3,99999-4"
+outputs pages 1 and 3, followed by all the document
+pages in reverse order up to page 4.
+.TP
+.BI "-detail=" "keyword"
+This options causes
 .B djvutxt
-outputs the text corresponding to all pages of the document.
+to output s-expressions 
+specifying the position of the text in the page.
+See the manual page
+.BR djvused (1)
+for a description of the output format.
+Argument 
+.I keyword
+specifies the maximum level of detail
+for which text location is reported.
+The recognized values are:
+.BR page ", " region ", " para ", "
+.BR line ", " word ", and " char "."
+All other values are interpreted as 
+.BR char .
+
 
 .SH REMARKS
 Use program
@@ -57,8 +87,11 @@ Use program
 for more control over the text layer.
 
 .SH CREDITS
-This program was written by Andrei Erofeev <andrew_erofeev@yahoo.com> and
-was then improved Bill Riemers <docbill@sourceforge.net> and many others.
+This program was initially written by 
+Andrei Erofeev <andrew_erofeev@yahoo.com> and
+was then improved Bill Riemers <docbill@sourceforge.net> 
+and many others. It was then rewritten to use the 
+ddjvuapi by Leon Bottou <leonb@sourceforge.net>.
 
 .SH SEE ALSO
 .BR djvu (1),
