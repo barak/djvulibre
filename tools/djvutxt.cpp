@@ -228,10 +228,10 @@ usage()
          "Usage: djvutxt [options] <djvufile> [<outputfile>]\n\n"
          "Options:\n"
          " -page=PAGESPEC    Selects page(s) to be decoded.\n"
-         " -detail=KEYWORD   Outputs text location. Keyword \"page\", \"region\"\n"
-         "                   \"para\", \"line\", \"word\", or \"char\" specify\n"
-         "                   the maximum detail level. Unrecognized keywords\n"
-         "                   are interpreted as \"char\".\n") );
+         " -detail=KEYWORD   Outputs S-expression with the text location.\n"
+         "                   The optional keyword <page>, <region>, <para>,\n"
+         "                   <line>,<word>, or <char> specify the finest\n"
+         "                   level of detail. Default is <char>.\n") );
 }
 
 
