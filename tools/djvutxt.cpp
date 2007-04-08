@@ -232,6 +232,8 @@ usage()
          "                   The optional keyword <page>, <region>, <para>,\n"
          "                   <line>,<word>, or <char> specify the finest\n"
          "                   level of detail. Default is <char>.\n") );
+  /* Terminate */
+  exit(10);
 }
 
 
