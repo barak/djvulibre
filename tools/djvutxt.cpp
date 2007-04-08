@@ -105,9 +105,9 @@ handle(int wait)
       switch(msg->m_any.tag)
         {
         case DDJVU_ERROR:
-          fprintf(stderr,"ddjvu: %s\n", msg->m_error.message);
+          fprintf(stderr,"djvutxt: %s\n", msg->m_error.message);
           if (msg->m_error.filename)
-            fprintf(stderr,"ddjvu: '%s:%d'\n", 
+            fprintf(stderr,"djvutxt: '%s:%d'\n", 
                     msg->m_error.filename, msg->m_error.lineno);
           exit(10);
         default:
