@@ -34,18 +34,31 @@ Program
 .B djvutxt
 decodes the hidden text layer of a DjVu document 
 .I inputdjvufile
-and prints the 
-.SM UTF8
-encoded text into file
+and prints it into file
 .I outputtxtfile
-or the standard output.
-No output is produced if the file contains no hidden text layer.
-The hidden text layer is usually generated with the help of an 
-optical character recognition software.
+or on the standard output.
+The hidden text layer is usually generated with 
+the help of an optical character recognition software.
+
+Without options
+.BR -detail
+and
+.BR -escape ,
+this program simply outputs the UTF-8 text.
+Option
+.BR -detail
+cause the output of S-expressions
+describing the text and its location.
+Option
+.BR -escape
+uses C-style escape sequences to represent
+nonprintable non-ASCII characters.
+
+
 
 .SH OPTIONS
 .TP
-.BI "-page=" "pagespec"
+.BI "--page=" "pagespec"
 Specify which pages should be processed.
 When this option is not specified,
 the text of all pages of the documents is
@@ -62,10 +75,10 @@ outputs pages 1 to 10, and specification
 outputs pages 1 and 3, followed by all the document
 pages in reverse order up to page 4.
 .TP
-.BI "-detail=" "keyword"
+.BI "--detail=" "keyword"
 This options causes
 .B djvutxt
-to output s-expressions 
+to output S-expressions 
 specifying the position of the text in the page.
 See the manual page
 .BR djvused (1)
@@ -79,6 +92,14 @@ The recognized values are:
 .BR line ", " word ", and " char "."
 All other values are interpreted as 
 .BR char .
+.TP
+.BI "--escape"
+Output escape sequences of the form
+.BI \ "ooo"
+for all non ASCII or non printable UTF-8 
+characters and for the backslash character.
+
+
 
 
 .SH REMARKS

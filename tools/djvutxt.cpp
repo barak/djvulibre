@@ -87,6 +87,7 @@ const char *inputfilename = 0;
 const char *outputfilename = 0;
 const char *detail = 0;
 const char *pagespec = 0;
+int escape = 0;
 
 ddjvu_context_t *ctx;
 ddjvu_document_t *doc;
@@ -140,12 +141,34 @@ dopage(int pageno)
 {
   miniexp_t r = miniexp_nil;
   const char *lvl = (detail) ? detail : "page";
-  while ((r = ddjvu_document_get_pagetext(doc, pageno-1, lvl)) == miniexp_dummy)
+  while ((r = ddjvu_document_get_pagetext(doc,pageno-1,lvl))==miniexp_dummy)
     handle(TRUE);
+  minilisp_print_7bits = escape;
   if (detail)
     miniexp_pprint(r, 72);
   else if ((r = miniexp_nth(5, r)) && miniexp_stringp(r))
-    printf("%s\n\f", miniexp_to_str(r));
+    {
+      const char *s = miniexp_to_str(r); 
+      if (! escape)
+        fputs(s, stdout);
+      else
+        {
+          unsigned char c;
+          while ((c = *(unsigned char*)s++))
+            {
+              bool esc = false;
+              if (c == '\\' || c >= 0x7f)
+                esc = true; /* non-ascii */
+              if (c < 0x20 && !strchr("\013\035\037\012", c))
+                esc = true; /* non-printable other than separators */
+              if (esc)
+                printf("\\%03o", c);
+              else
+                putc(c, stdout);
+            }
+        }
+      fputs("\n\f", stdout);
+    }
 }
 
 
@@ -231,7 +254,9 @@ usage()
          " -detail=KEYWORD   Outputs S-expression with the text location.\n"
          "                   The optional keyword <page>, <region>, <para>,\n"
          "                   <line>,<word>, or <char> specify the finest\n"
-         "                   level of detail. Default is <char>.\n\n") );
+         "                   level of detail. Default is <char>.\n"
+         " -escape           Output octal escape sequences for all\n"
+         "                   non ASCII UTF-8 characters.\n\n") );
   /* Terminate */
   exit(10);
 }
@@ -284,6 +309,8 @@ main(int argc, char **argv)
                 fprintf(stderr,i18n("warning: duplicate option --detail.\n"));
               detail = arg;
             }
+          else if (!strcmp(opt, "escape") && !arg)
+            escape = 1;
           else
             die(i18n("unrecognized option %s."), s);
         }
