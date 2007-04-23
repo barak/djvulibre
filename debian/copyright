@@ -106,3 +106,13 @@ upstream source code.
  | TO ANY WARRANTY OF NON-INFRINGEMENT, OR ANY IMPLIED WARRANTY OF
  | MERCHANTABILITY OR FITNESS FOR A PARTICULAR PURPOSE.
  +------------------------------------------------------------------
+
+  Directory gui/nsdejavu/npsdk contains files extracted from 
+  the Mozilla project.  These files are available under the 
+  Mozilla Public License version 1.1 with permission to 
+  redistribute under either the GNU General Public License 
+  version 2 or the GNU Library General Public License version 2.1.
+  This files are used for the compilation of "nsdejavu.so"
+  which is a bridge between web browsers and the djview3 or djview4
+  programs.
+
