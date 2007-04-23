@@ -119,7 +119,10 @@
 #endif
 
 #define XP_UNIX 1
+#define MOZ_X11 1
 #include "npapi.h"
+#include "npruntime.h"
+#include "npupp.h"
 
 #include <X11/Intrinsic.h>
 #include <X11/IntrinsicP.h>
@@ -132,7 +135,12 @@
 #ifndef FALSE
 # define FALSE 0
 #endif
-
+#ifndef offsetof
+# define offsetof(TYPE,MEMBER) ((size_t)&((TYPE*)0)->MEMBER)
+#endif
+#ifndef min
+# define min(a,b) (((a)<(b))?(a):(b))
+#endif
 
 
 /* ------------------------------------------------------------ */
@@ -724,6 +732,9 @@ get_library_path(strpool *pool)
 static const char *
 GetLibraryPath(void)
 {
+  /* This is no longer needed since djview no longer uses the provided path.
+     This is kept to allow interoperability between nsdejavu.so and previous
+     version of djview. LYB. */
   static char path[MAXPATHLEN+1];
   if (! path[0]) 
     {
@@ -1610,7 +1621,7 @@ Attach(Display * displ, Window window, void * id)
   Visual *visual;
   Widget shell;
   Widget widget;
-  char back_color_str[128]; 
+  char protocol_str[128]; 
   XFontStruct * font=0;
   const char *text="DjVu plugin is being loaded. Please stand by...";
   XtAppContext app_context;  
@@ -1660,14 +1671,19 @@ Attach(Display * displ, Window window, void * id)
       black = black_screen.pixel;
       CopyColormap(displ, visual, XtScreen(shell), cmap);
     }
-  /* Get the background color for passing it to the application */
-  back_color_str[0]=0;
-  XtVaGetValues(widget, XtNwidth, &width, XtNheight, &height,
-                XtNbackground, &back_color, NULL);
-  cell.flags=DoRed | DoGreen | DoBlue;
-  cell.pixel=back_color;
-  XQueryColor(displ, cmap, &cell);
-  sprintf(back_color_str, "rgb:%X/%X/%X", cell.red, cell.green, cell.blue);
+  /* Protocol string could be "XEMBED/..." to indicate that we want XEMBED. */
+  protocol_str[0]=0;
+  /* Old viewers want the background color name instead. */
+  if (! protocol_str[0])
+    {
+      XtVaGetValues(widget, XtNwidth, &width, XtNheight, &height,
+                    XtNbackground, &back_color, NULL);
+      cell.flags=DoRed | DoGreen | DoBlue;
+      cell.pixel=back_color;
+      XQueryColor(displ, cmap, &cell);
+      sprintf(protocol_str, "rgb:%X/%X/%X", cell.red, cell.green, cell.blue);
+    }
+  /* Map widget */
   XtMapWidget(widget);
   XSync(displ, False);
   /* Creating GC for "Stand by..." message */
@@ -1725,8 +1741,8 @@ Attach(Display * displ, Window window, void * id)
   XSync(displ,False);
   if ( (WriteInteger(pipe_write, CMD_ATTACH_WINDOW) <= 0) ||
        (WritePointer(pipe_write, id) <= 0) ||
-       (WriteString(pipe_write, displ_str) <= 0) ||
-       (WriteString(pipe_write, back_color_str) <= 0) ||
+       (WriteString(pipe_write,  displ_str) <= 0) ||
+       (WriteString(pipe_write,  protocol_str) <= 0) ||
        (WriteInteger(pipe_write, window) <= 0) ||
        (WriteInteger(pipe_write, colormap) <= 0) ||
        (WriteInteger(pipe_write, XVisualIDFromVisual(visual)) <= 0) ||
@@ -2221,7 +2237,7 @@ NPP_GetJavaClass(void)
 
 
 NPError
-NPP_GetValue(void *future, NPPVariable variable, void *value)
+NPP_GetValue(NPP instance, NPPVariable variable, void *value)
 {
    NPError err = NPERR_NO_ERROR;
    switch (variable)
@@ -2255,8 +2271,297 @@ NPP_GetValue(void *future, NPPVariable variable, void *value)
 
 
 /******************************************************************************
-*************** The Netscape SDK gets included here ***************************
+*************** This replaces npunix.c from the Netscape SDK ******************
+******** Derived from nspluginwrapper licensed under GPL v2 or later **********
 *******************************************************************************/
 
-#include "npunix.c"
+
+char *
+NP_GetMIMEDescription(void)
+{
+  return NPP_GetMIMEDescription();
+}
+
+NPError
+NP_GetValue(void *future, NPPVariable variable, void *value)
+{
+  return NPP_GetValue((NPP)future, variable, value);
+}
+
+NPError
+NP_Shutdown(void)
+{
+  NPP_Shutdown();
+  return NPERR_NO_ERROR;
+}
+
+static NPNetscapeFuncs mozilla_funcs;
+
+static int mozilla_has_npruntime = 0;
+
+void
+NPN_Version(int* plugin_major, int* plugin_minor,
+            int* mozilla_major, int* mozilla_minor)
+{
+  *plugin_major = NP_VERSION_MAJOR;
+  *plugin_minor = NP_VERSION_MINOR;
+  *mozilla_major = mozilla_funcs.version >> 8;
+  *mozilla_minor = mozilla_funcs.version & 0xFF;
+}
+
+NPError
+NPN_GetValue(NPP instance, NPNVariable variable, void *r_value)
+{
+  if (mozilla_funcs.getvalue == NULL)
+    return NPERR_INVALID_FUNCTABLE_ERROR;
+  return CallNPN_GetValueProc(mozilla_funcs.getvalue,
+                              instance, variable, r_value);
+}
+
+NPError
+NPN_GetURL(NPP instance, const char* url, const char* window)
+{
+  if (mozilla_funcs.geturl == NULL)
+    return NPERR_INVALID_FUNCTABLE_ERROR;
+  return CallNPN_GetURLProc(mozilla_funcs.geturl, instance, url, window);
+}
+
+NPError
+NPN_GetURLNotify(NPP instance, const char* url, const char* window, void * data)
+{
+  if (mozilla_funcs.geturlnotify == NULL)
+    return NPERR_INVALID_FUNCTABLE_ERROR;
+  return CallNPN_GetURLNotifyProc(mozilla_funcs.geturlnotify, 
+                                  instance, url, window, data);
+}
+
+NPError
+NPN_PostURL(NPP instance, const char* url, const char* window,
+            uint32 len, const char* buf, NPBool file)
+{
+  if (mozilla_funcs.posturl == NULL)
+    return NPERR_INVALID_FUNCTABLE_ERROR;
+  return CallNPN_PostURLProc(mozilla_funcs.posturl, instance,
+                             url, window, len, buf, file);
+}
+
+NPError
+NPN_RequestRead(NPStream* stream, NPByteRange* rangeList)
+{
+  if (mozilla_funcs.requestread == NULL)
+    return NPERR_INVALID_FUNCTABLE_ERROR;
+  return CallNPN_RequestReadProc(mozilla_funcs.requestread,
+                                 stream, rangeList);
+}
+
+NPError
+NPN_NewStream(NPP instance, NPMIMEType type, const char *window,
+	      NPStream** stream_ptr)
+{
+  if (mozilla_funcs.newstream == NULL)
+    return NPERR_INVALID_FUNCTABLE_ERROR;
+  return CallNPN_NewStreamProc(mozilla_funcs.newstream, instance,
+                               type, window, stream_ptr);
+}
+
+int32
+NPN_Write(NPP instance, NPStream* stream, int32 len, void* buffer)
+{
+  if (mozilla_funcs.write == NULL)
+    return -1;
+  return CallNPN_WriteProc(mozilla_funcs.write, instance,
+                           stream, len, buffer);
+}
+
+NPError
+NPN_DestroyStream(NPP instance, NPStream* stream, NPError reason)
+{
+  if (mozilla_funcs.destroystream == NULL)
+    return NPERR_INVALID_FUNCTABLE_ERROR;
+  return CallNPN_DestroyStreamProc(mozilla_funcs.destroystream,
+                                   instance, stream, reason);
+}
+
+void
+NPN_Status(NPP instance, const char* message)
+{
+  CallNPN_StatusProc(mozilla_funcs.status, instance, message);
+}
+
+const char*
+NPN_UserAgent(NPP instance)
+{
+  return CallNPN_UserAgentProc(mozilla_funcs.uagent, instance);
+}
+
+void*
+NPN_MemAlloc(uint32 size)
+{
+  return CallNPN_MemAllocProc(mozilla_funcs.memalloc, size);
+}
+
+void 
+NPN_MemFree(void* ptr)
+{
+  CallNPN_MemFreeProc(mozilla_funcs.memfree, ptr);
+}
+
+void 
+NPN_ReloadPlugins(NPBool reloadPages)
+{
+  if (mozilla_funcs.reloadplugins != NULL)
+    CallNPN_ReloadPluginsProc(mozilla_funcs.reloadplugins, reloadPages);
+}
+
+NPError
+NPN_SetValue(NPP instance, NPPVariable variable, void *value)
+{
+  if (mozilla_funcs.setvalue == NULL)
+    return NPERR_INVALID_FUNCTABLE_ERROR;
+  return CallNPN_GetValueProc(mozilla_funcs.setvalue, 
+                              instance, variable, value);
+}
+
+void
+NPN_InvalidateRect(NPP instance, NPRect *invalid)
+{
+  if (mozilla_funcs.invalidaterect != NULL)
+    CallNPN_InvalidateRectProc(mozilla_funcs.invalidaterect, instance, invalid);
+}
+
+void
+NPN_InvalidateRegion(NPP instance, NPRegion invalid)
+{
+  if (mozilla_funcs.invalidateregion != NULL)
+    CallNPN_InvalidateRegionProc(mozilla_funcs.invalidateregion, instance, invalid);
+}
+
+void
+NPN_ForceRedraw(NPP instance)
+{
+  if (mozilla_funcs.forceredraw != NULL)
+    CallNPN_ForceRedrawProc(mozilla_funcs.forceredraw, instance);
+}
+
+NPIdentifier 
+NPN_GetStringIdentifier(const NPUTF8 *name)
+{
+  if (!mozilla_funcs.getstringidentifier || !mozilla_has_npruntime)
+    return NULL;
+  return CallNPN_GetStringIdentifierProc(mozilla_funcs.getstringidentifier, name);
+}
+
+NPIdentifier 
+NPN_GetIntIdentifier(int32_t intid)
+{
+  if (!mozilla_funcs.getintidentifier || !mozilla_has_npruntime)
+    return NULL;
+  return CallNPN_GetIntIdentifierProc(mozilla_funcs.getintidentifier, intid);
+}
+
+bool 
+NPN_IdentifierIsString(NPIdentifier identifier)
+{
+  if (!mozilla_funcs.identifierisstring || !mozilla_has_npruntime)
+    return FALSE;
+  return CallNPN_IdentifierIsStringProc(mozilla_funcs.identifierisstring, 
+                                        identifier);
+}
+
+NPUTF8 *
+NPN_UTF8FromIdentifier(NPIdentifier identifier)
+{
+  if (!mozilla_funcs.utf8fromidentifier || !mozilla_has_npruntime)
+    return NULL;
+  return CallNPN_UTF8FromIdentifierProc(mozilla_funcs.utf8fromidentifier, 
+                                                identifier);
+}
+
+int32_t 
+NPN_IntFromIdentifier(NPIdentifier identifier)
+{
+  if (!mozilla_funcs.intfromidentifier || !mozilla_has_npruntime)
+    return 0;
+  return CallNPN_IntFromIdentifierProc(mozilla_funcs.intfromidentifier, 
+                                       identifier);
+}
+
+NPObject *
+NPN_CreateObject(NPP npp, NPClass *aClass)
+{
+  if (!mozilla_funcs.createobject || !mozilla_has_npruntime)
+    return 0;
+  return CallNPN_CreateObjectProc(mozilla_funcs.createobject, npp, aClass); 
+}
+
+NPObject *
+NPN_RetainObject(NPObject *npobj)
+{
+  if (!mozilla_funcs.retainobject || !mozilla_has_npruntime)
+    return npobj;
+  return CallNPN_RetainObjectProc(mozilla_funcs.retainobject, npobj);
+}
+
+void 
+NPN_ReleaseObject(NPObject *npobj)
+{
+  if (mozilla_funcs.releaseobject && mozilla_has_npruntime)
+    return CallNPN_ReleaseObjectProc(mozilla_funcs.releaseobject, npobj);
+}
+
+void 
+NPN_SetException(NPObject *npobj, const NPUTF8 *message)
+{
+  if (mozilla_funcs.setexception && mozilla_has_npruntime)
+    CallNPN_SetExceptionProc(mozilla_funcs.setexception, npobj, message);
+}
+
+NPError
+NP_Initialize(NPNetscapeFuncs *moz_funcs, NPPluginFuncs *plugin_funcs)
+{
+  /* basic checks */
+  if (moz_funcs == NULL || plugin_funcs == NULL)
+    return NPERR_INVALID_FUNCTABLE_ERROR;
+  if ((moz_funcs->version >> 8) != NP_VERSION_MAJOR)
+    return NPERR_INCOMPATIBLE_VERSION_ERROR;
+  if (moz_funcs->size < (offsetof(NPNetscapeFuncs, forceredraw) 
+                         + sizeof(NPN_ForceRedrawUPP) ))
+    return NPERR_INVALID_FUNCTABLE_ERROR;
+  if (plugin_funcs->size < sizeof(NPPluginFuncs))
+    return NPERR_INVALID_FUNCTABLE_ERROR;
+  
+  /* copy mozilla_funcs. */
+  memcpy(&mozilla_funcs, moz_funcs, min(moz_funcs->size, sizeof(mozilla_funcs)));
+
+  /* fill plugin_funcs. */
+  memset(plugin_funcs, 0, sizeof(*plugin_funcs));
+  plugin_funcs->size = sizeof(NPPluginFuncs);
+  plugin_funcs->version = (NP_VERSION_MAJOR << 8) + NP_VERSION_MINOR;
+  plugin_funcs->newp = NewNPP_NewProc(NPP_New);
+  plugin_funcs->destroy = NewNPP_DestroyProc(NPP_Destroy);
+  plugin_funcs->setwindow = NewNPP_SetWindowProc(NPP_SetWindow);
+  plugin_funcs->newstream = NewNPP_NewStreamProc(NPP_NewStream);
+  plugin_funcs->destroystream = NewNPP_DestroyStreamProc(NPP_DestroyStream);
+  plugin_funcs->asfile = NewNPP_StreamAsFileProc(NPP_StreamAsFile);
+  plugin_funcs->writeready = NewNPP_WriteReadyProc(NPP_WriteReady);
+  plugin_funcs->write = NewNPP_WriteProc(NPP_Write);
+  plugin_funcs->print = NewNPP_PrintProc(NPP_Print);
+  plugin_funcs->event = NULL;
+  plugin_funcs->urlnotify = NewNPP_URLNotifyProc(NPP_URLNotify);
+  plugin_funcs->javaClass = NULL;
+  plugin_funcs->getvalue = NewNPP_GetValueProc(NPP_GetValue);
+  plugin_funcs->setvalue = NULL;
+
+  /* check for npruntime */
+  mozilla_has_npruntime = 1;
+  if ((moz_funcs->version >> 8) == 0 && (moz_funcs->version & 0xff) < 14)
+    mozilla_has_npruntime = 0;
+  if (moz_funcs->size < (offsetof(NPNetscapeFuncs, setexception) 
+                         + sizeof(NPN_SetExceptionUPP) ))
+    mozilla_has_npruntime = 0;
+  
+  /* call npp_initialize */
+  return NPP_Initialize();
+}
+
 
