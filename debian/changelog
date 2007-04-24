@@ -1,3 +1,9 @@
+djvulibre (3.5.19-2) unstable; urgency=low
+
+  * License clarification of mozilla plugin code.
+
+ -- Barak A. Pearlmutter <bap@debian.org>  Tue, 24 Apr 2007 09:36:48 +0100
+
 djvulibre (3.5.19-1) unstable; urgency=low
 
   * Track upstream changes (closes: #412316)
