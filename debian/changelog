@@ -1,7 +1,9 @@
 djvulibre (3.5.19-2) unstable; urgency=low
 
   * License clarification of mozilla plugin code.
-
+  * Fix upgrade issue by making plugin package conflict with older
+    binaries package (closes: #419666)
+  
  -- Barak A. Pearlmutter <bap@debian.org>  Tue, 24 Apr 2007 09:36:48 +0100
 
 djvulibre (3.5.19-1) unstable; urgency=low

@@ -60,6 +60,7 @@ Depends: ${shlibs:Depends}, djview | djview4
 Enhances: mozilla-browser, mozilla, mozilla-firefox, konqueror, galeon
 Recommends: mozilla-browser | mozilla | mozilla-firefox | konqueror | galeon | netscape-base-4 | netscape
 Suggests: mime-support
+Conflicts: djvulibre-bin (<< 3.5.19)
 Description: Browser plugin for the DjVu image format
  DjVu browser plugin.
 
