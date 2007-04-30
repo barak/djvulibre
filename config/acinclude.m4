@@ -332,7 +332,9 @@ if test x${PTHREAD_LIBS+set} = xset ||
 fi
 # Create a list of thread flags to try.  Items starting with a "-" are
 # C compiler flags, and other items are library names, except for "none"
-# which indicates that we try without any flags at all.
+# which indicates that we try without any flags at all. Also, combinations
+# of items (for instance, both a compiler flag and a library name) can be 
+# specified using a colon separator.
 acx_pthread_flags="pthreads none -Kthread -kthread lthread 
                    -pthread -pthreads -mthreads pthread
                    --thread-safe -mt"
@@ -364,11 +366,39 @@ case "${host_cpu}-${host_os}" in
         acx_pthread_flags="-pthread -pthreads pthread -mt $acx_pthread_flags"
         ;;
 esac
+case "${host_os}-${GCC}" in
+        *linux*-yes)
+        # On Linux/GCC, libtool uses -nostdlib for linking, which cancel part
+        # of the -pthread flag effect (libpthread is not automatically linked).
+        # So we'll try to link with both -pthread and -lpthread first:
+        acx_pthread_flags="-pthread:pthread $acx_pthread_flags"
+        ;;
+esac
 if test x"$acx_pthread_ok" = xno; then
 for flag in $acx_pthread_flags; do
         case $flag in
                 none)
                 AC_MSG_CHECKING([whether pthreads work without any flags])
+                ;;
+                *:*)
+                PTHREAD_CFLAGS=""
+                PTHREAD_LIBS=""
+                message="whether pthreads work with"
+                while test x"$flag" != x; do
+                        subflag=`echo $flag | cut -d: -f1`
+                        case $subflag in
+                                -*)
+                                PTHREAD_CFLAGS="$PTHREAD_CFLAGS $subflag"
+                                message="$message $subflag"
+                                ;;
+                                *)
+                                PTHREAD_LIBS="$PTHREAD_LIBS -l$subflag"
+                                message="$message -l$subflag"
+                                ;;
+                        esac
+                        flag=`echo $flag | cut -s -d: -f2-`
+                done
+                AC_MSG_CHECKING([$message])
                 ;;
                 -*)
                 AC_MSG_CHECKING([whether pthreads work with $flag])

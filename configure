@@ -24526,7 +24526,9 @@ echo "${ECHO_T}$acx_pthread_ok" >&6; }
 fi
 # Create a list of thread flags to try.  Items starting with a "-" are
 # C compiler flags, and other items are library names, except for "none"
-# which indicates that we try without any flags at all.
+# which indicates that we try without any flags at all. Also, combinations
+# of items (for instance, both a compiler flag and a library name) can be
+# specified using a colon separator.
 acx_pthread_flags="pthreads none -Kthread -kthread lthread
                    -pthread -pthreads -mthreads pthread
                    --thread-safe -mt"
@@ -24558,12 +24560,41 @@ case "${host_cpu}-${host_os}" in
         acx_pthread_flags="-pthread -pthreads pthread -mt $acx_pthread_flags"
         ;;
 esac
+case "${host_os}-${GCC}" in
+        *linux*-yes)
+        # On Linux/GCC, libtool uses -nostdlib for linking, which cancel part
+        # of the -pthread flag effect (libpthread is not automatically linked).
+        # So we'll try to link with both -pthread and -lpthread first:
+        acx_pthread_flags="-pthread:pthread $acx_pthread_flags"
+        ;;
+esac
 if test x"$acx_pthread_ok" = xno; then
 for flag in $acx_pthread_flags; do
         case $flag in
                 none)
                 { echo "$as_me:$LINENO: checking whether pthreads work without any flags" >&5
 echo $ECHO_N "checking whether pthreads work without any flags... $ECHO_C" >&6; }
+                ;;
+                *:*)
+                PTHREAD_CFLAGS=""
+                PTHREAD_LIBS=""
+                message="whether pthreads work with"
+                while test x"$flag" != x; do
+                        subflag=`echo $flag | cut -d: -f1`
+                        case $subflag in
+                                -*)
+                                PTHREAD_CFLAGS="$PTHREAD_CFLAGS $subflag"
+                                message="$message $subflag"
+                                ;;
+                                *)
+                                PTHREAD_LIBS="$PTHREAD_LIBS -l$subflag"
+                                message="$message -l$subflag"
+                                ;;
+                        esac
+                        flag=`echo $flag | cut -s -d: -f2-`
+                done
+                { echo "$as_me:$LINENO: checking $message" >&5
+echo $ECHO_N "checking $message... $ECHO_C" >&6; }
                 ;;
                 -*)
                 { echo "$as_me:$LINENO: checking whether pthreads work with $flag" >&5

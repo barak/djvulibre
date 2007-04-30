@@ -119,8 +119,9 @@ DjVuPrefs::setString(const char * name, const char * value)
 {
    DEBUG_MSG("setString(): Updating database: " << name << '=' << value << "\n");
    DEBUG_MAKE_INDENT(3);
-   
-   XrmPutStringResource((XrmDatabase *) &database, name, value);
+   XrmDatabase db = (XrmDatabase)database;
+   XrmPutStringResource(&db, name, value);
+   database = (void*)db;
 }
 
 int
@@ -198,11 +199,13 @@ DjVuPrefs::load(void)
 	  mag_names[MAG_CTRL], 
           hlb_names[HLB_SHIFT]);
 
-  database=XrmGetStringDatabase(buffer);
+  database = (void*) XrmGetStringDatabase(buffer);
   char * home=getenv("HOME"); if (!home) home="";
   GUTF8String db_name=GUTF8String(home)+"/"+DATABASE_FILE_NAME;
   DEBUG_MSG("merging database '" << db_name << "'\n");
-  XrmCombineFileDatabase(db_name, (XrmDatabase *) &database, True);
+  XrmDatabase db = (XrmDatabase)database;
+  XrmCombineFileDatabase(db_name, &db, True);
+  database = (void*)db;
   
   DEBUG_MSG("now initializing variables\n");
   GUTF8String strTemp;

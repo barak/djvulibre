@@ -71,7 +71,7 @@
 class DjVuPrefs
 {
 private:
-   void		* database;
+   void 	*database;
 
    GUTF8String	getString(const char * name);
    void		setString(const char * name, const char * value);
