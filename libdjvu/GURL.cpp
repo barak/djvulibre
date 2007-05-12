@@ -82,9 +82,12 @@
 #include <string.h>
 
 #ifdef WIN32
-# include <atlbase.h>
+# include <tchar.h>
 # include <windows.h>
 # include <direct.h>
+# ifndef __MINGW32__
+#  include <atlbase.h>
+# endif
 #endif /* WIN32 */
 
 // -- MAXPATHLEN
@@ -1414,8 +1417,12 @@ GURL::is_file(void) const
     dwAttrib = GetFileAttributesW(wfilename);
     if((dwAttrib|1) == 0xFFFFFFFF)
       {
+#ifdef __MINGW32__
+        dwAttrib = GetFileAttributesA(NativeFilename());
+#else
         USES_CONVERSION ;
         dwAttrib = GetFileAttributes(A2CT(NativeFilename())) ;//MBCS cvt
+#endif
       }
     retval=!( dwAttrib & FILE_ATTRIBUTE_DIRECTORY );
 #else
@@ -1451,8 +1458,12 @@ GURL::is_local_path(void) const
     dwAttrib = GetFileAttributesW(wfilename);
     if((dwAttrib|1) == 0xFFFFFFFF)
       {
+#ifdef __MINGW32__
+        dwAttrib = GetFileAttributesA(NativeFilename());
+#else
         USES_CONVERSION ;
         dwAttrib = GetFileAttributes(A2CT(NativeFilename())) ;//MBCS cvt
+#endif
       }
     retval=( (dwAttrib|1) != 0xFFFFFFFF);
 #endif
@@ -1492,8 +1503,12 @@ GURL::is_dir(void) const
     dwAttrib = GetFileAttributesW(wfilename);
     if((dwAttrib|1) == 0xFFFFFFFF)
       {
+#ifdef __MINGW32__
+        dwAttrib = GetFileAttributesA(NativeFilename());
+#else
         USES_CONVERSION ;
         dwAttrib = GetFileAttributes(A2CT(NativeFilename())) ;//MBCS cvt
+#endif
       }
     retval=((dwAttrib != 0xFFFFFFFF)&&( dwAttrib & FILE_ATTRIBUTE_DIRECTORY ));
 #else
@@ -1543,11 +1558,18 @@ GURL::mkdir() const
       else 
         retval = ::mkdir(NativeFilename(), 0755);
 #elif defined(WIN32)
+# ifdef __MINGW32__
+      if (is_dir())
+        retval = 0;
+      else 
+        retval = CreateDirectoryA(NativeFilename(), NULL);
+# else
       USES_CONVERSION;
       if (is_dir())
         retval = 0;
       else 
         retval = CreateDirectory(A2CT(NativeFilename()), NULL);
+# endif
 #else
 # error "Define something here for your operating system"
 #endif
@@ -1570,11 +1592,18 @@ GURL::deletefile(void) const
       else
         retval = ::unlink(NativeFilename());
 #elif defined(WIN32)
+# ifdef __MINGW32__
+      if (is_dir())
+        retval = ::RemoveDirectoryA(NativeFilename());
+      else
+        retval = ::DeleteFile(NativeFilename());
+# else
       USES_CONVERSION;
       if (is_dir())
         retval = ::RemoveDirectory(A2CT(NativeFilename()));
       else
         retval = ::DeleteFile(A2CT(NativeFilename()));
+# endif
 #else
 # error "Define something here for your operating system"
 #endif

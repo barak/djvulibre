@@ -75,7 +75,6 @@
 #include <string.h>
 
 #ifdef WIN32
-# include <atlbase.h>
 # include <windows.h>
 # include <direct.h>
 #endif

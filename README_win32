@@ -2,12 +2,16 @@
 1- How to build on Windows
 ===========================
 
-- Using Cygwin: 
-  The 'configure && make && make install' method should work.
+- Using Mingw (still contrived but improving)
+   $ configure --enable-static --disable-shared LIBS=-lmsvcp60
+   $ make THREAD_CFLAGS=-DTHREADMODEL=WINTHREADS
 
 - Using Microsoft Visual Studio: 
   You might have success using the project files
   located in the directories 'tools' and 'xmltools'.
   (note: these files should be located in a global win32 directory instead)
+
+- Using Cygwin: 
+  The 'configure && make && make install' method should work.
 
  

@@ -1605,15 +1605,15 @@ GStringRep::setat(int n, char ch) const
 
 #ifdef WIN32
 #define USE_VSNPRINTF _vsnprintf
-#endif
-
-#ifdef AUTOCONF
-# ifdef HAVE_VSNPRINTF
-#  define USE_VSNPRINTF vsnprintf
-# endif
 #else
-# ifdef linux
-#  define USE_VSNPRINTF vsnprintf
+# ifdef AUTOCONF
+#  ifdef HAVE_VSNPRINTF
+#   define USE_VSNPRINTF vsnprintf
+#  endif
+# else
+#  ifdef linux
+#   define USE_VSNPRINTF vsnprintf
+#  endif
 # endif
 #endif
 
@@ -2237,13 +2237,11 @@ static const char *setlocale_win32(void)
   }
   return locale;
 }
+const char *setlocale_win32_var = setlocale_win32();
 #endif
 
 GStringRep::GStringRep(void)
 {
-#ifdef WIN32
-  static const char *locale=setlocale_win32();
-#endif
   size=0;
   data=0;
 }

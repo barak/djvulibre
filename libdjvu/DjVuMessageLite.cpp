@@ -80,7 +80,6 @@
 // #include <stdio.h>
 #ifdef WIN32
 #include <tchar.h>
-#include <atlbase.h>
 #include <windows.h>
 #include <winreg.h>
 #endif

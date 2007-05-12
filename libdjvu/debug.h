@@ -67,10 +67,6 @@
 #endif
 
 #include <stdio.h>
-#ifdef WIN32
-# include <atlbase.h> // USES_CONVERSION, A2CT macro
-# include <windows.h> // OutputDebugString
-#endif 
 
 
 #ifdef HAVE_NAMESPACES
