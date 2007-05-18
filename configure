@@ -27103,30 +27103,35 @@ cat >>confdefs.h <<_ACEOF
 _ACEOF
 
   DIR_EXEC_PREFIX="`eval echo \"$exec_prefix\"`"
+  DIR_EXEC_PREFIX="`eval echo \"$DIR_EXEC_PREFIX\"`"
 
 cat >>confdefs.h <<_ACEOF
 #define DIR_EXEC_PREFIX "${DIR_EXEC_PREFIX}"
 _ACEOF
 
   DIR_BINDIR="`eval echo \"$bindir\"`"
+  DIR_BINDIR="`eval echo \"$DIR_BINDIR\"`"
 
 cat >>confdefs.h <<_ACEOF
 #define DIR_BINDIR "${DIR_BINDIR}"
 _ACEOF
 
   DIR_LIBDIR="`eval echo \"$libdir\"`"
+  DIR_LIBDIR="`eval echo \"$DIR_LIBDIR\"`"
 
 cat >>confdefs.h <<_ACEOF
 #define DIR_LIBDIR "${DIR_LIBDIR}"
 _ACEOF
 
   DIR_DATADIR="`eval echo \"$datadir\"`"
+  DIR_DATADIR="`eval echo \"$DIR_DATADIR\"`"
 
 cat >>confdefs.h <<_ACEOF
 #define DIR_DATADIR "${DIR_DATADIR}"
 _ACEOF
 
   DIR_MANDIR="`eval echo \"$mandir\"`"
+  DIR_MANDIR="`eval echo \"$DIR_MANDIR\"`"
 
 cat >>confdefs.h <<_ACEOF
 #define DIR_MANDIR "${DIR_MANDIR}"
