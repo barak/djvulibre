@@ -156,9 +156,9 @@ class MMXControl
 #define MMXir(op,imm,dst) \
   __asm__ volatile( #op " %0,%%" #dst : : "i" (imm) : "memory") 
 #define MMXar(op,addr,dst) \
-  __asm__ volatile( #op " %0,%%" #dst : : "m" (*(int*)(addr)) : "memory") 
+  __asm__ volatile( #op " %0,%%" #dst : : "m" (*(addr)) : "memory") 
 #define MMXra(op,src,addr) \
-  __asm__ volatile( #op " %%" #src ",%0" : : "m" (*(int*)(addr)) : "memory") 
+  __asm__ volatile( #op " %%" #src ",%0" : : "m" (*(addr)) : "memory") 
 #define MMX 1
 #endif
 
