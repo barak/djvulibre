@@ -35,6 +35,9 @@
 <!-- Chinese -->
 <LANGUAGE locale="downcase^zh" src="zh" />
 <LANGUAGE locale="downcase^chinese" src="zh" />
+<!-- Czech -->
+<LANGUAGE locale="downcase^cs" src="cs" />
+<LANGUAGE locale="downcase^czech" src="cs" />
 </BODY>
 </DjVuLanguages>
 

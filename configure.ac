@@ -469,6 +469,7 @@ AC_CONFIG_FILES(i18n/Makefile)
 AC_CONFIG_FILES(i18n/ja/Makefile)
 AC_CONFIG_FILES(i18n/de/Makefile)
 AC_CONFIG_FILES(i18n/fr/Makefile)
+AC_CONFIG_FILES(i18n/cs/Makefile)
 AC_CONFIG_FILES(desktopfiles/Makefile)
 
 # Go

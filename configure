@@ -27170,6 +27170,8 @@ ac_config_files="$ac_config_files i18n/de/Makefile"
 
 ac_config_files="$ac_config_files i18n/fr/Makefile"
 
+ac_config_files="$ac_config_files i18n/cs/Makefile"
+
 ac_config_files="$ac_config_files desktopfiles/Makefile"
 
 
@@ -27742,6 +27744,7 @@ do
     "i18n/ja/Makefile") CONFIG_FILES="$CONFIG_FILES i18n/ja/Makefile" ;;
     "i18n/de/Makefile") CONFIG_FILES="$CONFIG_FILES i18n/de/Makefile" ;;
     "i18n/fr/Makefile") CONFIG_FILES="$CONFIG_FILES i18n/fr/Makefile" ;;
+    "i18n/cs/Makefile") CONFIG_FILES="$CONFIG_FILES i18n/cs/Makefile" ;;
     "desktopfiles/Makefile") CONFIG_FILES="$CONFIG_FILES desktopfiles/Makefile" ;;
 
   *) { { echo "$as_me:$LINENO: error: invalid argument: $ac_config_target" >&5
