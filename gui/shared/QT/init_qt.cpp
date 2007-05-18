@@ -239,6 +239,16 @@ InstallLangTranslator(void)
        if (trans->load(QStringFromGString(urlb.pathname())))
          qApp->installTranslator(trans);
      }
+   else
+     {
+       GURL urlc = getDjViewDataFile("djview.qm");
+       if (urlc.is_file())
+         {
+           QTranslator *trans = new QTranslator(qApp);
+           if (trans->load(QStringFromGString(urlc.pathname())))
+             qApp->installTranslator(trans);
+         }
+     }
    return true;
 #endif
    return false;
