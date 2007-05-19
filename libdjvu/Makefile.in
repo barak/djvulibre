@@ -57,6 +57,7 @@ FLAGS = ${DEFS} ${INCS} ${OPTS} ${JPEG_CFLAGS} ${THREAD_CFLAGS}
 LIBS= @LDFLAGS@ ${JPEG_LIBS} ${THREAD_LIBS} @LIBS@
 CFLAGS = ${FLAGS} @CPPFLAGS@ @CFLAGS@ 
 CXXFLAGS =  ${FLAGS} ${CXXPICFLAGS} ${CXXRPOFLAGS} @CPPFLAGS@ @CXXFLAGS@ 
+DLLFLAGS = @DLLFLAGS@
 
 all: ${LIBDJVU_LA} 
 
@@ -79,7 +80,7 @@ OBJS = \
 ${LIBDJVU_LA} : ${OBJS}
 	@echo "[ generating $@ ... ]"
 	${LIBTOOL} --mode=link ${CXX} ${CXXFLAGS} -no-undefined \
-	    -rpath ${libdir} -version-info ${LIBDJVU_VER} \
+	    -rpath ${libdir} -version-info ${LIBDJVU_VER} ${DLLFLAGS} \
 	    ${OBJS} ${LIBS} -o ${LIBDJVU_LA}
 
 @RPO_YES@${LIBDJVU_LA} : libdjvu-rpo

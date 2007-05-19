@@ -116,7 +116,7 @@ namespace DJVU {
     performed by calling function #scale# in class \Ref{GBitmapScaler} and
     \Ref{GPixmapScaler}.  
 */
-class GScaler  : public GPEnabled
+class DJVUAPI GScaler  : public GPEnabled
 {
 protected:  
   GScaler();
@@ -184,7 +184,7 @@ protected:
       return out;
     }
     \end{verbatim} */
-class GBitmapScaler : public GScaler
+class DJVUAPI GBitmapScaler : public GScaler
 {
 protected:
   GBitmapScaler(void);
@@ -258,7 +258,7 @@ protected:
     \end{verbatim}
 
  */
-class GPixmapScaler : public GScaler
+class DJVUAPI GPixmapScaler : public GScaler
 {
 protected:
   GPixmapScaler(void);

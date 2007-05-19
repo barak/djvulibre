@@ -184,7 +184,7 @@ private:
 // data bounds, etc. It copes with data elements with the help of five
 // static functions which pointers are supposed to be passed to the
 // constructor.
-class ArrayRep : public _ArrayRep
+class DJVUAPI ArrayRep : public _ArrayRep
 {
 public:
    ArrayRep(int elsize,
@@ -304,7 +304,7 @@ ArrayRep::touch(int n)
     and \Ref{TArray} instead.
     */
     
-class ArrayBase : protected _ArrayBase
+class DJVUAPI ArrayBase : protected _ArrayBase
 {
 protected:
    void		check(void);

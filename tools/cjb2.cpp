@@ -758,7 +758,7 @@ read_tiff(CCImage &rimg, ByteStream *bs, cjb2opts &opts)
   if (bps != 1 || spp != 1)
     G_THROW("Tiff image is not bitonal");
   // photometric
-  uint photo = PHOTOMETRIC_MINISWHITE;
+  uint16 photo = PHOTOMETRIC_MINISWHITE;
   TIFFGetFieldDefaulted(tiff, TIFFTAG_PHOTOMETRIC, &photo);
   // image size
   uint32 w, h;

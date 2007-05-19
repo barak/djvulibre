@@ -200,7 +200,7 @@ class DjVuNavDir;
     with \Ref{DjVuDocument}. So please review the documentation on this class
     too. */
 
-class DjVuFile : public DjVuPort
+class DJVUAPI DjVuFile : public DjVuPort
 {
 public:
    enum { DECODING=1, DECODE_OK=2, DECODE_FAILED=4, DECODE_STOPPED=8,

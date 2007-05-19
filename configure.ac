@@ -67,8 +67,16 @@ if test -d $curwd/gnu/lib ; then
    LDFLAGS="$LDFLAGS -L$curwd/gnu/lib"
 fi
 
+# Extra flags to make dll
+DLLFLAGS=
+AC_SUBST(DLLFLAGS)
+
 # Special cases
 case "$host" in
+  *-mingw32)
+     DLLFLAGS="$DLLFLAGS -Wl,--export-all-symbols"
+     LIBS=-lmsvcp60
+  ;;
   *-darwin* | *-macos10*)
      if test -d /opt/local ; then
        CPPFLAGS="$CPPFLAGS -I/opt/local/include"

@@ -128,7 +128,7 @@ class GNativeString;
     as private members. It is therefore not possible to make multiple copies
     of instances of this class, as implied by the class semantic.  
 */
-class ByteStream : public GPEnabled
+class DJVUAPI ByteStream : public GPEnabled
 {
 public:
   class Stdio;
@@ -373,7 +373,7 @@ ByteStream::size(void) const
 /** ByteStream::Wrapper implements wrapping bytestream.  This is useful
     for derived classes that take a GP<ByteStream> as a creation argument,
     and the backwards compatible bytestreams.  */
-class ByteStream::Wrapper : public ByteStream
+class DJVUAPI ByteStream::Wrapper : public ByteStream
 {
 protected:
   GP<ByteStream> gbs;

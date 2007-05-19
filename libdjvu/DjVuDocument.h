@@ -213,7 +213,7 @@ class ByteStream;
 	     \end{itemize}
     \end{enumerate} */
     
-class DjVuDocument : public DjVuPort
+class DJVUAPI DjVuDocument : public DjVuPort
 {
 public:
       /** Flags describing the document initialization state.

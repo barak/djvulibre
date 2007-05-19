@@ -121,7 +121,7 @@ namespace DJVU {
 #define CALLINGCONVENTION  /* */
 #endif
 
-class DjVuPalette : public GPEnabled
+class DJVUAPI DjVuPalette : public GPEnabled
 {
 protected:
   DjVuPalette(void);

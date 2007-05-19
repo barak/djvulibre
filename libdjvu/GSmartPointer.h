@@ -115,7 +115,7 @@ namespace DJVU {
     Any instance of a subclass of #GPEnabled# can be used with 
     smart-pointers (see \Ref{GP}).  
  */
-class GPEnabled
+class DJVUAPI GPEnabled
 {
 public:
   /// Null constructor.
@@ -148,7 +148,7 @@ private:
     in reducing the template expansion overhead.
 */
 
-class GPBase
+class DJVUAPI GPBase
 {
 public:
   /** Null Constructor. */
@@ -458,7 +458,7 @@ GP<TYPE>::operator! () const
    What does it do that a GArray does not do ? 
    What about the objects construction and destruction ? */
 
-class GPBufferBase
+class DJVUAPI GPBufferBase
 {
 public:
   GPBufferBase(void *&,const size_t n,const size_t t);

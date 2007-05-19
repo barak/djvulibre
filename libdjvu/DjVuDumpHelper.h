@@ -99,7 +99,7 @@ class ByteStream;
     Based upon old \Ref{djvudump.cpp} code.
  */
 
-class DjVuDumpHelper
+class DJVUAPI DjVuDumpHelper
 {
 public:
       /// Default constructor

@@ -138,7 +138,7 @@ namespace DJVU {
     intersection of rectangles (\Ref{intersect}) or the smallest rectangle
     enclosing two rectangles (\Ref{recthull}).  */
 
-class GRect 
+class DJVUAPI GRect 
 {
 public:
   /** Constructs an empty rectangle */
@@ -210,7 +210,7 @@ public:
     matching corners of the second rectangle. The scaling operation is
     performed using integer fraction arithmetic in order to maximize
     accuracy. */
-class GRectMapper 
+class DJVUAPI GRectMapper 
 {
 public:
   /** Constructs a rectangle mapper. */

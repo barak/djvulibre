@@ -180,7 +180,7 @@ namespace DJVU {
     \Ref{ByteStream::copy} to transfer the IFF file into a non seekable
     ByteStream.  */
 
-class IFFByteStream : protected ByteStream::Wrapper
+class DJVUAPI IFFByteStream : protected ByteStream::Wrapper
 {
 protected: 
   IFFByteStream(const GP<ByteStream> &bs, const int pos);

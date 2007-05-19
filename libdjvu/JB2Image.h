@@ -249,7 +249,7 @@ typedef GP<JB2Dict> JB2DecoderCallback ( void* );
 
 /** Dictionary of JB2 shapes. */
 
-class JB2Dict : public GPEnabled
+class DJVUAPI JB2Dict : public GPEnabled
 {
 protected:
   JB2Dict(void);
@@ -344,7 +344,7 @@ private:
     to render anti-aliased images, or use function \Ref{encode} to generate
     JB2 data. */
 
-class JB2Image : public JB2Dict
+class DJVUAPI JB2Image : public JB2Dict
 {
 protected:
   JB2Image(void);

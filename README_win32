@@ -2,16 +2,37 @@
 1- How to build on Windows
 ===========================
 
-- Using Mingw (still contrived but improving)
-   $ configure --enable-static --disable-shared LIBS=-lmsvcp60
-   $ make THREAD_CFLAGS=-DTHREADMODEL=WINTHREADS
+1.1- Using Mingw
+----------------
 
-- Using Microsoft Visual Studio: 
+   This is now the recommended method for creating windows executables.
+   You must first install the mingw compiler and the msys environment.
+   See www.mingw.org for more information.
+   From the msys shell, run the usual commands 
+     $ configure
+     $ make
+   Then collect the djvulibre dll from directory libdjvu/.libs
+   and the executables from directory tools/.libs 
+   Please refer to the file INSTALL for information
+   about the arguments of the script 'configure'.
+
+
+1.2- Using Cygwin 
+-----------------
+
+   Simply run the usual commands 
+     $ configure
+     $ make
+     $ make install
+   Please refer to the file INSTALL for information
+   about the arguments of the script 'configure'.
+ 
+
+1.3- Using Microsoft Visual Studio
+----------------------------------
+
   You might have success using the project files
   located in the directories 'tools' and 'xmltools'.
   (note: these files should be located in a global win32 directory instead)
 
-- Using Cygwin: 
-  The 'configure && make && make install' method should work.
 
- 

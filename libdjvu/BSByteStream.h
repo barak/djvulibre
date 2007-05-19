@@ -198,7 +198,7 @@ namespace DJVU {
     BSByteStream object and before re-using the ByteStream object (see
     \Ref{IFFByteStream}.)
 */
-class BSByteStream : public ByteStream
+class DJVUAPI BSByteStream : public ByteStream
 {
 public:
 // Limits on block sizes

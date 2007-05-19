@@ -145,7 +145,7 @@ class GUTF8String;
 class GNativeString;
 
 // Internal string representation.
-class GStringRep : public GPEnabled
+class DJVUAPI GStringRep : public GPEnabled
 {
 public:
   enum EncodeType { XUCS4, XUCS4BE, XUCS4LE, XUCS4_2143, XUCS4_3412,
@@ -366,7 +366,7 @@ protected:
   char *data;
 };
 
-class GStringRep::UTF8 : public GStringRep
+class DJVUAPI GStringRep::UTF8 : public GStringRep
 {
 public:
   // default constructor
@@ -463,7 +463,7 @@ protected:
     position #-1# accesses the last character of the string,
     position #-2# represents the second last character, etc.)  */
 
-class GBaseString : protected GP<GStringRep>
+class DJVUAPI GBaseString : protected GP<GStringRep>
 {
 public:
   enum EscapeMode {
@@ -735,7 +735,7 @@ protected:
     position #-1# accesses the last character of the string,
     position #-2# represents the second last character, etc.)  */
 
-class GUTF8String : public GBaseString
+class DJVUAPI GUTF8String : public GBaseString
 {
 public:
   ~GUTF8String();
@@ -937,7 +937,7 @@ public:
     position #-1# accesses the last character of the string,
     position #-2# represents the second last character, etc.)  */
 
-class GNativeString : public GBaseString
+class DJVUAPI GNativeString : public GBaseString
 {
 public:
   ~GNativeString();

@@ -140,7 +140,7 @@ class DjVuFile;
     Ports which are not secured by a smart-pointer are not considered
     ``alive'' and never receive notifications! */
 
-class DjVuPort : public GPEnabled
+class DJVUAPI DjVuPort : public GPEnabled
 {
 public:
    DjVuPort();
@@ -275,7 +275,7 @@ private:
     files) and display error messages on #stderr#.  All other notifications
     are ignored. */
 
-class DjVuSimplePort : public DjVuPort
+class DJVUAPI DjVuSimplePort : public DjVuPort
 {
 public:
       /// Returns 1 if #class_name# is #"DjVuPort"# or #"DjVuSimplePort"#.
@@ -300,7 +300,7 @@ public:
     pool># as needed need and add a route from a \Ref{DjVuDocument} or
     \Ref{DjVuFile} to this port. */
 
-class DjVuMemoryPort : public DjVuPort
+class DJVUAPI DjVuMemoryPort : public DjVuPort
 {
 public:
       /// Returns 1 if #class_name# is #"DjVuPort"# or #"DjVuMemoryPort"#
@@ -355,7 +355,7 @@ private:
 
     The user is not expected to create the #DjVuPortcaster# itself. He should
     use \Ref{get_portcaster}() global function instead.  */
-class DjVuPortcaster
+class DJVUAPI DjVuPortcaster
 {
 public:
       /**  Use this function to get a copy of the global \Ref{DjVuPortcaster}. */

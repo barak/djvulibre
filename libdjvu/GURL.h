@@ -116,7 +116,7 @@ namespace DJVU {
     All other URLs are modified to contain only forward slashes.
 */
 
-class GURL
+class DJVUAPI GURL
 {
 public:
   class Filename;

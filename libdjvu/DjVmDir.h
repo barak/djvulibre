@@ -151,7 +151,7 @@ class ByteStream;
     directory because some classes (like \Ref{DjVuDocument} and \Ref{DjVmDoc})
     return a pointer to #DjVmDir# in some cases. */
 
-class DjVmDir : public GPEnabled
+class DJVUAPI DjVmDir : public GPEnabled
 {
 protected:
       /** Class \Ref{DjVmDir::File} represents the directory records
@@ -226,7 +226,7 @@ private: //dummy stuff
    static void encode(ByteStream *);
 };
 
-class DjVmDir::File : public GPEnabled
+class DJVUAPI DjVmDir::File : public GPEnabled
 {
 public:
   // Out of the record: INCLUDE below must be zero and PAGE must be one.

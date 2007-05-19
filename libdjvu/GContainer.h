@@ -388,7 +388,7 @@ GCONT NormTraits<T>::traits()
     @memo Dynamic arrays.  */
 //@{
 
-class GArrayBase : public GCont
+class DJVUAPI GArrayBase : public GCont
 {
 public:
   // -- CONSTRUCTORS
@@ -763,7 +763,7 @@ public:
     (using member function #del# or by other means.)
 */
 
-class GPosition : protected GCont
+class DJVUAPI GPosition : protected GCont
 {
 public:
   /** Creates a null GPosition object. */
@@ -804,7 +804,7 @@ protected:
 };
 
 
-class GListBase : public GCont
+class DJVUAPI GListBase : public GCont
 {
 protected:
   GListBase(const Traits& traits);
@@ -1073,7 +1073,7 @@ public:
 */
 //@{
 
-class GSetBase : public GCont
+class DJVUAPI GSetBase : public GCont
 {
 protected:
   GSetBase(const Traits &traits);

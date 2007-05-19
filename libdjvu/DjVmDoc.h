@@ -116,7 +116,7 @@ class DjVmNav;
     \Ref{insert_file}() and \Ref{delete_file}()). 
 */
 
-class DjVmDoc : public GPEnabled
+class DJVUAPI DjVmDoc : public GPEnabled
 {
       // Internal function.
 protected:   

@@ -103,7 +103,7 @@ namespace DJVU {
     \end{enumerate}
 */
 
-class DjVuDocEditor : public DjVuDocument
+class DJVUAPI DjVuDocEditor : public DjVuDocument
 {
 public:
    static int	thumbnails_per_file;

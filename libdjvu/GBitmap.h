@@ -127,7 +127,7 @@ class ByteStream;
     represent white pixels.  You should never write anything into border
     pixels because they are shared between images and between lines.  */
 
-class GBitmap : public GPEnabled
+class DJVUAPI GBitmap : public GPEnabled
 {
 protected:
   GBitmap(void);
