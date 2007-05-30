@@ -703,7 +703,7 @@ AC_DEFUN([AC_PATH_QT],
   # Check for the lib64 thing
   lib=`basename "$libdir"`
   case "$lib" in lib*) ;; *) lib="lib" ;; esac
-  if test $lib = "lib" ; then libs="lib" ; else libs="$lib lib" ; fi
+  if test $lib = "lib" -o $lib = "lib64" ; then libs="$lib" ; else libs="$lib lib" ; fi
   # Standard qt directory
   ac_has_qt=no
   if test x$QTDIR != xno ; then
