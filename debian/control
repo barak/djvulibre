@@ -58,7 +58,7 @@ Section: web
 Architecture: any
 Depends: ${shlibs:Depends}, djview4 | djview
 Enhances: mozilla-browser, mozilla, mozilla-firefox, konqueror, galeon
-Recommends: mozilla-browser | mozilla | mozilla-firefox | iceweasel | konqueror | galeon | netscape-base-4 | netscape
+Recommends: mozilla-browser | mozilla | mozilla-firefox | iceweasel | iceape-browser | konqueror | galeon | netscape-base-4 | netscape
 Suggests: mime-support
 Conflicts: djvulibre-bin (<< 3.5.19)
 Description: Browser plugin for the DjVu image format
