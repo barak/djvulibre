@@ -1,3 +1,9 @@
+djvulibre (3.5.19-3) unstable; urgency=low
+
+  * Plugin recommended brower list now includes iceweasel (closes: #427161)
+
+ --
+
 djvulibre (3.5.19-2) unstable; urgency=low
 
   * License clarification of mozilla plugin code.
