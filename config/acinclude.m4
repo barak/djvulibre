@@ -347,8 +347,8 @@ fi
 # of items (for instance, both a compiler flag and a library name) can be 
 # specified using a colon separator.
 acx_pthread_flags="pthreads none -Kthread -kthread lthread 
-                   -pthread -pthreads -mthreads pthread
-                   --thread-safe -mt"
+                   -pthread -pthreads -mt -mthreads pthread
+                   --thread-safe"
 # The ordering *is* (sometimes) important.  
 # Some notes on the individual items follow:
 # pthreads: AIX (must check this before -lpthread)
@@ -359,10 +359,11 @@ acx_pthread_flags="pthreads none -Kthread -kthread lthread
 # lthread: LinuxThreads port on FreeBSD (also preferred to -pthread)
 # -pthread: Linux/gcc (kernel threads), BSD/gcc (userland threads)
 # -pthreads: Solaris/gcc
-# -mthreads: Mingw32/gcc, Lynx/gcc
+# -mt: HP aCC (check before -mthreads)
 # -mt: Sun Workshop C (may only link SunOS threads [-lthread], but it
 #      doesn't hurt to check since this sometimes defines pthreads too;
 #      also defines -D_REENTRANT)
+# -mthreads: Mingw32/gcc, Lynx/gcc
 # pthread: Linux, etcetera
 # --thread-safe: KAI C++
 case "${host_cpu}-${host_os}" in
@@ -703,7 +704,8 @@ AC_DEFUN([AC_PATH_QT],
   # Check for the lib64 thing
   lib=`basename "$libdir"`
   case "$lib" in lib*) ;; *) lib="lib" ;; esac
-  if test $lib = "lib" -o $lib = "lib64" ; then libs="$lib" ; else libs="$lib lib" ; fi
+  if test $lib = "lib" -o $lib = "lib64" ; then 
+    libs="$lib" ; else libs="$lib lib"; fi
   # Standard qt directory
   ac_has_qt=no
   if test x$QTDIR != xno ; then
