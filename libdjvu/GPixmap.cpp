@@ -568,13 +568,13 @@ GPixmap::init(ByteStream &bs)
           for (int x=0; x<ncolumns; x++)
             if (grey)
               {
-                p[x].g = p[x].b = p[x].r = ramp[read_integer(lookahead, bs)];
+                p[x].g = p[x].b = p[x].r = ramp[(int)read_integer(lookahead, bs)];
               }
             else
               {
-                p[x].r = ramp[read_integer(lookahead, bs)];
-                p[x].g = ramp[read_integer(lookahead, bs)];
-                p[x].b = ramp[read_integer(lookahead, bs)];
+                p[x].r = ramp[(int)read_integer(lookahead, bs)];
+                p[x].g = ramp[(int)read_integer(lookahead, bs)];
+                p[x].b = ramp[(int)read_integer(lookahead, bs)];
               }
         }
     }

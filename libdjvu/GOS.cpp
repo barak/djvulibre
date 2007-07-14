@@ -96,10 +96,19 @@
 #endif
 
 #ifdef macintosh
-# include <unix.h>
-# include <errno.h>
-# include <unistd.h>
+# ifndef UNIX
+#  include <unix.h>
+#  include <errno.h>
+#  include <unistd.h>
+# endif
 #endif
+
+#ifdef WIN32
+# if !defined(__MINGW32__) && !defined(__CYGWIN32__)
+#  define getcwd _getcwd
+# endif
+#endif
+
 
 // -- TRUE FALSE
 #undef TRUE

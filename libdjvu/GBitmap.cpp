@@ -809,7 +809,7 @@ GBitmap::read_pgm_text(ByteStream &bs, int maxval)
   for (int n = nrows-1; n>=0; n--) 
     {
       for (int c = 0; c<ncolumns; c++)
-        row[c] = ramp[read_integer(lookahead, bs)];
+        row[c] = ramp[(int)read_integer(lookahead, bs)];
       row -= bytes_per_row;
     }
 }

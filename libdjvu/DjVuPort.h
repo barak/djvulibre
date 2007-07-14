@@ -264,7 +264,8 @@ public:
    class DjVuPortCorpse;
 private:
    static GCriticalSection	* corpse_lock;
-   static DjVuPortCorpse	* corpse_head, * corpse_tail;
+   static DjVuPortCorpse	* corpse_head;
+   static DjVuPortCorpse        * corpse_tail;
    static int			corpse_num;
 };
 

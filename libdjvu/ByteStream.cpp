@@ -87,7 +87,7 @@
 # endif
 #endif
 
-#if defined(UNIX)
+#ifdef UNIX
 # include <sys/types.h>
 # include <sys/stat.h>
 # include <unistd.h>
@@ -95,13 +95,25 @@
 # ifdef HAS_MEMMAP
 #  include <sys/mman.h>
 # endif
-#elif defined(macintosh)
-# include <unistd.h>
+#endif
+
+#ifdef macintosh
+# ifndef UNIX
+#  include <unistd.h>
 _MSL_IMP_EXP_C int _dup(int);
 _MSL_IMP_EXP_C int _dup2(int,int);
 _MSL_IMP_EXP_C int _close(int);
 __inline int dup(int _a ) { return _dup(_a);}
 __inline int dup2(int _a, int _b ) { return _dup2(_a, _b);}
+# endif
+#endif
+
+#ifdef WIN32
+# if !defined(__MINGW32__) && !defined(__CYGWIN32__)
+#  define close _close
+#  define fdopen _fdopen
+#  define dup _dup
+# endif
 #endif
 
 #ifdef HAVE_NAMESPACES
