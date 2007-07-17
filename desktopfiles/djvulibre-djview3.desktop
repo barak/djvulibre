@@ -2,7 +2,7 @@
 Encoding=UTF-8
 Type=Application
 Categories=Qt;Graphics
-MimeType=image/x-djvu;image/x.djvu;image/vnd.djvu
+MimeType=image/x-djvu;image/x.djvu;image/vnd.djvu;
 Name=DjView3
 Exec=djview3 %f
 Terminal=false
