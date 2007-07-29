@@ -309,6 +309,7 @@ DjVuMessage::GetProfilePaths(void)
       appendPath(GURL::UTF8(DebugModuleDjVuDir,mpath),pathsmap,paths);
 #endif
       appendPath(mpath,pathsmap,paths);
+      appendPath(GURL::UTF8(ModuleDjVuDir,mpath),pathsmap,paths);
       mpath=mpath.base();
       appendPath(GURL::UTF8(ModuleDjVuDir,mpath),pathsmap,paths);
       mpath=mpath.base();

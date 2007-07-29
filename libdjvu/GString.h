@@ -475,10 +475,10 @@ public:
   friend class GNativeString;
 protected:
   // Sets the gstr pointer;
-  void init(void);
+  inline void init(void);
 
   ~GBaseString();
-  GBaseString &init(const GP<GStringRep> &rep);
+  inline GBaseString &init(const GP<GStringRep> &rep);
 
   // -- CONSTRUCTORS
   /** Null constructor. Constructs an empty string. */
@@ -711,7 +711,7 @@ public:
     const EscapeMode escape=UNKNOWN_ESCAPED) const;
   GUTF8String NativeToUTF8(void) const;
 protected:
-  int CheckSubscript(int n) const;
+  inline int CheckSubscript(int n) const;
 };
 
 /** General purpose character string.
@@ -739,9 +739,9 @@ class DJVUAPI GUTF8String : public GBaseString
 {
 public:
   ~GUTF8String();
-  void init(void);
+  inline void init(void);
 
-  GUTF8String &init(const GP<GStringRep> &rep);
+  inline GUTF8String &init(const GP<GStringRep> &rep);
 
   // -- CONSTRUCTORS
   /** Null constructor. Constructs an empty string. */
@@ -778,10 +778,10 @@ public:
       character array #str#. */
   GUTF8String& operator= (const char str);
   GUTF8String& operator= (const char *str);
-  GUTF8String& operator= (const GP<GStringRep> &str);
-  GUTF8String& operator= (const GBaseString &str);
-  GUTF8String& operator= (const GUTF8String &str);
-  GUTF8String& operator= (const GNativeString &str);
+  inline GUTF8String& operator= (const GP<GStringRep> &str);
+  inline GUTF8String& operator= (const GBaseString &str);
+  inline GUTF8String& operator= (const GUTF8String &str);
+  inline GUTF8String& operator= (const GNativeString &str);
 
   /** Constructs a string with a formatted string (as in #vprintf#).
       The string is re-initialized with the characters generated
@@ -1005,10 +1005,10 @@ public:
       array #str#. */
   GNativeString& operator= (const char str);
   GNativeString& operator= (const char *str);
-  GNativeString& operator= (const GP<GStringRep> &str);
-  GNativeString& operator= (const GBaseString &str);
-  GNativeString& operator= (const GUTF8String &str);
-  GNativeString& operator= (const GNativeString &str);
+  inline GNativeString& operator= (const GP<GStringRep> &str);
+  inline GNativeString& operator= (const GBaseString &str);
+  inline GNativeString& operator= (const GUTF8String &str);
+  inline GNativeString& operator= (const GNativeString &str);
   // -- CONCATENATION
   /// Appends character #ch# to the string.
   GNativeString& operator+= (char ch);
