@@ -2,7 +2,7 @@ djvulibre (3.5.19-3) unstable; urgency=low
 
   * Plugin recommended brower list now includes iceweasel (closes: #427161)
 
- --
+ -- Barak A. Pearlmutter <bap@debian.org>  Wed, 6 Jun 2007 09:28:19 +0100
 
 djvulibre (3.5.19-2) unstable; urgency=low
 
