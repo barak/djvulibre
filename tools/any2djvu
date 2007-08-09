@@ -74,6 +74,7 @@ function usage()
     echo
     echo "Options:"
     echo "  -q          quiet mode: reduce chatter on the screen"
+    echo "  -a          acknowledge internet transmission"
     echo "  -c          clean after work: remove log file"
     echo "  -r dpi      resolution in dpi (200/300/400, default: $res)"
     echo "  -o ocr      perform OCR (0 - no, 1 - yes, default: $ocr)"
@@ -88,18 +89,19 @@ function usage()
     echo "Examples:"
     echo "  cd ~bap/public_html/foo"
     echo " # uploads from web-accessible directory"
-    echo "  any2djvu.sh http://www.cs.unm.edu/~bap/foo file.ps"
-    echo "  any2djvu.sh http://www.inference.phy.cam.ac.uk/mackay *.ps.gz bar.pdf"
+    echo "  any2djvu http://www.cs.unm.edu/~bap/foo file.ps"
+    echo "  any2djvu http://www.inference.phy.cam.ac.uk/mackay *.ps.gz bar.pdf"
     echo " # uploads from current directory"
-    echo "  any2djvu.sh b*.pdf"
-    echo "  any2djvu.sh -s -c -r 300 -o 0 bp.ps"
+    echo "  any2djvu b*.pdf"
+    echo "  any2djvu -s -c -r 300 -o 0 bp.ps"
 }
 
 
-while getopts "hcqsr:o:f:u:p:" opt
+while getopts "hacqsr:o:f:u:p:" opt
   do
   case "$opt" in
       h) usage; exit 0 ;;
+      a) DJVU_ONLINE_ACK=1 ;;
       c) doclean=1 ;;
       s) echo "option -s is deprecated, please use -q"; silent=1  ;;
       q) silent=1  ;;
@@ -121,32 +123,32 @@ if [ ${res#[234]} != '00' ]; then
 fi
 
 # check OCR option
-if [ ! x$ocr == x0 ] && [ ! x$ocr == x1 ]; then
+if [ ! "x$ocr" == x0 ] && [ ! "x$ocr" == x1 ]; then
     echo 'error: -o OCR must be 0 or 1'
     exit 2
 fi
 
 # if help is requested or docformat is not specified right - show help
-if [ x$docformat == x'help' ]; then
+if [ "x$docformat" == x'help' ]; then
     format_help
     exit 0
 fi
 
-if [ -z $docformat ] || [ ! -z ${docformat#[0-9]} ]; then
+if [ -z "$docformat" ] || [ ! -z "${docformat#[0-9]}" ]; then
     echo "error: requested document format unknown: $docformat".
     format_help
     exit 2
 fi
 
-
 lurl=''
-if [ ! -e $1 ]; then	     # if 1st argument is not an existing file
+if [ ! -e "$1" ]; then	     # if 1st argument is not an existing file
     lurl="$1"			# assume that it is a URL
     shift
 fi
 
-log=`date -u`": "`whoami`'@'`hostname`", pid $$: $0 (cwd "`pwd`")"
-[ -z $silent ]  && echo '/-- Started' $log >&2
+#log=`date -u`": "`whoami`'@'`hostname`", pid $$: $0 (cwd "`pwd`")"
+log="`date -u`: `whoami`@`hostname`, pid $$: $0 (cwd `pwd`)"
+[ -z $silent ]  && echo '/-- Started' "$log" >&2
 
 in="$1"
 shift
@@ -162,6 +164,29 @@ if [ ! -z $s ]; then
     warn
 fi
 
+if [ -z "$DJVU_ONLINE_ACK" ]; then
+    cat <<EOF
+WARNING!
+
+any2djvu uses an external server which is willing to perform the
+conversion and requires the document transfer over to that server.
+There is a security issue in operating on documents not intended for
+widespread distribution, which could be partially although not
+completely ameliorated by using a secure web connection.
+
+Do you acknowledge and allow the transmission of the document?
+(Type 'yes' to acknowledge. You can define non-empty environment
+ variable DJVU_ONLINE_ACK to avoid seeing this dialog, or use -a
+ command line parameter to any2djvu).
+EOF
+    echo -n "[yes/no]:"
+    read ack
+    if [[ ! "$ack" =~ '^[yY][eE][sS]$' ]]; then
+        warn
+        exit 1
+    fi
+fi
+
 wgetopts=''
 curlopts=''
 shellopts=''
@@ -174,36 +199,36 @@ fi
 cgiopts="&docformat=$docformat&resolution=$res&ocr=$ocr&legal=1"
 while [ -n "$in" ]; do
     b="$in"
-    b=${b%.ps.gz}
-    b=${b%.ps}
-    b=${b%.pdf}
-    b=${b%.PDF}
+    b="${b%.ps.gz}"
+    b="${b%.ps}"
+    b="${b%.pdf}"
+    b="${b%.PDF}"
     echo `date -u` Processing $b ...
-    log=$b-any2djvu.log
-    if [ -z $lurl ]; then
-	if [ ! -e $in ]; then
-	    echo "File $in wasn't found. Conversion stopped"
-	    exit 2
-	fi
-	curl $curlopts -F fupload=@$in -F submit=Submit			\
-	    -F docformat=$docformat -F resolution=$res			\
-	    -F ocr=$ocr -F legal=1 $rurl/$rcgi				\
-	    | eval tee $log $shellopts
+    log="$b-any2djvu.log"
+    if [ -z "$lurl" ]; then
+        if [ ! -e "$in" ]; then
+            echo "File $in wasn't found. Conversion stopped"
+            exit 2
+        fi
+        curl $curlopts -F "fupload=@$in" -F submit=Submit               \
+            -F docformat=$docformat -F resolution=$res                  \
+            -F ocr=$ocr -F legal=1 "$rurl/$rcgi"                          \
+            | eval tee "'$log'" $shellopts
     else
-	wget $wgetopts -O - "$rurl/$rcgi?urlupload=$lurl/$in$cgiopts"	\
-	    | eval tee $log $shellopts
+        wget $wgetopts -O - "$rurl/$rcgi?urlupload=$lurl/$in$cgiopts"   \
+            | eval tee "'$log'" $shellopts
     fi
-    l=`egrep 'href=djvu/.*\.djvu' $log`
-    l=${l##*href=}
-    l=${l%%>*}
+    l=`egrep 'href=djvu/.*\.djvu' "$log"`
+    l="${l##*href=}"
+    l="${l%%>*}"
     if [ -z "$l" ]; then
-	echo "error: something got wrong. check log file"
-	exit 1
+        echo "error: something got wrong. check log file"
+        exit 1
     fi
-    wget $wgetopts -O $b.djvu "$rurl/$l"
+    wget $wgetopts -O "$b.djvu" "$rurl/$l"
 
-    [ -z $doclean ] || rm $log
-    [ -z $silent ]  && ls -l $b.djvu
+    [ -z "$doclean" ] || rm "$log"
+    [ -z $silent ]  && ls -l "$b.djvu"
 
     in="$1"
     shift
