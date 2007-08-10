@@ -51,7 +51,10 @@ On Debian GNU/Linux systems, the complete text of the GNU General
 Public License version 2 can be found in
 `/usr/share/common-licenses/GPL-2'.
 
-The following appeared in the file COPYRIGHT at the top level of the
+As of upstream VERSION 3.5.19, the "GPL v2" has been broadened to
+"GPL v2 or any later version".
+
+The following appears in the file COPYRIGHT at the top level of the
 upstream source code.
 
  DjVuLibre-3.5
