@@ -89,7 +89,7 @@ function usage()
     echo "Examples:"
     echo "  cd ~bap/public_html/foo"
     echo " # uploads from web-accessible directory"
-    echo "  any2djvu http://www.cs.unm.edu/~bap/foo file.ps"
+    echo "  any2djvu http://www.bcl.hamilton.ie/~barak/papers mesh-preprint.ps.gz"
     echo "  any2djvu http://www.inference.phy.cam.ac.uk/mackay *.ps.gz bar.pdf"
     echo " # uploads from current directory"
     echo "  any2djvu b*.pdf"
