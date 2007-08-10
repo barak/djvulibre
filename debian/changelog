@@ -1,15 +1,17 @@
 djvulibre (3.5.19-3) unstable; urgency=low
 
+  * Make any2djvu script handle filenames with spaces correctly (closes: #435355)
+  * Print enormous security warning when any2djvu script is used (closes: #435356)
   * Plugin recommended brower list now includes iceweasel (closes: #427161)
 
- -- Barak A. Pearlmutter <bap@debian.org>  Wed, 6 Jun 2007 09:28:19 +0100
+ -- Barak A. Pearlmutter <bap@debian.org>  Fri, 10 Aug 2007 09:06:13 +0100
 
 djvulibre (3.5.19-2) unstable; urgency=low
 
   * License clarification of mozilla plugin code.
   * Fix upgrade issue by making plugin package conflict with older
     binaries package (closes: #419666)
-  
+
  -- Barak A. Pearlmutter <bap@debian.org>  Tue, 24 Apr 2007 09:36:48 +0100
 
 djvulibre (3.5.19-1) unstable; urgency=low
