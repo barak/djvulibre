@@ -1394,35 +1394,28 @@ Comments::make_chunks(IFFByteStream &iff)
   // Create annotation chunk
   if (links.size() > 0)
     {
-      minivar_t exprs;
-      minivar_t exor = miniexp_cons(miniexp_symbol("xor"),miniexp_nil);
-      for (GPosition p = links; p; ++p)
-        {
-          GP<LnkMark> mark = links[p];
-          minivar_t url = miniexp_string((const char*)(mark->s));
-          minivar_t expr = miniexp_cons(exor, miniexp_nil);
-          minivar_t area;
-          area = miniexp_cons(miniexp_number(mark->r.height()), area);
-          area = miniexp_cons(miniexp_number(mark->r.width()), area);
-          area = miniexp_cons(miniexp_number(mark->r.ymin), area);
-          area = miniexp_cons(miniexp_number(mark->r.xmin), area);
-          area = miniexp_cons(miniexp_symbol("rect"),area);
-          expr = miniexp_cons(area, expr);
-          expr = miniexp_cons(miniexp_nil, expr);
-          expr = miniexp_cons(url, expr);
-          expr = miniexp_cons(miniexp_symbol("maparea"), expr);
-          exprs = miniexp_cons(expr, exprs);
-        }
-      exprs = miniexp_reverse(exprs);
       iff.put_chunk("ANTz");
       {
         GP<ByteStream> bsb = BSByteStream::create(iff.get_bytestream(), 50);
         minilisp_outbs = bsb;
         minilisp_puts = minilisp_outfunc;
-        while (miniexp_consp(exprs))
+        minivar_t exor = miniexp_cons(miniexp_symbol("xor"),miniexp_nil);
+        for (GPosition p = links; p; ++p)
           {
-            miniexp_pprint(miniexp_car(exprs), 72);
-            exprs = miniexp_cdr(exprs);
+            GP<LnkMark> mark = links[p];
+            minivar_t url = miniexp_string((const char*)(mark->s));
+            minivar_t expr = miniexp_cons(exor, miniexp_nil);
+            minivar_t area;
+            area = miniexp_cons(miniexp_number(mark->r.height()), area);
+            area = miniexp_cons(miniexp_number(mark->r.width()), area);
+            area = miniexp_cons(miniexp_number(mark->r.ymin), area);
+            area = miniexp_cons(miniexp_number(mark->r.xmin), area);
+            area = miniexp_cons(miniexp_symbol("rect"),area);
+            expr = miniexp_cons(area, expr);
+            expr = miniexp_cons(miniexp_nil, expr);
+            expr = miniexp_cons(url, expr);
+            expr = miniexp_cons(miniexp_symbol("maparea"), expr);
+            miniexp_pprint(expr, 72);
           }
         minilisp_outbs = 0;
         minilisp_set_output(stdout);
