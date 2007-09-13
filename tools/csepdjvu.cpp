@@ -1199,6 +1199,10 @@ Comments::parse_comment_line(BufferByteStream &bs)
       if (! (bs.skip(" \t") && bs.read_geometry(mark->r) &&
              bs.skip(" \t") && bs.read_ps_string(mark->s) ) )
         G_THROW("csepdjvu: corrupted file (syntax error in link comment)");
+      int ymax = h - mark->r.ymin - 1; // reversed in gsdjvu ?
+      int ymin = h - mark->r.ymax - 1; // reversed in gsdjvu ?
+      mark->r.ymax = ymax;
+      mark->r.ymin = ymin;
       links.append(mark);
       return true;
     }
