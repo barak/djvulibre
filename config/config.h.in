@@ -112,6 +112,9 @@
 /* Define to 1 if you have the `setenv' function. */
 #undef HAVE_SETENV
 
+/* Define to 1 if you have the `sigaction' function. */
+#undef HAVE_SIGACTION
+
 /* define if the compiler comes with standard includes */
 #undef HAVE_STDINCLUDES
 

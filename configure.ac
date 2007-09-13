@@ -159,6 +159,7 @@ AC_FUNC_FORK
 AC_CHECK_FUNCS(wcrtomb iswspace setenv)
 AC_CHECK_FUNCS(putc_unlocked strerror vsnprintf)
 AC_CHECK_FUNCS(gethostname iconv strftime getpwuid)
+AC_CHECK_FUNCS(sigaction)
 
 # ----------------------------------------
 # Test auxilliary packages

@@ -1,3 +1,8 @@
+NEW IN VERSION 3.5.20
+---------------------
+- Csepdjvu handle gsdjvu hyperlink comments.
+- Djvudigital therefore handles hyperlinks.
+
 NEW IN VERSION 3.5.19
 ---------------------
 - License change. Starting with version 3.5.19, 
