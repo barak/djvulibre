@@ -87,6 +87,7 @@ depend:
 
 clean: FORCE
 	-test ${LRELEASE} = ":" || ${RM} *.qm
+	-for n in ${MANFILES} ; do test -r $$n.gz && ${RM} $$n.gz ; done
 	-${RM} 2>/dev/null nsdejavu.1
 
 distclean: clean
