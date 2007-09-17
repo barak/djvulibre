@@ -199,7 +199,7 @@ depend: ${MOCINCS} FORCE
 	${top_srcdir}/etc/makefixdep Makefile.dep
 
 clean: FORCE
-	-${RM} 2>/dev/null ${PROGRAM}
+	-${LIBTOOL} --mode=clean ${RM} 2>/dev/null ${PROGRAM}
 	-${RM} 2>/dev/null *.o *.a *.so *.stamp *_moc.cpp *_moc.inc *.pro
 	-for n in ${CIN_SOURCES} ; do \
 	  rm 2>/dev/null `basename $$n .cin`.cpp ; done
