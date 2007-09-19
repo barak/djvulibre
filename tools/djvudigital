@@ -93,8 +93,10 @@ checkps2utf8()
 {
     if [ -z "$djvutext" ] 
     then
-        if ( "$gsdjvu" -dNODISPLAY -c '(ps2utf8.ps) runlibfile quit' \
-             | grep -q WRITESYSTEMDICT )
+        djvutext=no
+        if ( "$gsdjvu" 2>&1 -dNODISPLAY -c '/.djvutextmark where { pop } { 
+              (ps2utf8.ps) runlibfile } ifelse quit' | \
+              grep -q WRITESYSTEMDICT )
         then
             djvutext="/tmp/dj$$.ps"
             trap "rm 2>/dev/null $djvutext" 0
@@ -104,18 +106,9 @@ checkps2utf8()
 /onmark { pop pop pop pop currentx currenty currentpoint 
 .djvutextmark } bind def end exec
 EOF
-        else
-            cat 1>&2 <<\EOF
-djvudigital: cannot locate file "ps2utf8.ps".
-+--------------------------------------------------------------------+
-| DjVuDigital relies on this file to extract text from postscript    |
-| and pdf files. Options --words or --lines cannot work without this |
-| file. Please visit http://djvulibre.djvuzone.org/gsdjvu.html.      |
-+--------------------------------------------------------------------+
-EOF
-            exit 10
         fi
     fi
+    test "$djvutext" != no && test -r "$djvutext"  
 }
 
 
@@ -246,14 +239,20 @@ do
           gsepsf="-dEPSCrop"
           ;;
       --words)
-          checkps2utf8
-          gsarg0="$gsarg0 -dDELAYBIND -dWRITESYSTEMDICT"
-          gsarg1="-f $djvutext"
+          if checkps2utf8; then
+            gsarg0="$gsarg0 -dDELAYBIND -dWRITESYSTEMDICT"
+            gsarg1="-f $djvutext"
+          else
+            gsarg0="$gsarg0 -dProvideUnicode -dExtractText"
+          fi
           ;;
       --lines)
-          checkps2utf8
-          gsarg0="$gsarg0 -dDELAYBIND -dWRITESYSTEMDICT"
-          gsarg1="-f $djvutext"
+          if checkps2utf8; then 
+            gsarg0="$gsarg0 -dDELAYBIND -dWRITESYSTEMDICT"
+            gsarg1="-f $djvutext"
+          else
+            gsarg0="$gsarg0 -dProvideUnicode -dExtractText"
+          fi
           csepargs="$csepargs -t"
           ;;
       --pdf=screen)
@@ -348,12 +347,28 @@ fi
 
 case "$infile" in
     *.gz|*.GZ)
-        gzip -d -c "$infile" | \
-        $run $gsdjvu "-r$dpi" $gsverbosity $gsprinted $gsepsf \
+        if test -z "$run" ; then
+          gzip -d -c "$infile" | \
+          $gsdjvu "-r$dpi" $gsverbosity $gsprinted $gsepsf \
             "-sOutputFile=$backend" $gsarg0 $gsarg1 $gsarg2 -_ -c quit
+        else
+          echo -n gzip -d -c '"'"$infile"'"' '|' ""
+          echo -n $gsdjvu "-r$dpi" $gsverbosity $gsprinted $gsepsf ""
+          echo -n "-sOutputFile=""'""$backend""'" ""
+          echo -n $gsarg0 $gsarg1 $gsarg2 -_ -c quit
+          echo
+        fi
         ;;
     *)
-        $run $gsdjvu "-r$dpi" $gsverbosity $gsprinted $gsepsf \
-            "-sOutputFile=$backend" $gsarg0 $gsarg1 $gsarg2 -f "$infile" -c quit
+        if test -z "$run" ; then
+          $gsdjvu "-r$dpi" $gsverbosity $gsprinted $gsepsf \
+            "-sOutputFile=$backend" $gsarg0 $gsarg1 $gsarg2 \
+            -f "$infile" -c quit
+        else
+          echo -n $gsdjvu "-r$dpi" $gsverbosity $gsprinted $gsepsf ""
+          echo -n "-sOutputFile=""'""$backend""'" ""
+          echo -n $gsarg0 $gsarg1 $gsarg2 -f '"'"$infile"'"' -c quit
+          echo
+        fi
         ;;
 esac
