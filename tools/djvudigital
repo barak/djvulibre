@@ -94,8 +94,8 @@ checkps2utf8()
     if [ -z "$djvutext" ] 
     then
         djvutext=no
-        if ( "$gsdjvu" 2>&1 -dNODISPLAY -c '/.djvutextmark where { pop } { 
-              (ps2utf8.ps) runlibfile } ifelse quit' | \
+        if ( "$gsdjvu" 2>&1 -dNODISPLAY -c '/.djvutextmark where { 
+              (ps2utf8.ps) runlibfile } if quit' | \
               grep -q WRITESYSTEMDICT )
         then
             djvutext="/tmp/dj$$.ps"
