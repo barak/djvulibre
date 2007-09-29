@@ -46,7 +46,7 @@ csepdjvu.o: csepdjvu.cpp ../config.h ../libdjvu/DjVuGlobal.h ../config.h \
   ../libdjvu/IW44Image.h ../libdjvu/DjVuInfo.h ../libdjvu/GRect.h \
   ../libdjvu/DjVmDoc.h ../libdjvu/DjVmDir.h ../libdjvu/GThreads.h \
   ../libdjvu/GOS.h ../libdjvu/GURL.h ../libdjvu/DjVuMessage.h \
-  ../libdjvu/DjVuMessageLite.h ../libdjvu/DjVuText.h \
+  ../libdjvu/DjVuMessageLite.h ../libdjvu/DjVuText.h ../libdjvu/DjVmNav.h \
   ../libdjvu/GMapAreas.h ../libdjvu/GURL.h ../libdjvu/BSByteStream.h \
   ../libdjvu/miniexp.h jb2tune.h
 ddjvu.o: ddjvu.cpp ../config.h ../libdjvu/ddjvuapi.h

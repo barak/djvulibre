@@ -154,6 +154,7 @@
 #include "IW44Image.h"
 #include "DjVuInfo.h"
 #include "DjVmDoc.h"
+#include "DjVmNav.h"
 #include "GOS.h"
 #include "GURL.h"
 #include "DjVuMessage.h"
@@ -1095,6 +1096,7 @@ public:
   void process_comments(BufferByteStream &bs, int verbose=0);
   bool parse_comment_line(BufferByteStream &bs);
   void make_chunks(IFFByteStream &iff);
+  GP<DjVmNav> get_djvm_nav();
 protected:
   int w;
   int h;
@@ -1116,6 +1118,7 @@ protected:
     GUTF8String s;
   };
   GPList<LnkMark> links;
+  GP<DjVmNav> nav;
 protected:
   bool allspace(const TxtMark *mark);
   void textmark(GP<TxtMark> mark);
@@ -1204,6 +1207,24 @@ Comments::parse_comment_line(BufferByteStream &bs)
       mark->r.ymax = ymax;
       mark->r.ymin = ymin;
       links.append(mark);
+      return true;
+    }
+  // Bookmark comments
+  if (c == 'B')
+    {
+      int count; 
+      GUTF8String url;
+      GUTF8String title;
+      if (! (bs.skip(" \t") && bs.read_integer(count) &&
+             bs.skip(" \t") && bs.read_ps_string(title) &&
+             bs.skip(" \t") && bs.read_ps_string(url) ) )
+        G_THROW("csepdjvu: corrupted file (syntax error in outline comment)");
+      GP<DjVmNav::DjVuBookMark> b = 
+        DjVmNav::DjVuBookMark::create(count, title, url);
+      if (b && ! nav)
+        nav = DjVmNav::create();
+      if (b)
+        nav->append(b);
       return true;
     }
   // Unrecognized
@@ -1428,6 +1449,17 @@ Comments::make_chunks(IFFByteStream &iff)
     }
 }
 
+GP<DjVmNav>
+Comments::get_djvm_nav()
+{
+  if (nav && nav->getBookMarkCount() && nav->isValidBookmark())
+    return nav;
+  if (nav)
+    DjVuPrintErrorUTF8("%s", "csepdjvu: corrupted outline comments.\n");
+  return 0;
+}
+
+
 // --------------------------------------------------
 // MAIN COMPRESSION ROUTINE
 // --------------------------------------------------
@@ -1437,7 +1469,10 @@ Comments::make_chunks(IFFByteStream &iff)
 //    - bytestream bs contains the input separated file.
 //    - bytestream obs will receive the output djvu file.
 void 
-csepdjvu_page(BufferByteStream &bs, GP<ByteStream> obs, const csepdjvuopts &opts)
+csepdjvu_page(BufferByteStream &bs, 
+              GP<ByteStream> obs, 
+              GP<DjVmNav> &nav,
+              const csepdjvuopts &opts)
 {
   // Read rle data from separation file
   CRLEImage rimg(bs);
@@ -1607,6 +1642,9 @@ csepdjvu_page(BufferByteStream &bs, GP<ByteStream> obs, const csepdjvuopts &opts
   // -- terminate main composite chunk
   coms.make_chunks(iff);
   iff.close_chunk();
+  // -- store outline
+  if (! nav) 
+    nav = coms.get_djvm_nav();
 }  
 
 // -- Checks whether there is another page in the same file
@@ -1692,6 +1730,7 @@ main(int argc, const char **argv)
   G_TRY
     {
       GP<DjVmDoc> gdoc=DjVmDoc::create();
+      GP<DjVmNav> gnav;
       DjVmDoc &doc=*gdoc;
       GURL outputurl;
       GP<ByteStream> goutputpage=ByteStream::create();
@@ -1747,7 +1786,7 @@ main(int argc, const char **argv)
                 // Compress page 
                 goutputpage=ByteStream::create();
                 ByteStream &outputpage=*goutputpage;
-                csepdjvu_page(ibs, goutputpage, opts);
+                csepdjvu_page(ibs, goutputpage, gnav, opts);
                 if (opts.verbose) {
                   DjVuPrintErrorUTF8("csepdjvu: %d bytes for page %d",
                           outputpage.size(), pageno);
@@ -1763,16 +1802,17 @@ main(int argc, const char **argv)
             }
         } 
       // Save file
-      if (pageno == 1) 
+      if (pageno == 1 && ! gnav) 
         {
           ByteStream &outputpage=*goutputpage;
           // Save as a single page 
           outputpage.seek(0);
           ByteStream::create(outputurl,"wb")->copy(outputpage);
         }
-      else if (pageno > 1)
+      else if (pageno >= 1)
         {
           // Save as a bundled file
+          doc.set_djvm_nav(gnav);
           doc.write(ByteStream::create(outputurl,"wb"));
         }
       else 
