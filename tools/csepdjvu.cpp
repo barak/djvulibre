@@ -598,7 +598,7 @@ CRLEImage::CRLEImage(BufferByteStream &bs)
           if (x >= 0xc0)
             x = (bs.get()) + ((x - 0xc0) << 8);
           if (c+x > width)
-            G_THROW("csepdjvu: corrupted input file (lost RLE synchronization)");
+            G_THROW("csepdjvu: corrupted input file (lost RLE sync.)");
           if (p)
             {
               px[0] = c;
@@ -643,7 +643,7 @@ CRLEImage::CRLEImage(BufferByteStream &bs)
           p = (x >> 20) & 0xfff;
           x = (x & 0xfffff);
           if (c+x > width)
-            G_THROW("csepdjvu: corrupted input file (lost RLE synchronization)");
+            G_THROW("csepdjvu: corrupted input file (lost RLE sync.)");
           if (p >= 0 && p < ncolors)
             {
               px[0] = c;
@@ -1374,7 +1374,8 @@ Comments::textflush(void)
                   wzone->ztype = DjVuTXT::WORD;
                   wzone->text_start = txt->textUTF8.length();
                   txt->textUTF8 += word->s;
-                  wzone->text_length = txt->textUTF8.length() - wzone->text_start;
+                  wzone->text_length = 
+                    txt->textUTF8.length() - wzone->text_start;
                   wzone->rect = word->r;
                   lzone->rect.recthull(lzone->rect, word->r);
                 }
@@ -1382,7 +1383,8 @@ Comments::textflush(void)
                 {
                   if (lzone->text_length > 0) txt->textUTF8 += " ";
                   txt->textUTF8 += word->s;
-                  lzone->text_length = txt->textUTF8.length() - lzone->text_start;
+                  lzone->text_length = 
+                    txt->textUTF8.length() - lzone->text_start;
                   lzone->rect.recthull(lzone->rect, word->r);
                 }
             }
@@ -1487,7 +1489,8 @@ csepdjvu_page(BufferByteStream &bs,
   rimg.make_ccids_by_analysis();                  // Obtain ccids
   rimg.make_ccs_from_ccids();                     // Compute cc descriptors
   if (opts.verbose > 1)
-    DjVuFormatErrorUTF8( "%s\t%d", ERR_MSG("csepdjvu.analyzed"), rimg.ccs.size());
+    DjVuFormatErrorUTF8("%s\t%d", ERR_MSG("csepdjvu.analyzed"), 
+                        rimg.ccs.size());
   
   // Post-process Color Connected Components
   int largesize = MIN(500, MAX(64, opts.dpi));
@@ -1668,22 +1671,23 @@ check_for_another_page(BufferByteStream &bs, const csepdjvuopts &opts)
 void
 usage()
 {
-  DjVuPrintErrorUTF8(
+  const char *msg = 
 #ifdef DJVULIBRE_VERSION
-         "CSEPDJVU --- DjVuLibre-" DJVULIBRE_VERSION "\n"
+    "CSEPDJVU --- DjVuLibre-" DJVULIBRE_VERSION "\n"
 #endif
-         "DjVu encoder working with \"separated\" files\n\n"
-         "Usage: csepdjvu <...options_or_separatedfiles...> <outputdjvufile>\n"
-         "Options are:\n"
-         "   -v, -vv    Select verbosity level.\n"
-         "   -d <n>     Set resolution to <n> dpi (default: 300).\n"
-         "   -t         Restricts text information to lines only.\n"
-         "   -q <spec>  Select quality level for background (default: 72+11+10+10);\n"
-         "              see option -slice in program c44 for additional information.\n"
-         "Each separated files contain one or more pages\n"
-         "Each page is composed of:\n"
-         " (1) a B&W-RLE or Color-RLE image representing the foreground,\n"
-         " (2) an optional PPM image representing the background layer.\n" );
+    "DjVu encoder working with \"separated\" files\n\n"
+    "Usage: csepdjvu <...options_or_separatedfiles...> <outputdjvufile>\n"
+    "Options are:\n"
+    "   -v, -vv    Select verbosity level.\n"
+    "   -d <n>     Set resolution to <n> dpi (default: 300).\n"
+    "   -t         Restricts text information to lines only.\n"
+    "   -q <spec>  Select quality for background (default: 72+11+10+10);\n"
+    "              see option -slice in program c44 for more information.\n"
+    "Each separated files contain one or more pages\n"
+    "Each page is composed of:\n"
+    " (1) a B&W-RLE or Color-RLE image representing the foreground,\n"
+    " (2) an optional PPM image representing the background layer.\n";
+  DjVuPrintErrorUTF8(msg);
   exit(10);
 }
 
@@ -1699,22 +1703,27 @@ parse_slice(const char *q, csepdjvuopts &opts)
       char *ptr; 
       int x = strtol(q, &ptr, 10);
       if (ptr == q)
-        G_THROW("csepdjvu: illegal quality specification (number expected)");
+        G_THROW("csepdjvu: "
+                "illegal quality specification (number expected)");
       if (lastx>0 && q[-1]=='+')
         x += lastx;
       if (x<1 || x>1000 || x<lastx)
-        G_THROW("csepdjvu: illegal quality specification (number out of range)");
+        G_THROW("csepdjvu: "
+                "illegal quality specification (number out of range)");
       lastx = x;
       if (*ptr && *ptr!='+' && *ptr!=',')
-        G_THROW("csepdjvu: illegal quality specification (comma expected)");        
+        G_THROW("csepdjvu: "
+                "illegal quality specification (comma expected)");        
       q = (*ptr ? ptr+1 : ptr);
       if (count+1 >= (int)(sizeof(opts.slice)/sizeof(opts.slice[0])))
-        G_THROW("csepdjvu: illegal quality specification (too many chunks)");                
+        G_THROW("csepdjvu: "
+                "illegal quality specification (too many chunks)");
       opts.slice[count++] = x;
       opts.slice[count] = 0;
     }
   if (count < 1)
-    G_THROW("csepdjvu: illegal quality specification (no chunks)");                    
+    G_THROW("csepdjvu: "
+            "illegal quality specification (no chunks)");
 }
 
 
@@ -1776,28 +1785,31 @@ main(int argc, const char **argv)
           else 
             {
               // Process separation file
-              GP<ByteStream> fbs=ByteStream::create(GURL::Filename::UTF8(arg),"rb");
+              GP<ByteStream> fbs = 
+                ByteStream::create(GURL::Filename::UTF8(arg),"rb");
               BufferByteStream ibs(*fbs);
               do {
                 char pagename[16];
                 sprintf(pagename, "p%04d.djvu", ++pageno);
                 if (opts.verbose > 1)
-                  DjVuPrintErrorUTF8("%s","-------------------------------------\n");
+                  DjVuPrintErrorUTF8("%s","--------------------\n");
                 // Compress page 
                 goutputpage=ByteStream::create();
                 ByteStream &outputpage=*goutputpage;
                 csepdjvu_page(ibs, goutputpage, gnav, opts);
                 if (opts.verbose) {
                   DjVuPrintErrorUTF8("csepdjvu: %d bytes for page %d",
-                          outputpage.size(), pageno);
+                                     outputpage.size(), pageno);
                   if (arg == "-")
                     DjVuPrintErrorUTF8("%s"," (from stdin)\n");
                   else
-                    DjVuPrintErrorUTF8(" (from file '%s')\n", (const char*)arg);
+                    DjVuPrintErrorUTF8(" (from file '%s')\n", 
+                                       (const char*)arg);
                 }
                 // Insert page into document
                 outputpage.seek(0);
-                doc.insert_file(outputpage, DjVmDir::File::PAGE, pagename, pagename);
+                doc.insert_file(outputpage, DjVmDir::File::PAGE, 
+                                pagename, pagename);
               } while (check_for_another_page(ibs, opts));
             }
         } 
