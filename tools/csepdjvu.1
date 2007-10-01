@@ -211,6 +211,10 @@ before the text was drawn. The drawing operation then moves the
 current point by 
 .IR dx ", and " dy
 pixels.
+When such comments are present, 
+.BR csepdjvu 
+produces a hidden text layer for the 
+corresponding pages.
 .IP "*" 3
 .BI "# L " w "x" h "+" x "+" y " (" url ")"
 .br
@@ -220,8 +224,10 @@ should be associated with area of size
 .IR w "x" h
 at position 
 .IR x "," y "."
-This is not currently supported by 
-.BR csepdjvu .
+When such comments are present, 
+.BR csepdjvu 
+produces pages with an annotation chunk 
+containing the specified hyperlinks.
 .IP "*" 3
 .BI "# B " count " (" string ") (#" pageno ")"
 .br
@@ -234,8 +240,10 @@ Integer
 .I count 
 indicates how many of the following outline entries must
 be attached to the current entry as subentries.
-This is not currently supported by 
-.BR csepdjvu .
+When such comments are present in the first page
+.BR csepdjvu 
+produces an navigation chunk with 
+the specified outline.
 
 .SH CREDITS
 
