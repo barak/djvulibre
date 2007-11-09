@@ -586,7 +586,7 @@ class miniobj_t {
 
   /* --- stuff defined by MINIOBJ_DECLARE --- */
   /* classname: a symbol characterizing this class. */
-  static miniexp_t classname;
+  static const miniexp_t classname;
   /* classof: class name symbol for this object. */
   virtual miniexp_t classof() const = 0;
   /* isa -- tests if this is an instance of <classname>. */
@@ -608,12 +608,12 @@ class miniobj_t {
    the mandatory part of miniobj subclasses. */
 
 #define MINIOBJ_DECLARE(cls, supercls, name) \
-  public: static miniexp_t classname; \
+  public: static const miniexp_t classname; \
           virtual miniexp_t classof() const; \
           virtual bool isa(miniexp_t) const; 
 
 #define MINIOBJ_IMPLEMENT(cls, supercls, name)\
-  miniexp_t cls::classname = miniexp_symbol(name);\
+  const miniexp_t cls::classname = miniexp_symbol(name);\
   miniexp_t cls::classof() const {\
     return cls::classname; }\
   bool cls::isa(miniexp_t n) const {\

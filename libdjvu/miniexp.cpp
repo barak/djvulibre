@@ -672,7 +672,7 @@ miniobj_t::~miniobj_t()
 {
 }
 
-miniexp_t miniobj_t::classname = 0;
+const miniexp_t miniobj_t::classname = 0;
 
 bool
 miniobj_t::isa(miniexp_t) const
