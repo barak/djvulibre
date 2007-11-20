@@ -129,6 +129,7 @@ binary-arch: build install
 	dh_installman
 	dh_installinfo
 	dh_installchangelogs
+	-dh_icons		# hyphen protects pre-dh_icons systems like etch
 	dh_link
 	dh_strip
 	dh_compress --exclude=.djvu
