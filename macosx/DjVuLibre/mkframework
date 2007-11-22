@@ -22,7 +22,9 @@ DJVU_XMLTOOLS = djvutoxml djvuxmlparser
 
 DJVU_XMLMAN1PAGES = djvuxml
 
-DESTDIR = ${BUILD_DIR}/${BUILD_STYLE}/DjVuLibre.framework/Versions/Current
+PDIR = ${BUILT_PRODUCTS_DIR}
+
+DESTDIR = ${PDIR}/DjVuLibre.framework/Versions/Current
 prefix = 
 bindir = ${prefix}/bin
 mandir = ${prefix}/man
@@ -32,13 +34,13 @@ all: install-bin install-man
 install-bin:
 	${INSTALL} -d ${DESTDIR}${bindir}
 	for n in ${DJVU_TOOLS} ; do \
-          ${INSTALL_PROGRAM} -m 0755 ${BUILD_DIR}/${BUILD_STYLE}/$$n ${DESTDIR}${bindir} \
+          ${INSTALL_PROGRAM} -m 0755 ${PDIR}/$$n ${DESTDIR}${bindir} \
           || exit ; done
 	for n in ${DJVU_TOOLSCRIPTS} ; do \
           ${INSTALL_PROGRAM} -m 0755 ${srcdir}/tools/$$n ${DESTDIR}${bindir} \
           || exit ; done
 	for n in ${DJVU_XMLTOOLS} ; do \
-          ${INSTALL_PROGRAM} -m 0755 ${BUILD_DIR}/${BUILD_STYLE}/$$n ${DESTDIR}${bindir} \
+          ${INSTALL_PROGRAM} -m 0755 ${PDIR}/$$n ${DESTDIR}${bindir} \
           || exit ; done
 
 install-man:

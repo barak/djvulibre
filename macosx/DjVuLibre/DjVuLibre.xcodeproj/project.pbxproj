@@ -89,6 +89,11 @@
 /* End PBXAggregateTarget section */
 
 /* Begin PBXBuildFile section */
+		254784610CF51C5B00A6CE45 /* libjpeg.62.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 254784600CF51C5B00A6CE45 /* libjpeg.62.dylib */; };
+		254784680CF51E1A00A6CE45 /* libtiff.3.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 254784670CF51E1A00A6CE45 /* libtiff.3.dylib */; };
+		254784690CF51E1A00A6CE45 /* libtiff.3.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 254784670CF51E1A00A6CE45 /* libtiff.3.dylib */; };
+		25D4AA0C0CF52B570061BED8 /* libdjvulibre_static.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 41C111E30AB5292400411F5B /* libdjvulibre_static.a */; };
+		25D4AA480CF530000061BED8 /* libjpeg.62.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 254784600CF51C5B00A6CE45 /* libjpeg.62.dylib */; };
 		414A4D070AB938450077A908 /* DjVuLibre.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 41C10D1B0AB2956C00411F5B /* DjVuLibre.framework */; };
 		414A4D080AB938520077A908 /* DjVuLibre.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 41C10D1B0AB2956C00411F5B /* DjVuLibre.framework */; };
 		414A4D090AB938800077A908 /* DjVuLibre.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 41C10D1B0AB2956C00411F5B /* DjVuLibre.framework */; };
@@ -262,11 +267,17 @@
 		41C1128B0AB5301C00411F5B /* CoreFoundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 41C112880AB5301C00411F5B /* CoreFoundation.framework */; };
 		41C1128C0AB5301C00411F5B /* CoreServices.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 41C112890AB5301C00411F5B /* CoreServices.framework */; };
 		41C1128D0AB5301C00411F5B /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 41C1128A0AB5301C00411F5B /* Foundation.framework */; };
-		41C112910AB5304B00411F5B /* libdjvulibre.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 41C112900AB5304B00411F5B /* libdjvulibre.a */; };
 		41C112C30AB5381A00411F5B /* libiconv.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 41C112C20AB5381A00411F5B /* libiconv.dylib */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
+		25D4A9FE0CF52B1A0061BED8 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 41C10D090AB294CB00411F5B /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 41C111E20AB5292400411F5B /* Static Library */;
+			remoteInfo = "Static Library";
+		};
 		414A4D3B0AB93B4E0077A908 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = 41C10D090AB294CB00411F5B /* Project object */;
@@ -321,7 +332,7 @@
 			containerPortal = 41C10D090AB294CB00411F5B /* Project object */;
 			proxyType = 1;
 			remoteGlobalIDString = 41AF933D0AB8C8E700771123;
-			remoteInfo = cpaldvju;
+			remoteInfo = cpaldjvu;
 		};
 		41AF93680AB8C9BE00771123 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
@@ -603,16 +614,11 @@
 			remoteGlobalIDString = 41AF94550AB8E23E00771123;
 			remoteInfo = xmtools;
 		};
-		41C112850AB52FB300411F5B /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 41C10D090AB294CB00411F5B /* Project object */;
-			proxyType = 1;
-			remoteGlobalIDString = 41C111E20AB5292400411F5B;
-			remoteInfo = "Static Library";
-		};
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		254784600CF51C5B00A6CE45 /* libjpeg.62.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libjpeg.62.dylib; path = /opt/local/lib/libjpeg.62.dylib; sourceTree = "<absolute>"; };
+		254784670CF51E1A00A6CE45 /* libtiff.3.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libtiff.3.dylib; path = /opt/local/lib/libtiff.3.dylib; sourceTree = "<absolute>"; };
 		414A4CC00AB927670077A908 /* mkframework */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.sh; path = mkframework; sourceTree = "<group>"; };
 		414A4D520AB940C70077A908 /* ReadMe.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = ReadMe.txt; path = ../ReadMe.txt; sourceTree = "<group>"; };
 		414A4D7D0AB946E30077A908 /* MDImporterVersion */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = MDImporterVersion; sourceTree = "<group>"; };
@@ -671,7 +677,7 @@
 		41AF930B0AB8C7A100771123 /* debug_tool.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; path = debug_tool.xcconfig; sourceTree = "<group>"; };
 		41AF930C0AB8C7A100771123 /* release_tool.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; path = release_tool.xcconfig; sourceTree = "<group>"; };
 		41AF932F0AB8C89500771123 /* cjb2 */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = cjb2; sourceTree = BUILT_PRODUCTS_DIR; };
-		41AF933E0AB8C8E700771123 /* cpaldvju */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = cpaldvju; sourceTree = BUILT_PRODUCTS_DIR; };
+		41AF933E0AB8C8E700771123 /* cpaldjvu */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = cpaldjvu; sourceTree = BUILT_PRODUCTS_DIR; };
 		41AF93490AB8C91800771123 /* csepdjvu */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = csepdjvu; sourceTree = BUILT_PRODUCTS_DIR; };
 		41AF93580AB8C95600771123 /* ddjvu */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = ddjvu; sourceTree = BUILT_PRODUCTS_DIR; };
 		41AF93630AB8C99B00771123 /* djvm */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = djvm; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -685,7 +691,7 @@
 		41AF94120AB8DA3500771123 /* djvuserve */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = djvuserve; sourceTree = BUILT_PRODUCTS_DIR; };
 		41AF942E0AB8DDB400771123 /* libjb2cmp.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libjb2cmp.a; sourceTree = BUILT_PRODUCTS_DIR; };
 		41AF94600AB8E25B00771123 /* djvutoxml */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = djvutoxml; sourceTree = BUILT_PRODUCTS_DIR; };
-		41AF946D0AB8E2A100771123 /* djvuxmlparser */ = {isa = PBXFileReference; includeInIndex = 0; lastKnownFileType = "compiled.mach-o.executable"; path = djvuxmlparser; sourceTree = BUILT_PRODUCTS_DIR; };
+		41AF946D0AB8E2A100771123 /* djvuxmlparser */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = djvuxmlparser; sourceTree = BUILT_PRODUCTS_DIR; };
 		41AF94830AB8E4FF00771123 /* COPYING */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = COPYING; path = ../../COPYING; sourceTree = SOURCE_ROOT; };
 		41AF94840AB8E4FF00771123 /* COPYRIGHT */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = COPYRIGHT; path = ../../COPYRIGHT; sourceTree = SOURCE_ROOT; };
 		41AF94850AB8E4FF00771123 /* djvulibre.spec */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = djvulibre.spec; path = ../../djvulibre.spec; sourceTree = SOURCE_ROOT; };
@@ -808,7 +814,7 @@
 		41C111200AB4AA9B00411F5B /* debug.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; path = debug.xcconfig; sourceTree = "<group>"; };
 		41C111BA0AB523CF00411F5B /* release.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; path = release.xcconfig; sourceTree = "<group>"; };
 		41C111BB0AB523CF00411F5B /* VersionConfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = VersionConfig; sourceTree = "<group>"; };
-		41C111E30AB5292400411F5B /* libdjvulibre.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libdjvulibre.a; sourceTree = BUILT_PRODUCTS_DIR; };
+		41C111E30AB5292400411F5B /* libdjvulibre_static.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libdjvulibre_static.a; sourceTree = BUILT_PRODUCTS_DIR; };
 		41C112550AB52DF400411F5B /* DjVu.mdimporter */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = DjVu.mdimporter; sourceTree = BUILT_PRODUCTS_DIR; };
 		41C112630AB52E8C00411F5B /* English */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.strings; name = English; path = English.lproj/InfoPlist.strings; sourceTree = "<group>"; };
 		41C112650AB52E8C00411F5B /* English */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.strings; name = English; path = English.lproj/schema.strings; sourceTree = "<group>"; };
@@ -819,7 +825,6 @@
 		41C112880AB5301C00411F5B /* CoreFoundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreFoundation.framework; path = /System/Library/Frameworks/CoreFoundation.framework; sourceTree = "<absolute>"; };
 		41C112890AB5301C00411F5B /* CoreServices.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreServices.framework; path = /System/Library/Frameworks/CoreServices.framework; sourceTree = "<absolute>"; };
 		41C1128A0AB5301C00411F5B /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = /System/Library/Frameworks/Foundation.framework; sourceTree = "<absolute>"; };
-		41C112900AB5304B00411F5B /* libdjvulibre.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libdjvulibre.a; path = ../Debug/libdjvulibre.a; sourceTree = BUILT_PRODUCTS_DIR; };
 		41C112C20AB5381A00411F5B /* libiconv.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libiconv.dylib; path = /usr/lib/libiconv.dylib; sourceTree = "<absolute>"; };
 		41C112DB0AB62B8D00411F5B /* System.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = System.framework; path = /System/Library/Frameworks/System.framework; sourceTree = "<absolute>"; };
 /* End PBXFileReference section */
@@ -847,6 +852,7 @@
 			files = (
 				41AF937E0AB8CF5800771123 /* DjVuLibre.framework in Frameworks */,
 				41AF94370AB8DE2F00771123 /* libjb2cmp.a in Frameworks */,
+				254784680CF51E1A00A6CE45 /* libtiff.3.dylib in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -873,6 +879,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				41AF93810AB8CF6400771123 /* DjVuLibre.framework in Frameworks */,
+				254784690CF51E1A00A6CE45 /* libtiff.3.dylib in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -975,6 +982,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				254784610CF51C5B00A6CE45 /* libjpeg.62.dylib in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -992,8 +1000,9 @@
 				41C1128B0AB5301C00411F5B /* CoreFoundation.framework in Frameworks */,
 				41C1128C0AB5301C00411F5B /* CoreServices.framework in Frameworks */,
 				41C1128D0AB5301C00411F5B /* Foundation.framework in Frameworks */,
-				41C112910AB5304B00411F5B /* libdjvulibre.a in Frameworks */,
 				41C112C30AB5381A00411F5B /* libiconv.dylib in Frameworks */,
+				25D4AA0C0CF52B570061BED8 /* libdjvulibre_static.a in Frameworks */,
+				25D4AA480CF530000061BED8 /* libjpeg.62.dylib in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1105,6 +1114,8 @@
 		41C10D070AB294CB00411F5B = {
 			isa = PBXGroup;
 			children = (
+				254784670CF51E1A00A6CE45 /* libtiff.3.dylib */,
+				254784600CF51C5B00A6CE45 /* libjpeg.62.dylib */,
 				41AF94830AB8E4FF00771123 /* COPYING */,
 				41AF94840AB8E4FF00771123 /* COPYRIGHT */,
 				41AF94850AB8E4FF00771123 /* djvulibre.spec */,
@@ -1123,12 +1134,12 @@
 			isa = PBXGroup;
 			children = (
 				41C10D1B0AB2956C00411F5B /* DjVuLibre.framework */,
-				41C111E30AB5292400411F5B /* libdjvulibre.a */,
+				41C111E30AB5292400411F5B /* libdjvulibre_static.a */,
 				41C112550AB52DF400411F5B /* DjVu.mdimporter */,
 				41AF92740AB83CB100771123 /* bzz */,
 				41AF93040AB8C6D300771123 /* c44 */,
 				41AF932F0AB8C89500771123 /* cjb2 */,
-				41AF933E0AB8C8E700771123 /* cpaldvju */,
+				41AF933E0AB8C8E700771123 /* cpaldjvu */,
 				41AF93490AB8C91800771123 /* csepdjvu */,
 				41AF93580AB8C95600771123 /* ddjvu */,
 				41AF93630AB8C99B00771123 /* djvm */,
@@ -1314,7 +1325,6 @@
 			isa = PBXGroup;
 			children = (
 				41C112C20AB5381A00411F5B /* libiconv.dylib */,
-				41C112900AB5304B00411F5B /* libdjvulibre.a */,
 				41C112880AB5301C00411F5B /* CoreFoundation.framework */,
 				41C112890AB5301C00411F5B /* CoreServices.framework */,
 				41C1128A0AB5301C00411F5B /* Foundation.framework */,
@@ -1418,8 +1428,8 @@
 				41AF94490AB8DEBB00771123 /* PBXTargetDependency */,
 			);
 			name = cpaldjvu;
-			productName = cpaldvju;
-			productReference = 41AF933E0AB8C8E700771123 /* cpaldvju */;
+			productName = cpaldjvu;
+			productReference = 41AF933E0AB8C8E700771123 /* cpaldjvu */;
 			productType = "com.apple.product-type.tool";
 		};
 		41AF93480AB8C91800771123 /* csepdjvu */ = {
@@ -1695,7 +1705,7 @@
 			);
 			name = "Static Library";
 			productName = "Static Library";
-			productReference = 41C111E30AB5292400411F5B /* libdjvulibre.a */;
+			productReference = 41C111E30AB5292400411F5B /* libdjvulibre_static.a */;
 			productType = "com.apple.product-type.library.static";
 		};
 		41C112540AB52DF400411F5B /* DjVu.mdimporter */ = {
@@ -1709,7 +1719,7 @@
 			buildRules = (
 			);
 			dependencies = (
-				41C112860AB52FB300411F5B /* PBXTargetDependency */,
+				25D4A9FF0CF52B1A0061BED8 /* PBXTargetDependency */,
 			);
 			name = DjVu.mdimporter;
 			productName = DjVu.mdimporter;
@@ -1864,7 +1874,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "echo \" \"\necho \"Completing DjVuLibre.framework\"\necho \" \"\n\n# echo \"cd $BUILD_DIR/$BUILD_STYLE; $SOURCE_ROOT/mkframework.sh\"\necho \"cd $SOURCE_ROOT; /usr/bin/make -n -f mkframework\"\ncd $SOURCE_ROOT; /usr/bin/make -f mkframework\n\nexit 0";
+			shellScript = "echo \" \"\necho \"Completing DjVuLibre.framework\"\necho \" \"\n\n# echo \"cd $BUILD_DIR/$BUILD_STYLE; $SOURCE_ROOT/mkframework.sh\"\necho \"cd $SOURCE_ROOT; /usr/bin/make -f mkframework\"\ncd $SOURCE_ROOT; /usr/bin/make -f mkframework\n\nexit 0";
 		};
 /* End PBXShellScriptBuildPhase section */
 
@@ -2157,6 +2167,11 @@
 /* End PBXSourcesBuildPhase section */
 
 /* Begin PBXTargetDependency section */
+		25D4A9FF0CF52B1A0061BED8 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 41C111E20AB5292400411F5B /* Static Library */;
+			targetProxy = 25D4A9FE0CF52B1A0061BED8 /* PBXContainerItemProxy */;
+		};
 		414A4D3C0AB93B4E0077A908 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
 			target = 41C112540AB52DF400411F5B /* DjVu.mdimporter */;
@@ -2397,11 +2412,6 @@
 			target = 41AF94550AB8E23E00771123 /* xmtools */;
 			targetProxy = 41AF94B70AB8E68800771123 /* PBXContainerItemProxy */;
 		};
-		41C112860AB52FB300411F5B /* PBXTargetDependency */ = {
-			isa = PBXTargetDependency;
-			target = 41C111E20AB5292400411F5B /* Static Library */;
-			targetProxy = 41C112850AB52FB300411F5B /* PBXContainerItemProxy */;
-		};
 /* End PBXTargetDependency section */
 
 /* Begin PBXVariantGroup section */
@@ -2545,6 +2555,10 @@
 			baseConfigurationReference = 41AF930B0AB8C7A100771123 /* debug_tool.xcconfig */;
 			buildSettings = {
 				INSTALL_PATH = "$(HOME)/bin";
+				LIBRARY_SEARCH_PATHS = (
+					"$(inherited)",
+					/opt/local/lib,
+				);
 				PRODUCT_NAME = cjb2;
 			};
 			name = Debug;
@@ -2554,6 +2568,10 @@
 			baseConfigurationReference = 41AF930C0AB8C7A100771123 /* release_tool.xcconfig */;
 			buildSettings = {
 				INSTALL_PATH = "$(HOME)/bin";
+				LIBRARY_SEARCH_PATHS = (
+					"$(inherited)",
+					/opt/local/lib,
+				);
 				PRODUCT_NAME = cjb2;
 			};
 			name = Release;
@@ -2572,7 +2590,7 @@
 			baseConfigurationReference = 41AF930C0AB8C7A100771123 /* release_tool.xcconfig */;
 			buildSettings = {
 				INSTALL_PATH = "$(HOME)/bin";
-				PRODUCT_NAME = cpaldvju;
+				PRODUCT_NAME = cpaldjvu;
 			};
 			name = Release;
 		};
@@ -2599,6 +2617,10 @@
 			baseConfigurationReference = 41AF930B0AB8C7A100771123 /* debug_tool.xcconfig */;
 			buildSettings = {
 				INSTALL_PATH = "$(HOME)/bin";
+				LIBRARY_SEARCH_PATHS = (
+					"$(inherited)",
+					/opt/local/lib,
+				);
 				PRODUCT_NAME = ddjvu;
 			};
 			name = Debug;
@@ -2608,6 +2630,10 @@
 			baseConfigurationReference = 41AF930C0AB8C7A100771123 /* release_tool.xcconfig */;
 			buildSettings = {
 				INSTALL_PATH = "$(HOME)/bin";
+				LIBRARY_SEARCH_PATHS = (
+					"$(inherited)",
+					/opt/local/lib,
+				);
 				PRODUCT_NAME = ddjvu;
 			};
 			name = Release;
@@ -2878,6 +2904,8 @@
 			baseConfigurationReference = 41C111200AB4AA9B00411F5B /* debug.xcconfig */;
 			buildSettings = {
 				COPY_PHASE_STRIP = NO;
+				HEADER_SEARCH_PATHS = /opt/local/include;
+				LIBRARY_SEARCH_PATHS = /opt/local/lib;
 			};
 			name = Debug;
 		};
@@ -2886,6 +2914,8 @@
 			baseConfigurationReference = 41C111BA0AB523CF00411F5B /* release.xcconfig */;
 			buildSettings = {
 				COPY_PHASE_STRIP = YES;
+				HEADER_SEARCH_PATHS = /opt/local/include;
+				LIBRARY_SEARCH_PATHS = /opt/local/lib;
 			};
 			name = Release;
 		};
@@ -2897,13 +2927,16 @@
 				GCC_ENABLE_FIX_AND_CONTINUE = YES;
 				GCC_MODEL_TUNING = G5;
 				GCC_OPTIMIZATION_LEVEL = 0;
+				HEADER_SEARCH_PATHS = "${inherited}";
 				INFOPLIST_FILE = "DjVuLibre-Info.plist";
 				INSTALL_PATH = /Library/Frameworks;
+				LIBRARY_SEARCH_PATHS = "$(inherited)";
 				OTHER_LDFLAGS = (
 					"$(VersionLDFLAGS)",
 					"-liconv",
 				);
 				PRODUCT_NAME = DjVuLibre;
+				USER_HEADER_SEARCH_PATHS = "";
 			};
 			name = Debug;
 		};
@@ -2912,13 +2945,16 @@
 			baseConfigurationReference = 41C111BA0AB523CF00411F5B /* release.xcconfig */;
 			buildSettings = {
 				GCC_MODEL_TUNING = G5;
+				HEADER_SEARCH_PATHS = "${inherited}";
 				INFOPLIST_FILE = "DjVuLibre-Info.plist";
 				INSTALL_PATH = /Library/Frameworks;
+				LIBRARY_SEARCH_PATHS = "$(inherited)";
 				OTHER_LDFLAGS = (
 					"$(VersionLDFLAGS)",
 					"-liconv",
 				);
 				PRODUCT_NAME = DjVuLibre;
+				USER_HEADER_SEARCH_PATHS = "";
 			};
 			name = Release;
 		};
@@ -2932,8 +2968,8 @@
 				GCC_MODEL_TUNING = G5;
 				GCC_OPTIMIZATION_LEVEL = 0;
 				INSTALL_PATH = /usr/local/lib;
-				PRODUCT_NAME = djvulibre;
-				STANDARD_C_PLUS_PLUS_LIBRARY_TYPE = static;
+				PRODUCT_NAME = djvulibre_static;
+				STANDARD_C_PLUS_PLUS_LIBRARY_TYPE = dynamic;
 			};
 			name = Debug;
 		};
@@ -2947,8 +2983,8 @@
 				GCC_MODEL_TUNING = G5;
 				INSTALL_PATH = /usr/local/lib;
 				PREBINDING = NO;
-				PRODUCT_NAME = djvulibre;
-				STANDARD_C_PLUS_PLUS_LIBRARY_TYPE = static;
+				PRODUCT_NAME = djvulibre_static;
+				STANDARD_C_PLUS_PLUS_LIBRARY_TYPE = dynamic;
 				ZERO_LINK = NO;
 			};
 			name = Release;
@@ -2961,6 +2997,10 @@
 				GCC_MODEL_TUNING = G5;
 				INFOPLIST_FILE = "DjVu_mdimporter-Info.plist";
 				INSTALL_PATH = /Library/Spotlight;
+				LIBRARY_SEARCH_PATHS = (
+					"$(inherited)",
+					/opt/local/lib,
+				);
 				OTHER_CFLAGS = "-I$(SOURCE_ROOT)/../..";
 				OTHER_LDFLAGS = "";
 				PRODUCT_NAME = DjVu;
@@ -2977,6 +3017,10 @@
 				GCC_MODEL_TUNING = G5;
 				INFOPLIST_FILE = "DjVu_mdimporter-Info.plist";
 				INSTALL_PATH = /Library/Spotlight;
+				LIBRARY_SEARCH_PATHS = (
+					"$(inherited)",
+					/opt/local/lib,
+				);
 				OTHER_CFLAGS = "-I$(SOURCE_ROOT)/../..";
 				OTHER_LDFLAGS = "";
 				PRODUCT_NAME = DjVu;
