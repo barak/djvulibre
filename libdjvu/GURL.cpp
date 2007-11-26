@@ -486,12 +486,14 @@ GURL::operator=(const GURL & url_in)
 GUTF8String
 GURL::protocol(const GUTF8String& url)
 {
-   const char * const url_ptr=url;
-   const char * ptr=url_ptr;
-   for(char c=*ptr;
-     c && (isalnum(c) || c == '+' || c == '-' || c == '.');
-     c=*(++ptr)) EMPTY_LOOP;
-   return(*ptr==colon)?GUTF8String(url_ptr, ptr-url_ptr):GUTF8String();
+  const char * const url_ptr=url;
+  const char * ptr=url_ptr;
+  for(char c=*ptr;
+      c && (isalnum(c) || c == '+' || c == '-' || c == '.');
+      c=*(++ptr)) EMPTY_LOOP;
+  if (ptr[0]==colon && ptr[1]=='/' && ptr[2]=='/')
+    return GUTF8String(url_ptr, ptr-url_ptr);
+  return GUTF8String();
 }
 
 GUTF8String
@@ -1102,7 +1104,7 @@ GURL::encode_reserved(const GUTF8String &gs)
     if ( (ss>='a' && ss<='z') ||
          (ss>='A' && ss<='Z') ||
          (ss>='0' && ss<='9') ||
-         (strchr("$-_.+!*'(),:~=", ss)) ) 
+         (strchr("$-_.+!*'(),~=", ss)) ) 
     {
       *d = ss;
       continue;
