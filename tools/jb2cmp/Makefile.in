@@ -81,6 +81,7 @@ distclean: clean
 ${JB2CMP_A}: ${OBJS}
 	-${RM} 2>/dev/null ${JB2CMP_A}
 	${AR} cr ${JB2CMP_A} ${OBJS}
+	${RANLIB} ${JB2CMP_A}
 
 # Rules
 
