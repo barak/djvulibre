@@ -32,6 +32,7 @@ CC = @CC@
 CXX = @CXX@
 RM = @RM@
 AR = @AR@
+RANLIB = @RANLIB@
 LN_S = @LN_S@
 TOUCH = @TOUCH@
 INSTALL = @INSTALL@
