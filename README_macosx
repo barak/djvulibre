@@ -23,10 +23,9 @@ The commands to install these libraries are
 Then you can run configure
 
 $ ./configure \
- --enable-xmltools \
- CFLAGS="-isysroot /Developer/SDKs/MacOSX10.4u.sdk -arch ppc -arch i386" \
- CXXFLAGS="-isysroot /Developer/SDKs/MacOSX10.4u.sdk -arch ppc -arch i386" \
- LDFLAGS="-Wl,-syslibroot,/Developer/SDKs/MacOSX10.4u.sdk -arch ppc -arch i386"
+   CFLAGS="-arch ppc -arch i386" \
+   CXXFLAGS="-arch ppc -arch i386" \
+   LDFLAGS="-arch ppc -arch i386"
 
 and compile with 
 

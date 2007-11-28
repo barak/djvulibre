@@ -164,10 +164,12 @@ AC_CHECK_FUNCS(sigaction)
 # iconv function might be defined as libiconv in iconv.h
 AC_MSG_CHECKING([for iconv])
 ac_has_iconv=no
+AC_LANG_PUSH(C)
 AC_TRY_LINK([#include "iconv.h"],
             [iconv((iconv_t)0, (char**)0, (size_t*)0, (char**)0, (size_t*)0);],
             [ac_has_iconv=yes])
 AC_MSG_RESULT($ac_has_iconv)
+AC_LANG_POP(C)
 if test x$ac_has_iconv = xyes ; then
     AC_DEFINE(HAVE_ICONV,1,
         [Define to 1 if you have the `iconv' function.])
