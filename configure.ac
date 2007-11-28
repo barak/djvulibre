@@ -25,7 +25,7 @@
 # ----------------------------------------
 
 AC_PREREQ(2.50)
-AC_INIT(djvulibre, 3.5.19)
+AC_INIT(djvulibre, 3.5.20)
 AC_REVISION($Id$)
 AC_CONFIG_AUX_DIR(config)
 AC_CONFIG_SRCDIR(INSTALL)
@@ -128,7 +128,7 @@ AC_CXX_RPO
 # ----------------------------------------
 
 AC_CHECK_LIB(m,sqrt)
-AC_CHECK_LIB(iconv,libiconv)
+AC_CHECK_LIB(iconv,libiconv_open)
 
 # ----------------------------------------
 # Header Files
@@ -158,8 +158,21 @@ AC_FUNC_MMAP
 AC_FUNC_FORK
 AC_CHECK_FUNCS(wcrtomb iswspace setenv)
 AC_CHECK_FUNCS(putc_unlocked strerror vsnprintf)
-AC_CHECK_FUNCS(gethostname iconv strftime getpwuid)
+AC_CHECK_FUNCS(gethostname strftime getpwuid)
 AC_CHECK_FUNCS(sigaction)
+
+# iconv function might be defined as libiconv in iconv.h
+AC_MSG_CHECKING([for iconv])
+ac_has_iconv=no
+AC_TRY_LINK([#include "iconv.h"],
+            [iconv((iconv_t)0, (char**)0, (size_t*)0, (char**)0, (size_t*)0);],
+            [ac_has_iconv=yes])
+AC_MSG_RESULT($ac_has_iconv)
+if test x$ac_has_iconv = xyes ; then
+    AC_DEFINE(HAVE_ICONV,1,
+        [Define to 1 if you have the `iconv' function.])
+fi
+
 
 # ----------------------------------------
 # Test auxilliary packages
