@@ -323,7 +323,7 @@ MINILISPAPI miniexp_t miniexp_concat(miniexp_t l);
      garbage collection: miniexp_cons(), miniexp_object(),
      miniexp_string(), miniexp_substring(),
      miniexp_concat(), miniexp_pprin(), miniexp_pprint(),
-     miniexp_gc(), and miniexp_release_gc_lock().  A
+     miniexp_gc(), and minilisp_release_gc_lock().  A
      function that does not cause calls to these functions
      does not need to bother about minivars.
 
@@ -345,8 +345,8 @@ MINILISPAPI miniexp_t miniexp_concat(miniexp_t l);
    Wrappers are provided to allocate minivars and to access
    their value. This is somehow inconvenient.  It might be
    more practical to control the garbage collector
-   invocations with <miniexp_acquire_gc_lock()> and
-   <miniexp_release_gc_lock()>...  */
+   invocations with <minilisp_acquire_gc_lock()> and
+   <minilisp_release_gc_lock()>...  */
    
 
 /* minilisp_gc --
