@@ -606,6 +606,10 @@ AC_SUBST(PTHREAD_LIBS)
 AC_SUBST(PTHREAD_CFLAGS)
 AC_MSG_CHECKING([threading model])
 AC_MSG_RESULT($ac_threads)
+if test x$ac_threads = xwin32 ; then
+   AC_CHECK_CXX_OPT([-mthreads],
+	 [THREAD_CFLAGS="-mthreads $THREAD_CFLAGS"])
+fi
 if test $ac_threads != no ; then
    AC_MSG_RESULT([setting THREAD_CFLAGS=$THREAD_CFLAGS])
    AC_MSG_RESULT([setting THREAD_LIBS=$THREAD_LIBS])
