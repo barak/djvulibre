@@ -23,11 +23,15 @@ The commands to install these libraries are
 Then you can run configure
 
 $ ./configure \
+   --with-extra-includes=/usr/include \
+   --with-extra-libraries=/usr/lib \
    CFLAGS="-arch ppc -arch i386" \
    CXXFLAGS="-arch ppc -arch i386" \
    LDFLAGS="-arch ppc -arch i386"
 
-and compile with 
+The --with-extra-include and --with-extra-libraries are here
+to favor system libraries (in /usr) over those that come with macports.
+Then you can compile with 
 
 $ make
 
