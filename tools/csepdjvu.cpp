@@ -1427,6 +1427,7 @@ Comments::make_chunks(IFFByteStream &iff)
         minilisp_outbs = bsb;
         minilisp_puts = minilisp_outfunc;
         minivar_t exor = miniexp_cons(miniexp_symbol("xor"),miniexp_nil);
+        minivar_t zstr = miniexp_string("");
         for (GPosition p = links; p; ++p)
           {
             GP<LnkMark> mark = links[p];
@@ -1439,7 +1440,7 @@ Comments::make_chunks(IFFByteStream &iff)
             area = miniexp_cons(miniexp_number(mark->r.xmin), area);
             area = miniexp_cons(miniexp_symbol("rect"),area);
             expr = miniexp_cons(area, expr);
-            expr = miniexp_cons(miniexp_nil, expr);
+            expr = miniexp_cons(zstr, expr);
             expr = miniexp_cons(url, expr);
             expr = miniexp_cons(miniexp_symbol("maparea"), expr);
             miniexp_pprint(expr, 72);
