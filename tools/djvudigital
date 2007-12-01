@@ -270,7 +270,7 @@ do
           gsarg0=" -dBgSubsample=`getarg $n` $gsarg0"
           ;;
       --bg-slices=*)
-          csepargs=" -q`getarg $n` $csepargs"
+          csepargs=" -q `getarg $n` $csepargs"
           ;;
       --fg-colors=*)
           gsarg0=" -dFgColors=`getarg $n` $gsarg0"
