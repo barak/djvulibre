@@ -220,8 +220,8 @@ main(int argc, char **argv)
   int i;
   int optc = 0;
   char **optv;
-  char *infile = 0;
-  char *outfile = 0;
+  const char *infile = 0;
+  const char *outfile = 0;
   FILE *fout;
 
   /* Sort options */

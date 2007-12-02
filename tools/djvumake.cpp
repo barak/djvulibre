@@ -398,7 +398,7 @@ create_info_chunk(IFFByteStream &iff, GArray<GUTF8String> &argv)
 // -- Create MMR mask chunk
 
 void 
-create_mmr_chunk(IFFByteStream &iff, char *chkid, const GURL &url)
+create_mmr_chunk(IFFByteStream &iff, const char *chkid, const GURL &url)
 {
   analyze_mmr_chunk(url);
   g().mmrstencil->seek(0);
@@ -411,7 +411,7 @@ create_mmr_chunk(IFFByteStream &iff, char *chkid, const GURL &url)
 // -- Create JB2 mask chunk
 
 void 
-create_jb2_chunk(IFFByteStream &iff, const char * const chkid, const GURL &url)
+create_jb2_chunk(IFFByteStream &iff, const char *chkid, const GURL &url)
 {
   analyze_jb2_chunk(url);
   g().jb2stencil->seek(0);
@@ -424,7 +424,7 @@ create_jb2_chunk(IFFByteStream &iff, const char * const chkid, const GURL &url)
 // -- Create inclusion chunk
 
 void 
-create_incl_chunk(IFFByteStream &iff, char *chkid, const char *fileid)
+create_incl_chunk(IFFByteStream &iff, const char *chkid, const char *fileid)
 {
   iff.put_chunk("INCL");
   iff.write(fileid, strlen(fileid));
@@ -462,7 +462,7 @@ struct SecondaryHeader {
 // -- Create and check FG44 chunk
 
 void 
-create_fg44_chunk(IFFByteStream &iff, char *ckid, const GURL &url)
+create_fg44_chunk(IFFByteStream &iff, const char *ckid, const GURL &url)
 {
   GP<ByteStream> gbs=ByteStream::create(url,"rb");
   GP<IFFByteStream> gbsi=IFFByteStream::create(gbs);
@@ -508,7 +508,7 @@ create_fg44_chunk(IFFByteStream &iff, char *ckid, const GURL &url)
 // -- Create and check BG44 chunk
 
 void 
-create_bg44_chunk(IFFByteStream &iff, char *ckid, GUTF8String filespec)
+create_bg44_chunk(IFFByteStream &iff, const char *ckid, GUTF8String filespec)
 {
   static GP<IFFByteStream> bg44iff;
   if (! bg44iff)
@@ -699,7 +699,8 @@ main(int argc, char **argv)
             }
           else if (!dargv[i].cmp("Smmr=",5))
             {
-              create_mmr_chunk(iff, "Smmr", GURL::Filename::UTF8(5+(const char *)dargv[i]));
+              create_mmr_chunk(iff, "Smmr", 
+			       GURL::Filename::UTF8(5+(const char *)dargv[i]));
               if (flag_contains_stencil)
                 DjVuPrintErrorUTF8("%s","djvumake: duplicate stencil chunk\n");
               flag_contains_stencil = 1;
@@ -708,7 +709,8 @@ main(int argc, char **argv)
             {
               if (flag_contains_fg)
                 DjVuPrintErrorUTF8("%s","djvumake: duplicate 'FGxx' chunk\n");
-              create_fg44_chunk(iff, "FG44", GURL::Filename::UTF8(5+(const char *)dargv[i]));
+              create_fg44_chunk(iff, "FG44", 
+				GURL::Filename::UTF8(5+(const char *)dargv[i]));
             }
           else if (!dargv[i].cmp("BG44=",5))
             {

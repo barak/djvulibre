@@ -193,7 +193,7 @@ inform(ddjvu_page_t *page, int pageno)
 {
   if (flag_verbose)
     {
-      char *desctype;
+      const char *desctype;
       char *description = ddjvu_page_get_long_description(page);
       ddjvu_page_type_t type = ddjvu_page_get_type(page);
       fprintf(stderr,i18n("\n-------- page %d -------\n"), pageno);
@@ -549,7 +549,8 @@ dopage(int pageno)
 void
 parse_pagespec(const char *s, int max_page, void (*dopage)(int))
 {
-  static char *err = I18N("invalid page specification: %s");
+  static const char *err = 
+    I18N("invalid page specification: %s");
   int spec = 0;
   int both = 1;
   int start_page = 1;
@@ -618,7 +619,8 @@ parse_pagespec(const char *s, int max_page, void (*dopage)(int))
 void
 parse_geometry(const char *s, ddjvu_rect_t *r)
 {
-  static char *fmt = I18N("syntax error in geometry specification: %s");
+  static const char *fmt = 
+    I18N("syntax error in geometry specification: %s");
   char *curptr = (char*) s;
   char *endptr;
 
@@ -690,11 +692,16 @@ usage()
 int 
 parse_option(int argc, char **argv, int i)
 {
-  static char *errarg = I18N("option '-%s' needs no argument.");
-  static char *errnoarg = I18N("option '-%s' needs an argument.");
-  static char *errbadarg = I18N("valid arguments for option '-%s' %s.");
-  static char *errdupl= I18N("option '%s' specified multiple times.");
-  static char *errconfl = I18N("option '%s' conflicts with another option.");
+  static const char *errarg = 
+    I18N("option '-%s' needs no argument.");
+  static const char *errnoarg = 
+    I18N("option '-%s' needs an argument.");
+  static const char *errbadarg = 
+    I18N("valid arguments for option '-%s' %s.");
+  static const char *errdupl = 
+    I18N("option '%s' specified multiple times.");
+  static const char *errconfl = 
+    I18N("option '%s' conflicts with another option.");
   
   char buf[32];
   const char *s = argv[i];

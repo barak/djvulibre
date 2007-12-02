@@ -280,8 +280,8 @@ ParsingByteStream::get_utf8_token(bool skipseparator, bool compat)
                 }
               else 
                 {
-                  char *tr1 = "tnrbfva";
-                  char *tr2 = "\t\n\r\b\f\013\007";
+                  const char *tr1 = "tnrbfva";
+                  const char *tr2 = "\t\n\r\b\f\013\007";
                   { // extra nesting for windows
                     for (int i=0; tr1[i]; i++)
                     {
@@ -425,8 +425,8 @@ print_c_string(const char *data, int length,
       else
         {
           char buf[5];
-          static char *tr1 = "\"\\tnrbf";
-          static char *tr2 = "\"\\\t\n\r\b\f";
+          static const char *tr1 = "\"\\tnrbf";
+          static const char *tr2 = "\"\\\t\n\r\b\f";
           sprintf(buf,"\\%03o", (int)(((unsigned char*)data)[0]));
           { // extra nesting for windows
             for (int i=0; tr2[i]; i++)
@@ -1123,7 +1123,7 @@ command_set_meta(ParsingByteStream &pbs)
 
 struct  zone_names_struct
 { 
-  char *name;
+  const char *name;
   DjVuTXT::ZoneType ztype;
   char separator;
 };
