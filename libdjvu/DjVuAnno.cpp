@@ -243,8 +243,8 @@ GLObject::print(ByteStream & str, int compact, int indent, int * cur_pos) const
            else 
              {
                char buf[8];
-               static char *tr1 = "\"\\tnrbf";
-               static char *tr2 = "\"\\\t\n\r\b\f";
+               static const char *tr1 = "\"\\tnrbf";
+               static const char *tr2 = "\"\\\t\n\r\b\f";
                sprintf(buf,"\\%03o", (int)(((unsigned char*)data)[span]));
                for (int i=0; tr2[i]; i++)
                  if (data[span] == tr2[i])
@@ -474,8 +474,8 @@ GLParser::get_token(const char * & start)
                  }
                else
                  {
-                   static char *tr1 = "tnrbfva";
-                   static char *tr2 = "\t\n\r\b\f\013\007";
+                   static const char *tr1 = "tnrbfva";
+                   static const char *tr2 = "\t\n\r\b\f\013\007";
                    for (int i=0; tr1[i]; i++)
                      if (c == tr1[i])
                        c = tr2[i];

@@ -550,8 +550,8 @@ typedef void minilisp_mark_t(miniexp_t *pp);
 /* minivar_t --
    A class for protected garbage collector variables. */
 
-MINILISPAPI 
-class minivar_t 
+class MINILISPAPI 
+minivar_t 
 {
   miniexp_t data;
   minivar_t *next;
@@ -579,8 +579,8 @@ public:
    The base class for c++ objects 
    represented by object expressions. */
 
-MINILISPAPI 
-class miniobj_t {
+class MINILISPAPI 
+miniobj_t {
  public:
   virtual ~miniobj_t();
 

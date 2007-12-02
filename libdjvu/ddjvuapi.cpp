@@ -3458,7 +3458,7 @@ ddjvu_document_get_outline(ddjvu_document_t *document)
 // S-Expressions (text)
 
 static struct zone_names_s {
-  char *name;
+  const char *name;
   DjVuTXT::ZoneType ztype;
   char separator;
 } zone_names[] = {

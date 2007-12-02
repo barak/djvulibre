@@ -793,8 +793,8 @@ print_c_string(const char *s, char *d, bool eightbits)
       if (char_quoted(c, eightbits))
         {
           char letter = 0;
-          static char *tr1 = "\"\\tnrbf";
-          static char *tr2 = "\"\\\t\n\r\b\f";
+          static const char *tr1 = "\"\\tnrbf";
+          static const char *tr2 = "\"\\\t\n\r\b\f";
           { // extra nesting for windows
             for (int i=0; tr2[i]; i++)
               if (c == tr2[i])
@@ -1340,8 +1340,8 @@ read_c_string(int &c)
                   c = d;
                 }
             }
-          static char *tr1 = "tnrbfva";
-          static char *tr2 = "\t\n\r\b\f\013\007";
+          static const char *tr1 = "tnrbfva";
+          static const char *tr2 = "\t\n\r\b\f\013\007";
           { // extra nesting for windows
             for (int i=0; tr1[i]; i++)
               if (c == tr1[i])

@@ -269,7 +269,7 @@ DjVuToPS::DjVuToPS(void)
   DEBUG_MAKE_INDENT(3);
   DEBUG_MSG("Initializing dig2hex[]\n");
   // Creating tables for bin=>text translation
-  static char * dig2hex="0123456789ABCDEF";
+  static const char * dig2hex="0123456789ABCDEF";
   int i;
   for(i=0;i<256;i++)
     {
