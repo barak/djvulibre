@@ -367,6 +367,10 @@ GPBase::~GPBase()
 inline GPEnabled* 
 GPBase::get() const
 {
+#if PARANOID_DEBUG
+  if (ptr && ptr->get_count() <= 0)
+    *(int*)0=0;
+#endif
   return ptr;
 }
 
@@ -413,12 +417,20 @@ GP<TYPE>::operator TYPE* () const
 template <class TYPE> inline TYPE*
 GP<TYPE>::operator->() const
 {
+#if PARANOID_DEBUG
+  if (ptr && ptr->get_count() <= 0)
+    *(int*)0=0;
+#endif
   return (TYPE*) ptr;
 }
 
 template <class TYPE> inline TYPE&
 GP<TYPE>::operator*() const
 {
+#if PARANOID_DEBUG
+  if (ptr && ptr->get_count() <= 0)
+    *(int*)0=0;
+#endif
   return *(TYPE*) ptr;
 }
 

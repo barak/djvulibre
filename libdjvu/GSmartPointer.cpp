@@ -110,6 +110,10 @@ void
 GPEnabled::ref()
 {
   gcsCounter.lock();
+#if PARANOID_DEBUG
+  if (count <= 0)
+    G_THROW( ERR_MSG("GSmartPointer.suspicious") );
+#endif
   count++;
   gcsCounter.unlock();
 }
@@ -118,6 +122,10 @@ void
 GPEnabled::unref()
 {
   gcsCounter.lock();
+#if PARANOID_DEBUG
+  if (count <= 0)
+    G_THROW( ERR_MSG("GSmartPointer.suspicious") );
+#endif
   if (! --count) 
     count = -1;
   gcsCounter.unlock();
