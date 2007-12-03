@@ -3,8 +3,9 @@ djvulibre (3.5.20-1) unstable; urgency=low
   * New upstream release
   * Integrate dh_icons ubuntu-patch (closes: #452109)
   * Add vcs-cvs and homepage fields to debian/control
+  * Policy 3.7.3
 
- -- Barak A. Pearlmutter <bap@debian.org>  Tue, 20 Nov 2007 17:45:05 +0000
+ -- Barak A. Pearlmutter <bap@debian.org>  Mon,  3 Dec 2007 11:20:08 +0000
 
 djvulibre (3.5.19-3) unstable; urgency=low
 
