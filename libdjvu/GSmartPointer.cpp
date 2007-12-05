@@ -154,10 +154,12 @@ GPBase::assign (GPEnabled *nptr)
     {
       GPEnabled *old = ptr;
       ptr = nptr;
-      if (! --old->count) 
-        old->count = -1;
+      int cnt = old->count;
+      if (! --cnt) 
+        cnt = -1;
+      old->count = cnt;
       gcsCounter.unlock();      
-      if (old->count < 0)
+      if (cnt < 0)
         old->destroy();
     }
   else
@@ -180,10 +182,12 @@ GPBase::assign (const GPBase &sptr)
     {
       GPEnabled *old = ptr;
       ptr = sptr.ptr;
-      if (! --old->count) 
-        old->count = -1;
+      int cnt = old->count;
+      if (! --cnt) 
+        cnt = -1;
+      old->count = cnt;
       gcsCounter.unlock();      
-      if (old->count < 0)
+      if (cnt < 0)
         old->destroy();
     }
   else
