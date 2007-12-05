@@ -126,10 +126,12 @@ GPEnabled::unref()
   if (count <= 0)
     G_THROW( ERR_MSG("GSmartPointer.suspicious") );
 #endif
-  if (! --count) 
-    count = -1;
+  int cnt = count;
+  if (! --cnt) 
+    cnt = -1;
+  count = cnt;
   gcsCounter.unlock();
-  if (count < 0)
+  if (cnt < 0)
     destroy();
 }
 
