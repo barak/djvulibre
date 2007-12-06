@@ -59,6 +59,9 @@ clean:
 	rm -f build-stamp  config.status
 	-$(MAKE) distclean
 	dh_clean 
+# work around libtool --mode=clean issue
+	-rm -f xmltools/.libs/{djvutoxml,djvuxmlparser} gui/djview/.libs/djview
+	-rmdir xmltools/.libs gui/djview/.libs
 	-test -r /usr/share/misc/config.sub && \
 	  cp -f /usr/share/misc/config.sub config/config.sub
 	-test -r /usr/share/misc/config.guess && \
