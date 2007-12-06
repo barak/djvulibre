@@ -4,8 +4,9 @@ djvulibre (3.5.20-1) unstable; urgency=low
   * Integrate dh_icons ubuntu-patch (closes: #452109)
   * Add vcs-cvs and homepage fields to debian/control
   * Policy 3.7.3
+  * Upstream fix for filename-with-colon crash (closes: #452947)
 
- -- Barak A. Pearlmutter <bap@debian.org>  Mon,  3 Dec 2007 11:20:08 +0000
+ -- Barak A. Pearlmutter <bap@debian.org>  Thu,  6 Dec 2007 14:30:14 +0000
 
 djvulibre (3.5.19-3) unstable; urgency=low
 
