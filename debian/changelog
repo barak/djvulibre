@@ -1,3 +1,10 @@
+djvulibre (3.5.20-3.rc) unstable; urgency=low
+
+  * As in djview4, disable stripping of binaries by Makefile.in unless
+    INSTALL_PROGRAM="install -s" is used (closes: #436788)
+
+ -- Barak A. Pearlmutter <bap@debian.org>  Thu,  6 Dec 2007 18:13:47 +0000
+
 djvulibre (3.5.20-2) unstable; urgency=low
 
   * Fix innocuous double-build cleaning issue (closes: #424180, #442552)

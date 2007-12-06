@@ -176,7 +176,7 @@ install: install-bin install-man install-data
 install-bin: ${PROGRAM} FORCE
 	${INSTALL} -d ${DESTDIR}${bindir}
 	${LIBTOOL} --mode=install \
-	  ${INSTALL_PROGRAM} -s ${PROGRAM} ${DESTDIR}${bindir}/djview3
+	  ${INSTALL_PROGRAM} ${PROGRAM} ${DESTDIR}${bindir}/djview3
 	cd ${DESTDIR}${bindir} && ${LN_S} djview3 djview || true
 
 install-man: FORCE

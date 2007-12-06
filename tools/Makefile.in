@@ -77,7 +77,7 @@ install-bin: ${PROGRAMS} FORCE
 	${INSTALL} -d ${DESTDIR}${bindir}
 	for n in ${PROGRAMS} ; do \
 	  ${LIBTOOL} --mode=install \
-	    ${INSTALL_PROGRAM} -s $$n ${DESTDIR}${bindir} \
+	    ${INSTALL_PROGRAM} $$n ${DESTDIR}${bindir} \
           || exit ; done
 
 install-scripts: FORCE
