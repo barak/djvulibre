@@ -58,6 +58,7 @@ clean:
 	dh_testdir
 	rm -f build-stamp  config.status
 	-$(MAKE) distclean
+	dh_clean 
 	-test -r /usr/share/misc/config.sub && \
 	  cp -f /usr/share/misc/config.sub config/config.sub
 	-test -r /usr/share/misc/config.guess && \
