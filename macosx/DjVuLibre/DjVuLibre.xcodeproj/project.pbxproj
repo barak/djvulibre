@@ -91,7 +91,6 @@
 /* Begin PBXBuildFile section */
 		254784610CF51C5B00A6CE45 /* libjpeg.62.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 254784600CF51C5B00A6CE45 /* libjpeg.62.dylib */; };
 		254784680CF51E1A00A6CE45 /* libtiff.3.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 254784670CF51E1A00A6CE45 /* libtiff.3.dylib */; };
-		254784690CF51E1A00A6CE45 /* libtiff.3.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 254784670CF51E1A00A6CE45 /* libtiff.3.dylib */; };
 		25BD7D960CF547850047BBB0 /* libiconv.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 41C112C20AB5381A00411F5B /* libiconv.dylib */; };
 		25D4AA0C0CF52B570061BED8 /* libdjvulibre_static.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 41C111E30AB5292400411F5B /* libdjvulibre_static.a */; };
 		25D4AA480CF530000061BED8 /* libjpeg.62.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 254784600CF51C5B00A6CE45 /* libjpeg.62.dylib */; };
@@ -146,6 +145,8 @@
 		41AF94A70AB8E58200771123 /* djvu2spec.djvu in Resources */ = {isa = PBXBuildFile; fileRef = 41AF94870AB8E4FF00771123 /* djvu2spec.djvu */; };
 		41AF94AB0AB8E5AF00771123 /* djvuchanges.txt in Resources */ = {isa = PBXBuildFile; fileRef = 41AF94890AB8E4FF00771123 /* djvuchanges.txt */; };
 		41AF94AC0AB8E5AF00771123 /* lizard2002.djvu in Resources */ = {isa = PBXBuildFile; fileRef = 41AF948A0AB8E4FF00771123 /* lizard2002.djvu */; };
+		41B573880D0A1E480021A107 /* ddjvu.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 4154B96F0AB7C86D00865C24 /* ddjvu.cpp */; };
+		41B5739C0D0A1EF90021A107 /* libdjvulibre_static.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 41C111E30AB5292400411F5B /* libdjvulibre_static.a */; };
 		41C10D980AB296AA00411F5B /* Arrays.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 41C10D260AB296AA00411F5B /* Arrays.cpp */; };
 		41C10D9A0AB296AA00411F5B /* BSByteStream.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 41C10D280AB296AA00411F5B /* BSByteStream.cpp */; };
 		41C10D9C0AB296AA00411F5B /* BSEncodeByteStream.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 41C10D2A0AB296AA00411F5B /* BSEncodeByteStream.cpp */; };
@@ -615,6 +616,13 @@
 			remoteGlobalIDString = 41AF94550AB8E23E00771123;
 			remoteInfo = xmtools;
 		};
+		41B573900D0A1E6C0021A107 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 41C10D090AB294CB00411F5B /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 41C111E20AB5292400411F5B;
+			remoteInfo = "Static Library";
+		};
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
@@ -700,6 +708,7 @@
 		41AF94880AB8E4FF00771123 /* djvu3spec.djvu */ = {isa = PBXFileReference; lastKnownFileType = file; path = djvu3spec.djvu; sourceTree = "<group>"; };
 		41AF94890AB8E4FF00771123 /* djvuchanges.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = djvuchanges.txt; sourceTree = "<group>"; };
 		41AF948A0AB8E4FF00771123 /* lizard2002.djvu */ = {isa = PBXFileReference; lastKnownFileType = file; path = lizard2002.djvu; sourceTree = "<group>"; };
+		41B5738E0D0A1E480021A107 /* ddjvu */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = ddjvu; sourceTree = BUILT_PRODUCTS_DIR; };
 		41C10D1B0AB2956C00411F5B /* DjVuLibre.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = DjVuLibre.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		41C10D1D0AB2956C00411F5B /* DjVuLibre-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.xml; path = "DjVuLibre-Info.plist"; sourceTree = "<group>"; };
 		41C10D260AB296AA00411F5B /* Arrays.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Arrays.cpp; sourceTree = "<group>"; };
@@ -880,7 +889,6 @@
 			buildActionMask = 2147483647;
 			files = (
 				41AF93810AB8CF6400771123 /* DjVuLibre.framework in Frameworks */,
-				254784690CF51E1A00A6CE45 /* libtiff.3.dylib in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -976,6 +984,14 @@
 			buildActionMask = 2147483647;
 			files = (
 				41AF94780AB8E2E300771123 /* DjVuLibre.framework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		41B573890D0A1E480021A107 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				41B5739C0D0A1EF90021A107 /* libdjvulibre_static.a in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1165,6 +1181,7 @@
 				41AF942E0AB8DDB400771123 /* libjb2cmp.a */,
 				41AF94600AB8E25B00771123 /* djvutoxml */,
 				41AF946D0AB8E2A100771123 /* djvuxmlparser */,
+				41B5738E0D0A1E480021A107 /* ddjvu */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -1681,6 +1698,23 @@
 			productReference = 41AF946D0AB8E2A100771123 /* djvuxmlparser */;
 			productType = "com.apple.product-type.tool";
 		};
+		41B573840D0A1E480021A107 /* ddjvu-static */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 41B5738B0D0A1E480021A107 /* Build configuration list for PBXNativeTarget "ddjvu-static" */;
+			buildPhases = (
+				41B573870D0A1E480021A107 /* Sources */,
+				41B573890D0A1E480021A107 /* Frameworks */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				41B573910D0A1E6C0021A107 /* PBXTargetDependency */,
+			);
+			name = "ddjvu-static";
+			productName = ddjvu;
+			productReference = 41B5738E0D0A1E480021A107 /* ddjvu */;
+			productType = "com.apple.product-type.tool";
+		};
 		41C10D1A0AB2956C00411F5B /* DjVuLibre */ = {
 			isa = PBXNativeTarget;
 			buildConfigurationList = 41C10D1F0AB2956D00411F5B /* Build configuration list for PBXNativeTarget "DjVuLibre" */;
@@ -1742,6 +1776,7 @@
 		41C10D090AB294CB00411F5B /* Project object */ = {
 			isa = PBXProject;
 			buildConfigurationList = 41C10D0A0AB294CB00411F5B /* Build configuration list for PBXProject "DjVuLibre" */;
+			compatibilityVersion = "Xcode 2.4";
 			hasScannedForEncodings = 0;
 			mainGroup = 41C10D070AB294CB00411F5B;
 			productRefGroup = 41C10D1C0AB2956C00411F5B /* Products */;
@@ -1774,6 +1809,7 @@
 				41AF946C0AB8E2A100771123 /* djvuxmlparser */,
 				41AF94AE0AB8E66F00771123 /* BuildForDeployment */,
 				414A4D3A0AB93B480077A908 /* Spotlight DMG */,
+				41B573840D0A1E480021A107 /* ddjvu-static */,
 			);
 		};
 /* End PBXProject section */
@@ -2036,6 +2072,14 @@
 			buildActionMask = 2147483647;
 			files = (
 				41AF94730AB8E2C300771123 /* djvuxmlparser.cpp in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		41B573870D0A1E480021A107 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				41B573880D0A1E480021A107 /* ddjvu.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -2422,6 +2466,11 @@
 			target = 41AF94550AB8E23E00771123 /* xmtools */;
 			targetProxy = 41AF94B70AB8E68800771123 /* PBXContainerItemProxy */;
 		};
+		41B573910D0A1E6C0021A107 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 41C111E20AB5292400411F5B /* Static Library */;
+			targetProxy = 41B573900D0A1E6C0021A107 /* PBXContainerItemProxy */;
+		};
 /* End PBXTargetDependency section */
 
 /* Begin PBXVariantGroup section */
@@ -2600,7 +2649,7 @@
 		41AF935D0AB8C97F00771123 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				INSTALL_PATH = "$(HOME)/bin";
+				OTHER_LDFLAGS = "$(VersionLDFLAGS)";
 				PRODUCT_NAME = ddjvu;
 			};
 			name = Debug;
@@ -2856,12 +2905,51 @@
 			};
 			name = Release;
 		};
+		41B5738C0D0A1E480021A107 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				MACOSX_DEPLOYMENT_TARGET = 10.4;
+				OTHER_CFLAGS = (
+					"-DHAVE_CONFIG_H",
+					"-DNDEBUG",
+					"-DTHREADMODEL=POSIXTHREADS",
+					"-I$(SOURCE_ROOT)/../..",
+					"-I/usr/local/include",
+				);
+				OTHER_LDFLAGS = (
+					"$(VersionLDFLAGS)",
+					"-liconv",
+				);
+				PRODUCT_NAME = ddjvu;
+			};
+			name = Debug;
+		};
+		41B5738D0D0A1E480021A107 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				INSTALL_PATH = "$(HOME)/bin";
+				MACOSX_DEPLOYMENT_TARGET = 10.4;
+				OTHER_CFLAGS = (
+					"-DHAVE_CONFIG_H",
+					"-DNDEBUG",
+					"-DTHREADMODEL=POSIXTHREADS",
+					"-I$(SOURCE_ROOT)/../..",
+					"-I/usr/local/include",
+				);
+				OTHER_LDFLAGS = (
+					"$(VersionLDFLAGS)",
+					"-liconv",
+				);
+				PRODUCT_NAME = ddjvu;
+			};
+			name = Release;
+		};
 		41C10D0B0AB294CB00411F5B /* Debug */ = {
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = 41C111200AB4AA9B00411F5B /* debug.xcconfig */;
 			buildSettings = {
-				HEADER_SEARCH_PATHS = /opt/local/include;
-				LIBRARY_SEARCH_PATHS = /opt/local/lib;
+				MACOSX_DEPLOYMENT_TARGET = 10.4;
+				SDKROOT = /Developer/SDKs/MacOSX10.4u.sdk;
 			};
 			name = Debug;
 		};
@@ -2869,8 +2957,8 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = 41C111BA0AB523CF00411F5B /* release.xcconfig */;
 			buildSettings = {
-				HEADER_SEARCH_PATHS = /opt/local/include;
-				LIBRARY_SEARCH_PATHS = /opt/local/lib;
+				MACOSX_DEPLOYMENT_TARGET = 10.4;
+				SDKROOT = /Developer/SDKs/MacOSX10.4u.sdk;
 			};
 			name = Release;
 		};
@@ -2902,6 +2990,13 @@
 			buildSettings = {
 				GCC_OPTIMIZATION_LEVEL = 0;
 				INSTALL_PATH = /usr/local/lib;
+				OTHER_CFLAGS = (
+					"-DHAVE_CONFIG_H",
+					"-DNDEBUG",
+					"-DTHREADMODEL=POSIXTHREADS",
+					"-I$(SOURCE_ROOT)/../..",
+					"-I/usr/local/include",
+				);
 				PRODUCT_NAME = djvulibre_static;
 			};
 			name = Debug;
@@ -2911,6 +3006,13 @@
 			baseConfigurationReference = 41C111BA0AB523CF00411F5B /* release.xcconfig */;
 			buildSettings = {
 				INSTALL_PATH = /usr/local/lib;
+				OTHER_CFLAGS = (
+					"-DHAVE_CONFIG_H",
+					"-DNDEBUG",
+					"-DTHREADMODEL=POSIXTHREADS",
+					"-I$(SOURCE_ROOT)/../..",
+					"-I/usr/local/include",
+				);
 				PRODUCT_NAME = djvulibre_static;
 			};
 			name = Release;
@@ -3149,6 +3251,15 @@
 			buildConfigurations = (
 				41AF94BC0AB8E69D00771123 /* Debug */,
 				41AF94BD0AB8E69D00771123 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Debug;
+		};
+		41B5738B0D0A1E480021A107 /* Build configuration list for PBXNativeTarget "ddjvu-static" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				41B5738C0D0A1E480021A107 /* Debug */,
+				41B5738D0D0A1E480021A107 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Debug;
