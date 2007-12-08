@@ -86,7 +86,9 @@ namespace DJVU {
 
 // ------ STATIC CRITICAL SECTION
 
-static GCriticalSection gcsCounter;
+#define NGCSCOUNTERS 23
+
+static GCriticalSection gcsCounters[NGCSCOUNTERS];
 
 
 // ------ GPENABLED
@@ -109,6 +111,8 @@ GPEnabled::destroy()
 void 
 GPEnabled::ref()
 {
+  GCriticalSection &gcsCounter =
+    gcsCounters[((size_t)this)%NGCSCOUNTERS];
   gcsCounter.lock();
 #if PARANOID_DEBUG
   if (count <= 0)
@@ -121,6 +125,8 @@ GPEnabled::ref()
 void 
 GPEnabled::unref()
 {
+  GCriticalSection &gcsCounter =
+    gcsCounters[((size_t)this)%NGCSCOUNTERS];
   gcsCounter.lock();
 #if PARANOID_DEBUG
   if (count <= 0)
@@ -142,6 +148,8 @@ GPEnabled::unref()
 GPBase&
 GPBase::assign (GPEnabled *nptr)
 {
+  GCriticalSection &gcsCounter =
+    gcsCounters[((size_t)this)%NGCSCOUNTERS];
   gcsCounter.lock();
   if (nptr)
     {
@@ -173,6 +181,8 @@ GPBase::assign (GPEnabled *nptr)
 GPBase&
 GPBase::assign (const GPBase &sptr)
 {
+  GCriticalSection &gcsCounter =
+    gcsCounters[((size_t)this)%NGCSCOUNTERS];
   gcsCounter.lock();
   if (sptr.ptr) 
     {
