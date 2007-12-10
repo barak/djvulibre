@@ -361,6 +361,8 @@ BufferByteStream::read_geometry(GRect &r)
     {
       if (expect(c,"+-"))
         {
+          if (c == '+')
+            expect(c,"-");
           if (! read_integer(x))
             return false;
           if (c == '-')
@@ -368,6 +370,8 @@ BufferByteStream::read_geometry(GRect &r)
         }
       if (expect(c,"+-"))
         {
+          if (c == '+')
+            expect(c,"-");
           if (! read_integer(y))
             return false;
           if (c == '-')
