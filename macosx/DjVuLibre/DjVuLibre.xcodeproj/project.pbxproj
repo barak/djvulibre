@@ -93,7 +93,6 @@
 		254784680CF51E1A00A6CE45 /* libtiff.3.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 254784670CF51E1A00A6CE45 /* libtiff.3.dylib */; };
 		25BD7D960CF547850047BBB0 /* libiconv.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 41C112C20AB5381A00411F5B /* libiconv.dylib */; };
 		25D4AA0C0CF52B570061BED8 /* libdjvulibre_static.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 41C111E30AB5292400411F5B /* libdjvulibre_static.a */; };
-		25D4AA480CF530000061BED8 /* libjpeg.62.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 254784600CF51C5B00A6CE45 /* libjpeg.62.dylib */; };
 		414A4D070AB938450077A908 /* DjVuLibre.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 41C10D1B0AB2956C00411F5B /* DjVuLibre.framework */; };
 		414A4D080AB938520077A908 /* DjVuLibre.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 41C10D1B0AB2956C00411F5B /* DjVuLibre.framework */; };
 		414A4D090AB938800077A908 /* DjVuLibre.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 41C10D1B0AB2956C00411F5B /* DjVuLibre.framework */; };
@@ -1019,7 +1018,6 @@
 				41C1128C0AB5301C00411F5B /* CoreServices.framework in Frameworks */,
 				41C1128D0AB5301C00411F5B /* Foundation.framework in Frameworks */,
 				41C112C30AB5381A00411F5B /* libiconv.dylib in Frameworks */,
-				25D4AA480CF530000061BED8 /* libjpeg.62.dylib in Frameworks */,
 				25D4AA0C0CF52B570061BED8 /* libdjvulibre_static.a in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

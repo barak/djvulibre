@@ -10,10 +10,6 @@ To install:
     /usr/bin/mdimport -r /Library/Spotlight/DjVu.mdimporter
 
 
-The importer is based on the latest stable build of djvulibre--3.5.17 at the
-time of compilation.  It is deployed as a universal binary for ppc and i386
-machines.
-
 Further information on DjVu and DjVuLibre, including source, can be found at
 http://djvulibre.djvuzone.org/.
 
@@ -21,12 +17,23 @@ DjVu.mdimporter and DjVuLibre.framework are maintained by
 Jeff Sickel <jas@corpus-callosum.com>.
 
 
-Version 1.0 metadata imported:
-    kMDItemTextContent
-    kMDItemNumberOfPages
-    kMDItemPixelHeight
-    kMDItemPixelWidth
-    kMDItemPageHeight
-    kMDItemPageWidth
-    kMDItemVersion
-    kMDItemOrientation
+History:
+
+10-Dec-2007 version 1.1
+    built with djvulibre 3.5.19
+    added org.djvu.DjView for eventually roll in with DjView.app
+
+version 1.0
+    The importer is based on the latest stable build of djvulibre--3.5.17 at the
+    time of compilation.  It is deployed as a universal binary for ppc and i386
+    machines.
+
+    metadata imported:
+        kMDItemTextContent
+        kMDItemNumberOfPages
+        kMDItemPixelHeight
+        kMDItemPixelWidth
+        kMDItemPageHeight
+        kMDItemPageWidth
+        kMDItemVersion
+        kMDItemOrientation

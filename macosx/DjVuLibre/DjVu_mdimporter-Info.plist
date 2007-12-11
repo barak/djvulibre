@@ -18,6 +18,7 @@
 			<string>MDImporter</string>
 			<key>LSItemContentTypes</key>
 			<array>
+				<string>org.djvu.DjView</string>
 				<string>org.djvuzone.djvulibre.djvu</string>
 				<string>com.lizardtech.djvu</string>
 				<string>public.djvu</string>
