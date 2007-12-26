@@ -1248,8 +1248,11 @@ ddjvu_document_get_fileinfo_imp(ddjvu_document_t *document, int fileno,
           myinfo.id = (nav) ? (const char *) nav->page_to_name(fileno) : 0;
           myinfo.name = myinfo.title = myinfo.id;
           GP<DjVuFile> file = doc->get_djvu_file(fileno, true);
-          GP<DataPool> pool = (file) ? file->get_init_data_pool() : 0;
-          myinfo.size = (pool) ? pool->get_length() : -1;
+          GP<DataPool> pool; 
+          if (file) 
+            pool = file->get_init_data_pool();
+          if (pool)
+            myinfo.size = pool->get_length();
           memcpy(info, &myinfo, infosz);
           return DDJVU_JOB_OK;
         }
@@ -3336,7 +3339,10 @@ ddjvu_document_save(ddjvu_document_t *document, FILE *output,
           optv += 1;
         }
       // go
-      job->obs = (indirect) ? 0 : ByteStream::create(output, "wb", false);
+      if (indirect)
+        job->obs = ByteStream::create(output, "wb", false);
+      else 
+        job->obs = 0;
       job->start();
     }
   G_CATCH(ex)

@@ -839,6 +839,7 @@ DataPool::~DataPool(void)
     FCPools::get()->del_pool(furl, this);
   }
    
+  GP<DataPool> pool = this->pool;
   {
 	 // Wait until the static_trigger_cb() exits
       GCriticalSectionLock lock(&trigger_lock);
@@ -846,7 +847,6 @@ DataPool::~DataPool(void)
         pool->del_trigger(static_trigger_cb, this);
       del_trigger(static_trigger_cb, this);
   }
-
   if (pool)
   {
       GCriticalSectionLock lock(&triggers_lock);
@@ -984,7 +984,9 @@ DataPool::get_size(int dstart, int dlength) const
       if (dlength<0) return 0;
    }
    
-   if (pool) return pool->get_size(start+dstart, dlength);
+   GP<DataPool> pool = this->pool;
+   if (pool) 
+     return pool->get_size(start+dstart, dlength);
    else if (furl.is_local_file_url())
    {
       if (start+dstart+dlength>length) return length-(start+dstart);
@@ -1121,6 +1123,7 @@ DataPool::get_data(void * buffer, int offset, int sz, int level)
    if (! sz)
      return 0;
    
+   GP<DataPool> pool = this->pool;
    if (pool)
      {
        DEBUG_MSG("DataPool::get_data(): from pool\n");
@@ -1340,6 +1343,7 @@ DataPool::stop(bool only_blocked)
       // thru this DataPool again and will be stopped (DataPool::Stop exception)
       // Others (which entered the master DataPool thru other slave DataPools)
       // will simply continue waiting for their data.
+   GP<DataPool> pool = this->pool;
    if (pool)
    {
 	 // This loop is necessary because there may be another thread, which
@@ -1503,6 +1507,7 @@ DataPool::add_trigger(int tstart, int tlength,
         call_callback(callback, cl_data);
       }else
       {
+         GP<DataPool> pool = this->pool;
 	 if (pool)
 	 {
 	       // We're connected to a DataPool
@@ -1567,6 +1572,7 @@ DataPool::del_trigger(void (* callback)(void *), void * cl_data)
         break;
    }
 
+   GP<DataPool> pool = this->pool;
    if (pool)
      pool->del_trigger(callback, cl_data);
 }
@@ -1592,6 +1598,7 @@ DataPool::trigger_cb(void)
    DEBUG_MSG("DataPool::trigger_cb() called\n");
    DEBUG_MAKE_INDENT(3);
 
+   GP<DataPool> pool = this->pool;
    if (pool)
    {
       // Connected to a pool

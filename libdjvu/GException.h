@@ -162,7 +162,7 @@ namespace DJVU {
     throwing and catching exceptions (see \Ref{GException.h}). These macros
     only deal with exceptions of type #GException#. */
 
-class GException {
+class DJVUAPI GException {
 public:
   enum source_type { GINTERNAL=0, GEXTERNAL, GAPPLICATION, GOTHER };
   /** Constructs a GException.  This constructor is usually called by macro
@@ -258,7 +258,7 @@ private:
 // Compiler supports ANSI C++ exceptions.
 // Defined exception macros accordingly.
 
-class GExceptionHandler {
+class DJVUAPI GExceptionHandler {
 public:
 #ifndef NO_LIBGCC_HOOKS
   static void exthrow(const GException &) no_return;
@@ -287,7 +287,7 @@ public:
 // Compiler does not support ANSI C++ exceptions.
 // Emulate with setjmp/longjmp.
 
-class GExceptionHandler {
+class DJVUAPI GExceptionHandler {
 public:
   jmp_buf jump;
   GExceptionHandler *next;
@@ -324,10 +324,9 @@ public:
 #endif // !CPP_SUPPORTS_EXCEPTIONS
 
 
-inline void
-G_EXTHROW
-(const GException &ex,const char *msg=0,const char *file=0,int line=0,
-  const char *func=0, const GException::source_type source=GException::GINTERNAL)
+inline void G_EXTHROW(const GException &ex,
+   const char *msg=0,const char *file=0,int line=0, const char *func=0,
+   const GException::source_type source=GException::GINTERNAL)
 {
   G_EMTHROW( (msg||file||line||func)?
       GException(msg?msg:ex.get_cause(),
@@ -338,10 +337,9 @@ G_EXTHROW
   :ex);
 }
 
-inline void
-G_EXTHROW
-(const char msg[],const char *file=0,int line=0,const char *func=0,
-  const GException::source_type source=GException::GINTERNAL )
+inline void G_EXTHROW(const char msg[],
+   const char *file=0,int line=0,const char *func=0,
+   const GException::source_type source=GException::GINTERNAL )
 {
   G_EMTHROW(GException(msg,file,line,func,source));
 }
