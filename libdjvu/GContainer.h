@@ -281,14 +281,14 @@ protected:
       { return (void*)( ((T*)base) + n ); }
     // Template based default constructor
     static void init(void* dst, int n) 
-      { T* d = (T*)dst;   while (--n>=0) { new ((void*)d) T; d++; } }
+      { T* d = (T*)dst; while (--n>=0) { new ((void*)d) T; d++; } }
     // Template based copy constructor
     static void copy(void* dst, const void* src, int n, int zap)
-      { T* d = (T*)dst; const T *s = (const T*)src; 
-        while (--n>=0) { new ((void*)d) T(*s); if (zap) { s->T::~T(); }; d++; s++; } }
+      { T* d = (T*)dst; T* s = (T*)src; while (--n>=0) { 
+          new ((void*)d) T(*s); if (zap) { s->~T(); }; d++; s++; } }
     // Template based destructor
     static void fini(void* dst, int n) 
-      { T* d = (T*)dst; while (--n>=0) { d->T::~T(); d++; } }
+      { T* d = (T*)dst; while (--n>=0) { d->~T(); d++; } }
   };
   // --- Base class for list nodes
   struct Node
