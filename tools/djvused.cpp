@@ -1762,7 +1762,7 @@ command_save(void)
   if (!g().doc->can_be_saved())
     verror("cannot save old format (use save-bundled or save-indirect)");
   if (nosave)
-    vprint("save-indirect: not saving anything (-n was specified)");
+    vprint("save: not saving anything (-n was specified)");
   else if (!modified)
     vprint("save: document was not modified");
   else 

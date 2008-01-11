@@ -1969,7 +1969,7 @@ DjVuDocEditor::save_as(const GURL &where, bool bundled)
      doc_url=GURL();
    }else
    {
-     if (djvm_dir->get_files_num()==1)
+     if (djvm_dir->get_files_num()==1 && !djvm_nav)
      {
        // Here 'bundled' has no effect: we will save it as one page.
        DEBUG_MSG("saving one file...\n");
