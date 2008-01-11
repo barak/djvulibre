@@ -247,7 +247,7 @@ main(int argc, char **argv)
       // Decode
       const GURL::Filename::UTF8 url1(dargv[1]);
       GP<DjVuDocument> doc=DjVuDocument::create_wait(url1);
-      if (! doc->wait_for_complete_init())
+      if (! doc->wait_for_complete_init() || ! doc->is_init_ok())
         G_THROW("Decoding failed. Nothing can be done.");        
       GP<DjVuFile> file=doc->get_djvu_file(page_num);
       GP<ByteStream> pibs = file->get_djvu_bytestream(false, false);
