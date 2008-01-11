@@ -704,7 +704,8 @@ main(int argc, char **argv)
       GP<ByteStream> gibs=ByteStream::create(g().pnmurl,"rb");
       ByteStream &ibs=*gibs;
       char prefix[16];
-      if (ibs.readall((void*)prefix, sizeof(prefix)) != sizeof(prefix))
+      memset(prefix, 0, sizeof(prefix));
+      if (ibs.read((void*)prefix, sizeof(prefix)) < 0)
         G_THROW( ERR_MSG("c44.failed_pnm_header") );
 #ifdef DEFAULT_JPEG_TO_HALF_SIZE
       // Default specification for jpeg files

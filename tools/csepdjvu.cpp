@@ -1075,7 +1075,7 @@ read_background(BufferByteStream &bs, int w, int h, int &bgred)
     return 0;
   GP<GPixmap> pix = GPixmap::create(bs);
   // Check background reduction
-  for (bgred=1; bgred<12; bgred++) 
+  for (bgred=1; bgred<=12; bgred++) 
     {
       int subw = (w + bgred - 1) / bgred;
       int subh = (h + bgred - 1) / bgred;
