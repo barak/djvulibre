@@ -2050,6 +2050,12 @@ DjVuDocEditor::save_as(const GURL &where, bool bundled)
        iff.put_chunk("DIRM");
        djvm_dir->encode(giff->get_bytestream());
        iff.close_chunk();
+       if (djvm_nav)
+         {
+           iff.put_chunk("NAVM");
+           djvm_nav->encode(iff.get_bytestream());
+           iff.close_chunk();
+         }
        iff.close_chunk();
        iff.flush();
 
