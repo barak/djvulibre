@@ -4,9 +4,9 @@
 
 The djview3 viewer distributed with 
 djvulibre-3.5 does not support Qt4.
-Use a recent version of Qt3 instead.
+You need a recent version of Qt3 instead.
 
-The djview4 viewer based on Qt4 
-is distributed separately. 
-To compile djview4. you must first install
-the djvulibre library and its header files.
+You can also compile djvulibre without this viewer.
+The djview4 viewer based on Qt4 is distributed separately. 
+To compile djview4. you must first install the 
+djvulibre library and its header files.
