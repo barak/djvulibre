@@ -104,22 +104,38 @@ depends whether the first character is a "#" symbol.
 4- METADATA ANNOTATIONS.
 
 DjVuLibre has introduced metadata annotations a few years ago.
-Metadata entries for each page is represent by key/value pairs
+Metadata entries for each page are represent by key/value pairs
 located in a metadata directive in the annotation chunk.
+Metadata entries for the document are represented similarly
+using the methods described in the next section.
 
 The metadata directive has the form
 
   (metadata ... (key "value") ... )
 
-Each entry is identified by a symbol <key> representing the nature
-of the meta data entry.  Typical keys include 'year', 'booktitle',
-'editor', 'author', etc.  It is suggested to use the same key names
-as the BibTeX bibliography system.  The string <"value"> represents
+Each entry is identified by a symbol <key> 
+representing the nature of the metadata entry.
+The string <"value"> represents
 the value associated with the corresponding key.
 
+Several sets of keys are noteworthy.
+
+* Keys borrowed from the BibTex bibliography system. 
+  These key names are always expressed 
+  in lowercase, such as 'year', 'booktitle', 'editor', 
+  'author', etc.  
+
+* Keys borrowed from the PDF DocInfo.
+  These key names start with an uppercase letter:
+  'Title', 'Author', 'Subject', 'Keywords', 'Creator', 
+  'Producer', 'CreationDate', 'ModDate', 'Trapped'.
+  The values associated with the last three keys
+  should be dates expressed according to RFC 3339.
 
 
-5- ANNOTATIONS FOR THE DOCUMENT.
+
+
+5- DOCUMENT ANNOTATIONS AND METADATA
 
 This scheme provides a simple way to specify metadata for each page.
 But it is often useful to provide metadata that applies to the whole
