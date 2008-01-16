@@ -387,7 +387,7 @@ encoded meta-data value.
 .TP
 .BI "set-meta [" "djvusedmetafile" "]"
 Set the meta-data part of the annotations of the selected component file.
-The remaining part of the annotations is left unchanged
+The remaining part of the annotations is left unchanged.
 The optional argument
 .I djvusedmetafile
 names a file containing the meta-data.
@@ -820,14 +820,19 @@ Define meta-data entries.
 Each entry is identified by a symbol
 .I key
 representing the nature of the meta data entry.
-Typical keys include
-.BR year ", " booktitle ", " editor ", " author ", etc."
-It is suggested to use the same key names as the 
-BibTeX bibliography system.
-String
+The string
 .I value
-represents the value associated
-with the corresponding key.
+represents
+the value associated with the corresponding key.
+Two sets of keys are noteworthy:
+keys borrowed from the BibTex bibliography system,
+and keys borrowed from the PDF DocInfo metadata.
+BibTex keys are always expressed in lowercase, such as
+.BR year ", " booktitle ", " editor ", " author ", etc.."
+DocInfo keys start with an uppercase letter, such as
+.BR Title ", " Author ", " Subject ", " Creator ", "
+.BR Produced ", " CreationDate ", and " ModDate "."
+Dates should always be expressed according to RFC 3339.
 
 .SH LIMITATIONS
 The current version of program 
