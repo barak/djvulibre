@@ -21,6 +21,8 @@
 ddjvu_context_t *ctx;
 ddjvu_document_t *doc;
 
+#pragma mark -
+
 void
 handle(int wait)
 {
@@ -74,7 +76,6 @@ mdfprint(FILE *str, miniexp_t r)
     }
 }
 
-
 #pragma mark -
 /* -----------------------------------------------------------------------------
     Get metadata attributes from file
@@ -90,12 +91,13 @@ Boolean GetMetadataForFile(void* thisInterface,
 {
     Boolean result = NO;
     NSAutoreleasePool *pool = [[NSAutoreleasePool alloc] init];
-    NSProcessInfo *pinfo = [NSProcessInfo processInfo];
-    NSString *path = (NSString *)pathToFile;
-    NSMutableDictionary *dictionary = (NSMutableDictionary *)attributes;
+    NSProcessInfo *pinfo = nil;
+	NSString *path = (NSString *)pathToFile;
+	NSMutableDictionary *dictionary = (NSMutableDictionary *)attributes;
     int npages;
     miniexp_t expr;
-    
+	    
+	pinfo = [NSProcessInfo processInfo];
     if (! (ctx = ddjvu_context_create([[pinfo processName] cStringUsingEncoding:NSASCIIStringEncoding]))) {
         NSLog(@"Cannot create djvu conext for '%@'.", path);
         goto pop;

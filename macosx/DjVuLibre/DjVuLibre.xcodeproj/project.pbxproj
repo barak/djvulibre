@@ -93,6 +93,8 @@
 		254784680CF51E1A00A6CE45 /* libtiff.3.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 254784670CF51E1A00A6CE45 /* libtiff.3.dylib */; };
 		25BD7D960CF547850047BBB0 /* libiconv.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 41C112C20AB5381A00411F5B /* libiconv.dylib */; };
 		25D4AA0C0CF52B570061BED8 /* libdjvulibre_static.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 41C111E30AB5292400411F5B /* libdjvulibre_static.a */; };
+		413BF6A40D2407820078DB7E /* libdjvulibre.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 413BF6A20D2407820078DB7E /* libdjvulibre.dylib */; };
+		413BF6A50D2407820078DB7E /* libjpeg.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 413BF6A30D2407820078DB7E /* libjpeg.dylib */; };
 		414A4D070AB938450077A908 /* DjVuLibre.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 41C10D1B0AB2956C00411F5B /* DjVuLibre.framework */; };
 		414A4D080AB938520077A908 /* DjVuLibre.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 41C10D1B0AB2956C00411F5B /* DjVuLibre.framework */; };
 		414A4D090AB938800077A908 /* DjVuLibre.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 41C10D1B0AB2956C00411F5B /* DjVuLibre.framework */; };
@@ -269,6 +271,14 @@
 		41C1128C0AB5301C00411F5B /* CoreServices.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 41C112890AB5301C00411F5B /* CoreServices.framework */; };
 		41C1128D0AB5301C00411F5B /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 41C1128A0AB5301C00411F5B /* Foundation.framework */; };
 		41C112C30AB5381A00411F5B /* libiconv.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 41C112C20AB5381A00411F5B /* libiconv.dylib */; };
+		41F2923D0D2240D3009C352F /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = 41C112620AB52E8C00411F5B /* InfoPlist.strings */; };
+		41F2923E0D2240D3009C352F /* schema.strings in Resources */ = {isa = PBXBuildFile; fileRef = 41C112640AB52E8C00411F5B /* schema.strings */; };
+		41F2923F0D2240D3009C352F /* schema.xml in Resources */ = {isa = PBXBuildFile; fileRef = 41C112690AB52E8C00411F5B /* schema.xml */; };
+		41F292410D2240D3009C352F /* GetMetadataForFile.m in Sources */ = {isa = PBXBuildFile; fileRef = 41C112660AB52E8C00411F5B /* GetMetadataForFile.m */; };
+		41F292420D2240D3009C352F /* main.c in Sources */ = {isa = PBXBuildFile; fileRef = 41C112680AB52E8C00411F5B /* main.c */; };
+		41F292440D2240D3009C352F /* CoreFoundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 41C112880AB5301C00411F5B /* CoreFoundation.framework */; };
+		41F292450D2240D3009C352F /* CoreServices.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 41C112890AB5301C00411F5B /* CoreServices.framework */; };
+		41F292460D2240D3009C352F /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 41C1128A0AB5301C00411F5B /* Foundation.framework */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -627,6 +637,8 @@
 /* Begin PBXFileReference section */
 		254784600CF51C5B00A6CE45 /* libjpeg.62.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libjpeg.62.dylib; path = /opt/local/lib/libjpeg.62.dylib; sourceTree = "<absolute>"; };
 		254784670CF51E1A00A6CE45 /* libtiff.3.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libtiff.3.dylib; path = /opt/local/lib/libtiff.3.dylib; sourceTree = "<absolute>"; };
+		413BF6A20D2407820078DB7E /* libdjvulibre.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libdjvulibre.dylib; path = /Applications/Apps/Utilities/DjView.app/Contents/lib/libdjvulibre.dylib; sourceTree = "<absolute>"; };
+		413BF6A30D2407820078DB7E /* libjpeg.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libjpeg.dylib; path = /Applications/Apps/Utilities/DjView.app/Contents/lib/libjpeg.dylib; sourceTree = "<absolute>"; };
 		414A4CC00AB927670077A908 /* mkframework */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.sh; path = mkframework; sourceTree = "<group>"; };
 		414A4D520AB940C70077A908 /* ReadMe.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = ReadMe.txt; path = ../ReadMe.txt; sourceTree = "<group>"; };
 		414A4D7D0AB946E30077A908 /* MDImporterVersion */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = MDImporterVersion; sourceTree = "<group>"; };
@@ -836,6 +848,8 @@
 		41C1128A0AB5301C00411F5B /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = /System/Library/Frameworks/Foundation.framework; sourceTree = "<absolute>"; };
 		41C112C20AB5381A00411F5B /* libiconv.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libiconv.dylib; path = /usr/lib/libiconv.dylib; sourceTree = "<absolute>"; };
 		41C112DB0AB62B8D00411F5B /* System.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = System.framework; path = /System/Library/Frameworks/System.framework; sourceTree = "<absolute>"; };
+		41F2924C0D2240D3009C352F /* DjVu.mdimporter */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = DjVu.mdimporter; sourceTree = BUILT_PRODUCTS_DIR; };
+		41F2924E0D2240D3009C352F /* DjVu_mdimporter-Info copy.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "DjVu_mdimporter-Info copy.plist"; sourceTree = SOURCE_ROOT; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -991,6 +1005,8 @@
 			buildActionMask = 2147483647;
 			files = (
 				41B5739C0D0A1EF90021A107 /* libdjvulibre_static.a in Frameworks */,
+				413BF6A40D2407820078DB7E /* libdjvulibre.dylib in Frameworks */,
+				413BF6A50D2407820078DB7E /* libjpeg.dylib in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1019,6 +1035,16 @@
 				41C1128D0AB5301C00411F5B /* Foundation.framework in Frameworks */,
 				41C112C30AB5381A00411F5B /* libiconv.dylib in Frameworks */,
 				25D4AA0C0CF52B570061BED8 /* libdjvulibre_static.a in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		41F292430D2240D3009C352F /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				41F292440D2240D3009C352F /* CoreFoundation.framework in Frameworks */,
+				41F292450D2240D3009C352F /* CoreServices.framework in Frameworks */,
+				41F292460D2240D3009C352F /* Foundation.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1180,6 +1206,7 @@
 				41AF94600AB8E25B00771123 /* djvutoxml */,
 				41AF946D0AB8E2A100771123 /* djvuxmlparser */,
 				41B5738E0D0A1E480021A107 /* ddjvu */,
+				41F2924C0D2240D3009C352F /* DjVu.mdimporter */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -1343,6 +1370,7 @@
 				41C112640AB52E8C00411F5B /* schema.strings */,
 				41C112670AB52E8C00411F5B /* DjVu_mdimporter-Info.plist */,
 				41C112690AB52E8C00411F5B /* schema.xml */,
+				41F2924E0D2240D3009C352F /* DjVu_mdimporter-Info copy.plist */,
 			);
 			name = Resources;
 			sourceTree = "<group>";
@@ -1350,6 +1378,8 @@
 		41C112870AB52FDC00411F5B /* External Frameworks and Libraries */ = {
 			isa = PBXGroup;
 			children = (
+				413BF6A20D2407820078DB7E /* libdjvulibre.dylib */,
+				413BF6A30D2407820078DB7E /* libjpeg.dylib */,
 				41C112880AB5301C00411F5B /* CoreFoundation.framework */,
 				41C112890AB5301C00411F5B /* CoreServices.framework */,
 				41C1128A0AB5301C00411F5B /* Foundation.framework */,
@@ -1750,9 +1780,9 @@
 			productReference = 41C111E30AB5292400411F5B /* libdjvulibre_static.a */;
 			productType = "com.apple.product-type.library.static";
 		};
-		41C112540AB52DF400411F5B /* DjVu.mdimporter */ = {
+		41C112540AB52DF400411F5B /* DjVu.mdimporter Static */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = 41C112570AB52DF400411F5B /* Build configuration list for PBXNativeTarget "DjVu.mdimporter" */;
+			buildConfigurationList = 41C112570AB52DF400411F5B /* Build configuration list for PBXNativeTarget "DjVu.mdimporter Static" */;
 			buildPhases = (
 				41C112510AB52DF400411F5B /* Resources */,
 				41C112520AB52DF400411F5B /* Sources */,
@@ -1763,9 +1793,26 @@
 			dependencies = (
 				25D4A9FF0CF52B1A0061BED8 /* PBXTargetDependency */,
 			);
-			name = DjVu.mdimporter;
+			name = "DjVu.mdimporter Static";
 			productName = DjVu.mdimporter;
 			productReference = 41C112550AB52DF400411F5B /* DjVu.mdimporter */;
+			productType = "com.apple.product-type.bundle";
+		};
+		41F292390D2240D3009C352F /* DjVu.mdimporter Dynamic */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 41F292490D2240D3009C352F /* Build configuration list for PBXNativeTarget "DjVu.mdimporter Dynamic" */;
+			buildPhases = (
+				41F2923C0D2240D3009C352F /* Resources */,
+				41F292400D2240D3009C352F /* Sources */,
+				41F292430D2240D3009C352F /* Frameworks */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = "DjVu.mdimporter Dynamic";
+			productName = DjVu.mdimporter;
+			productReference = 41F2924C0D2240D3009C352F /* DjVu.mdimporter */;
 			productType = "com.apple.product-type.bundle";
 		};
 /* End PBXNativeTarget section */
@@ -1784,7 +1831,8 @@
 				41AF91880AB7DE3300771123 /* mkconfig */,
 				41C10D1A0AB2956C00411F5B /* DjVuLibre */,
 				41C111E20AB5292400411F5B /* Static Library */,
-				41C112540AB52DF400411F5B /* DjVu.mdimporter */,
+				41C112540AB52DF400411F5B /* DjVu.mdimporter Static */,
+				41F292390D2240D3009C352F /* DjVu.mdimporter Dynamic */,
 				41AF942D0AB8DDB400771123 /* jb2cmp */,
 				41AF926B0AB83C7900771123 /* tools */,
 				41AF92730AB83CB100771123 /* bzz */,
@@ -1834,6 +1882,16 @@
 				41C1126D0AB52E8C00411F5B /* InfoPlist.strings in Resources */,
 				41C1126E0AB52E8C00411F5B /* schema.strings in Resources */,
 				41C112720AB52E8C00411F5B /* schema.xml in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		41F2923C0D2240D3009C352F /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				41F2923D0D2240D3009C352F /* InfoPlist.strings in Resources */,
+				41F2923E0D2240D3009C352F /* schema.strings in Resources */,
+				41F2923F0D2240D3009C352F /* schema.xml in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -2216,6 +2274,15 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		41F292400D2240D3009C352F /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				41F292410D2240D3009C352F /* GetMetadataForFile.m in Sources */,
+				41F292420D2240D3009C352F /* main.c in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 /* End PBXSourcesBuildPhase section */
 
 /* Begin PBXTargetDependency section */
@@ -2226,7 +2293,7 @@
 		};
 		414A4D3C0AB93B4E0077A908 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
-			target = 41C112540AB52DF400411F5B /* DjVu.mdimporter */;
+			target = 41C112540AB52DF400411F5B /* DjVu.mdimporter Static */;
 			targetProxy = 414A4D3B0AB93B4E0077A908 /* PBXContainerItemProxy */;
 		};
 		41AF91A20AB7DFFF00771123 /* PBXTargetDependency */ = {
@@ -2451,7 +2518,7 @@
 		};
 		41AF94B40AB8E68800771123 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
-			target = 41C112540AB52DF400411F5B /* DjVu.mdimporter */;
+			target = 41C112540AB52DF400411F5B /* DjVu.mdimporter Static */;
 			targetProxy = 41AF94B30AB8E68800771123 /* PBXContainerItemProxy */;
 		};
 		41AF94B60AB8E68800771123 /* PBXTargetDependency */ = {
@@ -2906,6 +2973,11 @@
 		41B5738C0D0A1E480021A107 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				LIBRARY_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(LIBRARY_SEARCH_PATHS_QUOTED_FOR_TARGET_1)",
+				);
+				LIBRARY_SEARCH_PATHS_QUOTED_FOR_TARGET_1 = "\"$(SYSTEM_APPS_DIR)/Apps/Utilities/DjView.app/Contents/lib\"";
 				MACOSX_DEPLOYMENT_TARGET = 10.4;
 				OTHER_CFLAGS = (
 					"-DHAVE_CONFIG_H",
@@ -2926,6 +2998,11 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				INSTALL_PATH = "$(HOME)/bin";
+				LIBRARY_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(LIBRARY_SEARCH_PATHS_QUOTED_FOR_TARGET_1)",
+				);
+				LIBRARY_SEARCH_PATHS_QUOTED_FOR_TARGET_1 = "\"$(SYSTEM_APPS_DIR)/Apps/Utilities/DjView.app/Contents/lib\"";
 				MACOSX_DEPLOYMENT_TARGET = 10.4;
 				OTHER_CFLAGS = (
 					"-DHAVE_CONFIG_H",
@@ -3038,6 +3115,54 @@
 				INSTALL_PATH = /Library/Spotlight;
 				PRODUCT_NAME = DjVu;
 				STANDARD_C_PLUS_PLUS_LIBRARY_TYPE = static;
+				WRAPPER_EXTENSION = mdimporter;
+				ZERO_LINK = NO;
+			};
+			name = Release;
+		};
+		41F2924A0D2240D3009C352F /* Debug */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = 41C111200AB4AA9B00411F5B /* debug.xcconfig */;
+			buildSettings = {
+				GCC_ENABLE_FIX_AND_CONTINUE = NO;
+				INFOPLIST_FILE = "/Users/jas/Developer/Workarea/sourceforge/djvulibre-3.5/macosx/DjVuLibre/DjVu_mdimporter-Info copy.plist";
+				INSTALL_PATH = /Library/Spotlight;
+				LIBRARY_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(LIBRARY_SEARCH_PATHS_QUOTED_FOR_TARGET_1)",
+				);
+				LIBRARY_SEARCH_PATHS_QUOTED_FOR_TARGET_1 = "\"$(SYSTEM_APPS_DIR)/Apps/Utilities/DjView.app/Contents/lib\"";
+				OTHER_LDFLAGS = (
+					"-weak_library",
+					"$(SYSTEM_APPS_DIR)/Apps/Utilities/DjView.app/Contents/lib/libdjvulibre.15.dylib",
+				);
+				PRODUCT_NAME = DjVu;
+				STANDARD_C_PLUS_PLUS_LIBRARY_TYPE = dynamic;
+				WRAPPER_EXTENSION = mdimporter;
+				ZERO_LINK = NO;
+			};
+			name = Debug;
+		};
+		41F2924B0D2240D3009C352F /* Release */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = 41C111BA0AB523CF00411F5B /* release.xcconfig */;
+			buildSettings = {
+				GCC_ENABLE_FIX_AND_CONTINUE = NO;
+				INFOPLIST_FILE = "/Users/jas/Developer/Workarea/sourceforge/djvulibre-3.5/macosx/DjVuLibre/DjVu_mdimporter-Info copy.plist";
+				INSTALL_PATH = /Library/Spotlight;
+				LIBRARY_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(LIBRARY_SEARCH_PATHS_QUOTED_FOR_TARGET_1)",
+				);
+				LIBRARY_SEARCH_PATHS_QUOTED_FOR_TARGET_1 = "\"$(SYSTEM_APPS_DIR)/Apps/Utilities/DjView.app/Contents/lib\"";
+				OTHER_LDFLAGS = (
+					"-weak_library",
+					djvulibre,
+					"-weak_library",
+					jpeg,
+				);
+				PRODUCT_NAME = DjVu;
+				STANDARD_C_PLUS_PLUS_LIBRARY_TYPE = dynamic;
 				WRAPPER_EXTENSION = mdimporter;
 				ZERO_LINK = NO;
 			};
@@ -3289,11 +3414,20 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Debug;
 		};
-		41C112570AB52DF400411F5B /* Build configuration list for PBXNativeTarget "DjVu.mdimporter" */ = {
+		41C112570AB52DF400411F5B /* Build configuration list for PBXNativeTarget "DjVu.mdimporter Static" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				41C112580AB52DF400411F5B /* Debug */,
 				41C112590AB52DF400411F5B /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Debug;
+		};
+		41F292490D2240D3009C352F /* Build configuration list for PBXNativeTarget "DjVu.mdimporter Dynamic" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				41F2924A0D2240D3009C352F /* Debug */,
+				41F2924B0D2240D3009C352F /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Debug;
