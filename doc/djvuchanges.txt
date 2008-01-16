@@ -128,8 +128,8 @@ Several sets of keys are noteworthy.
 * Keys borrowed from the PDF DocInfo.
   These key names start with an uppercase letter:
   'Title', 'Author', 'Subject', 'Keywords', 'Creator', 
-  'Producer', 'CreationDate', 'ModDate', 'Trapped'.
-  The values associated with the last three keys
+  'Producer', 'Trapped', 'CreationDate', and 'ModDate'.
+  The values associated with the last two keys
   should be dates expressed according to RFC 3339.
 
 
