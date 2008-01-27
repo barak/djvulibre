@@ -88,7 +88,7 @@ class GBitmap;
 
 // this is the base class for using XML to change DjVu Docs.
 
-class lt_XMLParser : public GPEnabled
+class DJVUAPI lt_XMLParser : public GPEnabled
 {
 public:
   class Impl;

@@ -757,7 +757,7 @@ public:
 	     \item For #INDIRECT# documents this is the name of top-level
 	           index file. All document files will be saved into the
 		   save directory where the index file will resize. */
-   virtual void		save_as(const GURL &where, const bool bundled=0);
+   virtual void		save_as(const GURL &where, bool bundled=0);
       //@}
       /** Returns pointer to the internal directory of the document, if it
 	  is in one of the new formats: #BUNDLED# or #INDIRECT#.

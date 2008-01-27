@@ -166,7 +166,7 @@ public:
   friend class GBaseString;
   friend class GUTF8String;
   friend class GNativeString;
-  friend unsigned int hash(const GBaseString &ref);
+  friend DJVUAPI unsigned int hash(const GBaseString &ref);
 
 public:
   // default constructor
@@ -679,7 +679,7 @@ public:
       \Ref{GMap}).  This hash code may be reduced to an arbitrary
       range by computing its remainder modulo the upper bound of
       the range. */
-  friend unsigned int hash(const GBaseString &ref);
+  friend DJVUAPI unsigned int hash(const GBaseString &ref);
   // -- HELPERS
   friend class GStringRep;
 
@@ -873,8 +873,8 @@ public:
   GUTF8String operator+(const GBaseString &s2) const;
   GUTF8String operator+(const GUTF8String &s2) const;
   GUTF8String operator+(const GNativeString &s2) const;
-  GUTF8String operator+(const char    *s2) const;
-  friend GUTF8String operator+(const char    *s1, const GUTF8String &s2);
+  GUTF8String operator+(const char *s2) const;
+  friend DJVUAPI GUTF8String operator+(const char *s1, const GUTF8String &s2);
 
   /** Provides a direct access to the string buffer.  Returns a
       pointer for directly accessing the string buffer.  This pointer
@@ -1037,7 +1037,7 @@ public:
   GNativeString operator+(const GNativeString &s2) const;
   GUTF8String operator+(const GUTF8String &s2) const;
   GNativeString operator+(const char *s2) const;
-  friend GNativeString operator+(const char *s1, const GNativeString &s2);
+  friend DJVUAPI GNativeString operator+(const char *s1, const GNativeString &s2);
 
   /** Initializes a string with a formatted string (as in #printf#).
       The string is re-initialized with the characters generated

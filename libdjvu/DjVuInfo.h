@@ -125,7 +125,7 @@ class GUTF8String;
     chunk is always the first chunk of a DjVu file.
  */
 
-class DjVuInfo : public GPEnabled
+class DJVUAPI DjVuInfo : public GPEnabled
 {
 protected:
   DjVuInfo(void);

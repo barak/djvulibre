@@ -108,7 +108,7 @@ class ByteStream;
     The piece of text associated with each zone is represented by an offset
     and a length describing a segment of a global UTF8 encoded string.  */
 
-class DjVuTXT : public GPEnabled
+class DJVUAPI DjVuTXT : public GPEnabled
 {
 protected:
   DjVuTXT(void) {}
@@ -123,7 +123,7 @@ public:
                   LINE=5, WORD=6, CHARACTER=7 };
   /** Data structure representing document textual components.
       The text structure is represented by a hierarchy of rectangular zones. */
-  class Zone 
+  class DJVUAPI Zone 
   {
   public:
     Zone();
@@ -224,7 +224,7 @@ DjVuTXT::Zone::get_parent(void) const
 }
 
 
-class DjVuText : public GPEnabled
+class DJVUAPI DjVuText : public GPEnabled
 {
 protected:
    DjVuText(void) {}

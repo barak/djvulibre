@@ -100,7 +100,7 @@ namespace DJVU {
 class GURL;
 
 /** Operating System dependent functions. */
-class GOS 
+class DJVUAPI GOS 
 {
  public:
   // -----------------------------------------

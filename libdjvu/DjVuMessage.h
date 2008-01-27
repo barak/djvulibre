@@ -83,7 +83,7 @@ namespace DJVU {
 
 class GURL;
 
-class DjVuMessage : public DjVuMessageLite
+class DJVUAPI DjVuMessage : public DjVuMessageLite
 {
 protected:
   void init(void);

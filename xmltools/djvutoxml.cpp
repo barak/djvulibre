@@ -139,18 +139,6 @@ main(int argc, char * argv[], char *env[])
     flags|=DjVuImage::NOMAP;
   if(notext > 0)
     flags|=DjVuImage::NOTEXT;
-#ifdef DEBUG_SET_LEVEL
-  {
-    static GUTF8String debug=GOS::getenv("DEBUG");
-    if (debug.length())
-    {
-      int level=debug.is_int()?debug.toInt():0;
-      if (level<1) level=1;
-      if (level>32) level=32;
-      DEBUG_SET_LEVEL(level);
-    }
-  }
-#endif
     
   G_TRY
   {

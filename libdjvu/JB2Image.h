@@ -197,7 +197,7 @@ class ByteStream;
     coordinates are relative to the bottom left corner of the image.  Member
     #shapeno# is the subscript of the shape to be rendered.  */
 
-class JB2Blit {
+class DJVUAPI JB2Blit {
 public:
   /** Horizontal coordinate of the blit. */
   unsigned short left;
@@ -214,7 +214,7 @@ public:
     image representing the shape pixels.  Member #parent# is the subscript of
     the parent shape.  */
 
-class JB2Shape
+class DJVUAPI JB2Shape
 { 
 public: 
   /** Subscript of the parent shape.  The parent shape must always be located

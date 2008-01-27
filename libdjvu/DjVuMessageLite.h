@@ -149,7 +149,7 @@ class ByteStream;
     Annex R) and SHOULD NOT BE ASSUMED TO BE ASCII.
   */
 
-class DjVuMessageLite : public GPEnabled
+class DJVUAPI DjVuMessageLite : public GPEnabled
 {
 protected:
   // Constructor:

@@ -85,7 +85,7 @@ class ByteStream;
     This is a list of DjVuBookMarks.
 **/
 
-class DjVmNav : public GPEnabled
+class DJVUAPI DjVmNav : public GPEnabled
 {
 public:
    /** Class \Ref{DjVmNav::DjVuBookMark} represents a entry in the 
@@ -120,7 +120,7 @@ private:
     contains a count of immediate children, a display string and a url.
 **/
 
-class DjVmNav::DjVuBookMark : public GPEnabled
+class DJVUAPI DjVmNav::DjVuBookMark : public GPEnabled
 {
 protected:
   /** Default constructor. */

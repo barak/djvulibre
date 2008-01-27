@@ -370,21 +370,21 @@ public:
   static GUTF8String expand_name(const GUTF8String &filename, const char *fromdirname=0);
 };
 
-class GURL::UTF8 : public GURL
+class DJVUAPI GURL::UTF8 : public GURL
 {
 public:
   UTF8(const GUTF8String &xurl);
   UTF8(const GUTF8String &xurl, const GURL &codebase);
 };
 
-class GURL::Native : public GURL
+class DJVUAPI GURL::Native : public GURL
 {
 public:
   Native(const GNativeString &xurl);
   Native(const GNativeString &xurl, const GURL &codebase);
 };
 
-class GURL::Filename : public GURL
+class DJVUAPI GURL::Filename : public GURL
 {
 public:
   Filename(const GUTF8String &filename);
@@ -393,13 +393,13 @@ public:
   class Native;
 };
 
-class GURL::Filename::UTF8 : public GURL::Filename
+class DJVUAPI GURL::Filename::UTF8 : public GURL::Filename
 {
 public:
   UTF8(const GUTF8String &filename);
 };
 
-class GURL::Filename::Native : public GURL::Filename
+class DJVUAPI GURL::Filename::Native : public GURL::Filename
 {
 public:
   Native(const GNativeString &filename);

@@ -150,7 +150,7 @@ class JB2Image;
     the static member function \Ref{MMRDecoder::decode}.  This
     function internally creates an instance of #MMRDecoder# which
     processes the MMR data scanline by scanline.  */
-class MMRDecoder : public GPEnabled
+class DJVUAPI MMRDecoder : public GPEnabled
 {
 protected:
   MMRDecoder(const int width, const int height);

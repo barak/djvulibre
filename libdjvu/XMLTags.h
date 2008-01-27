@@ -85,7 +85,7 @@ class ByteStream;
 class XMLByteStream;
 class GURL;
 
-class lt_XMLTags : public GPEnabled
+class DJVUAPI lt_XMLTags : public GPEnabled
 {
 protected:
   lt_XMLTags();
