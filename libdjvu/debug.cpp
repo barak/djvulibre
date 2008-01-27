@@ -80,9 +80,6 @@
 
 #ifdef WIN32
 # include <windows.h>  // OutputDebugString
-# ifndef __MINGW32__
-#  include <atlbase.h> // A2CT
-# endif
 #endif 
 
 
@@ -163,12 +160,7 @@ DjVuDebug::format(const char *fmt, ... )
 #ifdef WIN32
       else
         {
-# ifdef __MINGW32__
           OutputDebugStringA((const char *)buffer);
-# else
-          USES_CONVERSION;
-          OutputDebugString(A2CT((const char *)buffer));
-# endif
         }
 #endif
     }

@@ -79,9 +79,6 @@
 # include <tchar.h>
 # include <windows.h>
 # include <winreg.h>
-# ifndef __MINGW32__
-#  include <atlbase.h>
-# endif
 #endif
 #ifdef UNIX
 # include <unistd.h>
@@ -158,22 +155,6 @@ RegOpenReadConfig ( HKEY hParentKey )
   if (RegOpenKeyEx(hParentKey, path, 0,
 		   KEY_READ, &hKey) == ERROR_SUCCESS )
   {
-#ifndef __MINGW32__
-    TCHAR path[1024];
-    TCHAR *szPathValue = path;
-    LPCTSTR lpszEntry = (LPCTSTR &)TEXT("");
-    DWORD dwCount = (sizeof(path)/sizeof(TCHAR))-1;
-    DWORD dwType;
-    LONG lResult = RegQueryValueEx(hKey, lpszEntry, NULL,
-             &dwType, (LPBYTE) szPathValue, &dwCount);
-    RegCloseKey(hKey);
-    if ((lResult == ERROR_SUCCESS))
-    {
-      szPathValue[dwCount] = 0;
-      USES_CONVERSION;
-      retval=GURL::Filename::Native(T2CA(path));
-    }
-#else
     CHAR path[1024];
     CHAR *szPathValue = path;
     LPCSTR lpszEntry = "";
@@ -187,7 +168,6 @@ RegOpenReadConfig ( HKEY hParentKey )
       szPathValue[dwCount] = 0;
       retval=GURL::Filename::Native(path);
     }
-#endif
   } 
   return retval;
 }
@@ -196,18 +176,10 @@ static GURL
 GetModulePath( void )
 {
   const GUTF8String cwd(GOS::cwd());
-#ifndef __MINGW32__
-  TCHAR path[1024];
-  DWORD dwCount = (sizeof(path)/sizeof(TCHAR))-1;
-  GetModuleFileName(0, path, dwCount);
-  USES_CONVERSION;
-  GURL retval=GURL::Filename::Native(T2CA(path)).base();
-#else
   CHAR path[1024];
   DWORD dwCount = (sizeof(path)/sizeof(CHAR))-1;
   GetModuleFileNameA(0, path, dwCount);
   GURL retval=GURL::Filename::Native(path).base();
-#endif
   GOS::cwd(cwd);
   return retval;
 }

@@ -28,11 +28,8 @@
    about the arguments of the script 'configure'.
  
 
-1.3- Using Microsoft Visual Studio
-----------------------------------
+1.3- Using Microsoft Visual C++ Express 2009
+--------------------------------------------
 
-  You might have success using the project files
-  located in the directories 'tools' and 'xmltools'.
-  (note: these files should be located in a global win32 directory instead)
-
+under work,
 
