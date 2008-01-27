@@ -5,14 +5,12 @@
 1.1- Using Microsoft Visual C++ 2008 Express Edition 
 ----------------------------------------------------
 
-Work in progress.
-See win32/djvulibre/djvulibre.sln,
+   See win32/djvulibre/djvulibre.sln,
 
 
 1.2- Using Mingw
 ----------------
 
-   This is now the recommended method for creating windows executables.
    You must first install the mingw compiler and the msys environment.
    See www.mingw.org for more information.
    From the msys shell, run the usual commands 
