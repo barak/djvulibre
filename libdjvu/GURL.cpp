@@ -1817,18 +1817,19 @@ GURL::expand_name(const GUTF8String &xfname, const char *from)
       }
     }
     // Process path components
-    for(;*fname== slash || *fname==backslash;fname++)
-      EMPTY_LOOP;
     while(*fname)
     {
+      for(;*fname== slash || *fname==backslash;fname++)
+        EMPTY_LOOP;
       if (fname[0]== dot )
       {
         if (fname[1]== slash || fname[1]==backslash || !fname[1])
         {
           fname++;
           continue;
-        }else if ((fname[1] == dot)
-          && (fname[2]== slash || fname[2]==backslash || !fname[2]))
+        }
+		else if ((fname[1] == dot)
+                 && (fname[2]== slash || fname[2]==backslash || !fname[2]))
         {
           fname += 2;
           char *back=_tcsrchr(string_buffer,backslash);
@@ -1843,99 +1844,21 @@ GURL::expand_name(const GUTF8String &xfname, const char *from)
           s = string_buffer;
           continue;
         }
-        char* s2=s;//MBCS DBCS
-        for(;*s;s++) 
-          EMPTY_LOOP;
-        char* back = _tcsrchr(s2,backslash);//MBCS DBCS
-        if ((s>string_buffer)&&(*(s-1)!= slash)&&
-            (back == NULL || (back!=NULL && s-1 != back) ))//MBCS DBCS
-        {
-          *s = backslash;
-          s++;
-        }
-        while (*fname && *fname!= slash && *fname!=backslash)
-        {
-          *s = *fname++;
-          if ((size_t)((++s)-string_buffer) > maxlen)
-            G_THROW( ERR_MSG("GURL.big_name") );
-        }
-        *s = 0;
       }
       char* s2=s;//MBCS DBCS
       for(;*s;s++) 
         EMPTY_LOOP;
-      char* back = _tcsrchr(s2,backslash);//MBCS DBCS
-      if ((s>string_buffer)&&(*(s-1)!= slash)
-          &&(back == NULL || (back!=NULL && s-1 != back) ))//MBCS DBCS
-      {
-        *s = backslash;
-        s++;
-      }
+	  if (s > string_buffer && s[-1] != slash && s[-1] != backslash)
+        *s++ = backslash;
       while (*fname && (*fname!= slash) && (*fname!=backslash))
       {
-        *s = *fname++;
-        if ((size_t)((++s)-string_buffer) > maxlen)
+        if (s > string_buffer + maxlen)
           G_THROW( ERR_MSG("GURL.big_name") );
+        *s++ = *fname++;
       }
       *s = 0;
-      for(;(*fname== slash)||(*fname==backslash);fname++)
-        EMPTY_LOOP;
     }
   }
-#elif defined(macintosh) // MACINTOSH implementation
-  strcpy(string_buffer, (const char *)(from?from:GOS::cwd()));
-  
-  if (!GStringRep::cmp(fname, string_buffer,strlen(string_buffer)) || is_file(fname))
-  {
-    strcpy(string_buffer, "");//please don't expand, the logic of filename is chaos.
-  }
-  
-  // Process path components
-  char *s = string_buffer + strlen(string_buffer);
-  if(fname)
-  {
-    for(;fname[0]==colon;fname++)
-      EMPTY_LOOP;
-    while(fname[0])
-    {
-      if (fname[0]== dot )
-      {
-        if (fname[1]==colon || !fname[1])
-        {
-          fname++;
-          continue;
-        }
-        if ((fname[1]== dot )
-          &&(fname[2]==colon || fname[2]==0))
-        {
-          fname +=2;
-          for(;(s>string_buffer+1)&&(*(s-1)==colon);s--)
-            EMPTY_LOOP;
-          for(;(s>string_buffer+1)&&(*(s-1)!=colon);s--)
-            EMPTY_LOOP;
-          continue;
-        }
-      }
-      if ((s==string_buffer)||(*(s-1)!=colon))
-      {
-        *s = colon;
-        s++;
-      }
-      while (*fname!=0 && *fname!=colon)
-      {
-        *s = *fname++;
-        if ((++s)-string_buffer > maxlen)
-          G_THROW( ERR_MSG("GURL.big_name") );
-      }
-      *s = 0;
-      for(;fname[0]==colon;fname++)
-        EMPTY_LOOP;
-    }
-  }
-  for(;(s>string_buffer+1) && (*(s-1)==colon);s--)
-    EMPTY_LOOP;
-  *s = 0;
-  return ((string_buffer[0]==colon)?(string_buffer+1):string_buffer);
 #else
 # error "Define something here for your operating system"
 #endif  

@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="Windows-1252"?>
+<VisualStudioPropertySheet
+	ProjectType="Visual C++"
+	Version="8.00"
+	Name="dirs"
+	>
+	<UserMacro
+		Name="DjvulibreRoot"
+		Value="$(SolutionDir)\..\.."
+	/>
+	<UserMacro
+		Name="ZlibRoot"
+		Value="$(SolutionDir)\..\zlib"
+	/>
+	<UserMacro
+		Name="TiffRoot"
+		Value="$(SolutionDir)\..\tiff"
+	/>
+	<UserMacro
+		Name="JpegRoot"
+		Value="$(SolutionDir)\..\jpeg"
+	/>
+	<UserMacro
+		Name="ZlibDir"
+		Value="$(ZlibRoot)\zlib"
+	/>
+	<UserMacro
+		Name="TiffDir"
+		Value="$(TiffRoot)\tiff\libtiff"
+	/>
+	<UserMacro
+		Name="JpegDir"
+		Value="$(JpegRoot)\jpeg-6b"
+	/>
+</VisualStudioPropertySheet>

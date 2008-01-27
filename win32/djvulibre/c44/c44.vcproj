@@ -21,7 +21,7 @@
 			OutputDirectory="$(SolutionDir)$(ConfigurationName)"
 			IntermediateDirectory="$(ConfigurationName)"
 			ConfigurationType="1"
-			InheritedPropertySheets="..\tools.vsprops;..\warnings.vsprops"
+			InheritedPropertySheets="..\tools.vsprops;..\warnings.vsprops;..\dirs.vsprops"
 			CharacterSet="2"
 			ManagedExtensions="0"
 			>
@@ -94,7 +94,7 @@
 			OutputDirectory="$(SolutionDir)$(ConfigurationName)"
 			IntermediateDirectory="$(ConfigurationName)"
 			ConfigurationType="1"
-			InheritedPropertySheets="..\tools.vsprops;..\warnings.vsprops"
+			InheritedPropertySheets="..\tools.vsprops;..\warnings.vsprops;..\dirs.vsprops"
 			CharacterSet="2"
 			WholeProgramOptimization="1"
 			>

@@ -2,9 +2,13 @@
 Microsoft Visual Studio Solution File, Format Version 10.00
 # Visual C++ Express 2008
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "libdjvulibre", "libdjvulibre\libdjvulibre.vcproj", "{AAA67337-AABD-4D04-A3CC-0A7F341F216C}"
+	ProjectSection(ProjectDependencies) = postProject
+		{64BB5626-EEB1-443C-904B-C02EEFB2DD5D} = {64BB5626-EEB1-443C-904B-C02EEFB2DD5D}
+	EndProjectSection
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "ddjvu", "ddjvu\ddjvu.vcproj", "{BF9D97C9-2C91-4DBB-9DE5-0128E1408990}"
 	ProjectSection(ProjectDependencies) = postProject
+		{629EF023-7766-40C3-82BA-39BDD2235096} = {629EF023-7766-40C3-82BA-39BDD2235096}
 		{AAA67337-AABD-4D04-A3CC-0A7F341F216C} = {AAA67337-AABD-4D04-A3CC-0A7F341F216C}
 	EndProjectSection
 EndProject
@@ -15,6 +19,7 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "djvudump", "djvudump\djvudu
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "cjb2", "cjb2\cjb2.vcproj", "{1A387849-BB31-499C-82DF-327D45199766}"
 	ProjectSection(ProjectDependencies) = postProject
+		{629EF023-7766-40C3-82BA-39BDD2235096} = {629EF023-7766-40C3-82BA-39BDD2235096}
 		{AAA67337-AABD-4D04-A3CC-0A7F341F216C} = {AAA67337-AABD-4D04-A3CC-0A7F341F216C}
 	EndProjectSection
 EndProject
@@ -86,6 +91,16 @@ EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "djvutoxml", "djvutoxml\djvutoxml.vcproj", "{923CCB70-AF1E-472C-99F9-E0FF1D657186}"
 	ProjectSection(ProjectDependencies) = postProject
 		{AAA67337-AABD-4D04-A3CC-0A7F341F216C} = {AAA67337-AABD-4D04-A3CC-0A7F341F216C}
+	EndProjectSection
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "libjpeg", "libjpeg\libjpeg.vcproj", "{64BB5626-EEB1-443C-904B-C02EEFB2DD5D}"
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "libz", "libz\libz.vcproj", "{D56B4FFD-8396-43B6-A10E-C0FB04B9BF70}"
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "libtiff", "libtiff\libtiff.vcproj", "{629EF023-7766-40C3-82BA-39BDD2235096}"
+	ProjectSection(ProjectDependencies) = postProject
+		{64BB5626-EEB1-443C-904B-C02EEFB2DD5D} = {64BB5626-EEB1-443C-904B-C02EEFB2DD5D}
+		{D56B4FFD-8396-43B6-A10E-C0FB04B9BF70} = {D56B4FFD-8396-43B6-A10E-C0FB04B9BF70}
 	EndProjectSection
 EndProject
 Global
@@ -166,6 +181,18 @@ Global
 		{923CCB70-AF1E-472C-99F9-E0FF1D657186}.Debug|Win32.Build.0 = Debug|Win32
 		{923CCB70-AF1E-472C-99F9-E0FF1D657186}.Release|Win32.ActiveCfg = Release|Win32
 		{923CCB70-AF1E-472C-99F9-E0FF1D657186}.Release|Win32.Build.0 = Release|Win32
+		{64BB5626-EEB1-443C-904B-C02EEFB2DD5D}.Debug|Win32.ActiveCfg = Debug|Win32
+		{64BB5626-EEB1-443C-904B-C02EEFB2DD5D}.Debug|Win32.Build.0 = Debug|Win32
+		{64BB5626-EEB1-443C-904B-C02EEFB2DD5D}.Release|Win32.ActiveCfg = Release|Win32
+		{64BB5626-EEB1-443C-904B-C02EEFB2DD5D}.Release|Win32.Build.0 = Release|Win32
+		{D56B4FFD-8396-43B6-A10E-C0FB04B9BF70}.Debug|Win32.ActiveCfg = Debug|Win32
+		{D56B4FFD-8396-43B6-A10E-C0FB04B9BF70}.Debug|Win32.Build.0 = Debug|Win32
+		{D56B4FFD-8396-43B6-A10E-C0FB04B9BF70}.Release|Win32.ActiveCfg = Release|Win32
+		{D56B4FFD-8396-43B6-A10E-C0FB04B9BF70}.Release|Win32.Build.0 = Release|Win32
+		{629EF023-7766-40C3-82BA-39BDD2235096}.Debug|Win32.ActiveCfg = Debug|Win32
+		{629EF023-7766-40C3-82BA-39BDD2235096}.Debug|Win32.Build.0 = Debug|Win32
+		{629EF023-7766-40C3-82BA-39BDD2235096}.Release|Win32.ActiveCfg = Release|Win32
+		{629EF023-7766-40C3-82BA-39BDD2235096}.Release|Win32.Build.0 = Release|Win32
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
