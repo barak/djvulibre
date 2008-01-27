@@ -122,9 +122,9 @@ static const char localestring[]="locale";
 #ifdef AUTOCONF
 static const char DjVuDataDir[] = DIR_DATADIR "/djvu/osi";
 static const char ModuleDjVuDir[] ="share/djvu/osi";
-#else /* !AUTOCONF */
-static const char ModuleDjVuDir[] ="profiles";
-#endif /* !AUTOCONF */
+#endif /* AUTOCONF */
+static const char ModuleDjVuDir[] ="share/djvu/osi";
+static const char ProfilesDjVuDir[] ="profiles";
 static const char LocalDjVuDir[] =".DjVu";      // relative to ${HOME}
 #ifdef LT_DEFAULT_PREFIX
 static const char DjVuPrefixDir[] = LT_DEFAULT_PREFIX "/profiles";
@@ -282,12 +282,16 @@ DjVuMessage::GetProfilePaths(void)
 #endif
       appendPath(mpath,pathsmap,paths);
       appendPath(GURL::UTF8(ModuleDjVuDir,mpath),pathsmap,paths);
+      appendPath(GURL::UTF8(ProfilesDjVuDir,mpath),pathsmap,paths);
       mpath=mpath.base();
       appendPath(GURL::UTF8(ModuleDjVuDir,mpath),pathsmap,paths);
+      appendPath(GURL::UTF8(ProfilesDjVuDir,mpath),pathsmap,paths);
       mpath=mpath.base();
       appendPath(GURL::UTF8(ModuleDjVuDir,mpath),pathsmap,paths);
+      appendPath(GURL::UTF8(ProfilesDjVuDir,mpath),pathsmap,paths);
       mpath=mpath.base();
       appendPath(GURL::UTF8(ModuleDjVuDir,mpath),pathsmap,paths);
+      appendPath(GURL::UTF8(ProfilesDjVuDir,mpath),pathsmap,paths);
     }
 #endif
 #if defined(AUTOCONF)
