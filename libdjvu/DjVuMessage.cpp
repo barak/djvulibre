@@ -121,7 +121,6 @@ static const char localestring[]="locale";
 // directory names for searching messages
 #ifdef AUTOCONF
 static const char DjVuDataDir[] = DIR_DATADIR "/djvu/osi";
-static const char ModuleDjVuDir[] ="share/djvu/osi";
 #endif /* AUTOCONF */
 static const char ModuleDjVuDir[] ="share/djvu/osi";
 static const char ProfilesDjVuDir[] ="profiles";
