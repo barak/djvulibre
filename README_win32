@@ -5,7 +5,12 @@
 1.1- Using Microsoft Visual C++ 2008 Express Edition 
 ----------------------------------------------------
 
-   See win32/djvulibre/djvulibre.sln,
+   See the directory win32.
+   Populate the zlib, jpeg and tiff directories with
+   the open source code suggested in the README files.
+   Check win32/djvulibre/dirs.vsprop to see
+   how to name the directories.
+   Then open win32/djvulibre/djvulibre.sln and compile.
 
 
 1.2- Using Mingw
