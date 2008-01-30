@@ -1,4 +1,4 @@
-djvulibre (3.5.20-3.rc) unstable; urgency=low
+djvulibre (3.5.20-3) unstable; urgency=low
 
   * As in djview4, disable stripping of binaries by Makefile.in unless
     INSTALL_PROGRAM="install -s" is used (closes: #436788)
