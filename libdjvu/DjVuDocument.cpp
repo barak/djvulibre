@@ -689,6 +689,8 @@ DjVuDocument::page_to_url(int page_num) const
          {
            if (page_num<1) 
              url=init_url;
+           else
+             G_THROW( ERR_MSG("DjVuDocument.big_num") );
            break;
          }
 	 case OLD_INDEXED:
