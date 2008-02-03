@@ -3339,7 +3339,7 @@ ddjvu_document_save(ddjvu_document_t *document, FILE *output,
           optv += 1;
         }
       // go
-      if (indirect)
+      if (! indirect)
         job->obs = ByteStream::create(output, "wb", false);
       else 
         job->obs = 0;
