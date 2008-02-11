@@ -723,6 +723,7 @@ command_set_page_title(ParsingByteStream &pbs)
 #define DELMETA     1
 #define CHKCOMPAT   2
 #define EIGHTBIT    4
+#define DELCOMMENT  8
 
 static bool
 filter_ant(GP<ByteStream> in, 
@@ -735,12 +736,20 @@ filter_ant(GP<ByteStream> in,
   bool unchanged = true;
   bool compat = false;
   GP<ByteStream> mem;
-  GP<ParsingByteStream> inp;
+  GP<ParsingByteStream> inp = ParsingByteStream::create(in);
 
+  if (flags & DELCOMMENT)
+    while ((c = inp->get()) == '#')
+      {
+        do { c = inp->get(); } while (c!=EOF && c!='\n' && c!='\r');
+        if (c == '\r' && (c = inp->get()) != '\n')
+          inp->unget(c);
+      }
+  
   if (flags & CHKCOMPAT)
     {
       mem = ByteStream::create();
-      mem->copy(*in);
+      mem->copy(*inp);
       mem->seek(0);
       char c;
       int state = 0;
@@ -770,11 +779,7 @@ filter_ant(GP<ByteStream> in,
       mem->seek(0);
       inp = ParsingByteStream::create(mem);
     }
-  else
-    {
-      inp = ParsingByteStream::create(in);
-    }
-  
+
   while ((c = inp->get()) != EOF)
     if (c!=' ' && c!='\t' && c!='\r' && c!='\n')
       break;
@@ -932,7 +937,7 @@ command_set_ant(ParsingByteStream &pbs)
     get_data_from_file("set-ant", pbs, *dsedant);
     dsedant->seek(0);
     GP<ByteStream> bsant = BSByteStream::create(ant,100);
-    filter_ant(dsedant, bsant, EIGHTBIT);
+    filter_ant(dsedant, bsant, EIGHTBIT|DELCOMMENT);
     bsant = 0;
   }
   modify_ant(g().file, "ANTz", ant);
