@@ -112,7 +112,7 @@ GPEnabled::destroy()
   delete this;
 }
 
-inline void 
+void 
 GPEnabled::ref()
 {
   GCriticalSection &gcsCounter = gcsCounters[((size_t)this)%NGCSCOUNTERS];
@@ -124,7 +124,7 @@ GPEnabled::ref()
   gcsCounter.unlock();
 }
 
-inline void 
+void 
 GPEnabled::unref()
 {
   GCriticalSection &gcsCounter = gcsCounters[((size_t)this)%NGCSCOUNTERS];
