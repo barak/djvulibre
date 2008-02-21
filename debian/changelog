@@ -1,3 +1,12 @@
+djvulibre (3.5.20-4) unstable; urgency=low
+
+  * Upstream tentative entry (LB):
+  * Fix locking issues on dual-core machines (bug introduces in 3.5.20-2)
+  * Avoid writing mime type information that conflicts with the default
+    information that comes with the freedesktop mime type database.
+
+ -- Barak A. Pearlmutter <bap@debian.org>  Wed, 21 Feb 2008 11:56:45 +0000
+
 djvulibre (3.5.20-3) unstable; urgency=low
 
   * As in djview4, disable stripping of binaries by Makefile.in unless
