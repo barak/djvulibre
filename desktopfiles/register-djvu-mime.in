@@ -65,7 +65,9 @@ install)
    "$xdg_icon_resource" install --noupdate --context mimetypes \
        --size 48 ./hi48-djvu.png image-vnd.djvu
    "$xdg_icon_resource" forceupdate
-   "$xdg_mime" install ./djvulibre-mime.xml
+   ## This is disabled to avoid conflicting with the
+   ## djvu information provided by freedesktop.org
+   ## "$xdg_mime" install ./djvulibre-mime.xml
    ;;
 uninstall)
    "$xdg_icon_resource" uninstall --noupdate --context mimetypes \
@@ -75,7 +77,9 @@ uninstall)
    "$xdg_icon_resource" uninstall --noupdate --context mimetypes \
        --size 48 image-vnd.djvu
    "$xdg_icon_resource" forceupdate
-   "$xdg_mime" uninstall ./djvulibre-mime.xml
+   ## This is disabled to avoid conflicting with the
+   ## djvu information provided by freedesktop.org
+   ## "$xdg_mime" uninstall ./djvulibre-mime.xml
    ;;
 *)
    echo 1>&2 "Usage: $0 {install|uninstall}"

@@ -97,9 +97,6 @@ install: build
 	mkdir --parents debian/tmp/usr/share/icons/hicolor/48x48/mimetypes
 	install --mode=644 ${CURDIR}/desktopfiles/hi48-djvu.png \
 	  debian/tmp/usr/share/icons/hicolor/48x48/mimetypes/image-vnd.djvu.mime.png
-	mkdir --parents debian/tmp/usr/share/mime/packages
-	install --mode=644 ${CURDIR}/desktopfiles/djvulibre-mime.xml \
-	  debian/tmp/usr/share/mime/packages	
 	mkdir --parents debian/tmp/usr/share/mimelnk/image
 	install --mode=644 ${CURDIR}/desktopfiles/vnd.djvu.desktop \
 	  debian/tmp/usr/share/mimelnk/image

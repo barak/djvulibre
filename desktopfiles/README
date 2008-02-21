@@ -58,12 +58,14 @@ There are two ways to exploit them.
       as "${datadir}/icons/hicolor/48x48/mimetypes/image-vnd.djvu.mime.png"
 
   * Mime type files:
-    - Install "djvulibre-mime.xml"
-      as "${datadir}/mime/packages/djvulibre-mime.xml"
-    - Under KDE3, also install "vnd.djvu.desktop"
+    - Under KDE3, install "vnd.djvu.desktop"
       as "${datadir}/mimelnk/image/vnd.djvu.desktop".
-    - Arrange to execute script "update-mime-database" 
-      at installation time.
+    - In the past it was useful to install "djvulibre-mime.xml"
+      as "${datadir}/mime/packages/djvulibre-mime.xml"
+      and arrange to execute script "update-mime-database" 
+      at installation time. This is no longer necessary
+      because djvu information comes with the freedesktop.org
+      mime type database.
      
   * Menu icons for djview3:
     - Install "hi32-djview3.png" 
