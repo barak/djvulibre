@@ -71,6 +71,10 @@
 // <http://prdownloads.sourceforge.net/djvu/DjVu2_2b-src.tgz>.
 
 #include <string.h>
+#if PARANOID_DEBUG
+# include <assert.h>
+#endif
+
 #include "GThreads.h"
 #include "GSmartPointer.h"
 #include "GException.h"
@@ -108,29 +112,25 @@ GPEnabled::destroy()
   delete this;
 }
 
-void 
+inline void 
 GPEnabled::ref()
 {
-  GCriticalSection &gcsCounter =
-    gcsCounters[((size_t)this)%NGCSCOUNTERS];
+  GCriticalSection &gcsCounter = gcsCounters[((size_t)this)%NGCSCOUNTERS];
   gcsCounter.lock();
 #if PARANOID_DEBUG
-  if (count <= 0)
-    G_THROW( ERR_MSG("GSmartPointer.suspicious") );
+  assert (count >= 0);
 #endif
   count++;
   gcsCounter.unlock();
 }
 
-void 
+inline void 
 GPEnabled::unref()
 {
-  GCriticalSection &gcsCounter =
-    gcsCounters[((size_t)this)%NGCSCOUNTERS];
+  GCriticalSection &gcsCounter = gcsCounters[((size_t)this)%NGCSCOUNTERS];
   gcsCounter.lock();
 #if PARANOID_DEBUG
-  if (count <= 0)
-    G_THROW( ERR_MSG("GSmartPointer.suspicious") );
+  assert (count > 0);
 #endif
   int cnt = count;
   if (! --cnt) 
@@ -148,63 +148,32 @@ GPEnabled::unref()
 GPBase&
 GPBase::assign (GPEnabled *nptr)
 {
-  GCriticalSection &gcsCounter =
-    gcsCounters[((size_t)this)%NGCSCOUNTERS];
-  gcsCounter.lock();
+  GCriticalSection &gcsCounter = gcsCounters[((size_t)this)%NGCSCOUNTERS];
   if (nptr)
-    {
-      if (nptr->count >= 0)  
-        nptr->count++;
-      else
-        nptr = 0;
-    }
-  if (ptr)
-    {
-      GPEnabled *old = ptr;
-      ptr = nptr;
-      int cnt = old->count;
-      if (! --cnt) 
-        cnt = -1;
-      old->count = cnt;
-      gcsCounter.unlock();      
-      if (cnt < 0)
-        old->destroy();
-    }
-  else
-    {
-      ptr = nptr;
-      gcsCounter.unlock();
-    }
+    nptr->ref();
+  gcsCounter.lock();
+  GPEnabled *old = ptr;
+  ptr = nptr;
+  gcsCounter.unlock();
+  if (old)
+    old->unref();
   return *this;
 }
+
 
 GPBase&
 GPBase::assign (const GPBase &sptr)
 {
-  GCriticalSection &gcsCounter =
-    gcsCounters[((size_t)this)%NGCSCOUNTERS];
+  GCriticalSection &gcsCounter = gcsCounters[((size_t)this)%NGCSCOUNTERS];
+  GPEnabled *nptr = sptr.ptr;
+  if (nptr)
+    nptr->ref();
   gcsCounter.lock();
-  if (sptr.ptr) 
-    {
-      sptr.ptr->count++;
-    }
-  if (ptr)
-    {
-      GPEnabled *old = ptr;
-      ptr = sptr.ptr;
-      int cnt = old->count;
-      if (! --cnt) 
-        cnt = -1;
-      old->count = cnt;
-      gcsCounter.unlock();      
-      if (cnt < 0)
-        old->destroy();
-    }
-  else
-    {
-      ptr = sptr.ptr;
-      gcsCounter.unlock();
-    }
+  GPEnabled *old = ptr;
+  ptr = nptr;
+  gcsCounter.unlock();
+  if (old)
+    old->unref();
   return *this;
 }
 
