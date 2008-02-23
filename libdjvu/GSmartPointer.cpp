@@ -165,10 +165,10 @@ GPBase&
 GPBase::assign (const GPBase &sptr)
 {
   GCriticalSection &gcsCounter = gcsCounters[((size_t)this)%NGCSCOUNTERS];
+  gcsCounter.lock();
   GPEnabled *nptr = sptr.ptr;
   if (nptr)
     nptr->ref();
-  gcsCounter.lock();
   GPEnabled *old = ptr;
   ptr = nptr;
   gcsCounter.unlock();
