@@ -177,6 +177,10 @@
 				>
 			</File>
 			<File
+				RelativePath="..\..\..\libdjvu\atomic.cpp"
+				>
+			</File>
+			<File
 				RelativePath="..\..\..\libdjvu\BSByteStream.cpp"
 				>
 			</File>
@@ -404,6 +408,10 @@
 			>
 			<File
 				RelativePath="..\..\..\libdjvu\Arrays.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\libdjvu\atomic.h"
 				>
 			</File>
 			<File

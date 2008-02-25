@@ -110,7 +110,7 @@ static void cond_wait()
 {
   ResetEvent(&ev);
   LeaveCriticalSection(&cs);
-  WaitForSingleObject(ev);
+  WaitForSingleObject(ev, INFINITE);
   EnterCriticalSection(&cs);
 }
 # define MUTEX_ENTER mutex_enter()
