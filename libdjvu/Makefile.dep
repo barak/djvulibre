@@ -219,10 +219,11 @@ GURL.lo GURL.o: GURL.cpp ../config.h GException.h DjVuGlobal.h GOS.h DjVuGlobal.
   GString.h DjVuGlobal.h GContainer.h GException.h GSmartPointer.h \
   DjVuGlobal.h GURL.h GString.h Arrays.h GException.h GSmartPointer.h \
   GThreads.h DjVuGlobal.h GException.h debug.h
-GUnicode.lo GUnicode.o: GUnicode.cpp ../config.h GString.h DjVuGlobal.h GContainer.h \
-  GException.h DjVuGlobal.h GSmartPointer.h DjVuGlobal.h \
-  /opt/local/include/iconv.h
-IFFByteStream.lo IFFByteStream.o: IFFByteStream.cpp ../config.h IFFByteStream.h \
+GUnicode.lo GUnicode.o: GUnicode.cpp ../config.h GString.h \
+  DjVuGlobal.h GContainer.h \
+  GException.h DjVuGlobal.h GSmartPointer.h DjVuGlobal.h
+IFFByteStream.lo IFFByteStream.o: IFFByteStream.cpp \
+  ../config.h IFFByteStream.h \
   DjVuGlobal.h GException.h DjVuGlobal.h GString.h DjVuGlobal.h \
   GContainer.h GException.h GSmartPointer.h DjVuGlobal.h ByteStream.h \
   Arrays.h GException.h GSmartPointer.h
@@ -246,9 +247,7 @@ JB2Image.lo JB2Image.o: JB2Image.cpp ../config.h JB2Image.h GString.h DjVuGlobal
   ZPCodec.h GContainer.h GThreads.h DjVuGlobal.h GException.h GRect.h \
   DjVuGlobal.h GBitmap.h GSmartPointer.h
 JPEGDecoder.lo JPEGDecoder.o: JPEGDecoder.cpp ../config.h JPEGDecoder.h GSmartPointer.h \
-  DjVuGlobal.h /opt/local/include/jconfig.h /opt/local/include/jpeglib.h \
-  /opt/local/include/jconfig.h /opt/local/include/jmorecfg.h \
-  /opt/local/include/jerror.h ByteStream.h Arrays.h GException.h \
+  DjVuGlobal.h ByteStream.h Arrays.h GException.h \
   DjVuGlobal.h GSmartPointer.h GPixmap.h GSmartPointer.h
 MMRDecoder.lo MMRDecoder.o: MMRDecoder.cpp ../config.h MMRDecoder.h GSmartPointer.h \
   DjVuGlobal.h JB2Image.h GString.h DjVuGlobal.h GContainer.h \
