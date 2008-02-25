@@ -1,4 +1,4 @@
-djvulibre (3.5.20-4) unstable; urgency=low
+djvulibre (3.5.20-5) unstable; urgency=low
 
   * Upstream tentative entry (LB):
   * Fix locking issues on dual-core machines (bug introduces in 3.5.20-2)

@@ -78,6 +78,7 @@
 #include "GThreads.h"
 #include "GSmartPointer.h"
 #include "GException.h"
+#include "atomic.h"
 
 
 #ifdef HAVE_NAMESPACES
@@ -90,8 +91,10 @@ namespace DJVU {
 
 // ------ STATIC CRITICAL SECTION
 
-static GCriticalSection gcsCounter;
-
+#define LOCKMASK 0x3f
+#define LOCKIDX(addr) ((((size_t)(addr))/sizeof(void*))&LOCKMASK)
+static int volatile gplocks[LOCKMASK+1];
+static int volatile gelocks[LOCKMASK+1];
 
 // ------ GPENABLED
 
@@ -113,18 +116,20 @@ GPEnabled::destroy()
 void 
 GPEnabled::ref()
 {
-  gcsCounter.lock();
+  int volatile *lock = gelocks+LOCKIDX(this);
+  atomicAcquireOrSpin(lock);
 #if PARANOID_DEBUG
   assert (count >= 0);
 #endif
   count++;
-  gcsCounter.unlock();
+  atomicRelease(lock);
 }
 
 void 
 GPEnabled::unref()
 {
-  gcsCounter.lock();
+  int volatile *lock = gelocks+LOCKIDX(this);
+  atomicAcquireOrSpin(lock);
 #if PARANOID_DEBUG
   assert (count > 0);
 #endif
@@ -132,7 +137,7 @@ GPEnabled::unref()
   if (! --cnt) 
     cnt = -1;
   count = cnt;
-  gcsCounter.unlock();
+  atomicRelease(lock);
   if (cnt < 0)
     destroy();
 }
@@ -144,17 +149,13 @@ GPEnabled::unref()
 GPBase&
 GPBase::assign (GPEnabled *nptr)
 {
-  gcsCounter.lock();
+  int volatile *lock = gplocks+LOCKIDX(this);
   if (nptr)
-    {
-#if PARANOID_DEBUG
-      assert (nptr->count >= 0);
-#endif
-      nptr->count ++;
-    }
+    nptr->ref();
+  atomicAcquireOrSpin(lock);
   GPEnabled *old = ptr;
   ptr = nptr;
-  gcsCounter.unlock();
+  atomicRelease(lock);
   if (old)
     old->unref();
   return *this;
@@ -164,18 +165,14 @@ GPBase::assign (GPEnabled *nptr)
 GPBase&
 GPBase::assign (const GPBase &sptr)
 {
-  gcsCounter.lock();
+  int volatile *lock = gplocks+LOCKIDX(this);
+  atomicAcquireOrSpin(lock);
   GPEnabled *nptr = sptr.ptr;
   if (nptr)
-    {
-#if PARANOID_DEBUG
-      assert (nptr->count > 0);
-#endif
-      nptr->count ++;
-    }
+    nptr->ref();
   GPEnabled *old = ptr;
   ptr = nptr;
-  gcsCounter.unlock();
+  atomicRelease(lock);
   if (old)
     old->unref();
   return *this;
