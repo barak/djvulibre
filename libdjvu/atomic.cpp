@@ -155,19 +155,20 @@ static void cond_wait()
 #endif
 
 #if USE_INTEL_ATOMIC_BUILTINS && !HAVE_SYNC
-# define SYNC_ACQ(l)  __sync_lock_test_and_set(l, 1)
-# define SYNC_REL(l)  __sync_lock_release(l)
+# define SYNC_ACQ(l)  (! __sync_lock_test_and_set(l, 1))
+# define SYNC_REL(l)  (__sync_lock_release(l))
 # define HAVE_SYNC 1
 #endif
 
 
 #if USE_WIN32_INTERLOCKED && !HAVE_SYNC
-# define SYNC_ACQ(l)  !InterlockedCompareExchange(l,1,0)
+# define SYNC_ACQ(l)  (! InterlockedCompareExchange((LONG volatile *)(l),1,0))
 # if defined(_M_ALPHA) || defined(_M_PPC) || defined(_M_IA64)
-#  define SYNC_REL(l)  InterlockedExchange(l,0)
+#  define SYNC_REL(l) (InterlockedExchange((LONG volatile *)(l),0))
 # else
-#  define SYNC_REL(l)  *(int volatile *l)=0
+#  define SYNC_REL(l) (*(int volatile *)(l)=0)
 # endif
+# define HAVE_SYNC 1
 #endif
 
 
@@ -180,8 +181,8 @@ static int cas_acq(int volatile *atomic, int newval, int cmpval)
 			: "r" (newval), "m" (*atomic), "0" (cmpval)); 
   return oldval; 
 }
-# define SYNC_ACQ(l)  !cas_acq(l,1,0)
-# define SYNC_REL(l)  *(int volatile *)l = 0
+# define SYNC_ACQ(l)  (! cas_acq(l,1,0))
+# define SYNC_REL(l)  (*(int volatile *)l = 0)
 # define HAVE_SYNC 1
 #endif
 
@@ -206,7 +207,7 @@ static void st_rel(int volatile *atomic, int newval)
   __asm __volatile ("sync" ::: "memory");
   *atomic = newval;
 }
-# define SYNC_ACQ(l)  !cas_acq(l,1,0)
+# define SYNC_ACQ(l)  (! cas_acq(l,1,0))
 # define SYNC_REL(l)  st_rel(l,0)
 # define HAVE_SYNC 1
 #endif
@@ -267,8 +268,7 @@ atomicAcquire(int volatile *lock)
 {
   int tmp;
   MUTEX_ENTER;
-  tmp = *lock;
-  if (! tmp)
+  if ((tmp = !*lock))
     *lock = 1;
   MUTEX_LEAVE;
   return tmp;
@@ -277,11 +277,10 @@ atomicAcquire(int volatile *lock)
 void 
 atomicAcquireOrSpin(int volatile *lock)
 {
-  int tmp;
   MUTEX_ENTER;
-  tmp = *lock;
-  while (! tmp)
+  while (*lock)
     COND_WAIT;
+  *lock = 1;
   MUTEX_LEAVE;
 }
 
