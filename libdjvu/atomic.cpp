@@ -40,6 +40,7 @@
 // #include <QMutex>
 // #include <QWaitCondition>
 
+#define OBEY_HAVE_INTEL_ATOMIC_BUILTINS 1
 
 
 /* ============================================================ 
@@ -137,7 +138,7 @@ static void cond_wait()
 #ifndef OBEY_HAVE_INTEL_ATOMIC_BUILTINS
 # if defined(__INTEL_COMPILER)
 #  define USE_INTEL_ATOMIC_BUILTINS 1
-# elif defined(__GNUC__) && (__GNUC_MAJOR_ == 4) && (__GNUC_MAJOR >= 1)
+# elif defined(__GNUC__) && (__GNUC__ == 4) && (__GNUC_MINOR__>= 1)
 #  define USE_INTEL_ATOMIC_BUILTINS 1
 # endif
 #endif

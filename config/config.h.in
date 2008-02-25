@@ -64,6 +64,9 @@
 /* Define to 1 if you have the <iconv.h> header file. */
 #undef HAVE_ICONV_H
 
+/* define if the compiler supports intel atomic builtins */
+#undef HAVE_INTEL_ATOMIC_BUILTINS
+
 /* Define to 1 if you have the <inttypes.h> header file. */
 #undef HAVE_INTTYPES_H
 

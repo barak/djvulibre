@@ -139,6 +139,27 @@ changequote([, ])dnl
 ])
 
 dnl -------------------------------------------------------
+dnl @synopsis AC_CXX_INTEL_ATOMIC_BUILTINS
+dnl If the compiler supports intel atomic builtins.
+dnl define HAVE_INTEL_ATOMIC_BUILTINS
+dnl -------------------------------------------------------
+AC_DEFUN([AC_CXX_INTEL_ATOMIC_BUILTINS],
+[AC_CACHE_CHECK(whether the compiler supports intel atomic builtins,
+ac_cv_cxx_intel_atomic_builtins,
+[AC_LANG_SAVE
+ AC_LANG_CPLUSPLUS
+ AC_TRY_COMPILE([static int volatile l;],
+ [__sync_lock_test_and_set(&l,1); return 0;],
+ ac_cv_cxx_intel_atomic_builtins=yes, ac_cv_cxx_intel_atomic_builtins=no)
+ AC_LANG_RESTORE
+])
+if test "$ac_cv_cxx_intel_atomic_builtins" = yes; then
+  AC_DEFINE(HAVE_INTEL_ATOMIC_BUILTINS,1,
+        [define if the compiler supports intel atomic builtins])
+fi
+])
+
+dnl -------------------------------------------------------
 dnl @synopsis AC_CXX_MEMBER_TEMPLATES
 dnl If the compiler supports member templates, 
 dnl define HAVE_MEMBER_TEMPLATES.
