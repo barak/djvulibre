@@ -162,7 +162,7 @@ static void cond_wait()
 
 
 #if USE_WIN32_INTERLOCKED && !HAVE_SYNC
-# define SYNC_ACQ(l)  (! InterlockedCompareExchange((LONG volatile *)(l),1,0))
+# define SYNC_ACQ(l)  (! InterlockedExchange((LONG volatile *)(l),1))
 # if defined(_M_ALPHA) || defined(_M_PPC) || defined(_M_IA64)
 #  define SYNC_REL(l) (InterlockedExchange((LONG volatile *)(l),0))
 # else
@@ -173,32 +173,30 @@ static void cond_wait()
 
 
 #if USE_GCC_I386_ASM && !HAVE_SYNC
-static int cas_acq(int volatile *atomic, int newval, int cmpval) 
+static int xchgl(int volatile *atomic, int newval) 
 {
   int oldval;
-  __asm__ __volatile__ ("lock; cmpxchgl %2, %1"
-			: "=a" (oldval), "=m" (*atomic)
-			: "r" (newval), "m" (*atomic), "0" (cmpval)); 
+  __asm__ __volatile__ ("xchgl %0, %1"
+			: "=r" (oldval), "=m" (*atomic)
+			: "0" (newval), "m" (*atomic)); 
   return oldval; 
 }
-# define SYNC_ACQ(l)  (! cas_acq(l,1,0))
+# define SYNC_ACQ(l)  (! xchgl(l,1))
 # define SYNC_REL(l)  (*(int volatile *)l = 0)
 # define HAVE_SYNC 1
 #endif
 
 
 #if USE_GCC_PPC_ASM && !HAVE_SYNC
-static int cas_acq(int volatile *atomic, int newval, int cmpval) 
+static int xchg_acq(int volatile *atomic, int newval) 
 {
   int oldval;
-  __asm __volatile ("1: lwarx   %0,0,%1\n"
-                    "   cmpw    %0,%2\n"
-                    "   bne     2f\n"
-                    "   stwcx.  %3,0,%1\n"
+  __asm __volatile ("1: lwarx   %0,0,%2\n"
+                    "   stwcx.  %3,0,%2\n"
                     "   bne-    1b\n"
-                    "2: isync"
-                    : "=&r" (oldval)
-                    : "b" (atomic), "r" (cmpval), "r" (newval)
+                    "   isync"
+                    : "=&r" (oldval), "=m" (*atomic)
+                    : "b" (atomic), "r" (newval), "m" (*atomic)
                     : "cr0", "memory");
   return oldval;
 }
@@ -207,7 +205,7 @@ static void st_rel(int volatile *atomic, int newval)
   __asm __volatile ("sync" ::: "memory");
   *atomic = newval;
 }
-# define SYNC_ACQ(l)  (! cas_acq(l,1,0))
+# define SYNC_ACQ(l)  (! xchg_acq(l,1))
 # define SYNC_REL(l)  st_rel(l,0)
 # define HAVE_SYNC 1
 #endif
