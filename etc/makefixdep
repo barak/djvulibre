@@ -20,6 +20,7 @@ do
         -e 's:/usr/include/[^ ]*\.h ::g' \
         -e 's:/usr/lib/qt[^ ]*\.h ::g' \
         -e 's:/usr/include/[^ ]*\.h$::g' \
+        -e 's:/opt/local/include/[^ ]*\.h$::g' \
         -e 's:/usr/lib/qt[^ ]*\.h$::g' \
         -e '/^  \\/d'
 
