@@ -220,6 +220,7 @@ static void st_rel(int volatile *atomic, int newval)
 /* We have fast synchronization */
 
 int volatile nwaiters = 0;
+int volatile dummy;
 
 int 
 atomicAcquire(int volatile *lock)
@@ -249,7 +250,7 @@ atomicRelease(int volatile *lock)
 {
   SYNC_REL(lock);
   if (nwaiters > 0)
-    {
+    { // this thread does not change nwaiters!
       MUTEX_ENTER;
       if (nwaiters > 0)
         COND_WAKEALL;
