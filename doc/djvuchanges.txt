@@ -83,6 +83,9 @@ Title searches progress forward from the page containing
 the hyperlink and wrap around the end of the document.
 The first matching page is selected.
 
+NOTE: This has to be changed to give preference to page ids. 
+      If a page id matches, that's it.
+
 
 3.2- DJVU CGI ARGUMENT "PAGE=".
 
@@ -98,7 +101,8 @@ depends whether the first character is a "#" symbol.
     Otherwise, search a page with NAME "X".
     Otherwise, search a page with ID "X".
 
-
+NOTE: This has to be changed to give preference to page ids. 
+      If a page id matches, that's it.
 
 
 4- METADATA ANNOTATIONS.
