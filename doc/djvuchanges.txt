@@ -63,46 +63,31 @@ these page titles in lieu of the sequential page numbers.
 Things get complicated when some page titles are purely numerical.
 For instance, the page titled "4" might not be the fourth page of 
 the document, and there might be many pages titled "4".
-The djview4 viewer (in preparation) uses the following rules:
+The djview4 viewer uses the following rules:
 
+
+3.1- DJVU CGI ARGUMENT "PAGE=".
+
+The djvu cgi argument "page=X" is interpreted as follows:
+- It first searches a page whose ID matches X.
+- Otherwise, it searches a page with TITLE X starting
+  from the current page and wrapping around.
+- Otherwise, if X is numerical and in range, this is the page number.
+- Otherwise, it searches a page whose NAME matches X.
+ 
 
 3.1- PAGE REFERENCES IN MAPAREA LINKS.
 
-Page references in hyperlink annotations 
-always start with the character "#".
+Page references in hyperlink annotations always have the form "#X".
+These references are interpretes as follows.
 
-"#$N": If N is numerical, go to page number N.
-"#+N": If N is numerical, go N pages forward.
-"#-N": If N is numerical, go N pages backward.
-"#X":  Search a page with title "X".
-       Otherwise, if X is numerical, go to the X-th page.
-       Otherwise, search a page with NAME "X".
-       Otherwise, search a page with ID "X".
-
-Title searches progress forward from the page containing 
-the hyperlink and wrap around the end of the document.
-The first matching page is selected.
-
-NOTE: This has to be changed to give preference to page ids. 
-      If a page id matches, that's it.
-
-
-3.2- DJVU CGI ARGUMENT "PAGE=".
-
-The meaning of the djvu cgi argument "page=" 
-depends whether the first character is a "#" symbol.
-
-"...?djvuopts&page=$N":  
-    If N is numerical, go to page number N.
-
-"...?djvuopts&page=X":
-    First search a page with TITLE "X".
-    Otherwise, if X is numerical, go to the X-th page.
-    Otherwise, search a page with NAME "X".
-    Otherwise, search a page with ID "X".
-
-NOTE: This has to be changed to give preference to page ids. 
-      If a page id matches, that's it.
+- It first searches a page whose ID matches X.
+- Otherwise, if X has the form +N or -N where N is a number,
+  this indicates a displacement relative to the current page.
+- Otherwise, it searches a page with TITLE X starting
+  from the current page and wrapping around.
+- Otherwise, if X is numerical and in range, this is the page number.
+- Otherwise, it searches a page whose NAME matches X.
 
 
 4- METADATA ANNOTATIONS.
