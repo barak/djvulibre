@@ -88,6 +88,14 @@ void atomicAcquireOrSpin(int volatile *lock);
 /* { *dest = 0; } */
 void atomicRelease(int volatile *lock);
 
+
+/* { *dest += 1; return *dest; } */
+int atomicIncrement(int volatile *var);
+
+/* { *dest -= 1; return *dest; } */
+int atomicDecrement(int volatile *var);
+
+
 # ifdef __cplusplus
 }
 #endif

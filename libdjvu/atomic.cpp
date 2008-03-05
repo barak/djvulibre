@@ -212,7 +212,83 @@ static void st_rel(int volatile *atomic, int newval)
 
 
 /* ============================================================ 
-// PART3 - THE IMPLEMENTATION
+// PART3 - INCREMENT/DECREMENT
+*/
+
+
+#if USE_INTEL_ATOMIC_BUILTINS && !HAVE_INCDEC
+# define SYNC_INC(l)  __sync_add_and_fetch(l, 1)
+# define SYNC_DEC(l)  __sync_add_and_fetch(l, -1)
+# define HAVE_INCDEC 1
+#endif
+
+
+#if USE_WIN32_INTERLOCKED && !HAVE_SYNC
+# define SYNC_INC(l)  InterlockedIncrement((LONG volatile *)(l))
+# define SYNC_DEC(l)  InterlockedDecrement((LONG volatile *)(l))
+# define HAVE_INCDEC 1
+#endif
+
+
+#if USE_GCC_I386_ASM && !HAVE_SYNC
+static int xaddl(int volatile *atomic, int add) 
+{
+  __asm__ __volatile__("lock; xaddl %0, %1" 
+                       : "=r" (add) : "m" (*atomic), "0" (add) );
+  return add;
+}
+# define SYNC_INC(l)  (xaddl(l, 1) + 1)
+# define SYNC_DEC(l)  (xaddl(l, -1) - 1)
+# define HAVE_INCDEC 1
+#endif
+
+
+#if USE_GCC_PPC_ASM && !HAVE_SYNC
+static int addlx(int volatile *atomic, int add) 
+{
+  int val;
+  __asm __volatile ("1: lwarx  %0,0,%2\n"
+                    "   add    %0,%0,%3\n"
+                    "   stwcx. %0,0,%2\n"
+                    "   bne-   1b"
+                    : "=&b" (val), "=m" (*mem)  
+                    : "b" (mem), "r" (add), "m" (*mem)           
+                    : "cr0", "memory");
+  return val;
+}
+
+# define SYNC_INC(l)  addlx(l, 1)
+# define SYNC_DEC(l)  addlx(l, -1)
+# define HAVE_INCDEC 1
+#endif
+
+
+
+#if HAVE_INCDEC
+
+int
+atomicIncrement(int volatile *var)
+{
+  return SYNC_INC(var);
+}
+
+int 
+atomicDecrement(int volatile *var)
+{
+  return SYNC_DEC(var);
+}
+
+#else
+# define NEED_INCDEC 1 
+#endif
+
+
+
+
+
+
+/* ============================================================ 
+// PART4 - THE IMPLEMENTATION
 */
 
 #if HAVE_SYNC
@@ -231,7 +307,7 @@ atomicAcquire(int volatile *lock)
 void 
 atomicAcquireOrSpin(int volatile *lock)
 {
-  int spin = 8;
+  int spin = 16;
   while (spin >= 0 && ! SYNC_ACQ(lock))
     spin -= 1;
   if (spin < 0)
@@ -257,6 +333,36 @@ atomicRelease(int volatile *lock)
       MUTEX_LEAVE;
     }
 }
+
+# if NEED_INCDEC
+
+#define LOCKMASK 0x3f
+#define LOCKIDX(addr) ((((size_t)(addr))/sizeof(void*))&LOCKMASK)
+static int volatile locks[LOCKMASK+1];
+
+int
+atomicIncrement(int volatile *var)
+{
+  int res;
+  int volatile *lock = locks+LOCKIDX(var);
+  atomicAcquireOrSpin(lock);
+  res = ++(*var);
+  atomicRelease(lock);
+  return res;
+}
+
+int 
+atomicDecrement(int volatile *var)
+{
+  int res;
+  int volatile *lock = locks+LOCKIDX(var);
+  atomicAcquireOrSpin(lock);
+  res = --(*var);
+  atomicRelease(lock);
+  return res;
+}
+
+# endif /* NEED_INCDEC */
 
 #else
 
@@ -291,6 +397,31 @@ atomicRelease(int volatile *lock)
   COND_WAKEALL;
   MUTEX_LEAVE;
 }
+
+
+# if NEED_INCDEC
+
+int
+atomicIncrement(int volatile *var)
+{
+  int res;
+  MUTEX_ENTER;
+  res = ++(*var);
+  MUTEX_LEAVE;
+  return res;
+}
+
+int 
+atomicDecrement(int volatile *var)
+{
+  int res;
+  MUTEX_ENTER;
+  res = --(*var);
+  MUTEX_LEAVE;
+  return res;
+}
+
+# endif /* NEED_INCDEC */
 
 #endif
 

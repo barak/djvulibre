@@ -89,15 +89,7 @@ namespace DJVU {
 #endif
 
 
-// ------ STATIC CRITICAL SECTION
-
-#define LOCKMASK 0x3f
-#define LOCKIDX(addr) ((((size_t)(addr))/sizeof(void*))&LOCKMASK)
-static int volatile gplocks[LOCKMASK+1];
-static int volatile gelocks[LOCKMASK+1];
-
 // ------ GPENABLED
-
 
 GPEnabled::~GPEnabled()
 {
@@ -116,40 +108,40 @@ GPEnabled::destroy()
 void 
 GPEnabled::ref()
 {
-  int volatile *lock = gelocks+LOCKIDX(this);
-  atomicAcquireOrSpin(lock);
 #if PARANOID_DEBUG
   assert (count >= 0);
 #endif
-  count++;
-  atomicRelease(lock);
+  atomicIncrement(&count);
 }
 
 void 
 GPEnabled::unref()
 {
-  int volatile *lock = gelocks+LOCKIDX(this);
-  atomicAcquireOrSpin(lock);
 #if PARANOID_DEBUG
   assert (count > 0);
 #endif
-  int cnt = count;
-  if (! --cnt) 
-    cnt = -1;
-  count = cnt;
-  atomicRelease(lock);
-  if (cnt < 0)
-    destroy();
+  if (! atomicDecrement(&count))
+    {
+      // in case someone temporarily creates and 
+      // releases a smartpointer during destruction.
+      count = (-0x7fff);
+      destroy();
+    }
 }
 
 
 // ------ GPBASE
 
 
+#define LOCKMASK 0x3f
+#define LOCKIDX(addr) ((((size_t)(addr))/sizeof(void*))&LOCKMASK)
+static int volatile locks[LOCKMASK+1];
+
+
 GPBase&
 GPBase::assign (GPEnabled *nptr)
 {
-  int volatile *lock = gplocks+LOCKIDX(this);
+  int volatile *lock = locks+LOCKIDX(this);
   if (nptr)
     nptr->ref();
   atomicAcquireOrSpin(lock);
@@ -165,7 +157,7 @@ GPBase::assign (GPEnabled *nptr)
 GPBase&
 GPBase::assign (const GPBase &sptr)
 {
-  int volatile *lock = gplocks+LOCKIDX(this);
+  int volatile *lock = locks+LOCKIDX(this);
   atomicAcquireOrSpin(lock);
   GPEnabled *nptr = sptr.ptr;
   if (nptr)

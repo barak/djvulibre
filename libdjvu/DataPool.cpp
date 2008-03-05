@@ -835,10 +835,9 @@ DataPool::~DataPool(void)
 
   clear_stream(true);
   if (furl.is_local_file_url())
-  {
-    FCPools::get()->del_pool(furl, this);
-  }
-   
+    if (this->get_count() > 1)
+      FCPools::get()->del_pool(furl, this);
+  
   GP<DataPool> pool = this->pool;
   {
 	 // Wait until the static_trigger_cb() exits
