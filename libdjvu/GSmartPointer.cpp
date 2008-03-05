@@ -78,8 +78,6 @@
 #include "GThreads.h"
 #include "GSmartPointer.h"
 #include "GException.h"
-#include "atomic.h"
-
 
 #ifdef HAVE_NAMESPACES
 namespace DJVU {
@@ -102,31 +100,10 @@ GPEnabled::destroy()
 {
   if (count >= 0)
     G_THROW( ERR_MSG("GSmartPointer.suspicious") );
+  // in case someone temporarily creates and 
+  // releases a smartpointer during destruction.
+  count = (-0x7fff);
   delete this;
-}
-
-void 
-GPEnabled::ref()
-{
-#if PARANOID_DEBUG
-  assert (count >= 0);
-#endif
-  atomicIncrement(&count);
-}
-
-void 
-GPEnabled::unref()
-{
-#if PARANOID_DEBUG
-  assert (count > 0);
-#endif
-  if (! atomicDecrement(&count))
-    {
-      // in case someone temporarily creates and 
-      // releases a smartpointer during destruction.
-      count = (-0x7fff);
-      destroy();
-    }
 }
 
 

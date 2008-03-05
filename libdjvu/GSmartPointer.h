@@ -100,6 +100,7 @@
 #endif
 
 #include "DjVuGlobal.h"
+#include "atomic.h"
 
 #ifdef HAVE_NAMESPACES
 namespace DJVU {
@@ -117,6 +118,10 @@ namespace DJVU {
  */
 class DJVUAPI GPEnabled
 {
+  friend class GPBase;
+  void destroy();
+  void unref();
+  void ref();
 public:
   /// Null constructor.
   GPEnabled();
@@ -132,11 +137,6 @@ public:
 protected:
   /// The reference counter
   volatile int count;
-private:
-  friend class GPBase;
-  void unref();
-  void ref();
-  void destroy();
 };
 
 
@@ -205,8 +205,10 @@ protected:
     The first time you use a smart-pointer to access #GPEnabled# object, the
     reference counter is incremented to one. Object destruction will then
     happen automatically when the reference counter is decremented back to
-    zero (i.e. when the last smart-pointer referencing this object stops doing so).
-    This will happen regardless of how many regular pointers reference this object.
+    zero (i.e. when the last smart-pointer referencing 
+    this object stops doing so).
+    This will happen regardless of how many regular pointers 
+    reference this object.
     In other words, if you start using smart-pointers with a #GPEnabled#
     object, you engage automatic mode for this object.  You should only do
     this with objects dynamically allocated with operator #new#.  You should
@@ -330,6 +332,25 @@ GPEnabled::operator=(const GPEnabled & obj)
      changed.  Subclasses of GPEnabled will call this version of the copy
      operator as part of the default 'memberwise copy' strategy. */
   return *this; 
+}
+
+inline void 
+GPEnabled::ref()
+{
+#if PARANOID_DEBUG
+  assert (count >= 0);
+#endif
+  atomicIncrement(&count);
+}
+
+inline void 
+GPEnabled::unref()
+{
+#if PARANOID_DEBUG
+  assert (count > 0);
+#endif
+  if (! atomicDecrement(&count))
+    destroy();
 }
 
 // INLINE FOR GPBASE
