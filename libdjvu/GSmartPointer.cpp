@@ -98,7 +98,7 @@ GPEnabled::~GPEnabled()
 void
 GPEnabled::destroy()
 {
-  if (count >= 0)
+  if (count > 0)
     G_THROW( ERR_MSG("GSmartPointer.suspicious") );
   // in case someone temporarily creates and 
   // releases a smartpointer during destruction.
