@@ -587,6 +587,18 @@ ac_threads=no
 if test x$ac_use_threads != xno ; then
   if test x$ac_threads = xno ; then
     case x$ac_use_threads in
+    x|xyes|xauto|xposix|xpthread)
+        AC_PATH_PTHREAD(
+                [ ac_threads=pthread
+                  ac_use_threads=pthread
+                  THREAD_LIBS="$PTHREAD_LIBS"
+                  THREAD_CFLAGS="$PTHREAD_CFLAGS -DTHREADMODEL=POSIXTHREADS"
+                ] )
+        ;;
+    esac
+  fi
+  if test x$ac_threads = xno ; then
+    case x$ac_use_threads in
     x|xyes|xauto|xwin32|xwindows)
 	AC_TRY_LINK([#include <windows.h>],
 	        [CreateThread(NULL,4096,NULL,NULL,0,NULL);],
@@ -594,18 +606,6 @@ if test x$ac_use_threads != xno ; then
                   ac_use_threads=win32
                   THREAD_LIBS=""
                   THREAD_CFLAGS="-DTHREADMODEL=WINTHREADS"
-                ] )
-        ;;
-    esac
-  fi
-  if test x$ac_threads = xno ; then
-    case x$ac_use_threads in
-    x|xyes|xauto|xposix|xpthread)
-        AC_PATH_PTHREAD(
-                [ ac_threads=pthread
-                  ac_use_threads=pthread
-                  THREAD_LIBS="$PTHREAD_LIBS"
-                  THREAD_CFLAGS="$PTHREAD_CFLAGS -DTHREADMODEL=POSIXTHREADS"
                 ] )
         ;;
     esac
