@@ -165,7 +165,9 @@ const char *options[] = {
   I18N("-copies=<1...999999>                (default: 1)"),
   I18N("-frame=<yes|no>                     (default: no)"),
   I18N("-cropmarks=<yes|no>                 (default: no)"),
+#ifdef THIS_THING_DOES_NOT_WORK_WITH_UTF8_STRINGS
   I18N("-text=<yes|no>                      (default: no)"),
+#endif
   I18N("-booklet=<no|recto|verso|yes>       (default: no)"),
   I18N("-bookletmax=<n>                     (default: 0)"),
   I18N("-bookletalign=<n>                   (default: 0)"),
