@@ -1603,20 +1603,14 @@ GStringRep::setat(int n, char ch) const
   return retval;
 }
 
-#ifdef WIN32
-#define USE_VSNPRINTF _vsnprintf
-#else
-# ifdef AUTOCONF
-#  ifdef HAVE_VSNPRINTF
-#   define USE_VSNPRINTF vsnprintf
-#  endif
-# else
-#  ifdef linux
-#   define USE_VSNPRINTF vsnprintf
-#  endif
-# endif
+#if defined(AUTOCONF) && defined(HAVE_VSNPRINTF)
+# define USE_VSNPRINTF vsnprintf
+#elif defined(WIN32) && !defined(__CYGWIN32__)
+# define USE_VSNPRINTF _vsnprintf
+#elif defined(linux)
+# define USE_VSNPRINTF vsnprintf
 #endif
-
+ 
 GUTF8String &
 GUTF8String::format(const char fmt[], ... )
 {
@@ -1639,94 +1633,31 @@ GStringRep::vformat(va_list args) const
   GP<GStringRep> retval;
   if(size)
   {
-#ifndef WIN32
-    char *nfmt;
-    GPBuffer<char> gnfmt(nfmt,size+1);
-    nfmt[0]=0;
-    int start=0;
-#endif
-    int from=0;
-    while((from=search('%',from)) >= 0)
-    {
-      if(data[++from] != '%')
-      {
-        int m,n=0;
-        sscanf(data+from,"%d!%n",&m,&n);
-        if(n)
-        {
-#ifdef WIN32
-          char *lpszFormat=data;
-          LPTSTR lpszTemp;
-          if((!::FormatMessage(
-            FORMAT_MESSAGE_FROM_STRING|FORMAT_MESSAGE_ALLOCATE_BUFFER,
-              lpszFormat, 0, 0, (LPTSTR)&lpszTemp,0,&args))
-            || !lpszTemp)
-          {
-            G_THROW(GException::outofmemory);
-          }
-          va_end(args); 
-          retval=strdup((const char *)lpszTemp);
-          LocalFree(lpszTemp);
-          break;
-#else
-          from+=n;
-          const int end=search('!',from);
-          if(end>=0)
-          {
-            strncat(nfmt,data+start,(int)(end-start));
-            strncat(nfmt,"$",1);
-            start=from=end+1;
-          }else
-          {
-            gnfmt.resize(0);
-            from=(-1);
-            break;
-          }
-#endif
-        }else
-        {
-#ifndef WIN32
-          gnfmt.resize(0);
-#endif
-          from=(-1);
-          break;
-        }
-      }
-    }
-    if(from < 0)
-    {
-#ifndef WIN32
-      char const * const fmt=(nfmt&&nfmt[0])?nfmt:data;
-#else
-      char const * const fmt=data;
-#endif
-      int buflen=32768;
-      char *buffer;
-      GPBuffer<char> gbuffer(buffer,buflen);
-
-      ChangeLocale locale(LC_NUMERIC,(isNative()?0:"C"));
-
-      // Format string
+    char const * const fmt=data;
+    int buflen=32768;
+    char *buffer;
+    GPBuffer<char> gbuffer(buffer,buflen);
+    ChangeLocale locale(LC_NUMERIC,(isNative()?0:"C"));
+    // Format string
 #ifdef USE_VSNPRINTF
-      while(USE_VSNPRINTF(buffer, buflen, fmt, args)<0)
+    while(USE_VSNPRINTF(buffer, buflen, fmt, args)<0)
       {
         gbuffer.resize(0);
         gbuffer.resize(buflen+32768);
       }
-      va_end(args);
+    va_end(args);
 #else
-      buffer[buflen-1] = 0;
-      vsprintf(buffer, fmt, args);
-      va_end(args);
-      if (buffer[buflen-1])
+    buffer[buflen-1] = 0;
+    vsprintf(buffer, fmt, args);
+    va_end(args);
+    if (buffer[buflen-1])
       {
         // This isn't as fatal since it is on the stack, but we
         // definitely should stop the current operation.
         G_THROW( ERR_MSG("GString.overwrite") );
       }
 #endif
-      retval=strdup((const char *)buffer);
-    }
+    retval=strdup((const char *)buffer);
   }
   // Go altering the string
   return retval;
