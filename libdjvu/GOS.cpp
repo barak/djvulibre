@@ -74,14 +74,25 @@
 #include <math.h>
 #include <string.h>
 
-#ifdef WIN32
-# include <windows.h>
-# include <direct.h>
+#if defined(__CYGWIN32__)
+# define UNIX 1
 #endif
 
-#ifdef OS2
+#if defined(WIN32) && !defined(UNIX)
+# include <windows.h>
+# include <direct.h>
+# define getcwd _getcwd
+#endif
+
+#if defined(OS2)
 # define INCL_DOS
 # include <os2.h>
+#endif
+
+#if defined(macintosh) && !defined(UNIX)
+# include <unix.h>
+# include <errno.h>
+# include <unistd.h>
 #endif
 
 #if defined(UNIX) || defined(OS2)
@@ -93,20 +104,6 @@
 # include <pwd.h>
 # include <stdio.h>
 # include <unistd.h>
-#endif
-
-#ifdef macintosh
-# ifndef UNIX
-#  include <unix.h>
-#  include <errno.h>
-#  include <unistd.h>
-# endif
-#endif
-
-#ifdef WIN32
-# if !defined(__MINGW32__) && !defined(__CYGWIN32__)
-#  define getcwd _getcwd
-# endif
 #endif
 
 
@@ -173,14 +170,14 @@ static const char nillchar=0;
 static inline int
 finddirsep(const GUTF8String &fname)
 {
-#if defined(UNIX)
-  return fname.rsearch('/',0);
-#elif defined(WIN32) || defined(OS2)
+#if defined(WIN32)
   return fname.rcontains("\\/",0);
+#elif defined(UNIX)
+  return fname.rsearch('/',0);
 #elif defined(macintosh)
   return fname.rcontains(":/",0);
 #else
-#error "Define something here for your operating system"
+# error "Define something here for your operating system"
 #endif  
 }
 
@@ -350,7 +347,7 @@ GOS::cwd(const GUTF8String &dirname)
   GetFullPathName(drv, MAXPATHLEN, string_buffer, &result);
   return GNativeString(string_buffer).getNative2UTF8();//MBCS cvt
 #else
-#error "Define something here for your operating system"
+# error "Define something here for your operating system"
 #endif 
 }
 
