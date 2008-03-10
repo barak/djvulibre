@@ -1915,7 +1915,7 @@ print_ps_string(const char *data, int length, ByteStream &out)
       else
         {
           char buffer[5];
-          sprintf(buffer,"\\%03o", *data);
+          sprintf(buffer,"\\%03o", *(unsigned char*)data);
           out.write(buffer,4);
           data += 1;
           length -= 1;
