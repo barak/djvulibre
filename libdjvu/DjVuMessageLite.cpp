@@ -380,6 +380,8 @@ DjVuMessageLite::InsertArg( GUTF8String &message,
               narg.format((const char *)format,(unsigned int)arg.toInt());
               break;
             case 'f':
+            case 'g':
+            case 'e':
               {
                 int endpos;
                 narg.format((const char *)format, arg.toDouble(0,endpos));
