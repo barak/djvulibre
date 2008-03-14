@@ -418,7 +418,7 @@ MINILISPAPI void minilisp_debug(int debugflag);
 /* minilisp_finish --
    Deallocates everything.  This is only useful when using
    development tools designed to check for memory leaks.  
-   No miniexp function can be used after calliang this. */
+   No miniexp function can be used after calling this. */
 
 MINILISPAPI void minilisp_finish(void);
 
@@ -427,7 +427,7 @@ MINILISPAPI void minilisp_finish(void);
 /* INPUT/OUTPUT                                       */
 /* -------------------------------------------------- */
 
-/* Notes about the textual represenation of miniexps.
+/* Notes about the textual representation of miniexps.
 
    - Special characters are:
      * the parenthesis <(> and <)>,

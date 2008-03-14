@@ -352,7 +352,7 @@ ddjvu_job_stop(ddjvu_job_t *job);
 
 /* ddjvu_job_set_user_data ---
    ddjvu_job_get_user_data ---
-   Each job can store an arbitray pointer
+   Each job can store an arbitrary pointer
    that callers can use for any purpose. These two 
    functions provide for accessing or setting this pointer. 
    This pointer is cleared when the job is released */
@@ -572,15 +572,15 @@ ddjvu_document_job(ddjvu_document_t *document);
    object is created.
 
    Further <m_newstream> messages are generated to access
-   the auxilliary files of indirect or indexed DjVu
+   the auxiliary files of indirect or indexed DjVu
    documents.  Member <name> then provides the basename of
-   the auxilliary file.
+   the auxiliary file.
 
    Member <url> is set according to the url argument
    provided to function <ddjvu_document_create>.  The first
    newstream message always contain the url passed to
    <ddjvu_document_create>.  Subsequent newstream messages
-   contain the url of the auxilliary files for indirect or
+   contain the url of the auxiliary files for indirect or
    indexed DjVu documents. */
    
 struct ddjvu_message_newstream_s { /* ddjvu_message_t::m_newstream */
@@ -921,7 +921,7 @@ struct ddjvu_message_chunk_s {     /* ddjvu_message_t::m_chunk */
    When receiving <m_relayout>, the viewer should get the image size, decide
    zoom factors, and place the image area, scrollbars, toolbars, and other gui
    objects.  When receiving <m_redisplay>, the viewer should invalidate the
-   image area so that the gui toolkint calls the repaint event handler. This
+   image area so that the gui toolkit calls the repaint event handler. This
    handler should call ddjvu_page_render() and paint the part of the
    image that needs repainting. */
 
@@ -945,7 +945,7 @@ DDJVUAPI int
 ddjvu_page_get_height(ddjvu_page_t *page);
 
 /* ddjvu_page_get_resolution ---
-   Returns the page resolution in pixels per inche (dpi).
+   Returns the page resolution in pixels per inch  (dpi).
    Calling this function before receiving a <m_pageinfo>
    message yields a meaningless but plausible value. */
 
@@ -1350,7 +1350,7 @@ ddjvu_document_print(ddjvu_document_t *document, FILE *output,
      Reordering or duplicating pages is prohibited. 
    * Option "-indirect=<filename>" causes the creation
      of an indirect document with index file <filename>
-     and auxilliary files in the same directory.
+     and auxiliary files in the same directory.
      When this option is specified, the argument <output>
      is ignored and should be NULL.
 */
