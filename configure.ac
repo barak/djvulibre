@@ -25,7 +25,7 @@
 # ----------------------------------------
 
 AC_PREREQ(2.50)
-AC_INIT(djvulibre, 3.5.20)
+AC_INIT(djvulibre, 3.5.21)
 AC_REVISION($Id$)
 AC_CONFIG_AUX_DIR(config)
 AC_CONFIG_SRCDIR(INSTALL)
@@ -34,7 +34,7 @@ AC_PREFIX_DEFAULT(/usr/local)
 AC_CANONICAL_HOST
 
 # Library version
-LIBDJVU_VER_COMPAT=15
+LIBDJVU_VER_COMPAT=21
 LIBDJVU_VER=`echo $PACKAGE_VERSION | sed -e 's/^3\.5\.//'`
 LIBDJVU_VER=$LIBDJVU_VER:0:`expr $LIBDJVU_VER - $LIBDJVU_VER_COMPAT`
 AC_SUBST(LIBDJVU_VER)
