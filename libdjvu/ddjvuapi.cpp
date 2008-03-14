@@ -3531,6 +3531,9 @@ ddjvu_document_get_pagetext(ddjvu_document_t *document, int pageno,
 {
   G_TRY
     {
+      ddjvu_status_t status = document->status();
+      if (status != DDJVU_JOB_OK)
+        return miniexp_status(status);
       DjVuDocument *doc = document->doc;
       if (doc)
         {
@@ -3758,7 +3761,11 @@ get_file_anno(GP<DjVuFile> file)
           if (! file->are_incl_files_created())
             file->process_incl_chunks();
           if (! file->are_incl_files_created())
-            return miniexp_status(DDJVU_JOB_FAILED);
+            {
+              if (file->get_flags() & DjVuFile::STOPPED)
+                return miniexp_status(DDJVU_JOB_STOPPED);
+              return miniexp_status(DDJVU_JOB_FAILED);
+            }
         }
       return miniexp_dummy;
     }
@@ -3772,6 +3779,9 @@ ddjvu_document_get_pageanno(ddjvu_document_t *document, int pageno)
 {
   G_TRY
     {
+      ddjvu_status_t status = document->status();
+      if (status != DDJVU_JOB_OK)
+        return miniexp_status(status);
       DjVuDocument *doc = document->doc;
       if (doc)
         {
@@ -3796,6 +3806,9 @@ ddjvu_document_get_anno(ddjvu_document_t *document, int compat)
 {
   G_TRY
     {
+      ddjvu_status_t status = document->status();
+      if (status != DDJVU_JOB_OK)
+        return miniexp_status(status);
       DjVuDocument *doc = document->doc;
       if (doc)
         {
@@ -3830,6 +3843,7 @@ ddjvu_document_get_anno(ddjvu_document_t *document, int compat)
                   return get_file_anno(doc->get_djvu_file(id));
                 }
             }
+          return miniexp_nil;
         }
     }
   G_CATCH(ex)
@@ -3837,7 +3851,7 @@ ddjvu_document_get_anno(ddjvu_document_t *document, int compat)
       ERROR1(document, ex);
     }
   G_ENDCATCH;
-  return miniexp_nil;
+  return miniexp_status(DDJVU_JOB_FAILED);
 }
 
 

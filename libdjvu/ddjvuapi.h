@@ -1428,13 +1428,18 @@ ddjvu_document_get_outline(ddjvu_document_t *document);
 /* ddjvu_document_get_anno --
    This function returns the document-wide annotations.
    This corresponds to a proposed change in the djvu format.
-   This function returns <miniexp_dummy> is the information
-   is not yet available. It may then cause the emission 
-   of <m_pageinfo> messages with null <m_any.page>.
    When no new-style document-wide annotations are available
    and <compat> is true, this function searches a shared 
    annotation chunk and returns its contents.
-*/   
+
+   This function returns <miniexp_dummy> is the information
+   is not yet available. It may then cause the emission 
+   of <m_pageinfo> messages with null <m_any.page>.
+
+   This function returns the empty list <miniexp_nil> when
+   the document does not contain page annotations. It can also
+   return symbols <failed> or <stopped> when an error occurs
+   while accessing the desired information. */
 
 DDJVUAPI miniexp_t
 ddjvu_document_get_anno(ddjvu_document_t *document, int compat);
