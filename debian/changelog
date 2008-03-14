@@ -1,11 +1,11 @@
-djvulibre (3.5.20-5) unstable; urgency=low
+djvulibre (3.5.20-4) unstable; urgency=low
 
-  * Upstream tentative entry (LB):
-  * Fix locking issues on dual-core machines (bug introduces in 3.5.20-2)
-  * Avoid writing mime type information that conflicts with the default
-    information that comes with the freedesktop mime type database.
+  * Upstream fix: locking issues on dual-core machines (as of 3.5.20-2)
+  * Avoid writing mime type conflicting with default freedesktop mime database
+  * Upstream fix for info fetch (closes: #463691)
+  * Upstream fix for document saving (closes: #467282)
 
- -- Barak A. Pearlmutter <bap@debian.org>  Wed, 21 Feb 2008 11:56:45 +0000
+ -- Barak A. Pearlmutter <bap@debian.org>  Fri, 14 Mar 2008 11:13:59 +0000
 
 djvulibre (3.5.20-3) unstable; urgency=low
 
