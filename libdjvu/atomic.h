@@ -79,21 +79,24 @@
 extern "C" {
 #endif
   
-/* { int tmp = *dest; *dest = 1; return tmp; }. */
+/* { int tmp = *lock; *lock = 1; return tmp; }. */
 int atomicAcquire(int volatile *lock);
   
 /* { while (!atomicAcquire(lock)) { spin/yield/wait } } */
 void atomicAcquireOrSpin(int volatile *lock);
 
-/* { *dest = 0; } */
+/* { *lock = 0; } */
 void atomicRelease(int volatile *lock);
 
 
-/* { *dest += 1; return *dest; } */
+/* { *var += 1; return *var; } */
 int atomicIncrement(int volatile *var);
 
-/* { *dest -= 1; return *dest; } */
+/* { *var -= 1; return *var; } */
 int atomicDecrement(int volatile *var);
+
+/* { void *tmp = *var; *var = value; return tmp; } */
+void *atomicExchangePointer(void *volatile *var, void *value);
 
 
 # ifdef __cplusplus

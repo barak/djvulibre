@@ -116,12 +116,31 @@ static int volatile locks[LOCKMASK+1];
 
 
 GPBase&
+GPBase::assign (const GPBase &sptr)
+{
+  int volatile *lock = locks+LOCKIDX(this);
+  atomicAcquireOrSpin(lock);
+  GPEnabled *nptr = sptr.ptr;
+  // we cannot use atomicExchangePointer later because a
+  // thread might destroy sptr.ptr at this point. 
+  if (nptr)
+    nptr->ref();
+  GPEnabled *old = ptr;
+  ptr = nptr;
+  atomicRelease(lock);
+  if (old)
+    old->unref();
+  return *this;
+}
+
+GPBase&
 GPBase::assign (GPEnabled *nptr)
 {
   int volatile *lock = locks+LOCKIDX(this);
   if (nptr)
     nptr->ref();
   atomicAcquireOrSpin(lock);
+  // we could use atomicExchangePointer
   GPEnabled *old = ptr;
   ptr = nptr;
   atomicRelease(lock);
@@ -131,21 +150,6 @@ GPBase::assign (GPEnabled *nptr)
 }
 
 
-GPBase&
-GPBase::assign (const GPBase &sptr)
-{
-  int volatile *lock = locks+LOCKIDX(this);
-  atomicAcquireOrSpin(lock);
-  GPEnabled *nptr = sptr.ptr;
-  if (nptr)
-    nptr->ref();
-  GPEnabled *old = ptr;
-  ptr = nptr;
-  atomicRelease(lock);
-  if (old)
-    old->unref();
-  return *this;
-}
 
 
 // ------ GPBUFFERBASE

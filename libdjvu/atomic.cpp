@@ -223,14 +223,16 @@ static void st_rel(int volatile *atomic, int newval)
 #endif
 
 
-#if USE_WIN32_INTERLOCKED && !HAVE_SYNC
+#if USE_WIN32_INTERLOCKED && !HAVE_INCDEC
 # define SYNC_INC(l)  InterlockedIncrement((LONG volatile *)(l))
 # define SYNC_DEC(l)  InterlockedDecrement((LONG volatile *)(l))
 # define HAVE_INCDEC 1
+# define SYNC_EXCH(l,v)  InterlockedExchangePointer(l,v)
+# define HAVE_EXCH 1
 #endif
 
 
-#if USE_GCC_I386_ASM && !HAVE_SYNC
+#if USE_GCC_I386_ASM && !HAVE_INCDEC
 static int xaddl(int volatile *atomic, int add) 
 {
   __asm__ __volatile__("lock; xaddl %0, %1" 
@@ -243,7 +245,7 @@ static int xaddl(int volatile *atomic, int add)
 #endif
 
 
-#if USE_GCC_PPC_ASM && !HAVE_SYNC
+#if USE_GCC_PPC_ASM && !HAVE_INCDEC
 static int addlx(int volatile *atomic, int add) 
 {
   int val;
@@ -256,7 +258,6 @@ static int addlx(int volatile *atomic, int add)
                     : "cr0", "memory");
   return val;
 }
-
 # define SYNC_INC(l)  addlx(l, 1)
 # define SYNC_DEC(l)  addlx(l, -1)
 # define HAVE_INCDEC 1
@@ -265,23 +266,31 @@ static int addlx(int volatile *atomic, int add)
 
 
 #if HAVE_INCDEC
-
 int
 atomicIncrement(int volatile *var)
 {
   return SYNC_INC(var);
 }
-
 int 
 atomicDecrement(int volatile *var)
 {
   return SYNC_DEC(var);
 }
-
+# define NEED_INCDEC 0
 #else
 # define NEED_INCDEC 1 
 #endif
 
+#if HAVE_EXCH
+void * 
+atomicExchangePointer(void *volatile *var, void *value)
+{
+  return SYNC_EXCH(var,value);
+}
+# define NEEX_EXCH 0
+#else
+# define NEED_EXCH 1
+#endif
 
 
 
@@ -334,12 +343,13 @@ atomicRelease(int volatile *lock)
     }
 }
 
-# if NEED_INCDEC
-
-#define LOCKMASK 0x3f
-#define LOCKIDX(addr) ((((size_t)(addr))/sizeof(void*))&LOCKMASK)
+# if NEED_INCDEC || NEED_EXCH
+#  define LOCKMASK 0x3f
+#  define LOCKIDX(addr) ((((size_t)(addr))/sizeof(void*))&LOCKMASK)
 static int volatile locks[LOCKMASK+1];
+# endif
 
+# if NEED_INCDEC
 int
 atomicIncrement(int volatile *var)
 {
@@ -350,7 +360,6 @@ atomicIncrement(int volatile *var)
   atomicRelease(lock);
   return res;
 }
-
 int 
 atomicDecrement(int volatile *var)
 {
@@ -361,10 +370,23 @@ atomicDecrement(int volatile *var)
   atomicRelease(lock);
   return res;
 }
-
 # endif /* NEED_INCDEC */
 
-#else
+# if NEED_EXCH
+void * 
+atomicExchangePointer(void *volatile *var, void *value)
+{
+  void *res;
+  int volatile *lock = locks+LOCKIDX(var);
+  atomicAcquireOrSpin(lock);
+  res = *var;
+  *var = value;
+  atomicRelease(lock);
+  return res;
+}
+# endif /* NEED_EXCH */
+
+#else /* HAVE_SYNC */
 
 /* Nothing. Use mutexes and conditions */
 
@@ -378,7 +400,6 @@ atomicAcquire(int volatile *lock)
   MUTEX_LEAVE;
   return tmp;
 }
-  
 void 
 atomicAcquireOrSpin(int volatile *lock)
 {
@@ -388,7 +409,6 @@ atomicAcquireOrSpin(int volatile *lock)
   *lock = 1;
   MUTEX_LEAVE;
 }
-
 void 
 atomicRelease(int volatile *lock)
 {
@@ -398,9 +418,7 @@ atomicRelease(int volatile *lock)
   MUTEX_LEAVE;
 }
 
-
 # if NEED_INCDEC
-
 int
 atomicIncrement(int volatile *var)
 {
@@ -410,7 +428,6 @@ atomicIncrement(int volatile *var)
   MUTEX_LEAVE;
   return res;
 }
-
 int 
 atomicDecrement(int volatile *var)
 {
@@ -420,9 +437,21 @@ atomicDecrement(int volatile *var)
   MUTEX_LEAVE;
   return res;
 }
+#endif /* NEED_INCDEC */
 
-# endif /* NEED_INCDEC */
+#if NEED_EXCH
+void * 
+atomicExchangePointer(void *volatile *var, void *value)
+{
+  void *res;
+  MUTEX_ENTER;
+  res = *var;
+  *var = value;
+  MUTEX_LEAVE;
+  return res;
+}
+# endif /* NEED_EXCH */
 
-#endif
+#endif  /* HAVE_SYNC */
 
 
