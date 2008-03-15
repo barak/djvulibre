@@ -253,8 +253,8 @@ static int addlx(int volatile *atomic, int add)
                     "   add    %0,%0,%3\n"
                     "   stwcx. %0,0,%2\n"
                     "   bne-   1b"
-                    : "=&b" (val), "=m" (*mem)  
-                    : "b" (mem), "r" (add), "m" (*mem)           
+                    : "=&b" (val), "=m" (*atomic)  
+                    : "b" (atomic), "r" (add), "m" (*atomic)           
                     : "cr0", "memory");
   return val;
 }
