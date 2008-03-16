@@ -433,10 +433,7 @@ gc_run(void)
       // mark
       minivar_t::mark(gc_mark);
       for (int i=0; i<recentsize; i++)
-        {
-          miniexp_t p = (miniexp_t)gc.recent[i];
-          gc_mark(&p);
-        }
+        gc_mark((miniexp_t*)&gc.recent[i]);
       // sweep
       gc.objs_free = gc.pairs_free = 0;
       gc.objs_freelist = gc.pairs_freelist = 0;
