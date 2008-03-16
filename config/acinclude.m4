@@ -148,8 +148,11 @@ AC_DEFUN([AC_CXX_INTEL_ATOMIC_BUILTINS],
 ac_cv_cxx_intel_atomic_builtins,
 [AC_LANG_SAVE
  AC_LANG_CPLUSPLUS
- AC_TRY_COMPILE([static int volatile l;],
- [__sync_lock_test_and_set(&l,1); return 0;],
+ AC_TRY_LINK([static int volatile l;],
+ [__sync_lock_test_and_set(&l,1); 
+  __sync_lock_release(&l);
+  __sync_add_and_fetch(&l,1);
+  return 0;],
  ac_cv_cxx_intel_atomic_builtins=yes, ac_cv_cxx_intel_atomic_builtins=no)
  AC_LANG_RESTORE
 ])

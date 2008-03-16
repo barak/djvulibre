@@ -21688,19 +21688,22 @@ static int volatile l;
 int
 main ()
 {
-__sync_lock_test_and_set(&l,1); return 0;
+__sync_lock_test_and_set(&l,1);
+  __sync_lock_release(&l);
+  __sync_add_and_fetch(&l,1);
+  return 0;
   ;
   return 0;
 }
 _ACEOF
-rm -f conftest.$ac_objext
-if { (ac_try="$ac_compile"
+rm -f conftest.$ac_objext conftest$ac_exeext
+if { (ac_try="$ac_link"
 case "(($ac_try" in
   *\"* | *\`* | *\\*) ac_try_echo=\$ac_try;;
   *) ac_try_echo=$ac_try;;
 esac
 eval "echo \"\$as_me:$LINENO: $ac_try_echo\"") >&5
-  (eval "$ac_compile") 2>conftest.er1
+  (eval "$ac_link") 2>conftest.er1
   ac_status=$?
   grep -v '^ *+' conftest.er1 >conftest.err
   rm -f conftest.er1
@@ -21709,7 +21712,8 @@ eval "echo \"\$as_me:$LINENO: $ac_try_echo\"") >&5
   (exit $ac_status); } && {
 	 test -z "$ac_cxx_werror_flag" ||
 	 test ! -s conftest.err
-       } && test -s conftest.$ac_objext; then
+       } && test -s conftest$ac_exeext &&
+       $as_test_x conftest$ac_exeext; then
   ac_cv_cxx_intel_atomic_builtins=yes
 else
   echo "$as_me: failed program was:" >&5
@@ -21718,7 +21722,8 @@ sed 's/^/| /' conftest.$ac_ext >&5
 	ac_cv_cxx_intel_atomic_builtins=no
 fi
 
-rm -f core conftest.err conftest.$ac_objext conftest.$ac_ext
+rm -f core conftest.err conftest.$ac_objext conftest_ipa8_conftest.oo \
+      conftest$ac_exeext conftest.$ac_ext
  ac_ext=cpp
 ac_cpp='$CXXCPP $CPPFLAGS'
 ac_compile='$CXX -c $CXXFLAGS $CPPFLAGS conftest.$ac_ext >&5'
