@@ -13,5 +13,6 @@ minilisp.o: minilisp.cpp ${MINIEXPH}
 miniexp.o: ${MINIEXPC} ${MINIEXPH}
 	${CXX} ${CXXFLAGS} -I${MINIEXPDIR} -o miniexp.o -c ${MINIEXPC}
 
-
+distclean clean: 
+	-rm minilisp minilisp.o miniexp.o 2>/dev/null
 

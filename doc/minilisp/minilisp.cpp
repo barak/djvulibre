@@ -945,7 +945,9 @@ sighandler(int signo)
 int
 main()
 {
-  //minilisp_debug(1);
+#ifdef DEBUG
+  minilisp_debug(1);
+#endif
   minilisp_macrochar_parser[(int)';'] = parse_comment;
   minilisp_macrochar_parser[(int)'\''] = parse_quote;
   FILE *f = fopen("minilisp.in","r");

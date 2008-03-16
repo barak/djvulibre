@@ -312,42 +312,109 @@ new_obj_block(void)
 }
 
 #if defined(__GNUC__) && (__GNUC__ >= 3)
-static void gc_mark_object(void **v)
-  __attribute__((noinline));
+static void gc_mark_object(void **v) __attribute__((noinline));
 #else
 static void gc_mark_object(void **v);
 #endif
 
+static bool
+gc_mark_check(void *p)
+{
+  if (((size_t)p) & 2)
+    return false;
+  void **v = (void**)(((size_t)p) & ~(size_t)3); 
+  if (! v)
+    return false;
+  char *m = markbyte(v);
+  if (*m)
+    return false;
+  *m = 1;
+  if (! (((size_t)p) & 1))
+    return true;
+  gc_mark_object((void**)v);
+  return false;
+}
+
+static void
+gc_mark_pair(void **v)
+{
+#ifndef MINIEXP_POINTER_REVERSAL
+  // This is a simple recursive code.
+  // Despite the tail recursion for the cdrs,
+  // it consume a stack space that grows like
+  // the longest chain of cars.
+  for(;;)
+    {
+      if (gc_mark_check(v[0]))
+        gc_mark_pair((void**)v[0]);
+      if (! gc_mark_check(v[1]))
+        break;
+      v = (void**)v[1];
+    }
+#else
+  // This is the classic pointer reversion code
+  // It saves stack memory by temporarily reversing the pointers. 
+  // This is a bit slower because of all these nonlocal writes.
+  // But it could be useful for memory-starved applications.
+  // That makes no sense for most uses of miniexp.
+  // I leave the code here because of its academic interest.
+  void **w = 0;
+ docar:
+  if (gc_mark_check(v[0]))
+    { // reverse car pointer
+      void **p = (void**)v[0];
+      v[0] = (void*)w;
+      w = (void**)(((size_t)v)|(size_t)1);
+      v = p;
+      goto docar;
+    }
+ docdr:
+  if (gc_mark_check(v[1]))
+    { // reverse cdr pointer
+      void **p = (void**)v[1];
+      v[1] = (void*)w;
+      w = v;
+      v = p;
+      goto docar;
+    }
+ doup:
+  if (w)
+    {
+      if (((size_t)w)&1)
+        { // undo car reversion
+          void **p = (void**)(((size_t)w)&~(size_t)1);
+          w = (void**)p[0];
+          p[0] = (void*)v;
+          v = p;
+          goto docdr;
+        }
+      else
+        { // undo cdr reversion
+          void **p = w;
+          w = (void**)p[1];
+          p[1] = (void*)v;
+          v = p;
+          goto doup;
+        }
+    }
+#endif
+}
+
 static void
 gc_mark(miniexp_t *pp)
 {
-  for(;;)
-    {
-      miniexp_t p = *pp;
-      if (((size_t)p) & 2) return;
-      void **v = (void**)(((size_t)p) & ~(size_t)3);
-      if (! v) return;
-      char *m = markbyte(v);
-      if (*m) return;
-      (*m) = 1;
-      if (((size_t)p) & 1)
-        { // object
-          gc_mark_object(v);
-          return;
-        }
-      else
-        { // pair
-          gc_mark((miniexp_t*)&v[0]);
-          pp = (miniexp_t*)&v[1];
-        }
-    }
+  void **v = (void**)*pp;
+  if (gc_mark_check((void**)*pp))
+    gc_mark_pair(v);
 }
 
 static void
 gc_mark_object(void **v)
 {
+  ASSERT(v[0] == v[1]);
   miniobj_t *obj = (miniobj_t*)v[0];
-  if (obj) obj->mark(gc_mark);
+  if (obj) 
+    obj->mark(gc_mark);
 }
 
 static void
