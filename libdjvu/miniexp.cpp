@@ -395,13 +395,12 @@ gc_alloc_pair(void *a, void *d)
         new_pair_block();
     }
   else if (gc.debug)
-    minilisp_gc();
+    gc_run();
   void **p = gc.pairs_freelist;
   gc.pairs_freelist = (void**)p[0];
   gc.pairs_free -= 1;
   p[0] = a;
   p[1] = d;
-  gc.recent[(++gc.recentindex) & (recentsize-1)] = p;
   return p;
 }
 
@@ -415,12 +414,11 @@ gc_alloc_object(void *obj)
         new_obj_block();
     }
   else if (gc.debug)
-    minilisp_gc();
+    gc_run();
   void **p = gc.objs_freelist;
   gc.objs_freelist = (void**)p[0];
   gc.objs_free -= 1;
   p[0] = p[1] = obj;
-  gc.recent[(++gc.recentindex) & (recentsize-1)] = p;
   return p;
 }
 
@@ -621,9 +619,8 @@ miniexp_nth(int n, miniexp_t l)
 miniexp_t 
 miniexp_cons(miniexp_t a, miniexp_t d)
 {
-  gc.recent[(gc.recentindex+1) & (recentsize-1)] = (void**)a;
-  gc.recent[(gc.recentindex+2) & (recentsize-1)] = (void**)d;
   miniexp_t r = (miniexp_t)gc_alloc_pair((void*)a, (void*)d); 
+  gc.recent[(++gc.recentindex) & (recentsize-1)] = (void**)r;
   return r;
 }
 
@@ -698,7 +695,9 @@ miniexp_t
 miniexp_object(miniobj_t *obj)
 {
   void **v = gc_alloc_object((void*)obj);
-  return (miniexp_t)(((size_t)v)|(size_t)1);
+  v = (void**)(((size_t)v)|((size_t)1));
+  gc.recent[(++gc.recentindex) & (recentsize-1)] = v;
+  return (miniexp_t)(v);
 }
 
 miniexp_t 
