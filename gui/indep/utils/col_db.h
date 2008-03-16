@@ -83,12 +83,12 @@ public:
    class ColorItem
    {
    public:
-      char		* name;
+      const char	* name;
       unsigned char	red, green, blue;
    };
    static ColorItem	color[];
    static int		colors;
-   static char 		** name;
+   static const char	** name;
    static unsigned char	* red, * green, * blue;
    
    static int	GetColorNum(u_int32 color);

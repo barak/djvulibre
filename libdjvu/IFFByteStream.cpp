@@ -149,12 +149,12 @@ IFFByteStream::check_id(const char *id)
     if (id[i]<0x20 || id[i]>0x7e)
       return -1;
   // check composite chunks
-  static char *szComposite[] = { "FORM", "LIST", "PROP", "CAT ", 0 };
+  static const char *szComposite[] = { "FORM", "LIST", "PROP", "CAT ", 0 };
   for (i=0; szComposite[i]; i++) 
     if (!memcmp(id, szComposite[i], 4))
       return 1;
   // check reserved chunks
-  static char *szReserved[] = { "FOR", "LIS", "CAT", 0 };
+  static const char *szReserved[] = { "FOR", "LIS", "CAT", 0 };
   for (i=0; szReserved[i]; i++) 
     if (!memcmp(id, szReserved[i], 3) && id[3]>='1' && id[3]<='9')
       return -1;

@@ -86,10 +86,10 @@ const int DjVuPrefs::legal_mag_size_num
 const int DjVuPrefs::legal_mag_scale_num
    = sizeof(DjVuPrefs::legal_mag_scale)/sizeof(DjVuPrefs::legal_mag_scale[0]);
 
-char *DjVuPrefs::hlb_names[]=
+const char *DjVuPrefs::hlb_names[]=
    { "Shift", "Shift + Shift", "Alt", "Alt + Alt", "Ctrl", "Ctrl + Ctrl" };
 
-char *DjVuPrefs::mag_names[]=
+const char *DjVuPrefs::mag_names[]=
    { "Shift", "Alt", "Ctrl", "Mid" };
 
 GUTF8String
@@ -200,7 +200,7 @@ DjVuPrefs::load(void)
           hlb_names[HLB_SHIFT]);
 
   database = (void*) XrmGetStringDatabase(buffer);
-  char * home=getenv("HOME"); if (!home) home="";
+  const char * home=getenv("HOME"); if (!home) home="";
   GUTF8String db_name=GUTF8String(home)+"/"+DATABASE_FILE_NAME;
   DEBUG_MSG("merging database '" << db_name << "'\n");
   XrmDatabase db = (XrmDatabase)database;
@@ -330,7 +330,7 @@ DjVuPrefs::save()
   setInt("MimeDontCheck", mimeDontCheck);
   if (bBeginner == 0)
     setString("Beginner", __DATE__ " " __TIME__ );
-  char * home=getenv("HOME"); if (!home) home="";
+  const char * home=getenv("HOME"); if (!home) home="";
   GUTF8String db_name=GUTF8String(home)+"/"+DATABASE_FILE_NAME;
   DEBUG_MSG("updating database '" << db_name << "'\n");
   XrmPutFileDatabase((XrmDatabase) database, db_name);
