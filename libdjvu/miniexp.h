@@ -294,7 +294,10 @@ MINILISPAPI miniexp_t miniexp_concat(miniexp_t l);
    can reference an arbitrary lisp expression.  Garbage
    collection preserves all lisp expressions referenced by a
    minivar, as well as all lisp expressions that can be
-   accessed from these.
+   accessed from these. Garbage collection also preserves
+   the sixteen most recently created miniexps in order
+   to make sure that temporaries do not vanish in the 
+   course of evaluating complicated C expressions.
      
    The minivar class is designed such that C++ program can
    directly use instances of <minivar_t> as normal
