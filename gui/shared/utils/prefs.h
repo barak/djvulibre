@@ -88,8 +88,8 @@ public:
    static const int legal_mag_scale[];
    static const int legal_mag_size_num;
    static const int legal_mag_scale_num;
-   static char	* hlb_names[];
-   static char	* mag_names[];
+   static const char *hlb_names[];
+   static const char *mag_names[];
 
    char		bBeginner;
 
