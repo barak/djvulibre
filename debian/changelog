@@ -1,5 +1,6 @@
-djvulibre (3.5.20-5) unstable; urgency=low
+djvulibre (3.5.20-5RC) unstable; urgency=low
 
+  * Upstream fix (closes: #471149)
   * Upstream __sync_... build error fixes in libdjvu/atomic.cpp for sparc,
     mips, arm, hppa, mipsel, armel.
 
