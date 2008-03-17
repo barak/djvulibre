@@ -86,7 +86,7 @@ ColorDB::ColorItem	ColorDB::color[]=
    { "gray",		211, 211, 211 }
 };
 
-char ** ColorDB::name;
+const char ** ColorDB::name;
 unsigned char * ColorDB::red;
 unsigned char * ColorDB::green;
 unsigned char * ColorDB::blue;
@@ -108,7 +108,7 @@ ColorDB::ColorDB(void)
    red=new unsigned char[colors];
    green=new unsigned char[colors];
    blue=new unsigned char[colors];
-   name=new char*[colors];
+   name=new const char*[colors];
    
    if (!red || !green || !blue || !name)
       G_THROW("ColorDB::ColorDB(): Not enough memory to initialize color database.");
