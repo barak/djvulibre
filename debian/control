@@ -50,9 +50,8 @@ Section: graphics
 Architecture: any
 Provides: djview
 Depends: ${shlibs:Depends}
-Recommends: djvulibre-desktop
+Recommends: djvulibre-desktop, djvulibre-plugin
 Suggests: djvulibre-bin
-Recommends: djvulibre-plugin
 Description: Viewer for the DjVu image format
  DjVu viewer djview.
 
