@@ -47,11 +47,24 @@ libver := $(shell egrep '^Package: libdjvulibre[0-9]+$$' debian/control \
 		  | head -1 \
 		  | sed 's/Package: libdjvulibre//')
 
+libver1 := $(shell cut --delimiter=' ' --field=2 debian/shlibs.local)
+
+libver2 := $(shell cut --delimiter=' ' --field=3 debian/shlibs.local | sed 's/^libdjvulibre//')
+
 ifneq ($(libver0),$(libver))
-	error must update debian/control to the new library
+	error inconsistent debian/control library major version
 endif
 
-testlibver: ; echo library major version: upstream $(libver0), debian $(libver)
+ifneq ($(libver),$(libver1))
+	error inconsistent debian/shlibs.local library major version
+endif
+
+ifneq ($(libver1),$(libver2))
+	error inconsistent library major version in debian/shlibs.local
+endif
+
+testlibver:
+	@echo library major version: upstream $(libver0), debian $(libver) $(libver1) $(libver2)
 
 config.status: configure
 	dh_testdir
