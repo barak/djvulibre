@@ -47,20 +47,8 @@ libver := $(shell egrep '^Package: libdjvulibre[0-9]+$$' debian/control \
 		  | head -1 \
 		  | sed 's/Package: libdjvulibre//')
 
-libver1 := $(shell cut --delimiter=' ' --field=2 debian/shlibs.local)
-
-libver2 := $(shell cut --delimiter=' ' --field=3 debian/shlibs.local | sed 's/^libdjvulibre//')
-
 ifneq ($(libver0),$(libver))
 	error inconsistent debian/control library major version
-endif
-
-ifneq ($(libver),$(libver1))
-	error inconsistent debian/shlibs.local library major version
-endif
-
-ifneq ($(libver1),$(libver2))
-	error inconsistent library major version in debian/shlibs.local
 endif
 
 testlibver:
@@ -164,10 +152,10 @@ binary-arch: build install
 	dh_strip
 	dh_compress --exclude=.djvu
 	dh_fixperms
-	dh_makeshlibs --exclude=/plugins --version-info
+	dh_makeshlibs --version-info # --exclude=/plugins
+	dh_shlibdeps -L libdjvulibre$(libver) -l debian/libdjvulibre$(libver)/usr/lib
 	dh_installdeb
 #	dh_perl
-	dh_shlibdeps # -L libdjvulibre$(libver) -l debian/libdjvulibre$(libver)/usr/lib
 	dh_gencontrol
 	dh_md5sums
 	dh_builddeb
