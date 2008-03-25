@@ -1,3 +1,13 @@
+djvulibre (3.5.20-6rc) unstable; urgency=low
+
+  * split djvulibre-desktop out of shared library proper
+  * desktop xdg-utils dependency out of shared library proper (closes: #472347)
+  * library version coexistence (closes: #471650, #471915, #472097, #472265, #472503)
+  * rename package djview to djview3
+  * include some upstream change logs and such in djvulibre-bin (closes: #455607)
+
+ -- Barak A. Pearlmutter <bap@debian.org>  Tue, 25 Mar 2008 08:56:12 +0000
+
 djvulibre (3.5.20-5) unstable; urgency=low
 
   * Upstream fix (closes: #471149)
