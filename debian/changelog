@@ -1,4 +1,4 @@
-djvulibre (3.5.20-6rc) unstable; urgency=low
+djvulibre (3.5.20-6) unstable; urgency=low
 
   * split djvulibre-desktop out of shared library proper
   * desktop xdg-utils dependency out of shared library proper (closes: #472347)
