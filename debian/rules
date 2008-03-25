@@ -152,7 +152,7 @@ binary-arch: build install
 	dh_strip
 	dh_compress --exclude=.djvu
 	dh_fixperms
-	dh_makeshlibs --version-info # --exclude=/plugins
+	dh_makeshlibs --version-info --exclude=/plugins
 	dh_shlibdeps -L libdjvulibre$(libver) -l debian/libdjvulibre$(libver)/usr/lib
 	dh_installdeb
 #	dh_perl
