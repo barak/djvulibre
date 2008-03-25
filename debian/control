@@ -48,6 +48,7 @@ Description: Runtime support for the DjVu image format
 Package: djview3
 Section: graphics
 Architecture: any
+Conflicts: djview (<= 3.5.20-5)
 Provides: djview
 Depends: ${shlibs:Depends}
 Recommends: djvulibre-desktop, djvulibre-plugin
