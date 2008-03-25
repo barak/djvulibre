@@ -29,17 +29,28 @@ Description: Development files for the DjVu image format
 Package: libdjvulibre21
 Section: libs
 Architecture: any
-Depends: ${shlibs:Depends}, xdg-utils
+Depends: ${shlibs:Depends}
 Conflicts: libdjvulibre1
 Replaces: libdjvulibre1
+Recommends: djvulibre-desktop
 Description: Runtime support for the DjVu image format
- DjVu runtime library and support files.
+ DjVu runtime library.
+
+Package: djvulibre-desktop
+Section: libs
+Architecture: any
+Depends: xdg-utils
+Recommends: djview4 | djview3 | djview | evince
+Conflicts: libdjvulibre1, libdjvulibre15, libdjvulibre21 (<= 3.5.20-5)
+Description: Runtime support for the DjVu image format
+ DjVu desktop support.
 
 Package: djview3
 Section: graphics
 Architecture: any
 Provides: djview
-Depends: ${shlibs:Depends}, xdg-utils
+Depends: ${shlibs:Depends}
+Recommends: djvulibre-desktop
 Suggests: djvulibre-bin
 Recommends: djvulibre-plugin
 Description: Viewer for the DjVu image format
@@ -61,7 +72,7 @@ Section: web
 Architecture: any
 Depends: ${shlibs:Depends}, djview4 | djview3 | djview
 Enhances: mozilla-browser, mozilla, mozilla-firefox, konqueror, galeon
-Recommends: mozilla-browser | mozilla | mozilla-firefox | iceweasel | iceape-browser | konqueror | galeon | netscape-base-4 | netscape
+Recommends: mozilla-browser | mozilla | mozilla-firefox | iceweasel | iceape-browser | konqueror | galeon | netscape-base-4 | netscape, djvulibre-desktop
 Suggests: mime-support
 Conflicts: djvulibre-bin (<< 3.5.19)
 Description: Browser plugin for the DjVu image format
@@ -71,6 +82,7 @@ Package: djvulibre-bin
 Section: graphics
 Architecture: any
 Depends: curl, ${shlibs:Depends}
+Recommends: djvulibre-desktop
 Suggests: djview4 | djview3 | djview
 Description: Utilities for the DjVu image format
  Executables including utilities for conversion between DjVu and other
