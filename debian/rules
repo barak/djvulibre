@@ -37,6 +37,22 @@ else
 	CFLAGS += -O3
 endif
 
+# extract library major version from source build system
+libver0 := $(shell egrep '^LIBDJVU_VER_COMPAT=[0-9]+$$' configure \
+		   | head -1 \
+		   | sed 's/LIBDJVU_VER_COMPAT=//')
+
+# extract library major version expected by debian packaging
+libver := $(shell egrep '^Package: libdjvulibre[0-9]+$$' debian/control \
+		  | head -1 \
+		  | sed 's/Package: libdjvulibre//')
+
+ifneq ($(libver0),$(libver))
+	error must update debian/control to the new library
+endif
+
+testlibver: ; echo library major version: upstream $(libver0), debian $(libver)
+
 config.status: configure
 	dh_testdir
 	./configure --host=$(DEB_HOST_GNU_TYPE)		\
@@ -138,10 +154,10 @@ binary-arch: build install
 	dh_makeshlibs --exclude=/plugins --version-info
 	dh_installdeb
 #	dh_perl
-	dh_shlibdeps # -L libdjvulibre15 -l debian/libdjvulibre15/usr/lib
+	dh_shlibdeps # -L libdjvulibre$(libver) -l debian/libdjvulibre$(libver)/usr/lib
 	dh_gencontrol
 	dh_md5sums
 	dh_builddeb
 
 binary: binary-indep binary-arch
-.PHONY: build clean binary-indep binary-arch binary install
+.PHONY: build clean binary-indep binary-arch binary install testlibver
