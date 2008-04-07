@@ -102,8 +102,12 @@ install: build
 	ln -sf ../../$(plug) debian/tmp/usr/lib/mozilla/plugins/
 	mkdir --parents      debian/tmp/usr/lib/mozilla-firefox/plugins
 	ln -sf ../../$(plug) debian/tmp/usr/lib/mozilla-firefox/plugins/
+	@echo  get rid of djview link which is handled with update-alternatives
 	-rm debian/tmp/usr/bin/djview
 	-rm debian/tmp/usr/share/man/man1/djview.1
+	@echo get rid of script using gsdjvu which is not in Debian
+	-rm debian/tmp/usr/bin/djvudigital
+	-rm debian/tmp/usr/share/man/man1/djvudigital.1
 	@echo "install djvu icon and mime types"
 	mkdir --parents debian/tmp/usr/share/icons/hicolor/22x22/mimetypes
 	install --mode=644 ${CURDIR}/desktopfiles/hi22-djvu.png \
