@@ -129,7 +129,7 @@ djvudigital: cannot locate suitable ghostscript executable.
 +--------------------------------------------------------------------+
 | DjVuDigital relies on a special ghostscript device driver, but     |
 | could not find a ghostscript executable that implement this driver.|
-| Please visit http://djvulibre.djvuzone.org/gsdjvu.html.            |
+| Please visit http://djvu.sourceforge.net/gsdjvu.html.              |
 +--------------------------------------------------------------------+
 EOF
     exit 10
