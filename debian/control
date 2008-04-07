@@ -42,8 +42,8 @@ Architecture: any
 Depends: xdg-utils
 Recommends: djview4 | djview3 | djview | evince
 Conflicts: libdjvulibre1, libdjvulibre15, libdjvulibre21 (<= 3.5.20-5)
-Description: Runtime support for the DjVu image format
- DjVu desktop support.
+Description: Desktop support for the DjVu image format
+ Miscellaneous files to support the DjVu image format on the desktop.
 
 Package: djview3
 Section: graphics
@@ -54,7 +54,7 @@ Depends: ${shlibs:Depends}
 Recommends: djvulibre-desktop, djvulibre-plugin
 Suggests: djvulibre-bin
 Description: Viewer for the DjVu image format
- DjVu viewer djview.
+ DjVu viewer djview3, formerly knows as just djview.
 
 Package: djview
 Section: graphics

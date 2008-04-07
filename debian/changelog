@@ -4,8 +4,9 @@ djvulibre (3.5.20-7) unstable; urgency=low
   * Postscript generation issue (four-color image into cpaldjvu into
     djvups without -mode=bw) seems to be resolved (closes: #278945)
   * Remove djvudigital from djvulibre-bin (closes: #461226)
-  
- -- Barak A. Pearlmutter <bap@debian.org>  Sun, 06 Apr 2008 22:49:53 -0700
+  * Rewrite desktop package description (closes: #474689, #474700)
+
+ -- Barak A. Pearlmutter <bap@debian.org>  Mon, 07 Apr 2008 09:58:58 -0700
 
 djvulibre (3.5.20-6) unstable; urgency=low
 
