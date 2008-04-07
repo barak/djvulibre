@@ -1,3 +1,11 @@
+djvulibre (3.5.20-7) unstable; urgency=low
+
+  * Generate djview transition package (closes: #473341)
+  * Postscript generation issue (four-color image into cpaldjvu into
+    djvups without -mode=bw) seems to be resolved (closes: #278945)
+
+ -- Barak A. Pearlmutter <bap@debian.org>  Sun, 06 Apr 2008 20:12:46 -0700
+
 djvulibre (3.5.20-6) unstable; urgency=low
 
   * split djvulibre-desktop out of shared library proper

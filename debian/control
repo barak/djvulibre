@@ -56,6 +56,13 @@ Suggests: djvulibre-bin
 Description: Viewer for the DjVu image format
  DjVu viewer djview.
 
+Package: djview
+Section: graphics
+Architecture: any
+Depends: djview4 | djview3
+Description: Transition package for djview to djview3
+ Ease transition of package name from djview to djview3.
+
 Package: djvuserve
 Section: web
 Recommends: apache | httpd-cgi | httpd
