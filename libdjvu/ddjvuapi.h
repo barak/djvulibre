@@ -1465,8 +1465,8 @@ ddjvu_document_get_anno(ddjvu_document_t *document, int compat);
    accessing the desired information. 
 
    Argument <maxdetail> controls the level of detail in the
-   returned s-expression. Values "page", "region", "para", "line", 
-   and "word" restrict the output to the specified granularity.
+   returned s-expression. Values "page", "column", "region", "para", 
+   "line", and "word" restrict the output to the specified granularity.
    All other values produce a s-expression that represents
    the hidden text data as finely as possible. */
 
