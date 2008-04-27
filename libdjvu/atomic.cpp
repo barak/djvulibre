@@ -177,7 +177,7 @@ static int xchgl(int volatile *atomic, int newval)
 {
   int oldval;
   __asm__ __volatile__ ("xchgl %0, %1"
-			: "=r" (oldval), "=m" (*atomic)
+			: "=r" (oldval), "+m" (*atomic)
 			: "0" (newval), "m" (*atomic)); 
   return oldval; 
 }
@@ -195,7 +195,7 @@ static int xchg_acq(int volatile *atomic, int newval)
                     "   stwcx.  %3,0,%2\n"
                     "   bne-    1b\n"
                     "   isync"
-                    : "=&r" (oldval), "=m" (*atomic)
+                    : "=&r" (oldval), "+m" (*atomic)
                     : "b" (atomic), "r" (newval), "m" (*atomic)
                     : "cr0", "memory");
   return oldval;
@@ -235,9 +235,11 @@ static void st_rel(int volatile *atomic, int newval)
 #if USE_GCC_I386_ASM && !HAVE_INCDEC
 static int xaddl(int volatile *atomic, int add) 
 {
+  int val; /* This works for the 486 and later */
   __asm__ __volatile__("lock; xaddl %0, %1" 
-                       : "=r" (add) : "m" (*atomic), "0" (add) );
-  return add;
+                       : "=r" (val), "+m" (*atomic) 
+                       : "m" (*atomic), "0" (add) );
+  return val;
 }
 # define SYNC_INC(l)  (xaddl(l, 1) + 1)
 # define SYNC_DEC(l)  (xaddl(l, -1) - 1)
@@ -253,7 +255,7 @@ static int addlx(int volatile *atomic, int add)
                     "   add    %0,%0,%3\n"
                     "   stwcx. %0,0,%2\n"
                     "   bne-   1b"
-                    : "=&b" (val), "=m" (*atomic)  
+                    : "=&b" (val), "+m" (*atomic)  
                     : "b" (atomic), "r" (add), "m" (*atomic)           
                     : "cr0", "memory");
   return val;
