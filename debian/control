@@ -40,7 +40,7 @@ Package: djvulibre-desktop
 Section: libs
 Architecture: any
 Depends: xdg-utils
-Recommends: djview4 | djview3 | djview | evince
+Suggests: djview4 | djview3 | djview | evince
 Conflicts: libdjvulibre1, libdjvulibre15, libdjvulibre21 (<= 3.5.20-5)
 Description: Desktop support for the DjVu image format
  Miscellaneous files to support the DjVu image format on the desktop.
@@ -90,7 +90,7 @@ Section: graphics
 Architecture: any
 Depends: curl, ${shlibs:Depends}
 Recommends: djvulibre-desktop
-Suggests: djview4 | djview3 | djview
+Suggests: djview4 | djview3 | djview | evince
 Description: Utilities for the DjVu image format
  Executables including utilities for conversion between DjVu and other
  formats.
