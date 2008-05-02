@@ -89,7 +89,7 @@ Package: djvulibre-bin
 Section: graphics
 Architecture: any
 Depends: curl, ${shlibs:Depends}
-Recommends: djvulibre-desktop
+Recommends: djvulibre-desktop, pdf2djvu
 Suggests: djview4 | djview3 | djview | evince
 Description: Utilities for the DjVu image format
  Executables including utilities for conversion between DjVu and other
