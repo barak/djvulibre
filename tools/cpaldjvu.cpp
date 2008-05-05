@@ -861,7 +861,7 @@ usage()
          "Usage: cpaldjvu [options] <inputppmfile> <outputdjvufile>\n"
          "Options are:\n"
          "   -colors [2-4096] Maximum number of colors during quantization (default 256).\n"
-         "   -dpi [25-1200]   Resolution written into the output file (default 100).\n"
+         "   -dpi [25-6000]   Resolution written into the output file (default 100).\n"
          "   -verbose         Displays additional messages.\n"
          "   -bgwhite         Use the lightest color for background (usually white).\n"
          );
@@ -902,7 +902,7 @@ main(int argc, const char **argv)
             {
               char *end;
               opts.dpi = strtol(dargv[++i], &end, 10);
-              if (*end || opts.dpi<25 || opts.dpi>1200)
+              if (*end || opts.dpi<25 || opts.dpi>6000)
                 usage();
             }
           else if (arg == "-verbose" || arg == "-v")

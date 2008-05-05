@@ -362,7 +362,7 @@ create_info_chunk(IFFByteStream &iff, GArray<GUTF8String> &argv)
     G_THROW("djvumake: incorrect width in 'INFO' chunk specification\n");
   if (h>0 && (h<=0 || h>=32768))
     G_THROW("djvumake: incorrect height in 'INFO' chunk specification\n");
-  if (dpi>0 && (dpi<72 || dpi>144000))
+  if (dpi>0 && (dpi<25 || dpi>6000))
     G_THROW("djvumake: incorrect dpi in 'INFO' chunk specification\n");
   // Search first mask chunks if size is still unknown
   if (h<0 || w<0)
