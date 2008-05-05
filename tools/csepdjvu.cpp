@@ -1196,6 +1196,8 @@ Comments::parse_comment_line(BufferByteStream &bs)
              bs.skip(" \t") && bs.read_geometry(mark->r) &&
              bs.skip(" \t") && bs.read_ps_string(mark->s) ) )
         G_THROW("csepdjvu: corrupted file (syntax error in text comment)");
+      if (mark->r.isempty())
+        G_THROW("csepdjvu: corrupted file (empty rectangle in text comment)");
       textmark(mark);
       return true;
     }
@@ -1206,6 +1208,8 @@ Comments::parse_comment_line(BufferByteStream &bs)
       if (! (bs.skip(" \t") && bs.read_geometry(mark->r) &&
              bs.skip(" \t") && bs.read_ps_string(mark->s) ) )
         G_THROW("csepdjvu: corrupted file (syntax error in link comment)");
+      if (mark->r.isempty())
+        G_THROW("csepdjvu: corrupted file (empty rectangle in link comment)");
       int ymax = h - mark->r.ymin - 1; // reversed in gsdjvu ?
       int ymin = h - mark->r.ymax - 1; // reversed in gsdjvu ?
       mark->r.ymax = ymax;
@@ -1768,7 +1772,7 @@ main(int argc, const char **argv)
               // Specify resolution
               char *end;
               opts.dpi = strtol(dargv[++i], &end, 10);
-              if (*end || opts.dpi<25 || opts.dpi>144000)
+              if (*end || opts.dpi<25 || opts.dpi>6000)
                 usage();
             }
           else if (arg == "-q" && i+1 < argc)
