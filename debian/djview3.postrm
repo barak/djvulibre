@@ -1,14 +1,18 @@
 #! /bin/sh
 
-# Alternatives
-if [ "$1" = "remove" ] && [ -x /usr/sbin/update-alternatives ] ; then
-  /usr/sbin/update-alternatives --quiet --remove djview /usr/bin/djview3
-fi
+case "$1" in
+    remove)
+	# Alternatives
+	if [ -x /usr/sbin/update-alternatives ] ; then
+	    /usr/sbin/update-alternatives --quiet \
+	     --remove djview /usr/bin/djview3
+	fi
 
-# Menu entries
-if [ "$1" = "remove" ] && 
-   [ -x /usr/bin/update-desktop-database ] ; then
-  /usr/bin/update-desktop-database
-fi
+	# Menu entries
+	if [ -x /usr/bin/update-desktop-database ] ; then
+	    /usr/bin/update-desktop-database
+	fi
+	;;
+esac
 
 #DEBHELPER#

@@ -104,10 +104,10 @@ install: build
 	ln -sf ../../$(plug) debian/tmp/usr/lib/mozilla-firefox/plugins/
 	@echo "work around debian diff inability to represent deleted files"
 	-rm debian/djview.files debian/djview.menu debian/djview.mime
-	@echo "get rid of djview link debian handles with update-alternatives"
+	@echo "flush djview link; handled in debian with update-alternatives"
 	-rm debian/tmp/usr/bin/djview
 	-rm debian/tmp/usr/share/man/man1/djview.1
-	@echo "get rid of script using gsdjvu which is not in Debian"
+	@echo "flush gsdjvu script; not in Debian"
 	-rm debian/tmp/usr/bin/djvudigital
 	-rm debian/tmp/usr/share/man/man1/djvudigital.1
 	@echo "install djvu icon and mime types"

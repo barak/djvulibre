@@ -1,18 +1,22 @@
 #! /bin/sh
 
-# Register menu entries (non debian menus)
-if [ "$1" = "configure" ] && 
-   [ -x /usr/bin/update-desktop-database ] ; then
-  /usr/bin/update-desktop-database
-fi
+case "$1" in
+    configure)
 
-# Alternatives
-if [ "$1" = "configure" ] && [ -x /usr/sbin/update-alternatives ] ; then
-  m1=`ls -1 /usr/share/man/man1/djview3.* | head -1`
-  m2=`echo $m1 | sed -e 's/djview3/djview/'`
-  /usr/sbin/update-alternatives --quiet \
-    --install /usr/bin/djview djview /usr/bin/djview3 103 \
-    --slave $m2 `basename $m2` $m1
-fi
+	# Register menu entries (non debian menus)
+	if [ -x /usr/bin/update-desktop-database ] ; then
+	    /usr/bin/update-desktop-database
+	fi
+
+	# Alternatives
+	if [ -x /usr/sbin/update-alternatives ] ; then
+	    update-alternatives --quiet \
+		--install /usr/bin/djview djview /usr/bin/djview3 103 \
+		--slave \
+		/usr/share/man/man1/djview.1.gz djview.1.gz \
+		/usr/share/man/man1/djview3.1.gz
+	fi
+	;;
+esac
 
 #DEBHELPER#
