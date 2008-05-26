@@ -151,7 +151,7 @@ several metadata directives in the shared annotations chunk.
 This scheme has a potential drawback. Since the shared annotations
 is included by all pages, the document wide metadata also appears as
 page metadata for all pages. This might not be adequate for some
-uses. As a workaround, the djview4 viewer (in preparation) only
+uses. As a workaround, the djview4 viewer only
 displays page metadata that differ from the document metadata.
 
 A more definitive answer would be the definition of a document
@@ -161,14 +161,16 @@ This is being considered.
 
 
 
-6- THE SO CALLED "SECURE DJVU" FORMAT.
+6- THE "SECURE DJVU" FORMAT.
 
 Recently Lizardtech introduced an incompatible "Secure DJVU" format.
 This format encrypt djvu data in the hope of controlling
-whether users can copy or print djvu documents.
-The specification is not open because there is no 
-durable way to enforce such constraints.
-This is just "security through obscurity".
+whether users can use, copy or print djvu documents.
+A recent specification describes the container format
+but does not provide enough information to decode the content.
+Providing such an information would obviously provide
+a means to avoid the usage restrictions. In fact there is no durable 
+way to enforce such constraints besides "security through obscurity".
 
 The current djvulibre library simply emits an 
 error message when encountering such files.
@@ -189,6 +191,6 @@ Some observations regarding these files:
   It appears to be in fact composed of 64 bits block
   as you would expect with blowfish.
 
-- Despite this strong encryption, the scheme is very weak.
+- Despite this strong encryption, the scheme is weak.
   The file contains the key at a relatively well known location.
   What is not known is the key scrambling scheme.
