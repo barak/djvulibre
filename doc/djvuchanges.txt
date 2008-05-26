@@ -8,19 +8,21 @@ format since the release of the DjVu3 specification by Lizardtech in
 november 2005.
 
 
+
 1- AMBIGUOUS PARTS IN THE SPECIFICATION
 
- 1a- Background reduction ratio
 
- The relation between the size (W,H) of the foreground image
- and the size (w,h) of the background (w,h) is described in 
- page 33 of the specification. The requirement ceil(W/w)=ceil(H/h)
- leads to contradictions. The requirements should be read as:
+1.1 - BACKGROUND REDUCTION RATIO
 
-  There is a single integer reduction factor 1 <= k <= 12 such 
+The relation between the size (W,H) of the foreground image
+and the size (w,h) of the background (w,h) is described in 
+page 33 of the specification. The requirement ceil(W/w)=ceil(H/h)
+leads to contradictions. The requirements should be read as:
+
+<<There is a single integer reduction factor 1 <= k <= 12 such 
   that w=ceil(W/k) and h=ceil(H/k).  Should there be several
   such integers, the smallest one shall be considered
-  to rescale the background image to the foreground resolution.
+  to rescale the background image to the foreground resolution.>>
 
 
 
