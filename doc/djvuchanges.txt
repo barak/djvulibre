@@ -14,10 +14,11 @@ november 2005.
 
 1.1 - BACKGROUND REDUCTION RATIO
 
-The relation between the size (W,H) of the foreground image
-and the size (w,h) of the background (w,h) is described in 
-page 33 of the specification. The requirement ceil(W/w)=ceil(H/h)
-leads to contradictions. The requirements should be read as:
+The relation between the size (W,H) of the foreground image and the
+size (w,h) of the background image is described in page 33 of the
+specification.  The requirement ceil(W/w)=ceil(H/h) does not
+completely capture the fact that the same reduction factor should be
+applied to both dimensions.  The requirements should be read as:
 
 <<There is a single integer reduction factor 1 <= k <= 12 such 
   that w=ceil(W/k) and h=ceil(H/k).  Should there be several
