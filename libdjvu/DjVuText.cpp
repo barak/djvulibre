@@ -313,7 +313,7 @@ DjVuTXT::has_valid_zones() const
 {
   if (!textUTF8)
     return false;
-  if (page_zone.children.isempty() || page_zone.rect.isempty()) 
+  if (page_zone.rect.isempty()) 
     return false;
   return true;
 }
