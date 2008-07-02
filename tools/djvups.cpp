@@ -272,12 +272,19 @@ main(int argc, char **argv)
     die(i18n("Cannot open output file '%s'."), outfile);
   /* Create printing job */
   if (! (job = ddjvu_document_print(doc, fout, optc, optv)))
-    die(i18n("Cannot create print job."));
+    die(i18n("Cannot create PostScript conversion job."));
   /* Wait until completion and cleanup */
   while (! ddjvu_job_done(job))
     handle(TRUE);
   if (verbose)
     fprintf(stderr,"\n");
+  /* Make sure we get error messages */
+  tryhelp = false;
+  if (ddjvu_job_error(job))
+    handle(FALSE);
+  if (ddjvu_job_error(job))
+    die(i18n("PostScript conversion job failed."));
+  /* Close */
   fclose(fout);
   if (job)
     ddjvu_job_release(job);
