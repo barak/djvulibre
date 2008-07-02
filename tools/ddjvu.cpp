@@ -1008,12 +1008,12 @@ main(int argc, char **argv)
     {
       int fd = dup(tiffd);
       if (! TIFFFlush(tiff))
-        die(i18n("Error while flushing tiff file."));
+        die(i18n("Error while flushing TIFF file."));
       TIFFClose(tiff);
       close(tiffd);
       tiffd = fd;
       if (flag_verbose)
-        fprintf(stderr,i18n("Converting TIFF output to PDF.\n"));
+        fprintf(stderr,i18n("Converting temporary TIFF to PDF.\n"));
       lseek(tiffd, 0, SEEK_SET);
       if (! (tiff = TIFFFdOpen(tiffd, tempfilename, "r")))
         die(i18n("Cannot reopen temporary tiff file '%s'."), tempfilename);
