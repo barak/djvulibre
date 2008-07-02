@@ -28,9 +28,9 @@ ddjvu \- Command line DjVu decoder.
 
 .SH DESCRIPTION
 
-This program decodes DjVu file
+Decode the DjVu file
 .IR "djvufile" ,
-produces a raw image, and saves it into file
+produces the image file
 .IR "outputfile" .
 
 The DjVu data is read from the standard input when argument 
@@ -40,6 +40,9 @@ Similarly, the output data is written to the standard output
 when argument 
 .IR "outputfile"
 is not specified or equal to a single dash.
+However a valid output file name is always required when producing a
+TIFF or PDF file.
+
 
 .SH MAIN OPTIONS
 .TP
@@ -50,9 +53,10 @@ The recognized file formats are
 .BR "pgm" ,
 .BR "ppm" ,
 .BR "pnm" ,
+.BR "rle" ,
 .BR "tiff" ,
 and
-.BR "rle" .
+.BR "pdf" .
 .RS
 .IP "*" 3
 Formats 
@@ -65,19 +69,9 @@ Portable Graymap (PGM),
 or Portable Pixmap (PGM) file.
 Format 
 .B "pnm"
-produces either a PBM, a PGM, or a PPM 
-output file according to the color nature 
+produces a PBM, PGM, or PPM 
+output file according to the color content
 of the output image.
-.IP "*"
-Format
-.B "tiff"
-produces a Tagged Image Format (TIFF) file.
-Command 
-.BR tiffcp (1)
-and 
-.BR tiffsplit (1)
-are useful for manipulating the resulting 
-TIFF files.
 .IP "*"
 Format
 .B "rle"
@@ -86,6 +80,38 @@ that is understood by the DjVuLibre commands
 .BR "cjb2" 
 and 
 .BR "csepdjvu" .
+.IP "*"
+Format
+.B "tiff"
+produces a Tagged Image Format (TIFF) file.
+The resulting file uses the best available 
+lossless compression model.
+Enabling lossy JPEG compression (see option 
+.BI "-quality"
+below) often produces smaller files.
+Commands 
+.BR tiffcp (1)
+and 
+.BR tiffsplit (1)
+are useful for manipulating the resulting 
+TIFF files.
+.IP "*"
+Format
+.B "pdf"
+produces a Portable Document Format (PDF) file.
+Each page in the resulting file is represented
+by an image at the specified resolution,
+using the best available lossless compression model.
+Enabling lossy JPEG compression (see option 
+.BI "-quality"
+below) often produces smaller files.
+An alternate way to produce PDF 
+file consists in first using
+.BR djvups (1)
+and convert the resulting PostScript file to PDF.
+Which method gives better results depends
+on the contents of the DJVU file and on the
+capabilities of the PS to PDF converter.
 .RE
 .TP
 .B ""
@@ -227,23 +253,22 @@ The output file will always have size
 when this option is specified.
 .TP
 .BI "-quality=" "factor"
-Enables lossy compression in TIFF files.
-Without this option, TIFF files always use 
-lossless compression or no compression.  
+Enables lossy compression in TIFF and PDF files.
+Without this option, TIFF or PDF output files always 
+use lossless compression or no compression.  
 Argument 
 .I factor
 specifies a JPEG quantization factor 
 ranging from 25 to 150. See command 
 .BR cjpeg (1)
 for more information on JPEG quantization factors.
+Value 80 is a good starting point.
 
 .SH DEPRECATED OPTIONS
 
 Various options have been maintained to ensure
 backward compatibility with previous versions of
 .BR ddjvu.  
-Please do not rely on these features.
-
 When option
 .BR -format
 is not specified, 
@@ -265,6 +290,8 @@ and
 are shorthands for the 
 .BI -mode= mod
 option.
+Please do not rely on these features.
+
 
 .SH EXAMPLES
 Command
@@ -278,7 +305,7 @@ Command
 .BI "ddjvu -format=ppm -page=1 -size=100x100 " "myfile.djvu" " -"
 .PP
 produces a thumbnail for the first page of a document and 
-outputs it as a PPM file on the standard output:
+outputs it as a PPM file on the standard output.
 
 .SH CREDITS
 The new version of this program was written 

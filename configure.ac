@@ -161,7 +161,7 @@ AC_FUNC_FORK
 AC_CHECK_FUNCS(wcrtomb iswspace setenv)
 AC_CHECK_FUNCS(putc_unlocked strerror vsnprintf)
 AC_CHECK_FUNCS(gethostname strftime getpwuid)
-AC_CHECK_FUNCS(sigaction)
+AC_CHECK_FUNCS(sigaction mkstemp)
 
 # iconv function might be defined as libiconv in iconv.h
 AC_MSG_CHECKING([for iconv])

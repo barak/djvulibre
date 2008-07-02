@@ -74,28 +74,31 @@
 
 #ifdef UNIX
 # include <sys/time.h>
+# include <sys/types.h>
+# include <unistd.h>
 #endif
 
 #include "libdjvu/ddjvuapi.h"
+#include "tiff2pdf.h"
 
 #if defined(WIN32) || defined(__CYGWIN32__)
 # include <io.h>
+# define dup     _dup
+# define lseek   _lseek
+# define open    _open
+# define close   _close
+# define mktemp  _mktemp
+# define O_CREAT _O_CREAT
+# define O_RDWR  _O_RDWR
 #endif
+
 #if HAVE_PUTC_UNLOCKED
 # undef putc
 # define putc putc_unlocked
 #endif
+
 #if HAVE_TIFF
 # include <tiffio.h>
-# ifndef COMPRESSION_CCITT_T6
-#  define COMPRESSION_CCITT_T6 4
-# endif
-# ifndef COMPRESSION_JPEG
-#  define COMPRESSION_JPEG 7
-# endif
-# ifndef COMPRESSION_PACKBITS
-#  define COMPRESSION_PACKBITS 32771
-# endif
 #endif
 
 /* Some day we'll redo i18n right. */
@@ -128,17 +131,22 @@ int          flag_subsample = -1;
 int          flag_segment = 0;
 int          flag_verbose = 0;
 char         flag_mode = 0;     /* 'c', 'k', 's', 'f','b' */
-char         flag_format = 0;   /* '4','5','6','p','r','t' */
+char         flag_format = 0;   /* '4','5','6','p','r','t', 'f' */
 int          flag_quality = -1;
 const char  *flag_pagespec = 0; 
 ddjvu_rect_t info_size;
 ddjvu_rect_t info_segment;
-const char  *inputfilename;
-const char  *outputfilename;
+const char  *inputfilename = 0;
+const char  *outputfilename = 0;
 
-FILE *fout;
+#if HAVE_TIFF2PDF
+char *tempfilename = 0;
+int tiffd = -1;
+#endif
+
+FILE *fout = 0;
 #if HAVE_TIFF
-TIFF *tiff;
+TIFF *tiff = 0;
 #endif
 
 
@@ -183,6 +191,13 @@ die(const char *fmt, ...)
   vfprintf(stderr, fmt, args);
   va_end(args);
   fprintf(stderr,"\n");
+  /* Cleanup */
+#if HAVE_TIFF2PDF
+  if (tiffd >= 0)
+    close(tiffd);
+  if (tempfilename)
+    remove(tempfilename);
+#endif
   /* Terminates */
   exit(10);
 }
@@ -313,16 +328,30 @@ render(ddjvu_page_t *page)
   switch(flag_format)
     {
     case 't':
+    case 'f':
 #if HAVE_TIFF
       compression = COMPRESSION_NONE;
+# ifdef CCITT_SUPPORT
       if (style==DDJVU_FORMAT_MSBTOLSB 
           && TIFFFindCODEC(COMPRESSION_CCITT_T6))
         compression = COMPRESSION_CCITT_T6;
-      else if (style!=DDJVU_FORMAT_MSBTOLSB && flag_quality>0 
-               && TIFFFindCODEC(COMPRESSION_JPEG))
+# endif
+# ifdef JPEG_SUPPORT
+      if (compression == COMPRESSION_NONE 
+          && style!=DDJVU_FORMAT_MSBTOLSB && flag_quality>0 
+          && TIFFFindCODEC(COMPRESSION_JPEG))
         compression = COMPRESSION_JPEG;
-      else if (TIFFFindCODEC(COMPRESSION_PACKBITS))
+# endif
+# ifdef PACKBITS_SUPPORT
+      if (compression == COMPRESSION_NONE && flag_format == 't' 
+          && TIFFFindCODEC(COMPRESSION_PACKBITS))
         compression = COMPRESSION_PACKBITS;
+# endif
+# ifdef ZIP_SUPPORT
+      else if (compression == COMPRESSION_NONE
+               && TIFFFindCODEC(COMPRESSION_DEFLATE))
+        compression = COMPRESSION_DEFLATE;
+# endif
       break;
 #endif      
     case '4':
@@ -427,8 +456,9 @@ render(ddjvu_page_t *page)
           die(i18n("writing rle file: %s"), strerror(errno));
         break;
       }
-      /* -------------- TIFF output */
+      /* -------------- TIFF or PDF output */
     case 't':
+    case 'f':
       {
 #if HAVE_TIFF
         int i;
@@ -457,21 +487,35 @@ render(ddjvu_page_t *page)
           } else {
             TIFFSetField(tiff, TIFFTAG_SAMPLESPERPIXEL, (uint16)3);
             TIFFSetField(tiff, TIFFTAG_COMPRESSION, compression);
+# ifdef JPEG_SUPPORT
             if (compression == COMPRESSION_JPEG) {
               TIFFSetField(tiff, TIFFTAG_PHOTOMETRIC, PHOTOMETRIC_YCBCR);
               TIFFSetField(tiff, TIFFTAG_JPEGCOLORMODE, JPEGCOLORMODE_RGB);
               TIFFSetField(tiff, TIFFTAG_JPEGQUALITY, flag_quality);
             } else 
+# endif
               TIFFSetField(tiff, TIFFTAG_PHOTOMETRIC, PHOTOMETRIC_RGB);
           }
         }
         if (flag_verbose) {
-          if (compression == COMPRESSION_CCITT_T6)
+          if (compression == COMPRESSION_NONE)
+            fprintf(stderr,i18n("Producing uncompressed TIFF file.\n"));
+# ifdef CCITT_SUPPORT
+          else if (compression == COMPRESSION_CCITT_T6)
             fprintf(stderr,i18n("Producing TIFF/G4 file.\n"));
+# endif
+# ifdef JPEG_SUPPORT
           else if (compression == COMPRESSION_JPEG)
             fprintf(stderr,i18n("Producing TIFF/JPEG file.\n"));
+# endif
+# ifdef ZIP_SUPPORT
+          else if (compression == COMPRESSION_DEFLATE)
+            fprintf(stderr,i18n("Producing TIFF/DEFLATE file.\n"));
+# endif
+# ifdef PACKBITS_SUPPORT
           else if (compression == COMPRESSION_PACKBITS)
             fprintf(stderr,i18n("Producing TIFF/PACKBITS file.\n"));
+# endif
           else
             fprintf(stderr,i18n("Producing TIFF file.\n"));
         }
@@ -507,23 +551,52 @@ dopage(int pageno)
   
   timingdata[1] = ticks();
   /* Open files */
-  if (flag_format == 't') 
+  if (flag_format == 't')
     {
 #if HAVE_TIFF
-      if (! tiff) 
-        {
-          if (! strcmp(outputfilename,"-"))
-            die(i18n("Tiff output requires a valid output file name."));
-          else if (! (tiff = TIFFOpen(outputfilename, "w")))
-            die(i18n("Cannot open output tiff file '%s'."), outputfilename);
-        } 
-      else 
+      if (tiff) 
         {
           if (! TIFFWriteDirectory(tiff))
             die(i18n("Problem writing TIFF directory."));
         }
+      else
+        {
+          if (! strcmp(outputfilename,"-"))
+            die(i18n("TIFF output requires a valid output file name."));
+          if (! (tiff = TIFFOpen(outputfilename, "w")))
+            die(i18n("Cannot open output tiff file '%s'."), outputfilename);
+        }
 #else
       die(i18n("TIFF output is not compiled"));
+#endif
+    }
+  else if (flag_format == 'f')  
+    {
+#if HAVE_TIFF2PDF
+      if (tiff) 
+        {
+          if (! TIFFWriteDirectory(tiff))
+            die(i18n("Problem writing TIFF directory."));
+        }
+      else
+        {
+          if (! strcmp(outputfilename,"-"))
+            die(i18n("PDF output requires a valid output file name."));
+          if (! (tempfilename = (char*)malloc(strlen(outputfilename) + 8)))
+            die(i18n("Out of memory."));
+          strcpy(tempfilename, outputfilename);
+          strcat(tempfilename, ".XXXXXX");
+# if HAVE_MKSTEMP
+          tiffd = mkstemp(tempfilename);
+# else
+          if (mktemp(tempfilename))
+            tiffd = open(tempfilename, O_RDWR|O_CREAT);
+# endif
+          if (tiffd < 0 || ! (tiff = TIFFFdOpen(tiffd, tempfilename, "w")))
+            die(i18n("Cannot create temporary tiff file '%s'."), tempfilename);
+        }
+#else
+      die(i18n("PDF output is not compiled"));
 #endif
     } 
   else if (! fout) 
@@ -831,8 +904,10 @@ parse_option(int argc, char **argv, int i)
         flag_format='r';
       else if (!strcmp(arg,"tiff") || !strcmp(arg,"tif"))
         flag_format='t';
+      else if (!strcmp(arg,"pdf"))
+        flag_format='f';
       else
-        die(i18n(errbadarg),opt,i18n("are: pbm,pgm,ppm,pnm,rle,tiff"));
+        die(i18n(errbadarg),opt,i18n("are: pbm,pgm,ppm,pnm,rle,tiff,pdf"));
     }
   else if (!strcmp(opt,"mode"))
     {
@@ -928,6 +1003,38 @@ main(int argc, char **argv)
   parse_pagespec(flag_pagespec, i, dopage);
 
   /* Close */
+#if HAVE_TIFF2PDF
+  if (tiff && tiffd >= 0 && tempfilename)
+    {
+      int fd = dup(tiffd);
+      if (! TIFFFlush(tiff))
+        die(i18n("Error while flushing tiff file."));
+      TIFFClose(tiff);
+      close(tiffd);
+      tiffd = fd;
+      if (flag_verbose)
+        fprintf(stderr,i18n("Converting TIFF output to PDF.\n"));
+      off_t buzz = lseek(tiffd, 0, SEEK_SET);
+      int err = errno;
+      if (! (tiff = TIFFFdOpen(tiffd, tempfilename, "r")))
+        die(i18n("Cannot reopen temporary tiff file '%s'."), tempfilename);
+      if (! (fout = fopen(outputfilename, "wb")))
+        die(i18n("Cannot open output file '%s'."), outputfilename);
+      const char *argv[3];
+      argv[0] = "tiff2pdf";
+      argv[1] = "-o";
+      argv[2] = outputfilename;
+      if (tiff2pdf(tiff, fout, 3, argv) != EXIT_SUCCESS)
+        die(i18n("Error occured while creating PDF file."));
+      TIFFClose(tiff);
+      tiff = 0;
+      close(tiffd);
+      tiffd = -1;
+      remove(tempfilename);
+      free(tempfilename);
+      tempfilename = 0;
+    }
+#endif
 #if HAVE_TIFF
   if (tiff)
     {

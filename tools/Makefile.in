@@ -137,9 +137,9 @@ csepdjvu: csepdjvu.o ${JB2OBJS}
 	${LIBTOOL} --mode=link \
 	  ${CXX} -o $@ ${CXXFLAGS} csepdjvu.o ${JB2OBJS} ${LIBDJVU} ${LIBS}
 
-ddjvu: ddjvu.o
+ddjvu: ddjvu.o tiff2pdf.o
 	${LIBTOOL} --mode=link \
-	  ${CXX} -o $@ ${CXXFLAGS} ddjvu.o ${LIBDJVU} ${MORELIBS}
+	  ${CXX} -o $@ ${CXXFLAGS} ddjvu.o tiff2pdf.o ${LIBDJVU} ${MORELIBS}
 
 djvm: djvm.o
 	${LIBTOOL} --mode=link \

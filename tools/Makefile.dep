@@ -49,7 +49,8 @@ csepdjvu.o: csepdjvu.cpp ../config.h ../libdjvu/DjVuGlobal.h ../config.h \
   ../libdjvu/DjVuMessageLite.h ../libdjvu/DjVuText.h ../libdjvu/DjVmNav.h \
   ../libdjvu/GMapAreas.h ../libdjvu/GURL.h ../libdjvu/BSByteStream.h \
   ../libdjvu/miniexp.h jb2tune.h
-ddjvu.o: ddjvu.cpp ../config.h ../libdjvu/ddjvuapi.h
+ddjvu.o: ddjvu.cpp tiff2pdf.h ../config.h ../libdjvu/ddjvuapi.h
+tiff2pdf.o: tiff2pdf.c tiff2pdf.h ../config.h
 djvm.o: djvm.cpp ../config.h ../libdjvu/GException.h ../config.h \
   ../libdjvu/DjVuGlobal.h ../libdjvu/DjVuDocEditor.h \
   ../libdjvu/DjVuDocument.h ../libdjvu/DjVuPort.h ../libdjvu/GThreads.h \
