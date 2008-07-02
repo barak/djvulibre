@@ -1014,17 +1014,16 @@ main(int argc, char **argv)
       tiffd = fd;
       if (flag_verbose)
         fprintf(stderr,i18n("Converting TIFF output to PDF.\n"));
-      off_t buzz = lseek(tiffd, 0, SEEK_SET);
-      int err = errno;
+      lseek(tiffd, 0, SEEK_SET);
       if (! (tiff = TIFFFdOpen(tiffd, tempfilename, "r")))
         die(i18n("Cannot reopen temporary tiff file '%s'."), tempfilename);
       if (! (fout = fopen(outputfilename, "wb")))
         die(i18n("Cannot open output file '%s'."), outputfilename);
-      const char *argv[3];
-      argv[0] = "tiff2pdf";
-      argv[1] = "-o";
-      argv[2] = outputfilename;
-      if (tiff2pdf(tiff, fout, 3, argv) != EXIT_SUCCESS)
+      const char *args[3];
+      args[0] = argv[0];
+      args[1] = "-o";
+      args[2] = outputfilename;
+      if (tiff2pdf(tiff, fout, 3, args) != EXIT_SUCCESS)
         die(i18n("Error occured while creating PDF file."));
       TIFFClose(tiff);
       tiff = 0;
