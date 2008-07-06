@@ -596,13 +596,16 @@ miniobj_t {
   virtual bool isa(miniexp_t classname) const;
 
   /* --- optional stuff --- */
-  /* mark: iterates over miniexps contained by this object
-     for garbage collecting purposes. */
-  virtual void mark(minilisp_mark_t*);
-
   /* pname: returns a printable name for this object.
      The caller must deallocate the result with delete[]. */
   virtual char *pname() const;
+  /* mark: iterates over miniexps contained by this object
+     for garbage collecting purposes. */
+  virtual void mark(minilisp_mark_t*);
+  /* destroy: called by the garbage collector to
+     deallocate the object. Defaults to 'delete this'. */
+  virtual void destroy();
+     
 };
 
 /* MINIOBJ_DECLARE --

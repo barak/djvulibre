@@ -259,8 +259,9 @@ collect_free(block_t *b, void **&freelist, int &count, bool destroy)
       for (unsigned int i=1; i<nptrs_chunk/2; i++)
         if (! c[i])
           {
-            if (destroy && m[i+i]==m[i+i+1]) 
-              delete (miniobj_t*)m[i+i];
+            miniobj_t *obj = (miniobj_t*)m[i+i];
+            if (destroy && obj && m[i+i]==m[i+i+1]) 
+              obj->destroy();
             m[i+i] = (void*)freelist;
             m[i+i+1] = 0;
             freelist = &m[i+i];
@@ -747,6 +748,12 @@ miniobj_t::isa(miniexp_t) const
 void 
 miniobj_t::mark(minilisp_mark_t*)
 {
+}
+
+void 
+miniobj_t::destroy()
+{
+  delete this;
 }
 
 char *

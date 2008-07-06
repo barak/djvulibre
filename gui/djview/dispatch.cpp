@@ -427,7 +427,7 @@ AttachWindow(void)
               // Build arguments
               int argc = 0;
               static char * argv[10];
-              argv[argc++] = DJVIEW_NAME;
+              argv[argc++] = (char*)(DJVIEW_NAME);
               // -display
               static char s_display[128];
               if (displ_name.length()>0 
