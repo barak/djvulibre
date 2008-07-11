@@ -6,7 +6,7 @@ Build-Depends: debhelper (>= 5), libx11-dev, libxext-dev, libxt-dev, x-dev, libq
 Vcs-Cvs: :ext:@djvu.cvs.sourceforge.net:/cvsroot/djvu
 VCS-Browser: http://djvu.cvs.sourceforge.net/djvu/djvulibre-3.5/
 Homepage: http://djvu.sourceforge.net/
-Standards-Version: 3.7.3
+Standards-Version: 3.8.0
 
 Package: libdjvulibre-dev
 Section: libdevel
