@@ -1,12 +1,11 @@
-djvulibre (3.5.20-8rc) unstable; urgency=low
+djvulibre (3.5.20-8) unstable; urgency=low
 
-  * Raise djvudigital script default resolution from 300 to 600 (closes: #478607)
+  * Raise djvudigital default resolution from 300 to 600 (closes: #478607)
   * Have lib suggest rather than recommend reader (closes: #476682)
   * Utilities package now recommends pdf2djvu package, coming soon
   * Fix update-alternatives in installation scripts (closes: #476444)
-  * PENDING: Split libdjvulibre-text out of djvulibre-desktop (closes: #472347)
-  * PENDING: ... which allows downgraded dependency of lib on desktop (closes: #474702, #474993, #475630)
-
+  * Rev deb policy
+  
  -- Barak A. Pearlmutter <bap@debian.org>  Fri, 02 May 2008 01:12:15 -0700
 
 djvulibre (3.5.20-7) unstable; urgency=low

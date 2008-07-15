@@ -30,10 +30,9 @@ Description: Development files for the DjVu image format
 Package: libdjvulibre21
 Section: libs
 Architecture: any
-Depends: ${shlibs:Depends}
+Depends: ${shlibs:Depends}, libdjvulibre-text (>= ${binary:Version}) | djvulibre-desktop (= ${binary:Version})
 Conflicts: libdjvulibre1
 Replaces: libdjvulibre1
-Recommends: djvulibre-desktop
 Description: Runtime support for the DjVu image format
  DjVu runtime library.
 

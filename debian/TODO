@@ -1,0 +1,7 @@
+  * Split libdjvulibre-text out of djvulibre-desktop, so (a)
+    libdjvulibreXX can depend on the text without the desktop, and (b)
+    libdjvulibreXX for various XX can coexist, using a >= dependency
+    (closes: #472347)
+
+  * Downgrade dependency of libdjvulibre on djvulibre-desktop
+    (closes: #474702, #474993, #475630)
