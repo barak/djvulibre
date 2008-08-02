@@ -79,7 +79,7 @@
 extern "C" {
 #endif
   
-/* { int tmp = *lock; *lock = 1; return tmp; }. */
+/* { int tmp = *lock; *lock = 1; return !tmp; }. */
 int atomicAcquire(int volatile *lock);
   
 /* { while (!atomicAcquire(lock)) { spin/yield/wait } } */
