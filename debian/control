@@ -36,6 +36,13 @@ Replaces: libdjvulibre1
 Description: Runtime support for the DjVu image format
  DjVu runtime library.
 
+Package: djvulibre-dbg
+Section: libs
+Architecture: any
+Depends: libdjvulibre21 (= ${binary:Version})
+Description: Debug symbols for the DjVu image format
+ DjVu runtime debug symbols.
+
 Package: djvulibre-desktop
 Section: libs
 Architecture: any
