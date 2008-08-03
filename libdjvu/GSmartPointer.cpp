@@ -98,12 +98,13 @@ GPEnabled::~GPEnabled()
 void
 GPEnabled::destroy()
 {
-  if (count > 0)
-    G_THROW( ERR_MSG("GSmartPointer.suspicious") );
-  // in case someone temporarily creates and 
-  // releases a smartpointer during destruction.
-  count = (-0x7fff);
-  delete this;
+  // Only delete if the counter is still zero.
+  // because someone may have rescued the object...
+  // If yes, set the counter to -0x7fff to mark 
+  // the object as doomed and make sure things
+  // will work if the destructor uses a GP...
+  if (atomicCompareAndSwap(&count, 0, -0x7fff))
+    delete this;
 }
 
 
@@ -118,16 +119,17 @@ static int volatile locks[LOCKMASK+1];
 GPBase&
 GPBase::assign (const GPBase &sptr)
 {
-  int volatile *lock = locks+LOCKIDX(this);
-  atomicAcquireOrSpin(lock);
+  int volatile *lockb = locks+LOCKIDX(&sptr);
+  atomicAcquireOrSpin(lockb);
   GPEnabled *nptr = sptr.ptr;
-  // we cannot use atomicExchangePointer later because a
-  // thread might destroy sptr.ptr at this point. 
   if (nptr)
     nptr->ref();
+  atomicRelease(lockb);
+  int volatile *locka = locks+LOCKIDX(this);
+  atomicAcquireOrSpin(locka);
   GPEnabled *old = ptr;
   ptr = nptr;
-  atomicRelease(lock);
+  atomicRelease(locka);
   if (old)
     old->unref();
   return *this;
@@ -136,14 +138,13 @@ GPBase::assign (const GPBase &sptr)
 GPBase&
 GPBase::assign (GPEnabled *nptr)
 {
-  int volatile *lock = locks+LOCKIDX(this);
   if (nptr)
     nptr->ref();
-  atomicAcquireOrSpin(lock);
-  // we could use atomicExchangePointer
+  int volatile *locka = locks+LOCKIDX(this);
+  atomicAcquireOrSpin(locka);
   GPEnabled *old = ptr;
   ptr = nptr;
-  atomicRelease(lock);
+  atomicRelease(locka);
   if (old)
     old->unref();
   return *this;

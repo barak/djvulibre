@@ -88,15 +88,14 @@ void atomicAcquireOrSpin(int volatile *lock);
 /* { *lock = 0; } */
 void atomicRelease(int volatile *lock);
 
-
 /* { *var += 1; return *var; } */
 int atomicIncrement(int volatile *var);
 
 /* { *var -= 1; return *var; } */
 int atomicDecrement(int volatile *var);
 
-/* { void *tmp = *var; *var = value; return tmp; } */
-void *atomicExchangePointer(void *volatile *var, void *value);
+/* { if (*var == oldval) { *var = newval; return TRUE; } return FALSE; } */
+int atomicCompareAndSwap(int volatile *var, int oldval, int newval);
 
 
 # ifdef __cplusplus

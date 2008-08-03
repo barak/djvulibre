@@ -1,6 +1,6 @@
 /* -*- C -*-
 // -------------------------------------------------------------------
-// MiniLock - a quick user space lock 
+// MiniLock - a quick mostly user space lock 
 // Copyright (c) 2008  Leon Bottou. All rights reserved
 //
 // Permission is hereby granted, free of charge, to any person obtaining
@@ -125,15 +125,17 @@ static void cond_wait()
 
 
 /* ============================================================ 
-// PART2 - THE ACQUIRE/RELEASE 
-// This part should define very fast SYNC_ACQ and SYNC_REL
-// macros that perform atomicAcquire and atomicRelease.
+// PART2 - ATOMIC PRIMITIVES
+// This part should define very fast SYNC_XXX and SYNC_REL
+// macros that perform atomic operations.
 // Intel builtins functions are very nice. 
 // Windows interlocked functions are nice.
 // Otherwise we have to use assembly code.
 // When these are not defined we simply use
-// the monitor macros to implement slow replacement functions.
+// the monitor macros to implement 
+// slow replacement functions.
 */
+
 
 #ifndef OBEY_HAVE_INTEL_ATOMIC_BUILTINS
 # if defined(__INTEL_COMPILER)
@@ -154,20 +156,33 @@ static void cond_wait()
 # define USE_GCC_PPC_ASM 1
 #endif
 
+
 #if USE_INTEL_ATOMIC_BUILTINS && !HAVE_SYNC
-# define SYNC_ACQ(l)  (! __sync_lock_test_and_set(l, 1))
-# define SYNC_REL(l)  (__sync_lock_release(l))
+# define SYNC_ACQ(l)     (! __sync_lock_test_and_set(l, 1))
+# define SYNC_REL(l)     (__sync_lock_release(l))
+# define SYNC_INC(l)     (__sync_add_and_fetch(l, 1))
+# define SYNC_DEC(l)     (__sync_add_and_fetch(l, -1))
+# define SYNC_CAS(l,o,n) (__sync_bool_compare_and_swap(l,o,n))
 # define HAVE_SYNC 1
 #endif
 
 
 #if USE_WIN32_INTERLOCKED && !HAVE_SYNC
-# define SYNC_ACQ(l)  (! InterlockedExchange((LONG volatile *)(l),1))
+# define SYNC_ACQ(l)                                    \
+  (!InterlockedExchange((LONG volatile *)(l),1))
 # if defined(_M_ALPHA) || defined(_M_PPC) || defined(_M_IA64)
-#  define SYNC_REL(l) (InterlockedExchange((LONG volatile *)(l),0))
+#  define SYNC_REL(l)                           \
+  (InterlockedExchange((LONG volatile *)(l),0))
 # else
-#  define SYNC_REL(l) (*(int volatile *)(l)=0)
+#  define SYNC_REL(l)                           \
+  (*(int volatile *)(l)=0)
 # endif
+# define SYNC_INC(l)                            \
+  (InterlockedIncrement((LONG volatile *)(l)))
+# define SYNC_DEC(l)                            \
+  (InterlockedDecrement((LONG volatile *)(l)))
+# define SYNC_CAS(l,o,n)                                        \
+  (InterlockedCompareExchange((LONG volatile *)(l),n,o)==(o))
 # define HAVE_SYNC 1
 #endif
 
@@ -181,8 +196,28 @@ static int xchgl(int volatile *atomic, int newval)
 			: "0" (newval), "m" (*atomic)); 
   return oldval; 
 }
-# define SYNC_ACQ(l)  (! xchgl(l,1))
-# define SYNC_REL(l)  (*(int volatile *)l = 0)
+static int xaddl(int volatile *atomic, int add) 
+{
+  int val; /* This works for the 486 and later */
+  __asm__ __volatile__("lock; xaddl %0, %1" 
+                       : "=r" (val), "+m" (*atomic) 
+                       : "m" (*atomic), "0" (add) );
+  return val;
+}
+static int cmpxchglf(int volatile *atomic, int oldval, int newval)
+{
+  int ret;
+  __asm __volatile ("lock; cmpxchgl %2, %1\n"
+                    "sete %%al; movzbl %%al,%0"
+                    : "=a" (ret), "=m" (*atomic)
+                    : "r" (newval), "m" (*atomic), "0" (oldval));
+  return ret;
+}
+# define SYNC_ACQ(l)     (! xchgl(l,1))
+# define SYNC_REL(l)     (*(int volatile *)l = 0)
+# define SYNC_INC(l)     (xaddl(l, 1) + 1)
+# define SYNC_DEC(l)     (xaddl(l, -1) - 1)
+# define SYNC_CAS(l,o,n) (cmpxchglf(l,o,n))
 # define HAVE_SYNC 1
 #endif
 
@@ -205,49 +240,6 @@ static void st_rel(int volatile *atomic, int newval)
   __asm __volatile ("sync" ::: "memory");
   *atomic = newval;
 }
-# define SYNC_ACQ(l)  (! xchg_acq(l,1))
-# define SYNC_REL(l)  st_rel(l,0)
-# define HAVE_SYNC 1
-#endif
-
-
-/* ============================================================ 
-// PART3 - INCREMENT/DECREMENT
-*/
-
-
-#if USE_INTEL_ATOMIC_BUILTINS && !HAVE_INCDEC
-# define SYNC_INC(l)  __sync_add_and_fetch(l, 1)
-# define SYNC_DEC(l)  __sync_add_and_fetch(l, -1)
-# define HAVE_INCDEC 1
-#endif
-
-
-#if USE_WIN32_INTERLOCKED && !HAVE_INCDEC
-# define SYNC_INC(l)  InterlockedIncrement((LONG volatile *)(l))
-# define SYNC_DEC(l)  InterlockedDecrement((LONG volatile *)(l))
-# define HAVE_INCDEC 1
-# define SYNC_EXCH(l,v)  InterlockedExchangePointer(l,v)
-# define HAVE_EXCH 1
-#endif
-
-
-#if USE_GCC_I386_ASM && !HAVE_INCDEC
-static int xaddl(int volatile *atomic, int add) 
-{
-  int val; /* This works for the 486 and later */
-  __asm__ __volatile__("lock; xaddl %0, %1" 
-                       : "=r" (val), "+m" (*atomic) 
-                       : "m" (*atomic), "0" (add) );
-  return val;
-}
-# define SYNC_INC(l)  (xaddl(l, 1) + 1)
-# define SYNC_DEC(l)  (xaddl(l, -1) - 1)
-# define HAVE_INCDEC 1
-#endif
-
-
-#if USE_GCC_PPC_ASM && !HAVE_INCDEC
 static int addlx(int volatile *atomic, int add) 
 {
   int val;
@@ -260,46 +252,32 @@ static int addlx(int volatile *atomic, int add)
                     : "cr0", "memory");
   return val;
 }
-# define SYNC_INC(l)  addlx(l, 1)
-# define SYNC_DEC(l)  addlx(l, -1)
-# define HAVE_INCDEC 1
-#endif
-
-
-
-#if HAVE_INCDEC
-int
-atomicIncrement(int volatile *var)
+static int cmpxchgl(int volatile *atomic, int oldval, int newval)
 {
-  return SYNC_INC(var);
+  int ret;
+  __asm __volatile ("   sync\n"
+                    "1: lwarx  %0,0,%1\n"
+                    "   cmpw   %0,%2\n"
+                    "   bne    2f\n"
+                    "   stwcx. %3,0,%1\n"
+                    "   bne-   1b\n"
+                    "2: isync"
+                    : "=&r" (ret)
+                    : "b" (atomic), "r" (oldval), "r" (newval)
+                    : "cr0", "memory");
+  return ret;
 }
-int 
-atomicDecrement(int volatile *var)
-{
-  return SYNC_DEC(var);
-}
-# define NEED_INCDEC 0
-#else
-# define NEED_INCDEC 1 
+# define SYNC_ACQ(l)     (!xchg_acq(l,1))
+# define SYNC_REL(l)     (st_rel(l,0))
+# define SYNC_INC(l)     (addlx(l, 1))
+# define SYNC_DEC(l)     (addlx(l, -1))
+# define SYNC_CAS(l,o,n) (cmpxchgl(l,o,n)==o)
+# define HAVE_SYNC 1
 #endif
-
-#if HAVE_EXCH
-void * 
-atomicExchangePointer(void *volatile *var, void *value)
-{
-  return SYNC_EXCH(var,value);
-}
-# define NEEX_EXCH 0
-#else
-# define NEED_EXCH 1
-#endif
-
-
-
 
 
 /* ============================================================ 
-// PART4 - THE IMPLEMENTATION
+// PART3 - THE IMPLEMENTATION
 */
 
 #if HAVE_SYNC
@@ -337,7 +315,7 @@ atomicRelease(int volatile *lock)
 {
   SYNC_REL(lock);
   if (nwaiters > 0)
-    { // this thread does not change nwaiters!
+    {
       MUTEX_ENTER;
       if (nwaiters > 0)
         COND_WAKEALL;
@@ -345,52 +323,27 @@ atomicRelease(int volatile *lock)
     }
 }
 
-# if NEED_INCDEC || NEED_EXCH
-#  define LOCKMASK 0x3f
-#  define LOCKIDX(addr) ((((size_t)(addr))/sizeof(void*))&LOCKMASK)
-static int volatile locks[LOCKMASK+1];
-# endif
-
-# if NEED_INCDEC
 int
 atomicIncrement(int volatile *var)
 {
-  int res;
-  int volatile *lock = locks+LOCKIDX(var);
-  atomicAcquireOrSpin(lock);
-  res = ++(*var);
-  atomicRelease(lock);
-  return res;
+  return SYNC_INC(var);
 }
+
 int 
 atomicDecrement(int volatile *var)
 {
-  int res;
-  int volatile *lock = locks+LOCKIDX(var);
-  atomicAcquireOrSpin(lock);
-  res = --(*var);
-  atomicRelease(lock);
-  return res;
+  return SYNC_DEC(var);
 }
-# endif /* NEED_INCDEC */
 
-# if NEED_EXCH
-void * 
-atomicExchangePointer(void *volatile *var, void *value)
+int 
+atomicCompareAndSwap(int volatile *var, int oldval, int newval)
 {
-  void *res;
-  int volatile *lock = locks+LOCKIDX(var);
-  atomicAcquireOrSpin(lock);
-  res = *var;
-  *var = value;
-  atomicRelease(lock);
-  return res;
+  return SYNC_CAS(var,oldval,newval);
 }
-# endif /* NEED_EXCH */
 
-#else /* HAVE_SYNC */
 
-/* Nothing. Use mutexes and conditions */
+
+#else
 
 int 
 atomicAcquire(int volatile *lock)
@@ -402,6 +355,7 @@ atomicAcquire(int volatile *lock)
   MUTEX_LEAVE;
   return tmp;
 }
+
 void 
 atomicAcquireOrSpin(int volatile *lock)
 {
@@ -411,6 +365,7 @@ atomicAcquireOrSpin(int volatile *lock)
   *lock = 1;
   MUTEX_LEAVE;
 }
+
 void 
 atomicRelease(int volatile *lock)
 {
@@ -420,7 +375,6 @@ atomicRelease(int volatile *lock)
   MUTEX_LEAVE;
 }
 
-# if NEED_INCDEC
 int
 atomicIncrement(int volatile *var)
 {
@@ -430,6 +384,7 @@ atomicIncrement(int volatile *var)
   MUTEX_LEAVE;
   return res;
 }
+
 int 
 atomicDecrement(int volatile *var)
 {
@@ -439,20 +394,18 @@ atomicDecrement(int volatile *var)
   MUTEX_LEAVE;
   return res;
 }
-#endif /* NEED_INCDEC */
 
-#if NEED_EXCH
-void * 
-atomicExchangePointer(void *volatile *var, void *value)
+int 
+atomicCompareAndSwap(int volatile *var, int oldval, int newval)
 {
-  void *res;
+  int ret;
   MUTEX_ENTER;
-  res = *var;
-  *var = value;
+  ret = *var;
+  if (ret == oldval)
+    *var = newval;
   MUTEX_LEAVE;
-  return res;
+  return (ret == oldval);
 }
-# endif /* NEED_EXCH */
 
 #endif  /* HAVE_SYNC */
 
