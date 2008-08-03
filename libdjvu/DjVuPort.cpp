@@ -264,7 +264,7 @@ DjVuPortcaster::is_port_alive(DjVuPort *port)
    GPosition pos=cont_map.contains(port);
    if (pos && cont_map[pos] && ((DjVuPort *) port)->get_count()>0)
       gp_port=port;
-   if (gp_port->get_count() <= 0)
+   if (gp_port && gp_port->get_count() <= 0)
       gp_port = 0;
    return gp_port;
 }
