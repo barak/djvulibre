@@ -1,9 +1,16 @@
-djvulibre (3.5.20-9rc) unstable; urgency=low
+djvulibre (3.5.20-9) unstable; urgency=low
 
-  * Add djvulibre-dbg package with debug symbols, thanks
-    to Pino Toscano <pino@kde.org> for the patch (closes: #493351)
+  * Add djvulibre-dbg package with debug symbols (closes: #493351)
+    thanks to Pino Toscano <pino@kde.org> for the patch
+  * Provide virtual package djvu-viewer (closes: #491012)
+  * Flush update-alternatives from djview scripts (closes: #491123)
+  * Minor updates to debian packaging info
+  * Split libdjvulibre-text out of djvulibre-desktop, so
+    (a) libdjvulibreXX can depend on just -text not -desktop, and
+    (b) libdjvulibreXX for various XX>=21 can coexist
+    (closes: #472347, #474702, #474993, #475630)
 
- -- Barak A. Pearlmutter <bap@debian.org>  Sat, 02 Aug 2008 12:04:27 +0100
+ -- Barak A. Pearlmutter <bap@debian.org>  Mon, 04 Aug 2008 14:16:12 +0100
 
 djvulibre (3.5.20-8) unstable; urgency=low
 

@@ -149,10 +149,11 @@ binary-arch: build install
 #	dh_installemacsen
 #	dh_installpam
 	dh_installmime
+	dh_desktop
 #	dh_installinit
-	dh_installcron
+#	dh_installcron
 	dh_installman
-	dh_installinfo
+#	dh_installinfo
 	dh_installchangelogs
 	-dh_icons		# hyphen protects pre-dh_icons systems like etch
 	dh_link
