@@ -12,3 +12,4 @@ libdjvulibre-dev
 libdjvulibre-text
 libdjvulibre21
 tmp
+*.log
