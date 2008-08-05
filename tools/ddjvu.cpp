@@ -98,7 +98,9 @@
 #endif
 
 #if HAVE_TIFF
+# include <tiff.h>
 # include <tiffio.h>
+# include <tiffconf.h>
 #endif
 
 /* Some day we'll redo i18n right. */

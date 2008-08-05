@@ -25,7 +25,9 @@
 # if HAVE_TIFF
 #  include <stdio.h>
 #  include <stdlib.h>
+#  include "tiff.h"
 #  include "tiffio.h"
+#  include "tiffconf.h"
 #  ifdef TIFFLIB_VERSION
 #   if TIFFLIB_VERSION > 20041104
 #    define HAVE_TIFF2PDF 1
