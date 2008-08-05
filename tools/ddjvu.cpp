@@ -473,7 +473,16 @@ render(ddjvu_page_t *page)
 		     (float)((dpi*rrect.h+ih/2)/ih));
         TIFFSetField(tiff, TIFFTAG_PLANARCONFIG, PLANARCONFIG_CONTIG);
         TIFFSetField(tiff, TIFFTAG_ORIENTATION, ORIENTATION_TOPLEFT);
-        TIFFSetField(tiff, TIFFTAG_ROWSPERSTRIP, (uint32)64);
+# if CCITT_SUPPORT
+        if (compression != COMPRESSION_CCITT_T6)
+# endif
+# if JPEG_SUPPORT
+          if (compression != COMPRESSION_JPEG)
+# endif
+# if ZIP_SUPPORT
+            if (compression != COMPRESSION_DEFLATE)
+# endif
+              TIFFSetField(tiff, TIFFTAG_ROWSPERSTRIP, (uint32)64);
         if (style == DDJVU_FORMAT_MSBTOLSB) {
           TIFFSetField(tiff, TIFFTAG_BITSPERSAMPLE, (uint16)1);
           TIFFSetField(tiff, TIFFTAG_SAMPLESPERPIXEL, (uint16)1);
