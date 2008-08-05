@@ -39,7 +39,7 @@ Description: Runtime support for the DjVu image format
 Package: libdjvulibre-text
 Section: libs
 Architecture: any
-Conflicts: djvulibre-desktop (<< 3.5.20-9)
+Conflicts: djvulibre-desktop (<< 3.5.20-9), djview3 (= 3.5.20-9)
 Description: Linguistic support files for libdjvulibre
  Runtime linguistic support files for the libdjvulibre library.
 
