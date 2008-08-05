@@ -350,10 +350,12 @@ QeFileDialog::done(int rc)
     {
       QFileInfo fi = QFileInfo(selectedFile());
       if (fi.isDir())
-        if (forWriting) 
-          lastSaveDir=fi.dirPath();
-        else 
-          lastLoadDir=fi.dirPath();
+	{
+	  if (forWriting)
+	    lastSaveDir=fi.dirPath();
+	  else
+	    lastLoadDir=fi.dirPath();
+	}
     }
   QFileDialog::done(rc);
 }

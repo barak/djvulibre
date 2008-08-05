@@ -298,7 +298,7 @@ GMarginCache<TPixmap>::nextRectToCache(int maxpixels, GRect & grect)
    DEBUG_MSG("GMarginCache::nextRectToCache(): Checking if anything else is to be cached\n");
    DEBUG_MAKE_INDENT(3);
    
-   if (!enabled || !left_pix && !right_pix && !top_pix && !bottom_pix)
+   if (!enabled || (!left_pix && !right_pix && !top_pix && !bottom_pix))
    {
       DEBUG_MSG("caching is disabled => returning 0\n");
       return false;
@@ -390,7 +390,7 @@ GMarginCache<TPixmap>::addRect(const GRect & grect, const GP<TPixmap> & pix)
 	     grect.height() << ")\n");
    DEBUG_MAKE_INDENT(3);
    
-   if (!enabled || !left_pix && !right_pix && !top_pix && !bottom_pix)
+   if (!enabled || (!left_pix && !right_pix && !top_pix && !bottom_pix))
    {
       DEBUG_MSG("caching is disabled => returning\n");
       return;
@@ -475,7 +475,7 @@ GMarginCache<TPixmap>::getPixmap(GRect & grect, GRect & grect_cached)
 	     grect.height() << ")\n");
    DEBUG_MAKE_INDENT(3);
    
-   if (!enabled || !left_pix && !right_pix && !top_pix && !bottom_pix)
+   if (!enabled || (!left_pix && !right_pix && !top_pix && !bottom_pix))
    {
       DEBUG_MSG("caching is disabled => returning 0\n");
       return 0;

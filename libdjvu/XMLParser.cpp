@@ -919,7 +919,7 @@ make_child_layer(
         const GP<lt_XMLTags> t(tag.get_content()[pos].tag);
         const GRect save_rect(self.rect);
         self.rect=default_rect;
-        if(retval=make_child_layer(self, *t, bs, height,ws,hs))
+	if ((retval = make_child_layer(self, *t, bs, height, ws, hs)))
         {
           xmin=min(save_rect.xmin,xmin);
           xmax=max(save_rect.xmax,xmax);

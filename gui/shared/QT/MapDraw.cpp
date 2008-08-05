@@ -78,26 +78,29 @@ void
 MapDraw::drawPixel(GPixmap & pm, int x, int y, bool eor,
 		   u_char r, u_char g, u_char b)
 {
-   if (y>=0 && y<(int) pm.rows())
+  if (y>=0 && y<(int) pm.rows())
+    {
       if (eor)
-      {
-	 GPixel * pix=pm[pm.rows()-1-y]+x;
-	 if (x>=0 && x<(int) pm.columns())
-	 {
-	    pix->r^=0xff;
-	    pix->g^=0xff;
-	    pix->b^=0xff;
-	 }
-      } else
-      {
-	 GPixel * pix=pm[pm.rows()-1-y]+x;
-	 if (x>=0 && x<(int) pm.columns())
-	 {
-	    pix->r=r;
-	    pix->g=g;
-	    pix->b=b;
-	 }
-      }
+	{
+	  GPixel * pix=pm[pm.rows()-1-y]+x;
+	  if (x>=0 && x<(int) pm.columns())
+	    {
+	      pix->r^=0xff;
+	      pix->g^=0xff;
+	      pix->b^=0xff;
+	    }
+	}
+      else
+	{
+	  GPixel * pix=pm[pm.rows()-1-y]+x;
+	  if (x>=0 && x<(int) pm.columns())
+	    {
+	      pix->r=r;
+	      pix->g=g;
+	      pix->b=b;
+	    }
+	}
+    }
 }
 
 void

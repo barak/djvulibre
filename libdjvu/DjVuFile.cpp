@@ -497,44 +497,44 @@ DjVuFile::decode_func(void)
     {
       GP<DjVuFile> & f=inc_files_list[pos];
       if (f->is_decode_failed())
-        G_THROW( ERR_MSG("DjVuFile.decode_fail") );
+	G_THROW( ERR_MSG("DjVuFile.decode_fail") );
       if (f->is_decode_stopped())
-        G_THROW( DataPool::Stop );
+	G_THROW( DataPool::Stop );
       if (!f->is_decode_ok())
-      {
-        DEBUG_MSG("this_url='" << url << "'\n");
-        DEBUG_MSG("incl_url='" << f->get_url() << "'\n");
-        DEBUG_MSG("decoding=" << f->is_decoding() << "\n");
-        DEBUG_MSG("status='" << f->get_flags() << "\n");
-        G_THROW( ERR_MSG("DjVuFile.not_finished") );
-      }
+	{
+	  DEBUG_MSG("this_url='" << url << "'\n");
+	  DEBUG_MSG("incl_url='" << f->get_url() << "'\n");
+	  DEBUG_MSG("decoding=" << f->is_decoding() << "\n");
+	  DEBUG_MSG("status='" << f->get_flags() << "\n");
+	  G_THROW( ERR_MSG("DjVuFile.not_finished") );
+	}
     }
   } G_CATCH(exc) {
     G_TRY {
       if (!exc.cmp_cause(DataPool::Stop))
-      {
-        flags.enter();
-        flags=flags & ~DECODING | DECODE_STOPPED;
-        flags.leave();
-        pcaster->notify_status(this, GUTF8String(ERR_MSG("DjVuFile.stopped"))
-                               + GUTF8String("\t") + GUTF8String(url));
-        pcaster->notify_file_flags_changed(this, DECODE_STOPPED, DECODING);
-      } else
-      {
-        flags.enter();
-        flags=flags & ~DECODING | DECODE_FAILED;
-        flags.leave();
-        pcaster->notify_status(this, GUTF8String(ERR_MSG("DjVuFile.failed"))
-                               + GUTF8String("\t") + GUTF8String(url));
-        pcaster->notify_error(this, exc.get_cause());
-        pcaster->notify_file_flags_changed(this, DECODE_FAILED, DECODING);
-      }
+	{
+	  flags.enter();
+	  flags = (flags & ~DECODING) | DECODE_STOPPED;
+	  flags.leave();
+	  pcaster->notify_status(this, GUTF8String(ERR_MSG("DjVuFile.stopped"))
+				 + GUTF8String("\t") + GUTF8String(url));
+	  pcaster->notify_file_flags_changed(this, DECODE_STOPPED, DECODING);
+	} else
+	{
+	  flags.enter();
+	  flags = (flags & ~DECODING) | DECODE_FAILED;
+	  flags.leave();
+	  pcaster->notify_status(this, GUTF8String(ERR_MSG("DjVuFile.failed"))
+				 + GUTF8String("\t") + GUTF8String(url));
+	  pcaster->notify_error(this, exc.get_cause());
+	  pcaster->notify_file_flags_changed(this, DECODE_FAILED, DECODING);
+	}
     } G_CATCH_ALL
-    {
-      DEBUG_MSG("******* Oops. Almost missed an exception\n");
-    } G_ENDCATCH;
+	{
+	  DEBUG_MSG("******* Oops. Almost missed an exception\n");
+	} G_ENDCATCH;
   } G_ENDCATCH;
-  
+
   decode_data_pool->clear_stream();
   G_TRY {
     if (flags.test_and_modify(DECODING, 0, DECODE_OK | INCL_FILES_CREATED, DECODING))
@@ -1587,7 +1587,7 @@ DjVuFile::get_merged_anno(const GP<DjVuFile> & file,
   {
     ByteStream &str_out=*gstr_out;
     map[url]=0;
-    
+
     // Do the included files first (To make sure that they have
     // less precedence)
     // Depending on if we have all data present, we will
@@ -1596,64 +1596,64 @@ DjVuFile::get_merged_anno(const GP<DjVuFile> & file,
     GPList<DjVuFile> list=file->get_included_files(!file->is_data_present());
     for(GPosition pos=list;pos;++pos)
       get_merged_anno(list[pos], gstr_out, ignore_list, level+1, max_level, map);
-    
+
     // Now process the DjVuFile's own annotations
     if (!ignore_list.contains(file->get_url()))
-    {
-      if (!file->is_data_present() ||
-        file->is_modified() && file->anno)
       {
-	       // Process the decoded (?) anno
-        GCriticalSectionLock lock(&file->anno_lock);
-        if (file->anno && file->anno->size())
-        {
-          if (str_out.tell())
-          {
-            str_out.write((void *) "", 1);
-          }
-          file->anno->seek(0);
-          str_out.copy(*file->anno);
-        }
-      } else if (file->is_data_present())
-      {
-	       // Copy all annotations chunks, but do NOT modify
-	       // this->anno (to avoid correlation with DjVuFile::decode())
-        const GP<ByteStream> str(file->data_pool->get_stream());
-        const GP<IFFByteStream> giff(IFFByteStream::create(str));
-        IFFByteStream &iff=*giff;
-        GUTF8String chkid;
-        if (iff.get_chunk(chkid))
-          while(iff.get_chunk(chkid))
-          {
-            if (chkid=="FORM:ANNO")
-            {
-              if (max_level<level)
-                max_level=level;
-              if (str_out.tell())
-              {
-                str_out.write((void *) "", 1);
-              }
-              str_out.copy(*iff.get_bytestream());
-            } 
-            else if (is_annotation(chkid)) // but not FORM:ANNO
-            {
-              if (max_level<level)
-                max_level=level;
-              if (str_out.tell()&&chkid != "ANTz")
-              {
-                str_out.write((void *) "", 1);
-              }
-              const GP<IFFByteStream> giff_out(IFFByteStream::create(gstr_out));
-              IFFByteStream &iff_out=*giff_out;
-              iff_out.put_chunk(chkid);
-              iff_out.copy(*iff.get_bytestream());
-              iff_out.close_chunk();
-            }
-            iff.close_chunk();
-          }
-        file->data_pool->clear_stream();
+	if (!file->is_data_present() ||
+	    (file->is_modified() && file->anno))
+	  {
+	    // Process the decoded (?) anno
+	    GCriticalSectionLock lock(&file->anno_lock);
+	    if (file->anno && file->anno->size())
+	      {
+		if (str_out.tell())
+		  {
+		    str_out.write((void *) "", 1);
+		  }
+		file->anno->seek(0);
+		str_out.copy(*file->anno);
+	      }
+	  } else if (file->is_data_present())
+	  {
+	    // Copy all annotations chunks, but do NOT modify
+	    // this->anno (to avoid correlation with DjVuFile::decode())
+	    const GP<ByteStream> str(file->data_pool->get_stream());
+	    const GP<IFFByteStream> giff(IFFByteStream::create(str));
+	    IFFByteStream &iff=*giff;
+	    GUTF8String chkid;
+	    if (iff.get_chunk(chkid))
+	      while(iff.get_chunk(chkid))
+		{
+		  if (chkid=="FORM:ANNO")
+		    {
+		      if (max_level<level)
+			max_level=level;
+		      if (str_out.tell())
+			{
+			  str_out.write((void *) "", 1);
+			}
+		      str_out.copy(*iff.get_bytestream());
+		    }
+		  else if (is_annotation(chkid)) // but not FORM:ANNO
+		    {
+		      if (max_level<level)
+			max_level=level;
+		      if (str_out.tell()&&chkid != "ANTz")
+			{
+			  str_out.write((void *) "", 1);
+			}
+		      const GP<IFFByteStream> giff_out(IFFByteStream::create(gstr_out));
+		      IFFByteStream &iff_out=*giff_out;
+		      iff_out.put_chunk(chkid);
+		      iff_out.copy(*iff.get_bytestream());
+		      iff_out.close_chunk();
+		    }
+		  iff.close_chunk();
+		}
+	    file->data_pool->clear_stream();
+	  }
       }
-    }
   }
 }
 
@@ -1710,48 +1710,48 @@ DjVuFile::get_anno(
   DEBUG_MSG("DjVuFile::get_anno()\n");
   ByteStream &str_out=*gstr_out;
   if (!file->is_data_present() ||
-    file->is_modified() && file->anno)
-  {
-    // Process the decoded (?) anno
-    GCriticalSectionLock lock(&file->anno_lock);
-    if (file->anno && file->anno->size())
+      (file->is_modified() && file->anno))
     {
-      if (str_out.tell())
-      {
-        str_out.write((void *) "", 1);
-      }
-      file->anno->seek(0);
-      str_out.copy(*file->anno);
-    }
-  } else if (file->is_data_present())
-  {
-	       // Copy all anno chunks, but do NOT modify
-	       // DjVuFile::anno (to avoid correlation with DjVuFile::decode())
-    const GP<ByteStream> str=file->data_pool->get_stream();
-    const GP<IFFByteStream> giff=IFFByteStream::create(str);
-    IFFByteStream &iff=*giff;
-    GUTF8String chkid;
-    if (iff.get_chunk(chkid))
+      // Process the decoded (?) anno
+      GCriticalSectionLock lock(&file->anno_lock);
+      if (file->anno && file->anno->size())
+	{
+	  if (str_out.tell())
+	    {
+	      str_out.write((void *) "", 1);
+	    }
+	  file->anno->seek(0);
+	  str_out.copy(*file->anno);
+	}
+    } else if (file->is_data_present())
     {
-      while(iff.get_chunk(chkid))
-      {
-        if (is_annotation(chkid))
-        {
-          if (str_out.tell())
-          {
-            str_out.write((void *) "", 1);
-          }
-          const GP<IFFByteStream> giff_out(IFFByteStream::create(gstr_out));
-          IFFByteStream &iff_out=*giff_out;
-          iff_out.put_chunk(chkid);
-          iff_out.copy(*iff.get_bytestream());
-          iff_out.close_chunk();
-        }
-        iff.close_chunk();
-      }
+      // Copy all anno chunks, but do NOT modify
+      // DjVuFile::anno (to avoid correlation with DjVuFile::decode())
+      const GP<ByteStream> str=file->data_pool->get_stream();
+      const GP<IFFByteStream> giff=IFFByteStream::create(str);
+      IFFByteStream &iff=*giff;
+      GUTF8String chkid;
+      if (iff.get_chunk(chkid))
+	{
+	  while(iff.get_chunk(chkid))
+	    {
+	      if (is_annotation(chkid))
+		{
+		  if (str_out.tell())
+		    {
+		      str_out.write((void *) "", 1);
+		    }
+		  const GP<IFFByteStream> giff_out(IFFByteStream::create(gstr_out));
+		  IFFByteStream &iff_out=*giff_out;
+		  iff_out.put_chunk(chkid);
+		  iff_out.copy(*iff.get_bytestream());
+		  iff_out.close_chunk();
+		}
+	      iff.close_chunk();
+	    }
+	}
+      file->data_pool->clear_stream();
     }
-    file->data_pool->clear_stream();
-  }
 }
 
 void
@@ -1761,48 +1761,48 @@ DjVuFile::get_text(
   DEBUG_MSG("DjVuFile::get_text()\n");
   ByteStream &str_out=*gstr_out;
   if (!file->is_data_present() ||
-    file->is_modified() && file->text)
-  {
-    // Process the decoded (?) text
-    GCriticalSectionLock lock(&file->text_lock);
-    if (file->text && file->text->size())
+      (file->is_modified() && file->text))
     {
-      if (str_out.tell())
-      {
-        str_out.write((void *) "", 1);
-      }
-      file->text->seek(0);
-      str_out.copy(*file->text);
-    }
-  } else if (file->is_data_present())
-  {
-	       // Copy all text chunks, but do NOT modify
-	       // DjVuFile::text (to avoid correlation with DjVuFile::decode())
-    const GP<ByteStream> str=file->data_pool->get_stream();
-    const GP<IFFByteStream> giff=IFFByteStream::create(str);
-    IFFByteStream &iff=*giff;
-    GUTF8String chkid;
-    if (iff.get_chunk(chkid))
+      // Process the decoded (?) text
+      GCriticalSectionLock lock(&file->text_lock);
+      if (file->text && file->text->size())
+	{
+	  if (str_out.tell())
+	    {
+	      str_out.write((void *) "", 1);
+	    }
+	  file->text->seek(0);
+	  str_out.copy(*file->text);
+	}
+    } else if (file->is_data_present())
     {
-      while(iff.get_chunk(chkid))
-      {
-        if (is_text(chkid))
-        {
-          if (str_out.tell())
-          {
-            str_out.write((void *) "", 1);
-          }
-          const GP<IFFByteStream> giff_out(IFFByteStream::create(gstr_out));
-          IFFByteStream &iff_out=*giff_out;
-          iff_out.put_chunk(chkid);
-          iff_out.copy(*iff.get_bytestream());
-          iff_out.close_chunk();
-        }
-        iff.close_chunk();
-      }
+      // Copy all text chunks, but do NOT modify
+      // DjVuFile::text (to avoid correlation with DjVuFile::decode())
+      const GP<ByteStream> str=file->data_pool->get_stream();
+      const GP<IFFByteStream> giff=IFFByteStream::create(str);
+      IFFByteStream &iff=*giff;
+      GUTF8String chkid;
+      if (iff.get_chunk(chkid))
+	{
+	  while(iff.get_chunk(chkid))
+	    {
+	      if (is_text(chkid))
+		{
+		  if (str_out.tell())
+		    {
+		      str_out.write((void *) "", 1);
+		    }
+		  const GP<IFFByteStream> giff_out(IFFByteStream::create(gstr_out));
+		  IFFByteStream &iff_out=*giff_out;
+		  iff_out.put_chunk(chkid);
+		  iff_out.copy(*iff.get_bytestream());
+		  iff_out.close_chunk();
+		}
+	      iff.close_chunk();
+	    }
+	}
+      file->data_pool->clear_stream();
     }
-    file->data_pool->clear_stream();
-  }
 }
 
 void
@@ -1812,48 +1812,48 @@ DjVuFile::get_meta(
   DEBUG_MSG("DjVuFile::get_meta()\n");
   ByteStream &str_out=*gstr_out;
   if (!file->is_data_present() ||
-    file->is_modified() && file->meta)
-  {
-    // Process the decoded (?) meta
-    GCriticalSectionLock lock(&file->meta_lock);
-    if (file->meta && file->meta->size())
+      (file->is_modified() && file->meta))
     {
-      if (str_out.tell())
-      {
-        str_out.write((void *) "", 1);
-      }
-      file->meta->seek(0);
-      str_out.copy(*file->meta);
-    }
-  } else if (file->is_data_present())
-  {
-	       // Copy all meta chunks, but do NOT modify
-	       // DjVuFile::meta (to avoid correlation with DjVuFile::decode())
-    const GP<ByteStream> str=file->data_pool->get_stream();
-    const GP<IFFByteStream> giff=IFFByteStream::create(str);
-    IFFByteStream &iff=*giff;
-    GUTF8String chkid;
-    if (iff.get_chunk(chkid))
+      // Process the decoded (?) meta
+      GCriticalSectionLock lock(&file->meta_lock);
+      if (file->meta && file->meta->size())
+	{
+	  if (str_out.tell())
+	    {
+	      str_out.write((void *) "", 1);
+	    }
+	  file->meta->seek(0);
+	  str_out.copy(*file->meta);
+	}
+    } else if (file->is_data_present())
     {
-      while(iff.get_chunk(chkid))
-      {
-        if (is_meta(chkid))
-        {
-          if (str_out.tell())
-          {
-            str_out.write((void *) "", 1);
-          }
-          const GP<IFFByteStream> giff_out(IFFByteStream::create(gstr_out));
-          IFFByteStream &iff_out=*giff_out;
-          iff_out.put_chunk(chkid);
-          iff_out.copy(*iff.get_bytestream());
-          iff_out.close_chunk();
-        }
-        iff.close_chunk();
-      }
+      // Copy all meta chunks, but do NOT modify
+      // DjVuFile::meta (to avoid correlation with DjVuFile::decode())
+      const GP<ByteStream> str=file->data_pool->get_stream();
+      const GP<IFFByteStream> giff=IFFByteStream::create(str);
+      IFFByteStream &iff=*giff;
+      GUTF8String chkid;
+      if (iff.get_chunk(chkid))
+	{
+	  while(iff.get_chunk(chkid))
+	    {
+	      if (is_meta(chkid))
+		{
+		  if (str_out.tell())
+		    {
+		      str_out.write((void *) "", 1);
+		    }
+		  const GP<IFFByteStream> giff_out(IFFByteStream::create(gstr_out));
+		  IFFByteStream &iff_out=*giff_out;
+		  iff_out.put_chunk(chkid);
+		  iff_out.copy(*iff.get_bytestream());
+		  iff_out.close_chunk();
+		}
+	      iff.close_chunk();
+	    }
+	}
+      file->data_pool->clear_stream();
     }
-    file->data_pool->clear_stream();
-  }
 }
 
 GP<ByteStream>

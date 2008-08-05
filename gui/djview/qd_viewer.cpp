@@ -1612,28 +1612,33 @@ QDViewer::slotChildError(int pipe)
 	 QSocketNotifier * notif=(QSocketNotifier *) obj;
 	 while(1)
 	 {
-	    timeval tv; tv.tv_sec=tv.tv_usec=0;
-	    fd_set read_fds, except_fds;
-	    FD_ZERO(&read_fds); FD_SET(pipe, &read_fds);
-	    FD_ZERO(&except_fds); FD_SET(pipe, &except_fds);
-	    int rc=select(pipe, &read_fds, 0, &except_fds, &tv);
-	    if (rc<0 && errno==EINTR) continue;
-	    if (rc<0) 
-              G_THROW(ERR_MSG("QDViewer.no_child_errmsg"));
-	    if (rc>=0)
+	   timeval tv; tv.tv_sec=tv.tv_usec=0;
+	   fd_set read_fds, except_fds;
+	   FD_ZERO(&read_fds); FD_SET(pipe, &read_fds);
+	   FD_ZERO(&except_fds); FD_SET(pipe, &except_fds);
+	   int rc=select(pipe, &read_fds, 0, &except_fds, &tv);
+	   if (rc<0 && errno==EINTR) continue;
+	   if (rc<0)
+	     G_THROW(ERR_MSG("QDViewer.no_child_errmsg"));
+	   if (rc>=0)
+	     {
 	       if (FD_ISSET(pipe, &read_fds))
-	       {
-		  char ch;
-		  int rc=::read(pipe, &ch, 1);
-		  if (rc<0) 
-                    G_THROW(ERR_MSG("QDViewer.no_child_errmsg"));
-		  if (rc==0) break;
-		  message+=ch;
-	       } else if (FD_ISSET(pipe, &except_fds))
-	       {
-		  notif->setEnabled(FALSE);
-		  break;
-	       } else break;
+		 {
+		   char ch;
+		   int rc=::read(pipe, &ch, 1);
+		   if (rc<0)
+		     G_THROW(ERR_MSG("QDViewer.no_child_errmsg"));
+		   if (rc==0) break;
+		   message+=ch;
+		 }
+	       else if (FD_ISSET(pipe, &except_fds))
+		 {
+		   notif->setEnabled(FALSE);
+		   break;
+		 }
+	       else
+		 break;
+	     }
 	 }
       }
       if (message.length())
@@ -1753,18 +1758,20 @@ QDViewer::fillToolBar(QDToolBar * toolbar)
 void
 QDViewer::updateToolBar(void)
 {
-   QDBase::updateToolBar();
-   
-   if (toolbar && nav_tbar)
-     if (dimg)
-       {
-         int doc_page=djvu_doc->url_to_page(dimg->get_djvu_file()->get_url());
-         nav_tbar->update(doc_page, djvu_doc, hundo.size(), hredo.size());
-       } 
-     else
-       {
-         nav_tbar->update(-1, djvu_doc, false, false);
-       }
+  QDBase::updateToolBar();
+
+  if (toolbar && nav_tbar)
+    {
+      if (dimg)
+	{
+	  int doc_page=djvu_doc->url_to_page(dimg->get_djvu_file()->get_url());
+	  nav_tbar->update(doc_page, djvu_doc, hundo.size(), hredo.size());
+	}
+      else
+	{
+	  nav_tbar->update(-1, djvu_doc, false, false);
+	}
+    }
 }
 
 void

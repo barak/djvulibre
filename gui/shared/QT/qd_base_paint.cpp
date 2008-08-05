@@ -352,13 +352,17 @@ QDBase::paint(QPaintDevice * drawable,	// Where to paint
             // Now draw hyperlinks, which are not "always active", but
             // are active right now
 	    if (pm || patch_pm)
-              for(GPosition pos=map_areas;pos;++pos)
-                {
+	      for (GPosition pos=map_areas;pos;++pos)
+		{
 		  GP<MapArea> ma=map_areas[pos];
 		  if (!ma->isAlwaysActive() && ma->isActive())
-                    if (pm) ma->draw(grectDisp, pm, MapArea::APPLY_ACTIVE);
-                    else ma->draw(patch_rect, patch_pm, MapArea::APPLY_ACTIVE);
-                }
+		    {
+		      if (pm)
+			ma->draw(grectDisp, pm, MapArea::APPLY_ACTIVE);
+		      else
+			ma->draw(patch_rect, patch_pm, MapArea::APPLY_ACTIVE);
+		    }
+		}
             
             // Dither the generated GPixmap[s]
 	    if (pm)
@@ -429,9 +433,9 @@ QDBase::paint(QPaintDevice * drawable,	// Where to paint
 		  // mode when there is one draw() for both ACTIVE and
 		  // INACTIVE modes. Here we need to draw smth only if
 		  // there is a need to do it.
-	       if (ma->isActive() && ma->isActiveOutlineMode() ||
-		   !ma->isActive() && ma->isInactiveOutlineMode())
-		  ma->drawOutline(grectDisp, &p);
+	       if ((ma->isActive() && ma->isActiveOutlineMode()) ||
+		   (!ma->isActive() && ma->isInactiveOutlineMode()))
+		 ma->drawOutline(grectDisp, &p);
 	    }
 
 	       // And draw hyperlinks with enabled edit controls

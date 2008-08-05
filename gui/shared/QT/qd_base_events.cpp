@@ -734,8 +734,8 @@ QDBase::eventFilter(QObject *obj, QEvent *e)
 
 	       if (cur_map_area)
 	       {
-		  if (!(display_all_hlinks && cur_map_area->isHyperlink() ||
-			cur_map_area->isBorderAlwaysVisible()))
+		 if (!((display_all_hlinks && cur_map_area->isHyperlink()) ||
+		       cur_map_area->isBorderAlwaysVisible()))
 		  {
 		     GRect grect;
 		     grect.intersect(rectVisible, rectDocument);
@@ -782,9 +782,9 @@ QDBase::eventFilter(QObject *obj, QEvent *e)
 		     case Key_Control:
 		     case Key_Shift:
 		     case Key_Alt:
-			if (ev->key()==Key_Control && getLensHotKey()==ControlButton ||
-			    ev->key()==Key_Shift && getLensHotKey()==ShiftButton ||
-			    ev->key()==Key_Alt && getLensHotKey()==AltButton)
+		       if ((ev->key()==Key_Control && getLensHotKey()==ControlButton) ||
+			   (ev->key()==Key_Shift && getLensHotKey()==ShiftButton) ||
+			   (ev->key()==Key_Alt && getLensHotKey()==AltButton))
 			{
 			   QPoint cursor=pane->mapFromGlobal(QCursor::pos());
 			   if (rectDocument.contains(cursor.x(), cursor.y()))
@@ -883,16 +883,16 @@ QDBase::eventFilter(QObject *obj, QEvent *e)
 	       {
 		  QKeyEvent * ev=(QKeyEvent *) e;
 		  switch(ev->key())
-		  {
-		     case Key_Control:
-		     case Key_Shift:
-		     case Key_Alt:
-			if (ev->key()==Key_Control && getLensHotKey()==ControlButton ||
-			    ev->key()==Key_Shift && getLensHotKey()==ShiftButton ||
-			    ev->key()==Key_Alt && getLensHotKey()==AltButton)
-			   hideLens();
-			break;
-		  }
+		    {
+		    case Key_Control:
+		    case Key_Shift:
+		    case Key_Alt:
+		      if ((ev->key()==Key_Control && getLensHotKey()==ControlButton) ||
+			  (ev->key()==Key_Shift && getLensHotKey()==ShiftButton) ||
+			  (ev->key()==Key_Alt && getLensHotKey()==AltButton))
+			hideLens();
+		      break;
+		    }
 	       }
 	    } // case QEvent::KeyRelease:
 	    default:

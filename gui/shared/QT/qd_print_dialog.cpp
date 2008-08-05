@@ -525,12 +525,14 @@ QDPrintDialog::done(int rc)
 
          int  bookletMode=(int)DjVuToPS::Options::OFF;
          if (bk_mode_butt->isChecked())
-           if (! strcmp(bk_mode_menu->currentText(), tr(recto_verso_str)))
-             bookletMode=(int)DjVuToPS::Options::RECTOVERSO;
-           else if (! strcmp(bk_mode_menu->currentText(), tr(recto_only_str)))
-             bookletMode=(int)DjVuToPS::Options::RECTO;
-           else if (! strcmp(bk_mode_menu->currentText(), tr(verso_only_str)))
-             bookletMode=(int)DjVuToPS::Options::VERSO;
+	   {
+	     if (! strcmp(bk_mode_menu->currentText(), tr(recto_verso_str)))
+	       bookletMode=(int)DjVuToPS::Options::RECTOVERSO;
+	     else if (! strcmp(bk_mode_menu->currentText(), tr(recto_only_str)))
+	       bookletMode=(int)DjVuToPS::Options::RECTO;
+	     else if (! strcmp(bk_mode_menu->currentText(), tr(verso_only_str)))
+	       bookletMode=(int)DjVuToPS::Options::VERSO;
+	   }
          int  bookletMax=4 * bk_max_spin->value();
          int  bookletAlign=bk_align_spin->value();
          int  bookletFold=bk_fold_spin->value();

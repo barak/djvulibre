@@ -314,11 +314,11 @@ QDBase::processAnno(bool allow_redraw)
 	 setBackgroundColor(bg_color, false);	// Don't redraw
       }
 
-      if (ant->hor_align!=DjVuANT::ALIGN_CENTER &&
-	  ant->hor_align!=DjVuANT::ALIGN_UNSPEC ||
-	  ant->ver_align!=DjVuANT::ALIGN_CENTER &&
-	  ant->ver_align!=DjVuANT::ALIGN_UNSPEC)
-	 do_layout=1;
+      if ((ant->hor_align!=DjVuANT::ALIGN_CENTER &&
+	   ant->hor_align!=DjVuANT::ALIGN_UNSPEC) ||
+	  (ant->ver_align!=DjVuANT::ALIGN_CENTER &&
+	   ant->ver_align!=DjVuANT::ALIGN_UNSPEC))
+	do_layout=1;
    
       createMapAreas(false); do_redraw=1;
    

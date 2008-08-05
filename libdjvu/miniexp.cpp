@@ -1094,7 +1094,7 @@ printer_t::print(miniexp_t p)
       while (miniexp_consp(p))
         {
           skip -= 1;
-          if (multiline || newline() && skip<0 && tab>indent)
+	  if (multiline || (newline() && skip<0 && tab>indent))
             {
               mlput("\n"); 
               mltab(indent); 
@@ -1114,7 +1114,7 @@ printer_t::print(miniexp_t p)
       if (p)
         {
           skip -= 1;
-          if (multiline || newline() && skip<0 && tab>indent)
+	  if (multiline || (newline() && skip<0 && tab>indent))
             {
               mlput("\n"); 
               mltab(indent); 
@@ -1361,7 +1361,7 @@ read_c_string(int &c)
   c = minilisp_getc();
   for(;;)
     {
-      if (c==EOF || isascii(c) && !isprint(c))
+      if (c==EOF || (isascii(c) && !isprint(c)))
         return read_error(c);
       else if (c=='\"')
         break;
@@ -1441,7 +1441,7 @@ read_quoted_symbol(int &c)
   for(;;)
     {
       c = minilisp_getc();
-      if (c==EOF || isascii(c) && !isprint(c))
+      if (c==EOF || (isascii(c) && !isprint(c)))
         return read_error(c);
       if (c=='|')
         break;

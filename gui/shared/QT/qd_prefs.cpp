@@ -357,13 +357,13 @@ QDLensPrefs::slotHlHotKeyChanged(DjVuPrefs::HLButtType key)
 {
       // Make sure that we don't have the same button selected
    QString cur_text=hkey_menu->currentText();
-   if (key==DjVuPrefs::HLB_CTRL && cur_text==ctrl_hkey ||
-       key==DjVuPrefs::HLB_SHIFT && cur_text==shift_hkey ||
-       key==DjVuPrefs::HLB_ALT && cur_text==alt_hkey)
+   if ((key==DjVuPrefs::HLB_CTRL && cur_text==ctrl_hkey) ||
+       (key==DjVuPrefs::HLB_SHIFT && cur_text==shift_hkey) ||
+       (key==DjVuPrefs::HLB_ALT && cur_text==alt_hkey))
      setComboBoxCurrentItem(hkey_menu, mid_hkey);
 }
-   
-QDLensPrefs::QDLensPrefs(DjVuPrefs * prefs, QWidget * parent, const char * name) 
+
+QDLensPrefs::QDLensPrefs(DjVuPrefs * prefs, QWidget * parent, const char * name)
   : QWidget(parent, name)
 {
    DEBUG_MSG("QDLensPrefs::QDLensPrefs(): Creating 'Magnifying Glass' box...\n");

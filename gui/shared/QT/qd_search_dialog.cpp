@@ -246,8 +246,8 @@ QDSearchDialog::slotSearch(void)
 	    // Didn't find anything. Switch to the next page or give up
 	 int pages_num=doc->get_pages_num();
 	 if (!all_pages_butt->isChecked() ||
-	     fwd && page_num>=pages_num-1 ||
-	     !fwd && page_num==0)
+	     (fwd && page_num>=pages_num-1) ||
+	     (!fwd && page_num==0))
 	 {
 	    if (asked_once)
 	    {

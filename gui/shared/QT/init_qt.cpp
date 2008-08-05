@@ -163,6 +163,8 @@ x11ErrorHandler(Display *displ, XErrorEvent *event)
   return 0;
 }
 
+#ifdef QT2
+#ifdef HAVE_X11_EXTENSIONS_XEXT_H
 static int
 x11ExtErrorHandler(Display *dpy, char *extname, char *cause)
 {
@@ -172,6 +174,8 @@ x11ExtErrorHandler(Display *dpy, char *extname, char *cause)
       return (*x11PreviousExtErrorHandler)(dpy, extname, cause);
   return 0;
 }
+#endif
+#endif
 
 static void
 InstallErrorHandlers(void)

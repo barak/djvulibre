@@ -298,44 +298,48 @@ MapArea::setActiveOutlineMode(bool on, bool redraw)
 void
 MapArea::setActive(bool on, bool redraw)
 {
-   if (!on && isAlwaysActive() || active==on) return;
-   
-   active=on;
-   if (redraw && pane && mapper)
+  if ((!on && isAlwaysActive()) || active==on)
+    return;
+
+  active=on;
+  if (redraw && pane && mapper)
+    {
       if (isActiveOutlineMode()) drawOutline(Q2G(pane->rect()));
-      else if (!isCacheUsed()) repaint();
+      else if (!isCacheUsed())
+	repaint();
       else
-      {
-	    // Use cache to draw ourselves
-	 GRect brect=gmap_area->get_bound_rect();
-	 mapper->map(brect);
-	 brect.inflate(3, 3);
-	 GRect pane_rect=Q2G(pane->rect());
-	 GRect urect;
-	 if (urect.intersect(pane_rect, brect))
-	 {
-	    for(GPosition pos=pieces;pos;++pos)
+	{
+	  // Use cache to draw ourselves
+	  GRect brect=gmap_area->get_bound_rect();
+	  mapper->map(brect);
+	  brect.inflate(3, 3);
+	  GRect pane_rect=Q2G(pane->rect());
+	  GRect urect;
+	  if (urect.intersect(pane_rect, brect))
 	    {
-	       GP<MapPiece> piece=pieces[pos];
-	       GRect piece_rect=*piece;
-	       mapper->map(piece_rect);
-	       GRect irect;
-	       if (irect.intersect(piece_rect, urect))
-	       {
-		  QPixmap & pix=active ? piece->getOnPixmap() : piece->getOffPixmap();
-		  if (pix.isNull()) repaint(piece_rect);
-		  QPainter p(pane);
-		  GRect crect=doc_rect;
-		  mapper->map(crect);
-		  p.setClipRect(G2Q(crect));
-		  p.drawPixmap(irect.xmin, irect.ymin, pix,
-			       irect.xmin-piece_rect.xmin,
-			       irect.ymin-piece_rect.ymin,
-			       irect.width(), irect.height());
-	       }
+	      for(GPosition pos=pieces;pos;++pos)
+		{
+		  GP<MapPiece> piece=pieces[pos];
+		  GRect piece_rect=*piece;
+		  mapper->map(piece_rect);
+		  GRect irect;
+		  if (irect.intersect(piece_rect, urect))
+		    {
+		      QPixmap & pix=active ? piece->getOnPixmap() : piece->getOffPixmap();
+		      if (pix.isNull()) repaint(piece_rect);
+		      QPainter p(pane);
+		      GRect crect=doc_rect;
+		      mapper->map(crect);
+		      p.setClipRect(G2Q(crect));
+		      p.drawPixmap(irect.xmin, irect.ymin, pix,
+				   irect.xmin-piece_rect.xmin,
+				   irect.ymin-piece_rect.ymin,
+				   irect.width(), irect.height());
+		    }
+		}
 	    }
-	 }
-      }
+	}
+    }
 }
 
 void

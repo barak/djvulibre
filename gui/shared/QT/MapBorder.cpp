@@ -198,7 +198,7 @@ genRect(const int * xx, const int * yy, int points, GRectMapper * mapper)
 		")-(" << end_x << ", " << end_y << "), di=" << di << ", dj=" << dj << "\n");*/
       
       GPosition pos1;
-      if (di && dj || cell_cnt && (di!=last_di || dj!=last_dj) ||
+      if ((di && dj) || (cell_cnt && (di!=last_di || dj!=last_dj)) ||
 	  passed_cells[cell_i+di].search(cell_j+dj, pos1))
       {
 	 // We're either leaving the current cell through a corner or a way,

@@ -399,23 +399,26 @@ DjVuImage::get_mimetype() const
 
 //// DJVUIMAGE: UTILITIES
 
-GUTF8String 
+GUTF8String
 DjVuImage::get_short_description() const
 {
   GUTF8String msg = "Empty";
   int width = get_width();
   int height = get_height();
   if (width && height)
-    if (file && file->file_size>100)
-      //msg.format("%dx%d in %0.1f Kb", width, height, file->file_size/1024.0);
-      msg.format( ERR_MSG("DjVuImage.short1") "\t%d\t%d\t%0.1f", width, height, file->file_size/1024.0 );
-    else
-      //msg.format("%dx%d", width, height);
-      msg.format( ERR_MSG("DjVuImage.short2") "\t%d\t%d", width, height );
+    {
+      if (file && file->file_size>100)
+	//msg.format("%dx%d in %0.1f Kb", width, height, file->file_size/1024.0);
+	msg.format( ERR_MSG("DjVuImage.short1") "\t%d\t%d\t%0.1f",
+		    width, height, file->file_size/1024.0 );
+      else
+	//msg.format("%dx%d", width, height);
+	msg.format( ERR_MSG("DjVuImage.short2") "\t%d\t%d", width, height );
+    }
   return msg;
 }
 
-GUTF8String 
+GUTF8String
 DjVuImage::get_long_description() const
 {
   return file?(file->description):GUTF8String();

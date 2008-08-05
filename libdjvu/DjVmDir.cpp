@@ -451,7 +451,7 @@ DjVmDir::encode(const GP<ByteStream> &gstr, const bool bundled, const bool do_re
               str.write32(file->offset);
             }
         }
-      
+
       GP<ByteStream> gbs_str=BSByteStream::create(gstr, 50);
       ByteStream &bs_str=*gbs_str;
       DEBUG_MSG("storing and compressing sizes for every record\n");
@@ -462,32 +462,34 @@ DjVmDir::encode(const GP<ByteStream> &gstr, const bool bundled, const bool do_re
         }
       DEBUG_MSG("storing and compressing flags for every record\n");
       const bool xdo_rename=(do_rename||!bundled);
-      for(pos=files_list;pos;++pos)
-        {
-          const GP<File> file(files_list[pos]);
-          if(xdo_rename)
-            {
-              const GUTF8String new_id = file->name;
-              if (! new_id)
-                if(!file->oldname.length() || file->oldname == new_id)
-                  file->flags &= ~File::HAS_NAME;
-                else
-                  file->flags |= File::HAS_NAME;
-            }
-          else 
-            {
-              if (!file->name.length() || file->name == file->id)
-                file->flags &= ~File::HAS_NAME;
-              else
-                file->flags |= File::HAS_NAME;
-            }
-          if (file->title.length() && (file->title!=file->id))
-            file->flags |= File::HAS_TITLE;
-          else
-            file->flags &= ~File::HAS_TITLE;
+      for (pos=files_list;pos;++pos)
+	{
+	  const GP<File> file(files_list[pos]);
+	  if (xdo_rename)
+	    {
+	      const GUTF8String new_id = file->name;
+	      if (!new_id)
+		{
+		  if (!file->oldname.length() || file->oldname == new_id)
+		    file->flags &= ~File::HAS_NAME;
+		  else
+		    file->flags |= File::HAS_NAME;
+		}
+	    }
+	  else
+	    {
+	      if (!file->name.length() || file->name == file->id)
+		file->flags &= ~File::HAS_NAME;
+	      else
+		file->flags |= File::HAS_NAME;
+	    }
+	  if (file->title.length() && (file->title!=file->id))
+	    file->flags |= File::HAS_TITLE;
+	  else
+	    file->flags &= ~File::HAS_TITLE;
 
-       bs_str.write8(file->flags);
-     }
+	  bs_str.write8(file->flags);
+	}
 
      DEBUG_MSG("storing and compressing names...\n");
      for(pos=files_list;pos;++pos)

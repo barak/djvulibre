@@ -539,34 +539,36 @@ DataPool::BlockList::add_range(int start, int length)
 	 int size=list[pos];
 	 block_end=block_start+abs(size);
 	 if (size<0)
-	    if (block_start<start)
-	    {
-	       if (block_end>start && block_end<=start+length)
+	   {
+	     if (block_start<start)
 	       {
-		  list[pos]=-(start-block_start);
-		  list.insert_after(pos, block_end-start);
-		  ++pos;
-		  block_start=start;
-	       } else if (block_end>start+length)
+		 if (block_end>start && block_end<=start+length)
+		   {
+		     list[pos]=-(start-block_start);
+		     list.insert_after(pos, block_end-start);
+		     ++pos;
+		     block_start=start;
+		   } else if (block_end>start+length)
+		   {
+		     list[pos]=-(start-block_start);
+		     list.insert_after(pos, length);
+		     ++pos;
+		     list.insert_after(pos, -(block_end-(start+length)));
+		     ++pos;
+		     block_start=start+length;
+		   }
+	       } else if (block_start>=start && block_start<start+length)
 	       {
-		  list[pos]=-(start-block_start);
-		  list.insert_after(pos, length);
-		  ++pos;
-		  list.insert_after(pos, -(block_end-(start+length)));
-		  ++pos;
-		  block_start=start+length;
+		 if (block_end<=start+length) list[pos]=abs(size);
+		 else
+		   {
+		     list[pos]=start+length-block_start;
+		     list.insert_after(pos, -(block_end-(start+length)));
+		     ++pos;
+		     block_start=start+length;
+		   }
 	       }
-	    } else if (block_start>=start && block_start<start+length)
-	    {
-	       if (block_end<=start+length) list[pos]=abs(size);
-	       else
-	       {
-		  list[pos]=start+length-block_start;
-		  list.insert_after(pos, -(block_end-(start+length)));
-		  ++pos;
-		  block_start=start+length;
-	       }
-	    }
+	   }
 	 block_start=block_end;
 	 ++pos;
       }
@@ -582,15 +584,15 @@ DataPool::BlockList::add_range(int start, int length)
       {
 	 GPosition pos1=pos; ++pos1;
 	 while(pos1)
-	 {
-	    if (list[pos]<0 && list[pos1]>0 ||
-		list[pos]>0 && list[pos1]<0)
+	   {
+	     if ( (list[pos]<0 && list[pos1]>0) ||
+		  (list[pos]>0 && list[pos1]<0) )
 	       break;
-	    list[pos]+=list[pos1];
-	    GPosition this_pos=pos1;
-	    ++pos1;
-	    list.del(this_pos);
-	 }
+	     list[pos]+=list[pos1];
+	     GPosition this_pos=pos1;
+	     ++pos1;
+	     list.del(this_pos);
+	   }
 	 pos=pos1;
       }
    } // if (length>0)
@@ -615,18 +617,21 @@ DataPool::BlockList::get_bytes(int start, int length) const
       int size=list[pos];
       block_end=block_start+abs(size);
       if (size>0)
-	 if (block_start<start)
-	 {
-	    if (block_end>=start && block_end<start+length)
-	       bytes+=block_end-start;
-            else if (block_end>=start+length)
-	       bytes+=length;
-	 } else
-	 {
-	    if (block_end<=start+length)
-	       bytes+=block_end-block_start;
-	    else bytes+=start+length-block_start;
-	 }
+	{
+	  if (block_start<start)
+	    {
+	      if (block_end>=start && block_end<start+length)
+		bytes+=block_end-start;
+	      else if (block_end>=start+length)
+		bytes+=length;
+	    }
+	  else
+	    {
+	      if (block_end<=start+length)
+		bytes+=block_end-block_start;
+	      else bytes+=start+length-block_start;
+	    }
+	}
       block_start=block_end;
    }
    return bytes;
@@ -648,16 +653,20 @@ DataPool::BlockList::get_range(int start, int length) const
    GCriticalSectionLock lk((GCriticalSection *) &lock);
    int block_start=0, block_end=0;
    for(GPosition pos=list;pos && block_start<start+length;++pos)
-   {
-      int size=list[pos];
-      block_end=block_start+abs(size);
-      if (block_start<=start && block_end>start)
-	 if (size<0) return -1;
-         else
-	    if (block_end>start+length) return length;
-            else return block_end-start;
-      block_start=block_end;
-   }
+     {
+       int size=list[pos];
+       block_end=block_start+abs(size);
+       if (block_start<=start && block_end>start)
+	 {
+	   if (size<0)
+	     return -1;
+	   else if (block_end>start+length)
+	     return length;
+	   else
+	     return block_end-start;
+	 }
+       block_start=block_end;
+     }
    return 0;
 }
 
@@ -1121,7 +1130,7 @@ DataPool::get_data(void * buffer, int offset, int sz, int level)
    
    if (! sz)
      return 0;
-   
+
    GP<DataPool> pool = this->pool;
    if (pool)
      {
@@ -1129,41 +1138,42 @@ DataPool::get_data(void * buffer, int offset, int sz, int level)
        DEBUG_MAKE_INDENT(3);
        int retval=0;
        if (length>0 && offset+sz>length)
-         sz=length-offset;
+	 sz=length-offset;
        if (sz<0)
-        sz=0;
+	 sz=0;
        for(;;)
-         {
-           // Ask the underlying (master) DataPool for data. Note, that
-           // master DataPool may throw the "DATA_POOL_REENTER" exception
-           // demanding all readers to restart. This happens when
-           // a DataPool in the chain of DataPools stops. All readers
-           // should return to the most upper level and then reenter the
-           // DataPools hierarchy. Some of them will be stopped by
-           // DataPool::Stop exception.
-           G_TRY
-             {
-               if(stop_flag||stop_blocked_flag&&!is_eof()&&!has_data(offset, sz))
-                 G_THROW( DataPool::Stop );
-               retval=pool->get_data(buffer, start+offset, sz, level+1);
-             } 
-           G_CATCH(exc) 
-             {
-               pool->clear_stream(true);
-               if ((exc.get_cause() != GUTF8String( ERR_MSG("DataPool.reenter") ) ) 
-                   || level)
-                 G_RETHROW;
-             } G_ENDCATCH;
-           pool->clear_stream(true);
-           return retval;
-         }
+	 {
+	   // Ask the underlying (master) DataPool for data. Note, that
+	   // master DataPool may throw the "DATA_POOL_REENTER" exception
+	   // demanding all readers to restart. This happens when
+	   // a DataPool in the chain of DataPools stops. All readers
+	   // should return to the most upper level and then reenter the
+	   // DataPools hierarchy. Some of them will be stopped by
+	   // DataPool::Stop exception.
+	   G_TRY
+	     {
+	       if(stop_flag
+		  || (stop_blocked_flag && !is_eof() && !has_data(offset, sz)))
+		 G_THROW( DataPool::Stop );
+	       retval=pool->get_data(buffer, start+offset, sz, level+1);
+	     }
+	   G_CATCH(exc)
+	   {
+	     pool->clear_stream(true);
+	     if ((exc.get_cause() != GUTF8String(ERR_MSG("DataPool.reenter")))
+		 || level)
+	       G_RETHROW;
+	   } G_ENDCATCH;
+	   pool->clear_stream(true);
+	   return retval;
+	 }
      }
    else if (furl.is_local_file_url())
      {
        DEBUG_MSG("DataPool::get_data(): from file\n");
        DEBUG_MAKE_INDENT(3);
        if (length>0 && offset+sz>length)
-         sz=length-offset;
+	 sz=length-offset;
        if (sz<0)
          sz=0;
        
@@ -1434,52 +1444,53 @@ DataPool::check_triggers(void)
 {
   DEBUG_MSG("DataPool::check_triggers(): calling activated trigger callbacks.\n");
   DEBUG_MAKE_INDENT(3);
-  
+
   if (!pool && !furl.is_local_file_url())
     while(true)
-    {
-      GP<Trigger> trigger;
-      
-      // First find a candidate (trigger, which needs to be called)
-      // Don't remove it from the list yet. del_trigger() should
-      // be able to find it if necessary and disable.
       {
-        GCriticalSectionLock list_lock(&triggers_lock);
-        for(GPosition pos=triggers_list;pos;++pos)
-        {
-          GP<Trigger> t=triggers_list[pos];
-          if (is_eof() || t->length>=0 &&
-            block_list->get_bytes(t->start, t->length)==t->length)
-          {
-            trigger=t;
-            break;
-          }
-        }
+	GP<Trigger> trigger;
+
+	// First find a candidate (trigger, which needs to be called)
+	// Don't remove it from the list yet. del_trigger() should
+	// be able to find it if necessary and disable.
+	{
+	  GCriticalSectionLock list_lock(&triggers_lock);
+	  for(GPosition pos=triggers_list;pos;++pos)
+	    {
+	      GP<Trigger> t=triggers_list[pos];
+	      if (is_eof()
+		  || (t->length>=0 &&
+		      block_list->get_bytes(t->start, t->length)==t->length))
+		{
+		  trigger=t;
+		  break;
+		}
+	    }
+	}
+
+	if (trigger)
+	  {
+	    // Now check that the trigger is not disabled
+	    // and lock the trigger->disabled lock for the duration
+	    // of the trigger. This will block the del_trigger() and
+	    // will postpone client's destruction (usually following
+	    // the call to del_trigger())
+	    {
+	      GMonitorLock lock(&trigger->disabled);
+	      if (!trigger->disabled)
+		call_callback(trigger->callback, trigger->cl_data);
+	    }
+
+	    // Finally - remove the trigger from the list.
+	    GCriticalSectionLock list_lock(&triggers_lock);
+	    for(GPosition pos=triggers_list;pos;++pos)
+	      if (triggers_list[pos]==trigger)
+		{
+		  triggers_list.del(pos);
+		  break;
+		}
+	  } else break;
       }
-      
-      if (trigger)
-      {
-	       // Now check that the trigger is not disabled
-	       // and lock the trigger->disabled lock for the duration
-	       // of the trigger. This will block the del_trigger() and
-	       // will postpone client's destruction (usually following
-	       // the call to del_trigger())
-        {
-          GMonitorLock lock(&trigger->disabled);
-          if (!trigger->disabled)
-            call_callback(trigger->callback, trigger->cl_data);
-        }
-        
-	       // Finally - remove the trigger from the list.
-        GCriticalSectionLock list_lock(&triggers_lock);
-        for(GPosition pos=triggers_list;pos;++pos)
-          if (triggers_list[pos]==trigger)
-          {
-            triggers_list.del(pos);
-            break;
-          }
-      } else break;
-    }
 }
 
 void

@@ -319,9 +319,9 @@ render(ddjvu_page_t *page)
 
   /* Determine output pixel format */
   style = DDJVU_FORMAT_RGB24;
-  if ((mode==DDJVU_RENDER_BLACK) ||
-      (mode==DDJVU_RENDER_MASKONLY) ||
-      (mode==DDJVU_RENDER_COLOR) && (type==DDJVU_PAGETYPE_BITONAL))
+  if (mode==DDJVU_RENDER_BLACK ||
+      mode==DDJVU_RENDER_MASKONLY ||
+      (mode==DDJVU_RENDER_COLOR && type==DDJVU_PAGETYPE_BITONAL))
     {
       style = DDJVU_FORMAT_GREY8;
       if ((int)prect.w == iw && (int)prect.h == ih)

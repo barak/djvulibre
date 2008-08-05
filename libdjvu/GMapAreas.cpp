@@ -463,15 +463,16 @@ GMapPoly::does_side_cross_rect(const GRect & grect, int side)
    int ymax=y1+y2-ymin;
 
    if (xmax<grect.xmin || xmin>grect.xmax ||
-       ymax<grect.ymin || ymin>grect.ymax) return false;
+       ymax<grect.ymin || ymin>grect.ymax)
+     return false;
 
    return
-      x1>=grect.xmin && x1<=grect.xmax && y1>=grect.ymin && y1<=grect.ymax ||
-      x2>=grect.xmin && x2<=grect.xmax && y2>=grect.ymin && y2<=grect.ymax ||
-      do_segments_intersect(grect.xmin, grect.ymin, grect.xmax, grect.ymax,
-			    x1, y1, x2, y2) ||
-      do_segments_intersect(grect.xmax, grect.ymin, grect.xmin, grect.ymax,
-			    x1, y1, x2, y2);
+     (x1>=grect.xmin && x1<=grect.xmax && y1>=grect.ymin && y1<=grect.ymax) ||
+     (x2>=grect.xmin && x2<=grect.xmax && y2>=grect.ymin && y2<=grect.ymax) ||
+     do_segments_intersect(grect.xmin, grect.ymin, grect.xmax, grect.ymax,
+			   x1, y1, x2, y2) ||
+     do_segments_intersect(grect.xmax, grect.ymin, grect.xmin, grect.ymax,
+			   x1, y1, x2, y2);
 }
 
 bool
@@ -514,59 +515,55 @@ GMapPoly::are_segments_parallel(int x11, int y11, int x12, int y12,
 char const * const
 GMapPoly::check_data(void)
 {
-  if (open && points<2 || !open && points<3) 
+  if ((open && points<2) || (!open && points<3))
     return error_too_few_points;
   for(int i=0;i<sides;i++)
-  {
-    for(int j=i+2;j<sides;j++)
     {
-      if (i != (j+1)%points )
-      {
-        if (do_segments_intersect(xx[i], yy[i], xx[i+1], yy[i+1],
+      for(int j=i+2;j<sides;j++)
+	{
+	  if (i != (j+1)%points )
+	    if (do_segments_intersect(xx[i], yy[i], xx[i+1], yy[i+1],
 				      xx[j], yy[j], xx[(j+1)%points], yy[(j+1)%points]))
-        {
-          return error_intersect;
-        }
-      }
+	      return error_intersect;
+	}
     }
-  }
   return "";
 }
 
 void
 GMapPoly::optimize_data(void)
 {
-   // Removing segments of length zero
-   int i;
-   for(i=0;i<sides;i++)
-   {
+  // Removing segments of length zero
+  int i;
+  for(i=0;i<sides;i++)
+    {
       while(xx[i]==xx[(i+1)%points] && yy[i]==yy[(i+1)%points])
-      {
-	 for(int k=(i+1)%points;k<points-1;k++)
-	 {
-	    xx[k]=xx[k+1]; yy[k]=yy[k+1];
-	 }
-	 points--; sides--;
-	 if (!points) return;
-      }
-   }
-   // Concatenating consequitive parallel segments
-   for(i=0;i<sides;i++)
-   {
-      while((open && i+1<sides || !open) &&
+	{
+	  for(int k=(i+1)%points;k<points-1;k++)
+	    {
+	      xx[k]=xx[k+1]; yy[k]=yy[k+1];
+	    }
+	  points--; sides--;
+	  if (!points) return;
+	}
+    }
+  // Concatenating consequitive parallel segments
+  for(i=0;i<sides;i++)
+    {
+      while(((open && i+1<sides) || !open) &&
 	    are_segments_parallel(xx[i], yy[i],
 				  xx[(i+1)%points], yy[(i+1)%points],
 				  xx[(i+1)%points], yy[(i+1)%points],
 				  xx[(i+2)%points], yy[(i+2)%points]))
-      {
-	 for(int k=(i+1)%points;k<points-1;k++)
-	 {
-	    xx[k]=xx[k+1]; yy[k]=yy[k+1];
-	 }
-	 points--; sides--;
-	 if (!points) return;
-      }
-   }
+	{
+	  for(int k=(i+1)%points;k<points-1;k++)
+	    {
+	      xx[k]=xx[k+1]; yy[k]=yy[k+1];
+	    }
+	  points--; sides--;
+	  if (!points) return;
+	}
+    }
 }
 
 bool
@@ -574,9 +571,9 @@ GMapPoly::gma_is_point_inside(const int xin, const int yin) const
 {
    if (open)
      return false;
-   
+
    int xfar=get_xmax()+(get_xmax()-get_xmin());
-   
+
    int intersections=0;
    for(int i=0;i<points;i++)
    {
@@ -594,7 +591,7 @@ GMapPoly::gma_is_point_inside(const int xin, const int yin) const
 	    return true;
 	 }
       }
-      if (res1<0 && res2>0 || res1>0 && res2<0)
+      if ((res1<0 && res2>0) || (res1>0 && res2<0))
       {
 	 int x1=xx[i%points], y1=yy[i%points];
 	 int x2=xx[(i+1)%points], y2=yy[(i+1)%points];

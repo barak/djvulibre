@@ -251,8 +251,9 @@ QDToolBar::positionWidgets(int width, int rows, bool move, int * height_ptr)
    if (height_ptr) *height_ptr=height+crect.top()+rect().bottom()-crect.bottom();
    
       // See if left_list and right_list overlap
-   return (left_row<right_row || left_row==right_row &&
-	   left_x_r+margin<=right_x_l);
+   return (left_row<right_row ||
+	   (left_row==right_row &&
+	    left_x_r+margin<=right_x_l));
 }
 
 int

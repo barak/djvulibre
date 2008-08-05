@@ -118,8 +118,12 @@ const
    if (zoom>IDC_ZOOM_MAX-IDC_ZOOM_MIN) return Invalid;
    if (zoom<=0) return Invalid;
    if (zoom<5)
-      if (input.length()==1) return Valid;
-      else return Invalid;
+     {
+       if (input.length()==1)
+	 return Valid;
+       else
+	 return Invalid;
+     }
 
    return Acceptable;
 }

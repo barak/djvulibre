@@ -1998,11 +1998,13 @@ main(int argc, char **argv)
       // Execute
       execute();
       if (modified)
-        if (save)
-          command_save();
-        else
-          fprintf(stderr,"djvused: (warning) file was modified but not saved\n");
-    }
+	{
+	  if (save)
+	    command_save();
+	  else
+	    fprintf(stderr,"djvused: (warning) file was modified but not saved\n");
+	}
+     }
   G_CATCH(ex)
     {
       ex.perror();

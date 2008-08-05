@@ -778,72 +778,85 @@ QDBase::getZoom(void) const
 void
 QDBase::setZoom(int cmd, bool do_layout, int src)
 {
-   DEBUG_MSG("QDBase::setZoom(): setting zoom " << cmd << "\n");
-   DEBUG_MAKE_INDENT(3);
+  DEBUG_MSG("QDBase::setZoom(): setting zoom " << cmd << "\n");
+  DEBUG_MAKE_INDENT(3);
 
-   if (mode_prio[zoom_src]>mode_prio[src]) return;
-   zoom_src=src;
+  if (mode_prio[zoom_src]>mode_prio[src]) return;
+  zoom_src=src;
 
-   if (!dimg)
-   {
+  if (!dimg)
+    {
       if (cmd!=IDC_ZOOM_ZOOMOUT && cmd!=IDC_ZOOM_ZOOMIN)
-      {
-	 cmd_zoom=cmd;
-	 updateToolBar();
-	 if (do_layout) layout();
-      }
+	{
+	  cmd_zoom=cmd;
+	  updateToolBar();
+	  if (do_layout) layout();
+	}
       return;
-   }
-   
-   int image_dpi=dimg->get_rounded_dpi();
-   if (image_dpi<=0 || image_dpi>=2400) image_dpi=300;
+    }
 
-   const int std_zoom[]={ 300, 150, 100, 75, 50, 25 };
-   const int std_zooms=sizeof(std_zoom)/sizeof(std_zoom[0]);
-   int cur_zoom=getZoom();
-   
-   if (cmd==IDC_ZOOM_ZOOMIN)
-   {
+  int image_dpi=dimg->get_rounded_dpi();
+  if (image_dpi<=0 || image_dpi>=2400) image_dpi=300;
+
+  const int std_zoom[]={ 300, 150, 100, 75, 50, 25 };
+  const int std_zooms=sizeof(std_zoom)/sizeof(std_zoom[0]);
+  int cur_zoom=getZoom();
+
+  if (cmd==IDC_ZOOM_ZOOMIN)
+    {
       int new_zoom=cur_zoom*3/2;
-      if (new_zoom>IDC_ZOOM_MAX-IDC_ZOOM_MIN) new_zoom=IDC_ZOOM_MAX-IDC_ZOOM_MIN;
+      if (new_zoom>IDC_ZOOM_MAX-IDC_ZOOM_MIN)
+	new_zoom=IDC_ZOOM_MAX-IDC_ZOOM_MIN;
       if (new_zoom>=20 && new_zoom<=330)
-      {
-	 int zoom_ind=0;
-	 for(int i=0;i<std_zooms;i++)
+	{
+	  int zoom_ind=0;
+	  for(int i=0;i<std_zooms;i++)
 	    if (abs(std_zoom[i]-new_zoom)<abs(std_zoom[zoom_ind]-new_zoom) &&
 		std_zoom[i]>cur_zoom)
-	       zoom_ind=i;
-	 cmd=IDC_ZOOM_MIN+std_zoom[zoom_ind];
-	 if (cmd==cmd_zoom)
-	    if (zoom_ind>0) cmd=IDC_ZOOM_MIN+std_zoom[zoom_ind-1];
-	    else cmd=IDC_ZOOM_MIN+new_zoom;
-      } else cmd=IDC_ZOOM_MIN+new_zoom;
-   }
+	      zoom_ind=i;
+	  cmd=IDC_ZOOM_MIN+std_zoom[zoom_ind];
+	  if (cmd==cmd_zoom)
+	    {
+	      if (zoom_ind>0)
+		cmd=IDC_ZOOM_MIN+std_zoom[zoom_ind-1];
+	      else
+		cmd=IDC_ZOOM_MIN+new_zoom;
+	    }
+	}
+      else cmd=IDC_ZOOM_MIN+new_zoom;
+    }
 
-   if (cmd==IDC_ZOOM_ZOOMOUT)
-   {
+  if (cmd==IDC_ZOOM_ZOOMOUT)
+    {
       int new_zoom=cur_zoom*2/3;
       if (new_zoom<=5) new_zoom=5;
       if (new_zoom>=20 && new_zoom<=330)
-      {
-	 int zoom_ind=0;
-	 for(int i=0;i<std_zooms;i++)
+	{
+	  int zoom_ind=0;
+	  for(int i=0;i<std_zooms;i++)
 	    if (abs(std_zoom[i]-new_zoom)<abs(std_zoom[zoom_ind]-new_zoom) &&
 		std_zoom[i]<cur_zoom)
-	       zoom_ind=i;
-	 cmd=IDC_ZOOM_MIN+std_zoom[zoom_ind];
-	 if (cmd==cmd_zoom)
-	    if (zoom_ind<std_zooms-1) cmd=IDC_ZOOM_MIN+std_zoom[zoom_ind+1];
-	    else cmd=IDC_ZOOM_MIN+new_zoom;
-      } else cmd=IDC_ZOOM_MIN+new_zoom;
-   }
+	      zoom_ind=i;
+	  cmd=IDC_ZOOM_MIN+std_zoom[zoom_ind];
+	  if (cmd==cmd_zoom)
+	    {
+	      if (zoom_ind<std_zooms-1)
+		cmd=IDC_ZOOM_MIN+std_zoom[zoom_ind+1];
+	      else
+		cmd=IDC_ZOOM_MIN+new_zoom;
+	    }
+	}
+      else
+	cmd=IDC_ZOOM_MIN+new_zoom;
+    }
 
-   if (cmd!=cmd_zoom)
-   {
+  if (cmd!=cmd_zoom)
+    {
       cmd_zoom=cmd;
       updateToolBar();
-      if (do_layout) layout();
-   }
+      if (do_layout)
+	layout();
+    }
 }
 
 int
@@ -1404,19 +1417,22 @@ QDBase::unStickToolBar(void)
 void
 QDBase::enableToolBar(bool on)
 {
-   if ( !toolbar ) return;
-   
-   if (on!=isToolBarEnabled())
+  if ( !toolbar ) return;
+
+  if (on!=isToolBarEnabled())
+    {
       if (on)
-      {
-	 prefs.toolBarOn=1;
-	 layout();
-	 updateToolBar();
-      } else
-      {
-	 prefs.toolBarOn=0;
-	 layout();
-      }
+	{
+	  prefs.toolBarOn=1;
+	  layout();
+	  updateToolBar();
+	}
+      else
+	{
+	  prefs.toolBarOn=0;
+	  layout();
+	}
+    }
 }
 
 bool
@@ -1499,7 +1515,7 @@ QDBase::showToolBar(bool slow)
 	    showing_toolbar=0;
 	    throw;
 	 }
-      
+
 	 showing_toolbar=0;
       }
    }
@@ -1509,19 +1525,23 @@ QDBase::showToolBar(bool slow)
 void
 QDBase::hideToolBar(bool slow)
 {
-   DEBUG_MSG("QDBase::hideToolBar(): slow=" << slow << "\n");
-   DEBUG_MAKE_INDENT(3);
-   
-   if (!dimg || !dimg->get_width() || !dimg->get_height() ||
-       !isToolBarEnabled()) return;
-   
-   if (!isToolBarStuck() && isToolBarShown())
+  DEBUG_MSG("QDBase::hideToolBar(): slow=" << slow << "\n");
+  DEBUG_MAKE_INDENT(3);
+
+  if (!dimg || !dimg->get_width() || !dimg->get_height() ||
+      !isToolBarEnabled())
+    return;
+
+  if (!isToolBarStuck() && isToolBarShown())
+    {
       if (!slow)
-      {
-	 toolbar->move(0, pane->height());
-	 toolbar_shown=0;
-      } else if (!toolbar_timer.isActive())
-	 toolbar_timer.start(prefs.toolBarDelay, TRUE);
+	{
+	  toolbar->move(0, pane->height());
+	  toolbar_shown=0;
+	}
+      else if (!toolbar_timer.isActive())
+	toolbar_timer.start(prefs.toolBarDelay, TRUE);
+    }
 }
 
 void

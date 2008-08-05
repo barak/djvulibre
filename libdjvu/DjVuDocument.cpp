@@ -665,13 +665,15 @@ DjVuDocument::check_unnamed_files(void)
 int
 DjVuDocument::get_pages_num(void) const
 {
-   check();
-   if (flags & DOC_TYPE_KNOWN)
+  check();
+  if (flags & DOC_TYPE_KNOWN)
+    {
       if (doc_type==BUNDLED || doc_type==INDIRECT)
-	 return djvm_dir->get_pages_num();
+	return djvm_dir->get_pages_num();
       else if (flags & DOC_NDIR_KNOWN)
-	 return ndir->get_pages_num();
-   return 1;
+	return ndir->get_pages_num();
+    }
+  return 1;
 }
 
 GURL

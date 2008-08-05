@@ -770,9 +770,13 @@ QXImager::QXImager(Display * _displ, void * _visual,
 void
 QXImager::dither(GPixmap & gpix, int x0, int y0)
 {
-   if (is_color)
-      if (depth<15) gpix.ordered_666_dither(x0, y0);
-      else if (depth<24) gpix.ordered_32k_dither(x0, y0);
+  if (is_color)
+    {
+      if (depth<15)
+	gpix.ordered_666_dither(x0, y0);
+      else if (depth<24)
+	gpix.ordered_32k_dither(x0, y0);
+    }
 }
 
 void
