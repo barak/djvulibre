@@ -65,8 +65,8 @@ Architecture: any
 Conflicts: djview (<= 3.5.20-5), libdjvulibre-text (= 3.5.20-9)
 Provides: djvu-viewer
 Depends: ${shlibs:Depends}
-Recommends: djvulibre-desktop, djvulibre-plugin
-Suggests: djvulibre-bin
+Recommends: djvulibre-desktop
+Suggests: djvulibre-bin, djvulibre-plugin
 Description: Viewer for the DjVu image format
  DjVu viewer djview3, formerly knows as just djview.
 
@@ -92,8 +92,8 @@ Package: djvulibre-plugin
 Section: web
 Architecture: any
 Depends: ${shlibs:Depends}, djview4 | djview3
-Enhances: mozilla-browser, mozilla, mozilla-firefox, konqueror, galeon
-Recommends: mozilla-browser | mozilla | mozilla-firefox | iceweasel | iceape-browser | konqueror | galeon | netscape-base-4 | netscape, djvulibre-desktop
+Enhances: mozilla-browser, mozilla, mozilla-firefox, iceweasel, iceape-browser, konqueror, galeon
+Recommends: mozilla-browser | mozilla | mozilla-firefox | iceweasel | iceape-browser | konqueror | galeon
 Suggests: mime-support
 Conflicts: djvulibre-bin (<< 3.5.19)
 Description: Browser plugin for the DjVu image format
