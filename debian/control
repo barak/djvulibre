@@ -62,7 +62,7 @@ Description: Desktop support for the DjVu image format
 Package: djview3
 Section: graphics
 Architecture: any
-Conflicts: djview (<= 3.5.20-5)
+Conflicts: djview (<= 3.5.20-5), libdjvulibre-text (= 3.5.20-9)
 Provides: djvu-viewer
 Depends: ${shlibs:Depends}
 Recommends: djvulibre-desktop, djvulibre-plugin
