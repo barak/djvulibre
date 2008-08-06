@@ -1079,6 +1079,7 @@ do_bitmap(const DjVuImage &dimg, BImager get,
 {
     GRect rect=inrect;
     GRect all=inall;
+    GP<DjVuInfo> info = dimg.get_info();
     if( dimg.get_rotate() )
       {
         GRectMapper mapper;
@@ -1142,6 +1143,7 @@ do_pixmap(const DjVuImage &dimg, PImager get,
 {
   GRect rect=inrect;
   GRect all=inall;
+  GP<DjVuInfo> info = dimg.get_info();
   if( dimg.get_rotate()%4 )
     {
       GRectMapper mapper;
@@ -1158,7 +1160,6 @@ do_pixmap(const DjVuImage &dimg, PImager get,
   int red, w=0, h=0, rw=0, rh=0;
   w = dimg.get_real_width();
   h = dimg.get_real_height();
-
   rw = all.width();
   rh = all.height();
   GRect zrect = rect; 
