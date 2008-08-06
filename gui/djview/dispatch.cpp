@@ -429,21 +429,23 @@ AttachWindow(void)
               static char * argv[10];
               argv[argc++] = (char*)(DJVIEW_NAME);
               // -display
+              static char m_display[] = "-display\0";
               static char s_display[128];
               if (displ_name.length()>0 
                   && displ_name.length()<sizeof(s_display)-1)
                 {
                   strcpy(s_display, (const char*)displ_name);
-                  argv[argc++] = "-display";
+                  argv[argc++] = m_display;
                   argv[argc++] = s_display;
                 }
 #ifdef COPY_BACKGROUND_COLOR
               // -bg
+              static char m_bg[] = "-bg\0";
               static char s_bg[128];
               if (back_color.length()>0 && back_color.length()<sizeof(s_bg)-1)
                 {
                   strcpy(s_bg, (const char*)back_color);
-                  argv[argc++]="-bg";
+                  argv[argc++]= m_bg;
                   argv[argc++] = s_bg;
                 }
               // - one could check the colormap

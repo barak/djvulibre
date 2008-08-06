@@ -266,8 +266,8 @@ QDPort::slotGeneralMsg(const GUTF8String &qmsg)
 	 while(*ptr && isspace(*ptr)) ptr++;
 	 long set_mask, clr_mask;
 	 sscanf(ptr, "%ld %ld", &set_mask, &clr_mask);
-	 //emit sigNotifyFileFlagsChanged((DjVuFile *) source, set_mask, clr_mask);
-	 emit sigNotifyFileFlagsChanged((GP<DjVuFile> &)source, set_mask, clr_mask);
+         GP<DjVuFile> fsrc = (DjVuFile*)(DjVuPort*)src;
+	 emit sigNotifyFileFlagsChanged(fsrc, set_mask, clr_mask);
       } else if (call_name=="notify_doc_flags_changed")
       {
 	 while(*ptr && isspace(*ptr)) ptr++;

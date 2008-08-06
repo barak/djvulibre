@@ -175,7 +175,7 @@ dopage(int pageno)
 void
 parse_pagespec(const char *s, int max_page, void (*dopage)(int))
 {
-  static char *err = I18N("invalid page specification: %s");
+  static const char *err = I18N("invalid page specification: %s");
   int spec = 0;
   int both = 1;
   int start_page = 1;

@@ -352,12 +352,12 @@ GStringRep::Unicode::create(
             size_t pleft=6*ptrleft+1;
             GPBuffer<char> gutf8buf(utf8buf,pleft);
             char *p=utf8buf;
-            unsigned char const *last=ptr;
-            for(;iconv_adaptor(iconv, cv, (char**)&ptr, &ptrleft, &p, &pleft);last=ptr) 
-              EMPTY_LOOP;
+            char *nptr = (char*)ptr;
+            while(iconv_adaptor(iconv, cv, &nptr, &ptrleft, &p, &pleft)) 
+              ptr = (unsigned char*)nptr;
             iconv_close(cv);
-            retval=create(utf8buf,(size_t)last-(size_t)buf,t);
-            retval->set_remainder(last,(size_t)eptr-(size_t)last,e);
+            retval=create(utf8buf,(size_t)ptr-(size_t)buf,t);
+            retval->set_remainder(ptr,(size_t)eptr-(size_t)ptr,e);
           }
         }
       }else
@@ -436,6 +436,7 @@ GStringRep::Unicode::create(
       unsigned char *optr=utf8buf;
       int len=0;
       unsigned char const *iptr=(unsigned char *)buf;
+      unsigned short const *sptr=(unsigned short *)buf;
       unsigned long w;
       switch(t)
       {
@@ -472,9 +473,7 @@ GStringRep::Unicode::create(
           }
           break;
         case XUTF16:
-          for(;
-            (w=xUTF16toUCS4((unsigned short const*&)iptr,eptr));
-            len++)
+          for(;(w=xUTF16toUCS4(sptr,eptr));len++)
           {
             optr=UCS4toUTF8(w,optr);
           }
