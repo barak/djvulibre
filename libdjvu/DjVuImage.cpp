@@ -1077,17 +1077,17 @@ static GP<GBitmap>
 do_bitmap(const DjVuImage &dimg, BImager get,
           const GRect &inrect, const GRect &inall, int align )
 {
-    GRect rect=inrect;
-    GRect all=inall;
-    GP<DjVuInfo> info = dimg.get_info();
-    if( dimg.get_rotate() )
-      {
-        GRectMapper mapper;
-        mapper.rotate(-dimg.get_rotate());
-        mapper.map(rect);
-        mapper.map(all);
+  GRect rect=inrect;
+  GRect all=inall;
+  if (! dimg.get_info())
+    return 0;
+  if( dimg.get_rotate() )
+    {
+      GRectMapper mapper;
+      mapper.rotate(-dimg.get_rotate());
+      mapper.map(rect);
+      mapper.map(all);
     }
-    
   // Sanity
   if (! ( all.contains(rect.xmin, rect.ymin) &&
           all.contains(rect.xmax-1, rect.ymax-1) ))
@@ -1143,7 +1143,8 @@ do_pixmap(const DjVuImage &dimg, PImager get,
 {
   GRect rect=inrect;
   GRect all=inall;
-  GP<DjVuInfo> info = dimg.get_info();
+  if (! dimg.get_info())
+    return 0;
   if( dimg.get_rotate()%4 )
     {
       GRectMapper mapper;
