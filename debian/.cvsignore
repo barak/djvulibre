@@ -13,3 +13,4 @@ libdjvulibre-text
 libdjvulibre21
 tmp
 *.log
+substvars
