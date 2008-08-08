@@ -75,7 +75,7 @@ build-stamp: config.status
 clean:
 	dh_testdir
 	rm -f build-stamp  config.status
-	-$(MAKE) distclean
+	[ ! -f Makefile ] || $(MAKE) distclean
 	dh_clean 
 # work around libtool --mode=clean issue
 	-rm -f xmltools/.libs/{djvutoxml,djvuxmlparser} gui/djview/.libs/djview
