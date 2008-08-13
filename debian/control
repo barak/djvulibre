@@ -55,7 +55,7 @@ Package: djvulibre-desktop
 Section: libs
 Architecture: any
 Suggests: djview4 | djvu-viewer | evince
-Conflicts: libdjvulibre1, libdjvulibre15, libdjvulibre21 (<= 3.5.20-5)
+Conflicts: libdjvulibre1, libdjvulibre15 (<= 3.5.20-5), libdjvulibre21 (<= 3.5.20-5)
 Description: Desktop support for the DjVu image format
  Miscellaneous files to support the DjVu image format on the desktop.
 
