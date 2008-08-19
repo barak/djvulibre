@@ -3,13 +3,11 @@
 case "$1" in
     configure)
 	# Alternatives
-	if [ -x /usr/sbin/update-alternatives ] ; then
-	    update-alternatives --quiet \
-		--install /usr/bin/djview djview /usr/bin/djview3 30 \
-		--slave \
-		/usr/share/man/man1/djview.1.gz djview.1.gz \
-		/usr/share/man/man1/djview3.1.gz
-	fi
+	update-alternatives --quiet \
+	    --install /usr/bin/djview djview /usr/bin/djview3 30 \
+	    --slave \
+	    /usr/share/man/man1/djview.1.gz djview.1.gz \
+	    /usr/share/man/man1/djview3.1.gz
 	;;
 esac
 

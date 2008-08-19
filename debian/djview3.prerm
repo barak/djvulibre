@@ -3,10 +3,8 @@
 case "$1" in
     remove|deconfigure)
 	# Alternatives
-	if [ -x /usr/sbin/update-alternatives ] ; then
-	    /usr/sbin/update-alternatives --quiet \
-		--remove djview /usr/bin/djview3
-	fi
+	/usr/sbin/update-alternatives --quiet \
+	    --remove djview /usr/bin/djview3
 	;;
 esac
 

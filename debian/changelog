@@ -1,8 +1,10 @@
 djvulibre (3.5.20-11rc) unstable; urgency=low
 
   * Upstream mods for man and GCC 4.x warnings
+  * Tiny HURD MAXPATHLEN patch from Samuel Thibault (closes: #487342)
+  * Existence update-alternative existence check from installation scripts
 
- -- Barak A. Pearlmutter <bap@debian.org>  Wed, 06 Aug 2008 14:51:53 +0100
+ -- Barak A. Pearlmutter <bap@debian.org>  Tue, 19 Aug 2008 15:57:17 +0100
 
 djvulibre (3.5.20-10) unstable; urgency=low
 
