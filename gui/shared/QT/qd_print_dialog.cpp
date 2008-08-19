@@ -98,6 +98,20 @@
 #include <errno.h>
 #include <signal.h>
 
+// -- MAXPATHLEN
+#ifndef MAXPATHLEN
+# ifdef _MAX_PATH
+#  define MAXPATHLEN _MAX_PATH
+# else
+#  define MAXPATHLEN 1024
+# endif
+#else
+# if ( MAXPATHLEN < 1024 )
+#  undef MAXPATHLEN
+#  define MAXPATHLEN 1024
+# endif
+#endif
+
 /** Avoid name clashes on solaris! */
 #ifdef PS
 # undef PS
