@@ -2,7 +2,7 @@ Source: djvulibre
 Section: web
 Priority: optional
 Maintainer: Barak A. Pearlmutter <bap@debian.org>
-Build-Depends: debhelper (>= 5), libx11-dev, libxext-dev, libxt-dev, libqt3-mt-dev (>= 3:3.3.4-4), libjpeg62-dev | libjpeg-dev, libtiff4-dev | libtiff3g-dev | libtiff-dev
+Build-Depends: debhelper (>= 7), libx11-dev, libxext-dev, libxt-dev, libqt3-mt-dev (>= 3:3.3.4-4), libjpeg62-dev | libjpeg-dev, libtiff4-dev | libtiff3g-dev | libtiff-dev
 Vcs-Cvs: :ext:@djvu.cvs.sourceforge.net:/cvsroot/djvu
 VCS-Browser: http://djvu.cvs.sourceforge.net/djvu/djvulibre-3.5/
 Homepage: http://djvu.sourceforge.net/
@@ -40,6 +40,7 @@ Package: libdjvulibre-text
 Section: libs
 Architecture: any
 Conflicts: djvulibre-desktop (<< 3.5.20-9), djview3 (= 3.5.20-9)
+Replaces: libdjvulibre15
 Description: Linguistic support files for libdjvulibre
  Runtime linguistic support files for the libdjvulibre library.
 
@@ -55,7 +56,8 @@ Package: djvulibre-desktop
 Section: libs
 Architecture: any
 Suggests: djview4 | djvu-viewer | evince
-Conflicts: libdjvulibre1, libdjvulibre15 (<= 3.5.20-5), libdjvulibre21 (<= 3.5.20-5)
+Conflicts: libdjvulibre1, libdjvulibre21 (<= 3.5.20-5)
+Replaces: libdjvulibre15 (<= 3.5.20-5)
 Description: Desktop support for the DjVu image format
  Miscellaneous files to support the DjVu image format on the desktop.
 
