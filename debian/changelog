@@ -1,3 +1,9 @@
+djvulibre (3.5.21) unstable; urgency=low
+
+  * Upstream release 3.5.21 (not a real debian release)
+
+ -- Leon Bottou <leonb@users.sourceforge.net>  Sat, 23 Aug 2008 08:26:00 +0500
+
 djvulibre (3.5.20-12rc) unstable; urgency=low
 
   * Remove path from command-with-path in djview3.prerm
