@@ -152,6 +152,7 @@ ac_cv_cxx_intel_atomic_builtins,
  [__sync_lock_test_and_set(&l,1); 
   __sync_lock_release(&l);
   __sync_add_and_fetch(&l,1);
+  __sync_bool_compare_and_swap(&l,&l,1);
   return 0;],
  ac_cv_cxx_intel_atomic_builtins=yes, ac_cv_cxx_intel_atomic_builtins=no)
  AC_LANG_RESTORE
