@@ -78,6 +78,10 @@
 
 #include <ctype.h>
 
+#if defined(WIN32) && !defined(__CYGWIN32__)
+# include <io.h>
+# define mktemp  _mktemp
+#endif
 
 #ifdef HAVE_NAMESPACES
 namespace DJVU {
@@ -194,11 +198,25 @@ DjVuDocEditor::init(const GURL &url)
    {
          // Suxx. I need to convert it NOW.
          // We will unlink this file in the destructor
-      tmp_doc_url=GURL::Filename::Native(tmpnam(0));
-      const GP<ByteStream> gstr(ByteStream::create(tmp_doc_url, "wb"));
-      tmp_doc->write(gstr, true);        // Force DJVM format
-      gstr->flush();
-      doc_pool=DataPool::create(tmp_doc_url);
+     GP<ByteStream> gstr;
+     char tempfilename[] = "djvused.XXXXXX\0";
+#if HAVE_MKSTEMP
+     int fd = mkstemp(tempfilename);
+     if (fd < 0)
+       G_THROW("Unable to create temporary file in current directory");
+     tmp_doc_url = GURL::Filename::Native(tempfilename);
+     gstr = ByteStream::create(tmp_doc_url, "wb");
+     close(fd);
+#else
+     mktemp(tempfilename);
+     if (!tempfilename[0])
+       G_THROW("Unable to create temporary file in current directory");
+     tmp_doc_url=GURL::Filename::Native(tempfilename);
+     gstr = ByteStream::create(tmp_doc_url, "wb");
+#endif
+     tmp_doc->write(gstr, true);        // Force DJVM format
+     gstr->flush();
+     doc_pool=DataPool::create(tmp_doc_url);
    }
 
       // OK. Now doc_pool contains data of the document in one of the
