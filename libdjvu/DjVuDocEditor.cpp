@@ -199,18 +199,22 @@ DjVuDocEditor::init(const GURL &url)
          // Suxx. I need to convert it NOW.
          // We will unlink this file in the destructor
      GP<ByteStream> gstr;
+#ifdef WIN32
      char tempfilename[] = "djvused.XXXXXX\0";
+#else
+     char tempfilename[] = "/tmp/djvused.XXXXXX\0";
+#endif
 #if HAVE_MKSTEMP
      int fd = mkstemp(tempfilename);
      if (fd < 0)
-       G_THROW("Unable to create temporary file in current directory");
+       G_THROW("Unable to create temporary file");
      tmp_doc_url = GURL::Filename::Native(tempfilename);
      gstr = ByteStream::create(tmp_doc_url, "wb");
      close(fd);
 #else
      mktemp(tempfilename);
      if (!tempfilename[0])
-       G_THROW("Unable to create temporary file in current directory");
+       G_THROW("Unable to create temporary file");
      tmp_doc_url=GURL::Filename::Native(tempfilename);
      gstr = ByteStream::create(tmp_doc_url, "wb");
 #endif
