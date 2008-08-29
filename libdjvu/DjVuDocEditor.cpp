@@ -78,11 +78,6 @@
 
 #include <ctype.h>
 
-#if defined(WIN32) && !defined(__CYGWIN32__)
-# include <io.h>
-# define mktemp  _mktemp
-#endif
-
 #ifdef HAVE_NAMESPACES
 namespace DJVU {
 # ifdef NOT_DEFINED // Just to fool emacs c++ mode
@@ -199,12 +194,14 @@ DjVuDocEditor::init(const GURL &url)
          // Suxx. I need to convert it NOW.
          // We will unlink this file in the destructor
      GP<ByteStream> gstr;
-#ifdef WIN32
-     char tempfilename[] = "djvused.XXXXXX\0";
-#else
+#if defined(WIN32) && !defined(__CYGWIN32__)
+     char *tempfilename = _tempnam(".", "djvused.XXXXXX");
+     if (! tempfilename)
+       G_THROW("Unable to create temporary file");
+     tmp_doc_url = GURL::Filename::Native(tempfilename);
+     gstr = ByteStream::create(tmp_doc_url, "wb");
+#elif HAVE_MKSTEMP
      char tempfilename[] = "/tmp/djvused.XXXXXX\0";
-#endif
-#if HAVE_MKSTEMP
      int fd = mkstemp(tempfilename);
      if (fd < 0)
        G_THROW("Unable to create temporary file");
@@ -212,6 +209,7 @@ DjVuDocEditor::init(const GURL &url)
      gstr = ByteStream::create(tmp_doc_url, "wb");
      close(fd);
 #else
+     char tempfilename[] = "/tmp/djvused.XXXXXX\0";
      mktemp(tempfilename);
      if (!tempfilename[0])
        G_THROW("Unable to create temporary file");
