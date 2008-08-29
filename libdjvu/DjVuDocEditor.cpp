@@ -200,6 +200,7 @@ DjVuDocEditor::init(const GURL &url)
        G_THROW("Unable to create temporary file");
      tmp_doc_url = GURL::Filename::Native(tempfilename);
      gstr = ByteStream::create(tmp_doc_url, "wb");
+     free(tempfilename);
 #elif HAVE_MKSTEMP
      char tempfilename[] = "/tmp/djvused.XXXXXX\0";
      int fd = mkstemp(tempfilename);
