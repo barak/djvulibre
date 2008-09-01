@@ -1,18 +1,15 @@
-djvulibre (3.5.21) unstable; urgency=low
+djvulibre (3.5.21-1rc) unstable; urgency=medium
 
-  * Upstream release 3.5.21 (not a real debian release)
-
- -- Leon Bottou <leonb@users.sourceforge.net>  Sat, 23 Aug 2008 08:26:00 +0500
-
-djvulibre (3.5.20-12rc) unstable; urgency=low
-
+  * Upstream release
   * Remove path from command-with-path in djview3.prerm
+  * dh7-ianize
 
- -- Barak A. Pearlmutter <bap@debian.org>  Wed, 20 Aug 2008 22:13:41 +0100
+ -- Barak A. Pearlmutter <bap@debian.org>  Sat, 30 Aug 2008 21:52:32 +0100
 
 djvulibre (3.5.20-11) unstable; urgency=low
 
   * Upstream mods for man and GCC 4.x warnings
+  * Conflict with old library to avoid (closes: #472503)
   * Tiny HURD MAXPATHLEN patch from Samuel Thibault (closes: #487342)
   * Existence update-alternative existence check from installation scripts
   * Integrate 3.5.20-10.1 NMU by Philipp Kern (thanks!) with Conflicts:
