@@ -1,18 +1,8 @@
 #!/usr/bin/make -f
-# Based on sample debian/rules that uses debhelper,
-# GNU copyright, 1997 to 1999 by Joey Hess,
-# modified 2002 to 2004 by Barak A. Pearlmutter.
 
-# Uncomment this to turn on verbose mode.
-#export DH_VERBOSE=1
-
-# These are used for cross-compiling and for saving the configure script
-# from having to guess our platform (since we know it already)
 DEB_HOST_GNU_TYPE   ?= $(shell dpkg-architecture -qDEB_HOST_GNU_TYPE)
 DEB_BUILD_GNU_TYPE  ?= $(shell dpkg-architecture -qDEB_BUILD_GNU_TYPE)
 DEB_BUILD_OPTIONS   ?= debug nostrip
-
-SHELL=/bin/bash
 
 ifeq ($(DEB_HOST_GNU_TYPE),m68k-linux-gnu) # m68k GCC 4.0 breakage
 	CFLAGS = -Wall -Wno-non-virtual-dtor
@@ -57,29 +47,18 @@ testlibver:
 
 config.status: configure
 	dh_testdir
-	./configure --host=$(DEB_HOST_GNU_TYPE)		\
-		    --build=$(DEB_BUILD_GNU_TYPE)	\
-		    --prefix=/usr			\
-		    --disable-desktopfiles              \
-		    --mandir=\$${prefix}/share/man	\
-		    --infodir=\$${prefix}/share/info
+	dh_auto_configure -- --disable-desktopfiles
 
 build: build-stamp
 build-stamp: config.status
 	dh_testdir
-	touch --no-create tools/jb2cmp/mdjvucfg.h
 	$(MAKE) -k depend	# otherwise a missing Makefile.dep blows up
 	$(MAKE) OPTS="$(CFLAGS)" # hotwire compiler options
 	touch build-stamp
 
 clean:
-	dh_testdir
-	rm -f build-stamp  config.status
-	[ ! -f Makefile ] || $(MAKE) distclean
-	dh_clean 
-# work around libtool --mode=clean issue
-	-rm -f xmltools/.libs/{djvutoxml,djvuxmlparser} gui/djview/.libs/djview
-	-rmdir xmltools/.libs gui/djview/.libs
+	dh $@
+# push in latest config support files
 	-test -r /usr/share/misc/config.sub && \
 	  cp -f /usr/share/misc/config.sub config/config.sub
 	-test -r /usr/share/misc/config.guess && \
@@ -88,8 +67,10 @@ clean:
 plugsubdir=netscape/plugins-libc6
 plug=$(plugsubdir)/nsdejavu.so
 
-install: build
+install: install-stamp
+install-stamp: build-stamp
 	dh_testdir
+	dh_prep
 	dh_installdirs
 	$(MAKE) install	\
 		DESTDIR=$(CURDIR)/debian/tmp \
@@ -103,8 +84,6 @@ install: build
 	ln -sf ../../$(plug) debian/tmp/usr/lib/mozilla/plugins/
 	mkdir --parents      debian/tmp/usr/lib/mozilla-firefox/plugins
 	ln -sf ../../$(plug) debian/tmp/usr/lib/mozilla-firefox/plugins/
-	@echo "work around debian diff inability to represent deleted files"
-	-rm debian/djview.files debian/djview.menu debian/djview.mime debian/djview.postrm debian/djview.postinst shlibs.local
 	@echo "flush djview link; handled in debian with update-alternatives"
 	-rm debian/tmp/usr/bin/djview
 	-rm debian/tmp/usr/share/man/man1/djview.1
@@ -123,50 +102,29 @@ install: build
 	  debian/tmp/usr/share/icons/hicolor/48x48/mimetypes/image-vnd.djvu.mime.png
 	mkdir --parents debian/tmp/usr/share/mimelnk/image
 	install --mode=644 ${CURDIR}/desktopfiles/vnd.djvu.desktop \
-	  debian/tmp/usr/share/mimelnk/image
+	  debian/tmp/usr/share/mimelnk/image/
 	@echo "install djview3 icon and menu"
 	mkdir --parents debian/tmp/usr/share/icons/hicolor/32x32/apps
 	install --mode=644 debian/djvulibre-djview3.xpm \
-	  debian/tmp/usr/share/icons/hicolor/32x32/apps
+	  debian/tmp/usr/share/icons/hicolor/32x32/apps/
 	mkdir --parents debian/tmp/usr/share/applications
 	install --mode=644 ${CURDIR}/desktopfiles/djvulibre-djview3.desktop \
-	  debian/tmp/usr/share/applications
-
-# Build architecture-independent files here.
-binary-indep: build install
-# We have nothing to do by default.
-
-# Build architecture-dependent files here.
-binary-arch: build install
-	dh_testdir
-	dh_testroot
-	dh_movefiles
-#	dh_installdebconf
-	dh_installdocs --noscripts
-	dh_installexamples
-	dh_installmenu
-#	dh_installlogrotate
-#	dh_installemacsen
-#	dh_installpam
-	dh_installmime
-	dh_desktop
-#	dh_installinit
-#	dh_installcron
-	dh_installman
-#	dh_installinfo
-	dh_installchangelogs
-	-dh_icons		# hyphen protects pre-dh_icons systems like etch
-	dh_link
-	dh_strip --dbg-package=djvulibre-dbg
-	dh_compress --exclude=.djvu
-	dh_fixperms
-	dh_makeshlibs --version-info --exclude=/plugins
-	dh_shlibdeps -L libdjvulibre$(libver) -l debian/libdjvulibre$(libver)/usr/lib
-	dh_installdeb
-#	dh_perl
-	dh_gencontrol
-	dh_md5sums
-	dh_builddeb
+	  debian/tmp/usr/share/applications/
+	touch install-stamp
 
 binary: binary-indep binary-arch
+
+binary-indep:
+
+binary-arch:
+	dh $@ --after auto_test --before auto_install
+	debian/rules install
+	dh $@ --after auto_install --before compress
+	dh_compress --exclude=.djvu
+	dh $@ --after compress --before strip
+	dh_strip --dbg-package=djvulibre-dbg
+	dh $@ --after strip --before makeshlibs
+	dh_makeshlibs --version-info --exclude=/plugins
+	dh $@ --after makeshlibs
+
 .PHONY: build clean binary-indep binary-arch binary install testlibver
