@@ -32,15 +32,14 @@ Section: libs
 Architecture: any
 Depends: ${shlibs:Depends}, libdjvulibre-text (>= ${binary:Version})
 Conflicts: libdjvulibre1
-Replaces: libdjvulibre1
+Replaces: libdjvulibre1, libdjvulibre15
 Description: Runtime support for the DjVu image format
  DjVu runtime library.
 
 Package: libdjvulibre-text
 Section: libs
 Architecture: any
-Conflicts: djvulibre-desktop (<< 3.5.20-9), djview3 (= 3.5.20-9)
-Replaces: libdjvulibre15
+Replaces: libdjvulibre15, djview3 (= 3.5.20-9), djvulibre-desktop (<< 3.5.20-9)
 Description: Linguistic support files for libdjvulibre
  Runtime linguistic support files for the libdjvulibre library.
 
