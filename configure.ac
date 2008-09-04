@@ -130,7 +130,9 @@ AC_CXX_RPO
 # ----------------------------------------
 
 AC_CHECK_LIB(m,sqrt)
-AC_CHECK_LIB(iconv,libiconv_open)
+
+# AC_CHECK_LIB(iconv,libiconv_open) # not really used.
+
 
 # ----------------------------------------
 # Header Files

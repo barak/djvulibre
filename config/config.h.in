@@ -76,9 +76,6 @@
 /* Define if you have the IJG JPEG library. */
 #undef HAVE_JPEG
 
-/* Define to 1 if you have the `iconv' library (-liconv). */
-#undef HAVE_LIBICONV
-
 /* Define to 1 if you have the `m' library (-lm). */
 #undef HAVE_LIBM
 
