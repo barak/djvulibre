@@ -81,7 +81,7 @@
 #include "libdjvu/ddjvuapi.h"
 #include "tiff2pdf.h"
 
-#if defined(WIN32) || defined(__CYGWIN32__)
+#if defined(WIN32) && !defined(__CYGWIN32__)
 # include <io.h>
 # define dup     _dup
 # define lseek   _lseek

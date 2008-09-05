@@ -64,6 +64,8 @@ install)
        --size 32 ./hi32-djvu.png image-vnd.djvu
    "$xdg_icon_resource" install --noupdate --context mimetypes \
        --size 48 ./hi48-djvu.png image-vnd.djvu
+   "$xdg_icon_resource" install --noupdate --context mimetypes \
+       --size 64 ./hi64-djvu.png image-vnd.djvu
    "$xdg_icon_resource" forceupdate
    ## This is disabled to avoid conflicting with the
    ## djvu information provided by freedesktop.org
@@ -76,6 +78,8 @@ uninstall)
        --size 32 image-vnd.djvu
    "$xdg_icon_resource" uninstall --noupdate --context mimetypes \
        --size 48 image-vnd.djvu
+   "$xdg_icon_resource" uninstall --noupdate --context mimetypes \
+       --size 64 image-vnd.djvu
    "$xdg_icon_resource" forceupdate
    ## This is disabled to avoid conflicting with the
    ## djvu information provided by freedesktop.org
