@@ -102,7 +102,7 @@ install-stamp: build-stamp
 	mkdir --parents debian/tmp/usr/share/icons/hicolor/scalable/mimetypes
 	install --mode=644 desktopfiles/hi-djvu.svgz \
 	  debian/tmp/usr/share/icons/hicolor/scalable/mimetypes/image-vnd.djvu.svgz
-	ln -sf image-vnd.djvu.png \
+	ln -sf image-vnd.djvu.svgz \
 	  debian/tmp/usr/share/icons/hicolor/scalable/mimetypes/djvu.svgz
 	mkdir --parents debian/tmp/usr/share/mimelnk/image
 	install --mode=644 desktopfiles/vnd.djvu.desktop \
