@@ -91,18 +91,12 @@ install-stamp: build-stamp
 	-rm debian/tmp/usr/bin/djvudigital
 	-rm debian/tmp/usr/share/man/man1/djvudigital.1
 	@echo "install djvu icon and mime types"
-	mkdir --parents debian/tmp/usr/share/icons/hicolor/22x22/mimetypes
-	install --mode=644 ${CURDIR}/desktopfiles/hi22-djvu.png \
-	  debian/tmp/usr/share/icons/hicolor/22x22/mimetypes/image-vnd.djvu.mime.png
-	mkdir --parents debian/tmp/usr/share/icons/hicolor/32x32/mimetypes
-	install --mode=644 ${CURDIR}/desktopfiles/hi32-djvu.png \
-	  debian/tmp/usr/share/icons/hicolor/32x32/mimetypes/image-vnd.djvu.mime.png
-	mkdir --parents debian/tmp/usr/share/icons/hicolor/48x48/mimetypes
-	install --mode=644 ${CURDIR}/desktopfiles/hi48-djvu.png \
-	  debian/tmp/usr/share/icons/hicolor/48x48/mimetypes/image-vnd.djvu.mime.png
-	mkdir --parents debian/tmp/usr/share/icons/hicolor/64x64/mimetypes
-	install --mode=644 ${CURDIR}/desktopfiles/hi64-djvu.png \
-	  debian/tmp/usr/share/icons/hicolor/64x64/mimetypes/image-vnd.djvu.mime.png
+	for n in 22 32 48 64 ; do \
+	  d="debian/tmp/usr/share/icons/hicolor/$${n}x$${n}/mimetypes"; \
+	  mkdir --parents $${d}; \
+	  install --mode=644 ${CURDIR}/desktopfiles/hi$${n}-djvu.png $${d}/djvu.png; \
+	  ln -sf djvu.png $${d}/image-vnd.djvu.png; \
+	done
 	mkdir --parents debian/tmp/usr/share/mimelnk/image
 	install --mode=644 ${CURDIR}/desktopfiles/vnd.djvu.desktop \
 	  debian/tmp/usr/share/mimelnk/image/
