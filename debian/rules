@@ -100,6 +100,7 @@ install-stamp: build-stamp
 	mkdir --parents debian/tmp/usr/share/icons/hicolor/48x48/mimetypes
 	install --mode=644 ${CURDIR}/desktopfiles/hi48-djvu.png \
 	  debian/tmp/usr/share/icons/hicolor/48x48/mimetypes/image-vnd.djvu.mime.png
+	mkdir --parents debian/tmp/usr/share/icons/hicolor/64x64/mimetypes
 	install --mode=644 ${CURDIR}/desktopfiles/hi64-djvu.png \
 	  debian/tmp/usr/share/icons/hicolor/64x64/mimetypes/image-vnd.djvu.mime.png
 	mkdir --parents debian/tmp/usr/share/mimelnk/image
