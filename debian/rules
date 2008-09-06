@@ -94,18 +94,28 @@ install-stamp: build-stamp
 	for n in 22 32 48 64 ; do \
 	  d="debian/tmp/usr/share/icons/hicolor/$${n}x$${n}/mimetypes"; \
 	  mkdir --parents $${d}; \
-	  install --mode=644 ${CURDIR}/desktopfiles/hi$${n}-djvu.png $${d}/djvu.png; \
-	  ln -sf djvu.png $${d}/image-vnd.djvu.png; \
+	  install --mode=644 desktopfiles/hi$${n}-djvu.png \
+	    $${d}/image-vnd.djvu.png; \
+	  ln -sf image-vnd.djvu.png \
+	    $${d}/djvu.png; \
 	done
+	mkdir --parents debian/tmp/usr/share/icons/hicolor/scalable/mimetypes
+	install --mode=644 desktopfiles/hi-djvu.svgz \
+	  debian/tmp/usr/share/icons/hicolor/scalable/mimetypes/image-vnd.djvu.svgz
+	ln -sf image-vnd.djvu.png \
+	  debian/tmp/usr/share/icons/hicolor/scalable/mimetypes/djvu.svgz
 	mkdir --parents debian/tmp/usr/share/mimelnk/image
-	install --mode=644 ${CURDIR}/desktopfiles/vnd.djvu.desktop \
+	install --mode=644 desktopfiles/vnd.djvu.desktop \
 	  debian/tmp/usr/share/mimelnk/image/
 	@echo "install djview3 icon and menu"
+	mkdir --parents debian/tmp/usr/share/icons/hicolor/scalable/apps
+	install --mode=644 desktopfiles/hi-djview3.svgz \
+	  debian/tmp/usr/share/icons/hicolor/scalable/apps/djvulibre-djview3.svgz
 	mkdir --parents debian/tmp/usr/share/icons/hicolor/64x64/apps
 	install --mode=644 debian/djvulibre-djview3.xpm \
 	  debian/tmp/usr/share/icons/hicolor/64x64/apps/
 	mkdir --parents debian/tmp/usr/share/applications
-	install --mode=644 ${CURDIR}/desktopfiles/djvulibre-djview3.desktop \
+	install --mode=644 desktopfiles/djvulibre-djview3.desktop \
 	  debian/tmp/usr/share/applications/
 	touch install-stamp
 
