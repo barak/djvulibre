@@ -1,8 +1,8 @@
-djvulibre (3.5.21-1rc) unstable; urgency=medium
+djvulibre (3.5.21-1) unstable; urgency=medium
 
   * Upstream release
   * Remove path from command-with-path in djview3.prerm
-  * dh7-ianize
+  * partially dh7-ianize
 
  -- Barak A. Pearlmutter <bap@debian.org>  Sat, 30 Aug 2008 21:52:32 +0100
 
