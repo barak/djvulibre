@@ -58,7 +58,7 @@ build-stamp: config.status
 
 clean:
 	dh $@
-# push in latest config support files
+	@echo push in latest config support files
 	-test -r /usr/share/misc/config.sub && \
 	  cp -f /usr/share/misc/config.sub config/config.sub
 	-test -r /usr/share/misc/config.guess && \
@@ -84,12 +84,6 @@ install-stamp: build-stamp
 	ln -sf ../../$(plug) debian/tmp/usr/lib/mozilla/plugins/
 	mkdir --parents      debian/tmp/usr/lib/mozilla-firefox/plugins
 	ln -sf ../../$(plug) debian/tmp/usr/lib/mozilla-firefox/plugins/
-	@echo "flush djview link; handled in debian with update-alternatives"
-	-rm debian/tmp/usr/bin/djview
-	-rm debian/tmp/usr/share/man/man1/djview.1
-	@echo "flush gsdjvu script; not in Debian"
-	-rm debian/tmp/usr/bin/djvudigital
-	-rm debian/tmp/usr/share/man/man1/djvudigital.1
 	@echo "install djvu icon and mime types"
 	for n in 22 32 48 64 ; do \
 	  d="debian/tmp/usr/share/icons/hicolor/$${n}x$${n}/mimetypes"; \
@@ -124,9 +118,21 @@ binary: binary-indep binary-arch
 binary-indep:
 
 binary-arch:
+	dh $@ --before auto_configure
 	dh $@ --after auto_test --before auto_install
 	debian/rules install
-	dh $@ --after auto_install --before compress
+	dh $@ --after auto_install --until dh_install
+	@echo remove from djvulibre-bin, already in djview3
+	find debian/djvulibre-bin -name djview3\* -print -delete
+	@echo remove from djvulibre-bin, just links
+	find debian/djvulibre-bin -name djview\* -print -delete
+	@echo remove from djvulibre-bin, already in djvulibre-plugin
+	rm debian/djvulibre-bin/usr/share/man/{.,*}/man*/nsdejavu.1
+	@echo remove from djvulibre-bin, already in djvuserve
+	find debian/djvulibre-bin -name djvuserve\* -print -delete
+	@echo remove from djvulibre-bin, not in Debian: needs gsdjvu, incompatible license, direct complaints to ATT
+	find debian/djvulibre-bin -name djvudigital\* -print -delete
+	dh $@ --after dh_install --before compress
 	dh_compress --exclude=.djvu
 	dh $@ --after compress --before strip
 	dh_strip --dbg-package=djvulibre-dbg
