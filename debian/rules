@@ -103,7 +103,7 @@ install-stamp: build-stamp
 	@echo "install djview3 icon and menu"
 	mkdir --parents debian/tmp/usr/share/icons/hicolor/32x32/apps
 	install --mode=644 debian/djvulibre-djview3.xpm \
-	  debian/tmp/usr/share/icons/hicolor/32x32/apps/
+	  debian/tmp/usr/share/icons/hicolor/64x64/apps/
 	mkdir --parents debian/tmp/usr/share/applications
 	install --mode=644 ${CURDIR}/desktopfiles/djvulibre-djview3.desktop \
 	  debian/tmp/usr/share/applications/
