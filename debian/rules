@@ -47,7 +47,7 @@ testlibver:
 
 config.status: configure
 	dh_testdir
-	dh_auto_configure -- --disable-desktopfiles
+	dh_auto_configure -- --disable-desktopfiles --enable-static --enable-shared
 
 build: build-stamp
 build-stamp: config.status
@@ -130,8 +130,8 @@ binary-arch:
 	rm debian/djvulibre-bin/usr/share/man/{.,*}/man*/nsdejavu.1
 	@echo remove from djvulibre-bin, already in djvuserve
 	find debian/djvulibre-bin -name djvuserve\* -print -delete
-	@echo remove from djvulibre-bin, not in Debian: needs gsdjvu, incompatible license, direct complaints to ATT
-	find debian/djvulibre-bin -name djvudigital\* -print -delete
+# 	@echo remove from djvulibre-bin, not in Debian: needs gsdjvu, direct complaints to ATT
+# 	find debian/djvulibre-bin -name djvudigital\* -print -delete
 	dh $@ --after dh_install --before compress
 	dh_compress --exclude=.djvu
 	dh $@ --after compress --before strip
