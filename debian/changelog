@@ -5,8 +5,10 @@ djvulibre (3.5.21-1) unstable; urgency=medium
   * Partially dh7-ianize
   * Include bin/djvudigital, useful if gsdjvu installed (closes: #495979)
   * Include /usr/lib/libdjvulibre.a in libdjvulibre-dev
+  * Build depend on imagemagick and include upstream change to regenerate
+    icon files from SVG sources during build process
 
- -- Barak A. Pearlmutter <bap@debian.org>  Sun, 07 Sep 2008 12:39:09 +0100
+ -- Barak A. Pearlmutter <bap@debian.org>  Sun, 07 Sep 2008 15:21:53 +0100
 
 djvulibre (3.5.20-11) unstable; urgency=low
 
