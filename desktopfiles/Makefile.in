@@ -31,6 +31,7 @@ mandir = @mandir@
 INSTALL = @INSTALL@
 INSTALL_PROGRAM = @INSTALL_PROGRAM@
 INSTALL_DATA = @INSTALL_DATA@
+CONVERT = @CONVERT@
 XDG_MIME = @XDG_MIME@
 XDG_ICON_RESOURCE = @XDG_ICON_RESOURCE@
 XDG_DESKTOP_MENU = @XDG_DESKTOP_MENU@
@@ -42,9 +43,31 @@ datadir_djview = ${datadir}/djvu/djview3/desktop
 
 # -------- all
 
-all: register-djvu-mime 
+all: djvu-icons register-djvu-mime 
 
-@GUI_YES@all: register-djview-menu
+@GUI_YES@all: djview-icons register-djview-menu
+
+icons: djvu-icons djview-icons
+
+djvu-icons: hi22-djvu.png hi32-djvu.png hi48-djvu.png hi64-djvu.png hi-djvu.svgz 
+
+djview-icons: hi32-djview3.png hi64-djview3.png hi-djview3.svgz
+
+hi22-djvu.png hi32-djvu.png hi48-djvu.png hi64-djvu.png: djvu.svg
+	s=`echo $@ | sed -e 's/[a-z]*\([0-9]*\).*/\1/'`; \
+	${CONVERT} -geometry $${s}x$${s} -depth 8 -background none $< $@ \
+	  || cp ${srcdir}/prebuilt-$@ $@
+
+hi32-djview3.png hi64-djview3.png: djview.svg
+	s=`echo $@ | sed -e 's/[a-z]*\([0-9]*\).*/\1/'`; \
+	${CONVERT} -geometry $${s}x$${s} -depth 8 -background none $< $@ \
+	  || cp ${srcdir}/prebuilt-$@ $@
+
+hi-djvu.svgz: djvu.svg
+	cat $< | gzip >$@
+
+hi-djview3.svgz: djview.svg
+	cat $< | gzip >$@
 
 register-djvu-mime: register-djvu-mime.in
 	sed < ${srcdir}/register-djvu-mime.in > register-djvu-mime \
@@ -64,6 +87,7 @@ register-djview-menu: register-djview-menu.in
 	  -e 's,MYDIR,${datadir_djview},g'
 	chmod a+x register-djview-menu
 
+
 # -------- install
 
 install: install-djvu-files
@@ -73,8 +97,8 @@ install: install-djvu-files
 install-djvu-files: FORCE
 	${INSTALL} -d ${DESTDIR}${datadir_djvu}
 	${INSTALL_PROGRAM} register-djvu-mime ${DESTDIR}${datadir_djvu}
-	${INSTALL_DATA} ${srcdir}/*djvu.png ${DESTDIR}${datadir_djvu}
-	${INSTALL_DATA} ${srcdir}/*djvu.svgz ${DESTDIR}${datadir_djvu}
+	${INSTALL_DATA} *djvu.png ${DESTDIR}${datadir_djvu}
+	${INSTALL_DATA} *djvu.svgz ${DESTDIR}${datadir_djvu}
 	${INSTALL_DATA} ${srcdir}/*mime.xml ${DESTDIR}${datadir_djvu}
 	-@echo "Run ${datadir_djvu}/register-djvu-mime install"
 	-@echo " to register the djvu mime types and icons."
@@ -82,8 +106,8 @@ install-djvu-files: FORCE
 install-djview-files: FORCE
 	${INSTALL} -d ${DESTDIR}${datadir_djview}
 	${INSTALL_PROGRAM} register-djview-menu ${DESTDIR}${datadir_djview}
-	${INSTALL_DATA} ${srcdir}/*djview3.png ${DESTDIR}${datadir_djview}
-	${INSTALL_DATA} ${srcdir}/*djview3.svgz ${DESTDIR}${datadir_djview}
+	${INSTALL_DATA} *djview3.png ${DESTDIR}${datadir_djview}
+	${INSTALL_DATA} *djview3.svgz ${DESTDIR}${datadir_djview}
 	${INSTALL_DATA} ${srcdir}/*djview3.desktop ${DESTDIR}${datadir_djview}
 	-@echo "Run ${datadir_djview}/register-djview-menu install"
 	-@echo " to register the djview3 menu entries."
@@ -92,7 +116,7 @@ install-djview-files: FORCE
 # -------- misc
 
 clean: FORCE
-	-${RM} 2>/dev/null register-djvu-mime register-djview-menu
+	-${RM} 2>/dev/null register-djvu-mime register-djview-menu *.png *.svgz
 
 distclean: clean 
 	-${RM} -r 2>/dev/null Makefile *.rpo ii_files
