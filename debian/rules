@@ -127,10 +127,10 @@ binary-arch:
 	@echo remove from djvulibre-bin, just links
 	find debian/djvulibre-bin -name djview\* -print -delete
 	@echo remove from djvulibre-bin, already in djvulibre-plugin
-	rm debian/djvulibre-bin/usr/share/man/{.,*}/man*/nsdejavu.1
+	find debian/djvulibre-bin -name nsdejavu\* -print -delete
 	@echo remove from djvulibre-bin, already in djvuserve
 	find debian/djvulibre-bin -name djvuserve\* -print -delete
-# 	@echo remove from djvulibre-bin, not in Debian: needs gsdjvu, direct complaints to ATT
+# 	@echo "remove from djvulibre-bin, not in Debian: needs gsdjvu, direct complaints to AT&T"
 # 	find debian/djvulibre-bin -name djvudigital\* -print -delete
 	dh $@ --after dh_install --before compress
 	dh_compress --exclude=.djvu
