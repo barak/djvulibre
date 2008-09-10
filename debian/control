@@ -44,7 +44,7 @@ Description: Linguistic support files for libdjvulibre
  Runtime linguistic support files for the libdjvulibre library.
 
 Package: djvulibre-dbg
-Section: libs
+Section: libdevel
 Priority: extra
 Architecture: any
 Depends: libdjvulibre21 (= ${binary:Version})

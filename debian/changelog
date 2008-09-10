@@ -1,8 +1,9 @@
 djvulibre (3.5.21-2rc) unstable; urgency=low
 
   * Remove bashism ...{.,*}... from debian/rules
+  * Put djvulibre-dbg in section libdevel (closes: #498456)
 
- -- Barak A. Pearlmutter <bap@debian.org>  Mon, 08 Sep 2008 07:29:19 +0100
+ -- Barak A. Pearlmutter <bap@debian.org>  Wed, 10 Sep 2008 07:19:18 +0100
 
 djvulibre (3.5.21-1) unstable; urgency=medium
 
