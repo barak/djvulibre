@@ -86,7 +86,7 @@ install-man: FORCE ${NSDEJAVU1}
 depend:
 
 clean: FORCE
-	-test ${LRELEASE} = ":" || ${RM} *.qm
+	-test ${LRELEASE} = ":" || ${RM} *-tmp.ts *-tmp.pro *.qm
 	-for n in ${MANFILES} ; do test -r $$n.gz && ${RM} $$n.gz ; done
 	-${RM} 2>/dev/null nsdejavu.1
 
@@ -99,6 +99,6 @@ FORCE:
 
 .ts.qm:
 	if test ${LRELEASE} = ":" ; then : ; else \
-	  echo TRANSLATIONS=tmp.ts > tmp.pro && \
-	  cp $< tmp.ts && ${LRELEASE} tmp.pro && cp tmp.qm $@ && \
-	  ${RM} tmp.qm tmp.ts tmp.pro ; fi
+	  echo TRANSLATIONS=$@-tmp.ts > $@-tmp.pro && \
+	  cp $< $@-tmp.ts && ${LRELEASE} $@-tmp.pro && cp $@-tmp.qm $@ && \
+	  ${RM} $@-tmp.qm $@-tmp.ts $@-tmp.pro ; fi

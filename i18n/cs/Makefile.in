@@ -85,7 +85,7 @@ nsdejavu.1: ${srcdir}/nsdejavu.1.in
 depend:
 
 clean: FORCE
-	-test ${LRELEASE} = ":" || ${RM} *.qm
+	-test ${LRELEASE} = ":" || ${RM} *-tmp.ts *-tmp.pro *.qm
 
 distclean: clean
 	-${RM} Makefile
@@ -98,6 +98,6 @@ FORCE:
 
 .ts.qm:
 	if test ${LRELEASE} = ":" ; then : ; else \
-	  echo TRANSLATIONS=tmp.ts > tmp.pro && \
-	  cp $< tmp.ts && ${LRELEASE} tmp.pro && cp tmp.qm $@ && \
-	  ${RM} tmp.qm tmp.ts tmp.pro ; fi
+	  echo TRANSLATIONS=$@-tmp.ts > $@-tmp.pro && \
+	  cp $< $@-tmp.ts && ${LRELEASE} $@-tmp.pro && cp $@-tmp.qm $@ && \
+	  ${RM} $@-tmp.qm $@-tmp.ts $@-tmp.pro ; fi
