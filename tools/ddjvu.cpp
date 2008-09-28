@@ -235,7 +235,7 @@ inform(ddjvu_page_t *page, int pageno)
 
 
 void
-render(ddjvu_page_t *page)
+render(ddjvu_page_t *page, int pageno)
 {
   ddjvu_rect_t prect;
   ddjvu_rect_t rrect;
@@ -370,7 +370,7 @@ render(ddjvu_page_t *page)
       break;
     }
   if (! (fmt = ddjvu_format_create(style, 0, 0)))
-    die(i18n("Cannot determine pixel style"));
+    die(i18n("Cannot determine pixel style for page %d"), pageno);
   ddjvu_format_set_row_order(fmt, 1);
   /* Allocate buffer */
   if (style == DDJVU_FORMAT_MSBTOLSB)
@@ -380,12 +380,13 @@ render(ddjvu_page_t *page)
   else
     rowsize = rrect.w * 3; 
   if (! (image = (char*)malloc(rowsize * rrect.h)))
-    die(i18n("Cannot allocate image buffer"));
+    die(i18n("Cannot allocate image buffer for page %d"), pageno);
 
   /* Render */
   timingdata[2] = ticks();
   if (! ddjvu_page_render(page, mode, &prect, &rrect, fmt, rowsize, image))
-    die(i18n("Cannot render image"));
+    if (style != DDJVU_FORMAT_MSBTOLSB && style != DDJVU_FORMAT_LSBTOMSB) 
+      memset(image, 0xFF, rowsize * rrect.h);
   timingdata[3] = ticks();
   if (flag_verbose)
     if (timingdata[2] != timingdata[3])
@@ -624,7 +625,7 @@ dopage(int pageno)
     }
   /* Render */
   inform(page, pageno);
-  render(page);
+  render(page, pageno);
   ddjvu_page_release(page);
 }
 
