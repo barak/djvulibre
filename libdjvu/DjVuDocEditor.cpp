@@ -133,11 +133,6 @@ DjVuDocEditor::DjVuDocEditor(void)
 
 DjVuDocEditor::~DjVuDocEditor(void)
 {
-   if (!tmp_doc_url.is_empty())
-   {
-     tmp_doc_url.deletefile();
-   }
-
    GCriticalSectionLock lock(&thumb_lock);
    thumb_map.empty();
    DataPool::close_all();
@@ -191,40 +186,15 @@ DjVuDocEditor::init(const GURL &url)
        orig_doc_type==OLD_INDEXED ||
        orig_doc_type==SINGLE_PAGE)
    {
-         // Suxx. I need to convert it NOW.
-         // We will unlink this file in the destructor
-     GP<ByteStream> gstr;
-#if defined(WIN32) && !defined(__CYGWIN32__)
-     char *tempfilename = _tempnam(".", "djvused.XXXXXX");
-     if (! tempfilename)
-       G_THROW("Unable to create temporary file");
-     tmp_doc_url = GURL::Filename::Native(tempfilename);
-     gstr = ByteStream::create(tmp_doc_url, "wb");
-     free(tempfilename);
-#elif HAVE_MKSTEMP
-     char tempfilename[] = "/tmp/djvused.XXXXXX\0";
-     int fd = mkstemp(tempfilename);
-     if (fd < 0)
-       G_THROW("Unable to create temporary file");
-     tmp_doc_url = GURL::Filename::Native(tempfilename);
-     gstr = ByteStream::create(tmp_doc_url, "wb");
-     close(fd);
-#else
-     char tempfilename[] = "/tmp/djvused.XXXXXX\0";
-     mktemp(tempfilename);
-     if (!tempfilename[0])
-       G_THROW("Unable to create temporary file");
-     tmp_doc_url=GURL::Filename::Native(tempfilename);
-     gstr = ByteStream::create(tmp_doc_url, "wb");
-#endif
-     tmp_doc->write(gstr, true);        // Force DJVM format
-     gstr->flush();
-     doc_pool=DataPool::create(tmp_doc_url);
+     // Suxx. I need to convert it now.
+     GP<ByteStream> gstr = ByteStream::create();  // Convert in memory.
+     tmp_doc->write(gstr, true);  // Force DJVM format
+     gstr->seek(0);                     
+     doc_pool=DataPool::create(gstr);
    }
 
       // OK. Now doc_pool contains data of the document in one of the
       // new formats. It will be a lot easier to insert/delete pages now.
-
       // 'doc_url' below of course doesn't refer to the file with the converted
       // data, but we will take care of it by redirecting the request_data().
    initialized=true;

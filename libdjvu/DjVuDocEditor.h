@@ -403,7 +403,6 @@ private:
    bool		initialized;
    GURL		doc_url;
    GP<DataPool>	doc_pool;
-   GURL		tmp_doc_url;
    int		orig_doc_type;
    int		orig_doc_pages;
 
