@@ -11,8 +11,7 @@ november 2005.
 
 1- AMBIGUOUS PARTS IN THE SPECIFICATION
 
-
-1.1 - BACKGROUND REDUCTION RATIO
+1.1- BACKGROUND REDUCTION RATIO
 
 The relation between the size (W,H) of the foreground image and the
 size (w,h) of the background image is described in page 33 of the
@@ -83,7 +82,6 @@ For instance, the page titled "4" might not be the fourth page of
 the document, and there might be many pages titled "4".
 The djview4 viewer uses the following rules:
 
-
 3.1- DJVU CGI ARGUMENT "PAGE=".
 
 The djvu cgi argument "page=X" is interpreted as follows:
@@ -93,8 +91,7 @@ The djvu cgi argument "page=X" is interpreted as follows:
 - Otherwise, if X is numerical and in range, this is the page number.
 - Otherwise, it searches a page whose NAME matches X.
  
-
-3.1- PAGE REFERENCES IN MAPAREA LINKS.
+3.2- PAGE REFERENCES IN MAPAREA LINKS.
 
 Page references in hyperlink annotations always have the form "#X".
 These references are interpretes as follows.
@@ -108,7 +105,10 @@ These references are interpretes as follows.
 - Otherwise, it searches a page whose NAME matches X.
 
 
-4- METADATA ANNOTATIONS.
+
+4- METADATA
+
+4.1- DJVULIBRE METADATA
 
 DjVuLibre has introduced metadata annotations a few years ago.
 Metadata entries for each page are represent by key/value pairs
@@ -139,6 +139,31 @@ Several sets of keys are noteworthy.
   The values associated with the last two keys
   should be dates expressed according to RFC 3339.
 
+4.2- XMP METADATA
+
+The XMP specification describe a generic purpose XML format 
+for metadata. Just like DjVuLibre metadata, XMP metadata is 
+embedded in an annotation chunk at the page or document level 
+using the following annotation directive
+
+  (xmp "<rdf:RDF xmlsns:rdf=... [escaped XMP here] ...</rdf:RDF>") 
+
+The sole argument of the xmp directive is the serialized XMP data
+without the "xpacket" wrapper. The "x:xmpmeta" element may also be 
+dropped. Only elements from "rdf:RDF" inwards need be serialized. 
+Since the XMP data is represented as a string, doublequotes
+and backslashes must be escaped.  Other characters may be
+escaped as well (see section 1.2 above).
+
+The full XMP specification is available from Adobe: 
+ 
+   http://www.adobe.com/devnet/xmp/ 
+
+To maximize interoperability with current viewers,
+it is recommended that XMP manipulation programs keep
+the DjVuLibre metadata in sync. This is facilitated
+since all the PDF DocInfo keys have exact counterparts 
+in the XMP pdf namespace.
 
 
 
