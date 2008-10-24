@@ -153,7 +153,7 @@ without the "xpacket" wrapper. The "x:xmpmeta" element may also be
 dropped. Only elements from "rdf:RDF" inwards need be serialized. 
 Since the XMP data is represented as a string, doublequotes
 and backslashes must be escaped.  Other characters may be
-escaped as well (see section 1.2 above).
+escaped as well (see section 2 above).
 
 The full XMP specification is available from Adobe: 
  
