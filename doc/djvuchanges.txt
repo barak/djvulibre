@@ -141,29 +141,40 @@ Several sets of keys are noteworthy.
 
 4.2- XMP METADATA
 
-The XMP specification describe a generic purpose XML format 
-for metadata. Just like DjVuLibre metadata, XMP metadata is 
-embedded in an annotation chunk at the page or document level 
-using the following annotation directive
+The XMP specification describes a general purpose RDF/XML format for
+metadata. Just like DjVuLibre metadata, XMP metadata is embedded in
+an annotation chunk at the page or document level using the following
+annotation directive
 
-  (xmp "<rdf:RDF xmlsns:rdf=... [escaped XMP here] ...</rdf:RDF>") 
+   (xmp "<rdf:RDF xmlsns:rdf=... [escaped XMP here] ...</rdf:RDF>")
 
 The sole argument of the xmp directive is the serialized XMP data
-without the "xpacket" wrapper. The "x:xmpmeta" element may also be 
-dropped. Only elements from "rdf:RDF" inwards need be serialized. 
-Since the XMP data is represented as a string, doublequotes
-and backslashes must be escaped.  Other characters may be
-escaped as well (see section 2 above).
+without the "xpacket" wrapper. The "x:xmpmeta" element may also be
+dropped. Only elements from "rdf:RDF" inwards are needed.
+Since the XMP data is represented as a string, doublequotes and
+backslashes must be escaped.  Other characters may be escaped as well
+(see section 2 above).
 
-The full XMP specification is available from Adobe: 
- 
-   http://www.adobe.com/devnet/xmp/ 
+The full XMP specification is available from Adobe:
 
-To maximize interoperability with current viewers,
-it is recommended that XMP manipulation programs keep
-the DjVuLibre metadata in sync. This is facilitated
-since all the PDF DocInfo keys have exact counterparts 
-in the XMP pdf namespace.
+   http://www.adobe.com/devnet/xmp/
+
+To maximize interoperability with current viewers, it is recommended
+that XMP manipulation programs keep the DjVuLibre metadata in sync.
+This is facilitated by synchronizing the PDF DocInfo keys with XMP
+properties as follows:
+
+   DocInfo key    XMP property
+   ------------   ---------------
+   Title          dc:title
+   Author         dc:creator
+   Subject        dc:description
+   Keywords       pdf:Keywords
+   Producer       pdf:Producer
+   Trapped        pdf:Trapped
+   Creator        xmp:CreatorTool
+   CreationDate   xmp:CreateDate
+   ModDate        xmp:ModifyDate
 
 
 
