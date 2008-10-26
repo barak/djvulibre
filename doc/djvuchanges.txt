@@ -146,7 +146,7 @@ metadata. Just like DjVuLibre metadata, XMP metadata is embedded in
 an annotation chunk at the page or document level using the following
 annotation directive
 
-   (xmp "<rdf:RDF xmlsns:rdf=... [escaped XMP here] ...</rdf:RDF>")
+   (xmp "<rdf:RDF xmlns:rdf=... [escaped XMP here] ...</rdf:RDF>")
 
 The sole argument of the xmp directive is the serialized XMP data
 without the "xpacket" wrapper. The "x:xmpmeta" element may also be
