@@ -3,6 +3,7 @@ djvulibre (3.5.21-2) unstable; urgency=low
   * Remove bashism ...{.,*}... from debian/rules (closes: #505644)
   * Put djvulibre-dbg in section libdevel (closes: #498456)
   * Formatting patch for c44.1 from Ubuntu (closes: #505643)
+  * Don't integrate 3.5.20-8+lenny0 (do no reopen #495979, #507503)
 
  -- Barak A. Pearlmutter <bap@debian.org>  Fri, 14 Nov 2008 10:34:44 +0000
 
