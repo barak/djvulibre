@@ -1,3 +1,9 @@
+djvulibre (3.5.21-3) unstable; urgency=low
+
+  * Upstream browser plugin fix to gui/nsdejavu/nsdejavu.c (closes: #504340)
+
+ -- Barak A. Pearlmutter <bap@debian.org>  Wed, 10 Dec 2008 21:32:00 +0000
+
 djvulibre (3.5.21-2) unstable; urgency=low
 
   * Remove bashism ...{.,*}... from debian/rules (closes: #505644)
