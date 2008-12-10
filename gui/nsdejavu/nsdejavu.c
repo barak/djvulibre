@@ -2054,9 +2054,9 @@ NPP_SetWindow(NPP np_inst, NPWindow * win_str)
     }
   if (new_window)
     {
-      NPSetWindowCallbackStruct *cbs 
-        = (NPSetWindowCallbackStruct *) win_str->ws_info;
-      Display * displ=cbs->display;
+      Display *displ = 0;
+      if (NPN_GetValue(np_inst, NPNVxDisplay, &displ) != NPERR_NO_ERROR)
+        displ = ((NPSetWindowCallbackStruct *)(win_str->ws_info))->display;
       if (!IsConnectionOK(FALSE)) 
         return NPERR_GENERIC_ERROR;
       if (Attach(displ, new_window, id) < 0)
