@@ -2037,7 +2037,7 @@ NPP_SetWindow(NPP np_inst, NPWindow * win_str)
 
   if (map_lookup(&instance, id, &inst) < 0)
     return NPERR_INVALID_INSTANCE_ERROR;
-  cur_window = inst->window;
+  cur_window = (inst) ? inst->window : 0;
   new_window = (win_str) ? (Window) win_str->window : 0;
   if (cur_window)
     {
