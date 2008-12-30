@@ -228,6 +228,3 @@ Some observations regarding these files:
   It appears to be in fact composed of 64 bits block
   as you would expect with blowfish.
 
-- Despite this strong encryption, the scheme is weak.
-  The file contains the key at a relatively well known location.
-  What is not known is the key scrambling scheme.
