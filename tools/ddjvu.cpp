@@ -247,6 +247,7 @@ render(ddjvu_page_t *page, int pageno)
   int dpi = ddjvu_page_get_resolution(page);
   ddjvu_page_type_t type = ddjvu_page_get_type(page);
   char *image = 0;
+  char white = 0xFF;
   int rowsize;
 #if HAVE_TIFF
   int compression = COMPRESSION_NONE;
@@ -373,9 +374,10 @@ render(ddjvu_page_t *page, int pageno)
     die(i18n("Cannot determine pixel style for page %d"), pageno);
   ddjvu_format_set_row_order(fmt, 1);
   /* Allocate buffer */
-  if (style == DDJVU_FORMAT_MSBTOLSB)
-    rowsize = (rrect.w + 7) / 8;
-  else if (style == DDJVU_FORMAT_GREY8)
+  if (style == DDJVU_FORMAT_MSBTOLSB) {
+    white = 0x00;
+    rowsize = (rrect.w + 7) / 8; 
+  } else if (style == DDJVU_FORMAT_GREY8)
     rowsize = rrect.w;
   else
     rowsize = rrect.w * 3; 
@@ -385,8 +387,7 @@ render(ddjvu_page_t *page, int pageno)
   /* Render */
   timingdata[2] = ticks();
   if (! ddjvu_page_render(page, mode, &prect, &rrect, fmt, rowsize, image))
-    if (style != DDJVU_FORMAT_MSBTOLSB && style != DDJVU_FORMAT_LSBTOMSB) 
-      memset(image, 0xFF, rowsize * rrect.h);
+    memset(image, white, rowsize * rrect.h);
   timingdata[3] = ticks();
   if (flag_verbose)
     if (timingdata[2] != timingdata[3])
