@@ -1,7 +1,7 @@
 [Desktop Entry]
 Encoding=UTF-8
 Type=Application
-Categories=Qt;Graphics
+Categories=Qt;Graphics;Viewer;
 MimeType=image/x-djvu;image/x.djvu;image/vnd.djvu;
 Name=DjView3
 Exec=djview3 %f
