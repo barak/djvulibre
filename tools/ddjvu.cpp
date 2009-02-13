@@ -475,13 +475,13 @@ render(ddjvu_page_t *page, int pageno)
 		     (float)((dpi*rrect.h+ih/2)/ih));
         TIFFSetField(tiff, TIFFTAG_PLANARCONFIG, PLANARCONFIG_CONTIG);
         TIFFSetField(tiff, TIFFTAG_ORIENTATION, ORIENTATION_TOPLEFT);
-# if CCITT_SUPPORT
+# ifdef CCITT_SUPPORT
         if (compression != COMPRESSION_CCITT_T6)
 # endif
-# if JPEG_SUPPORT
+# ifdef JPEG_SUPPORT
           if (compression != COMPRESSION_JPEG)
 # endif
-# if ZIP_SUPPORT
+# ifdef ZIP_SUPPORT
             if (compression != COMPRESSION_DEFLATE)
 # endif
               TIFFSetField(tiff, TIFFTAG_ROWSPERSTRIP, (uint32)64);
