@@ -1093,7 +1093,7 @@ copy_line(const GPixel *s, int smin, int smax,
   }
   while (x < dmax)              
   {
-    d[x] = s[smax]; 
+    d[x] = s[smax-1]; 
     x++; 
   }
 }
