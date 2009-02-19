@@ -109,7 +109,7 @@ install-stamp: build-stamp
 	install --mode=644 debian/djvulibre-djview3.xpm \
 	  debian/tmp/usr/share/icons/hicolor/32x32/apps/
 	mkdir --parents debian/tmp/usr/share/applications
-	install --mode=644 desktopfiles/djvulibre-djview3.desktop \
+	install --mode=755 desktopfiles/djvulibre-djview3.desktop \
 	  debian/tmp/usr/share/applications/
 	touch install-stamp
 
