@@ -816,7 +816,7 @@ dilate8(const GBitmap *p_bm)
                 {
                   nbmprow[x-1]=1;
                   nbmprow[x]=1;
-                  nbmprow[x-1]=1;
+                  nbmprow[x+1]=1;
                 }
               nbmrow[x-1]=1;
               nbmrow[x]=1;
