@@ -102,7 +102,7 @@ Boolean GetMetadataForFile(void* thisInterface,
         NSLog(@"Cannot create djvu conext for '%@'.", path);
         goto pop;
     }
-    if (! (doc = ddjvu_document_create_by_filename(ctx, [path cStringUsingEncoding:NSASCIIStringEncoding], TRUE))) {
+    if (! (doc = ddjvu_document_create_by_filename(ctx, [path fileSystemRepresentation], TRUE))) {
         NSLog(@"Cannot open djvu document '%@'.", path);
         goto pop;
     }
