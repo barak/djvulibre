@@ -89,8 +89,8 @@
 /* End PBXAggregateTarget section */
 
 /* Begin PBXBuildFile section */
-		254784610CF51C5B00A6CE45 /* libjpeg.62.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 254784600CF51C5B00A6CE45 /* libjpeg.62.dylib */; };
-		254784680CF51E1A00A6CE45 /* libtiff.3.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 254784670CF51E1A00A6CE45 /* libtiff.3.dylib */; };
+		254784610CF51C5B00A6CE45 /* libjpeg.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 254784600CF51C5B00A6CE45 /* libjpeg.a */; };
+		254784680CF51E1A00A6CE45 /* libtiff.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 254784670CF51E1A00A6CE45 /* libtiff.a */; };
 		25BD7D960CF547850047BBB0 /* libiconv.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 41C112C20AB5381A00411F5B /* libiconv.dylib */; };
 		25D4AA0C0CF52B570061BED8 /* libdjvulibre_static.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 41C111E30AB5292400411F5B /* libdjvulibre_static.a */; };
 		413BF6A40D2407820078DB7E /* libdjvulibre.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 413BF6A20D2407820078DB7E /* libdjvulibre.dylib */; };
@@ -101,6 +101,8 @@
 		414A4D0A0AB938850077A908 /* DjVuLibre.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 41C10D1B0AB2956C00411F5B /* DjVuLibre.framework */; };
 		414A4D0B0AB938880077A908 /* DjVuLibre.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 41C10D1B0AB2956C00411F5B /* DjVuLibre.framework */; };
 		414A4D0C0AB9388C0077A908 /* DjVuLibre.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 41C10D1B0AB2956C00411F5B /* DjVuLibre.framework */; };
+		414B4E510F6E2EB2003645A9 /* atomic.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 414B4E500F6E2EB2003645A9 /* atomic.cpp */; };
+		414B4E520F6E2EB2003645A9 /* atomic.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 414B4E500F6E2EB2003645A9 /* atomic.cpp */; };
 		41AF927E0AB83CF000771123 /* bzz.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 4154B9600AB7C86D00865C24 /* bzz.cpp */; };
 		41AF92870AB83D8800771123 /* DjVuLibre.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 41C10D1B0AB2956C00411F5B /* DjVuLibre.framework */; };
 		41AF93170AB8C81D00771123 /* c44.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 4154B9630AB7C86D00865C24 /* c44.cpp */; };
@@ -282,19 +284,19 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
-		25D4A9FE0CF52B1A0061BED8 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 41C10D090AB294CB00411F5B /* Project object */;
-			proxyType = 1;
-			remoteGlobalIDString = 41C111E20AB5292400411F5B;
-			remoteInfo = "Static Library";
-		};
 		414A4D3B0AB93B4E0077A908 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = 41C10D090AB294CB00411F5B /* Project object */;
 			proxyType = 1;
 			remoteGlobalIDString = 41C112540AB52DF400411F5B;
 			remoteInfo = DjVu.mdimporter;
+		};
+		414B4DE50F6DB4D1003645A9 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 41C10D090AB294CB00411F5B /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 41C111E20AB5292400411F5B;
+			remoteInfo = "Static Library";
 		};
 		41AF91A10AB7DFFF00771123 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
@@ -635,13 +637,14 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
-		254784600CF51C5B00A6CE45 /* libjpeg.62.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libjpeg.62.dylib; path = /opt/local/lib/libjpeg.62.dylib; sourceTree = "<absolute>"; };
-		254784670CF51E1A00A6CE45 /* libtiff.3.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libtiff.3.dylib; path = /opt/local/lib/libtiff.3.dylib; sourceTree = "<absolute>"; };
+		254784600CF51C5B00A6CE45 /* libjpeg.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libjpeg.a; path = /usr/local/lib/libjpeg.a; sourceTree = "<absolute>"; };
+		254784670CF51E1A00A6CE45 /* libtiff.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libtiff.a; path = /usr/local/lib/libtiff.a; sourceTree = "<absolute>"; };
 		413BF6A20D2407820078DB7E /* libdjvulibre.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libdjvulibre.dylib; path = /Applications/Apps/Utilities/DjView.app/Contents/lib/libdjvulibre.dylib; sourceTree = "<absolute>"; };
 		413BF6A30D2407820078DB7E /* libjpeg.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libjpeg.dylib; path = /Applications/Apps/Utilities/DjView.app/Contents/lib/libjpeg.dylib; sourceTree = "<absolute>"; };
 		414A4CC00AB927670077A908 /* mkframework */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.sh; path = mkframework; sourceTree = "<group>"; };
 		414A4D520AB940C70077A908 /* ReadMe.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = ReadMe.txt; path = ../ReadMe.txt; sourceTree = "<group>"; };
 		414A4D7D0AB946E30077A908 /* MDImporterVersion */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = MDImporterVersion; sourceTree = "<group>"; };
+		414B4E500F6E2EB2003645A9 /* atomic.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = atomic.cpp; sourceTree = "<group>"; };
 		4154B95D0AB7C86D00865C24 /* any2djvu */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.sh; path = any2djvu; sourceTree = "<group>"; };
 		4154B95E0AB7C86D00865C24 /* any2djvu.1 */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.man; path = any2djvu.1; sourceTree = "<group>"; };
 		4154B95F0AB7C86D00865C24 /* bzz.1 */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.man; path = bzz.1; sourceTree = "<group>"; };
@@ -721,7 +724,7 @@
 		41AF948A0AB8E4FF00771123 /* lizard2002.djvu */ = {isa = PBXFileReference; lastKnownFileType = file; path = lizard2002.djvu; sourceTree = "<group>"; };
 		41B5738E0D0A1E480021A107 /* ddjvu */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = ddjvu; sourceTree = BUILT_PRODUCTS_DIR; };
 		41C10D1B0AB2956C00411F5B /* DjVuLibre.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = DjVuLibre.framework; sourceTree = BUILT_PRODUCTS_DIR; };
-		41C10D1D0AB2956C00411F5B /* DjVuLibre-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.xml; path = "DjVuLibre-Info.plist"; sourceTree = "<group>"; };
+		41C10D1D0AB2956C00411F5B /* DjVuLibre-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "DjVuLibre-Info.plist"; sourceTree = "<group>"; };
 		41C10D260AB296AA00411F5B /* Arrays.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Arrays.cpp; sourceTree = "<group>"; };
 		41C10D270AB296AA00411F5B /* Arrays.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Arrays.h; sourceTree = "<group>"; };
 		41C10D280AB296AA00411F5B /* BSByteStream.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; fileEncoding = 4; path = BSByteStream.cpp; sourceTree = "<group>"; };
@@ -840,7 +843,7 @@
 		41C112630AB52E8C00411F5B /* English */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.strings; name = English; path = English.lproj/InfoPlist.strings; sourceTree = "<group>"; };
 		41C112650AB52E8C00411F5B /* English */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.strings; name = English; path = English.lproj/schema.strings; sourceTree = "<group>"; };
 		41C112660AB52E8C00411F5B /* GetMetadataForFile.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = GetMetadataForFile.m; sourceTree = "<group>"; };
-		41C112670AB52E8C00411F5B /* DjVu_mdimporter-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xml; path = "DjVu_mdimporter-Info.plist"; sourceTree = SOURCE_ROOT; };
+		41C112670AB52E8C00411F5B /* DjVu_mdimporter-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "DjVu_mdimporter-Info.plist"; sourceTree = SOURCE_ROOT; };
 		41C112680AB52E8C00411F5B /* main.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = main.c; sourceTree = "<group>"; };
 		41C112690AB52E8C00411F5B /* schema.xml */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xml; path = schema.xml; sourceTree = "<group>"; };
 		41C112880AB5301C00411F5B /* CoreFoundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreFoundation.framework; path = /System/Library/Frameworks/CoreFoundation.framework; sourceTree = "<absolute>"; };
@@ -875,7 +878,7 @@
 			files = (
 				41AF937E0AB8CF5800771123 /* DjVuLibre.framework in Frameworks */,
 				41AF94370AB8DE2F00771123 /* libjb2cmp.a in Frameworks */,
-				254784680CF51E1A00A6CE45 /* libtiff.3.dylib in Frameworks */,
+				254784680CF51E1A00A6CE45 /* libtiff.a in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1014,7 +1017,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				254784610CF51C5B00A6CE45 /* libjpeg.62.dylib in Frameworks */,
+				254784610CF51C5B00A6CE45 /* libjpeg.a in Frameworks */,
 				25BD7D960CF547850047BBB0 /* libiconv.dylib in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -1055,8 +1058,8 @@
 			isa = PBXGroup;
 			children = (
 				41C112C20AB5381A00411F5B /* libiconv.dylib */,
-				254784600CF51C5B00A6CE45 /* libjpeg.62.dylib */,
-				254784670CF51E1A00A6CE45 /* libtiff.3.dylib */,
+				254784600CF51C5B00A6CE45 /* libjpeg.a */,
+				254784670CF51E1A00A6CE45 /* libtiff.a */,
 			);
 			name = "External Frameworks and Libraries";
 			sourceTree = "<group>";
@@ -1214,6 +1217,7 @@
 		41C10D240AB296AA00411F5B /* libdjvu */ = {
 			isa = PBXGroup;
 			children = (
+				414B4E500F6E2EB2003645A9 /* atomic.cpp */,
 				41C10D260AB296AA00411F5B /* Arrays.cpp */,
 				41C10D270AB296AA00411F5B /* Arrays.h */,
 				41C10D280AB296AA00411F5B /* BSByteStream.cpp */,
@@ -1791,7 +1795,7 @@
 			buildRules = (
 			);
 			dependencies = (
-				25D4A9FF0CF52B1A0061BED8 /* PBXTargetDependency */,
+				414B4DE60F6DB4D1003645A9 /* PBXTargetDependency */,
 			);
 			name = "DjVu.mdimporter Static";
 			productName = DjVu.mdimporter;
@@ -2199,6 +2203,7 @@
 				41C10E030AB296AA00411F5B /* XMLParser.cpp in Sources */,
 				41C10E050AB296AA00411F5B /* XMLTags.cpp in Sources */,
 				41C10E070AB296AA00411F5B /* ZPCodec.cpp in Sources */,
+				414B4E520F6E2EB2003645A9 /* atomic.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -2262,6 +2267,7 @@
 				41C112330AB52B4600411F5B /* GOS.cpp in Sources */,
 				41C112340AB52B4600411F5B /* DjVuImage.cpp in Sources */,
 				41C112350AB52B4600411F5B /* IFFByteStream.cpp in Sources */,
+				414B4E510F6E2EB2003645A9 /* atomic.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -2286,15 +2292,15 @@
 /* End PBXSourcesBuildPhase section */
 
 /* Begin PBXTargetDependency section */
-		25D4A9FF0CF52B1A0061BED8 /* PBXTargetDependency */ = {
-			isa = PBXTargetDependency;
-			target = 41C111E20AB5292400411F5B /* Static Library */;
-			targetProxy = 25D4A9FE0CF52B1A0061BED8 /* PBXContainerItemProxy */;
-		};
 		414A4D3C0AB93B4E0077A908 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
 			target = 41C112540AB52DF400411F5B /* DjVu.mdimporter Static */;
 			targetProxy = 414A4D3B0AB93B4E0077A908 /* PBXContainerItemProxy */;
+		};
+		414B4DE60F6DB4D1003645A9 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 41C111E20AB5292400411F5B /* Static Library */;
+			targetProxy = 414B4DE50F6DB4D1003645A9 /* PBXContainerItemProxy */;
 		};
 		41AF91A20AB7DFFF00771123 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
