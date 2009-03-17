@@ -9,6 +9,9 @@ To install:
     
     /usr/bin/mdimport -r /Library/Spotlight/DjVu.mdimporter
 
+Note:
+    As of version 1.2, DjVu.mdimported and djvu.qlgenerator are included
+    with DjView.app.
 
 Further information on DjVu and DjVuLibre, including source, can be found at
 http://djvulibre.djvuzone.org/.
@@ -19,6 +22,12 @@ Jeff Sickel <jas@corpus-callosum.com>.
 
 History:
 
+16-Mar-2009 version 1.3
+    file system representation update (discovered by Nicholas Kulikov)
+    
+01-Sep-2008 version 1.2
+    bundled with DjView.app
+    
 10-Dec-2007 version 1.1
     built with djvulibre 3.5.19
     added org.djvu.DjView for eventually roll in with DjView.app

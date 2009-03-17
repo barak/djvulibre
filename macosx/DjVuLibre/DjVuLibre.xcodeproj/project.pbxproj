@@ -1915,7 +1915,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "if [ $CONFIGURATION != \"Release\" ]; then\n\texit\nfi\n\n/usr/local/bin/buildDMG.pl -dmgName DjVuSpotlight_${MDIMPORTER_VERSION}.dmg \\\n\t-buildDir $SYMROOT \\\n\t-volName DjVuSpotlight_${MDIMPORTER_VERSION} \\\n\t-compressionLevel 9 \\\n\t$SYMROOT/$CONFIGURATION/DjVu.mdimporter \\\n\t$SRCROOT/ReadMe.txt \\\n\t$SRCROOT/../../COPYING \\\n\t$SRCROOT/../../COPYRIGHT \\\n\t$SRCROOT/../../doc/djvu3spec.djvu\n\nexit 0\n";
+			shellScript = "if [ $CONFIGURATION != \"Release\" ]; then\n\texit\nfi\n\n/usr/local/bin/buildDMG.pl -dmgName DjVuSpotlight_${MDIMPORTER_VERSION}.dmg \\\n\t-buildDir $SYMROOT \\\n\t-volName DjVuSpotlight_${MDIMPORTER_VERSION} \\\n\t-compressionLevel 9 \\\n\t$SYMROOT/$CONFIGURATION/DjVu.mdimporter \\\n\t$SRCROOT/ReadMe.txt \\\n\t$SRCROOT/../../COPYING \\\n\t$SRCROOT/../../COPYRIGHT \\\n\t$SRCROOT/../../doc/djvu3spec.djvu\n\nhdiutil detach /Volumes/DjVuSpotlight_${MDIMPORTER_VERSION}\nhdiutil resize -size min $SYMROOT/DjVuSpotlight_${MDIMPORTER_VERSION}.dmg\n\nexit 0\n";
 		};
 		41AF91870AB7DE3300771123 /* ShellScript */ = {
 			isa = PBXShellScriptBuildPhase;
