@@ -20,7 +20,7 @@
 	<key>CFBundleExecutable</key>
 	<string>${EXECUTABLE_NAME}</string>
 	<key>CFBundleGetInfoString</key>
-	<string>1.0, Copyright Corpus Callosum Corporation 2007</string>
+	<string>${QLGENERATOR_VERSION}, Copyright 2007, 2009 Corpus Callosum Corporation</string>
 	<key>CFBundleIconFile</key>
 	<string></string>
 	<key>CFBundleIdentifier</key>
@@ -30,9 +30,9 @@
 	<key>CFBundleName</key>
 	<string>${PRODUCT_NAME}</string>
 	<key>CFBundleShortVersionString</key>
-	<string>1.0</string>
+	<string>${QLGENERATOR_VERSION}</string>
 	<key>CFBundleVersion</key>
-	<string>1.0</string>
+	<string>${QLGENERATOR_VERSION}</string>
 	<key>CFPlugInDynamicRegisterFunction</key>
 	<string></string>
 	<key>CFPlugInDynamicRegistration</key>

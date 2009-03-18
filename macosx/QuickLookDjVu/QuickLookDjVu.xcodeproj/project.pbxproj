@@ -50,14 +50,17 @@
 		08FB77B6FE84183AC02AAC07 /* main.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = main.c; sourceTree = "<group>"; };
 		0AA1909FFE8422F4C02AAC07 /* CoreFoundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreFoundation.framework; path = /System/Library/Frameworks/CoreFoundation.framework; sourceTree = "<absolute>"; };
 		2C05A19B06CAA52B00D84F6F /* GeneratePreviewForURL.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = GeneratePreviewForURL.m; sourceTree = "<group>"; };
+		414B4D7C0F6D9803003645A9 /* QLGeneratorVersion */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = QLGeneratorVersion; sourceTree = "<group>"; };
+		414B4D7D0F6D9803003645A9 /* debug.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; path = debug.xcconfig; sourceTree = "<group>"; };
+		414B4D7E0F6D9803003645A9 /* release.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; path = release.xcconfig; sourceTree = "<group>"; };
 		41B573380D09969D0021A107 /* ddjvu */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.executable"; path = ddjvu; sourceTree = "<group>"; };
-		41B575C60D0DAD2B0021A107 /* more_pages.pdf */ = {isa = PBXFileReference; lastKnownFileType = image.pdf; name = more_pages.pdf; path = /Users/jas/Developer/Workarea/Mercurial/djvu_quicklook/QuickLookDjVu/more_pages.pdf; sourceTree = "<absolute>"; };
-		41B576C90D0E2AC60021A107 /* README.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = README.txt; path = /Users/jas/Developer/Workarea/Mercurial/djvu_quicklook/QuickLookDjVu/README.txt; sourceTree = "<absolute>"; };
-		41BC78F30CFBEC4100887A1D /* ddjvuRef.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ddjvuRef.h; path = /Users/jas/Developer/Workarea/Mercurial/djvu_quicklook/QuickLookDjVu/ddjvuRef.h; sourceTree = "<absolute>"; };
-		41BC78F40CFBEC4100887A1D /* ddjvuRef.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = ddjvuRef.c; path = /Users/jas/Developer/Workarea/Mercurial/djvu_quicklook/QuickLookDjVu/ddjvuRef.c; sourceTree = "<absolute>"; };
+		41B575C60D0DAD2B0021A107 /* more_pages.pdf */ = {isa = PBXFileReference; lastKnownFileType = image.pdf; path = more_pages.pdf; sourceTree = "<group>"; };
+		41B576C90D0E2AC60021A107 /* README.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = README.txt; sourceTree = "<group>"; };
+		41BC78F30CFBEC4100887A1D /* ddjvuRef.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ddjvuRef.h; sourceTree = "<group>"; };
+		41BC78F40CFBEC4100887A1D /* ddjvuRef.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = ddjvuRef.c; sourceTree = "<group>"; };
 		41BC7ABB0CFE435800887A1D /* Cocoa.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Cocoa.framework; path = /System/Library/Frameworks/Cocoa.framework; sourceTree = "<absolute>"; };
 		61E3BCFA0870B4F2002186A0 /* GenerateThumbnailForURL.m */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.objc; path = GenerateThumbnailForURL.m; sourceTree = "<group>"; };
-		8D576316048677EA00EA77CD /* QuickLookDjVu.qlgenerator */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = QuickLookDjVu.qlgenerator; sourceTree = BUILT_PRODUCTS_DIR; };
+		8D576316048677EA00EA77CD /* djvu.qlgenerator */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = djvu.qlgenerator; sourceTree = BUILT_PRODUCTS_DIR; };
 		8D576317048677EA00EA77CD /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
 		C86B05260671AA6E00DD9006 /* CoreServices.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreServices.framework; path = /System/Library/Frameworks/CoreServices.framework; sourceTree = "<absolute>"; };
 		F28CFBFC0A3EC0AF000ABFF5 /* ApplicationServices.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = ApplicationServices.framework; path = /System/Library/Frameworks/ApplicationServices.framework; sourceTree = "<absolute>"; };
@@ -83,6 +86,7 @@
 		089C166AFE841209C02AAC07 /* QuickLookDjVu */ = {
 			isa = PBXGroup;
 			children = (
+				414B4D7B0F6D9803003645A9 /* config */,
 				08FB77AFFE84173DC02AAC07 /* Source */,
 				41B573370D0996380021A107 /* bin */,
 				089C167CFE841241C02AAC07 /* Resources */,
@@ -130,9 +134,19 @@
 		19C28FB6FE9D52B211CA2CBB /* Products */ = {
 			isa = PBXGroup;
 			children = (
-				8D576316048677EA00EA77CD /* QuickLookDjVu.qlgenerator */,
+				8D576316048677EA00EA77CD /* djvu.qlgenerator */,
 			);
 			name = Products;
+			sourceTree = "<group>";
+		};
+		414B4D7B0F6D9803003645A9 /* config */ = {
+			isa = PBXGroup;
+			children = (
+				414B4D7C0F6D9803003645A9 /* QLGeneratorVersion */,
+				414B4D7D0F6D9803003645A9 /* debug.xcconfig */,
+				414B4D7E0F6D9803003645A9 /* release.xcconfig */,
+			);
+			path = config;
 			sourceTree = "<group>";
 		};
 		41B573370D0996380021A107 /* bin */ = {
@@ -173,7 +187,7 @@
 			name = djvu;
 			productInstallPath = /Library/QuickLook;
 			productName = QuickLookDjVu;
-			productReference = 8D576316048677EA00EA77CD /* QuickLookDjVu.qlgenerator */;
+			productReference = 8D576316048677EA00EA77CD /* djvu.qlgenerator */;
 			productType = "com.apple.product-type.bundle";
 		};
 /* End PBXNativeTarget section */
@@ -223,14 +237,15 @@
 			files = (
 			);
 			inputPaths = (
-				"$(TARGET_BUILD_DIR)/QuickLookDjVu.qlgenerator",
+				"$(TARGET_BUILD_DIR)/djvu.qlgenerator",
+				"$(SRCROOT)/README.txt",
 			);
 			outputPaths = (
-				"$(SYMROOT)/QuickLookDjVu_1.0.dmg",
+				"$(SYMROOT)/QuickLookDjVu_$(QLGENERATOR_VERSION).dmg",
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "if [ $CONFIGURATION != \"Release\" ]; then\n\texit\nfi\n\n/usr/local/bin/buildDMG.pl -dmgName QuickLookDjVu_1.0.dmg \\\n\t-buildDir $SYMROOT \\\n\t-volName QuickLookDjVu_1.0 \\\n\t-compressionLevel 9 \\\n\t$SYMROOT/$CONFIGURATION/QuickLookDjVu.qlgenerator \\\n\t$SRCROOT/README.txt \\\n\nexit 0\n";
+			shellScript = "if [ $CONFIGURATION != \"Release\" ]; then\n\texit\nfi\n\n/usr/local/bin/buildDMG.pl -dmgName QuickLookDjVu_$QLGENERATOR_VERSION.dmg \\\n\t-buildDir $SYMROOT \\\n\t-volName QuickLookDjVu_$QLGENERATOR_VERSION \\\n\t-compressionLevel 9 \\\n\t$SYMROOT/$CONFIGURATION/djvu.qlgenerator \\\n\t$SRCROOT/README.txt \\\n\nhdiutil detach /Volumes/QuickLookDjVu_$QLGENERATOR_VERSION\nhdiutil resize -size min $SYMROOT/QuickLookDjVu_$QLGENERATOR_VERSION.dmg\n\nexit 0\n";
 		};
 /* End PBXShellScriptBuildPhase section */
 
@@ -270,6 +285,7 @@
 /* Begin XCBuildConfiguration section */
 		2CA3261F0896AD4900168862 /* Debug */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = 414B4D7D0F6D9803003645A9 /* debug.xcconfig */;
 			buildSettings = {
 				COPY_PHASE_STRIP = NO;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
@@ -293,6 +309,7 @@
 		};
 		2CA326200896AD4900168862 /* Release */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = 414B4D7E0F6D9803003645A9 /* release.xcconfig */;
 			buildSettings = {
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
 				GCC_MODEL_TUNING = G5;
@@ -303,7 +320,7 @@
 					"$(inherited)",
 					"\"$(SYSTEM_APPS_DIR)/Apps/Utilities/DjView.app/Contents/lib\"",
 				);
-				PRODUCT_NAME = QuickLookDjVu;
+				PRODUCT_NAME = djvu;
 				VALID_ARCHS = "i386 ppc";
 				WRAPPER_EXTENSION = qlgenerator;
 			};
@@ -335,6 +352,7 @@
 		};
 		41B576CC0D0E30730021A107 /* Debug */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = 414B4D7D0F6D9803003645A9 /* debug.xcconfig */;
 			buildSettings = {
 				COPY_PHASE_STRIP = NO;
 				GCC_DYNAMIC_NO_PIC = NO;
@@ -345,6 +363,7 @@
 		};
 		41B576CD0D0E30730021A107 /* Release */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = 414B4D7E0F6D9803003645A9 /* release.xcconfig */;
 			buildSettings = {
 				COPY_PHASE_STRIP = YES;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";

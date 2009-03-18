@@ -1,10 +1,10 @@
-QuickLookDjVu.qlgenerator
+djvu.qlgenerator
 
 QuickLook generator for DjVu documents.
 
-To install, copy QuickLookDjVu.qlgenerator to:
+To install, copy djvu.qlgenerator to:
 
-	DjView.app/Contents/Library/QuickLook  (version 1.0)
+	DjView.app/Contents/Library/QuickLook  (version 1.0+)
 	/Library/QuickLook
 	~/Library/QuickLook
 
@@ -38,11 +38,15 @@ inspector view from the Finder.
 
 Further information about DjVu can be found at http://www.djvu.org/.
 
-QuickLookDjVu.qlgenerator is maintained by Jeff Sickel <jas@corpus-callosum.com>.
+djvu.qlgenerator is maintained by Jeff Sickel <jas@corpus-callosum.com>.
 
 
 History:
 
+15-Mar-2009 version 1.1
+    handle localized file names (UTF-8)
+    bug/patch submitted by Nicholas Kulikov
+    
 13-Dec-2007 version 1.0
     able to be bundled inside DjView.app 
     added defaults for org.djvu.qlgenerator previewpages settings
