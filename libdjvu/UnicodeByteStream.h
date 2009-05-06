@@ -68,15 +68,16 @@
 
 /** @name UnicodeByteStream.h
 
-    Files #"UnicodeByteStream.h"# and #"UnicodeByteStream.cpp"# implement a parser for
-    files structured W3C Extensible Markup Language (XML) 1.0 (Second Edition).
+    Files #"UnicodeByteStream.h"# and #"UnicodeByteStream.cpp"# 
+    implement a parser for files structured W3C Extensible Markup 
+    Language (XML) 1.0 (Second Edition).
     
     Class \Ref{UnicodeByteStream} provides a way to read or write XML files.
     files.  Member functions provide an easy mean to position the underlying
     \Ref{ByteStream}.
 
-    {\bf References} --- W3C Extensible Markup Language (XML) 1.0
-    (Second Edition)
+    {\bf References:} 
+    W3C Extensible Markup Language (XML) 1.0 (Second Edition)
     \URL{http://www.w3.org/TR/2000/REC-xml-20001006.html}
 
     @memo 

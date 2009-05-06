@@ -609,8 +609,6 @@ DjVuFile::process_incl_chunk(ByteStream & str, int file_num)
       // decoder to resolve all chunk dependencies, and
       // abort decoding if necessary.
       
-      // G_EXTHROW(ex); /* commented out */
-      
       get_portcaster()->notify_error(this,ex.get_cause());
       return 0;
     }
@@ -666,7 +664,7 @@ DjVuFile::report_error(const GException &ex,bool throw_errors)
   {
     if(throw_errors)
     {
-      G_EXTHROW(ex);
+      G_EMTHROW(ex);
     }else
     {
       get_portcaster()->notify_error(this,ex.get_cause());
@@ -681,7 +679,8 @@ DjVuFile::report_error(const GException &ex,bool throw_errors)
     GUTF8String msg = GUTF8String( ERR_MSG("DjVuFile.EOF") "\t") + url;
     if(throw_errors)
     {
-      G_EXTHROW(ex, msg);
+      G_EMTHROW(GException(msg, ex.get_file(), ex.get_line(), 
+                           ex.get_function() ));
     }else
     {
       get_portcaster()->notify_error(this,msg);
