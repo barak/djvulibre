@@ -144,12 +144,16 @@ AC_HEADER_DIRENT
 AC_HEADER_TIME
 AC_HEADER_SYS_WAIT     
 AC_CHECK_HEADERS(wchar.h wctype.h sys/mman.h iconv.h)
-AC_CHECK_HEADERS(stdint.h sys/ipc.h sys/shm.h)
+AC_CHECK_HEADERS(stdint.h inttypes.h sys/ipc.h sys/shm.h)
 
 # ----------------------------------------
 # Types
 # ----------------------------------------
 
+AC_TYPE_INT16_T
+AC_TYPE_INT32_T
+AC_TYPE_UINT16_T
+AC_TYPE_UINT32_T
 AC_CHECK_TYPES(wchar_t)
 AC_CHECK_TYPES(long long int)
 AC_CHECK_TYPES(mbstate_t,,,[#include "wchar.h"])

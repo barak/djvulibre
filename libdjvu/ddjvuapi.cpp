@@ -121,11 +121,10 @@ using namespace DJVU;
 #include "miniexp.h"
 #include "ddjvuapi.h"
 
-#if HAVE_STDINT_H
+#if !defined(AUTOCONF) || HAVE_STDINT_H
 # include <stdint.h>
-#else
-typedef unsigned short uint16_t;
-typedef unsigned int uint32_t;
+#elif HAVE_INTTYPES_H
+# include <inttypes.h>
 #endif
 
 
