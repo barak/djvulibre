@@ -145,7 +145,6 @@ AC_HEADER_TIME
 AC_HEADER_SYS_WAIT     
 AC_CHECK_HEADERS(wchar.h wctype.h sys/mman.h iconv.h)
 AC_CHECK_HEADERS(stdint.h sys/ipc.h sys/shm.h)
-AC_CHECK_HEADERS(X11/extensions/Xext.h,,,[#include <X11/Xlib.h>])
 
 # ----------------------------------------
 # Types
@@ -177,7 +176,7 @@ AC_MSG_RESULT($ac_has_iconv)
 AC_LANG_POP(C)
 if test x$ac_has_iconv = xyes ; then
     AC_DEFINE(HAVE_ICONV,1,
-        [Define to 1 if you have the `iconv' function.])
+        [Define to 1 if you have the iconv function.])
 fi
 
 
@@ -204,6 +203,21 @@ AC_PATH_THREADS(,
 AC_PATH_QT(,
 [ no_qt=yes
   AC_MSG_WARN([Qt support is disabled]) ])
+
+# Search X11 and Xt headers
+if test "$no_x" != "yes" ; then
+    savedCFLAGS="$CFLAGS"
+    CFLAGS="$CFLAGS ${X_CFLAGS}"
+    AC_CHECK_HEADERS(X11/extensions/Xext.h,,,[include <X11/Xlib.h>])
+    AC_CHECK_HEADER(X11/Shell.h, [], [no_xt=yes])
+    AC_CHECK_HEADER(X11/IntrinsicP.h, [], [no_xt=yes])
+    CFLAGS="$savedCFLAGS"
+    if test "$no_xt" == "yes" ; then
+        AC_MSG_WARN([Xt include files not found])
+    else
+        AC_DEFINE(HAVE_XT,1,[Define if you have the Xt include files.])
+    fi
+fi
 
 
 # ----------------------------------------
@@ -235,13 +249,14 @@ AC_ARG_ENABLE(djview,
    [ac_enable_djview=$enableval], 
    [ac_enable_djview=yes] ) 
 if test x$ac_enable_djview != xno ; then
-  if test x$no_threads = xyes || test x$no_qt = xyes ; then
+  if test x$no_threads = xyes || test x$no_qt = xyes || test x$no_xt = xyes ; then
      AC_MSG_WARN([Disabling compilation of djview.
 --------------------------------------------------------
 *** The GUI portion of this package will not be compiled.
 *** This is probably not what you want.  Chech the output
 *** of configure for warning messages.  Read file INSTALL. 
 *** Investigate options --with-qt and --enable-threads.
+*** Make sure the Xt include files are present.
 --------------------------------------------------------])
      ac_enable_djview=no;
   fi
@@ -335,18 +350,18 @@ AC_SUBST(DESKTOP_NO)
 # Flags for NSDEJAVU.SO
 # ----------------------------------------
 
-
 NSDEJAVU_CFLAGS=
 NSDEJAVU_LIBS=
 if test x$ac_enable_djview != xno 
 then
- NSDEJAVU_CFLAGS=${X_CFLAGS}
- case "$host" in
- *-cygwin* | *-mingw*)
-   NSDEJAVU_LIBS="`echo ${X_LIBS} | sed -e 's/-lXext/-lXt -lXext/'`"
-   NSDEJAVU_LIBS="-no-undefined $NSDEJAVU_LIBS"
-   ;;
- esac
+    AC_PATH_GLIB
+    NSDEJAVU_CFLAGS=${X_CFLAGS}
+    case "$host" in
+        *-cygwin* | *-mingw*)
+            NSDEJAVU_LIBS="`echo ${X_LIBS} | sed -e 's/-lXext/-lXt -lXext/'`"
+            NSDEJAVU_LIBS="-no-undefined $NSDEJAVU_LIBS"
+            ;;
+    esac
 fi
 AC_SUBST(NSDEJAVU_CFLAGS)
 AC_SUBST(NSDEJAVU_LIBS)

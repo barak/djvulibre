@@ -86,6 +86,7 @@
 #include <fcntl.h>
 #include <errno.h>
 #include <signal.h>
+#include <string.h>
 #include <ctype.h>
 #if HAVE_UNISTD_H
 # include <unistd.h>
@@ -124,11 +125,6 @@
 #include "npruntime.h"
 #include "npupp.h"
 
-#include <X11/Intrinsic.h>
-#include <X11/IntrinsicP.h>
-#include <X11/StringDefs.h>
-#include <X11/Shell.h>
-
 #ifndef TRUE
 # define TRUE 1
 #endif
@@ -141,6 +137,48 @@
 #ifndef min
 # define min(a,b) (((a)<(b))?(a):(b))
 #endif
+
+#ifndef USE_XT
+# if HAVE_XT
+#  define USE_XT 1
+# else
+#  define USE_XT 0
+# endif
+#endif
+#ifndef USE_GLIB
+# if HAVE_GLIB
+#  define USE_GLIB 1
+# else
+#  define USE_GLIB 0
+# endif
+#endif
+
+#if USE_XT
+# include <X11/Intrinsic.h>
+# include <X11/IntrinsicP.h>
+# include <X11/StringDefs.h>
+# include <X11/Shell.h>
+# pragma weak XtAddCallback
+# pragma weak XtAddEventHandler
+# pragma weak XtAppAddInput
+# pragma weak XtRemoveCallback
+# pragma weak XtRemoveEventHandler
+# pragma weak XtRemoveInput
+# pragma weak XtStrings
+# pragma weak XtVaGetValues
+# pragma weak XtWidgetToApplicationContext
+# pragma weak XtWindowToWidget
+#endif
+
+#if USE_GLIB
+# include <glib.h>
+# pragma weak g_io_channel_unix_new
+# pragma weak g_io_channel_unref
+# pragma weak g_io_add_watch
+# pragma weak g_source_remove
+#endif
+
+
 
 
 /* ------------------------------------------------------------ */
@@ -173,6 +211,9 @@ typedef struct
 #define CMD_GET_URL_NOTIFY	12
 #define CMD_URL_NOTIFY		13
 #define CMD_HANDSHAKE		14
+#define CMD_SET_DJVUOPT         15
+#define CMD_GET_DJVUOPT         16
+#define CMD_ON_CHANGE           17
 
 #define TYPE_INTEGER	1
 #define TYPE_DOUBLE	2
@@ -275,17 +316,24 @@ Write(int fd, const void * buffer, int length)
 }
 
 static int
-WriteString(int fd, const char *str)
+WriteStringLen(int fd, const char *str, int length)
 {
-  int type, length;
-  if (! str) str = "";
-  length = strlen(str);
-  type = TYPE_STRING;
+  int type = TYPE_STRING;
   if ( (Write(fd, &type, sizeof(type)) < 0) ||
        (Write(fd, &length, sizeof(length)) < 0) ||
        (Write(fd, str, length+1) < 0) )
     return -1;
   return 1;
+}
+
+static int
+WriteString(int fd, const char *str)
+{
+  int length;
+  if (! str) 
+    str = "";
+  length = strlen(str);
+  return WriteStringLen(fd, str, length);
 }
 
 static int
@@ -880,17 +928,21 @@ map_insert(Map *m, void *key, void *val)
 
 
 typedef struct {
-  Widget	widget;
   Window	window;
-  Widget	shell;
-  Window        client;
   NPP		np_instance;
   int		full_mode;
+  int           xembed_mode;
+#if USE_XT
+  Window        client;
+  Widget	widget;
+#endif
+  NPObject     *npobject;
+  NPVariant     onchange;
 } Instance;
 
 
 static Instance *
-instance_new(NPP np_instance, int full_mode) 
+instance_new(NPP np_instance, int full_mode)  
 {
   Instance *this = malloc(sizeof(Instance));
   if (this) 
@@ -898,6 +950,9 @@ instance_new(NPP np_instance, int full_mode)
       memset(this, 0, sizeof(Instance));
       this->np_instance = np_instance;
       this->full_mode = full_mode;
+      this->xembed_mode = 0;
+      this->npobject = 0;
+      VOID_TO_NPVARIANT(this->onchange);
     }
   return this;
 }
@@ -907,28 +962,12 @@ instance_free(Instance *this)
 {
   if (this)
     {
+      NPN_ReleaseVariantValue(&this->onchange);
       memset(this, 0, sizeof(Instance));
       free(this);
     }
 }
 
-static void
-instance_detach(Instance *this)
-{
-  this->widget = 0;
-  this->window = 0;
-  this->shell  = 0;
-  this->client = 0;
-}
-
-static void
-instance_attach(Instance *this, Widget widget, Window window, Widget shell)
-{
-  this->widget = widget; 
-  this->window = window; 
-  this->shell = shell;
-  this->client = 0;
-}
 
 
 /* ------------------------------------------------------------ */
@@ -1007,64 +1046,44 @@ delayedrequest_purge(DelayedRequestList *dlist)
 
 #define ENV_DJVU_STORAGE_PTR	"_DJVU_STORAGE_PTR"
 
-/*
- * The plugin can be freely loaded/unloaded by Netscape, so any static
- * variable is at risk of being destroyed at any time (after NPP_Shutdown()
- * is called)
- * We divide all static variables into three cathegory:
- *    1. Variables, which are just shortcuts to some global structures
- *	 e.g. app_context, which is application-specific. To avoid calling
- *       the XtWidgetToApplicationContext(widget) every time, we call
- *       it once and cache the result
- *    2. Variables, which correspond to resources, which were *created* by
- *       this particular load of the nsdejavu.so, and which need to be
- *	 destroyed when the nsdejavu.so is being unloaded. Examples:
- *	 'instance' map, 'input_id' handler, etc.
- *    3. Variables corresponding to resources, which need to be allocated
- *       only once in the Netscape lifetime. Examples are 'font10', 'white',
- *       etc. These things are application-specific and should not be
- *       changed between the plugin's loading/unloading. We store pointers
- *       to them in the Netscape's environment.
+/* The plugin can be freely loaded/unloaded by Netscape, 
+ * so any static variable is at risk of being destroyed at any time
+ * after NPP_Shutdown() is called. */
+
+/* -- These variables need to be destroyed and reinitialized
+ *    when the plugin is reloaded. 
  */
-
-/* ********************** Group 1 ************************
- * *********** Shortcuts to global structures ************
- */
-
-static char * reload_msg = 
-( "An internal error occurred in the DjVu plugin.\n"
-  "Some of the embeded DjVu images may not be visible.\n"
-  "Please reload the page.\n\n" );
-
-
-/* ********************** Group 2 ************************
- * ********* Things, that need to be destroyed ***********
- */
-
 static int			delay_pipe[2];
-static XtInputId		input_id, delay_id;
 static Map                      instance, strinstance;
 static DelayedRequestList	delayed_requests;
+static NPIdentifier             npid_getdjvuopt;
+static NPIdentifier             npid_setdjvuopt;
+static NPIdentifier             npid_onchange;
+static NPIdentifier             npid_version;
+#if USE_XT
+static XtInputId		input_id, delay_id;
+#endif
+#if USE_GLIB
+static gint                     input_gid, delay_gid;
+#endif
 
-/* ********************** Group 3 ************************
- * ************ Things, created only once ****************
+/* -- These variables need to be saved and restored
+ *    when the plugin is reloaded. 
  */
-
 static int		pipe_read = -1;
 static int              pipe_write = -1;
 static int              rev_pipe = -1;
+static int              scriptable = 0;
+static int              xembedable = 0;
 static unsigned long	white, black;
 static Colormap         colormap;
-static GC		text_gc;
-static XFontStruct	*font10, *font12, *font14, *font18, *fixed_font;
 
 typedef struct
 {
   int pipe_read, pipe_write, rev_pipe;
+  int scriptable, xembedable;
   unsigned long white, black;
   Colormap colormap;
-  GC text_gc;
-  XFontStruct *font10, *font12, *font14, *font18, *fixed_font;
 }  SavedStatic;
 
 static void
@@ -1093,15 +1112,11 @@ SaveStatic(void)
       storage->pipe_read = pipe_read;
       storage->pipe_write = pipe_write;
       storage->rev_pipe = rev_pipe;
+      storage->scriptable = scriptable;
+      storage->xembedable = xembedable;
       storage->white = white;
       storage->black = black;
       storage->colormap = colormap;
-      storage->text_gc = text_gc;
-      storage->font10 = font10;
-      storage->font12 = font12;
-      storage->font14 = font14;
-      storage->font18 = font18;
-      storage->fixed_font = fixed_font;
     }
 }
 
@@ -1120,23 +1135,19 @@ LoadStatic(void)
       pipe_read = storage->pipe_read;
       pipe_write = storage->pipe_write;
       rev_pipe = storage->rev_pipe;
+      scriptable = storage->scriptable;
+      xembedable = storage->xembedable;
       white = storage->white;
       black = storage->black;
       colormap = storage->colormap;
-      text_gc = storage->text_gc;
-      font10 = storage->font10;
-      font12 = storage->font12;
-      font14 = storage->font14;
-      font18 = storage->font18;
-      fixed_font = storage->fixed_font;
     } 
 }
 
 
 
 /*******************************************************************************
- ******************************* Intrinsic Callbacks ****************************
-*******************************************************************************/
+ ********************************** Callbacks **********************************
+ *******************************************************************************/
 
 static int  Detach(void * id);
 static int  Resize(void * id);
@@ -1146,17 +1157,10 @@ static void ProgramDied(void);
 static int  StartProgram(void);
 
 
-static void
-Destroy_cb(Widget w, XtPointer cl_data, XtPointer ptr)
-     /* Called when the instance's drawing area is about to be destroyed */
-{
-  void * id = cl_data;
-  Detach(id);
-}
+/******* Pipe functions ********/
 
 static void
-Delay_cb(XtPointer ptr, int * fd, XtInputId *xid)
-     /* Called when there are delayed requests to be processed */
+process_delayed_requests(void)
 {
   char ch;
   DelayedRequest *reqp;
@@ -1168,7 +1172,7 @@ Delay_cb(XtPointer ptr, int * fd, XtInputId *xid)
         {
         case CMD_SHOW_STATUS:
           if ((inst = map_lookup(&instance, reqp->id)))
-            if (inst->widget) 
+            if (inst->window) 
               NPN_Status(inst->np_instance, reqp->status);
           break;
         case CMD_GET_URL:
@@ -1185,8 +1189,20 @@ Delay_cb(XtPointer ptr, int * fd, XtInputId *xid)
               const char *target = (reqp->target && reqp->target[0]) 
                 ? reqp->target : 0;
               if (NPN_GetURLNotify(inst->np_instance, reqp->url, target, 0)
-                  != NPERR_NO_ERROR)
+                  != NPERR_NO_ERROR )
                 NPN_GetURL(inst->np_instance, reqp->url, target);
+            }
+          break;
+        case CMD_ON_CHANGE:
+          if ((inst = map_lookup(&instance, reqp->id)) 
+              && NPVARIANT_IS_STRING(inst->onchange) )
+            {
+              NPString *code = &NPVARIANT_TO_STRING(inst->onchange);
+              NPP npp = inst->np_instance;
+              NPVariant res;
+              VOID_TO_NPVARIANT(res);
+              NPN_Evaluate(npp, inst->npobject, code, &res);
+              NPN_ReleaseVariantValue(&res);
             }
           break;
         default:
@@ -1197,22 +1213,8 @@ Delay_cb(XtPointer ptr, int * fd, XtInputId *xid)
 }
 
 static void
-Input_cb(XtPointer ptr, int * fd, XtInputId *xid)
-     /* Called when we receive commands from the 'djview'
-        This function can be called either by Xt toolkit (when Netscape
-        is idle), or by Refresh_cb() when we're waiting for a confirmation
-        from the viewer.
-        
-        Due to the thing above we do not process request here (Netscape
-        doesn't like when you call NPP_GetURL() from NPN_Write()). We
-        queue the request and process it later (in Delay_cb()) */
+process_requests(void)
 {
-  /* For some weird reason Input_cb() can also be called when
-     there is a problem with the pipes. Ideally, instead of calling
-     this callback (which is XtInputReadMask), Intrinsic should
-     call callback associated with XtInputExceptMask. But it doesn't
-     do it so. Thus, we need to check for the status of pipes manually
-  */
   if (!IsConnectionOK(FALSE))
     {
     problem:
@@ -1252,6 +1254,15 @@ Input_cb(XtPointer ptr, int * fd, XtInputId *xid)
             write(delay_pipe[1], "1", 1);
           }
           break;
+        case CMD_ON_CHANGE:
+          {
+            DelayedRequest *reqp = delayedrequest_append(&delayed_requests);
+            if (!reqp) return;
+            reqp->req_num = req_num;
+            if ( (ReadPointer(rev_pipe,&reqp->id,0,0) <= 0) )
+              goto problem;
+            write(delay_pipe[1], "1", 1);
+          }
         default:
           break;
         }
@@ -1270,7 +1281,7 @@ Input_cb(XtPointer ptr, int * fd, XtInputId *xid)
 }
 
 static void
-Refresh_cb(void)
+check_requests(void)
 {
   if (rev_pipe)
     {
@@ -1283,17 +1294,48 @@ Refresh_cb(void)
       tv.tv_usec = 0;
       rc = select(rev_pipe+1, &read_fds, 0, 0, &tv);
       if (rc>0)
-        Input_cb(0, 0,0);
+        process_requests();
     }
+}
+
+
+
+
+/******* Xt Callbacks ********/
+
+#if USE_XT
+
+static XtInputId
+xt_add_input_fd(XtAppContext app, int fd, XtInputCallbackProc proc)
+{
+  return XtAppAddInput(app, fd, (XtPointer) XtInputReadMask, proc, 0);
+}
+
+static void
+Delay_cb(XtPointer ptr, int * fd, XtInputId *xid)
+{
+  process_delayed_requests();
+}
+
+static void
+Input_cb(XtPointer ptr, int * fd, XtInputId *xid)
+{
+  process_requests();
+}
+
+static void
+Destroy_cb(Widget w, XtPointer cl_data, XtPointer ptr)
+{
+  Detach((void*)cl_data);
 }
 
 static void
 Resize_hnd(Widget w, XtPointer cl_data, XEvent * event, Boolean * cont)
 {
-  /* This function is necessary because Netscape sometimes doesn't resize the
-     drawing area along with the shell. So I have to do it manually. */
+  /* This function is necessary because Netscape 
+     sometimes doesn't resize the drawing area. */
   *cont = True;
-  if (event->type==ConfigureNotify)	/* There can be a GravityNotify too */
+  if (event->type == ConfigureNotify)	/* There can be a GravityNotify too */
     {
       Instance *inst;
       void *id = (void*)cl_data;
@@ -1303,8 +1345,8 @@ Resize_hnd(Widget w, XtPointer cl_data, XEvent * event, Boolean * cont)
     }
 }
 
-const long Event_hnd_mask = ( KeyPressMask | KeyReleaseMask |
-                              SubstructureNotifyMask );
+static const long event_mask = 
+  (KeyPressMask|KeyReleaseMask|SubstructureNotifyMask);
 
 static void
 Simulate_focus(Display *dpy, Window client, int yes)
@@ -1356,6 +1398,40 @@ Event_hnd(Widget w, XtPointer cl_data, XEvent * event, Boolean * cont)
         }
     }
 }
+
+#endif
+
+/******* Gtk Callbacks ********/
+
+#if USE_GLIB
+
+static gint
+g_source_add_input_fd(int fd, GIOFunc func)
+{
+  GIOCondition cond = G_IO_IN | G_IO_PRI | G_IO_ERR | G_IO_HUP;
+  GIOChannel *channel = g_io_channel_unix_new(fd);
+  gint result = g_io_add_watch(channel, cond, func, 0);
+  g_io_channel_unref(channel);
+  return result;
+}
+
+static gboolean
+Delay_gcb(GIOChannel *source, GIOCondition condition, gpointer data)
+{
+  process_delayed_requests();
+  return TRUE;
+}
+
+static gboolean
+Input_gcb(GIOChannel *source, GIOCondition condition, gpointer data)
+{
+  process_requests();
+  return TRUE;
+}
+
+#endif
+
+
 
 
 /*******************************************************************************
@@ -1524,7 +1600,7 @@ IsConnectionOK(int handshake)
   if (handshake)
     {
       if ( (WriteInteger(pipe_write, CMD_HANDSHAKE) <= 0) ||
-           (ReadResult(pipe_read, rev_pipe, Refresh_cb) <= 0) )
+           (ReadResult(pipe_read, rev_pipe, check_requests) <= 0) )
         return FALSE;
     }
   return TRUE;
@@ -1544,9 +1620,16 @@ static void
 CloseConnection(void)
 {
   /* Close all connections to the viewer */
+#if USE_XT
   if (input_id) 
     XtRemoveInput(input_id); 
   input_id=0;
+#endif
+#if USE_GLIB
+  if (input_gid)
+    g_source_remove(input_gid);
+  input_gid=0;
+#endif
   if (pipe_read>0) 
     close(pipe_read); 
   pipe_read=-1;
@@ -1569,21 +1652,23 @@ Resize(void * id)
   Instance *inst;
   if (! (inst = map_lookup(&instance, id)))
     return 1;
-  if (inst->widget)
-   {
-     Dimension width, height;
-     XtVaGetValues(inst->widget,
-                   XtNwidth, &width,
-                   XtNheight, &height, NULL);
-     if (! IsConnectionOK(TRUE))
-       return -1;
-     if ( (WriteInteger(pipe_write, CMD_RESIZE) <= 0) ||
-          (WritePointer(pipe_write, id) <= 0) ||
-          (WriteInteger(pipe_write, width) <= 0) ||
-          (WriteInteger(pipe_write, height) <= 0) ||
-          (ReadResult(pipe_read, rev_pipe, Refresh_cb) <= 0) )
-       return -1;
-   }
+  if (inst->xembed_mode)
+    return 1;
+#if USE_XT
+  else if (inst->widget && !inst->xembed_mode)
+    {
+      Dimension width, height;
+      XtVaGetValues(inst->widget, XtNwidth, &width, XtNheight, &height, NULL);
+      if (! IsConnectionOK(TRUE))
+        return -1;
+      if ( (WriteInteger(pipe_write, CMD_RESIZE) <= 0) ||
+           (WritePointer(pipe_write, id) <= 0) ||
+           (WriteInteger(pipe_write, width) <= 0) ||
+           (WriteInteger(pipe_write, height) <= 0) ||
+           (ReadResult(pipe_read, rev_pipe, check_requests) <= 0) )
+        return -1;
+    }
+#endif
   return 1;
 }
 
@@ -1593,19 +1678,26 @@ Detach(void * id)
   Instance *inst;
   if (! (inst = map_lookup(&instance, id)))
     return 1;
-  if (inst->widget)
+  if (inst->window)
     {
-      XtRemoveCallback(inst->widget, XtNdestroyCallback, Destroy_cb, id);
-      XtRemoveEventHandler(inst->widget, Event_hnd_mask,
-                           False, Event_hnd, id);
-      XtRemoveEventHandler(inst->widget, StructureNotifyMask,
-                           False, Resize_hnd, id);
-      instance_detach(inst);
+#if USE_XT
+      if (inst->widget && !inst->xembed_mode)
+        {
+          XtRemoveCallback(inst->widget, XtNdestroyCallback, Destroy_cb, id);
+          XtRemoveEventHandler(inst->widget, event_mask,
+                               False, Event_hnd, id);
+          XtRemoveEventHandler(inst->widget, StructureNotifyMask,
+                               False, Resize_hnd, id);
+          inst->widget = 0;
+          inst->client = 0;
+        }
+#endif
+      inst->window = 0;
       if (! IsConnectionOK(TRUE))
         return -1;
       if ( (WriteInteger(pipe_write, CMD_DETACH_WINDOW) <= 0) ||
            (WritePointer(pipe_write, id) <= 0) ||
-           (ReadResult(pipe_read, rev_pipe, Refresh_cb) <= 0) )
+           (ReadResult(pipe_read, rev_pipe, check_requests) <= 0) )
         return -1;
     }
   return 1;
@@ -1616,35 +1708,44 @@ Attach(Display * displ, Window window, void * id)
 {
   char *displ_str;
   Instance *inst;
-  int depth;
+  Screen *screen;
   Colormap cmap;
   Visual *visual;
-  Widget shell;
-  Widget widget;
   char protocol_str[128]; 
-  XFontStruct * font=0;
-  const char *text="DjVu plugin is being loaded. Please stand by...";
-  XtAppContext app_context;  
-  Dimension width, height;
-  unsigned long back_color;
-  XColor cell;
+  XWindowAttributes attributes;
+  int width, height;
+#if USE_XT
+  XtAppContext app_context = 0;   
+  Widget widget = 0;
+#endif
   
   XSync(displ, False);
-  if (! (inst = map_lookup(&instance, id)))
+  if (!(inst = map_lookup(&instance, id)))
     return 1;
 
-  widget = XtWindowToWidget(displ, window);
-  XtAddCallback(widget, XtNdestroyCallback, Destroy_cb, id);
-  XtAddEventHandler(widget, Event_hnd_mask, False, Event_hnd, id);
-  XtAddEventHandler(widget, StructureNotifyMask, False, Resize_hnd, id);
-  
-  app_context = XtWidgetToApplicationContext(widget);
-  if (! input_id)
-    input_id = XtAppAddInput(app_context, rev_pipe,
-                             (XtPointer) XtInputReadMask, Input_cb, 0);
-  if (!delay_id)
-    delay_id = XtAppAddInput(app_context, delay_pipe[0],
-                             (XtPointer) XtInputReadMask, Delay_cb, 0);
+#if USE_XT
+  if (!inst->xembed_mode)
+    {
+      widget = XtWindowToWidget(displ, window);
+      app_context = XtWidgetToApplicationContext(widget);
+      XtAddCallback(widget, XtNdestroyCallback, Destroy_cb, id);
+      XtAddEventHandler(widget, event_mask, False, Event_hnd, id);
+      XtAddEventHandler(widget, StructureNotifyMask, False, Resize_hnd, id);
+      if (! input_id)
+        input_id = xt_add_input_fd(app_context, rev_pipe, Input_cb);
+      if (! delay_id)
+        delay_id = xt_add_input_fd(app_context, delay_pipe[0], Delay_cb);
+    }
+#endif
+#if USE_GLIB
+  if (inst->xembed_mode)
+    {
+      if (! input_gid)
+        input_gid = g_source_add_input_fd(rev_pipe, Input_gcb);
+      if (! delay_gid)
+        delay_gid = g_source_add_input_fd(delay_pipe[0], Delay_gcb);
+    }
+#endif
   
   /* Preparing CMD_ATTACH_WINDOW attributes */
   displ_str = DisplayString(displ);
@@ -1652,116 +1753,82 @@ Attach(Display * displ, Window window, void * id)
     displ_str=getenv("DISPLAY");
   if (!displ_str) 
     displ_str=":0";
-  shell = widget;
-  while(!XtIsShell(shell)) 
-    shell = XtParent(shell);
-  XtVaGetValues(shell, XtNvisual, &visual, 
-                XtNcolormap, &cmap, XtNdepth, &depth, NULL);
-  if (!visual) 
-    visual = XDefaultVisualOfScreen(XtScreen(shell));
-  /* Process colormap */
-  if (!colormap)
-    {
-      /* Allocating black and white colors */
-      XColor white_screen, white_exact;
-      XColor black_screen, black_exact;
-      XAllocNamedColor(displ, cmap, "white", &white_screen, &white_exact);
-      white = white_screen.pixel;
-      XAllocNamedColor(displ, cmap, "black", &black_screen, &black_exact);
-      black = black_screen.pixel;
-      CopyColormap(displ, visual, XtScreen(shell), cmap);
-    }
-  /* Protocol string could be "XEMBED/..." to indicate that we want XEMBED. */
-  protocol_str[0]=0;
-  /* Old viewers want the background color name instead. */
-  if (! protocol_str[0])
-    {
-      XtVaGetValues(widget, XtNwidth, &width, XtNheight, &height,
-                    XtNbackground, &back_color, NULL);
-      cell.flags=DoRed | DoGreen | DoBlue;
-      cell.pixel=back_color;
-      XQueryColor(displ, cmap, &cell);
-      sprintf(protocol_str, "rgb:%X/%X/%X", cell.red, cell.green, cell.blue);
-    }
-  /* Map widget */
-  XtMapWidget(widget);
-  XSync(displ, False);
-  /* Creating GC for "Stand by..." message */
-  if (!text_gc)
-    {
-      text_gc = XCreateGC(displ, window, 0, 0);
-      XSetForeground(displ, text_gc, black);
-    }
-  /* Load font for "Stand by..." message */
-  if (!font)
-    {
-      if (!font18)
-        font18=XLoadQueryFont(displ, "-*-helvetica-medium-r-normal--18-*");
-      if (font18 && XTextWidth(font18, text, strlen(text))*5<=width*4)
-        font=font18;
-    }
-  if (!font)
-    {
-      if (!font14)
-        font14=XLoadQueryFont(displ, "-*-helvetica-medium-r-normal--14-*");
-      if (font14 && XTextWidth(font14, text, strlen(text))*5<=width*4)
-        font=font14;
-    }
-  if (!font)
-    {
-      if (!font12)
-        font12=XLoadQueryFont(displ, "-*-helvetica-medium-r-normal--12-*");
-      if (font12 && XTextWidth(font12, text, strlen(text))*5<=width*4)
-        font=font12;
-    }
-  if (!font)
-    {
-      if (!font10)
-        font10=XLoadQueryFont(displ, "-*-helvetica-medium-r-normal--10-*");
-      if (font10 && XTextWidth(font10, text, strlen(text))*5<=width*4)
-        font=font10;
-    }
-  if (!font)
-    {
-      if (!fixed_font)
-        fixed_font=XLoadQueryFont(displ, "fixed");
-      if (fixed_font && XTextWidth(fixed_font, text, strlen(text))*6<=width*5)
-        font=fixed_font;
-    }
-  /* Paint the drawing area and display "Stand by..." message */
-  XtVaSetValues(widget, XtNforeground, black, XtNbackground, white, NULL);
-  if (font && text_gc)
-    {
-      int text_width = XTextWidth(font, text, strlen(text));
-      XSetFont(displ, text_gc, font->fid);
-      XDrawString(displ, window, text_gc, (width-text_width)/2,
-                  height/2, text, strlen(text));
-    }
   
-  XSync(displ,False);
-  if ( (WriteInteger(pipe_write, CMD_ATTACH_WINDOW) <= 0) ||
-       (WritePointer(pipe_write, id) <= 0) ||
-       (WriteString(pipe_write,  displ_str) <= 0) ||
-       (WriteString(pipe_write,  protocol_str) <= 0) ||
-       (WriteInteger(pipe_write, window) <= 0) ||
-       (WriteInteger(pipe_write, colormap) <= 0) ||
-       (WriteInteger(pipe_write, XVisualIDFromVisual(visual)) <= 0) ||
-       (WriteInteger(pipe_write, width) <= 0) ||
-       (WriteInteger(pipe_write, height) <= 0) ||
-       (ReadResult(pipe_read, rev_pipe, Refresh_cb) <= 0) )
+  if (XGetWindowAttributes(displ, window, &attributes))
     {
-      /* Failure */
-      if (widget) 
-        XtRemoveCallback(widget, XtNdestroyCallback, Destroy_cb, id);
-      XtRemoveEventHandler(widget, Event_hnd_mask, False, Event_hnd, id);
-      XtRemoveEventHandler(widget, StructureNotifyMask, False, Resize_hnd, id);
-      instance_detach(inst);
-      return -1;
+      width = attributes.width;
+      height = attributes.height;
+      screen = attributes.screen;
+      cmap = attributes.colormap;
+      visual = attributes.visual;
+      if (!colormap)
+        {
+          /* Allocating black and white colors */
+          XColor white_screen, white_exact;
+          XColor black_screen, black_exact;
+          XAllocNamedColor(displ, cmap, "white", &white_screen, &white_exact);
+          white = white_screen.pixel;
+          XAllocNamedColor(displ, cmap, "black", &black_screen, &black_exact);
+          black = black_screen.pixel;
+          CopyColormap(displ, visual, screen, cmap);
+        }
+      /* Prepare protocol string */
+      protocol_str[0]=0;
+      if (inst->xembed_mode)
+        strcpy(protocol_str, "XEMBED");
+#if USE_XT
+      else
+        {
+          /* Old viewers want the background color name instead. */
+          unsigned long back_color;
+          XColor cell;
+          XtVaGetValues(widget, XtNbackground, &back_color, NULL);
+          cell.flags = DoRed | DoGreen | DoBlue;
+          cell.pixel = back_color;
+          XQueryColor(displ, cmap, &cell);
+          sprintf(protocol_str, "rgb:%X/%X/%X", cell.red, cell.green, cell.blue);
+        }
+      if (widget && !inst->xembed_mode)
+        XtMapWidget(widget);
+#endif
+      XSync(displ, False);
+      
+      /* Send attach command */
+      if ( (WriteInteger(pipe_write, CMD_ATTACH_WINDOW) > 0) &&
+           (WritePointer(pipe_write, id) > 0) &&
+           (WriteString(pipe_write,  displ_str) > 0) &&
+           (WriteString(pipe_write,  protocol_str) > 0) &&
+           (WriteInteger(pipe_write, window) > 0) &&
+           (WriteInteger(pipe_write, colormap) > 0) &&
+           (WriteInteger(pipe_write, XVisualIDFromVisual(visual)) > 0) &&
+           (WriteInteger(pipe_write, width) > 0) &&
+           (WriteInteger(pipe_write, height) > 0) &&
+           (ReadResult(pipe_read, rev_pipe, check_requests) > 0) )
+        {
+          /* Success */ 
+          inst->window = window; 
+#if USE_XT
+          inst->widget = widget; 
+          inst->client = 0;
+#endif
+          return 1;
+        }
     }
-  /* Success */
-  instance_attach(inst, widget, window, shell);
-  return 1;
+  /* Failure */
+#if USE_XT
+  if (widget)
+    {
+      XtRemoveCallback(widget, XtNdestroyCallback, Destroy_cb, id);
+      XtRemoveEventHandler(widget, event_mask, False, Event_hnd, id);
+      XtRemoveEventHandler(widget, StructureNotifyMask, False, Resize_hnd, id);
+    }
+  inst->widget = 0;
+  inst->client = 0;
+#endif
+  inst->window = 0;
+  return -1;
 }
+
 
 static void
 UnsetVariable(const char *var)
@@ -1792,7 +1859,7 @@ StartProgram(void)
   int _rev_pipe;
   void *sigsave;
   pid_t pid;
-  char *ptr;
+  char *ptr, *p, *q;
   struct stat st;
   int s;
   
@@ -1862,7 +1929,7 @@ StartProgram(void)
           chmod(path, mode);
         }
       execl(path, path, "-netscape", NULL);
-      fprintf(stderr,"Failed to execute %s\n", path);
+      fprintf(stderr,"nsdejavu: failed to execute %s\n", path);
       fflush(stderr);
       _exit(1);
     }
@@ -1880,9 +1947,285 @@ StartProgram(void)
       CloseConnection();
       return -1;
     }
+  scriptable = 0;
+  xembedable = 0;
+  for (p=ptr; *p; p++)
+    {
+      if (isspace(*p))
+        continue;
+      for (q=p; *q; q++)
+        if (isspace(*q))
+          break;
+      s = *q;
+      *q = 0;
+      if (!strcmp(p, "XEMBED"))
+        xembedable = 1;
+      if (!strcmp(p, "SCRIPT"))
+        scriptable = 1;
+      *q = s;
+      p = q;
+    }
   free(ptr);
   return 1;
 }
+
+/*******************************************************************************
+***************************** NPRuntime interface ******************************
+*******************************************************************************/
+
+static void
+npvariantcpy(NPVariant *to, const NPVariant *from)
+{
+  if (NPVARIANT_IS_OBJECT(*from))
+    {
+      NPObject *object = NPVARIANT_TO_OBJECT(*from);
+      NPN_RetainObject(object);
+      OBJECT_TO_NPVARIANT(object, *to);
+      return;
+    }
+  if (NPVARIANT_IS_STRING(*from))
+    {
+      const NPString *s = &NPVARIANT_TO_STRING(*from);
+      char *nstr = NPN_MemAlloc(s->utf8length+1);
+      VOID_TO_NPVARIANT(*to);
+      if (nstr)
+        {
+          memcpy(nstr, s->utf8characters, s->utf8length);
+          nstr[s->utf8length] = 0;
+          STRINGZ_TO_NPVARIANT(nstr, *to);
+        }
+      return;
+    }
+  *to = *from;
+}
+
+typedef struct FatNPObject {
+  NPObject obj;
+  NPP npp;
+} FatNPObject;
+
+static NPObject *
+np_allocate(NPP npp, NPClass *npclass)
+{
+  FatNPObject *npobj = malloc(sizeof(FatNPObject));
+  if (npobj)
+    {
+      memset(npobj, 0, sizeof(FatNPObject));
+      npobj->obj._class = npclass;
+      npobj->obj.referenceCount = 1;
+      npobj->npp = npp;
+    }
+  return (NPObject*)npobj;
+}
+
+static void
+np_deallocate(NPObject *npobj)
+{
+  free(npobj);
+}
+
+static void
+np_invalidate(NPObject *npobj)
+{
+}
+
+static bool 
+np_hasmethod(NPObject *npobj, NPIdentifier name)
+{
+  if (name == npid_getdjvuopt ||
+      name == npid_setdjvuopt )
+    return 1;
+  return 0;
+}
+
+static bool
+np_invoke(NPObject *npobj, NPIdentifier name,
+          const NPVariant *args, uint32_t argCount,
+          NPVariant *result)
+{
+  void *id = 0;
+  Instance *inst = 0;
+  if (npobj->_class && npobj->_class->allocate == np_allocate)
+    if ((id = ((FatNPObject*)npobj)->npp->pdata))
+      inst = map_lookup(&instance, id);
+  if (inst && name == npid_getdjvuopt)
+    {
+      // GetDjVuOpt ------------
+      if (argCount != 1)
+        NPN_SetException(npobj, "Exactly one argument is expected");
+      else if (args[0].type != NPVariantType_String)
+        NPN_SetException(npobj, "First argument should be a string");
+      else
+        {
+          char *res = 0;
+          char *tmp = 0;
+          const char *kname = NPVARIANT_TO_STRING(args[0]).utf8characters;
+          int klen = NPVARIANT_TO_STRING(args[0]).utf8length;
+          if ( (WriteInteger(pipe_write, CMD_GET_DJVUOPT) <= 0) ||
+               (WritePointer(pipe_write, id) <= 0) ||
+               (WriteStringLen(pipe_write, kname, klen) <= 0) ||
+               (ReadResult(pipe_read, rev_pipe, check_requests) <= 0) ||
+               (ReadString(pipe_read, &res, 0, 0) <= 0) )
+            {
+              NPN_SetException(npobj, "Djview program died");
+              ProgramDied();
+              return 0;
+            }
+          if (! (tmp = NPN_MemAlloc(strlen(res) + 1)))
+            {
+              NPN_SetException(npobj, "Out of memory");
+              return 0;
+            }
+          strcpy(tmp, res);
+          STRINGZ_TO_NPVARIANT(tmp, *result);
+          free(res);
+          return 1;
+        }
+      return 0;
+    }
+  else if (inst && name == npid_setdjvuopt)
+    {
+      // SetDjVuOpt ------------
+      if (argCount != 2)
+        NPN_SetException(npobj, "Exactly two arguments were expected");
+      else if (args[0].type != NPVariantType_String)
+        NPN_SetException(npobj, "First argument should be a string");
+      else
+        {
+          const char *kname = NPVARIANT_TO_STRING(args[0]).utf8characters;
+          int klen = NPVARIANT_TO_STRING(args[0]).utf8length;
+          char buffer[32];
+          const char *arg = buffer;
+          int len = -1;
+          if (NPVARIANT_IS_INT32(args[1]))
+            sprintf(buffer,"%d", NPVARIANT_TO_INT32(args[1]));
+          else if (NPVARIANT_IS_DOUBLE(args[1]))
+            sprintf(buffer,"%e", NPVARIANT_TO_DOUBLE(args[1]));
+          else if (NPVARIANT_IS_STRING(args[1]))
+            {
+              arg = NPVARIANT_TO_STRING(args[1]).utf8characters;
+              len = NPVARIANT_TO_STRING(args[1]).utf8length;
+            }
+          else
+            {
+              NPN_SetException(npobj, "Arg 2 should be a string or a number");
+              return 0;
+            }
+          if (len < 0)
+            len = strlen(arg);
+          if ( (WriteInteger(pipe_write, CMD_SET_DJVUOPT) <= 0) ||
+               (WritePointer(pipe_write, id) <= 0) ||
+               (WriteStringLen(pipe_write, kname, klen) <= 0) ||
+               (WriteStringLen(pipe_write, arg, len) <= 0) ||
+               (ReadResult(pipe_read, rev_pipe, check_requests) <= 0) )
+            {
+              NPN_SetException(npobj, "Djview program died");
+              ProgramDied();
+              return 0;
+            }
+          VOID_TO_NPVARIANT(*result);
+          return 1;
+        }
+      return 0;
+    }
+  NPN_SetException(npobj, "Unrecognized method");
+  return 0;
+}
+
+static bool 
+np_invokedefault(NPObject *npobj, const NPVariant *args, 
+                 uint32 argCount, NPVariant *result)
+{
+  return 0;
+}
+
+static bool 
+np_hasproperty(NPObject *npobj, NPIdentifier name)
+{
+  if (name == npid_onchange || 
+      name == npid_version)
+    return 1;
+  return 0;
+}
+
+static bool 
+np_getproperty(NPObject *npobj, NPIdentifier name, NPVariant *result)
+{
+  void *id = 0;
+  Instance *inst = 0;
+  if (npobj->_class && npobj->_class->allocate == np_allocate)
+    if ((id = ((FatNPObject*)npobj)->npp->pdata))
+      inst = map_lookup(&instance, id);
+  if (inst && name == npid_onchange)
+    {
+      npvariantcpy(result, &inst->onchange);
+      return 1;
+    }
+  else if (inst && name == npid_version)
+    {
+      NPVariant res;
+      STRINGZ_TO_NPVARIANT("nsdejavu+djview4 (x11)", res);
+      npvariantcpy(result, &res);
+      return 1;
+    }
+  return 0;
+}
+
+static bool
+np_setproperty(NPObject *npobj, NPIdentifier name, const NPVariant *value)
+{
+  void *id = 0;
+  Instance *inst = 0;
+  if (npobj->_class && npobj->_class->allocate == np_allocate)
+    if ((id = ((FatNPObject*)npobj)->npp->pdata))
+      inst = map_lookup(&instance, id);
+  if (inst && name == npid_onchange)
+    {
+      int onchange_flag = 0;
+      NPN_ReleaseVariantValue(&inst->onchange);
+      npvariantcpy(&inst->onchange, value);
+      if (NPVARIANT_IS_STRING(*value))
+        onchange_flag = 1;
+      else if (! NPVARIANT_IS_NULL(*value) && 
+               ! NPVARIANT_IS_VOID(*value) )
+        {
+          NPN_SetException(npobj, "String or null expected");
+          return 0;
+        }
+      if ( (WriteInteger(pipe_write, CMD_ON_CHANGE) <= 0) ||
+           (WritePointer(pipe_write, id) <= 0) ||
+           (WriteInteger(pipe_write, onchange_flag) <= 0) ||
+           (ReadResult(pipe_read, rev_pipe, check_requests) <= 0) )
+        {
+          NPN_SetException(npobj, "Djview program died");
+          ProgramDied();
+          return 0;
+        }
+      return 1;
+    }
+  return 0;
+}
+
+static bool
+np_removeproperty(NPObject *npobj, NPIdentifier name)
+{
+  NPVariant v;
+  VOID_TO_NPVARIANT(v);
+  return np_setproperty(npobj, name, &v);
+}
+
+
+static NPClass npclass = {
+  NP_CLASS_STRUCT_VERSION,
+  np_allocate, np_deallocate, np_invalidate,
+  np_hasmethod, np_invoke, np_invokedefault,
+  np_hasproperty, 
+  np_getproperty, 
+  np_setproperty,
+  np_removeproperty
+};
+
+
 
 /*******************************************************************************
 ***************************** Netscape plugin interface ************************
@@ -1899,18 +2242,35 @@ NPP_Initialize(void)
       if (StartProgram() < 0)
         return NPERR_GENERIC_ERROR;
     }
+  if (scriptable)
+    {
+      npid_getdjvuopt = NPN_GetStringIdentifier("getdjvuopt");
+      npid_setdjvuopt = NPN_GetStringIdentifier("setdjvuopt");
+      npid_onchange = NPN_GetStringIdentifier("onchange");
+      npid_version = NPN_GetStringIdentifier("version");
+    }
   return NPERR_NO_ERROR;
 }
 
 void
 NPP_Shutdown(void)
 {
+#if USE_XT
   if (input_id) 
     XtRemoveInput(input_id); 
   input_id = 0;
   if (delay_id) 
     XtRemoveInput(delay_id); 
   delay_id = 0;
+#endif
+#if USE_GLIB
+  if (input_gid)
+    g_source_remove(input_gid);
+  input_gid = 0;
+  if (delay_gid)
+    g_source_remove(delay_gid);
+  delay_gid = 0;
+#endif
   close(delay_pipe[0]);
   close(delay_pipe[1]);
   map_purge(&instance);
@@ -1931,7 +2291,7 @@ NPP_New(NPMIMEType mime, NPP np_inst, uint16 np_mode, int16 argc,
   int i;
   if (!IsConnectionOK(TRUE))
     {
-      fprintf(stderr, "%s", reload_msg);
+      fprintf(stderr, "nsdejavu: restarting djview (reload the page.)\n");
       CloseConnection();
       StartProgram();
     }
@@ -1964,7 +2324,7 @@ NPP_New(NPMIMEType mime, NPP np_inst, uint16 np_mode, int16 argc,
     } 
   else if (WriteInteger(pipe_write, 0) <= 0)
     goto problem;
-  if (ReadResult(pipe_read, rev_pipe, Refresh_cb) <= 0)
+  if (ReadResult(pipe_read, rev_pipe, check_requests) <= 0)
     goto problem;
   if (ReadPointer(pipe_read, &id, 0, 0) <= 0)
     goto problem;
@@ -1978,8 +2338,36 @@ NPP_New(NPMIMEType mime, NPP np_inst, uint16 np_mode, int16 argc,
     goto problem;
   if (map_insert(&instance, id, inst) < 0)
     goto problem;
-  return NPERR_NO_ERROR;
+  if (scriptable)
+    inst->npobject = NPN_CreateObject(np_inst, &npclass);
+#if USE_GLIB
+  if (xembedable)
+    NPN_GetValue(np_inst, NPNVSupportsXEmbedBool, &inst->xembed_mode);
+#endif
+#if USE_XT
+  if (inst->xembed_mode && XtWindowToWidget)
+    {
+        NPNToolkitType toolkit = 0;
+        if (NPN_GetValue(np_inst, NPNVToolkit, &toolkit) 
+            != NPERR_NO_ERROR || toolkit != NPNVGtk2 )
+          inst->xembed_mode = 0;
+    }
+#endif
+  fprintf(stderr,"nsdejavu: using the %s protocol.\n",
+          (inst->xembed_mode) ? "XEmbed" : "Xt");
+#if USE_GLIB
+  if (inst->xembed_mode && g_io_add_watch)
+    return NPERR_NO_ERROR;
+#endif
+#if USE_XT
+  if (!inst->xembed_mode && XtWindowToWidget)
+    return NPERR_NO_ERROR;
+#endif
+  fprintf(stderr,"nsdejavu: browser does not export the %s symbols.\n",
+          (inst->xembed_mode) ? "Glib2" : "Xt" );
+  return NPERR_INCOMPATIBLE_VERSION_ERROR;
 }
+
 
 NPError
 NPP_Destroy(NPP np_inst, NPSavedData ** save)
@@ -1987,11 +2375,12 @@ NPP_Destroy(NPP np_inst, NPSavedData ** save)
   Instance *inst = 0;
   void * id = np_inst->pdata;
   SavedData saved_data;
-  
   if (! (inst = map_lookup(&instance, id)))
     return NPERR_INVALID_INSTANCE_ERROR;
-  /* Detach the main window, if not already detached */
-  NPP_SetWindow(np_inst, 0);
+  if (inst->npobject)
+    NPN_ReleaseObject(inst->npobject);
+  inst->npobject = 0;
+  NPP_SetWindow(np_inst, 0); 
   map_remove(&instance, id);
   np_inst->pdata=0;
   
@@ -1999,7 +2388,7 @@ NPP_Destroy(NPP np_inst, NPSavedData ** save)
     {
       if ( (WriteInteger(pipe_write, CMD_DESTROY) <= 0) ||
            (WritePointer(pipe_write, id) <= 0) ||
-           (ReadResult(pipe_read, rev_pipe, Refresh_cb) <= 0) ||
+           (ReadResult(pipe_read, rev_pipe, check_requests) <= 0) ||
            (ReadInteger(pipe_read, &saved_data.cmd_mode, 0, 0) <= 0) ||
            (ReadInteger(pipe_read, &saved_data.cmd_zoom, 0, 0) <= 0) ||
            (ReadInteger(pipe_read, &saved_data.imgx, 0, 0) <= 0) ||
@@ -2076,7 +2465,7 @@ NPP_Print(NPP np_inst, NPPrint* printInfo)
   void * id = np_inst->pdata;
 
   if ((inst = map_lookup(&instance, id)))
-    if (inst->widget)
+    if (inst->window)
       {
         if (printInfo && printInfo->mode==NP_FULL)
           printInfo->print.fullPrint.pluginPrinted=TRUE;
@@ -2086,7 +2475,7 @@ NPP_Print(NPP np_inst, NPPrint* printInfo)
             if ( (WriteInteger(pipe_write, CMD_PRINT) <= 0) ||
                  (WritePointer(pipe_write, id) <= 0) ||
                  (WriteInteger(pipe_write, modefull) <= 0) ||
-                 (ReadResult(pipe_read, rev_pipe, Refresh_cb) <= 0) )
+                 (ReadResult(pipe_read, rev_pipe, check_requests) <= 0) )
               {
                 ProgramDied();
                 return;
@@ -2109,7 +2498,7 @@ NPP_NewStream(NPP np_inst, NPMIMEType type, NPStream *stream,
   if ( (WriteInteger(pipe_write, CMD_NEW_STREAM) <= 0) ||
        (WritePointer(pipe_write, id) <= 0) ||
        (WriteString(pipe_write, stream->url) <= 0) ||
-       (ReadResult(pipe_read, rev_pipe, Refresh_cb) <= 0) ||
+       (ReadResult(pipe_read, rev_pipe, check_requests) <= 0) ||
        (ReadPointer(pipe_read, &sid, 0, 0) <= 0) )
     {
       ProgramDied();
@@ -2141,7 +2530,7 @@ NPP_Write(NPP np_inst, NPStream *stream, int32 junk, int32 len, void *buffer)
       if ( (WriteInteger(pipe_write, CMD_WRITE) <= 0) ||
            (WritePointer(pipe_write, sid) <= 0) ||
            (WriteArray(pipe_write, len, buffer) <= 0) ||
-           (ReadResult(pipe_read, rev_pipe, Refresh_cb) <= 0) ||
+           (ReadResult(pipe_read, rev_pipe, check_requests) <= 0) ||
            (ReadInteger(pipe_read, &res, 0, 0) <= 0) )
         {
           ProgramDied();
@@ -2172,7 +2561,7 @@ NPP_DestroyStream(NPP np_inst, NPStream *stream, NPError reason)
   if ( (WriteInteger(pipe_write, CMD_DESTROY_STREAM) <= 0) ||
        (WritePointer(pipe_write, sid) <= 0) ||
        (WriteInteger(pipe_write, reason==NPRES_DONE) <= 0) ||
-       (ReadResult(pipe_read, rev_pipe, Refresh_cb) <= 0) )
+       (ReadResult(pipe_read, rev_pipe, check_requests) <= 0) )
     {
       ProgramDied();
       return NPERR_GENERIC_ERROR;
@@ -2210,7 +2599,7 @@ NPP_URLNotify(NPP np_inst, const char *url, NPReason reason, void *ptr)
       if ( (WriteInteger(pipe_write, CMD_URL_NOTIFY) <= 0) ||
            (WriteString(pipe_write, url) <= 0) ||
            (WriteInteger(pipe_write, code) <= 0) ||
-           (ReadResult(pipe_read, rev_pipe, Refresh_cb) <= 0) )
+           (ReadResult(pipe_read, rev_pipe, check_requests) <= 0) )
         {
           ProgramDied();
         }
@@ -2237,33 +2626,60 @@ NPP_GetJavaClass(void)
 
 
 NPError
-NPP_GetValue(NPP instance, NPPVariable variable, void *value)
+NPP_GetValue(NPP np_inst, NPPVariable variable, void *value)
 {
-   NPError err = NPERR_NO_ERROR;
-   switch (variable)
-     {
-     case NPPVpluginNameString:
+  NPError err = NPERR_GENERIC_ERROR;
+  switch (variable)
+    {
+      
+    case NPPVpluginNameString:
 #if defined(DJVIEW_VERSION_STR)
-       *((char **)value) = "DjView-" DJVIEW_VERSION_STR;
+      *((char **)value) = "DjView-" DJVIEW_VERSION_STR;
 #elif defined(DJVULIBRE_VERSION)
-       *((char **)value) = "DjVuLibre-" DJVULIBRE_VERSION;
+      *((char **)value) = "DjVuLibre-" DJVULIBRE_VERSION;
 #endif
-       break;
+      err = NPERR_NO_ERROR;
+      break;
+
      case NPPVpluginDescriptionString:
-     *((char **)value) =
+       *((char **)value) =
 #if defined(DJVIEW_VERSION_STR)
-       "This is the <a href=\"http://djvu.sourceforge.net\">"
-       "DjView-" DJVIEW_VERSION_STR "</a> version of the DjVu plugin.<br>"
+         "This is the <a href=\"http://djvu.sourceforge.net\">"
+         "DjView-" DJVIEW_VERSION_STR "</a> version of the DjVu plugin.<br>"
 #elif defined(DJVULIBRE_VERSION)
-       "This is the <a href=\"http://djvu.sourceforge.net\">"
-       "DjVuLibre-" DJVULIBRE_VERSION "</a> version of the DjVu plugin.<br>"
+         "This is the <a href=\"http://djvu.sourceforge.net\">"
+         "DjVuLibre-" DJVULIBRE_VERSION "</a> version of the DjVu plugin.<br>"
 #endif
-       "See <a href=\"http://djvu.sourceforge.net\">DjVuLibre</a>.";
-     break;
-     default:
-       err = NPERR_GENERIC_ERROR;
-     }
-   return err;
+         "See <a href=\"http://djvu.sourceforge.net\">DjVuLibre</a>.";
+       err = NPERR_NO_ERROR;
+       break;
+
+    case NPPVpluginNeedsXEmbed:
+      {
+        void * id = np_inst->pdata;
+        Instance *inst = map_lookup(&instance, id);
+        if (! inst || ! inst->xembed_mode) break;
+        err = NPERR_NO_ERROR;
+        *((NPBool*)value) = TRUE;
+      }
+      break;
+
+     case NPPVpluginScriptableNPObject:
+       if (scriptable)
+         {
+           void * id = np_inst->pdata;
+           Instance *inst = map_lookup(&instance, id);
+           if (!inst || !inst->npobject) break;
+           err = NPERR_NO_ERROR;
+           NPN_RetainObject(inst->npobject);
+           *((NPObject**)value) = inst->npobject;
+         }
+       break;
+    
+    default:
+      break;
+    }
+  return err;
 }
 
 
@@ -2426,14 +2842,16 @@ void
 NPN_InvalidateRect(NPP instance, NPRect *invalid)
 {
   if (mozilla_funcs.invalidaterect != NULL)
-    CallNPN_InvalidateRectProc(mozilla_funcs.invalidaterect, instance, invalid);
+    CallNPN_InvalidateRectProc(mozilla_funcs.invalidaterect, 
+                               instance, invalid);
 }
 
 void
 NPN_InvalidateRegion(NPP instance, NPRegion invalid)
 {
   if (mozilla_funcs.invalidateregion != NULL)
-    CallNPN_InvalidateRegionProc(mozilla_funcs.invalidateregion, instance, invalid);
+    CallNPN_InvalidateRegionProc(mozilla_funcs.invalidateregion, 
+                                 instance, invalid);
 }
 
 void
@@ -2506,7 +2924,24 @@ void
 NPN_ReleaseObject(NPObject *npobj)
 {
   if (mozilla_funcs.releaseobject && mozilla_has_npruntime)
-    return CallNPN_ReleaseObjectProc(mozilla_funcs.releaseobject, npobj);
+    CallNPN_ReleaseObjectProc(mozilla_funcs.releaseobject, npobj);
+}
+
+void 
+NPN_ReleaseVariantValue(NPVariant *npvariant)
+{
+  if (mozilla_funcs.releasevariantvalue && mozilla_has_npruntime)
+    CallNPN_ReleaseVariantValueProc(mozilla_funcs.releasevariantvalue, 
+                                    npvariant);
+}
+
+bool 
+NPN_Evaluate(NPP npp, NPObject* obj, NPString *script, NPVariant *result)
+{
+  if (!mozilla_funcs.createobject || !mozilla_has_npruntime)
+    return 0;
+  return CallNPN_EvaluateProc(mozilla_funcs.evaluate, 
+                              npp, obj, script, result);
 }
 
 void 

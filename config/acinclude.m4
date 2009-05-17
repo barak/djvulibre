@@ -971,3 +971,59 @@ TIFFOpen(0,0);],
    fi
 ])
 
+
+dnl ------------------------------------------------------------------
+dnl @synopsis AC_PROG_PKG_CONFIG([ACTION-IF-FOUND[, ACTION-IF-NOT-FOUND]])
+dnl Sets output variables PKG_CONFIG
+dnl ------------------------------------------------------------------
+
+
+AC_DEFUN([AC_PROG_PKG_CONFIG], 
+[
+  AC_ARG_VAR(PKG_CONFIG,[Location of the pkg-config program.])
+  AC_ARG_VAR(PKG_CONFIG_PATH, [Path for pkg-config descriptors.])
+  AC_PATH_PROG(PKG_CONFIG, pkg-config)
+  if test -z "$PKG_CONFIG" ; then
+      ifelse([$2],,:,[$2])
+  else
+      ifelse([$1],,:,[$1])
+  fi
+])
+
+
+dnl ------------------------------------------------------------------
+dnl @synopsis AC_PATH_GLIB([action-if-found],[action-if-notfound])
+dnl Search for glib.  Defines HAVE_GLIB.
+dnl Sets output variables GLIB_CFLAGS and GLIB_LIBS
+dnl ------------------------------------------------------------------
+
+AC_DEFUN([AC_PATH_GLIB],
+[
+  AC_REQUIRE([AC_PROG_PKG_CONFIG])        
+  AC_ARG_VAR(GLIB_LIBS, [Libraries for glib-2.0])
+  AC_ARG_VAR(GLIB_CFLAGS, [Compilation flags for glib-2.0])
+  AC_MSG_CHECKING([for glib])
+  if test -x "$PKG_CONFIG" ; then
+    if $PKG_CONFIG glib-2.0 ; then
+       ac_glib=yes
+       AC_MSG_RESULT([found])
+       GLIB_LIBS=`$PKG_CONFIG --libs glib-2.0`
+       AC_MSG_RESULT([setting GLIB_LIBS=$GLIB_LIBS])
+       GLIB_CFLAGS=`$PKG_CONFIG --cflags glib-2.0`
+       AC_MSG_RESULT([setting GLIB_CFLAGS=$GLIB_CFLAGS])
+       AC_DEFINE(HAVE_GLIB,1,[Define if you have glib-2.0.])
+       ifelse([$1],,:,[$1])
+    else
+       AC_MSG_RESULT([not found by pkg-config])
+       ac_glib=no
+       ifelse([$2],,:,[$2])
+    fi
+  else
+    AC_MSG_RESULT([no pkg-config])
+    ac_glib=no
+    ifelse([$2],,:,[$2])
+  fi
+])
+
+
+

@@ -58,7 +58,10 @@
 /* Define to 1 if you have the `getpwuid' function. */
 #undef HAVE_GETPWUID
 
-/* Define to 1 if you have the `iconv' function. */
+/* Define if you have glib-2.0. */
+#undef HAVE_GLIB
+
+/* Define to 1 if you have the iconv function. */
 #undef HAVE_ICONV
 
 /* Define to 1 if you have the <iconv.h> header file. */
@@ -203,6 +206,9 @@
 
 /* Define to 1 if you have the <X11/extensions/Xext.h> header file. */
 #undef HAVE_X11_EXTENSIONS_XEXT_H
+
+/* Define if you have the Xt include files. */
+#undef HAVE_XT
 
 /* Define to use g++ pragmas interface/implementation */
 #undef NEED_GNUG_PRAGMAS
