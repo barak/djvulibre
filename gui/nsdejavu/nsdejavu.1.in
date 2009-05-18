@@ -245,14 +245,6 @@ among the CGI-style flags.
 For instance, values of the key
 .B page
 can be page IDs, page titles, page numbers, or page names.
-Numbers preceded by character
-.B +
-or 
-.B -
-are interpreted as displacements relative to the current page.
-To specify an ordinal page number without risking 
-ambiguities with page titles, you can use instead the key
-.BR pageno .
 .TP
 .IB "pluginobject" ".getdjvuopt(""" key """)"
 Return the value of the djvu option
