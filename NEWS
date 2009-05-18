@@ -1,7 +1,15 @@
+NEW SINCE VERSION 3.5.21
+------------------------
+- Backported djview4 version of nsdejavu.so 
+- Various bug fixes
+
+
 NEW IN VERSION 3.5.21
 ---------------------
 - Speed improvement on multicore platforms
 - Ddjvu now can produce pdf output.
+- Various bug fixes
+
 
 NEW IN VERSION 3.5.20
 ---------------------
