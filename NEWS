@@ -1,5 +1,6 @@
-NEW SINCE VERSION 3.5.21
+NEW IN VERSION 3.5.22
 ------------------------
+- Probably the last release before djvulibre-4
 - Backported djview4 version of nsdejavu.so 
 - Various bug fixes
 
