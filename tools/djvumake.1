@@ -105,16 +105,38 @@ encoded data.
 The DjVu decoder does not yet display
 files containing JPEG-2000 data.
 .TP
-.BI FGbz= bzzfile
-Create a foreground color chunk describing one solid color
-for each
+.BI FGbz=( filename |# color )
+Create a foreground color chunk describing one solid
+color for each
 .SM JB2
 encoded mark. 
-File
-.I bzzfile
-is best created by extracting the chunk data from an existing
-DjVu file using command 
-.BR djvuextract .
+The argument can be the name
+.I filename
+of a file containing the raw data
+or can represent a single color
+.I color 
+for colorizing all the marks.
+Raw data files are best extracted from existing DjVu files
+using the command 
+.BR djvuextract . 
+Colors can be represented by exactly six hexadecimal digits, e.g. 
+.BR FGbz=#FF8080 ,
+or by one of the following sixteen HTML color names 
+defined by W3C, e.g.
+.BR FGbz=#red .
+.br
+.TS
+center,box;
+lfB lfB lfB lfB
+lfB lfB lfB lfB
+lfB lfB lfB lfB
+lfB lfB lfB lfB
+. 
+aqua	black	blue	fuchsia
+gray	green	lime	maroon
+navy	olive	purple	red
+silver	teal	white	yellow
+.TE
 .TP
 .BI FG44= iw44file
 Create a 
@@ -152,6 +174,14 @@ Create a DjVu3 include chunk pointing to the component file named
 The resulting file should then be included into a 
 multipage document using command 
 .BR djvm .
+.TP
+.BI Djbz= jb2file
+Create a 
+.SM JB2 
+shape dictionary.  File 
+.I jb2file
+must contain raw JB2 data
+describing a JB2 dictionary.
 .TP 
 .BI PPM= ppmfile
 Create a
@@ -185,10 +215,11 @@ following two commands:
 .br
 .br
 .PP
-Please refer to the DjVu specification (
-.B http://www.djvuzone.org/djvu/djvu/djvuspec/
-) for more information about the composition of a legal 
-DjVu image file.
+The DjVu specification documents in the directory
+.B doc
+of the DjVuLibre distribution provide the
+authoritative information about the composition 
+of a legal DjVu image file.
 
 .SH CREDITS
 This program was written by L\('eon Bottou <leonb@users.sourceforge.net> and

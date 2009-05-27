@@ -101,7 +101,7 @@
       Creates one IW44 foreround chunks.  File #iw44file# must be an
       IW44 file such as the files created by \Ref{c44}.  Only the first
       chunk will be copied.\\
-      {#FGbz=<bzzfile>#} &
+      {#FGbz=<bzzfile>|#<color> #} &
       Creates a chunk containing colors for each JB2 encoded object.
       Such chunks are created using class \Ref{DjVuPalette}.
       See program \Ref{cpaldjvu} for an example.\\
@@ -161,8 +161,9 @@
 int flag_contains_fg      = 0;
 int flag_contains_bg      = 0;
 int flag_contains_stencil = 0;
-int flag_contains_bg44    = 0;
 int flag_contains_incl    = 0;
+int flag_fg_needs_palette = 0;
+unsigned char stencil_color[] = {'\0','\0','\0','\0'};
 
 struct DJVUMAKEGlobal 
 {
@@ -171,6 +172,7 @@ struct DJVUMAKEGlobal
   GP<ByteStream> jb2stencil;
   GP<ByteStream> mmrstencil;
   GP<JB2Image> stencil;
+  GP<JB2Dict> dictionary;
 };
 
 static DJVUMAKEGlobal& g(void)
@@ -182,6 +184,7 @@ static DJVUMAKEGlobal& g(void)
 int w = -1;
 int h = -1;
 int dpi = 300;
+int blit_count = -1;
 
 // -- Display brief usage information
 
@@ -200,14 +203,15 @@ usage()
          "\n"
          "   INFO=w[,[h[,[dpi]]]]        --  Create the initial information chunk\n"
          "   Sjbz=jb2file                --  Create a JB2 mask chunk\n"
+         "   Djbz=jb2file                --  Create a JB2 shape dictionary\n"
          "   Smmr=mmrfile                --  Create a MMR mask chunk\n"
          "   BG44=[iw4file][:nchunks]    --  Create one or more IW44 background chunks\n"
          "   BGjp=jpegfile               --  Create a JPEG background chunk\n"
-         "   BG2k=jpeg2000file           --  Create a JPEG-2000 background chunk\n"
+         "   BG2k=jpeg2000file           --  Create a JP2K background chunk\n"
          "   FG44=iw4file                --  Create an IW44 foreground chunk\n"
-         "   FGbz=bzzfile                --  Create a BZZ foreground chunk\n"
+         "   FGbz=(bzzfile|#color)       --  Create a BZZ encoded foreground chunk\n"
          "   FGjp=jpegfile               --  Create a JPEG foreground chunk\n"
-         "   FG2k=jpeg2000file           --  Create a JPEG-2000 foreground chunk\n"
+         "   FG2k=jpeg2000file           --  Create a JP2K foreground chunk\n"
          "   INCL=fileid                 --  Create an INCL chunk\n"
          "   chunk=rawdatafile           --  Create the specified chunk from the raw data file\n"
          "   PPM=ppmfile                 --  Create IW44 foreground and background chunks\n"
@@ -220,8 +224,6 @@ usage()
          "\n");
   exit(1);
 }
-
-
 
 // -- Obtain image size from mmr chunk
 
@@ -273,7 +275,32 @@ analyze_mmr_chunk(const GURL &url)
 }
 
 
-// -- Obtain image size from jb2 chunk
+// -- Obtain shape dictionary
+
+void 
+analyze_djbz_chunk(GP<ByteStream> gbs)
+{
+  if (g().dictionary)
+    G_THROW("Duplicate Djbz dictionary");
+  g().dictionary = JB2Dict::create();
+  g().dictionary->decode(gbs);
+}
+
+void 
+analyze_djbz_chunk(const GURL &url)
+{
+  GP<ByteStream> gbs = ByteStream::create(url, "rb");
+  analyze_djbz_chunk(gbs);
+}
+
+
+// -- Obtain image size and blit count from jb2 chunk
+
+GP<JB2Dict> 
+provide_shared_dict( void* )
+{
+  return(g().dictionary);
+}
 
 void 
 analyze_jb2_chunk(const GURL &url)
@@ -312,34 +339,52 @@ analyze_jb2_chunk(const GURL &url)
       if (!g().jb2stencil->size())
         G_THROW("Could not find JB2 data");
       // Decode
-      int jw = -1;
-      int jh = -1;
-      G_TRY
-        {
-          g().stencil=JB2Image::create();
-          g().stencil->decode(g().jb2stencil);
-          jw = g().stencil->get_width();
-          jh = g().stencil->get_height();
-        }
-      G_CATCH(ex) 
-      {
-        if (! flag_contains_incl) 
-          G_RETHROW;
-        else if (w < 0 || h < 0)
-          DjVuPrintErrorUTF8("djvumake: cannot determine jb2 mask size (%s)\n", 
-                             (const char *)url);
-      }
-      G_ENDCATCH;
-      if (w < 0 && jw >= 0) 
-        w = jw;
-      if (h < 0 && jh >= 0) 
-        h = jh;
-      if (jw > 0 & jh > 0)
-        if (jw != w || jh != h)
-          DjVuPrintErrorUTF8("djvumake: mask size (%s) does not match info size\n", 
-                             (const char *)url);
+      g().stencil=JB2Image::create();
+      g().stencil->decode(g().jb2stencil,&provide_shared_dict,NULL);
+      int jw = g().stencil->get_width();
+      int jh = g().stencil->get_height();
+      if (w < 0) w = jw;
+      if (h < 0) h = jh;
+      if (blit_count < 0) blit_count = g().stencil->get_blit_count();
+      if (jw!=w || jh!=h)
+        DjVuPrintErrorUTF8("djvumake: mask size (%s) does not match info size\n", (const char *)url);
     }
 }
+
+// -- Load dictionary from an INCL chunk
+
+void
+analyze_incl_chunk(const GURL &url)
+{
+  GP<ByteStream> gbs = ByteStream::create(url,"rb");
+  char buffer[24];
+  memset(buffer, 0, sizeof(buffer));
+  gbs->read(buffer,sizeof(buffer));
+  char *s = buffer;
+  if (!strncmp(s, "AT&T", 4))
+    s += 4;
+  if (strncmp(s, "FORM", 4) || strncmp(s+8, "DJVI", 4))
+    G_THROW("Expecting a valid FORM:DJVI chunk in the included file");
+  gbs->seek(0);
+  GP<IFFByteStream> giff=IFFByteStream::create(gbs);
+  GUTF8String chkid;
+  giff->get_chunk(chkid); // FORM:DJVI
+  for(; giff->get_chunk(chkid); giff->close_chunk())
+    if (chkid=="Djbz") 
+      analyze_djbz_chunk(giff->get_bytestream());
+}
+
+void
+check_for_shared_dict(GArray<GUTF8String> &argv)
+{
+  const int argc=argv.hbound()+1;
+  for (int i=2; i<argc; i++)
+    if (!argv[i].cmp("INCL=",5))
+      analyze_incl_chunk(GURL::Filename::UTF8(5+(const char *)argv[i]));
+    else if (!argv[i].cmp("Djbz=", 5))
+      analyze_djbz_chunk(GURL::Filename::UTF8(5+(const char *)argv[i]));
+}
+
 
 
 // -- Create info chunk from specification or mask
@@ -392,7 +437,7 @@ create_info_chunk(IFFByteStream &iff, GArray<GUTF8String> &argv)
             analyze_jb2_chunk(GURL::Filename::UTF8(5+(const char *)argv[i]));
             break;
           }
-      else if (!argv[i].cmp("Smmr=",5))
+        else if (!argv[i].cmp("Smmr=",5))
           {
             analyze_mmr_chunk(GURL::Filename::UTF8(5+(const char *)argv[i]));
             break;
@@ -426,6 +471,25 @@ create_mmr_chunk(IFFByteStream &iff, const char *chkid, const GURL &url)
   iff.close_chunk();
 }
 
+
+// -- Create FGbz palette chunk
+
+void 
+create_fgbz_chunk(IFFByteStream &iff)
+{
+  GP<DjVuPalette> pal = DjVuPalette::create();
+  GP<ByteStream>  gzbs  = ByteStream::create_static(stencil_color,4);
+  ByteStream &bs=*gzbs;
+
+  pal->decode_rgb_entries(bs, 1);
+  pal->colordata.resize(0,blit_count-1);
+  for (int d=0; d<blit_count; d++)
+    pal->colordata[d] = 0;
+
+  iff.put_chunk("FGbz");
+  pal->encode(iff.get_bytestream());
+  iff.close_chunk();
+}
 
 // -- Create JB2 mask chunk
 
@@ -476,7 +540,6 @@ struct SecondaryHeader {
   unsigned char xhi, xlo;
   unsigned char yhi, ylo;
 } secondary;
-
 
 // -- Create and check FG44 chunk
 
@@ -676,7 +739,50 @@ create_masksub_chunks(IFFByteStream &iff, const GURL &url)
   }
 }
 
-
+void 
+parse_color_name(const char *cname)
+{
+  static struct { 
+    const char *name; 
+    unsigned char r, g, b; 
+  } stdcols[] = { 
+    {"aqua",    '\x00', '\xFF', '\xFF'},
+    {"black",   '\x00', '\x00', '\x00'},
+    {"blue",    '\x00', '\x00', '\xFF'},
+    {"fuchsia", '\xFF', '\x00', '\xFF'},
+    {"gray",    '\x80', '\x80', '\x80'},
+    {"green",   '\x00', '\x80', '\x00'},
+    {"lime",    '\x00', '\xFF', '\x00'},
+    {"maroon",  '\x80', '\x00', '\x00'},
+    {"navy",    '\x00', '\x00', '\x80'},
+    {"olive",   '\x80', '\x80', '\x00'},
+    {"purple",  '\x80', '\x00', '\x80'},
+    {"red",     '\xFF', '\x00', '\x00'},
+    {"silver",  '\xC0', '\xC0', '\xC0'},
+    {"teal",    '\x00', '\x80', '\x80'},
+    {"white",   '\xFF', '\xFF', '\xFF'},
+    {"yellow",  '\xFF', '\xFF', '\x00'},
+    {0}
+  };
+  GUTF8String name = GUTF8String(cname).downcase();
+  for (int i=0; stdcols[i].name; i++)
+    if (name == stdcols[i].name)
+      {
+        stencil_color[0] = stdcols[i].r;
+        stencil_color[1] = stdcols[i].g;
+        stencil_color[2] = stdcols[i].b;
+        return;
+      }
+  unsigned int R,G,B;
+  if (sscanf(cname,"%2x%2x%2x",&R,&G,&B) == 3)
+    {
+      stencil_color[0] = (unsigned char) R;
+      stencil_color[1] = (unsigned char) G;
+      stencil_color[2] = (unsigned char) B;
+      return;
+    }
+  G_THROW("Unrecognized color name");
+}
 
 // -- Main
 
@@ -700,6 +806,8 @@ main(int argc, char **argv)
       IFFByteStream &iff=*giff;
       // Create header
       iff.put_chunk("FORM:DJVU", 1);
+      // Check if shared dicts are present
+      check_for_shared_dict(dargv);
       // Create information chunk
       create_info_chunk(iff, dargv);
       // Parse all arguments
@@ -712,10 +820,13 @@ main(int argc, char **argv)
             }
           else if (!dargv[i].cmp("Sjbz=",5))
             {
-              create_jb2_chunk(iff, "Sjbz", GURL::Filename::UTF8(5+(const char *)dargv[i]));
               if (flag_contains_stencil)
                 DjVuPrintErrorUTF8("%s","djvumake: duplicate stencil chunk\n");
+              create_jb2_chunk(iff, "Sjbz", GURL::Filename::UTF8(5+(const char *)dargv[i]));
               flag_contains_stencil = 1;
+              if (flag_fg_needs_palette && blit_count >= 0)
+                create_fgbz_chunk(iff);
+              flag_fg_needs_palette = 0;
             }
           else if (!dargv[i].cmp("Smmr=",5))
             {
@@ -724,6 +835,25 @@ main(int argc, char **argv)
               if (flag_contains_stencil)
                 DjVuPrintErrorUTF8("%s","djvumake: duplicate stencil chunk\n");
               flag_contains_stencil = 1;
+            }
+          else if (!dargv[i].cmp("FGbz=",5))
+            {
+              const char *c = 5 + (const char*)dargv[i];
+              if (flag_contains_fg)
+                DjVuPrintErrorUTF8("%s","djvumake: duplicate 'FGxx' chunk\n");
+              if (c[0] != '#')
+                {
+                  create_raw_chunk(iff, "FGbz", GURL::Filename::UTF8(c));
+                }
+              else
+                {
+                  parse_color_name(c + 1);
+                  if (flag_contains_stencil && blit_count >= 0)
+                    create_fgbz_chunk(iff);
+                  else
+                    flag_fg_needs_palette = 1;
+                }
+              flag_contains_fg = 1;
             }
           else if (!dargv[i].cmp("FG44=",5))
             {
@@ -745,9 +875,7 @@ main(int argc, char **argv)
               create_raw_chunk(iff, chkid, GURL::Filename::UTF8(5+(const char *)dargv[i]));
               flag_contains_bg = 1;
             }
-          else if (!dargv[i].cmp("FGjp=",5) ||
-                   !dargv[i].cmp("FGbz=",5) ||
-                   !dargv[i].cmp("FG2k=",5)  )
+          else if (!dargv[i].cmp("FGjp=",5) ||  !dargv[i].cmp("FG2k=",5))
             {
               if (flag_contains_fg)
                 DjVuPrintErrorUTF8("%s","djvumake: duplicate 'FGxx' chunk\n");
@@ -771,7 +899,9 @@ main(int argc, char **argv)
           else if (dargv[i].length() > 4 && dargv[i][4] == '=')
             {
               GNativeString chkid = dargv[i].substr(0,4);
-              if (chkid != "TXTz" && chkid != "TXTa" && chkid != "ANTz" && chkid != "ANTz")
+              if (chkid != "TXTz" && chkid != "TXTa" 
+                  && chkid != "ANTz" && chkid != "ANTz"
+                  && chkid != "Djbz" )
                 DjVuPrintErrorUTF8("djvumake: creating chunk of unknown type ``%s''.\n",
                                    (const char*)chkid);
               create_raw_chunk(iff, chkid, GURL::Filename::UTF8(5+(const char *)dargv[i]));
@@ -798,7 +928,9 @@ main(int argc, char **argv)
           // Photo DjVu Image
           if (flag_contains_bg!=1)
             DjVuPrintErrorUTF8("%s","djvumake: photo djvu image has subsampled BGxx chunk\n"); 
-          if (flag_contains_fg)
+          if (flag_fg_needs_palette)
+            DjVuPrintErrorUTF8("%s","djvumake: could not generate FGbz chunk, as stencil is not available\n");
+          else if (flag_contains_fg)
             DjVuPrintErrorUTF8("%s","djvumake: photo djvu file contains FGxx chunk\n");            
         }
       else
