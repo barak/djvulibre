@@ -900,7 +900,7 @@ main(int argc, char **argv)
             {
               GNativeString chkid = dargv[i].substr(0,4);
               if (chkid != "TXTz" && chkid != "TXTa" 
-                  && chkid != "ANTz" && chkid != "ANTz"
+                  && chkid != "ANTz" && chkid != "ANTa"
                   && chkid != "Djbz" )
                 DjVuPrintErrorUTF8("djvumake: creating chunk of unknown type ``%s''.\n",
                                    (const char*)chkid);
