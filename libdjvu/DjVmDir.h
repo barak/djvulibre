@@ -53,8 +53,8 @@
 //C- | MERCHANTABILITY OR FITNESS FOR A PARTICULAR PURPOSE.
 //C- +------------------------------------------------------------------
 // 
-// $Id$
-// $Name$
+// $Id: DjVmDir.h,v 1.14 2007/07/29 16:23:51 leonb Exp $
+// $Name: release_3_5_22 $
 
 #ifndef _DJVMDIR_H
 #define _DJVMDIR_H
@@ -113,7 +113,7 @@
     @memo Implements DjVu multipage document directory
     @author Andrei Erofeev <eaf@geocities.com>
     @version
-    #$Id$# */
+    #$Id: DjVmDir.h,v 1.14 2007/07/29 16:23:51 leonb Exp $# */
 //@{
 
 

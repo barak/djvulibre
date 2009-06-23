@@ -53,8 +53,8 @@
 //C- | MERCHANTABILITY OR FITNESS FOR A PARTICULAR PURPOSE.
 //C- +------------------------------------------------------------------
 // 
-// $Id$
-// $Name$
+// $Id: mime_check.h,v 1.8 2007/03/25 20:48:23 leonb Exp $
+// $Name: release_3_5_22 $
 
 #ifndef HDR_MIME_CHECK
 #define HDR_MIME_CHECK

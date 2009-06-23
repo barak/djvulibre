@@ -53,8 +53,8 @@
 //C- | MERCHANTABILITY OR FITNESS FOR A PARTICULAR PURPOSE.
 //C- +------------------------------------------------------------------
 // 
-// $Id$
-// $Name$
+// $Id: djvmcvt.cpp,v 1.9 2007/03/25 20:48:35 leonb Exp $
+// $Name: release_3_5_22 $
 
 #ifdef HAVE_CONFIG_H
 # include "config.h"
@@ -136,7 +136,7 @@
     @author
     Andrei Erofeev <eaf@geocities.com>
     @version
-    #$Id$# */
+    #$Id: djvmcvt.cpp,v 1.9 2007/03/25 20:48:35 leonb Exp $# */
 
 
 #include "DjVuDocument.h"

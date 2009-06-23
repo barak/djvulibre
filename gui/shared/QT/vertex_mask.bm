@@ -54,7 +54,7 @@
 //C- +------------------------------------------------------------------
 */
 
-/* $Id$ */
+/* $Id: vertex_mask.bm,v 1.3 2007/03/25 20:48:27 leonb Exp $ */
 
 #define vertex_mask_width 14
 #define vertex_mask_height 14

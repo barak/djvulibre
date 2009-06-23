@@ -15,7 +15,7 @@
 // GNU General Public License for more details.
 // -------------------------------------------------------------------
 */
-/* $Id$ */
+/* $Id: miniexp.cpp,v 1.23 2008/08/05 20:50:35 bpearlmutter Exp $ */
 
 #ifdef HAVE_CONFIG_H
 # include "config.h"

@@ -1,16 +1,16 @@
 #! /bin/bash -f
 # CVS version control block - do not edit manually
-#  $RCSfile$
-#  $Revision$
-#  $Date$
-#  $Source$
+#  $RCSfile: any2djvu,v $
+#  $Revision: 1.3 $
+#  $Date: 2007/08/10 08:08:55 $
+#  $Source: /cvsroot/djvu/djvulibre-3.5/tools/any2djvu,v $
 
 function copyright()
 {
     echo "Copyright (C) 2002 David Kreil <D.Kreil@IEEE.Org>"
     echo "Modified by Barak A. Pearlmutter <bap@debian.org>"
     echo "         and Yaroslav Halchenko <debian@onerussian.com>"
-    echo 'CVS $Revision$'
+    echo 'CVS $Revision: 1.3 $'
     echo "Released under the GNU GPL v2, 21-Oct-2002."
 }
 

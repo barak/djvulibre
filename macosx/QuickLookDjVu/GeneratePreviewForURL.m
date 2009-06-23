@@ -100,8 +100,7 @@ GeneratePreviewForURL(void *thisInterface,
 				page++;
 				dest = [tmpPath stringByAppendingPathComponent:[[source lastPathComponent] stringByAppendingFormat:@"_t_p%04d.tiff", page]];
 				size = CGSizeMake(width, height);
-				cmdRef = CFStringCreateWithFormat(NULL, NULL, CFSTR("\"%s\" -format=tiff -page=%d -size=%dx%d \"%@\" \"%@\""), ddjvu, page, width, height, source, dest);
-				
+				cmdRef = CFStringCreateWithFormat(NULL, NULL, CFSTR("\"%s\" -format=tiff -page=%d -size=%dx%d \"%s\" \"%s\""), ddjvu, page, width, height, [source fileSystemRepresentation], [dest fileSystemRepresentation]);
 				cmd = CFStringGetCStringPtr(cmdRef, CFStringGetSystemEncoding());
 				if (cmd != NULL) {
 					if (debug)

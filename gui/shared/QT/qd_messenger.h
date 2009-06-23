@@ -53,8 +53,8 @@
 //C- | MERCHANTABILITY OR FITNESS FOR A PARTICULAR PURPOSE.
 //C- +------------------------------------------------------------------
 // 
-// $Id$
-// $Name$
+// $Id: qd_messenger.h,v 1.7 2007/03/25 20:48:25 leonb Exp $
+// $Name: release_3_5_22 $
 
 #ifndef HDR_QD_MESSENGER
 #define HDR_QD_MESSENGER

@@ -53,8 +53,8 @@
 //C- | MERCHANTABILITY OR FITNESS FOR A PARTICULAR PURPOSE.
 //C- +------------------------------------------------------------------
 // 
-// $Id$
-// $Name$
+// $Id: GString.cpp,v 1.27 2009/05/17 23:57:42 leonb Exp $
+// $Name: release_3_5_22 $
 
 // From: Leon Bottou, 1/31/2002
 // This file has very little to do with my initial implementation.
@@ -203,7 +203,7 @@ GStringRep::UTF8::create(const char *s,const int start,const int length)
 
 GP<GStringRep> 
 GStringRep::UTF8::create(
-  const unsigned short *s,const int start,const int length)
+  const uint16_t *s,const int start,const int length)
 {
   GStringRep::UTF8 dummy;
   return dummy.substr(s,start,length);
@@ -211,7 +211,7 @@ GStringRep::UTF8::create(
 
 GP<GStringRep>
 GStringRep::UTF8::create(
-  const unsigned long *s,const int start,const int length)
+  const uint32_t *s,const int start,const int length)
 {
   GStringRep::UTF8 dummy;
   return dummy.substr(s,start,length);
@@ -336,16 +336,16 @@ public:
   static GP<GStringRep> create(
     const char *s,const int start,const int length=(-1));
   static GP<GStringRep> create(
-    const unsigned short *s,const int start,const int length=(-1));
+    const uint16_t *s,const int start,const int length=(-1));
   static GP<GStringRep> create(
-    const unsigned long *s,const int start,const int length=(-1));
+    const uint32_t *s,const int start,const int length=(-1));
 
     // Create with an sprintf()
   static GP<GStringRep> create_format(const char fmt[],...);
   static GP<GStringRep> create(const char fmt[],va_list &args);
 
   virtual unsigned char *UCS4toString(
-    const unsigned long w,unsigned char *ptr, mbstate_t *ps=0) const;
+    const uint32_t w,unsigned char *ptr, mbstate_t *ps=0) const;
 
   // Tests if a string is legally encoded in the current character set.
   virtual bool is_valid(void) const;
@@ -355,7 +355,7 @@ public:
   friend class GBaseString;
 protected:
   // Return the next character and increment the source pointer.
-  virtual unsigned long getValidUCS4(const char *&source) const;
+  virtual uint32_t getValidUCS4(const char *&source) const;
 };
 
 GP<GStringRep>
@@ -410,7 +410,7 @@ GStringRep::Native::create(
 
 GP<GStringRep>
 GStringRep::Native::create(
-    const unsigned short *s,const int start,const int length)
+    const uint16_t *s,const int start,const int length)
 {
   GStringRep::Native dummy;
   return dummy.substr(s,start,length);
@@ -418,7 +418,7 @@ GStringRep::Native::create(
 
 GP<GStringRep>
 GStringRep::Native::create(
-  const unsigned long *s,const int start,const int length)
+  const uint32_t *s,const int start,const int length)
 {
   GStringRep::Native dummy;
   return dummy.substr(s,start,length);
@@ -532,7 +532,7 @@ GStringRep::Native::create_format(const char fmt[],...)
 
 unsigned char *
 GStringRep::Native::UCS4toString(
-  const unsigned long w0,unsigned char *ptr, mbstate_t *ps) const
+  const uint32_t w0,unsigned char *ptr, mbstate_t *ps) const
 {
   return UCS4toNative(w0,ptr,ps);
 }
@@ -543,10 +543,10 @@ GStringRep::Native::UCS4toString(
 // is enough.)
 unsigned char *
 GStringRep::UCS4toNative(
-  const unsigned long w0,unsigned char *ptr, mbstate_t *ps)
+  const uint32_t w0,unsigned char *ptr, mbstate_t *ps)
 {
-  unsigned short w1;
-  unsigned short w2=1;
+  uint16_t w1;
+  uint16_t w2=1;
   for(int count=(sizeof(wchar_t)==sizeof(w1)) ? UCS4toUTF16(w0,w1,w2) : 1;
       count;
       --count,w1=w2)
@@ -588,12 +588,12 @@ GStringRep::Native::toUTF8(const bool) const
     //(void)mbrlen(source, n, &ps);
     memset(&ps,0,sizeof(mbstate_t));
     int i=0;
-    if(sizeof(wchar_t) == sizeof(unsigned long))
+    if(sizeof(wchar_t) == sizeof(uint32_t))
       {
         wchar_t w = 0;
         for(;(n>0)&&((i=mbrtowc(&w,source,n,&ps))>=0); n-=i,source+=i)
           {
-            ptr=UCS4toUTF8(w,ptr);
+            ptr=UCS4toUTF8((uint32_t)w,ptr);
           }
       }
     else
@@ -601,9 +601,9 @@ GStringRep::Native::toUTF8(const bool) const
         wchar_t w = 0;
         for(;(n>0)&&((i=mbrtowc(&w,source,n,&ps))>=0);n-=i,source+=i)
           {
-            unsigned short s[2];
+            uint16_t s[2];
             s[0]=w;
-            unsigned long w0;
+            uint32_t w0;
             if(UTF16toUCS4(w0,s,s+1)<=0)
               {
                 source+=i;
@@ -827,10 +827,10 @@ GStringRep::Native::toDouble(
    return retval;
 }
 
-unsigned long
+uint32_t
 GStringRep::Native::getValidUCS4(const char *&source) const
 {
-  unsigned long retval=0;
+  uint32_t retval=0;
   int n=(int)((size_t)size+(size_t)data-(size_t)source);
   if(source && (n > 0))
   {
@@ -841,11 +841,11 @@ GStringRep::Native::getValidUCS4(const char *&source) const
     const int len=mbrtowc(&wt,source,n,&ps); 
     if(len>=0)
     {
-      if(sizeof(wchar_t) == sizeof(unsigned short))
+      if(sizeof(wchar_t) == sizeof(uint16_t))
       {
         source+=len;
-        unsigned short s[2];
-        s[0]=(unsigned short)wt;
+        uint16_t s[2];
+        s[0]=(uint16_t)wt;
         if(UTF16toUCS4(retval,s,s+1)<=0)
         {
           if((n-=len)>0)
@@ -853,8 +853,8 @@ GStringRep::Native::getValidUCS4(const char *&source) const
             const int len=mbrtowc(&wt,source,n,&ps);
             if(len>=0)
             {
-              s[1]=(unsigned short)wt;
-              unsigned long w;
+              s[1]=(uint16_t)wt;
+              uint32_t w;
               if(UTF16toUCS4(w,s,s+2)>0)
               {
                 source+=len;
@@ -865,7 +865,7 @@ GStringRep::Native::getValidUCS4(const char *&source) const
         }
       }else
       {
-        retval=(unsigned long)wt;
+        retval=(uint32_t)wt;
         source++;
       } 
     }else
@@ -939,12 +939,12 @@ GNativeString::GNativeString(const unsigned char *str)
   init(GStringRep::Native::create((const char *)str));
 }
 
-GNativeString::GNativeString(const unsigned short *str)
+GNativeString::GNativeString(const uint16_t *str)
 {
   init(GStringRep::Native::create(str,0,-1));
 }
 
-GNativeString::GNativeString(const unsigned long *str)
+GNativeString::GNativeString(const uint32_t *str)
 {
   init(GStringRep::Native::create(str,0,-1));
 }
@@ -955,13 +955,13 @@ GNativeString::GNativeString(const char *dat, unsigned int len)
     GStringRep::Native::create(dat,0,((int)len<0)?(-1):(int)len));
 }
 
-GNativeString::GNativeString(const unsigned short *dat, unsigned int len)
+GNativeString::GNativeString(const uint16_t *dat, unsigned int len)
 {
   init(
     GStringRep::Native::create(dat,0,((int)len<0)?(-1):(int)len));
 }
 
-GNativeString::GNativeString(const unsigned long *dat, unsigned int len)
+GNativeString::GNativeString(const uint32_t *dat, unsigned int len)
 {
   init(
     GStringRep::Native::create(dat,0,((int)len<0)?(-1):(int)len));
@@ -1094,12 +1094,12 @@ GStringRep::substr(const char *s,const int start,const int len) const
 }
 
 GP<GStringRep>
-GStringRep::substr(const unsigned short *s,const int start,const int len) const
+GStringRep::substr(const uint16_t *s,const int start,const int len) const
 {
   GP<GStringRep> retval;
   if(s && s[0])
   {
-    unsigned short const *eptr;
+    uint16_t const *eptr;
     if(len<0)
     {
       for(eptr=s;eptr[0];++eptr)
@@ -1117,7 +1117,7 @@ GStringRep::substr(const unsigned short *s,const int start,const int len) const
       GPBuffer<unsigned char> gbuf(buf,(((size_t)eptr-(size_t)s)/2)*3+7);
       for(ptr=buf;s[0];)
       {
-        unsigned long w;
+        uint32_t w;
         int i=UTF16toUCS4(w,s,eptr);
         if(i<=0)
           break;
@@ -1132,12 +1132,12 @@ GStringRep::substr(const unsigned short *s,const int start,const int len) const
 }
 
 GP<GStringRep>
-GStringRep::substr(const unsigned long *s,const int start,const int len) const
+GStringRep::substr(const uint32_t *s,const int start,const int len) const
 {
   GP<GStringRep> retval;
   if(s && s[0])
   {
-    unsigned long const *eptr;
+    uint32_t const *eptr;
     if(len<0)
     {
       for(eptr=s;eptr[0];++eptr)
@@ -1295,13 +1295,9 @@ bool
 GStringRep::giswspace(const unsigned long w)
 {
 #if HAS_WCTYPE
-  return 
-    ((sizeof(wchar_t) == 2)&&(w&~0xffff))
-    ||((unsigned long)iswspace((wchar_t)w))
-    ||((w == '\r')||(w == '\n'));
+  return iswspace((wchar_t)w);
 #else
-  return 
-    (w&~0xff)?(true):(((unsigned long)isspace((char)w))||((w == '\r')||(w == '\n')));
+  if (w & ~0xff) || isspace((int)(w & 0xff));
 #endif
 }
 
@@ -1309,10 +1305,9 @@ bool
 GStringRep::giswupper(const unsigned long w)
 {
 #if HAS_WCTYPE
-  return ((sizeof(wchar_t) == 2)&&(w&~0xffff))
-    ?(true):((unsigned long)iswupper((wchar_t)w)?true:false);
+  return iswupper((wchar_t)w);
 #else
-  return (w&~0xff)?(true):((unsigned long)isupper((char)w)?true:false);
+  return (w & ~0xff) || isupper((int)(w & 0xff));
 #endif
 }
 
@@ -1320,10 +1315,9 @@ bool
 GStringRep::giswlower(const unsigned long w)
 {
 #if HAS_WCTYPE
-  return ((sizeof(wchar_t) == 2)&&(w&~0xffff))
-    ?(true):((unsigned long)iswlower((wchar_t)w)?true:false);
+  return iswlower((wchar_t)w);
 #else
-  return (w&~0xff)?(true):((unsigned long)islower((char)w)?true:false);
+  return (w & ~0xff) || islower((int)(w & 0xff));
 #endif
 }
 
@@ -1331,10 +1325,9 @@ unsigned long
 GStringRep::gtowupper(const unsigned long w)
 {
 #if HAS_WCTYPE
-  return ((sizeof(wchar_t) == 2)&&(w&~0xffff))
-    ?w:((unsigned long)towupper((wchar_t)w));
+  return (unsigned long)towupper((wchar_t)w);
 #else
-  return (w&~0xff)?w:((unsigned long)toupper((char)w));
+  return (w&~0xff) ? w : (unsigned long)toupper(w & 0xff);
 #endif
 }
 
@@ -1342,10 +1335,9 @@ unsigned long
 GStringRep::gtowlower(const unsigned long w)
 {
 #if HAS_WCTYPE
-  return ((sizeof(wchar_t) == 2)&&(w&~0xffff))
-    ?w:((unsigned long)towlower((wchar_t)w));
+  return (unsigned long)towlower((wchar_t)w);
 #else
-  return (w&~0xff)?w:((unsigned long)tolower((char)w));
+  return (w&~0xff) ? w : (unsigned long)tolower(w & 0xff);
 #endif
 }
 
@@ -1814,7 +1806,7 @@ GBaseString::throw_illegal_subscript()
 
 unsigned char *
 GStringRep::UTF8::UCS4toString(
-  const unsigned long w0,unsigned char *ptr, mbstate_t *) const
+  const uint32_t w0,unsigned char *ptr, mbstate_t *) const
 {
   return UCS4toUTF8(w0,ptr);
 }
@@ -1835,9 +1827,9 @@ GStringRep::UTF8::ncopy(
 	  wchar_t const * const rend=buf+buflen;
       for(const unsigned char *s=(const unsigned char *)data;(r<rend)&&(s<eptr)&&*s;)
 	  {
-        const unsigned long w0=UTF8toUCS4(s,eptr);
-        unsigned short w1;
-        unsigned short w2=1;
+        const uint32_t w0=UTF8toUCS4(s,eptr);
+        uint16_t w1;
+        uint16_t w2=1;
         for(int count=(sizeof(wchar_t) == sizeof(w1))?UCS4toUTF16(w0,w1,w2):1;
             count&&(r<rend);
             --count,w1=w2,++r)
@@ -1873,14 +1865,14 @@ GStringRep::UTF8::toNative(const EscapeMode escape) const
     memset(&ps,0,sizeof(mbstate_t));
     for(const unsigned char *s=(const unsigned char *)data;(s<eptr)&& *s;)
     {
-      const unsigned long w0=UTF8toUCS4(s,eptr);
+      const uint32_t w0=UTF8toUCS4(s,eptr);
       const unsigned char * const r0=r;
       r=UCS4toNative(w0,r,&ps);
       if(r == r0)
       {
         if(escape == IS_ESCAPED)
         {
-          sprintf((char *)r,"&#%lu;",w0);
+          sprintf((char *)r,"&#%lu;",(unsigned long)w0);
           r+=strlen((char *)r);
         }else
         {
@@ -1928,22 +1920,22 @@ GStringRep::UTF8::is_valid(void) const
   return retval;
 }
 
-static inline unsigned long
-add_char(unsigned long const U, unsigned char const * const r)
+static inline uint32_t
+add_char(uint32_t const U, unsigned char const * const r)
 {
-  unsigned long const C=r[0];
+  uint32_t const C=r[0];
   return ((C|0x3f) == 0xbf)?((U<<6)|(C&0x3f)):0;
 }
 
-unsigned long
+uint32_t
 GStringRep::UTF8toUCS4(
   unsigned char const *&s,void const * const eptr)
 {
-  unsigned long U=0;
+  uint32_t U=0;
   unsigned char const *r=s;
   if(r < eptr)
   {
-    unsigned long const C1=r++[0];
+    uint32_t const C1=r++[0];
     if(C1&0x80)
     {
       if(r < eptr)
@@ -2041,7 +2033,7 @@ GStringRep::UTF8toUCS4(
 }
 
 unsigned char *
-GStringRep::UCS4toUTF8(const unsigned long w,unsigned char *ptr)
+GStringRep::UCS4toUTF8(const uint32_t w,unsigned char *ptr)
 {
   if(w <= 0x7f)
   {
@@ -2401,7 +2393,7 @@ GStringRep::UTF8::toDouble(const int pos, int &endpos) const
 }
 
 int 
-GStringRep::getUCS4(unsigned long &w, const int from) const
+GStringRep::getUCS4(uint32_t &w, const int from) const
 {
   int retval;
   if(from>=size)
@@ -2422,7 +2414,7 @@ GStringRep::getUCS4(unsigned long &w, const int from) const
 }
 
 
-unsigned long
+uint32_t
 GStringRep::UTF8::getValidUCS4(const char *&source) const
 {
   return GStringRep::UTF8toUCS4((const unsigned char *&)source,data+size);
@@ -2476,18 +2468,18 @@ GStringRep::firstEndSpace(int from,const int len) const
 
 int
 GStringRep::UCS4toUTF16(
-  const unsigned long w,unsigned short &w1, unsigned short &w2)
+  const uint32_t w,uint16_t &w1, uint16_t &w2)
 {
   int retval;
   if(w<0x10000)
   {
-    w1=(unsigned short)w;
+    w1=(uint16_t)w;
     w2=0;
     retval=1;
   }else
   {
-    w1=(unsigned short)((((w-0x10000)>>10)&0x3ff)+0xD800);
-    w2=(unsigned short)((w&0x3ff)+0xDC00);
+    w1=(uint16_t)((((w-0x10000)>>10)&0x3ff)+0xD800);
+    w2=(uint16_t)((w&0x3ff)+0xDC00);
     retval=2;
   }
   return retval;
@@ -2495,14 +2487,14 @@ GStringRep::UCS4toUTF16(
 
 int
 GStringRep::UTF16toUCS4(
-  unsigned long &U,unsigned short const * const s,void const * const eptr)
+  uint32_t &U,uint16_t const * const s,void const * const eptr)
 {
   int retval=0;
   U=0;
-  unsigned short const * const r=s+1;
+  uint16_t const * const r=s+1;
   if(r <= eptr)
   {
-    unsigned long const W1=s[0];
+    uint32_t const W1=s[0];
     if((W1<0xD800)||(W1>0xDFFF))
     {
       if((U=W1))
@@ -2511,10 +2503,10 @@ GStringRep::UTF16toUCS4(
       }
     }else if(W1<=0xDBFF)
     {
-      unsigned short const * const rr=r+1;
+      uint16_t const * const rr=r+1;
       if(rr <= eptr)
       {
-        unsigned long const W2=s[1];
+        uint32_t const W2=s[1];
         if(((W2>=0xDC00)||(W2<=0xDFFF))&&((U=(0x10000+((W1&0x3ff)<<10))|(W2&0x3ff))))
         {
           retval=2;
@@ -2614,19 +2606,19 @@ GUTF8String::GUTF8String(const char *str)
 GUTF8String::GUTF8String(const unsigned char *str)
 { init(GStringRep::UTF8::create((const char *)str)); }
 
-GUTF8String::GUTF8String(const unsigned short *str)
+GUTF8String::GUTF8String(const uint16_t *str)
 { init(GStringRep::UTF8::create(str,0,-1)); }
 
-GUTF8String::GUTF8String(const unsigned long *str)
+GUTF8String::GUTF8String(const uint32_t *str)
 { init(GStringRep::UTF8::create(str,0,-1)); }
 
 GUTF8String::GUTF8String(const char *dat, unsigned int len)
 { init(GStringRep::UTF8::create(dat,0,((int)len<0)?(-1):(int)len)); }
 
-GUTF8String::GUTF8String(const unsigned short *dat, unsigned int len)
+GUTF8String::GUTF8String(const uint16_t *dat, unsigned int len)
 { init(GStringRep::UTF8::create(dat,0,((int)len<0)?(-1):(int)len)); }
 
-GUTF8String::GUTF8String(const unsigned long *dat, unsigned int len)
+GUTF8String::GUTF8String(const uint32_t *dat, unsigned int len)
 { init(GStringRep::UTF8::create(dat,0,((int)len<0)?(-1):(int)len)); }
 
 GUTF8String::GUTF8String(const GBaseString &gs, int from, int len)

@@ -22,7 +22,9 @@ The commands to install these libraries are
 
 Then you can run configure
 
-$ ./configure \
+./configure \
+   --enable-static=yes \
+   --disable-desktopfiles \
    --with-extra-includes=/usr/include \
    --with-extra-libraries=/usr/lib \
    CFLAGS="-arch ppc -arch i386" \
@@ -44,10 +46,11 @@ and other macosx tricks...
 Alternatively you can just open the macosx/DjVuLibre/DjVuLibre.xcodeproj 
 and build everything using Xcode. This can be painful if you do not have
 the same version of Xcode as the one we used to generate that file.
-In Leon's opinion, this is hell.
+In Leon's opinion, this is hell.  Jeff agrees, those dyld dependancies 
+trap us forever in the eighth circle.
 
 Note that the macosx directory contains a few useful tools
-that are not compiled using the main makefile.
+that are not compiled using the main makefile:
+
 The djvu.mdimporter program is a spotlight importer for djvu metadata.
 The djvu.qlgenerator program generates quicklook data (leopard only).
-

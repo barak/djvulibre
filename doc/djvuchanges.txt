@@ -86,6 +86,8 @@ The djview4 viewer uses the following rules:
 
 The djvu cgi argument "page=X" is interpreted as follows:
 - It first searches a page whose ID matches X.
+- Otherwise, if X has the form +N or -N where N is a number,
+  this indicates a displacement relative to the current page.
 - Otherwise, it searches a page with TITLE X starting
   from the current page and wrapping around.
 - Otherwise, if X is numerical and in range, this is the page number.
@@ -95,10 +97,9 @@ The djvu cgi argument "page=X" is interpreted as follows:
 
 Page references in hyperlink annotations always have the form "#X".
 These references are interpretes as follows.
-
 - It first searches a page whose ID matches X.
 - Otherwise, if X has the form +N or -N where N is a number,
-  this indicates a displacement relative to the current page.
+  this indicates a displacement relative to the page containing the link.
 - Otherwise, it searches a page with TITLE X starting
   from the current page and wrapping around.
 - Otherwise, if X is numerical and in range, this is the page number.

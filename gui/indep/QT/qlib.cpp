@@ -53,7 +53,7 @@
 //C- | MERCHANTABILITY OR FITNESS FOR A PARTICULAR PURPOSE.
 //C- +------------------------------------------------------------------
 // 
-// $Id$
+// $Id: qlib.cpp,v 1.22 2008/08/05 20:53:13 bpearlmutter Exp $
 
 #ifdef HAVE_CONFIG_H
 # include "config.h"

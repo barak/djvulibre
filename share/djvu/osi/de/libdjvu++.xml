@@ -1,7 +1,7 @@
 ﻿<?xml version="1.0" ?>
 <!DOCTYPE DjVuMessages PUBLIC "-//W3C/DTD DjVuMessages 1.0//EN" "../../../pubtext/DjVuMessages.dtd">
 <!-- Messages from libdjvu++ -->
-<!-- $Id$ -->
+<!-- $Id: libdjvu++.xml,v 1.2 2006/10/05 15:51:03 leonb Exp $ -->
 <DjVuMessages>
 <BODY>
 <MESSAGE name="DjVuMessage.Unrecognized" number="10000">

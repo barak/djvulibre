@@ -1,7 +1,7 @@
 ﻿<?xml version="1.0" ?>
 <!DOCTYPE DjVuMessages PUBLIC "-//W3C/DTD DjVuMessages 1.0//EN" "../../../pubtext/DjVuMessages.dtd">
 <!-- Messages from libdjvu++ -->
-<!-- $Id$ -->
+<!-- $Id: unixgui-shared.xml,v 1.1 2001/10/19 14:39:30 leonb Exp $ -->
 <DjVuMessages>
 <BODY>
 <MESSAGE name="QDBase.bitmap_not_found" number="00100">

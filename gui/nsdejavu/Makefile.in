@@ -44,6 +44,7 @@ DEFS = @DEFS@
 OPTS = @OPTS@
 NSDEJAVU_LIBS = @NSDEJAVU_LIBS@
 NSDEJAVU_CFLAGS = @NSDEJAVU_CFLAGS@
+GLIB_CFLAGS = @GLIB_CFLAGS@
 
 INCS = \
  -I${srcdir} \
@@ -51,7 +52,7 @@ INCS = \
  -I${top_srcdir}/gui/shared/res \
  -I${top_srcdir}/gui/npsdk 
 
-CFLAGS = @CPPFLAGS@ ${DEFS} ${OPTS} ${INCS} ${NSDEJAVU_CFLAGS} 
+CFLAGS = @CPPFLAGS@ ${DEFS} ${OPTS} ${INCS} ${NSDEJAVU_CFLAGS} ${GLIB_CFLAGS}
 
 LIBS = @LDFLAGS@ ${NSDEJAVU_LIBS} 
 

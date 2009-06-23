@@ -53,8 +53,8 @@
 //C- | MERCHANTABILITY OR FITNESS FOR A PARTICULAR PURPOSE.
 //C- +------------------------------------------------------------------
 // 
-// $Id$
-// $Name$
+// $Id: cpaldjvu.cpp,v 1.16 2008/05/05 02:24:40 leonb Exp $
+// $Name: release_3_5_22 $
 
 #ifdef HAVE_CONFIG_H
 # include "config.h"
@@ -98,7 +98,7 @@
     @author
     L\'eon Bottou <leonb@research.att.com>
     @version
-    #$Id$# */
+    #$Id: cpaldjvu.cpp,v 1.16 2008/05/05 02:24:40 leonb Exp $# */
 //@{
 //@}
 

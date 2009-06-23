@@ -53,7 +53,7 @@
 //C- | MERCHANTABILITY OR FITNESS FOR A PARTICULAR PURPOSE.
 //C- +------------------------------------------------------------------
 // 
-// $Id$
+// $Id: GScaler.cpp,v 1.15 2007/03/25 20:48:32 leonb Exp $
 
 #ifdef HAVE_CONFIG_H
 # include "config.h"

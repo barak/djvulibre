@@ -53,8 +53,8 @@
 //C- | MERCHANTABILITY OR FITNESS FOR A PARTICULAR PURPOSE.
 //C- +------------------------------------------------------------------
 //
-// $Id$
-// $Name$
+// $Id: UnicodeByteStream.h,v 1.11 2009/05/06 12:57:49 leonb Exp $
+// $Name: release_3_5_22 $
 
 #ifndef _UNICODEBYTESTREAM_H_
 #define _UNICODEBYTESTREAM_H_
@@ -68,15 +68,16 @@
 
 /** @name UnicodeByteStream.h
 
-    Files #"UnicodeByteStream.h"# and #"UnicodeByteStream.cpp"# implement a parser for
-    files structured W3C Extensible Markup Language (XML) 1.0 (Second Edition).
+    Files #"UnicodeByteStream.h"# and #"UnicodeByteStream.cpp"# 
+    implement a parser for files structured W3C Extensible Markup 
+    Language (XML) 1.0 (Second Edition).
     
     Class \Ref{UnicodeByteStream} provides a way to read or write XML files.
     files.  Member functions provide an easy mean to position the underlying
     \Ref{ByteStream}.
 
-    {\bf References} --- W3C Extensible Markup Language (XML) 1.0
-    (Second Edition)
+    {\bf References:} 
+    W3C Extensible Markup Language (XML) 1.0 (Second Edition)
     \URL{http://www.w3.org/TR/2000/REC-xml-20001006.html}
 
     @memo 
@@ -84,7 +85,7 @@
     @author
     Bill C Riemers <docbill@sourceforge.net>
     @version
-    #$Id$# */
+    #$Id: UnicodeByteStream.h,v 1.11 2009/05/06 12:57:49 leonb Exp $# */
 //@{
 
 #include "DjVuGlobal.h"

@@ -53,8 +53,8 @@
 //C- | MERCHANTABILITY OR FITNESS FOR A PARTICULAR PURPOSE.
 //C- +------------------------------------------------------------------
 // 
-// $Id$
-// $Name$
+// $Id: qd_viewer_shell.h,v 1.12 2007/03/25 20:48:23 leonb Exp $
+// $Name: release_3_5_22 $
 
 #ifndef HDR_QD_VIEWER_SHELL
 #define HDR_QD_VIEWER_SHELL

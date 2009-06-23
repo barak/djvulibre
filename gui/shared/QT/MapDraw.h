@@ -53,8 +53,8 @@
 //C- | MERCHANTABILITY OR FITNESS FOR A PARTICULAR PURPOSE.
 //C- +------------------------------------------------------------------
 // 
-// $Id$
-// $Name$
+// $Id: MapDraw.h,v 1.7 2007/03/25 20:48:24 leonb Exp $
+// $Name: release_3_5_22 $
 
 #ifndef HDR_MAPDRAW
 #define HDR_MAPDRAW

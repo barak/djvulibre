@@ -53,8 +53,8 @@
 //C- | MERCHANTABILITY OR FITNESS FOR A PARTICULAR PURPOSE.
 //C- +------------------------------------------------------------------
 // 
-// $Id$
-// $Name$
+// $Id: djvuextract.cpp,v 1.10 2008/01/11 15:44:25 leonb Exp $
+// $Name: release_3_5_22 $
 
 #ifdef HAVE_CONFIG_H
 # include "config.h"
@@ -95,7 +95,7 @@
     @memo
     Extract components from DjVu files.
     @version
-    #$Id$#
+    #$Id: djvuextract.cpp,v 1.10 2008/01/11 15:44:25 leonb Exp $#
     @author
     L\'eon Bottou <leonb@research.att.com> - Initial implementation\\
     Andrei Erofeev <eaf@geocities.com> - Multipage support */

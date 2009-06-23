@@ -53,8 +53,8 @@
 //C- | MERCHANTABILITY OR FITNESS FOR A PARTICULAR PURPOSE.
 //C- +------------------------------------------------------------------
 // 
-// $Id$
-// $Name$
+// $Id: cjb2.cpp,v 1.18 2007/05/19 03:07:34 leonb Exp $
+// $Name: release_3_5_22 $
 
 #ifdef HAVE_CONFIG_H
 # include "config.h"
@@ -102,7 +102,7 @@
     Pascal Vincent <vincentp@iro.umontreal.ca>\\
     Ilya Mezhirov <ilya@mezhirov.mccme.ru>
     @version
-    $Id$ */
+    $Id: cjb2.cpp,v 1.18 2007/05/19 03:07:34 leonb Exp $ */
 //@{
 //@}
 

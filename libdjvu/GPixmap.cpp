@@ -53,8 +53,8 @@
 //C- | MERCHANTABILITY OR FITNESS FOR A PARTICULAR PURPOSE.
 //C- +------------------------------------------------------------------
 // 
-// $Id$
-// $Name$
+// $Id: GPixmap.cpp,v 1.18 2009/02/18 07:26:25 leonb Exp $
+// $Name: release_3_5_22 $
 
 #ifdef HAVE_CONFIG_H
 # include "config.h"
@@ -1093,7 +1093,7 @@ copy_line(const GPixel *s, int smin, int smax,
   }
   while (x < dmax)              
   {
-    d[x] = s[smax]; 
+    d[x] = s[smax-1]; 
     x++; 
   }
 }

@@ -53,8 +53,8 @@
 //C- | MERCHANTABILITY OR FITNESS FOR A PARTICULAR PURPOSE.
 //C- +------------------------------------------------------------------
 // 
-// $Id$
-// $Name$
+// $Id: qd_mime_dialog.h,v 1.10 2007/03/25 20:48:23 leonb Exp $
+// $Name: release_3_5_22 $
 
 #ifndef HDR_QD_MIME_DIALOG
 #define HDR_QD_MIDE_DIALOG

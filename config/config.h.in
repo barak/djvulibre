@@ -58,7 +58,10 @@
 /* Define to 1 if you have the `getpwuid' function. */
 #undef HAVE_GETPWUID
 
-/* Define to 1 if you have the `iconv' function. */
+/* Define if you have glib-2.0. */
+#undef HAVE_GLIB
+
+/* Define to 1 if you have the iconv function. */
 #undef HAVE_ICONV
 
 /* Define to 1 if you have the <iconv.h> header file. */
@@ -204,6 +207,9 @@
 /* Define to 1 if you have the <X11/extensions/Xext.h> header file. */
 #undef HAVE_X11_EXTENSIONS_XEXT_H
 
+/* Define if you have the Xt include files. */
+#undef HAVE_XT
+
 /* Define to use g++ pragmas interface/implementation */
 #undef NEED_GNUG_PRAGMAS
 
@@ -231,8 +237,29 @@
 /* Define to 1 if the X Window System is missing or not being used. */
 #undef X_DISPLAY_MISSING
 
+/* Define for Solaris 2.5.1 so the uint32_t typedef from <sys/synch.h>,
+   <pthread.h>, or <semaphore.h> is not used. If the typedef was allowed, the
+   #define below would cause a syntax error. */
+#undef _UINT32_T
+
+/* Define to the type of a signed integer type of width exactly 16 bits if
+   such a type exists and the standard includes do not define it. */
+#undef int16_t
+
+/* Define to the type of a signed integer type of width exactly 32 bits if
+   such a type exists and the standard includes do not define it. */
+#undef int32_t
+
 /* Define to `int' if <sys/types.h> does not define. */
 #undef pid_t
+
+/* Define to the type of an unsigned integer type of width exactly 16 bits if
+   such a type exists and the standard includes do not define it. */
+#undef uint16_t
+
+/* Define to the type of an unsigned integer type of width exactly 32 bits if
+   such a type exists and the standard includes do not define it. */
+#undef uint32_t
 
 /* Define as `fork' if `vfork' does not work. */
 #undef vfork

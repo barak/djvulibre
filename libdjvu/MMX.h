@@ -53,8 +53,8 @@
 //C- | MERCHANTABILITY OR FITNESS FOR A PARTICULAR PURPOSE.
 //C- +------------------------------------------------------------------
 // 
-// $Id$
-// $Name$
+// $Id: MMX.h,v 1.11 2007/05/18 19:50:41 leonb Exp $
+// $Name: release_3_5_22 $
 
 #ifndef _MMX_H_
 #define _MMX_H_
@@ -107,7 +107,7 @@ namespace DJVU {
     @memo
     Essential support for MMX.
     @version 
-    #$Id$#
+    #$Id: MMX.h,v 1.11 2007/05/18 19:50:41 leonb Exp $#
     @author: 
     L\'eon Bottou <leonb@research.att.com> -- initial implementation */
 //@{

@@ -53,8 +53,8 @@
 //C- | MERCHANTABILITY OR FITNESS FOR A PARTICULAR PURPOSE.
 //C- +------------------------------------------------------------------
 // 
-// $Id$
-// $Name$
+// $Id: init_qt.h,v 1.10 2007/03/25 20:48:25 leonb Exp $
+// $Name: release_3_5_22 $
 
 #ifndef HDR_INIT_QT
 #define HDR_INIT_QT

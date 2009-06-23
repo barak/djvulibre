@@ -53,8 +53,8 @@
 //C- | MERCHANTABILITY OR FITNESS FOR A PARTICULAR PURPOSE.
 //C- +------------------------------------------------------------------
 // 
-// $Id$
-// $Name$
+// $Id: c44.cpp,v 1.14 2008/01/11 14:46:56 leonb Exp $
+// $Name: release_3_5_22 $
 
 #ifdef HAVE_CONFIG_H
 # include "config.h"
@@ -211,7 +211,7 @@
     @author
     L\'eon Bottou <leonb@research.att.com>
     @version
-    #$Id$# */
+    #$Id: c44.cpp,v 1.14 2008/01/11 14:46:56 leonb Exp $# */
 //@{
 //@}
 

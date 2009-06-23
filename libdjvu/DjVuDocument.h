@@ -53,8 +53,8 @@
 //C- | MERCHANTABILITY OR FITNESS FOR A PARTICULAR PURPOSE.
 //C- +------------------------------------------------------------------
 // 
-// $Id$
-// $Name$
+// $Id: DjVuDocument.h,v 1.13 2008/01/27 11:36:27 leonb Exp $
+// $Name: release_3_5_22 $
 
 #ifndef _DJVUDOCUMENT_H
 #define _DJVUDOCUMENT_H
@@ -92,7 +92,7 @@ class ByteStream;
 
     @memo DjVu document class.
     @author Andrei Erofeev <eaf@geocities.com>
-    @version #$Id$#
+    @version #$Id: DjVuDocument.h,v 1.13 2008/01/27 11:36:27 leonb Exp $#
 */
 
 //@{

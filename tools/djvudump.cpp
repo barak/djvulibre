@@ -53,8 +53,8 @@
 //C- | MERCHANTABILITY OR FITNESS FOR A PARTICULAR PURPOSE.
 //C- +------------------------------------------------------------------
 // 
-// $Id$
-// $Name$
+// $Id: djvudump.cpp,v 1.8 2007/03/25 20:48:35 leonb Exp $
+// $Name: release_3_5_22 $
 
 #ifdef HAVE_CONFIG_H
 # include "config.h"
@@ -108,7 +108,7 @@ xxx
     @author
     L\'eon Bottou <leonb@research.att.com>
     @version
-    #$Id$# */
+    #$Id: djvudump.cpp,v 1.8 2007/03/25 20:48:35 leonb Exp $# */
 //@{
 //@}
 

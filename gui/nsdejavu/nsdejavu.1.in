@@ -21,7 +21,7 @@
 .\" You should have received a copy of the GNU General Public
 .\" License along with this manual. Otherwise check the web site
 .\" of the Free Software Foundation at http://www.fsf.org.
-.TH NSDEJAVU 1 "1/4/2006" "DjVuLibre-3.5" "DjVuLibre-3.5"
+.TH NSDEJAVU 1 "1/4/2007" "DjView-4" "DjView-4"
 .de SS
 .SH \\0\\0\\0\\$*
 ..
@@ -131,19 +131,18 @@ The keywords recognized by each viewer
 are listed in the man pages for
 .BR djview3 (1)
 and
-.BR djview4 (1)
+.BR djview4 (1).
 Unrecognized keywords are ignored.
 The most common keywords are:
 .TP
-.BI page= pagenum_or_pagename
-Specify the initial page to be displayed.
-Page numbers are numbered from 1.
+.BI page= pagename
+Specify which page is displayed by name or by ordinal number.
 .TP
 .BI zoom= zoomfactor
-Specify the initial zoom factor.
+Set the zoom factor. 
 Legal values for
 .I zoomfactor
-are shown in the below:
+are:
 .br
 .TS
 center,box;
@@ -161,25 +160,34 @@ stretch	Stretch the image to the plugin window size.
 .TE
 
 
+.SH BROWSER COMPATIBILITY
+The DjVu browser plugin has been tested with several popular web browsers:
+Netscape 4 and 6; Gecko based browsers such as Mozilla, Galeon and Firefox;
+KHTML based browsers such as Konqueror; and Opera.
+Please read the browser documentation to find out where 
+the plugin library should be installed.
+
+
 .SH EMBEDDING DJVU IMAGES IN HTML PAGES
 You can integrate DjVu content on an
 .SM HTML
-web page with the
+web page with either the
 .SM <embed>
+or the
+.SM <object>
 tag.
-This method is that it will work even if your web 
+This method will work even if your web 
 server does not support the DjVu
 .SM MIME
 type.
 The
 .SM CGI
-style flags can be directly used as attributes of the
-embedding tag.
+style flags can be directly used as attributes of the embedding tag.
 The following example shows the W3C standard syntax with the
 .SM OBJECT 
 tag:
 .IP "" 3
-.B "<object data=""myfile.djvu"" type=""image/x-djvu"""
+.B "<object data=""myfile.djvu"" type=""image/vnd.djvu"""
 .br
 .B "\0\0\0\0\0\0\0\0\0 width=""100%"" height=""100%"" >"
 .br
@@ -195,135 +203,86 @@ And this is the customary syntax with the
 .SM EMBED
 tag:
 .IP "" 3
-.B "<embed src=""myfile.djvu"" type=""image/x-djvu"""
+.B "<embed src=""myfile.djvu"" type=""image/vnd.djvu"""
 .br
 .B "\0\0\0\0\0\0\0\0\0 width=""100%"" height=""100%"""
 .br
 .B "\0\0\0\0\0\0\0\0\0 page=""iii"" zoom=""stretch""></embed>"
 .PP
 
-.SH BROWSER COMPATIBILITY
-The DjVu browser plugin has been tested with
-several popular web browsers:
-.SS NETSCAPE 4
+
+
+.SH INTERFACING THE DJVIEW PLUGIN WITH JAVASCRIPT
+Recent versions of the 
+.B djview4
+plugin can be controlled from the JavaScript intepreter of 
+browsers implementing the Mozilla NPRuntime API.
+To access the plugin object,
+include the attribute
+.BI "id=""" pluginname """"
+into the
+.B <object>
+or
+.B <embed>
+tag and use the JavaScript function
+.BI "getElementById(""" pluginname """)."
 .PP
-The DjVu browser plugin is normally installed in directory
-.BR /usr/local/lib/netscape/plugins .
-This is sufficient to enable the DjVu browser plugin
-because Netscape 4 always searches this directory for
-plugins.
-You might have to first remove previous version of the DjVuLibre plugin.
-Selecting menu
-.B "Help->About Plugins"
-in
-.B netscape
-displays the current list of plugins.
-Previous versions of the plugin might be installed in one of
-the following locations:
-.IP "" 2
-.B "$HOME/.netscape/plugins/nsdejavu.so"
-.br
-.B "/usr/lib/netscape/plugins/nsdejavu.so"
-.br
-.B "/opt/netscape/plugins/nsdejavu.so"
+The plugin object implements two methods
+to retrieve and set the value of the options
+usually recognized as CGI-style flags.
+It also can evaluate a specified JavaScript
+expression whenever something changes
+in the status of the djview interface.
+.TP
+.IB "pluginobject" ".setdjvuopt(""" key """," value ")"
+Set the value of the djvu option
+.I key
+to the character string
+.IR value .
+This achieves the same effect as specifying option
+.IR key = value
+among the CGI-style flags.  
+For instance, values of the key
+.B page
+can be page IDs, page titles, page numbers, or page names.
+.TP
+.IB "pluginobject" ".getdjvuopt(""" key """)"
+Return the value of the djvu option
+.I key
+as a string.
+The returned value is always a character string, 
+even when the return is logically a number.
+Boolean values are returned as strings
+.B yes
+or 
+.BR no. 
+Besides the usual CGI-style flags,
+this function recognizes the additional key 
+.B pages
+and returns the total number of pages in the DjVu document.
+An empty string is returned when the key is not recognized.
+.TP
+.IB "pluginobject" ".onchange=""" code """;"
+Ensure that string
+.I code
+is evaluated in the context of the plugin object
+whenever something changes in the djview graphical 
+user interface.  For instance, this evaluation happens
+when progressive refinements are painted, and
+when the user manipulates the image interactively.
+.TP
+.IB "pluginobject" ".version"
+Return a string describing the plugin version.
+This property can be used to test whether the
+djview plugin is scriptable in this browser.
 .PP
-More complicated cases can be solved by creating a symbolic
-link into your personal plugin directory:
-.IP "" 2
-.B "cd $HOME/.netscape/plugins"
-.br
-.B "ln -s /usr/lib/netscape/plugins/nsdejavu.so ."
-.PP
-You must not copy
-.B nsdejavu.so
-but create a symbolic link.  This is necessary
-because
-.B nsdejavu.so
-first locates its normal installation directory by following the symbolic
-link.  The Netscape plugin search rules are explained in the
-.B README
-file that comes with the Netscape distribution.
-Also check option
-.B -fix
-of program
-.BR djview3 .
-.PP
-.SS NETSCAPE 6
-.PP
-The DjVuLibre plugin works nicely with Netscape 6.1 or better.
-It seems that Netscape 6 only recognize plugins installed inside
-its own plugin directory.  This can be done using a symbolic link.
-Let us assume that Netscape 6 is installed in
-.IR /usr/local/netscape6 .
-The following commands should do the trick:
-.IP "" 2
-.BI "cd " "/usr/local/netscape6" "/plugins"
-.br
-.B "ln -s /usr/lib/netscape/plugins/nsdejavu.so ."
-.PP
-.SS MOZILLA
-.PP
-The DjVuLibre plugin works nicely with Mozilla 0.9.5 or better.
-You must establish a link from the Mozilla plugin directory.
-Assuming that Mozilla is installed under
-.IR /usr/lib/mozilla-1.1 :
-.IP "" 2
-.BI "cd " "/usr/lib/mozilla-1.1" "/plugins"
-.br
-.B "ln -s /usr/lib/netscape/plugins/nsdejavu.so ."
-.PP
-You can then restart
-.B mozilla
-and select menu
-.B "Help->About Plugins" to check
-whether the DjVuLibre plugin is properly recognized.
-.PP
-.SS GALEON
-.PP
-Galeon internally uses the Mozilla rendering engine.
-Install the plugin for Mozilla and it should also
-work for Galeon.
-.PP
-.SS FIREFOX
-.PP
-The DjVuLibre plugin works nicely with Firefox or better.
-You must establish a link from the Firefox plugin directory.
-Assuming that Firefox is installed under
-.IR /usr/lib/mozilla-firefox :
-.IP "" 2
-.BI "cd " "/usr/lib/mozilla-firefox" "/plugins"
-.br
-.B "ln -s /usr/lib/netscape/plugins/nsdejavu.so ."
-.PP
-.SS KONQUEROR
-.PP
-The DjVuLibre plugin works with
-.SM KDE-2.2
-or better.
-You must first make sure that
-.B konqueror
-recognizes the DjVU plugin.
-In Konqueror, select
-.BR "Settings->Configure Konqueror" .
-When the dialog appears, select the icon
-.BR "Netscape Plugins" .
-Make sure that directory
-.B "/usr/lib/netscape/plugins"
-appears in the list of plugin directories.
-Then press button
-.BR "Scan for new plugins" .
-Clicking the
-.B "Plugins"
-tab button should display a list of recognized plugins.
-Check that
-.B "nsdejavu.so"
-appears there.
-.PP
-.SS OPERA
-.PP
-The DjVuLibre plugin works with Opera-6.
-As explained in the Opera software support pages,
-you must have the OpenMotif libraries installed.
+Note that the scriptability feature may not 
+be accessible until the djview plugin is fully loaded.
+Therefore it is advisable to check
+.IB "pluginobject" ".version"
+from the JavaScript
+.B onload
+before calling any other method.
 
 .SH CREDITS
 This program was written by Andrei Erofeev <andrew_erofeev@yahoo.com>

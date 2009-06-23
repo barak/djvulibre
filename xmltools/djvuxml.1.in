@@ -178,7 +178,7 @@ defines the input and output of the DjVu XML tools.
 
 The DjVuXML-s DTD is a simplification of the HTML DTD:
 .IP "" 2
-.B \%http://www.w3c.org/\:TR/\:1998/\:REC\:-html40\:-19980424/\:sgml/\:dtd.html
+.B \%http://www.w3c.org/TR/1998/REC-html40-19980424/sgml/dtd.html
 .PP
 with a few new attributes added specific to DjVu.  Each of the 
 specified pages of a DjVu document are represented as 
@@ -254,7 +254,7 @@ elements consist of
 .B AREA
 elements.  In addition to the attributes listed in
 .IP "" 2
-.BR \%http://www.w3.org/\:TR/\:1998/\:REC\:-html40\:-19980424/\:struct/\:objects.html\%#edef\:-AREA ,
+.BR \%http://www.w3.org/TR/1998/REC-html40-19980424/struct/objects.html#edef-AREA ,
 .PP
 the attributes
 .BR bordertype ,

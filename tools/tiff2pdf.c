@@ -15,7 +15,7 @@
 //C- GNU General Public License for more details.
 //C-  ------------------------------------------------------------------
 //
-// $Id$ */
+// $Id: tiff2pdf.c,v 1.2 2008/07/06 03:24:40 leonb Exp $ */
 
 /* The following code is derived from program "tiff2pdf"
  * whose copyright notice is reproduced below.

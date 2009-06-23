@@ -53,8 +53,8 @@
 //C- | MERCHANTABILITY OR FITNESS FOR A PARTICULAR PURPOSE.
 //C- +------------------------------------------------------------------
 //
-// $Id$
-// $Name$
+// $Id: djvumake.cpp,v 1.17 2009/05/12 13:01:40 leonb Exp $
+// $Name: release_3_5_22 $
 
 #ifdef HAVE_CONFIG_H
 # include "config.h"
@@ -116,7 +116,9 @@
       {#PPM=<ppmfile>#} (psuedo-chunk) &
       Create IW44 foreground and background chunks
       by masking and subsampling PPM file #ppmfile#.
-      This is used by program \Ref{cdjvu}.
+      This is used by program \Ref{cdjvu}.\\
+      {#chunk=<rawdatafile>#} &
+      Creates the specified chunk with the specified raw data.
     \end{tabular}
 
     Let us assume now that you have a PPM image #"myimage.ppm"# and a PBM
@@ -132,7 +134,7 @@
     @memo
     Assemble DjVu files.
     @version
-    #$Id$#
+    #$Id: djvumake.cpp,v 1.17 2009/05/12 13:01:40 leonb Exp $#
     @author
     L\'eon Bottou <leonb@research.att.com> \\
     Patrick Haffner <haffner@research.att.com>
@@ -181,7 +183,6 @@ int w = -1;
 int h = -1;
 int dpi = 300;
 
-
 // -- Display brief usage information
 
 void 
@@ -208,7 +209,7 @@ usage()
          "   FGjp=jpegfile               --  Create a JPEG foreground chunk\n"
          "   FG2k=jpeg2000file           --  Create a JPEG-2000 foreground chunk\n"
          "   INCL=fileid                 --  Create an INCL chunk\n"
-         "\n"
+         "   chunk=rawdatafile           --  Create the specified chunk from the raw data file\n"
          "   PPM=ppmfile                 --  Create IW44 foreground and background chunks\n"
          "                                   by masking and subsampling a PPM file.\n"
          "\n"
@@ -311,14 +312,32 @@ analyze_jb2_chunk(const GURL &url)
       if (!g().jb2stencil->size())
         G_THROW("Could not find JB2 data");
       // Decode
-      g().stencil=JB2Image::create();
-      g().stencil->decode(g().jb2stencil);
-      int jw = g().stencil->get_width();
-      int jh = g().stencil->get_height();
-      if (w < 0) w = jw;
-      if (h < 0) h = jh;
-      if (jw!=w || jh!=h)
-        DjVuPrintErrorUTF8("djvumake: mask size (%s) does not match info size\n", (const char *)url);
+      int jw = -1;
+      int jh = -1;
+      G_TRY
+        {
+          g().stencil=JB2Image::create();
+          g().stencil->decode(g().jb2stencil);
+          jw = g().stencil->get_width();
+          jh = g().stencil->get_height();
+        }
+      G_CATCH(ex) 
+      {
+        if (! flag_contains_incl) 
+          G_RETHROW;
+        else if (w < 0 || h < 0)
+          DjVuPrintErrorUTF8("djvumake: cannot determine jb2 mask size (%s)\n", 
+                             (const char *)url);
+      }
+      G_ENDCATCH;
+      if (w < 0 && jw >= 0) 
+        w = jw;
+      if (h < 0 && jh >= 0) 
+        h = jh;
+      if (jw > 0 & jh > 0)
+        if (jw != w || jh != h)
+          DjVuPrintErrorUTF8("djvumake: mask size (%s) does not match info size\n", 
+                             (const char *)url);
     }
 }
 
@@ -676,7 +695,8 @@ main(int argc, char **argv)
         usage();
       // Open djvu file
       remove(dargv[1]);
-      GP<IFFByteStream> giff=IFFByteStream::create(ByteStream::create(GURL::Filename::UTF8(dargv[1]),"wb"));
+      GP<IFFByteStream> giff = 
+        IFFByteStream::create(ByteStream::create(GURL::Filename::UTF8(dargv[1]),"wb"));
       IFFByteStream &iff=*giff;
       // Create header
       iff.put_chunk("FORM:DJVU", 1);
@@ -748,9 +768,18 @@ main(int argc, char **argv)
               flag_contains_bg = 1;
               flag_contains_fg = 1;
             }
+          else if (dargv[i].length() > 4 && dargv[i][4] == '=')
+            {
+              GNativeString chkid = dargv[i].substr(0,4);
+              if (chkid != "TXTz" && chkid != "TXTa" && chkid != "ANTz" && chkid != "ANTz")
+                DjVuPrintErrorUTF8("djvumake: creating chunk of unknown type ``%s''.\n",
+                                   (const char*)chkid);
+              create_raw_chunk(iff, chkid, GURL::Filename::UTF8(5+(const char *)dargv[i]));
+            }
           else 
             {
-              DjVuPrintErrorUTF8("djvumake: illegal argument : ``%s'' (ignored)\n", (const char *)dargv[i]);
+              DjVuPrintErrorUTF8("djvumake: illegal argument : ``%s'' (ignored)\n", 
+                                 (const char *)dargv[i]);
             }
         }
       // Close
@@ -816,7 +845,7 @@ dilate8(const GBitmap *p_bm)
                 {
                   nbmprow[x-1]=1;
                   nbmprow[x]=1;
-                  nbmprow[x-1]=1;
+                  nbmprow[x+1]=1;
                 }
               nbmrow[x-1]=1;
               nbmrow[x]=1;
