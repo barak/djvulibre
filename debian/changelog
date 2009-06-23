@@ -1,8 +1,11 @@
-djvulibre (3.5.22-1rc) unstable; urgency=low
+djvulibre (3.5.22-1) unstable; urgency=low
 
+  [ Leon Bottou ]
   * Upstream release candidate
   
- -- Leon Bottou <leonb@users.sourceforge.net>  Wed, 5 May 2009 11:19:00 +0500
+  [ Barak A. Pearlmutter ]
+
+ -- Barak A. Pearlmutter <bap@debian.org>  Tue, 23 Jun 2009 22:53:13 +0200
 
 djvulibre (3.5.21-3) unstable; urgency=low
 
