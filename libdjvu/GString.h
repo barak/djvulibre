@@ -130,8 +130,8 @@
 # include <stdint.h>
 #elif HAVE_INTTYPES_H
 # include <inttypes.h>
-#else !defined(AUTOCONF)
-# if defined (WIN32)
+#else
+# ifdef WIN32
 typedef unsigned __int32 uint32_t
 typedef unsigned __int16 uint16_t
 # else
