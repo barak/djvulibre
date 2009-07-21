@@ -1,3 +1,10 @@
+djvulibre (3.5.22-2) unstable; urgency=low
+
+  * Invoke Elder Gods Horror to skirt libtool issue (closes: #512252), see
+    debian/rules "Cthulhu"
+
+ -- Barak A. Pearlmutter <bap@debian.org>  Tue, 21 Jul 2009 13:09:57 +0200
+
 djvulibre (3.5.22-1) unstable; urgency=low
 
   [ Leon Bottou ]
