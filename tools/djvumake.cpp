@@ -598,8 +598,8 @@ create_bg44_chunk(IFFByteStream &iff, const char *ckid, GUTF8String filespec)
       if (flag_contains_bg)
         DjVuPrintErrorUTF8("%s","djvumake: Duplicate BGxx chunk\n");
       int i=filespec.rsearch(':');
-      for (unsigned int j=i+1; i>0 && j<filespec.length(); j++)
-        if (filespec[j]<'0' || filespec[j]>'9')
+      for (int j=i+1; i>0 && j<(int)filespec.length(); j++)
+        if (filespec[j] < '0' || filespec[j] > '9')
           i = -1;
       if (!i)
         G_THROW("djvumake: no filename specified in first BG44 specification");
