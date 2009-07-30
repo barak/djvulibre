@@ -1297,7 +1297,7 @@ GStringRep::giswspace(const unsigned long w)
 #if HAS_WCTYPE
   return iswspace((wchar_t)w);
 #else
-  if (w & ~0xff) || isspace((int)(w & 0xff));
+  return (w & ~0xff) || isspace((int)(w & 0xff));
 #endif
 }
 
