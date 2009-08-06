@@ -105,24 +105,35 @@ encoded data.
 The DjVu decoder does not yet display
 files containing JPEG-2000 data.
 .TP
-.BI FGbz=( filename |# color )
+.BI FGbz=( filename |{# color [: x , y , w , h ]})
 Create a foreground color chunk describing one solid
 color for each
 .SM JB2
 encoded mark. 
 The argument can be the name
 .I filename
-of a file containing the raw data
-or can represent a single color
-.I color 
-for colorizing all the marks.
-Raw data files are best extracted from existing DjVu files
-using the command 
-.BR djvuextract . 
-Colors can be represented by exactly six hexadecimal digits, e.g. 
+of a file containing the raw data.
+Such files are best created using program
+.BR djvuextract (1).
+Alternatively the argument could describe a sequence of color zones.
+Each color zone specifies a color name
+.IR color ,
+and optionally the coordinates
+.IR x , y , w , h
+of a rectangle.
+Each mark receives the color of the last color zone
+whose rectangle intersects the bounding box of the mark.
+The mark is painted black if its bounding box does not
+intersect one of the zones.
+The rectangle coordinates are expressed in pixels
+with the origin at the bottom left corner of the page.
+The full page is assumed when no rectangle 
+coordinates are specified.
+.Color names can be specified with exactly 
+six hexadecimal digits, e.g. 
 .BR FGbz=#FF8080 ,
 or by one of the following sixteen HTML color names 
-defined by W3C, e.g.
+defined by the W3C, e.g.
 .BR FGbz=#red .
 .br
 .TS

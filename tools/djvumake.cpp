@@ -101,7 +101,7 @@
       Creates one IW44 foreround chunks.  File #iw44file# must be an
       IW44 file such as the files created by \Ref{c44}.  Only the first
       chunk will be copied.\\
-      {#FGbz=<bzzfile>|#<color> #} &
+      {FGbz=(bzzfile|\{#color1[:x,y,w,h]\})}
       Creates a chunk containing colors for each JB2 encoded object.
       Such chunks are created using class \Ref{DjVuPalette}.
       See program \Ref{cpaldjvu} for an example.\\
@@ -152,18 +152,20 @@
 
 #include "GPixmap.h"
 #include "GBitmap.h"
+#include "GContainer.h"
+#include "GRect.h"
 #include "DjVuMessage.h"
 
 #include <locale.h>
 #include <stdio.h>
 #include <stdlib.h>
+#include <ctype.h>
 
 int flag_contains_fg      = 0;
 int flag_contains_bg      = 0;
 int flag_contains_stencil = 0;
 int flag_contains_incl    = 0;
 int flag_fg_needs_palette = 0;
-unsigned char stencil_color[] = {'\0','\0','\0','\0'};
 
 struct DJVUMAKEGlobal 
 {
@@ -173,6 +175,8 @@ struct DJVUMAKEGlobal
   GP<ByteStream> mmrstencil;
   GP<JB2Image> stencil;
   GP<JB2Dict> dictionary;
+  GTArray<GRect> colorzones;
+  GP<ByteStream> colorpalette;
 };
 
 static DJVUMAKEGlobal& g(void)
@@ -343,9 +347,12 @@ analyze_jb2_chunk(const GURL &url)
       g().stencil->decode(g().jb2stencil,&provide_shared_dict,NULL);
       int jw = g().stencil->get_width();
       int jh = g().stencil->get_height();
-      if (w < 0) w = jw;
-      if (h < 0) h = jh;
-      if (blit_count < 0) blit_count = g().stencil->get_blit_count();
+      if (w < 0) 
+        w = jw;
+      if (h < 0) 
+        h = jh;
+      if (blit_count < 0) 
+        blit_count = g().stencil->get_blit_count();
       if (jw!=w || jh!=h)
         DjVuPrintErrorUTF8("djvumake: mask size (%s) does not match info size\n", (const char *)url);
     }
@@ -477,15 +484,28 @@ create_mmr_chunk(IFFByteStream &iff, const char *chkid, const GURL &url)
 void 
 create_fgbz_chunk(IFFByteStream &iff)
 {
+  int nzones = g().colorzones.size();
+  int npalette = g().colorpalette->size() / 3;
   GP<DjVuPalette> pal = DjVuPalette::create();
-  GP<ByteStream>  gzbs  = ByteStream::create_static(stencil_color,4);
-  ByteStream &bs=*gzbs;
-
-  pal->decode_rgb_entries(bs, 1);
+  g().colorpalette->seek(0);
+  pal->decode_rgb_entries(*g().colorpalette, npalette);
   pal->colordata.resize(0,blit_count-1);
   for (int d=0; d<blit_count; d++)
-    pal->colordata[d] = 0;
-
+    {
+      JB2Blit *blit = g().stencil->get_blit(d);
+      const JB2Shape &shape = g().stencil->get_shape(blit->shapeno);
+      GRect brect(blit->left, blit->bottom, shape.bits->columns(), shape.bits->rows());
+      int index = nzones;
+      for (int i=0; i<nzones; i++)
+        {
+          GRect zrect = g().colorzones[i];
+          if (zrect.isempty() || zrect.intersect(brect, zrect))
+            index = i;
+        }
+      if (index >= npalette)
+        G_THROW("create_fgbz_chunk: internal error");
+      pal->colordata[d] = index;
+    }
   iff.put_chunk("FGbz");
   pal->encode(iff.get_bytestream());
   iff.close_chunk();
@@ -742,8 +762,10 @@ create_masksub_chunks(IFFByteStream &iff, const GURL &url)
   }
 }
 
-void 
-parse_color_name(const char *cname)
+
+
+const char *
+parse_color_name(const char *s, char *rgb)
 {
   static struct { 
     const char *name; 
@@ -767,25 +789,77 @@ parse_color_name(const char *cname)
     {"yellow",  '\xFF', '\xFF', '\x00'},
     {0}
   };
-  GUTF8String name = GUTF8String(cname).downcase();
+  // potential color names
+  int len = 0;
+  while (s[len] && s[len]!=':' && s[len]!='#')
+    len += 1;
+  GUTF8String name(s, len);
+  name = name.downcase();
   for (int i=0; stdcols[i].name; i++)
     if (name == stdcols[i].name)
       {
-        stencil_color[0] = stdcols[i].r;
-        stencil_color[1] = stdcols[i].g;
-        stencil_color[2] = stdcols[i].b;
-        return;
+        rgb[0] = stdcols[i].r;
+        rgb[1] = stdcols[i].g;
+        rgb[2] = stdcols[i].b;
+        return s+len;
       }
-  unsigned int R,G,B;
-  if (sscanf(cname,"%2x%2x%2x",&R,&G,&B) == 3)
+  // potential hex specifications
+  unsigned int r,g,b;
+  if (sscanf(s,"%2x%2x%2x",&r,&g,&b) == 3)
     {
-      stencil_color[0] = (unsigned char) R;
-      stencil_color[1] = (unsigned char) G;
-      stencil_color[2] = (unsigned char) B;
-      return;
+      rgb[0] = r;
+      rgb[1] = g;
+      rgb[2] = b;
+      return s+6;
     }
-  G_THROW("Unrecognized color name");
+  G_THROW("Unrecognized color name in FGbz chunk specification");
 }
+
+
+void
+parse_color_zones(const char *s)
+{
+  bool fullpage = false;
+  int zones = 0;
+  g().colorzones.empty();
+  g().colorpalette = ByteStream::create();
+  // zones
+  while (s[0] == '#')
+    {
+      char rgb[3];
+      GRect rect;
+      s = parse_color_name(s+1, rgb);
+      if (s[0] == ':')
+        {
+          int c[4];
+          for (int i=0; i<4; i++)
+            {
+              char *e = 0;
+              c[i] = strtol(s+1, &e, 10);
+              if (e <= s || (i>=2 && c[i]<0) || (i<3 && e[0]!=','))
+                G_THROW("Invalid coordinates in FGbz chunk specification");
+              s = e;
+            }
+          rect = GRect(c[0],c[1],c[2],c[3]);
+        }
+      if (rect.isempty())
+        fullpage = true;
+      g().colorpalette->writall(rgb, 3);
+      g().colorzones.touch(zones);
+      g().colorzones[zones] = rect;
+      zones++;
+    }
+  if (s[0])
+    G_THROW("Syntax error in FGbz chunk specification");
+  // add extra black palette entry
+  if (! fullpage)
+    {
+      char rgb[3] = {0,0,0};
+      g().colorpalette->writall(rgb, 3);
+    }
+}
+
+
 
 // -- Main
 
@@ -850,7 +924,7 @@ main(int argc, char **argv)
                 }
               else
                 {
-                  parse_color_name(c + 1);
+                  parse_color_zones(c);
                   if (flag_contains_stencil && blit_count >= 0)
                     create_fgbz_chunk(iff);
                   else
