@@ -205,21 +205,22 @@ usage()
          "The arguments describe the successive chunks of the DJVU file.\n"
          "Possible arguments are:\n"
          "\n"
-         "   INFO=w[,[h[,[dpi]]]]        --  Create the initial information chunk\n"
-         "   Sjbz=jb2file                --  Create a JB2 mask chunk\n"
-         "   Djbz=jb2file                --  Create a JB2 shape dictionary\n"
-         "   Smmr=mmrfile                --  Create a MMR mask chunk\n"
-         "   BG44=[iw4file][:nchunks]    --  Create one or more IW44 background chunks\n"
-         "   BGjp=jpegfile               --  Create a JPEG background chunk\n"
-         "   BG2k=jpeg2000file           --  Create a JP2K background chunk\n"
-         "   FG44=iw4file                --  Create an IW44 foreground chunk\n"
-         "   FGbz=(bzzfile|#color)       --  Create a BZZ encoded foreground chunk\n"
-         "   FGjp=jpegfile               --  Create a JPEG foreground chunk\n"
-         "   FG2k=jpeg2000file           --  Create a JP2K foreground chunk\n"
-         "   INCL=fileid                 --  Create an INCL chunk\n"
-         "   chunk=rawdatafile           --  Create the specified chunk from the raw data file\n"
-         "   PPM=ppmfile                 --  Create IW44 foreground and background chunks\n"
-         "                                   by masking and subsampling a PPM file.\n"
+         "   INFO=w[,[h[,[dpi]]]]     --  Create the initial information chunk\n"
+         "   Sjbz=jb2file             --  Create a JB2 mask chunk\n"
+         "   Djbz=jb2file             --  Create a JB2 shape dictionary\n"
+         "   Smmr=mmrfile             --  Create a MMR mask chunk\n"
+         "   BG44=[iw4file][:nchunks] --  Create one or more IW44 background chunks\n"
+         "   BGjp=jpegfile            --  Create a JPEG background chunk\n"
+         "   BG2k=jpeg2000file        --  Create a JP2K background chunk\n"
+         "   FG44=iw4file             --  Create an IW44 foreground chunk\n"
+         "   FGbz=bzzfile             --  Create a foreground color chunk from a file\n"
+         "   FGbz={#color:x,y,w,h}    --  Create a foreground color chunk from zones\n"
+         "   FGjp=jpegfile            --  Create a JPEG foreground image chunk\n"
+         "   FG2k=jpeg2000file        --  Create a JP2K foreground image chunk\n"
+         "   INCL=fileid              --  Create an INCL chunk\n"
+         "   chunk=rawdatafile        --  Create the specified chunk from the raw data file\n"
+         "   PPM=ppmfile              --  Create IW44 foreground and background chunks\n"
+         "                                by masking and subsampling a PPM file.\n"
          "\n"
          "You may omit the specification of the information chunk. An information\n"
          "chunk will be created using the image size of the first mask chunk\n"
@@ -813,6 +814,7 @@ parse_color_name(const char *s, char *rgb)
       return s+6;
     }
   G_THROW("Unrecognized color name in FGbz chunk specification");
+  return 0; // win
 }
 
 
