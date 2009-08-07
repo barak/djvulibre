@@ -157,6 +157,7 @@ AC_TYPE_UINT32_T
 AC_CHECK_TYPES(wchar_t)
 AC_CHECK_TYPES(long long int)
 AC_CHECK_TYPES(mbstate_t,,,[#include "wchar.h"])
+AC_SYS_LARGEFILE
 
 # ----------------------------------------
 # Functions
@@ -164,6 +165,7 @@ AC_CHECK_TYPES(mbstate_t,,,[#include "wchar.h"])
 
 AC_FUNC_MMAP
 AC_FUNC_FORK
+AC_FUNC_FSEEKO
 AC_CHECK_FUNCS(wcrtomb iswspace setenv)
 AC_CHECK_FUNCS(putc_unlocked strerror vsnprintf)
 AC_CHECK_FUNCS(gethostname strftime getpwuid)
