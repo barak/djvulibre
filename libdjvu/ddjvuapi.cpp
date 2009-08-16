@@ -971,17 +971,21 @@ ddjvu_document_create(ddjvu_context_t *ctx,
   return d;
 }
 
-ddjvu_document_t *
-ddjvu_document_create_by_filename(ddjvu_context_t *ctx,
-                                  const char *filename,
-                                  int cache)
+static ddjvu_document_t *
+ddjvu_document_create_by_filename_imp(ddjvu_context_t *ctx,
+                                      const char *filename,
+                                      int cache, int utf8)
 {
   ddjvu_document_t *d = 0;
   G_TRY
     {
       DjVuFileCache *xcache = ctx->cache;
       if (! cache) xcache = 0;
-      GURL gurl = GURL::Filename::UTF8(filename);
+      GURL gurl;
+      if (utf8) 
+        gurl = GURL::Filename::UTF8(filename);
+      else
+        gurl = GURL::Filename::Native(filename);
       d = new ddjvu_document_s;
       ref(d);
       GMonitorLock lock(&d->monitor);
@@ -1004,6 +1008,22 @@ ddjvu_document_create_by_filename(ddjvu_context_t *ctx,
     }
   G_ENDCATCH;
   return d;
+}
+
+ddjvu_document_t *
+ddjvu_document_create_by_filename(ddjvu_context_t *ctx,
+                                  const char *filename,
+                                  int cache)
+{
+  return ddjvu_document_create_by_filename_imp(ctx,filename,cache,0);
+}
+
+ddjvu_document_t *
+ddjvu_document_create_by_filename_utf8(ddjvu_context_t *ctx,
+                                       const char *filename,
+                                       int cache)
+{
+  return ddjvu_document_create_by_filename_imp(ctx,filename,cache,1);
 }
 
 ddjvu_job_t *

@@ -1,3 +1,9 @@
+NEW SINCE VERSION 3.5.22
+------------------------
+- Added ddjvu_document_create_by_filename_utf8
+- ddjvuapi_version=19
+
+
 NEW IN VERSION 3.5.22
 ------------------------
 - Probably the last release before djvulibre-4

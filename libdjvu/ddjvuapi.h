@@ -112,6 +112,8 @@ extern "C" {
 
    Version   Change
    -----------------------------
+     19    Added:
+              ddjvu_document_create_by_filename_utf8
      18    Added:
               ddjvu_document_get_{anno,pagedump,filedump}()
            Modifed (binary compatible):
@@ -133,9 +135,7 @@ extern "C" {
      14    Initial version.
 */
 
-#define DDJVUAPI_VERSION 18
-
-
+#define DDJVUAPI_VERSION 19
 
 typedef struct ddjvu_context_s    ddjvu_context_t;
 typedef union  ddjvu_message_s    ddjvu_message_t;
@@ -501,13 +501,19 @@ ddjvu_document_create(ddjvu_context_t *context,
 /* ddjvu_document_create_by_filename ---
    Creates a document for a DjVu document stored in a file.
    The document will directly access the specified DjVu file 
-   or related files without generating <m_newstream> messages. */
+   or related files without generating <m_newstream> messages.
+   The standard function expects the filename in locale encoding. 
+   The utf8 variant expects an utf8 encoded filename. */
 
 DDJVUAPI ddjvu_document_t *
 ddjvu_document_create_by_filename(ddjvu_context_t *context,
                                   const char *filename,
                                   int cache);
 
+DDJVUAPI ddjvu_document_t *
+ddjvu_document_create_by_filename_utf8(ddjvu_context_t *context,
+                                       const char *filename,
+                                       int cache);
 
 /* ddjvu_document_job ---
    Access the job object in charge of decoding the document header. 
