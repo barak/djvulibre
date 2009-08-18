@@ -1193,7 +1193,7 @@ DjVuFile::decode_chunk( const GUTF8String &id, const GP<ByteStream> &gbs,
       ByteStream &achunk=*gachunk;
       achunk.copy(bs);
       achunk.seek(0);
-      GCriticalSectionLock lock(&text_lock);
+      GCriticalSectionLock lock(&meta_lock);
       if (! meta)
       {
         meta = ByteStream::create();
