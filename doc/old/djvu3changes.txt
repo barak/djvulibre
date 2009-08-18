@@ -1,4 +1,11 @@
 
+
+
+<WARNING: THIS DOCUMENT HAS BEEN MADE OBSOLETE 
+ BY THE LIZARDTECH SPECIFICATION "DJVU3SPEC.DJVU".>
+
+
+
     This file summarizes the file format changes 
     between DjVu2 and DjVu3.
 
