@@ -991,6 +991,33 @@ main(int argc, char **argv)
                                  (const char *)dargv[i]);
             }
         }
+      // Common cases for missing chunks
+      if (flag_contains_stencil)
+        {
+          if (flag_contains_bg && ! flag_contains_fg)
+            {  
+              DjVuPrintErrorUTF8("%s","djvumake: generating black FGbz chunk\n");
+              g().colorzones.empty();
+              g().colorpalette = ByteStream::create();
+              char rgb[3] = {0,0,0};
+              g().colorpalette->writall(rgb, 3);
+              create_fgbz_chunk(iff);
+              flag_contains_fg = 1;
+            }
+          if (flag_contains_fg && !flag_contains_bg)
+            {
+              DjVuPrintErrorUTF8("%s","djvumake: generating white BG44 chunk\n");
+              GPixel bgcolor = GPixel::WHITE;
+              GP<GPixmap> inputsub=GPixmap::create((h+11)/12, (w+11)/12, &bgcolor);
+              GP<IW44Image> iw = IW44Image::create_encode(*inputsub, 0, IW44Image::CRCBnone);
+              IWEncoderParms iwparms;
+              iff.put_chunk("BG44");
+              iwparms.slices = 97;
+              iw->encode_chunk(iff.get_bytestream(), iwparms);
+              iff.close_chunk();
+              flag_contains_bg = 1;
+            }
+        }
       // Close
       iff.close_chunk();
       // Sanity checks
