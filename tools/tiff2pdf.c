@@ -980,7 +980,7 @@ static T2P* t2p_init()
 		TIFFError(
 			TIFF2PDF_MODULE, 
 			"Can't allocate %u bytes of memory for t2p_init", 
-			sizeof(T2P));
+			(int)sizeof(T2P));
 		return( (T2P*) NULL );
 	}
 	_TIFFmemset(t2p, 0x00, sizeof(T2P));
@@ -1124,7 +1124,7 @@ static void t2p_read_tiff_init(T2P* t2p, TIFF* input){
 		TIFFError(
 			TIFF2PDF_MODULE, 
 			"Can't allocate %u bytes of memory for tiff_pages array, %s", 
-			directorycount * sizeof(T2P_PAGE), 
+			directorycount * (int)sizeof(T2P_PAGE), 
 			TIFFFileName(input));
 		t2p->t2p_error = T2P_ERR_ERROR;
 		return;
@@ -1135,7 +1135,7 @@ static void t2p_read_tiff_init(T2P* t2p, TIFF* input){
 		TIFFError(
 			TIFF2PDF_MODULE, 
 			"Can't allocate %u bytes of memory for tiff_tiles array, %s", 
-			directorycount * sizeof(T2P_TILES), 
+			directorycount * (int)sizeof(T2P_TILES), 
 			TIFFFileName(input));
 		t2p->t2p_error = T2P_ERR_ERROR;
 		return;
@@ -1267,7 +1267,7 @@ static void t2p_read_tiff_init(T2P* t2p, TIFF* input){
 				TIFFError(
 					TIFF2PDF_MODULE, 
 					"Can't allocate %u bytes of memory for t2p_read_tiff_init, %s", 
-					t2p->tiff_tiles[i].tiles_tilecount * sizeof(T2P_TILE), 
+					t2p->tiff_tiles[i].tiles_tilecount * (int)sizeof(T2P_TILE), 
 					TIFFFileName(input));
 				t2p->t2p_error = T2P_ERR_ERROR;
 				return;
@@ -1506,8 +1506,7 @@ static void t2p_read_tiff_data(T2P* t2p, TIFF* input){
 				TIFFError(
 					TIFF2PDF_MODULE, 
 					"No support for palettized image %s with not one sample per pixel", 
-					TIFFFileName(input), 
-					t2p->tiff_samplesperpixel);
+					TIFFFileName(input) );
 				t2p->t2p_error = T2P_ERR_ERROR;
 				return;
 			}
@@ -1576,8 +1575,7 @@ static void t2p_read_tiff_data(T2P* t2p, TIFF* input){
 				TIFFError(
 					TIFF2PDF_MODULE, 
 					"No support for palettized CMYK image %s with not one sample per pixel", 
-					TIFFFileName(input), 
-					t2p->tiff_samplesperpixel);
+					TIFFFileName(input) );
 				t2p->t2p_error = T2P_ERR_ERROR;
 				return;
 			}
@@ -1656,8 +1654,7 @@ static void t2p_read_tiff_data(T2P* t2p, TIFF* input){
 			TIFFError(
 				TIFF2PDF_MODULE, 
 				"No support for %s with photometric interpretation LogL/LogLuv", 
-				TIFFFileName(input),
-				t2p->tiff_photometric);
+				TIFFFileName(input));
 			t2p->t2p_error = T2P_ERR_ERROR;
 			return;
 		default:
