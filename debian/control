@@ -6,12 +6,12 @@ Build-Depends: debhelper (>= 7), libx11-dev, libxext-dev, libxt-dev, libqt3-mt-d
 Vcs-Cvs: :ext:@djvu.cvs.sourceforge.net:/cvsroot/djvu
 VCS-Browser: http://djvu.cvs.sourceforge.net/djvu/djvulibre-3.5/
 Homepage: http://djvu.sourceforge.net/
-Standards-Version: 3.8.0
+Standards-Version: 3.8.3
 
 Package: libdjvulibre-dev
 Section: libdevel
 Architecture: any
-Depends: libdjvulibre21 (= ${binary:Version}), libjpeg62-dev
+Depends: ${shlibs:Depends}, ${misc:Depends}, libdjvulibre21 (= ${binary:Version}), libjpeg62-dev
 Description: Development files for the DjVu image format
  DjVu image format static library and development files.
  .
@@ -30,7 +30,7 @@ Description: Development files for the DjVu image format
 Package: libdjvulibre21
 Section: libs
 Architecture: any
-Depends: ${shlibs:Depends}, libdjvulibre-text (>= ${binary:Version})
+Depends: ${shlibs:Depends}, ${misc:Depends}, libdjvulibre-text (>= ${binary:Version})
 Conflicts: libdjvulibre1
 Replaces: libdjvulibre1, libdjvulibre15
 Description: Runtime support for the DjVu image format
@@ -44,10 +44,10 @@ Description: Linguistic support files for libdjvulibre
  Runtime linguistic support files for the libdjvulibre library.
 
 Package: djvulibre-dbg
-Section: libdevel
+Section: debug
 Priority: extra
 Architecture: any
-Depends: libdjvulibre21 (= ${binary:Version})
+Depends: ${shlibs:Depends}, ${misc:Depends}, libdjvulibre21 (= ${binary:Version})
 Description: Debug symbols for the DjVu image format
  DjVu runtime debug symbols.
 
@@ -65,7 +65,7 @@ Section: graphics
 Architecture: any
 Conflicts: djview (<= 3.5.20-5), libdjvulibre-text (= 3.5.20-9)
 Provides: djvu-viewer
-Depends: ${shlibs:Depends}
+Depends: ${shlibs:Depends}, ${misc:Depends}
 Recommends: djvulibre-desktop
 Suggests: djvulibre-bin, djvulibre-plugin
 Description: Viewer for the DjVu image format
@@ -74,7 +74,7 @@ Description: Viewer for the DjVu image format
 Package: djview
 Section: graphics
 Architecture: any
-Depends: djview4 | djview3
+Depends: ${shlibs:Depends}, ${misc:Depends}, djview4 | djview3
 Description: Transition package for djview to djview3
  Ease transition of package name from djview to djview3.
 
@@ -83,7 +83,7 @@ Section: web
 Recommends: apache | httpd-cgi | httpd
 Conflicts: djvulibre-bin (<< 3.5.9-3)
 Architecture: any
-Depends: ${shlibs:Depends}
+Depends: ${shlibs:Depends}, ${misc:Depends}
 Description: CGI program for unbundling DjVu files on the fly
  CGI program to convert a bundled multi-page DjVu document into an
  indirect DjVu document on the fly.  This provides for efficiently
@@ -92,7 +92,7 @@ Description: CGI program for unbundling DjVu files on the fly
 Package: djvulibre-plugin
 Section: web
 Architecture: any
-Depends: ${shlibs:Depends}, djview4 | djview3
+Depends: ${shlibs:Depends}, ${misc:Depends}, djview4 | djview3
 Enhances: mozilla-browser, mozilla, mozilla-firefox, iceweasel, iceape-browser, konqueror, galeon
 Recommends: mozilla-browser | mozilla | mozilla-firefox | iceweasel | iceape-browser | konqueror | galeon
 Suggests: mime-support
@@ -103,7 +103,7 @@ Description: Browser plugin for the DjVu image format
 Package: djvulibre-bin
 Section: graphics
 Architecture: any
-Depends: curl, ${shlibs:Depends}
+Depends: ${shlibs:Depends}, ${misc:Depends}, curl
 Recommends: pdf2djvu
 Suggests: djvulibre-desktop, djview4 | djvu-viewer | evince
 Description: Utilities for the DjVu image format
