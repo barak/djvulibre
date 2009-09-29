@@ -1,3 +1,9 @@
+djvulibre (3.5.22-5rc) unstable; urgency=low
+
+  * dh ${misc:Depends} for straggler binary packages
+
+ -- Barak A. Pearlmutter <bap@debian.org>  Tue, 29 Sep 2009 15:38:06 -0400
+
 djvulibre (3.5.22-4) unstable; urgency=low
 
   * Clean lintian issues:
