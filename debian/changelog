@@ -1,3 +1,9 @@
+djvulibre (3.5.22-6) unstable; urgency=low
+
+  * patch for typos, thanks Jakub Wilk <ubanus@users.sf.net> (closes: #551109)
+
+ -- Barak A. Pearlmutter <bap@debian.org>  Sat, 17 Oct 2009 18:16:19 +0100
+
 djvulibre (3.5.22-5) unstable; urgency=low
 
   * dh ${misc:Depends} for straggler binary packages

@@ -982,7 +982,7 @@ command_print_meta(ParsingByteStream &)
       GP<DjVmDir::File> frec = g().doc->get_djvm_dir()->get_shared_anno_file();
       if (frec)
         {
-          vprint("print-meta: implicitely selecting shared annotations");
+          vprint("print-meta: implicitly selecting shared annotations");
           select_clear();
           select_add(frec);
         }
@@ -1101,11 +1101,11 @@ command_set_meta(ParsingByteStream &pbs)
       GP<DjVmDir::File> frec = g().doc->get_djvm_dir()->get_shared_anno_file();
       if (frec)
         {
-          vprint("print-meta: implicitely selecting shared annotations.");
+          vprint("print-meta: implicitly selecting shared annotations.");
         }
       else if (metadata.size() > 0)
         {
-          vprint("print-meta: implicitely creating and selecting shared annotations.");
+          vprint("print-meta: implicitly creating and selecting shared annotations.");
           g().doc->create_shared_anno_file();
           frec = g().doc->get_djvm_dir()->get_shared_anno_file();
         }
