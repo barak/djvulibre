@@ -1,3 +1,9 @@
+djvulibre (3.5.22-7rc) unstable; urgency=low
+
+  * patch typos (closes: #551398)
+
+ -- Barak A. Pearlmutter <bap@debian.org>  Sun, 18 Oct 2009 16:28:20 +0100
+
 djvulibre (3.5.22-6) unstable; urgency=low
 
   * patch for typos, thanks Jakub Wilk <ubanus@users.sf.net> (closes: #551109)
