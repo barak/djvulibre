@@ -84,7 +84,7 @@
     \item[-clean]       Quasi-lossless compression (same as -losslevel 1).
     \item[-lossy]       Lossy compression (same as -losslevel 100).
     \item[-losslevel n] Set loss level (0 to 200)
-    \item[-verbose]     Displays additional messages.
+    \item[-verbose]     Display additional messages.
     \end{description}
     Encoding is lossless unless one or several lossy options are selected.
     The #dpi# argument mostly affects the cleaning thresholds.
@@ -922,9 +922,9 @@ usage()
          "Simple DjVuBitonal encoder\n\n"
          "Usage: cjb2 [options] <input-pbm-or-tiff> <output-djvu>\n"
          "Options are:\n"
-         " -verbose        Displays additional messages.\n"
+         " -verbose        Display additional messages.\n"
          " -dpi <n>        Specify image resolution (default 300).\n"
-         " -clean          Cleanup image by remove small flyspecks.\n"
+         " -clean          Cleanup image by removing small flyspecks.\n"
          " -lossy          Lossy compression (implies -clean as well)\n"
          " -losslevel <n>  Loss factor (implies -lossy, default 100)\n"
          "Encoding is lossless unless a lossy options is selected.\n" );
