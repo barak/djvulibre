@@ -80,8 +80,8 @@
     Options are:
     \begin{description}
     \item[-dpi xxx]     Specify image resolution (default 300).
-    \item[-lossless]    Lossless compresion (same as -losslevel 0, default).
-    \item[-clean]       Quasi-lossless compresion (same as -losslevel 1).
+    \item[-lossless]    Lossless compression (same as -losslevel 0, default).
+    \item[-clean]       Quasi-lossless compression (same as -losslevel 1).
     \item[-lossy]       Lossy compression (same as -losslevel 100).
     \item[-losslevel n] Set loss level (0 to 200)
     \item[-verbose]     Displays additional messages.
@@ -924,7 +924,7 @@ usage()
          "Options are:\n"
          " -verbose        Displays additional messages.\n"
          " -dpi <n>        Specify image resolution (default 300).\n"
-         " -clean          Cleanup image by remove small flyspecs.\n"
+         " -clean          Cleanup image by remove small flyspecks.\n"
          " -lossy          Lossy compression (implies -clean as well)\n"
          " -losslevel <n>  Loss factor (implies -lossy, default 100)\n"
          "Encoding is lossless unless a lossy options is selected.\n" );

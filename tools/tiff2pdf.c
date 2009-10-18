@@ -1090,7 +1090,7 @@ static void t2p_validate(T2P* t2p){
 		if(t2p->pdf_defaultcompressionquality%100 !=0){
 			TIFFError(
 				TIFF2PDF_MODULE, 
-				"PNG Group predictor differencing not implemented, assuming compresion quality %u", 
+				"PNG Group predictor differencing not implemented, assuming compression quality %u", 
 				t2p->pdf_defaultcompressionquality);
 		}
 		t2p->pdf_defaultcompressionquality%=100;
