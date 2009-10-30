@@ -589,7 +589,7 @@ dopage(int pageno)
       if (tiff) 
         {
           if (! TIFFWriteDirectory(tiff))
-            die(i18n("Problem writing TIFF directory."));
+            die(i18n("Problem writing directory in temporary TIFF file."));
         }
       else
         {
@@ -606,7 +606,7 @@ dopage(int pageno)
             tiffd = open(tempfilename, O_RDWR|O_CREAT);
 # endif
           if (tiffd < 0 || ! (tiff = TIFFFdOpen(tiffd, tempfilename, "w")))
-            die(i18n("Cannot create temporary tiff file '%s'."), tempfilename);
+            die(i18n("Cannot create temporary TIFF file '%s'."), tempfilename);
         }
 #else
       die(i18n("PDF output is not compiled"));
@@ -1029,7 +1029,7 @@ main(int argc, char **argv)
         fprintf(stderr,i18n("Converting temporary TIFF to PDF.\n"));
       lseek(tiffd, 0, SEEK_SET);
       if (! (tiff = TIFFFdOpen(tiffd, tempfilename, "r")))
-        die(i18n("Cannot reopen temporary tiff file '%s'."), tempfilename);
+        die(i18n("Cannot reopen temporary TIFF file '%s'."), tempfilename);
       if (! (fout = fopen(outputfilename, "wb")))
         die(i18n("Cannot open output file '%s'."), outputfilename);
       const char *args[3];
