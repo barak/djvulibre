@@ -1438,7 +1438,7 @@ ddjvu_document_get_outline(ddjvu_document_t *document);
    and <compat> is true, this function searches a shared 
    annotation chunk and returns its contents.
 
-   This function returns <miniexp_dummy> is the information
+   This function returns <miniexp_dummy> if the information
    is not yet available. It may then cause the emission 
    of <m_pageinfo> messages with null <m_any.page>.
 
@@ -1557,7 +1557,7 @@ ddjvu_anno_get_vertalign(miniexp_t annotations);
 /* ddjvu_anno_get_hyperlinks --
    Parse the annotations and returns a zero terminated 
    array of <(maparea ...)> s-expressions.
-   The called should free this array with function <free>.
+   The caller should free this array with function <free>.
    These s-expressions remain allocated as long
    as the annotations remain allocated.
    See also <(maparea ...)> in the djvused man page. */
@@ -1569,7 +1569,7 @@ ddjvu_anno_get_hyperlinks(miniexp_t annotations);
 /* ddjvu_anno_get_metadata_keys --
    Parse the annotations and returns a zero terminated 
    array of key symbols for the page metadata.
-   The called should free this array with function <free>.
+   The caller should free this array with function <free>.
    See also <(metadata ...)> in the djvused man page. */
 
 DDJVUAPI miniexp_t *
