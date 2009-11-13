@@ -443,7 +443,7 @@ MINILISPAPI void minilisp_finish(void);
      Vertical bars <|> can be used to delimit names that
      contain blanks, special characters, non printable
      characters, non ascii characters, or 
-     can be confused as a number.
+     can be confused for a number.
      
    - Numbers follow the syntax specified by the C
      function strtol() with base=0.
