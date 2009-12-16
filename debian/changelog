@@ -1,8 +1,9 @@
-djvulibre (3.5.22-7rc) unstable; urgency=low
+djvulibre (3.5.22-7) unstable; urgency=low
 
   * patch typos (closes: #551398)
+  * man page install (closes: #561350), note dh_installman would botch i18n
 
- -- Barak A. Pearlmutter <bap@debian.org>  Sun, 18 Oct 2009 16:28:20 +0100
+ -- Barak A. Pearlmutter <bap@debian.org>  Wed, 16 Dec 2009 14:02:49 -0500
 
 djvulibre (3.5.22-6) unstable; urgency=low
 
