@@ -1,5 +1,6 @@
 usr/bin/djview3
 usr/share/djvu/djview3
-usr/share/man/{.,*}/man1/djview3.1
 usr/share/applications
 usr/share/icons/hicolor/*/apps
+usr/share/man/man*/djview3.*
+usr/share/man/*/man*/djview3.*
