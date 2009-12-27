@@ -338,6 +338,9 @@ ddjvu_context_create(const char *programname)
   G_TRY
     {
       setlocale(LC_ALL,"");
+#ifdef LC_NUMERIC
+      setlocale(LC_NUMERIC, "C");
+#endif
       if (programname)
         djvu_programname(programname);
       DjVuMessage::use_language();
