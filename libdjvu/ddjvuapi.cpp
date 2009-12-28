@@ -337,9 +337,11 @@ ddjvu_context_create(const char *programname)
   ddjvu_context_t *ctx = 0;
   G_TRY
     {
+#ifdef LC_ALL
       setlocale(LC_ALL,"");
-#ifdef LC_NUMERIC
+# ifdef LC_NUMERIC
       setlocale(LC_NUMERIC, "C");
+# endif
 #endif
       if (programname)
         djvu_programname(programname);
