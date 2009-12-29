@@ -1874,10 +1874,10 @@ GStringRep::UTF8::toNative(const EscapeMode escape) const
         {
           sprintf((char *)r,"&#%lu;",(unsigned long)w0);
           r+=strlen((char *)r);
-        }else
+        }
+        else
         {
-          r=buf;
-          break;
+          *r++ = '?';
         }
       }
     }

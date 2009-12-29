@@ -116,6 +116,7 @@ xxx
 #include "ByteStream.h"
 #include "GException.h"
 #include "GOS.h"
+#include "GString.h"
 #include "GURL.h"
 #include "DjVuMessage.h"
 
@@ -128,13 +129,17 @@ void
 display(const GURL &url)
 {
    DjVuDumpHelper helper;
-   GP<ByteStream> ibs=ByteStream::create(url, "rb");
-   GP<ByteStream> str_out;
-   str_out=helper.dump(ibs);
-   GP<ByteStream> obs=ByteStream::create("w");
-   str_out->seek(0);
-   obs->copy(*str_out);
+   GP<ByteStream> ibs = ByteStream::create(url, "rb");
+   GP<ByteStream> obs = helper.dump(ibs);
+   GUTF8String str;
+   size_t size = obs->size();
+   char *buf = str.getbuf(obs->size());
+   obs->seek(0);
+   obs->readall(buf, size);
+   GNativeString ns = str;
+   fputs((const char*)ns, stdout);
 }
+
 
 void
 usage()
