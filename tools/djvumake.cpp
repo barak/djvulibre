@@ -964,7 +964,7 @@ main(int argc, char **argv)
             }
           else if (!dargv[i].cmp("INCL=",5))
             {
-              create_incl_chunk(iff, "INCL", GURL::Filename::UTF8(5+(const char *)dargv[i]).name());
+              create_incl_chunk(iff, "INCL", GURL::Filename::UTF8(5+(const char *)dargv[i]).fname());
               flag_contains_incl = 1;
             }
           else if (!dargv[i].cmp("PPM=",4))
