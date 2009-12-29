@@ -24,6 +24,9 @@ applied to both dimensions.  The requirements should be read as:
   such integers, the smallest one shall be considered
   to rescale the background image to the foreground resolution.>>
 
+1.2- ENCODING OF INCL CHUNKS
+
+The contents of INCL chunks is UTF-8 encoded.
 
 
 2- ESCAPE SEQUENCES IN ANNOTATION CHUNK STRINGS.
