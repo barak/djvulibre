@@ -1602,6 +1602,7 @@ ddjvu_page_s::status()
   if (! img)
     return DDJVU_JOB_NOTSTARTED;        
   DjVuFile *file = img->get_djvu_file();
+  DjVuInfo *info = img->get_info();
   if (! file)
     return DDJVU_JOB_NOTSTARTED;
   else if (file->is_decode_stopped())
@@ -1609,7 +1610,7 @@ ddjvu_page_s::status()
   else if (file->is_decode_failed())
     return DDJVU_JOB_FAILED;
   else if (file->is_decode_ok())
-    return DDJVU_JOB_OK;
+    return (info) ? DDJVU_JOB_OK : DDJVU_JOB_FAILED;
   else if (file->is_decoding())
     return DDJVU_JOB_STARTED;
   return DDJVU_JOB_NOTSTARTED;
