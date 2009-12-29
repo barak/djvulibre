@@ -489,8 +489,8 @@ struct ddjvu_message_info_s {   /* ddjvu_message_t::m_info */
    and <ddjvu_stream_close>.
 
    Localized characters in argument <url> should be in 
-   urlencoded utf-8 (like "%2A"). What is happening for non 
-   ascii characters is unclear (probably plain utf8). */
+   urlencoded UTF-8 (like "%2A"). What is happening for non 
+   ascii characters is unclear (probably UTF-8). */
 
 DDJVUAPI ddjvu_document_t *
 ddjvu_document_create(ddjvu_context_t *context,
