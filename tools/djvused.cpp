@@ -1458,10 +1458,11 @@ output(const GP<DjVuFile> &f, const GP<ByteStream> &out,
         }
       if (id && ant->size() + txt->size())
         {
-          GUTF8String msg;
-          msg.format("# -------------------------------------\n"
-                     "select '%s'\n", id);
-          out->write((const char*)msg, msg.length());
+          static const char msg1[] = "# ------------------------- \n select \0";
+          static const char msg2[] = "\n\0";
+          out->write(msg1, strlen(msg1));
+          print_c_string(id, strlen(id), *out);
+          out->write(msg2, strlen(msg2));
         }
       if (ant->size()) 
         {
