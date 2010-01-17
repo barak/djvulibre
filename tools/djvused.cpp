@@ -1987,7 +1987,7 @@ main(int argc, char **argv)
           else if (!strcmp(argv[i],"-e") && !g().cmdbs && ++i<argc) 
             g().cmdbs = ByteStream::create_static(argv[i],strlen(argv[i]));
           else if (argv[i][0] != '-' && !g().djvufile)
-            g().djvufile = argv[i];
+            g().djvufile = GNativeString(argv[i]);
           else
             usage();
       }
