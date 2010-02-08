@@ -35,6 +35,8 @@ for n in $qtplug ; do
     for m in $qtdir/plugins/$n/*.dll ; do
         run cp $m $target/plugins/$n ; done
     run chmod 0755 $target/plugins/$n/* ; done
+    run rm $target/plugins/*/*d4.dll
+    run rm $target/plugins/imageformats/qsvg*
 echo '[Paths]' > $target/qt.conf
 
 for n in "$msredist"/* ; do
