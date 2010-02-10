@@ -1,8 +1,9 @@
-djvulibre (3.5.22-8) UNRELEASED; urgency=low
+djvulibre (3.5.22-8) unstable; urgency=low
 
   * upstream patch escapes fields in djvused output-* (closes: #564684)
+  * ditch libjpeg62-dev dependencies in favour of libjpeg-dev (closes: #569233)
 
- -- Barak A. Pearlmutter <bap@debian.org>  Mon, 08 Feb 2010 01:25:40 +0000
+ -- Barak A. Pearlmutter <bap@debian.org>  Wed, 10 Feb 2010 23:35:19 +0000
 
 djvulibre (3.5.22-7) unstable; urgency=low
 
