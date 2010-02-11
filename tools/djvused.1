@@ -620,13 +620,14 @@ The string
 is the title of the outline entry.
 The destination string
 .I url
-can be an arbitrary
-.SM URL
-or can be composed of the hash character ("#")
-followed by either the component file identifier
-or the page number corresponding to the outline entry.
-The remaining expressions describe subentries of 
-this outline entry.
+can be either an arbitrary percent encoded
+.SM URL,
+or composed of the hash character ("#")
+followed by a page name or number,
+or composed of the question mark character ("?")
+followed by cgi-style arguments interpreted by the djvu viewer.
+The remaining expressions in the list
+describe subentries of this outline entry.
 
 .SS Annotation syntax
 Annotations are represented by a sequence of annotation expressions.
@@ -698,12 +699,14 @@ anchor tag
 .SM <A>.
 The destination string
 .I href
-can be an arbitrary
-.SM URL
-or can be composed of the hash character ("#")
-followed by either a component file identifier
-or a page number.  Page numbers may be prefixed
-with an optional sign to represent a page displacement.  
+can be either an arbitrary percent encoded
+.SM URL,
+or composed of the hash character ("#")
+followed by a page name or number,
+or composed of the question mark character ("?")
+followed by cgi-style arguments interpreted by the djvu viewer.
+Page numbers may be prefixed with an optional sign 
+to represent a page displacement.  
 For instance the strings
 .B """#-1""" 
 and 
