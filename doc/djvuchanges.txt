@@ -30,7 +30,7 @@ The contents of INCL chunks is UTF-8 encoded.
 
 1.3- ENCODING OF URLS IN ANNOTATIONS
 
-Urls in annotations should be percent encoded.
+URLs in annotations should be percent encoded.
 However UTF-8 characters will be interpreted properly.
 
 
@@ -205,22 +205,21 @@ This is being considered.
 
 
 
-5- TARGETS IN MAPAREA AND OUTLINE LINKS
+5- CGI STYLE OPTIONS IN MAPAREA AND OUTLINE LINKS
 
 Outline and maparea annotation are
-UTF-8 encoded strings interpreted as follows:
+UTF-8 encoded strings that can be 
+interpreted as page specification (see section 3.1)
+or as percent-encoded URLs (see section 1.3.)
 
-* Strings starting with the hash character "#" are page references 
-  and should be interpreted as described in section 3.1.
+In addition, strings starting with a question mark '?' are 
+interpreted as CGI style options separated by the 
+ampersand character '&'.  These options are ignored
+when the maparea link target is another window.
+Otherwise these options are passed verbatim to the viewer.
+This can cause portability problems because different djvu 
+viewers support different sets of CGI style options.
 
-* Strings starting with a question mark '?' contain CGI style 
-  options separated by the ampersand character '&'.
-  These options are passed verbatim to the viewer. 
-  This can cause portability problems because different djvu 
-  viewers support different sets of CGI style options.
-
-* All other strings are interpreted as a percent-encoded URL,
-  possibly containing cgi style options.
 
 
 6- THE "SECURE DJVU" FORMAT.
