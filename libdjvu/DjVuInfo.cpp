@@ -157,7 +157,7 @@ DjVuInfo::encode(ByteStream &bs)
   unsigned char flags;
   switch (orientation) 
     {
-    default: flags=0; break;
+    default: flags=1; break;
     case 1:  flags=6; break;
     case 2:  flags=2; break;
     case 3:  flags=5; break;
