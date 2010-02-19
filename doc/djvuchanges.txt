@@ -24,14 +24,20 @@ applied to both dimensions.  The requirements should be read as:
   such integers, the smallest one shall be considered
   to rescale the background image to the foreground resolution.>>
 
-1.2- ENCODING OF INCL CHUNKS
+1.2- ENCODING OF URLS IN ANNOTATIONS
 
-The contents of INCL chunks is UTF-8 encoded.
+Page 16 omits to specify that URLs in annotations should be percent encoded. 
+However, consistent with the encoding of strings in the annotation chunk, 
+UTF-8 characters in URL strings will be interpreted properly as if
+they were percent encoded.
 
-1.3- ENCODING OF URLS IN ANNOTATIONS
+1.3- FLAGS IN DJVUINFO CHUNKS
 
-URLs in annotations should be percent encoded.
-However UTF-8 characters will be interpreted properly.
+Page 24 specifies that {1,6,2,5} are the only four allowed 
+values of the "flags" field in the INFO chunk.
+To maximize compatibility with earlier versions of the standard,
+values different from {1,6,2,5} should be ignored
+and interpreted as 1 : rightside up orientation.
 
 
 
