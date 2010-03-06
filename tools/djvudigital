@@ -139,7 +139,7 @@ fi
 # Step 2 -- locate csepdjvu executable
 
 csepdjvu=
-for cs in ${CSEPDJVU} `pathexpand msepdjvu` `pathexpand csepdjvu`
+for cs in ${CSEPDJVU} `pathexpand csepdjvu` `pathexpand msepdjvu`
 do
   if [ -z "$csepdjvu" ] && ( "$cs" -h 2>&1 | grep -q quality )
   then
