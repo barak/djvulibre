@@ -928,16 +928,17 @@ map_insert(Map *m, void *key, void *val)
 
 
 typedef struct {
-  Window	window;
-  NPP		np_instance;
-  int		full_mode;
-  int           xembed_mode;
+  Window	 window;
+  NPP		 np_instance;
+  int		 full_mode;
+  int            xembed_mode;
+  NPNToolkitType toolkit;
 #if USE_XT
-  Window        client;
-  Widget	widget;
+  Window         client;
+  Widget 	 widget;
 #endif
-  NPObject     *npobject;
-  NPVariant     onchange;
+  NPObject      *npobject;
+  NPVariant      onchange;
 } Instance;
 
 
@@ -1156,16 +1157,20 @@ static int  IsConnectionOK(int);
 static void ProgramDied(void);
 static int  StartProgram(void);
 
+/******* Check macro ********/
+
+#define CHECK(x) if ((x) < 0) \
+    fprintf(stderr,"unexpected error: %s:%d %s\n", __FILE__,__LINE__,#x);
 
 /******* Pipe functions ********/
 
 static void
 process_delayed_requests(void)
 {
-  char ch;
+  char ch; 
   DelayedRequest *reqp;
   Instance *inst;
-  read(delay_pipe[0], &ch, 1);
+  CHECK(read(delay_pipe[0], &ch, 1));
   while((reqp = delayedrequest_pop(&delayed_requests)))
     {
       switch(reqp->req_num)
@@ -1238,7 +1243,7 @@ process_requests(void)
             if ( (ReadPointer(rev_pipe,&reqp->id,0,0) <= 0) ||
                  (ReadString(rev_pipe,&reqp->status,0,0) <= 0) ) 
               goto problem;
-            write(delay_pipe[1], "1", 1);
+            CHECK(write(delay_pipe[1], "1", 1));
           }
           break;
         case CMD_GET_URL:
@@ -1251,7 +1256,7 @@ process_requests(void)
                  (ReadString(rev_pipe,&reqp->url,0,0) <= 0) ||
                  (ReadString(rev_pipe,&reqp->target,0,0) <= 0) )
               goto problem;
-            write(delay_pipe[1], "1", 1);
+            CHECK(write(delay_pipe[1], "1", 1));
           }
           break;
         case CMD_ON_CHANGE:
@@ -1261,7 +1266,7 @@ process_requests(void)
             reqp->req_num = req_num;
             if ( (ReadPointer(rev_pipe,&reqp->id,0,0) <= 0) )
               goto problem;
-            write(delay_pipe[1], "1", 1);
+            CHECK(write(delay_pipe[1], "1", 1));
           }
         default:
           break;
@@ -1655,7 +1660,7 @@ Resize(void * id)
   if (inst->xembed_mode)
     return 1;
 #if USE_XT
-  else if (inst->widget && !inst->xembed_mode)
+  else if (inst->widget)
     {
       Dimension width, height;
       XtVaGetValues(inst->widget, XtNwidth, &width, XtNheight, &height, NULL);
@@ -1903,9 +1908,9 @@ StartProgram(void)
       close(pipe_read);
       close(pipe_write);
       close(rev_pipe);
-      close(3); dup(_pipe_read); close(_pipe_read);
-      close(4); dup(_pipe_write); close(_pipe_write);
-      close(5); dup(_rev_pipe); close(_rev_pipe);
+      close(3); CHECK(dup(_pipe_read)); close(_pipe_read);
+      close(4); CHECK(dup(_pipe_write)); close(_pipe_write);
+      close(5); CHECK(dup(_rev_pipe)); close(_rev_pipe);
       /* Duplication above will guarantee, 
          that the new file descriptors will not be closed on exec.
          Now close all file descriptors which we don't use. For some reasons
@@ -2235,7 +2240,8 @@ NPError
 NPP_Initialize(void)
 {
   LoadStatic();
-  pipe(delay_pipe);
+  if (pipe(delay_pipe) < 0)
+    return NPERR_GENERIC_ERROR;
   if (!IsConnectionOK(TRUE))
     {
       CloseConnection();
@@ -2344,14 +2350,11 @@ NPP_New(NPMIMEType mime, NPP np_inst, uint16 np_mode, int16 argc,
   if (xembedable)
     NPN_GetValue(np_inst, NPNVSupportsXEmbedBool, &inst->xembed_mode);
 #endif
-#if USE_XT
-  if (inst->xembed_mode && XtWindowToWidget)
-    {
-        NPNToolkitType toolkit = 0;
-        if (NPN_GetValue(np_inst, NPNVToolkit, &toolkit) 
-            != NPERR_NO_ERROR || toolkit != NPNVGtk2 )
-          inst->xembed_mode = 0;
-    }
+  if (NPN_GetValue(np_inst, NPNVToolkit, &inst->toolkit) != NPERR_NO_ERROR)
+    inst->toolkit = (NPNToolkitType)(-1);
+#if USE_XT_IN_PRIORITY
+  if (inst->xembed_mode && inst->toolkit != NPNVGtk2 && XtWindowToWidget)
+    inst->xembed_mode = 0;
 #endif
   fprintf(stderr,"nsdejavu: using the %s protocol.\n",
           (inst->xembed_mode) ? "XEmbed" : "Xt");
