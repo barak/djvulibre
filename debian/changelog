@@ -1,3 +1,10 @@
+djvulibre (3.5.22-9) unstable; urgency=low
+
+  * fix typo in debian/copyright
+  * include upstream changes including nsdejavu XtShellStrings fix
+
+ -- Barak A. Pearlmutter <bap@debian.org>  Mon, 15 Mar 2010 16:56:46 +0000
+
 djvulibre (3.5.22-8) unstable; urgency=low
 
   * upstream patch escapes fields in djvused output-* (closes: #564684)
