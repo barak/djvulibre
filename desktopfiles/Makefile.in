@@ -32,6 +32,7 @@ INSTALL = @INSTALL@
 INSTALL_PROGRAM = @INSTALL_PROGRAM@
 INSTALL_DATA = @INSTALL_DATA@
 CONVERT = @CONVERT@
+RSVG = @RSVG@
 XDG_MIME = @XDG_MIME@
 XDG_ICON_RESOURCE = @XDG_ICON_RESOURCE@
 XDG_DESKTOP_MENU = @XDG_DESKTOP_MENU@
@@ -55,12 +56,14 @@ djview-icons: hi32-djview3.png hi64-djview3.png hi-djview3.svgz
 
 hi22-djvu.png hi32-djvu.png hi48-djvu.png hi64-djvu.png: djvu.svg
 	s=`echo $@ | sed -e 's/[a-z]*\([0-9]*\).*/\1/'`; \
-	${CONVERT} -geometry $${s}x$${s} -depth 8 -background none $< $@ \
+	  ${RSVG} -w $${s} -h $${s} $< $@ \
+          || ${CONVERT} -geometry $${s}x$${s} -depth 8 -background none $< $@ \
 	  || cp ${srcdir}/prebuilt-$@ $@
 
 hi32-djview3.png hi64-djview3.png: djview.svg
 	s=`echo $@ | sed -e 's/[a-z]*\([0-9]*\).*/\1/'`; \
-	${CONVERT} -geometry $${s}x$${s} -depth 8 -background none $< $@ \
+	  ${RSVG} -w $${s} -h $${s} $< $@ \
+	  || ${CONVERT} -geometry $${s}x$${s} -depth 8 -background none $< $@ \
 	  || cp ${srcdir}/prebuilt-$@ $@
 
 hi-djvu.svgz: djvu.svg
