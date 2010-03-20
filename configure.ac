@@ -100,13 +100,16 @@ AC_PROG_MAKE_SET
 
 # Programs
 AC_PROG_LN_S
-AC_PATH_PROG(RM, rm)
 AC_PATH_PROG(AR, ar)
 AC_PATH_PROG(TOUCH, touch)
 AC_PATH_PROG(MKDIR, mkdir)
 AC_PATH_PROG(RSVG, rsvg, false)
 AC_PATH_PROG(CONVERT, convert, false)
 AC_PROG_INSTALL
+
+# tweak rm to make libtool happy
+AC_PATH_PROG(RM, rm) 
+RM="$RM -f"
 
 # Libtool & Compilers
 AC_DISABLE_STATIC
@@ -115,6 +118,7 @@ AC_PROG_LIBTOOL
 AC_PROG_CC
 AC_PROG_CXX
 AC_SUBST(LIBTOOL_DEPS)
+
 
 # C++
 AC_LANG(C++)
@@ -207,27 +211,6 @@ AC_PATH_THREADS(,
 [ no_threads=yes
   AC_MSG_WARN([Thread support is disabled]) ])
 
-# Search QT library
-AC_PATH_QT(,
-[ no_qt=yes
-  AC_MSG_WARN([Qt support is disabled]) ])
-
-# Search X11 and Xt headers
-if test "$no_x" != "yes" ; then
-    savedCFLAGS="$CFLAGS"
-    CFLAGS="$CFLAGS ${X_CFLAGS}"
-    AC_CHECK_HEADERS(X11/extensions/Xext.h,,,[include <X11/Xlib.h>])
-    AC_CHECK_HEADER(X11/Shell.h, [], [no_xt=yes])
-    AC_CHECK_HEADER(X11/IntrinsicP.h, [], [no_xt=yes])
-    CFLAGS="$savedCFLAGS"
-    if test "$no_xt" == "yes" ; then
-        AC_MSG_WARN([Xt include files not found])
-    else
-        AC_DEFINE(HAVE_XT,1,[Define if you have the Xt include files.])
-    fi
-fi
-
-
 # ----------------------------------------
 # What to compile
 # ----------------------------------------
@@ -255,10 +238,32 @@ AC_ARG_ENABLE(djview,
    AC_HELP_STRING([--disable-djview],
                   [Disable the compilation of djview.]),
    [ac_enable_djview=$enableval], 
-   [ac_enable_djview=yes] ) 
+   [ac_enable_djview=no] ) 
 if test x$ac_enable_djview != xno ; then
-  if test x$no_threads = xyes || test x$no_qt = xyes || test x$no_xt = xyes ; then
-     AC_MSG_WARN([Disabling compilation of djview.
+
+    # Search QT library
+    AC_PATH_QT(,
+        [ no_qt=yes
+            AC_MSG_WARN([Qt support is disabled]) ])
+    
+    # Search X11 and Xt headers
+    if test "$no_x" != "yes" ; then
+        savedCFLAGS="$CFLAGS"
+        CFLAGS="$CFLAGS ${X_CFLAGS}"
+        AC_CHECK_HEADERS(X11/extensions/Xext.h,,,[include <X11/Xlib.h>])
+        AC_CHECK_HEADER(X11/Shell.h, [], [no_xt=yes])
+        AC_CHECK_HEADER(X11/IntrinsicP.h, [], [no_xt=yes])
+        CFLAGS="$savedCFLAGS"
+        if test "$no_xt" == "yes" ; then
+            AC_MSG_WARN([Xt include files not found])
+        else
+            AC_DEFINE(HAVE_XT,1,[Define if you have the Xt include files.])
+        fi
+    fi
+
+    if test x$no_threads = xyes || test x$no_qt = xyes || test x$no_xt = xyes 
+    then
+       AC_MSG_WARN([Disabling compilation of djview.
 --------------------------------------------------------
 *** The GUI portion of this package will not be compiled.
 *** This is probably not what you want.  Chech the output
@@ -266,8 +271,8 @@ if test x$ac_enable_djview != xno ; then
 *** Investigate options --with-qt and --enable-threads.
 *** Make sure the Xt include files are present.
 --------------------------------------------------------])
-     ac_enable_djview=no;
-  fi
+       ac_enable_djview=no;
+    fi
 fi
 if test x$ac_enable_djview != xno ; then
    GUI_YES=''

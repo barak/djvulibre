@@ -758,8 +758,6 @@ I18N_YES
 LINGUAS
 GUI_NO
 GUI_YES
-XML_NO
-XML_YES
 LRELEASE
 LUPDATE
 UIC
@@ -772,6 +770,8 @@ X_LIBS
 X_PRE_LIBS
 X_CFLAGS
 XMKMF
+XML_NO
+XML_YES
 THREAD_CFLAGS
 THREAD_LIBS
 PTHREAD_CFLAGS
@@ -815,6 +815,7 @@ CFLAGS
 CC
 LIBTOOL
 RANLIB
+RM
 INSTALL_DATA
 INSTALL_SCRIPT
 INSTALL_PROGRAM
@@ -823,7 +824,6 @@ RSVG
 MKDIR
 TOUCH
 AR
-RM
 LN_S
 SET_MAKE
 DLLFLAGS
@@ -891,10 +891,10 @@ enable_largefile
 with_jpeg
 with_tiff
 enable_threads
-with_x
-with_qt
 enable_xmltools
 enable_djview
+with_x
+with_qt
 enable_i18n
 enable_desktopfiles
 '
@@ -3033,46 +3033,6 @@ else
 $as_echo "no, using $LN_S" >&6; }
 fi
 
-# Extract the first word of "rm", so it can be a program name with args.
-set dummy rm; ac_word=$2
-{ $as_echo "$as_me:${as_lineno-$LINENO}: checking for $ac_word" >&5
-$as_echo_n "checking for $ac_word... " >&6; }
-if test "${ac_cv_path_RM+set}" = set; then :
-  $as_echo_n "(cached) " >&6
-else
-  case $RM in
-  [\\/]* | ?:[\\/]*)
-  ac_cv_path_RM="$RM" # Let the user override the test with a path.
-  ;;
-  *)
-  as_save_IFS=$IFS; IFS=$PATH_SEPARATOR
-for as_dir in $PATH
-do
-  IFS=$as_save_IFS
-  test -z "$as_dir" && as_dir=.
-    for ac_exec_ext in '' $ac_executable_extensions; do
-  if { test -f "$as_dir/$ac_word$ac_exec_ext" && $as_test_x "$as_dir/$ac_word$ac_exec_ext"; }; then
-    ac_cv_path_RM="$as_dir/$ac_word$ac_exec_ext"
-    $as_echo "$as_me:${as_lineno-$LINENO}: found $as_dir/$ac_word$ac_exec_ext" >&5
-    break 2
-  fi
-done
-  done
-IFS=$as_save_IFS
-
-  ;;
-esac
-fi
-RM=$ac_cv_path_RM
-if test -n "$RM"; then
-  { $as_echo "$as_me:${as_lineno-$LINENO}: result: $RM" >&5
-$as_echo "$RM" >&6; }
-else
-  { $as_echo "$as_me:${as_lineno-$LINENO}: result: no" >&5
-$as_echo "no" >&6; }
-fi
-
-
 # Extract the first word of "ar", so it can be a program name with args.
 set dummy ar; ac_word=$2
 { $as_echo "$as_me:${as_lineno-$LINENO}: checking for $ac_word" >&5
@@ -3368,6 +3328,49 @@ test -z "$INSTALL_SCRIPT" && INSTALL_SCRIPT='${INSTALL}'
 
 test -z "$INSTALL_DATA" && INSTALL_DATA='${INSTALL} -m 644'
 
+
+# tweak rm to make libtool happy
+# Extract the first word of "rm", so it can be a program name with args.
+set dummy rm; ac_word=$2
+{ $as_echo "$as_me:${as_lineno-$LINENO}: checking for $ac_word" >&5
+$as_echo_n "checking for $ac_word... " >&6; }
+if test "${ac_cv_path_RM+set}" = set; then :
+  $as_echo_n "(cached) " >&6
+else
+  case $RM in
+  [\\/]* | ?:[\\/]*)
+  ac_cv_path_RM="$RM" # Let the user override the test with a path.
+  ;;
+  *)
+  as_save_IFS=$IFS; IFS=$PATH_SEPARATOR
+for as_dir in $PATH
+do
+  IFS=$as_save_IFS
+  test -z "$as_dir" && as_dir=.
+    for ac_exec_ext in '' $ac_executable_extensions; do
+  if { test -f "$as_dir/$ac_word$ac_exec_ext" && $as_test_x "$as_dir/$ac_word$ac_exec_ext"; }; then
+    ac_cv_path_RM="$as_dir/$ac_word$ac_exec_ext"
+    $as_echo "$as_me:${as_lineno-$LINENO}: found $as_dir/$ac_word$ac_exec_ext" >&5
+    break 2
+  fi
+done
+  done
+IFS=$as_save_IFS
+
+  ;;
+esac
+fi
+RM=$ac_cv_path_RM
+if test -n "$RM"; then
+  { $as_echo "$as_me:${as_lineno-$LINENO}: result: $RM" >&5
+$as_echo "$RM" >&6; }
+else
+  { $as_echo "$as_me:${as_lineno-$LINENO}: result: no" >&5
+$as_echo "no" >&6; }
+fi
+
+
+RM="$RM -f"
 
 # Libtool & Compilers
 # Check whether --enable-static was given.
@@ -4869,13 +4872,13 @@ if test "${lt_cv_nm_interface+set}" = set; then :
 else
   lt_cv_nm_interface="BSD nm"
   echo "int some_variable = 0;" > conftest.$ac_ext
-  (eval echo "\"\$as_me:4872: $ac_compile\"" >&5)
+  (eval echo "\"\$as_me:4875: $ac_compile\"" >&5)
   (eval "$ac_compile" 2>conftest.err)
   cat conftest.err >&5
-  (eval echo "\"\$as_me:4875: $NM \\\"conftest.$ac_objext\\\"\"" >&5)
+  (eval echo "\"\$as_me:4878: $NM \\\"conftest.$ac_objext\\\"\"" >&5)
   (eval "$NM \"conftest.$ac_objext\"" 2>conftest.err > conftest.out)
   cat conftest.err >&5
-  (eval echo "\"\$as_me:4878: output\"" >&5)
+  (eval echo "\"\$as_me:4881: output\"" >&5)
   cat conftest.out >&5
   if $GREP 'External.*some_variable' conftest.out > /dev/null; then
     lt_cv_nm_interface="MS dumpbin"
@@ -6070,7 +6073,7 @@ ia64-*-hpux*)
   ;;
 *-*-irix6*)
   # Find out which ABI we are using.
-  echo '#line 6073 "configure"' > conftest.$ac_ext
+  echo '#line 6076 "configure"' > conftest.$ac_ext
   if { { eval echo "\"\$as_me\":${as_lineno-$LINENO}: \"$ac_compile\""; } >&5
   (eval $ac_compile) 2>&5
   ac_status=$?
@@ -7570,11 +7573,11 @@ else
    -e 's:.*FLAGS}\{0,1\} :&$lt_compiler_flag :; t' \
    -e 's: [^ ]*conftest\.: $lt_compiler_flag&:; t' \
    -e 's:$: $lt_compiler_flag:'`
-   (eval echo "\"\$as_me:7573: $lt_compile\"" >&5)
+   (eval echo "\"\$as_me:7576: $lt_compile\"" >&5)
    (eval "$lt_compile" 2>conftest.err)
    ac_status=$?
    cat conftest.err >&5
-   echo "$as_me:7577: \$? = $ac_status" >&5
+   echo "$as_me:7580: \$? = $ac_status" >&5
    if (exit $ac_status) && test -s "$ac_outfile"; then
      # The compiler can only warn and ignore the option if not recognized
      # So say no if there are warnings other than the usual output.
@@ -7909,11 +7912,11 @@ else
    -e 's:.*FLAGS}\{0,1\} :&$lt_compiler_flag :; t' \
    -e 's: [^ ]*conftest\.: $lt_compiler_flag&:; t' \
    -e 's:$: $lt_compiler_flag:'`
-   (eval echo "\"\$as_me:7912: $lt_compile\"" >&5)
+   (eval echo "\"\$as_me:7915: $lt_compile\"" >&5)
    (eval "$lt_compile" 2>conftest.err)
    ac_status=$?
    cat conftest.err >&5
-   echo "$as_me:7916: \$? = $ac_status" >&5
+   echo "$as_me:7919: \$? = $ac_status" >&5
    if (exit $ac_status) && test -s "$ac_outfile"; then
      # The compiler can only warn and ignore the option if not recognized
      # So say no if there are warnings other than the usual output.
@@ -8014,11 +8017,11 @@ else
    -e 's:.*FLAGS}\{0,1\} :&$lt_compiler_flag :; t' \
    -e 's: [^ ]*conftest\.: $lt_compiler_flag&:; t' \
    -e 's:$: $lt_compiler_flag:'`
-   (eval echo "\"\$as_me:8017: $lt_compile\"" >&5)
+   (eval echo "\"\$as_me:8020: $lt_compile\"" >&5)
    (eval "$lt_compile" 2>out/conftest.err)
    ac_status=$?
    cat out/conftest.err >&5
-   echo "$as_me:8021: \$? = $ac_status" >&5
+   echo "$as_me:8024: \$? = $ac_status" >&5
    if (exit $ac_status) && test -s out/conftest2.$ac_objext
    then
      # The compiler can only warn and ignore the option if not recognized
@@ -8069,11 +8072,11 @@ else
    -e 's:.*FLAGS}\{0,1\} :&$lt_compiler_flag :; t' \
    -e 's: [^ ]*conftest\.: $lt_compiler_flag&:; t' \
    -e 's:$: $lt_compiler_flag:'`
-   (eval echo "\"\$as_me:8072: $lt_compile\"" >&5)
+   (eval echo "\"\$as_me:8075: $lt_compile\"" >&5)
    (eval "$lt_compile" 2>out/conftest.err)
    ac_status=$?
    cat out/conftest.err >&5
-   echo "$as_me:8076: \$? = $ac_status" >&5
+   echo "$as_me:8079: \$? = $ac_status" >&5
    if (exit $ac_status) && test -s out/conftest2.$ac_objext
    then
      # The compiler can only warn and ignore the option if not recognized
@@ -10452,7 +10455,7 @@ else
   lt_dlunknown=0; lt_dlno_uscore=1; lt_dlneed_uscore=2
   lt_status=$lt_dlunknown
   cat > conftest.$ac_ext <<_LT_EOF
-#line 10455 "configure"
+#line 10458 "configure"
 #include "confdefs.h"
 
 #if HAVE_DLFCN_H
@@ -10548,7 +10551,7 @@ else
   lt_dlunknown=0; lt_dlno_uscore=1; lt_dlneed_uscore=2
   lt_status=$lt_dlunknown
   cat > conftest.$ac_ext <<_LT_EOF
-#line 10551 "configure"
+#line 10554 "configure"
 #include "confdefs.h"
 
 #if HAVE_DLFCN_H
@@ -13720,11 +13723,11 @@ else
    -e 's:.*FLAGS}\{0,1\} :&$lt_compiler_flag :; t' \
    -e 's: [^ ]*conftest\.: $lt_compiler_flag&:; t' \
    -e 's:$: $lt_compiler_flag:'`
-   (eval echo "\"\$as_me:13723: $lt_compile\"" >&5)
+   (eval echo "\"\$as_me:13726: $lt_compile\"" >&5)
    (eval "$lt_compile" 2>conftest.err)
    ac_status=$?
    cat conftest.err >&5
-   echo "$as_me:13727: \$? = $ac_status" >&5
+   echo "$as_me:13730: \$? = $ac_status" >&5
    if (exit $ac_status) && test -s "$ac_outfile"; then
      # The compiler can only warn and ignore the option if not recognized
      # So say no if there are warnings other than the usual output.
@@ -13819,11 +13822,11 @@ else
    -e 's:.*FLAGS}\{0,1\} :&$lt_compiler_flag :; t' \
    -e 's: [^ ]*conftest\.: $lt_compiler_flag&:; t' \
    -e 's:$: $lt_compiler_flag:'`
-   (eval echo "\"\$as_me:13822: $lt_compile\"" >&5)
+   (eval echo "\"\$as_me:13825: $lt_compile\"" >&5)
    (eval "$lt_compile" 2>out/conftest.err)
    ac_status=$?
    cat out/conftest.err >&5
-   echo "$as_me:13826: \$? = $ac_status" >&5
+   echo "$as_me:13829: \$? = $ac_status" >&5
    if (exit $ac_status) && test -s out/conftest2.$ac_objext
    then
      # The compiler can only warn and ignore the option if not recognized
@@ -13871,11 +13874,11 @@ else
    -e 's:.*FLAGS}\{0,1\} :&$lt_compiler_flag :; t' \
    -e 's: [^ ]*conftest\.: $lt_compiler_flag&:; t' \
    -e 's:$: $lt_compiler_flag:'`
-   (eval echo "\"\$as_me:13874: $lt_compile\"" >&5)
+   (eval echo "\"\$as_me:13877: $lt_compile\"" >&5)
    (eval "$lt_compile" 2>out/conftest.err)
    ac_status=$?
    cat out/conftest.err >&5
-   echo "$as_me:13878: \$? = $ac_status" >&5
+   echo "$as_me:13881: \$? = $ac_status" >&5
    if (exit $ac_status) && test -s out/conftest2.$ac_objext
    then
      # The compiler can only warn and ignore the option if not recognized
@@ -14817,6 +14820,7 @@ ac_cpp='$CPP $CPPFLAGS'
 ac_compile='$CC -c $CFLAGS $CPPFLAGS conftest.$ac_ext >&5'
 ac_link='$CC -o conftest$ac_exeext $CFLAGS $CPPFLAGS $LDFLAGS conftest.$ac_ext $LIBS >&5'
 ac_compiler_gnu=$ac_cv_c_compiler_gnu
+
 
 
 
@@ -17236,8 +17240,41 @@ $as_echo "$as_me: WARNING: Thread support is disabled" >&2;}
 fi
 
 
-# Search QT library
-{ $as_echo "$as_me:${as_lineno-$LINENO}: checking for X" >&5
+# ----------------------------------------
+# What to compile
+# ----------------------------------------
+
+
+# Check compilation of xmltools
+ac_enable_xmltools=yes
+# Check whether --enable-xmltools was given.
+if test "${enable_xmltools+set}" = set; then :
+  enableval=$enable_xmltools; ac_enable_xmltools=$enableval
+fi
+
+if test x$ac_enable_xmltools != xno ; then
+   XML_YES=''
+   XML_NO='#'
+else
+   XML_YES='#'
+   XML_NO=''
+fi
+
+
+
+
+# Check compilation of djview
+# Check whether --enable-djview was given.
+if test "${enable_djview+set}" = set; then :
+  enableval=$enable_djview; ac_enable_djview=$enableval
+else
+  ac_enable_djview=no
+fi
+
+if test x$ac_enable_djview != xno ; then
+
+    # Search QT library
+    { $as_echo "$as_me:${as_lineno-$LINENO}: checking for X" >&5
 $as_echo_n "checking for X... " >&6; }
 
 
@@ -18333,7 +18370,7 @@ _ACEOF
   if test "x$ac_has_qt" = xno ; then
     QT_CFLAGS= ; QT_LIBS= ; QTDIR= ; MOC=moc ;
      no_qt=yes
-  { $as_echo "$as_me:${as_lineno-$LINENO}: WARNING: Qt support is disabled" >&5
+            { $as_echo "$as_me:${as_lineno-$LINENO}: WARNING: Qt support is disabled" >&5
 $as_echo "$as_me: WARNING: Qt support is disabled" >&2;}
   else
     { $as_echo "$as_me:${as_lineno-$LINENO}: result: setting QT_CFLAGS=$QT_CFLAGS" >&5
@@ -18344,11 +18381,11 @@ $as_echo "setting QT_LIBS=$QT_LIBS" >&6; }
   fi
 
 
-# Search X11 and Xt headers
-if test "$no_x" != "yes" ; then
-    savedCFLAGS="$CFLAGS"
-    CFLAGS="$CFLAGS ${X_CFLAGS}"
-    for ac_header in X11/extensions/Xext.h
+    # Search X11 and Xt headers
+    if test "$no_x" != "yes" ; then
+        savedCFLAGS="$CFLAGS"
+        CFLAGS="$CFLAGS ${X_CFLAGS}"
+        for ac_header in X11/extensions/Xext.h
 do :
   ac_fn_cxx_check_header_compile "$LINENO" "X11/extensions/Xext.h" "ac_cv_header_X11_extensions_Xext_h" "include <X11/Xlib.h>
 "
@@ -18361,7 +18398,7 @@ fi
 
 done
 
-    ac_fn_cxx_check_header_mongrel "$LINENO" "X11/Shell.h" "ac_cv_header_X11_Shell_h" "$ac_includes_default"
+        ac_fn_cxx_check_header_mongrel "$LINENO" "X11/Shell.h" "ac_cv_header_X11_Shell_h" "$ac_includes_default"
 if test "x$ac_cv_header_X11_Shell_h" = x""yes; then :
 
 else
@@ -18369,7 +18406,7 @@ else
 fi
 
 
-    ac_fn_cxx_check_header_mongrel "$LINENO" "X11/IntrinsicP.h" "ac_cv_header_X11_IntrinsicP_h" "$ac_includes_default"
+        ac_fn_cxx_check_header_mongrel "$LINENO" "X11/IntrinsicP.h" "ac_cv_header_X11_IntrinsicP_h" "$ac_includes_default"
 if test "x$ac_cv_header_X11_IntrinsicP_h" = x""yes; then :
 
 else
@@ -18377,52 +18414,20 @@ else
 fi
 
 
-    CFLAGS="$savedCFLAGS"
-    if test "$no_xt" == "yes" ; then
-        { $as_echo "$as_me:${as_lineno-$LINENO}: WARNING: Xt include files not found" >&5
+        CFLAGS="$savedCFLAGS"
+        if test "$no_xt" == "yes" ; then
+            { $as_echo "$as_me:${as_lineno-$LINENO}: WARNING: Xt include files not found" >&5
 $as_echo "$as_me: WARNING: Xt include files not found" >&2;}
-    else
+        else
 
 $as_echo "#define HAVE_XT 1" >>confdefs.h
 
+        fi
     fi
-fi
 
-
-# ----------------------------------------
-# What to compile
-# ----------------------------------------
-
-
-# Check compilation of xmltools
-ac_enable_xmltools=yes
-# Check whether --enable-xmltools was given.
-if test "${enable_xmltools+set}" = set; then :
-  enableval=$enable_xmltools; ac_enable_xmltools=$enableval
-fi
-
-if test x$ac_enable_xmltools != xno ; then
-   XML_YES=''
-   XML_NO='#'
-else
-   XML_YES='#'
-   XML_NO=''
-fi
-
-
-
-
-# Check compilation of djview
-# Check whether --enable-djview was given.
-if test "${enable_djview+set}" = set; then :
-  enableval=$enable_djview; ac_enable_djview=$enableval
-else
-  ac_enable_djview=yes
-fi
-
-if test x$ac_enable_djview != xno ; then
-  if test x$no_threads = xyes || test x$no_qt = xyes || test x$no_xt = xyes ; then
-     { $as_echo "$as_me:${as_lineno-$LINENO}: WARNING: Disabling compilation of djview.
+    if test x$no_threads = xyes || test x$no_qt = xyes || test x$no_xt = xyes
+    then
+       { $as_echo "$as_me:${as_lineno-$LINENO}: WARNING: Disabling compilation of djview.
 --------------------------------------------------------
 *** The GUI portion of this package will not be compiled.
 *** This is probably not what you want.  Chech the output
@@ -18438,8 +18443,8 @@ $as_echo "$as_me: WARNING: Disabling compilation of djview.
 *** Investigate options --with-qt and --enable-threads.
 *** Make sure the Xt include files are present.
 --------------------------------------------------------" >&2;}
-     ac_enable_djview=no;
-  fi
+       ac_enable_djview=no;
+    fi
 fi
 if test x$ac_enable_djview != xno ; then
    GUI_YES=''

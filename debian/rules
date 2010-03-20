@@ -47,7 +47,7 @@ testlibver:
 
 config.status: configure
 	dh_testdir
-	dh_auto_configure -- --disable-desktopfiles --enable-static --enable-shared
+	dh_auto_configure -- --enable-djview --disable-desktopfiles --enable-static --enable-shared
 
 build: build-stamp
 build-stamp: config.status

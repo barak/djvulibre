@@ -1,7 +1,14 @@
 NEW SINCE VERSION 3.5.22
 ------------------------
+- Djview3 has been deprecated by djview4 whose source comes in 
+  its own tarball. Use configure option --enable-djview to force
+  the compilation of djview3.
+- Set ddjvuapi_version to 19.
 - Added ddjvu_document_create_by_filename_utf8
-- ddjvuapi_version=19
+- Generate icons with rsvg rather than imagemagick.
+- djvused: correctly outputs escape characters.
+- djvumake: added options to generate foreground colors.
+- Various bug fixes.
 
 
 NEW IN VERSION 3.5.22
