@@ -504,9 +504,14 @@ command_dump(ParsingByteStream &)
     pool = g().doc->get_init_data_pool();
   DjVuDumpHelper helper;
   GP<ByteStream> bs = helper.dump(pool);
-  GP<ByteStream> obs=ByteStream::create("w");
+  size_t size = bs->size();
+  GUTF8String str;
+  char *buf = str.getbuf(size);
   bs->seek(0);
-  obs->copy(*bs);
+  bs->readall(buf, size);
+  GNativeString ns = str;
+  GP<ByteStream> obs=ByteStream::create("w");
+  obs->writall((const char*)ns, ns.length());
 }
 
 static void
