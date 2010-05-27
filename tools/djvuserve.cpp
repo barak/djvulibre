@@ -354,8 +354,8 @@ int
 main(int argc, char ** argv)
 {
   setlocale(LC_ALL,"");
+  setlocale(LC_NUMERIC,"C");
   djvu_programname(argv[0]);
-
   G_TRY 
     {
       // Obtain path

@@ -692,6 +692,7 @@ int
 main(int argc, char **argv)
 {
   setlocale(LC_ALL,"");
+  setlocale(LC_NUMERIC,"C");
   djvu_programname(argv[0]);
   GArray<GUTF8String> dargv(0,argc-1);
   for(int i=0;i<argc;++i)
