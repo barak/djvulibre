@@ -263,6 +263,12 @@ ranging from 25 to 150. See command
 .BR cjpeg (1)
 for more information on JPEG quantization factors.
 Value 80 is a good starting point.
+.TP
+.B "-quality=uncompressed"
+Completely disables compression in TIFF and PDF files.
+Although the resulting files are often huge,
+this is sometimes useful for maximal compatibility
+with hastily written software.
 
 .SH DEPRECATED OPTIONS
 

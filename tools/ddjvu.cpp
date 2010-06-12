@@ -334,6 +334,8 @@ render(ddjvu_page_t *page, int pageno)
     case 'f':
 #if HAVE_TIFF
       compression = COMPRESSION_NONE;
+      if (flag_quality >= 1000)
+        break;
 # ifdef CCITT_SUPPORT
       if (style==DDJVU_FORMAT_MSBTOLSB 
           && TIFFFindCODEC(COMPRESSION_CCITT_T6))
@@ -957,7 +959,9 @@ parse_option(int argc, char **argv, int i)
         die(i18n(errdupl), opt);
       else if (!arg) 
         flag_quality = 100;
-      else 
+      else if (!strcmp(arg,"uncompressed"))
+        flag_quality = 1000;
+      else
         {
           flag_quality = strtol(arg,&end,10);
           if (*end || flag_quality<25 || flag_quality>150)
