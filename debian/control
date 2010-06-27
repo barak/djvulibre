@@ -2,7 +2,7 @@ Source: djvulibre
 Section: web
 Priority: optional
 Maintainer: Barak A. Pearlmutter <bap@debian.org>
-Build-Depends: debhelper (>= 7), libx11-dev, libxext-dev, libxt-dev, libqt3-mt-dev (>= 3:3.3.4-4), libjpeg-dev, libtiff4-dev | libtiff3g-dev | libtiff-dev, librsvg2-bin | imagemagick
+Build-Depends: debhelper (>= 7), libx11-dev, libxext-dev, libxt-dev, libglib2.0-dev, libqt3-mt-dev (>= 3:3.3.4-4), libjpeg-dev, libtiff4-dev | libtiff3g-dev | libtiff-dev, librsvg2-bin | imagemagick
 Vcs-Cvs: :ext:@djvu.cvs.sourceforge.net:/cvsroot/djvu
 VCS-Browser: http://djvu.cvs.sourceforge.net/djvu/djvulibre-3.5/
 Homepage: http://djvu.sourceforge.net/
