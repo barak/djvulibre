@@ -1357,6 +1357,7 @@ ddjvu_document_print(ddjvu_document_t *document, FILE *output,
    * Option "-indirect=<filename>" causes the creation
      of an indirect document with index file <filename>
      and auxiliary files in the same directory.
+     The file name is UTF-8 encoded.
      When this option is specified, the argument <output>
      is ignored and should be NULL.
 */
