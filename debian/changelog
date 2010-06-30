@@ -1,3 +1,9 @@
+djvulibre (3.5.22-10) unstable; urgency=low
+
+  * bump policy (debian/control)
+
+ -- Barak A. Pearlmutter <bap@debian.org>  Wed, 30 Jun 2010 16:03:12 +0200
+
 djvulibre (3.5.22-9) unstable; urgency=low
 
   * fix typo in debian/copyright
