@@ -1027,7 +1027,9 @@ main(int argc, char **argv)
       if (! TIFFFlush(tiff))
         die(i18n("Error while flushing TIFF file."));
       TIFFClose(tiff);
+#ifndef WIN32 // this crashes under windows.
       close(tiffd);
+#endif
       tiffd = fd;
       if (flag_verbose)
         fprintf(stderr,i18n("Converting temporary TIFF to PDF.\n"));
