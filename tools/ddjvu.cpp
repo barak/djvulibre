@@ -1027,7 +1027,7 @@ main(int argc, char **argv)
         die(i18n("Error while flushing TIFF file."));
 #ifdef WIN32
       TIFFClose(tiff);
-      tifffd = open(tempfilename,O_RDONLY);
+      tiffd = open(tempfilename,O_RDONLY);
 #else
       int fd = dup(tiffd);
       TIFFClose(tiff);
