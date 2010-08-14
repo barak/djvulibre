@@ -77,20 +77,13 @@
 # include <sys/types.h>
 # include <unistd.h>
 #endif
+#if defined(WIN32) && !defined(__CYGWIN32__)
+# include <io.h>
+#endif
 
 #include "libdjvu/ddjvuapi.h"
 #include "tiff2pdf.h"
 
-#if defined(WIN32) && !defined(__CYGWIN32__)
-# include <io.h>
-# define dup     _dup
-# define lseek   _lseek
-# define open    _open
-# define close   _close
-# define mktemp  _mktemp
-# define O_CREAT _O_CREAT
-# define O_RDWR  _O_RDWR
-#endif
 
 #if HAVE_PUTC_UNLOCKED
 # undef putc
@@ -247,7 +240,7 @@ render(ddjvu_page_t *page, int pageno)
   int dpi = ddjvu_page_get_resolution(page);
   ddjvu_page_type_t type = ddjvu_page_get_type(page);
   char *image = 0;
-  char white = 0xFF;
+  char white = (char)0xFF;
   int rowsize;
 #if HAVE_TIFF
   int compression = COMPRESSION_NONE;
@@ -601,13 +594,19 @@ dopage(int pageno)
             die(i18n("Out of memory."));
           strcpy(tempfilename, outputfilename);
           strcat(tempfilename, ".XXXXXX");
-# if HAVE_MKSTEMP && !defined(WIN32)
-          tiffd = mkstemp(tempfilename);
+          tiff = 0;
+# ifdef WIN32
+          if (_mktemp(tempfilename))
+            tiff = TIFFOpen(tempfilename,"w");
+# elif HAVE_MKSTEMP
+          if ((tiffd = mkstemp(tempfilename)) >= 0)
+            tiff = TIFFFdOpen(tiffd, tempfilename, "w");
 # else
           if (mktemp(tempfilename))
-            tiffd = open(tempfilename, O_RDWR|O_CREAT);
+            if ((tiffd = open(tempfilename, O_RDWR|O_CREAT)) >= 0)
+              tiff = TIFFFdOpen(tiffd, tempfilename, "w");
 # endif
-          if (tiffd < 0 || ! (tiff = TIFFFdOpen(tiffd, tempfilename, "w")))
+          if (! tiff)
             die(i18n("Cannot create temporary TIFF file '%s'."), tempfilename);
         }
 #else
@@ -1025,20 +1024,22 @@ main(int argc, char **argv)
     {
       if (! TIFFFlush(tiff))
         die(i18n("Error while flushing TIFF file."));
+      if (flag_verbose)
+        fprintf(stderr,i18n("Converting temporary TIFF to PDF.\n"));
 #ifdef WIN32
       TIFFClose(tiff);
-      tiffd = open(tempfilename,O_RDONLY);
+      if (!(tiff = TIFFOpen(tempfilename, "r")))
+        die(i18n("Cannot reopen temporary TIFF file '%s'."), tempfilename);
 #else
+      // more elaborate method to work with mkstemp()
       int fd = dup(tiffd);
       TIFFClose(tiff);
       close(tiffd);
       tiffd = fd;
       lseek(tiffd, 0, SEEK_SET);
-#endif
-      if (flag_verbose)
-        fprintf(stderr,i18n("Converting temporary TIFF to PDF.\n"));
       if (tiffd < 0 || !(tiff = TIFFFdOpen(tiffd, tempfilename, "r")))
         die(i18n("Cannot reopen temporary TIFF file '%s'."), tempfilename);
+#endif
       if (! (fout = fopen(outputfilename, "wb")))
         die(i18n("Cannot open output file '%s'."), outputfilename);
       const char *args[3];
