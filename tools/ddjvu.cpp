@@ -601,7 +601,7 @@ dopage(int pageno)
             die(i18n("Out of memory."));
           strcpy(tempfilename, outputfilename);
           strcat(tempfilename, ".XXXXXX");
-# if HAVE_MKSTEMP
+# if HAVE_MKSTEMP && !defined(WIN32)
           tiffd = mkstemp(tempfilename);
 # else
           if (mktemp(tempfilename))
@@ -1023,18 +1023,21 @@ main(int argc, char **argv)
 #if HAVE_TIFF2PDF
   if (tiff && tiffd >= 0 && tempfilename)
     {
-      int fd = dup(tiffd);
       if (! TIFFFlush(tiff))
         die(i18n("Error while flushing TIFF file."));
+#ifdef WIN32
       TIFFClose(tiff);
-#ifndef WIN32 // this crashes under windows.
+      tifffd = open(tempfilename,O_RDONLY);
+#else
+      int fd = dup(tiffd);
+      TIFFClose(tiff);
       close(tiffd);
-#endif
       tiffd = fd;
+      lseek(tiffd, 0, SEEK_SET);
+#endif
       if (flag_verbose)
         fprintf(stderr,i18n("Converting temporary TIFF to PDF.\n"));
-      lseek(tiffd, 0, SEEK_SET);
-      if (! (tiff = TIFFFdOpen(tiffd, tempfilename, "r")))
+      if (tiffd < 0 || !(tiff = TIFFFdOpen(tiffd, tempfilename, "r")))
         die(i18n("Cannot reopen temporary TIFF file '%s'."), tempfilename);
       if (! (fout = fopen(outputfilename, "wb")))
         die(i18n("Cannot open output file '%s'."), outputfilename);
