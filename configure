@@ -1559,7 +1559,7 @@ Optional Features:
   --disable-largefile     omit support for large files
   --enable-threads        select threading model (default is auto)
   --disable-xmltools      Do not compile the djvu xml tools.
-  --disable-djview        Disable the compilation of djview.
+  --enable-djview         Enable the compilation of djview3.
   --disable-i18n          Do not prepare the localization files.
   --disable-desktopfiles  Do not install scripts to register icons and menus.
 
@@ -1576,7 +1576,7 @@ Optional Packages:
   --with-jpeg=DIR         where the IJG jpeg library is located
   --with-tiff=DIR         where libtiff is located
   --with-x                use the X Window System
-  --with-qt=DIR           where the Qt root is installed.
+  --with-qt=DIR           where the Qt3 root is installed.
 
 Some influential environment variables:
   CC          C compiler command
@@ -1599,9 +1599,9 @@ Some influential environment variables:
   PTHREAD_CFLAGS
               Flags for compiling pthread programs.
   XMKMF       Path to xmkmf, Makefile generator for X Window System
-  QTDIR       Location of the Qt package.
-  QT_CFLAGS   Flags for compiling Qt programs.
-  QT_LIBS     Flags for linking Qt programs.
+  QTDIR       Location of the Qt3 package.
+  QT_CFLAGS   Flags for compiling Qt3 programs.
+  QT_LIBS     Flags for linking Qt3 programs.
   MOC         Location of the MOC program.
   UIC         Location of the UIC program.
   PKG_CONFIG  Location of the pkg-config program.
@@ -17330,7 +17330,20 @@ else
 fi
 
 if test x$ac_enable_djview != xno ; then
-
+    { $as_echo "$as_me:${as_lineno-$LINENO}: WARNING: Enabling compilation of djview3.
+--------------------------------------------------------
+*** The Qt2 or Qt3 based viewer, djview3, is considered obsolete.
+*** The recommended viewer is now the Qt4 based viewer, djview4.
+*** Djview4 comes in a separate source package that should be
+*** compiled after installing the djvulibre library.
+--------------------------------------------------------" >&5
+$as_echo "$as_me: WARNING: Enabling compilation of djview3.
+--------------------------------------------------------
+*** The Qt2 or Qt3 based viewer, djview3, is considered obsolete.
+*** The recommended viewer is now the Qt4 based viewer, djview4.
+*** Djview4 comes in a separate source package that should be
+*** compiled after installing the djvulibre library.
+--------------------------------------------------------" >&2;}
     # Search QT library
     { $as_echo "$as_me:${as_lineno-$LINENO}: checking for X" >&5
 $as_echo_n "checking for X... " >&6; }
@@ -18428,8 +18441,8 @@ _ACEOF
   if test "x$ac_has_qt" = xno ; then
     QT_CFLAGS= ; QT_LIBS= ; QTDIR= ; MOC=moc ;
      no_qt=yes
-            { $as_echo "$as_me:${as_lineno-$LINENO}: WARNING: Qt support is disabled" >&5
-$as_echo "$as_me: WARNING: Qt support is disabled" >&2;}
+            { $as_echo "$as_me:${as_lineno-$LINENO}: WARNING: Qt3 support is disabled" >&5
+$as_echo "$as_me: WARNING: Qt3 support is disabled" >&2;}
   else
     { $as_echo "$as_me:${as_lineno-$LINENO}: result: setting QT_CFLAGS=$QT_CFLAGS" >&5
 $as_echo "setting QT_CFLAGS=$QT_CFLAGS" >&6; }

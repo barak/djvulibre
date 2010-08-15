@@ -719,15 +719,15 @@ AC_DEFUN([AC_PATH_QT],
     X_LIBS="$X_LIBS $X_PRE_LIBS -lXext -lX11 $X_EXTRA_LIBS"
   fi
   # Variables
-  AC_ARG_VAR(QTDIR,[Location of the Qt package.])
-  AC_ARG_VAR(QT_CFLAGS,[Flags for compiling Qt programs.])
-  AC_ARG_VAR(QT_LIBS,[Flags for linking Qt programs.])
+  AC_ARG_VAR(QTDIR,[Location of the Qt3 package.])
+  AC_ARG_VAR(QT_CFLAGS,[Flags for compiling Qt3 programs.])
+  AC_ARG_VAR(QT_LIBS,[Flags for linking Qt3 programs.])
   AC_ARG_VAR(MOC,[Location of the MOC program.])
   AC_ARG_VAR(UIC,[Location of the UIC program.])
   # Arguments
   AC_ARG_WITH(qt, 
       AC_HELP_STRING([--with-qt=DIR],
-                     [where the Qt root is installed.]),
+                     [where the Qt3 root is installed.]),
       [ test x$withval != xyes && QTDIR=$withval ])
   test x$no_x = xyes && QTDIR=no
   # Check for the lib64 thing

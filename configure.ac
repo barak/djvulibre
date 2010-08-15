@@ -235,16 +235,22 @@ AC_SUBST(XML_NO)
 
 # Check compilation of djview
 AC_ARG_ENABLE(djview,
-   AC_HELP_STRING([--disable-djview],
-                  [Disable the compilation of djview.]),
+   AC_HELP_STRING([--enable-djview],
+                  [Enable the compilation of djview3.]),
    [ac_enable_djview=$enableval], 
    [ac_enable_djview=no] ) 
 if test x$ac_enable_djview != xno ; then
-
+    AC_MSG_WARN([Enabling compilation of djview3.
+--------------------------------------------------------
+*** The Qt2 or Qt3 based viewer, djview3, is considered obsolete.
+*** The recommended viewer is now the Qt4 based viewer, djview4.
+*** Djview4 comes in a separate source package that should be
+*** compiled after installing the djvulibre library.
+--------------------------------------------------------])
     # Search QT library
     AC_PATH_QT(,
         [ no_qt=yes
-            AC_MSG_WARN([Qt support is disabled]) ])
+            AC_MSG_WARN([Qt3 support is disabled]) ])
     
     # Search X11 and Xt headers
     if test "$no_x" != "yes" ; then
