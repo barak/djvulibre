@@ -25,7 +25,7 @@
 # ----------------------------------------
 
 AC_PREREQ(2.50)
-AC_INIT(djvulibre, 3.5.22)
+AC_INIT(djvulibre, 3.5.23)
 AC_REVISION($Id$)
 AC_CONFIG_AUX_DIR(config)
 AC_CONFIG_MACRO_DIR(config)

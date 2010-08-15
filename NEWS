@@ -1,4 +1,4 @@
-NEW SINCE VERSION 3.5.22
+NEW IN VERSION 3.5.23
 ------------------------
 - Djview3 has been deprecated by djview4 whose source comes in 
   its own tarball. Use configure option --enable-djview to force
@@ -9,7 +9,6 @@ NEW SINCE VERSION 3.5.22
 - djvused: correctly outputs escape characters.
 - djvumake: added options to generate foreground colors.
 - Various bug fixes.
-
 
 NEW IN VERSION 3.5.22
 ------------------------
