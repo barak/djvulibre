@@ -1004,6 +1004,10 @@ mach_start(mach_state *st1, void *pc, char *stacklo, char *stackhi)
                     "jmp %a1"             // branch to address %1
                     : : "r" (sp), "a" (pc) );
 #elif #cpu(arm) && defined(COTHREAD_UNTESTED)
+#ifdef __thumb__
+      /* instead of "mov pc, <register>", "bx <register>" should be used on ARMv5 and above */
+#error "This code needs some porting to work correctly in Thumb: https://wiki.ubuntu.com/ARM/Thumb2PortingHowto"
+#endif
       char *sp = (char*)(((unsigned long)stackhi-16) & ~0xff);
       asm volatile ("mov%?\t%|sp, %0\n\t" // set new stack pointer
                     "mov%?\t%|pc, %1"     // branch to address %1
