@@ -2,7 +2,16 @@ Source: djvulibre
 Section: web
 Priority: optional
 Maintainer: Barak A. Pearlmutter <bap@debian.org>
-Build-Depends: debhelper (>= 7), libx11-dev, libxext-dev, libxt-dev, libglib2.0-dev, libqt3-mt-dev (>= 3:3.3.4-4), libjpeg-dev, libtiff4-dev | libtiff3g-dev | libtiff-dev, librsvg2-bin | imagemagick
+Build-Depends: autotools-dev (>= 20100122.1~),
+	       debhelper (>= 7),
+	       libx11-dev,
+	       libxext-dev,
+	       libxt-dev,
+	       libglib2.0-dev,
+	       libqt3-mt-dev (>= 3:3.3.4-4),
+	       libjpeg-dev,
+	       libtiff4-dev | libtiff3g-dev | libtiff-dev,
+	       librsvg2-bin | imagemagick
 Vcs-Cvs: :ext:@djvu.cvs.sourceforge.net:/cvsroot/djvu
 VCS-Browser: http://djvu.cvs.sourceforge.net/djvu/djvulibre-3.5/
 Homepage: http://djvu.sourceforge.net/
@@ -95,8 +104,8 @@ Package: djvulibre-plugin
 Section: web
 Architecture: any
 Depends: ${shlibs:Depends}, ${misc:Depends}, djview4 | djview3
-Enhances: mozilla-browser, mozilla, mozilla-firefox, iceweasel, iceape-browser, konqueror, galeon
-Recommends: mozilla-browser | mozilla | mozilla-firefox | iceweasel | iceape-browser | konqueror | galeon
+Enhances: mozilla-browser, mozilla, firefox, iceweasel, iceape-browser, konqueror, galeon
+Recommends: mozilla-browser | mozilla | firefox | iceweasel | iceape-browser | konqueror | galeon
 Suggests: mime-support
 Conflicts: djvulibre-bin (<< 3.5.19)
 Description: Browser plugin for the DjVu image format

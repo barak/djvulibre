@@ -47,6 +47,7 @@ testlibver:
 
 config.status: configure
 	dh_testdir
+	dh_autotools-dev_updateconfig
 	dh_auto_configure -- --enable-djview --disable-desktopfiles --enable-static --enable-shared
 
 build: build-stamp
@@ -63,12 +64,8 @@ endif
 	touch build-stamp
 
 clean:
+	dh_autotools-dev_restoreconfig
 	dh $@
-	@echo push in latest config support files
-	-test -r /usr/share/misc/config.sub && \
-	  cp -f /usr/share/misc/config.sub config/config.sub
-	-test -r /usr/share/misc/config.guess && \
-	  cp -f /usr/share/misc/config.guess config/config.guess
 
 plugsubdir=netscape/plugins-libc6
 plug=$(plugsubdir)/nsdejavu.so
