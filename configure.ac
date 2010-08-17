@@ -24,8 +24,8 @@
 # Initialization
 # ----------------------------------------
 
-AC_PREREQ(2.50)
-AC_INIT(djvulibre, 3.5.23)
+AC_PREREQ([2.67])
+AC_INIT([djvulibre],[3.5.23])
 AC_REVISION($Id$)
 AC_CONFIG_AUX_DIR(config)
 AC_CONFIG_MACRO_DIR(config)
@@ -42,8 +42,7 @@ AC_SUBST(LIBDJVU_VER)
 
 # Additional libraries
 AC_ARG_WITH(extra-includes,
-            AC_HELP_STRING([--with-extra-includes=DIR],
-                       [Define an additional directory for include files]),
+            AS_HELP_STRING([--with-extra-includes=DIR],[Define an additional directory for include files]),
         [ if test -d "$withval" ; then
             CPPFLAGS="$CPPFLAGS -I$withval" 
           else
@@ -51,8 +50,7 @@ AC_ARG_WITH(extra-includes,
           fi ] )
 
 AC_ARG_WITH(extra-libraries,
-            AC_HELP_STRING([--with-extra-libraries=DIR],
-                       [Define an additional directory for library files]),
+            AS_HELP_STRING([--with-extra-libraries=DIR],[Define an additional directory for library files]),
         [ if test -d "$withval" ; then
            LDFLAGS="$LDFLAGS -L$withval"
           else
@@ -114,7 +112,7 @@ RM="$RM -f"
 # Libtool & Compilers
 AC_DISABLE_STATIC
 AC_PROG_RANLIB
-AC_PROG_LIBTOOL
+LT_INIT
 AC_PROG_CC
 AC_PROG_CXX
 AC_SUBST(LIBTOOL_DEPS)
@@ -181,9 +179,7 @@ AC_CHECK_FUNCS(sigaction mkstemp)
 AC_MSG_CHECKING([for iconv])
 ac_has_iconv=no
 AC_LANG_PUSH(C)
-AC_TRY_LINK([#include "iconv.h"],
-            [iconv((iconv_t)0, (char**)0, (size_t*)0, (char**)0, (size_t*)0);],
-            [ac_has_iconv=yes])
+AC_LINK_IFELSE([AC_LANG_PROGRAM([[#include "iconv.h"]], [[iconv((iconv_t)0, (char**)0, (size_t*)0, (char**)0, (size_t*)0);]])],[ac_has_iconv=yes],[])
 AC_MSG_RESULT($ac_has_iconv)
 AC_LANG_POP(C)
 if test x$ac_has_iconv = xyes ; then
@@ -219,8 +215,7 @@ AC_PATH_THREADS(,
 # Check compilation of xmltools
 ac_enable_xmltools=yes
 AC_ARG_ENABLE(xmltools,
-   AC_HELP_STRING([--disable-xmltools],
-                  [Do not compile the djvu xml tools.]),
+   AS_HELP_STRING([--disable-xmltools],[Do not compile the djvu xml tools.]),
    [ac_enable_xmltools=$enableval])
 if test x$ac_enable_xmltools != xno ; then
    XML_YES=''
@@ -235,8 +230,7 @@ AC_SUBST(XML_NO)
 
 # Check compilation of djview
 AC_ARG_ENABLE(djview,
-   AC_HELP_STRING([--enable-djview],
-                  [Enable the compilation of djview3.]),
+   AS_HELP_STRING([--enable-djview],[Enable the compilation of djview3.]),
    [ac_enable_djview=$enableval], 
    [ac_enable_djview=no] ) 
 if test x$ac_enable_djview != xno ; then
@@ -293,8 +287,7 @@ AC_SUBST(GUI_NO)
 
 # Check compilation of i18n files.
 AC_ARG_ENABLE(i18n,
-   AC_HELP_STRING([--disable-i18n],
-                  [Do not prepare the localization files.]),
+   AS_HELP_STRING([--disable-i18n],[Do not prepare the localization files.]),
    [ac_enable_i18n=$enableval], 
    [ac_enable_i18n=all] ) 
 if test "$ac_enable_i18n" != xno ; then
@@ -330,8 +323,7 @@ AC_SUBST(I18N_NO)
 
 ac_desktopfiles=yes
 AC_ARG_ENABLE(desktopfiles,
-    AC_HELP_STRING([--disable-desktopfiles],
-        [Do not install scripts to register icons and menus.]),
+    AS_HELP_STRING([--disable-desktopfiles],[Do not install scripts to register icons and menus.]),
     [ac_desktopfiles=$enableval])
 
 # Check for xdg tools
