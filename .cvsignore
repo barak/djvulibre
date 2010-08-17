@@ -1,4 +1,3 @@
-*.dh-orig
 Makefile
 autom4te.cache
 build-stamp
