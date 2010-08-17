@@ -3,7 +3,7 @@ Section: web
 Priority: optional
 Maintainer: Barak A. Pearlmutter <bap@debian.org>
 Build-Depends: autotools-dev (>= 20100122.1~),
-	       debhelper (>= 7),
+	       debhelper (>= 7.0.50~),
 	       libx11-dev,
 	       libxext-dev,
 	       libxt-dev,

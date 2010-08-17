@@ -2,11 +2,12 @@ djvulibre (3.5.23-1) unstable; urgency=low
 
   * new upstream release
   * bump policy (debian/control)
-  * integrate Ubuntu patch (closes: #592964) from Benjamin Drung <bdrung@ubuntu.com>
-    - uses autotools-dev to update config.* files to unclutter debdiffs.
-    - changes recommendation from mozilla-firefox to firefox
+  * Ubuntu patch from Benjamin Drung (closes: #592964)
+    - use autotools-dev to update config.* files to unclutter debdiffs
+    - change recommendation from mozilla-firefox to firefox
+  * modernise debian/rules with dh7 overrides, also thanks to Benjamin Drung
 
- -- Barak A. Pearlmutter <bap@debian.org>  Mon, 16 Aug 2010 21:15:37 +0200
+ -- Barak A. Pearlmutter <bap@debian.org>  Tue, 17 Aug 2010 09:05:46 +0200
 
 djvulibre (3.5.22-9) unstable; urgency=low
 

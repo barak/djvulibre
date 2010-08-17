@@ -45,14 +45,13 @@ endif
 testlibver:
 	@echo library major version: upstream $(libver0), debian $(libver) $(libver1) $(libver2)
 
-config.status: configure
-	dh_testdir
-	dh_autotools-dev_updateconfig
+build clean install binary-arch binary-indep binary:
+	dh $@ --with autotools_dev
+
+override_dh_auto_configure:
 	dh_auto_configure -- --enable-djview --disable-desktopfiles --enable-static --enable-shared
 
-build: build-stamp
-build-stamp: config.status
-	dh_testdir
+override_dh_auto_make:
 	$(MAKE) -k depend	# otherwise a missing Makefile.dep blows up
 # deliciously monstrous libtool workaround by Cthulhu via H.P.Lovecraft@ubuntu.com,
 # http://patches.ubuntu.com/d/djvulibre/djvulibre_3.5.22-1ubuntu1.patch
@@ -61,23 +60,12 @@ ifeq ($(DEB_HOST_GNU_TYPE),arm-linux-gnueabi)
 	touch -r libdjvu/Makefile.orig libdjvu/Makefile
 endif
 	$(MAKE) OPTS="$(CFLAGS)" # hotwire compiler options
-	touch build-stamp
-
-clean:
-	dh_autotools-dev_restoreconfig
-	dh $@
 
 plugsubdir=netscape/plugins-libc6
 plug=$(plugsubdir)/nsdejavu.so
 
-install: install-stamp
-install-stamp: build-stamp
-	dh_testdir
-	dh_prep
-	dh_installdirs
-	$(MAKE) install	\
-		DESTDIR=$(CURDIR)/debian/tmp \
-		plugindir=/usr/lib/$(plugsubdir)
+override_dh_auto_install:
+	dh_auto_install -- plugindir=/usr/lib/$(plugsubdir)
 	chmod +x debian/tmp/usr/bin/any2djvu
 	mkdir --parents debian/tmp/usr/lib/cgi-bin
 	cp --preserve=timestamps debian/djvuserve.sh \
@@ -114,17 +102,9 @@ install-stamp: build-stamp
 	mkdir --parents debian/tmp/usr/share/applications
 	install --mode=755 desktopfiles/djvulibre-djview3.desktop \
 	  debian/tmp/usr/share/applications/
-	touch install-stamp
 
-binary: binary-indep binary-arch
-
-binary-indep:
-
-binary-arch:
-	dh $@ --before auto_configure
-	dh $@ --after auto_test --before auto_install
-	debian/rules install
-	dh $@ --after auto_install --until dh_install
+override_dh_install:
+	dh_install
 	@echo remove from djvulibre-bin, already in djview3
 	find debian/djvulibre-bin -name djview3\* -print -delete
 	@echo remove from djvulibre-bin, just links
@@ -135,12 +115,15 @@ binary-arch:
 	find debian/djvulibre-bin -name djvuserve\* -print -delete
 # 	@echo "remove from djvulibre-bin, not in Debian: needs gsdjvu, direct complaints to AT&T"
 # 	find debian/djvulibre-bin -name djvudigital\* -print -delete
-	dh $@ --after dh_install --before compress
-	dh_compress --exclude=.djvu
-	dh $@ --after compress --before strip
-	dh_strip --dbg-package=djvulibre-dbg
-	dh $@ --after strip --before makeshlibs
-	dh_makeshlibs --version-info --exclude=/plugins
-	dh $@ --after makeshlibs
 
-.PHONY: build clean binary-indep binary-arch binary install testlibver
+override_dh_compress:
+	dh_compress --exclude=.djvu
+
+override_dh_strip:
+	dh_strip --dbg-package=djvulibre-dbg
+
+override_dh_makeshlibs:
+	dh_makeshlibs --version-info --exclude=/plugins
+
+.PHONY: build clean install binary-arch binary-indep binary
+.PHONY: testlibver
