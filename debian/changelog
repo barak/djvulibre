@@ -6,8 +6,9 @@ djvulibre (3.5.23-1) unstable; urgency=low
     - use autotools-dev to update config.* files to unclutter debdiffs
     - change recommendation from mozilla-firefox to firefox
   * modernise debian/rules with dh7 overrides, also thanks to Benjamin Drung
+  * switch to dpkg-source 3.0 (quilt) format
 
- -- Barak A. Pearlmutter <bap@debian.org>  Tue, 17 Aug 2010 09:05:46 +0200
+ -- Barak A. Pearlmutter <bap@debian.org>  Tue, 17 Aug 2010 13:35:37 +0200
 
 djvulibre (3.5.22-9) unstable; urgency=low
 
