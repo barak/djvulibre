@@ -808,6 +808,7 @@ GMonitor::enter()
 void 
 GMonitor::leave()
 {
+  static pthread_t pthread_null;
   pthread_t self = pthread_self();
   if (ok && (count>0 || !pthread_equal(locker, self)))
     G_THROW( ERR_MSG("GThreads.not_acq_broad") );
@@ -815,6 +816,7 @@ GMonitor::leave()
   if (count > 0)
     {
       count = 1;
+      locker = pthread_null;
       if (ok)
         pthread_mutex_unlock(&mutex);
     }
