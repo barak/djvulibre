@@ -1,8 +1,13 @@
 djvulibre (3.5.23-2) UNRELEASED; urgency=low
 
   * make any2djvu script not fail to notice assent (closes: #515310)
-
- -- Barak A. Pearlmutter <bap@debian.org>  Tue, 07 Sep 2010 16:25:29 +0100
+  * upstream changes fix many bugs
+    - djvumake no longer fails with these tiny images (closes: #539272)
+    - locale set internally as appropriate, e.g., PDF output (closes: #562156)
+      also fixes https://bugs.launchpad.net/ubuntu/+source/djvulibre/+bug/499324
+    - thread-related crash addressed, slightly post 3.5.23 (closes: #582961)
+  
+ -- Barak A. Pearlmutter <bap@debian.org>  Tue, 07 Sep 2010 17:47:42 +0100
 
 djvulibre (3.5.23-1) unstable; urgency=low
 
