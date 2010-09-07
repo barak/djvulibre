@@ -181,7 +181,7 @@ Do you acknowledge and allow the transmission of the document?
 EOF
     echo -n "[yes/no]:"
     read ack
-    if [[ ! "$ack" =~ '^[yY][eE][sS]$' ]]; then
+    if [[ ! "$ack" =~ ^[yY][eE][sS]$ ]]; then
         warn
         exit 1
     fi
