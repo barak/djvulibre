@@ -1,4 +1,4 @@
-djvulibre (3.5.23-2) UNRELEASED; urgency=low
+djvulibre (3.5.23-2) unstable; urgency=low
 
   * make any2djvu script not fail to notice assent (closes: #515310)
   * upstream changes fix many bugs
