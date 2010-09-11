@@ -1,3 +1,9 @@
+djvulibre (3.5.23-3) unstable; urgency=low
+
+  * revert switch to dpkg-source 3.0 (quilt) format
+
+ -- Barak A. Pearlmutter <bap@debian.org>  Sun, 12 Sep 2010 00:29:16 +0100
+
 djvulibre (3.5.23-2) unstable; urgency=low
 
   * make any2djvu script not fail to notice assent (closes: #515310)
