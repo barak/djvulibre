@@ -631,16 +631,17 @@ GPixmap::save_ppm(ByteStream &bs, int raw) const
 
 
 static void
-color_correction_table(double gamma, unsigned char gtable[256] )
+color_correction_table(double gamma, GPixel white,
+                       unsigned char gtable[256][3] )
 {
   // Check argument
   if (gamma<0.1 || gamma>10.0)
     G_THROW( ERR_MSG("GPixmap.bad_param") );
-  if (gamma<1.001 && gamma>0.999)
+  if (gamma<1.001 && gamma>0.999 && white==GPixel::WHITE)
     {
       // Trivial correction
       for (int i=0; i<256; i++)
-        gtable[i] = i;
+        gtable[i][0] = gtable[i][1] = gtable[i][2] = i;
     }
   else
     {
@@ -654,56 +655,94 @@ color_correction_table(double gamma, unsigned char gtable[256] )
 #else
           x = pow(x, 1.0/gamma);        
 #endif
-          gtable[i] = (int) floor(255.0 * x + 0.5);
+          gtable[i][0] = (int) floor(white.b * x + 0.5);
+          gtable[i][1] = (int) floor(white.g * x + 0.5);
+          gtable[i][2] = (int) floor(white.r * x + 0.5);
         }
       // Make sure that min and max values are exactly black or white
-      gtable[0] = 0;
-      gtable[255] = 255;
+      gtable[0][0] = 0;
+      gtable[0][1] = 0;
+      gtable[0][2] = 0;
+      gtable[255][0] = white.b;
+      gtable[255][1] = white.g;
+      gtable[255][2] = white.r;
     }
 }
 
 static void
-color_correction_table_cache(double gamma, unsigned char gtable[256] )
+color_correction_table_cache(double gamma, GPixel white,
+                             unsigned char gtable[256][3] )
 {
   // Compute color correction table
-  if (gamma<1.001 && gamma>0.999)
+  if (gamma<1.001 && gamma>0.999 && white==GPixel::WHITE)
     {
-      color_correction_table(gamma, gtable);
+      color_correction_table(gamma, white, gtable);
     }
   else
     {
       static double lgamma = -1.0;
-      static unsigned char ctable[256];
+      static GPixel lwhite = GPixel::BLACK;
+      static unsigned char ctable[256][3];
       GMonitorLock lock(&pixmap_monitor());
-      if (gamma != lgamma)
+      if (gamma != lgamma || white != lwhite)
         {
-          color_correction_table(gamma, ctable);
+          color_correction_table(gamma, white, ctable);
           lgamma = gamma;
+          lwhite = white;
         }
-      memcpy(gtable, ctable, 256*sizeof(unsigned char));
+      memcpy(gtable, ctable, 256*3*sizeof(unsigned char));
     }
 }
 
 void 
-GPixmap::color_correct(double gamma_correction)
+GPixmap::color_correct(double gamma_correction, GPixel white)
 {
   // Trivial corrections
-  if (gamma_correction>0.999 && gamma_correction<1.001)
+  if (gamma_correction>0.999 && gamma_correction<1.001 && white==GPixel::WHITE)
     return;
   // Compute correction table
-  unsigned char gtable[256];
-  color_correction_table_cache(gamma_correction, gtable);
+  unsigned char gtable[256][3];
+  color_correction_table_cache(gamma_correction, white, gtable);
   // Perform correction
   for (int y=0; y<nrows; y++)
   {
     GPixel *pix = (*this)[y];
     for (int x=0; x<ncolumns; x++, pix++)
     {
-      pix->r = gtable[ pix->r ];
-      pix->g = gtable[ pix->g ];
-      pix->b = gtable[ pix->b ];
+      pix->b = gtable[ pix->b ][0];
+      pix->g = gtable[ pix->g ][1];
+      pix->r = gtable[ pix->r ][2];
     }
   }
+}
+
+void 
+GPixmap::color_correct(double gamma_correction)
+{
+  // Trivial corrections
+  if (gamma_correction<=0.999 || gamma_correction>=1.001)
+    color_correct(gamma_correction, GPixel::WHITE);
+}
+
+
+void 
+GPixmap::color_correct(double gamma_correction, GPixel white,
+                       GPixel *pix, int npixels)
+{
+  // Trivial corrections
+  if (gamma_correction>0.999 && gamma_correction<1.001 && white==GPixel::WHITE)
+    return;
+  // Compute correction table
+  unsigned char gtable[256][3];
+  color_correction_table_cache(gamma_correction, white, gtable);
+  // Perform correction
+  while (--npixels>=0)
+    {
+      pix->b = gtable[pix->b][0];
+      pix->g = gtable[pix->g][1];
+      pix->r = gtable[pix->r][2];
+      pix++;
+    }
 }
 
 
@@ -711,21 +750,9 @@ void
 GPixmap::color_correct(double gamma_correction, GPixel *pix, int npixels)
 {
   // Trivial corrections
-  if (gamma_correction>0.999 && gamma_correction<1.001)
-    return;
-  // Compute correction table
-  unsigned char gtable[256];
-  color_correction_table_cache(gamma_correction, gtable);
-  // Perform correction
-  while (--npixels>=0)
-    {
-      pix->r = gtable[pix->r];
-      pix->g = gtable[pix->g];
-      pix->b = gtable[pix->b];
-      pix++;
-    }
+  if (gamma_correction<=0.999 || gamma_correction>=1.001)
+    color_correct(gamma_correction,GPixel::WHITE,pix,npixels);
 }
-
 
 
 //////////////////////////////////////////////////
@@ -1555,7 +1582,7 @@ GPixmap::blend(const GBitmap *bm, int xpos, int ypos, const GPixmap *color)
 void 
 GPixmap::stencil(const GBitmap *bm, 
                 const GPixmap *pm, int pms, const GRect *pmr, 
-                double corr)
+                 double corr, GPixel white)
 {
   // Check arguments
   GRect rect(0, 0, pm->columns()*pms, pm->rows()*pms);
@@ -1586,8 +1613,8 @@ GPixmap::stencil(const GBitmap *bm,
   for (unsigned int i=1; i<maxgray ; i++)
     multiplier[i] = 0x10000 * i / maxgray;
   // Prepare color correction table
-  unsigned char gtable[256];
-  color_correction_table_cache(corr, gtable);
+  unsigned char gtable[256][3];
+  color_correction_table_cache(corr, white, gtable);
   // Compute starting point in blown up foreground pixmap
   int fgy, fgy1, fgxz, fgx1z;
   euclidian_ratio(rect.ymin, pms, fgy, fgy1);
@@ -1609,16 +1636,16 @@ GPixmap::stencil(const GBitmap *bm,
       {
         if (srcpix >= maxgray)
         {
-          dst[x].b = gtable[fg[fgx].b];
-          dst[x].g = gtable[fg[fgx].g];
-          dst[x].r = gtable[fg[fgx].r];
+          dst[x].b = gtable[fg[fgx].b][0];
+          dst[x].g = gtable[fg[fgx].g][1];
+          dst[x].r = gtable[fg[fgx].r][2];
         }
         else
         {
           unsigned int level = multiplier[srcpix];
-          dst[x].b -= (((int)dst[x].b - (int)gtable[fg[fgx].b]) * level) >> 16;
-          dst[x].g -= (((int)dst[x].g - (int)gtable[fg[fgx].g]) * level) >> 16;
-          dst[x].r -= (((int)dst[x].r - (int)gtable[fg[fgx].r]) * level) >> 16;
+          dst[x].b -= (((int)dst[x].b-(int)gtable[fg[fgx].b][0])*level) >> 16;
+          dst[x].g -= (((int)dst[x].g-(int)gtable[fg[fgx].g][1])*level) >> 16;
+          dst[x].r -= (((int)dst[x].r-(int)gtable[fg[fgx].r][2])*level) >> 16;
         }
       }
       // Next column
@@ -1638,6 +1665,15 @@ GPixmap::stencil(const GBitmap *bm,
     } 
   }
 }
+
+void 
+GPixmap::stencil(const GBitmap *bm, 
+                const GPixmap *pm, int pms, const GRect *pmr, 
+                double corr)
+{
+  stencil(bm, pm, pms, pmr, corr, GPixel::WHITE);
+}
+
 
 GP<GPixmap> GPixmap::rotate(int count)
 {

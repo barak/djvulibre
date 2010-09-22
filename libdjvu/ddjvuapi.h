@@ -112,8 +112,10 @@ extern "C" {
 
    Version   Change
    -----------------------------
+     20    Added:
+              ddjvu_format_set_white()
      19    Added:
-              ddjvu_document_create_by_filename_utf8
+              ddjvu_document_create_by_filename_utf8()
      18    Added:
               ddjvu_document_get_{anno,pagedump,filedump}()
            Modifed (binary compatible):
@@ -135,7 +137,7 @@ extern "C" {
      14    Initial version.
 */
 
-#define DDJVUAPI_VERSION 19
+#define DDJVUAPI_VERSION 20
 
 typedef struct ddjvu_context_s    ddjvu_context_t;
 typedef union  ddjvu_message_s    ddjvu_message_t;
@@ -1248,6 +1250,16 @@ ddjvu_format_set_ditherbits(ddjvu_format_t *format, int bits);
 DDJVUAPI void
 ddjvu_format_set_gamma(ddjvu_format_t *format, double gamma);
 
+
+/* ddjvu_format_set_white ---
+   Sets the whitepoint of the display for which the pixels are
+   intended.  This will be combined with the gamma stored in
+   DjVu documents in order to compute a suitable color
+   correction.  The default value is 0xff,0xff,0xff. */
+
+DDJVUAPI void
+ddjvu_format_set_white(ddjvu_format_t *format, 
+                       unsigned char b, unsigned char g, unsigned char r);
 
 /* ddjvu_format_release ---
    Release a reference to a <ddjvu_format_t> object.
