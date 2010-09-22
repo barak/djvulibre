@@ -24,8 +24,8 @@
 # Initialization
 # ----------------------------------------
 
-AC_PREREQ([2.67])
-AC_INIT([djvulibre],[3.5.23])
+AC_PREREQ([2.65])
+AC_INIT([djvulibre],[3.5.24])
 AC_REVISION($Id$)
 AC_CONFIG_AUX_DIR(config)
 AC_CONFIG_MACRO_DIR(config)

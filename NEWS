@@ -1,5 +1,10 @@
+SINCE 3.5.23
+------------
+- Support for changing white point.
+
+
 NEW IN VERSION 3.5.23
-------------------------
+---------------------
 - Djview3 has been deprecated by djview4 whose source comes in 
   its own tarball. Use configure option --enable-djview to force
   the compilation of djview3.
@@ -11,7 +16,7 @@ NEW IN VERSION 3.5.23
 - Various bug fixes.
 
 NEW IN VERSION 3.5.22
-------------------------
+---------------------
 - Probably the last release before djvulibre-4
 - Backported djview4 version of nsdejavu.so 
 - Various bug fixes
