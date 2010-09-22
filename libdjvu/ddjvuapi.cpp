@@ -328,6 +328,24 @@ xhead(ddjvu_message_tag_t tag,
 
 
 // ----------------------------------------
+// Version
+
+const char*
+ddjvu_get_version_string(void)
+{
+  return "DjVuLibre-" DJVULIBRE_VERSION;
+}
+
+int
+ddjvu_code_get_version(void)
+{
+  return DJVUVERSION;
+}
+
+
+
+
+// ----------------------------------------
 // Context
 
 
@@ -1775,12 +1793,6 @@ ddjvu_page_get_version(ddjvu_page_t *page)
       ERROR1(page, ex);
     }
   G_ENDCATCH;
-  return DJVUVERSION;
-}
-
-int
-ddjvu_code_get_version(void)
-{
   return DJVUVERSION;
 }
 

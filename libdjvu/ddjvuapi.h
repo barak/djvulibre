@@ -113,6 +113,7 @@ extern "C" {
    Version   Change
    -----------------------------
      20    Added:
+              ddjvu_get_version_string()
               ddjvu_format_set_white()
      19    Added:
               ddjvu_document_create_by_filename_utf8()
@@ -185,6 +186,14 @@ typedef struct ddjvu_rectmapper_s ddjvu_rectmapper_t;
  */
 
 
+
+/* ddjvu_get_version_string() ---
+   Returns a string that described the underlying code. */
+
+DDJVUAPI const char*
+ddjvu_get_version_string(void);
+
+
 /* ddjvu_context_create ---
    Creates a <ddjvu_context_t> object.
    Argument <programname> is the name of the calling executable. */
@@ -201,6 +210,8 @@ ddjvu_context_create(const char *programname);
 
 DDJVUAPI void 
 ddjvu_context_release(ddjvu_context_t *context);
+
+
 
 
 
@@ -986,6 +997,7 @@ ddjvu_page_get_version(ddjvu_page_t *page);
 
 DDJVUAPI int
 ddjvu_code_get_version(void);
+
 
 /* ddjvu_page_get_type ---
    Returns the type of the page data.
