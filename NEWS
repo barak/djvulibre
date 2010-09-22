@@ -1,6 +1,7 @@
 SINCE 3.5.23
 ------------
-- Support for changing white point.
+- Set ddjvuapi_version to 20.
+- Added ddjvuapi support for changing white point.
 
 
 NEW IN VERSION 3.5.23
