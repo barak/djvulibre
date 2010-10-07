@@ -1020,26 +1020,31 @@ main(int argc, char **argv)
 
   /* Close */
 #if HAVE_TIFF2PDF
-  if (tiff && tiffd >= 0 && tempfilename)
+  if (tiff && tempfilename)
     {
       if (! TIFFFlush(tiff))
         die(i18n("Error while flushing TIFF file."));
       if (flag_verbose)
         fprintf(stderr,i18n("Converting temporary TIFF to PDF.\n"));
-#ifdef WIN32
-      TIFFClose(tiff);
-      if (!(tiff = TIFFOpen(tempfilename, "r")))
-        die(i18n("Cannot reopen temporary TIFF file '%s'."), tempfilename);
-#else
+#ifndef WIN32
       // more elaborate method to work with mkstemp()
-      int fd = dup(tiffd);
-      TIFFClose(tiff);
-      close(tiffd);
-      tiffd = fd;
-      lseek(tiffd, 0, SEEK_SET);
-      if (tiffd < 0 || !(tiff = TIFFFdOpen(tiffd, tempfilename, "r")))
-        die(i18n("Cannot reopen temporary TIFF file '%s'."), tempfilename);
+      if (tiffd >= 0)
+        {
+          int fd = dup(tiffd);
+          TIFFClose(tiff);
+          close(tiffd);
+          tiffd = fd;
+          lseek(tiffd, 0, SEEK_SET);
+          if (! (tiff = TIFFFdOpen(tiffd, tempfilename, "r")))
+            die(i18n("Cannot reopen temporary TIFF file '%s'."), tempfilename);
+        }
+      else
 #endif
+        {
+          TIFFClose(tiff);
+          if (!(tiff = TIFFOpen(tempfilename, "r")))
+            die(i18n("Cannot reopen temporary TIFF file '%s'."), tempfilename);
+        }
       if (! (fout = fopen(outputfilename, "wb")))
         die(i18n("Cannot open output file '%s'."), outputfilename);
       const char *args[3];
