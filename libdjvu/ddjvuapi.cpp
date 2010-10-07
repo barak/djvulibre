@@ -2229,7 +2229,8 @@ fmt_convert_row(const GPixel *p, int w,
       }
     case DDJVU_FORMAT_MSBTOLSB: /* packed bits, msb on the left */
       {
-        int t = 5*fmt->white.r + 9*fmt->white.g + 2*fmt->white.b + 16;
+        int t = (5*fmt->white.r + 9*fmt->white.g + 2*fmt->white.b + 16);
+        t = t * 0xc / 0x10;
         unsigned char s=0, m=0x80;
         while (--w >= 0) {
           if ( 5*p->r + 9*p->g + 2*p->b < t ) { s |= m; }
@@ -2242,6 +2243,7 @@ fmt_convert_row(const GPixel *p, int w,
     case DDJVU_FORMAT_LSBTOMSB: /* packed bits, lsb on the left */
       {
         int t = 5*fmt->white.r + 9*fmt->white.g + 2*fmt->white.b + 16;
+        t = t * 0xc / 0x10;
         unsigned char s=0, m=0x1;
         while (--w >= 0) {
           if ( 5*p->r + 9*p->g + 2*p->b < t ) { s |= m; }
@@ -2305,7 +2307,7 @@ fmt_convert_row(unsigned char *p, unsigned char g[256][4], int w,
         uint16_t *b = (uint16_t*)buf;
         while (--w >= 0) {
           unsigned char x = *p;
-          b[0]=(r[0][g[x][0]]|r[1][g[x][1]]|r[2][g[x][2]])^xorval; 
+          b[0]=(r[0][g[x][2]]|r[1][g[x][1]]|r[2][g[x][0]])^xorval; 
           b+=1; p+=1; 
         }
         break;
@@ -2315,7 +2317,7 @@ fmt_convert_row(unsigned char *p, unsigned char g[256][4], int w,
         uint32_t *b = (uint32_t*)buf;
         while (--w >= 0) {
           unsigned char x = *p;
-          b[0]=(r[0][g[x][0]]|r[1][g[x][1]]|r[2][g[x][2]])^xorval; 
+          b[0]=(r[0][g[x][2]]|r[1][g[x][1]]|r[2][g[x][0]])^xorval; 
           b+=1; p+=1; 
         }
         break;
@@ -2341,10 +2343,11 @@ fmt_convert_row(unsigned char *p, unsigned char g[256][4], int w,
     case DDJVU_FORMAT_MSBTOLSB: /* packed bits, msb on the left */
       {
         int t = 5*fmt->white.r + 9*fmt->white.g + 2*fmt->white.b + 16;
+        t = t * 0xc / 0x100;
         unsigned char s=0, m=0x80;
         while (--w >= 0) {
           unsigned char x = *p;
-          if ( 5*g[x][2] + 9*g[x][1] + 2*g[x][0] < t ) { s |= m; }
+          if ( g[x][3] < t ) { s |= m; }
           if (! (m >>= 1)) { *buf++ = s; s=0; m=0x80; }
           p += 1;
         }
@@ -2354,10 +2357,11 @@ fmt_convert_row(unsigned char *p, unsigned char g[256][4], int w,
     case DDJVU_FORMAT_LSBTOMSB: /* packed bits, lsb on the left */
       {
         int t = 5*fmt->white.r + 9*fmt->white.g + 2*fmt->white.b + 16;
+        t = t * 0xc / 0x100;
         unsigned char s=0, m=0x1;
         while (--w >= 0) {
           unsigned char x = *p;
-          if ( 5*g[x][2] + 9*g[x][1] + 2*g[x][0] < t ) { s |= m; }
+          if ( g[x][3] < t ) { s |= m; }
           if (! (m <<= 1)) { *buf++ = s; s=0; m=0x1; }
           p += 1;
         }
@@ -2382,7 +2386,7 @@ fmt_convert(GBitmap *bm, const ddjvu_format_t *fmt, char *buffer, int rowsize)
       g[i][0] = wh.b - ( i * wh.b + (m - 1)/2 ) / (m - 1);
       g[i][1] = wh.g - ( i * wh.g + (m - 1)/2 ) / (m - 1);
       g[i][2] = wh.r - ( i * wh.r + (m - 1)/2 ) / (m - 1);
-      g[i][3] = (5*g[i][3] + 9*g[i][2] + 2*g[i][0])>>4; 
+      g[i][3] = (5*g[i][2] + 9*g[i][1] + 2*g[i][0])>>4; 
     }
   for (i=m; i<256; i++)
     g[i][0] = g[i][1] = g[i][2] = g[i][3] = 0;
