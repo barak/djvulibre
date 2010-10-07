@@ -1055,8 +1055,10 @@ main(int argc, char **argv)
         die(i18n("Error occured while creating PDF file."));
       TIFFClose(tiff);
       tiff = 0;
+#ifndef WIN32
       close(tiffd);
       tiffd = -1;
+#endif
       remove(tempfilename);
       free(tempfilename);
       tempfilename = 0;
