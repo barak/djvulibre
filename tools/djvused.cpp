@@ -88,7 +88,7 @@ static bool modified = false;
 static bool verbose = false;
 static bool save = false;
 static bool nosave = false;
-
+static bool utf8 = false;
 
 struct DJVUSEDGlobal 
 {
@@ -406,9 +406,7 @@ char_unquoted(unsigned char c, bool eightbit)
 }
 
 static void
-print_c_string(const char *data, int length, 
-               ByteStream &out, 
-               bool eightbit=false)
+print_c_string(const char *data, int length, ByteStream &out, bool eightbit)
 {
   out.write("\"",1);
   while (*data && length>0) 
@@ -794,8 +792,7 @@ filter_ant(GP<ByteStream> in,
           inp->unget(c);
           GUTF8String token = inp->get_utf8_token(false, compat);
           if (copy)
-	    print_c_string(token, token.length(), *out, 
-                           (flags & EIGHTBIT) ? true : false );
+	    print_c_string(token, token.length(), *out, !!(flags & EIGHTBIT));
           if (compat)
             unchanged = false;
         }
@@ -839,6 +836,8 @@ print_ant(GP<IFFByteStream> iff,
 {
   GUTF8String chkid;
   bool changed = false;
+  if (utf8)
+    flags |= EIGHTBIT;
   while (iff->get_chunk(chkid))
     {
       if (chkid == "ANTa") 
@@ -970,7 +969,7 @@ print_meta(IFFByteStream &iff, ByteStream &out)
               out.writestring(tmp); 
               out.write8('\t');
               tmp=ant->metadata[pos];
-              print_c_string((const char*)tmp, tmp.length(), out);
+              print_c_string((const char*)tmp, tmp.length(), out, utf8);
               out.write8('\n');
             }
           }
@@ -1211,7 +1210,7 @@ print_txt_sub(const GP<DjVuTXT> &txt, DjVuTXT::Zone &zone,
       if (data[length-1] == zone_names()[zinfo].separator)
         length -= 1;
       out->write(" ",1);
-      print_c_string(data, length, *out);
+      print_c_string(data, length, *out, utf8);
     }
   else
     {
@@ -1466,7 +1465,7 @@ output(const GP<DjVuFile> &f, const GP<ByteStream> &out,
           static const char msg1[] = "# ------------------------- \n select \0";
           static const char msg2[] = "\n\0";
           out->write(msg1, strlen(msg1));
-          print_c_string(id, strlen(id), *out);
+          print_c_string(id, strlen(id), *out, utf8);
           out->write(msg2, strlen(msg2));
         }
       if (ant->size()) 
@@ -1572,14 +1571,14 @@ print_outline_sub(const GP<DjVmNav> &nav, int &pos, int count,
       nav->getBookMark(entry, pos++);
       out->write("(",1);
       str = entry->displayname;
-      print_c_string(str, str.length(), *out);
+      print_c_string(str, str.length(), *out, utf8);
       out->write("\n ",2);
       { // extra nesting for windows
         for (int i=0; i<indent; i++)
           out->write(" ",1);
       }
       str = entry->url;
-      print_c_string(str, str.length(), *out);
+      print_c_string(str, str.length(), *out, utf8);
       print_outline_sub(nav, pos, entry->count, out, indent+1);
       out->write(" )",2);
       count--;
@@ -1988,6 +1987,8 @@ main(int argc, char **argv)
             save = true; 
           else if (!strcmp(argv[i],"-n"))
             nosave = true;
+          else if (!strcmp(argv[i],"-u"))
+            utf8 = true;
           else if (!strcmp(argv[i],"-f") && i+1<argc && !g().cmdbs) 
             g().cmdbs = ByteStream::create(GURL::Filename::UTF8(argv[++i]), "r");
           else if (!strcmp(argv[i],"-e") && !g().cmdbs && ++i<argc) 

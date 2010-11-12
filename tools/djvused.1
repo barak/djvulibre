@@ -81,6 +81,16 @@ This is similar to executing command
 .B save
 immediately before terminating the program.
 .TP
+.BI "-u"
+By default,
+.B djvused
+produces pure ASCII files for maximal compatibility.
+Non-ascii characters in strings are represented using octal escape sequence.
+When option
+.B -u 
+is specified, these characters are printed in UTF-8 encoding.
+This is convenient for manually editing the file.
+.TP
 .BI "-n"
 Cause 
 .B djvused 
