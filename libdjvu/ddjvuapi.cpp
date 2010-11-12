@@ -333,7 +333,11 @@ xhead(ddjvu_message_tag_t tag,
 const char*
 ddjvu_get_version_string(void)
 {
+#ifdef DJVULIBRE_VERSION
   return "DjVuLibre-" DJVULIBRE_VERSION;
+#else
+  return "DjVuLibre";
+#endif
 }
 
 int
