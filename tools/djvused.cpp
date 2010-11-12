@@ -90,6 +90,8 @@ static bool save = false;
 static bool nosave = false;
 static bool utf8 = false;
 
+static unsigned char utf8bom[] = { 0xef, 0xbb, 0xbf };
+
 struct DJVUSEDGlobal 
 {
   // Globals that need static initialization
@@ -106,6 +108,16 @@ static DJVUSEDGlobal& g(void)
 {
   static DJVUSEDGlobal g;
   return g;
+}
+
+static GUTF8String 
+ToNative(GUTF8String s)
+{
+  if (utf8)
+    return s;
+  // fake the damn GUTF8/GNative type check
+  GNativeString n = s;
+  return GUTF8String((const char*)n);
 }
 
 
@@ -128,6 +140,7 @@ private:
   int  bufend;
   bool goteof;
   ParsingByteStream(const GP<ByteStream> &gbs);
+  int getbom(int c);
 public:
   static GP<ParsingByteStream> create(const GP<ByteStream> &gbs) 
   { return new ParsingByteStream(gbs); }
@@ -138,8 +151,7 @@ public:
   int unget(int c);
   inline int get();
   int get_spaces(bool skipseparator=false);
-  GUTF8String get_utf8_token(bool skipseparator=false, bool compat=false);
-  GUTF8String get_native_token(bool skipseparator=false, bool compat=false);
+  GUTF8String get_token(bool skipseparator=false, bool compat=false);
 };
 
 ParsingByteStream::ParsingByteStream(const GP<ByteStream> &xgbs)
@@ -196,16 +208,39 @@ ParsingByteStream::tell() const
   return 0;
 }
 
-inline int 
-ParsingByteStream::get() // aka. getc()
+int 
+ParsingByteStream::getbom(int c)
 {
-  if (bufpos < bufend || !eof())
-    return buffer[bufpos++];
-  return EOF;
+  int i = 0;
+  while (c == utf8bom[i++])
+    {
+      if (i >= 3)
+        i = 0;
+      if (bufpos < bufend || !eof())
+        c = buffer[bufpos++];
+    }
+  while (--i > 0)
+    {
+      unget(c);
+      c = utf8bom[i-1];
+    }
+  return c;
 }
 
+inline int 
+ParsingByteStream::get() // like getc() skipping bom.
+{
+  int c = EOF;
+  if (bufpos < bufend || !eof())
+    c = buffer[bufpos++];
+  if (c == utf8bom[0])
+    return getbom(c);
+  return c;
+}
+
+
 int  
-ParsingByteStream::unget(int c) // aka. ungetc()
+ParsingByteStream::unget(int c) // like ungetc()
 {
   if (bufpos > 0 && c != EOF) 
     return buffer[--bufpos] = (unsigned char)c;
@@ -229,7 +264,7 @@ ParsingByteStream::get_spaces(bool skipseparator)
 }
   
 GUTF8String
-ParsingByteStream::get_utf8_token(bool skipseparator, bool compat)
+ParsingByteStream::get_token(bool skipseparator, bool compat)
 {
   GUTF8String str;
   int c = get_spaces(skipseparator);
@@ -299,14 +334,6 @@ ParsingByteStream::get_utf8_token(bool skipseparator, bool compat)
   return str;
 }
 
-GUTF8String
-ParsingByteStream::get_native_token(bool skipseparator, bool compat)
-{
-  GUTF8String fake = get_utf8_token(skipseparator, compat);
-  GNativeString nat((const char*)fake);
-  return GUTF8String(nat);
-}
-
 
 // --------------------------------------------------
 // COMMANDS
@@ -323,11 +350,11 @@ vprint(const char *fmt, ... )
 {
   if (verbose)
     {
-      GNativeString msg("");
+      GUTF8String msg("");
       va_list args;
       va_start(args, fmt);
       msg.vformat(fmt, args);
-      fprintf(stderr,"djvused: %s\n", (const char*)msg);
+      fprintf(stderr,"djvused: %s\n", (const char*)ToNative(msg));
     }
 }
 
@@ -339,17 +366,17 @@ static void
 verror(const char *fmt, ... )
 #endif
 {
-  GNativeString msg;
+  GUTF8String msg;
   va_list args;
   va_start(args, fmt);
   msg.vformat(fmt, args);
-  G_THROW((const char*)msg);
+  G_THROW((const char*)ToNative(msg));
 }
 
 static void
 get_data_from_file(const char *cmd, ParsingByteStream &pbs, ByteStream &out)
 {
-  GUTF8String fname = pbs.get_native_token();
+  GUTF8String fname = pbs.get_token();
 
   if (! fname)
     {
@@ -460,14 +487,14 @@ command_ls(ParsingByteStream &)
         fprintf(stdout,"     A ");
       else
         fprintf(stdout,"     ? ");
-      GNativeString id = f->get_load_name();
-      fprintf(stdout,"%8d  %s", f->size, (const char*)(GNativeString)id);
-      GNativeString name = f->get_save_name();
+      GUTF8String id = f->get_load_name();
+      fprintf(stdout,"%8d  %s", f->size, (const char*)ToNative(id));
+      GUTF8String name = f->get_save_name();
       if (name != id)
-        fprintf(stdout," F=%s", (const char*)name);
-      GNativeString title = f->get_title();
+        fprintf(stdout," F=%s", (const char*)ToNative(name));
+      GUTF8String title = f->get_title();
       if (title != id && f->is_page())
-        fprintf(stdout," T=%s", (const char*)title);
+        fprintf(stdout," T=%s", (const char*)ToNative(title));
       fprintf(stdout,"\n");
     }
   }
@@ -507,7 +534,7 @@ command_dump(ParsingByteStream &)
   char *buf = str.getbuf(size);
   bs->seek(0);
   bs->readall(buf, size);
-  GNativeString ns = str;
+  GUTF8String ns = ToNative(str);
   GP<ByteStream> obs=ByteStream::create("w");
   obs->writall((const char*)ns, ns.length());
 }
@@ -611,7 +638,7 @@ select_add(GP<DjVmDir::File> frec)
 void
 command_select(ParsingByteStream &pbs)
 {
-  GUTF8String pagid = pbs.get_native_token();
+  GUTF8String pagid = pbs.get_token();
   // Case of NULL
   if (pagid == "") 
     {
@@ -628,7 +655,7 @@ command_select(ParsingByteStream &pbs)
         verror("page \"%d\" not found", pageno);
       select_clear();
       select_add(frec);
-      vprint("select: selecting \"%s\"", (const char*)(GNativeString)g().fileid);
+      vprint("select: selecting \"%s\"", (const char*)ToNative(g().fileid));
       return;
     }
   // Case of a single file id
@@ -638,10 +665,10 @@ command_select(ParsingByteStream &pbs)
   if (!frec)
     frec = g().doc->get_djvm_dir()->title_to_file(pagid);
   if (!frec)
-    verror("page \"%s\" not found", (const char*)(GNativeString)pagid);
+    verror("page \"%s\" not found", (const char*)ToNative(pagid));
   select_clear();
   select_add(frec);
-  vprint("select: selecting \"%s\"", (const char*)(GNativeString)g().fileid);
+  vprint("select: selecting \"%s\"", (const char*)ToNative(g().fileid));
 }  
 
 void
@@ -690,14 +717,14 @@ command_showsel(ParsingByteStream &)
         fprintf(stdout,"     A ");
       else
         fprintf(stdout,"     ? ");
-      GNativeString id = f->get_load_name();
-      fprintf(stdout,"%8d  %s", f->size, (const char*)(GNativeString)id);
-      GNativeString name = f->get_save_name();
+      GUTF8String id = f->get_load_name();
+      fprintf(stdout,"%8d  %s", f->size, (const char*)ToNative(id));
+      GUTF8String name = f->get_save_name();
       if (name != id)
-        fprintf(stdout," F=%s", (const char*)name);
-      GNativeString title = f->get_title();
+        fprintf(stdout," F=%s", (const char*)ToNative(name));
+      GUTF8String title = f->get_title();
       if (title != id && f->is_page())
-        fprintf(stdout," T=%s", (const char*)title);
+        fprintf(stdout," T=%s", (const char*)ToNative(title));
       fprintf(stdout,"\n");
     }
   }
@@ -710,7 +737,7 @@ command_set_page_title(ParsingByteStream &pbs)
 {
   if (! g().file)
     verror("must select a single page first");
-  GUTF8String fname = pbs.get_native_token();
+  GUTF8String fname = pbs.get_token();
   if (! fname)
     verror("must provide a name");
   GPList<DjVmDir::File> &lst = g().selected;
@@ -718,7 +745,7 @@ command_set_page_title(ParsingByteStream &pbs)
   if (! lst[pos]->is_page())
     verror("component file is not a page");
   g().doc->set_file_title(g().fileid, fname);
-  vprint("set-page-title: modified \"%s\"", (const char*)(GNativeString)g().fileid);
+  vprint("set-page-title: modified \"%s\"", (const char*)ToNative(g().fileid));
   modified = true;
 }
 
@@ -790,7 +817,7 @@ filter_ant(GP<ByteStream> in,
       if (c == '\"')
         {
           inp->unget(c);
-          GUTF8String token = inp->get_utf8_token(false, compat);
+          GUTF8String token = inp->get_token(false, compat);
           if (copy)
 	    print_c_string(token, token.length(), *out, !!(flags & EIGHTBIT));
           if (compat)
@@ -804,7 +831,7 @@ filter_ant(GP<ByteStream> in,
           inp->unget(c);
           if ((flags & DELMETA) && plevel==0 && c=='m')
             {
-              GUTF8String token = inp->get_utf8_token();
+              GUTF8String token = inp->get_token();
               if (token == "metadata")
                 copy = unchanged = false;
               if (copy) {
@@ -940,7 +967,7 @@ command_set_ant(ParsingByteStream &pbs)
     bsant = 0;
   }
   modify_ant(g().file, "ANTz", ant);
-  vprint("set-ant: modified \"%s\"", (const char*)(GNativeString)g().fileid);
+  vprint("set-ant: modified \"%s\"", (const char*)ToNative(g().fileid));
 }
 
 static void
@@ -1085,11 +1112,11 @@ command_set_meta(ParsingByteStream &pbs)
     {
       GUTF8String key, val;
       inp->unget(c);
-      key = inp->get_utf8_token();
+      key = inp->get_token();
       c = inp->get_spaces(false);
       if (c == '\"') {
         inp->unget(c);
-        val = inp->get_utf8_token();
+        val = inp->get_token();
       } else {
         while (c!='\n' && c!='\r' && c!=EOF) {
           val += c;
@@ -1122,7 +1149,7 @@ command_set_meta(ParsingByteStream &pbs)
   // set metadata
   if (g().file && modify_meta(g().file, &metadata))
     vprint("set-meta: modified \"%s\"", 
-           (const char*)(GNativeString)g().fileid);
+           (const char*)ToNative(g().fileid));
 }
 
 struct  zone_names_struct
@@ -1325,34 +1352,34 @@ construct_djvutxt_sub(ParsingByteStream &pbs,
   c = pbs.get_spaces(true);
   if (c != '(')
     verror("syntax error in txt data: got '%c', expecting '('", c);
-  token = pbs.get_utf8_token(true);
+  token = pbs.get_token(true);
   int zinfo;
   for (zinfo=0; zone_names()[zinfo].name; zinfo++)
     if (token == zone_names()[zinfo].name)
       break;
   if (! zone_names()[zinfo].name)
     verror("Syntax error in txt data: undefined token '%s'",
-           (const char*)(GNativeString)token);
+           (const char*)ToNative(token));
   zone.ztype = zone_names()[zinfo].ztype;
   if (zone.ztype<mintype || (exact && zone.ztype>mintype))
     verror("Syntax error in txt data: illegal zone token '%s'",
-           (const char*)(GNativeString)token);           
+           (const char*)ToNative(token));           
   // Get zone rect
   GUTF8String str;
-  str = pbs.get_utf8_token(true);
+  str = pbs.get_token(true);
   if (!str || !str.is_int()) 
     nerror: verror("Syntax error in txt data: number expected, got '%s'",
-                   (const char*)(GNativeString)str);  
+                   (const char*)ToNative(str));  
   zone.rect.xmin = atoi(str);
-  str = pbs.get_utf8_token(true);
+  str = pbs.get_token(true);
   if (!str || !str.is_int()) 
     goto nerror;
   zone.rect.ymin = atoi(str);
-  str = pbs.get_utf8_token(true);
+  str = pbs.get_token(true);
   if (!str || !str.is_int()) 
     goto nerror;
   zone.rect.xmax = atoi(str);
-  str = pbs.get_utf8_token(true);
+  str = pbs.get_token(true);
   if (!str || !str.is_int()) 
     goto nerror;
   zone.rect.ymax = atoi(str);
@@ -1374,7 +1401,7 @@ construct_djvutxt_sub(ParsingByteStream &pbs,
   if (c == '"') 
     {
       // This is a terminal
-      str = pbs.get_utf8_token(true);
+      str = pbs.get_token(true);
       zone.text_start = txt->textUTF8.length();
       zone.text_length = str.length();
       txt->textUTF8 += str;
@@ -1434,7 +1461,7 @@ command_set_txt(ParsingByteStream &pbs)
     }
   txtobs->seek(0);
   modify_txt(g().file, "TXTz", txtobs);
-  vprint("set-txt: modified \"%s\"", (const char*)(GNativeString)g().fileid);
+  vprint("set-txt: modified \"%s\"", (const char*)ToNative(g().fileid));
 }
 
 void
@@ -1612,11 +1639,11 @@ construct_outline_sub(ParsingByteStream &pbs, GP<DjVmNav> nav, int &count)
   if ((c = pbs.get_spaces(true)) != '\"')
     verror("Syntax error in outline data: expecting name string.");    
   pbs.unget(c);
-  name = pbs.get_utf8_token();
+  name = pbs.get_token();
   if ((c = pbs.get_spaces(true)) != '\"')
     verror("Syntax error in outline data: expecting url string.");    
   pbs.unget(c);
-  url = pbs.get_utf8_token();
+  url = pbs.get_token();
   mark = DjVmNav::DjVuBookMark::create(0, name, url);
   nav->append(mark);
   count += 1;
@@ -1636,7 +1663,7 @@ construct_outline(ParsingByteStream &pbs)
     return 0;
   if (c!='(')
     verror("Syntax error in outline data: expecting '(bookmarks ...'");
-  if (pbs.get_utf8_token()!="bookmarks")
+  if (pbs.get_token()!="bookmarks")
     verror("Syntax error in outline data: expecting 'bookmarks ...'");    
   while ((c = pbs.get_spaces(true)) == '(')
     construct_outline_sub(pbs, nav, count);
@@ -1676,7 +1703,7 @@ callback_thumbnails(int page_num, void *)
 void
 command_set_thumbnails(ParsingByteStream &pbs)
 {
-  GUTF8String sizestr = pbs.get_native_token();
+  GUTF8String sizestr = pbs.get_token();
   if (! sizestr)
     sizestr = "128";
   if (! sizestr.is_int() )
@@ -1698,7 +1725,7 @@ command_remove_thumbnails(ParsingByteStream &)
 void
 command_save_page(ParsingByteStream &pbs)
 {
-  GUTF8String fname = pbs.get_native_token();
+  GUTF8String fname = pbs.get_token();
   if (! fname) 
     verror("empty filename");
   if (! g().file)
@@ -1712,13 +1739,13 @@ command_save_page(ParsingByteStream &pbs)
   out->writall("AT&T",4);
   out->copy(*bs);
   vprint("saved \"%s\" as \"%s\"  (without inserting included files)",
-         (const char*)(GNativeString)g().fileid, (const char*)fname);
+         (const char*)ToNative(g().fileid), (const char*)fname);
 }
 
 void
 command_save_page_with(ParsingByteStream &pbs)
 {
-  GUTF8String fname = pbs.get_native_token();
+  GUTF8String fname = pbs.get_token();
   if (! fname) 
     verror("empty filename");
   if (! g().file)
@@ -1732,13 +1759,13 @@ command_save_page_with(ParsingByteStream &pbs)
   out->writall("AT&T",4);
   out->copy(*bs);
   vprint("saved \"%s\" as \"%s\"  (inserting included files)",
-         (const char*)(GNativeString)g().fileid, (const char*)fname);
+         (const char*)ToNative(g().fileid), (const char*)fname);
 }
 
 void
 command_save_bundled(ParsingByteStream &pbs)
 {
-  GUTF8String fname = pbs.get_native_token();
+  GUTF8String fname = pbs.get_token();
   if (! fname) 
     verror("empty filename");
   if (nosave) 
@@ -1751,7 +1778,7 @@ command_save_bundled(ParsingByteStream &pbs)
 void
 command_save_indirect(ParsingByteStream &pbs)
 {
-  GUTF8String fname = pbs.get_native_token();
+  GUTF8String fname = pbs.get_token();
   if (! fname) 
     verror("empty filename");
   if (nosave) 
@@ -1938,7 +1965,7 @@ execute()
   GUTF8String token;
   vprint("type \"help\" to see available commands.");
   vprint("ok.");
-  while (!! (token = cmd.get_native_token(true)))
+  while (!! (token = cmd.get_token(true)))
     {
       CommandFunc func = command_map()[token];
       G_TRY
@@ -1959,9 +1986,8 @@ execute()
         }
       G_CATCH(ex)
         {
-
           vprint("Error (%s): %s",
-                 (const char*)(GNativeString)token, ex.get_cause());
+                 (const char*)ToNative(token), ex.get_cause());
           if (! verbose)
             G_RETHROW;
         }
@@ -2000,6 +2026,11 @@ main(int argc, char **argv)
       }
       if (!g().djvufile)
         usage();
+      // BOM
+#ifdef WIN32
+      if (utf8)
+        fwrite(utf8bom, sizeof(utf8bom), 1, stdout);
+#endif
       // Open file
       g().doc = DjVuDocEditor::create_wait(GURL::Filename::UTF8(g().djvufile));
       select_all();
