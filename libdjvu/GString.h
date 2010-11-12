@@ -117,6 +117,7 @@
 #ifdef WIN32
 # include <windows.h>
 # define HAS_WCHAR 1
+# define HAS_WCTYPE 1
 # define HAS_MBSTATE 1
 #endif
 
