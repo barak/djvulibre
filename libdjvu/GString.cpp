@@ -1245,17 +1245,19 @@ GStringRep::getbuf(int n) const
 }
 
 const char *
-GStringRep::isCharType(
-  bool (*xiswtest)(const unsigned long wc), const char *ptr, const bool reverse) const
+GStringRep::isCharType(bool (*xiswtest)(const unsigned long wc), 
+                       const char *ptr, 
+                       const bool reverse) const
 {
-  char const * xptr=ptr;
-  const unsigned long w=getValidUCS4(xptr);
-  if((ptr != xptr)
-    &&(((sizeof(wchar_t) == 2)&&(w&~0xffff))
-      ||(reverse?(!xiswtest(w)):xiswtest(w))))
-  {
-    ptr=xptr;
-  }
+  const char *xptr = ptr;
+  unsigned long w=getValidUCS4(xptr);
+  if(ptr != xptr)
+    {
+      if (sizeof(wchar_t) == 2)
+        w &= ~0xffff;
+      if (reverse ^ xiswtest(w))
+        ptr = xptr;
+    }
   return ptr;
 }
 
@@ -1297,7 +1299,7 @@ GStringRep::giswspace(const unsigned long w)
 #if HAS_WCTYPE
   return iswspace((wchar_t)w);
 #else
-  return (w & ~0xff) || isspace((int)(w & 0xff));
+  return (w & ~0xff) ? false : isspace((int)(w & 0xff));
 #endif
 }
 
@@ -1307,7 +1309,7 @@ GStringRep::giswupper(const unsigned long w)
 #if HAS_WCTYPE
   return iswupper((wchar_t)w);
 #else
-  return (w & ~0xff) || isupper((int)(w & 0xff));
+  return (w & ~0xff) ? false : isupper((int)(w & 0xff));
 #endif
 }
 
@@ -1317,7 +1319,7 @@ GStringRep::giswlower(const unsigned long w)
 #if HAS_WCTYPE
   return iswlower((wchar_t)w);
 #else
-  return (w & ~0xff) || islower((int)(w & 0xff));
+  return (w & ~0xff) ? false : islower((int)(w & 0xff));
 #endif
 }
 
