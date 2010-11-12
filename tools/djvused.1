@@ -82,14 +82,12 @@ This is similar to executing command
 immediately before terminating the program.
 .TP
 .BI "-u"
-By default,
+Cause
 .B djvused
-produces pure ASCII files for maximal compatibility.
-Non-ascii characters in strings are represented using octal escape sequence.
-When option
-.B -u 
-is specified, these characters are printed in UTF-8 encoding.
-This is convenient for manually editing the file.
+to print hidden text and annotations as UTF-8 
+instead of encoding non-ASCII characters with octal escape sequences
+for maximal portability. This option is convenient for 
+manually editing or viewing the djvused output.
 .TP
 .BI "-n"
 Cause 
