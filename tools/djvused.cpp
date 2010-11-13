@@ -1942,6 +1942,7 @@ usage()
           "  -f <scriptfile>  -- take commands from a file\n"
           "  -e <script>      -- take commands from the command line\n"
           "  -s               -- save after execution\n"
+          "  -u               -- produces utf8 instead of escaping non ascii chars\n"
           "  -n               -- do not save anything\n"
           "\n"
           );
