@@ -108,9 +108,9 @@ public:
   Impl(void);
   virtual ~Impl();
   /// Parse the specified bytestream.
-  virtual void parse(const GP<ByteStream> &bs);
+  virtual void parse(const GP<ByteStream> &bs, GURL *pdjvufile);
   /// Parse the specified tags - this one does all the work
-  virtual void parse(const lt_XMLTags &tags);
+  virtual void parse(const lt_XMLTags &tags, GURL *pdjvufile);
   /// write to disk.
   virtual void save(void);
   /// erase.
@@ -220,10 +220,10 @@ lt_XMLParser::Impl::save(void)
 }
 
 void
-lt_XMLParser::Impl::parse(const GP<ByteStream> &bs)
+lt_XMLParser::Impl::parse(const GP<ByteStream> &bs, GURL *pdjvufile)
 {
   const GP<lt_XMLTags> tags(lt_XMLTags::create(bs));
-  parse(*tags);
+  parse(*tags, pdjvufile);
 }
   
 static const GMap<GUTF8String,GMapArea::BorderType> &
@@ -595,7 +595,7 @@ lt_XMLParser::Impl::get_file(const GURL &url,GUTF8String id)
 }
   
 void
-lt_XMLParser::Impl::parse(const lt_XMLTags &tags)
+lt_XMLParser::Impl::parse(const lt_XMLTags &tags, GURL *pdjvufile)
 {
   const GPList<lt_XMLTags> Body(tags.get_Tags(bodytag));
   GPosition pos=Body;
@@ -653,12 +653,14 @@ lt_XMLParser::Impl::parse(const lt_XMLTags &tags)
       {
         if(args[typePos] != mimetype)
         {
-//          DjVuPrintErrorUTF8("Ignoring %s Object tag\n",mimetype);
+          // DjVuPrintErrorUTF8("Ignoring %s Object tag\n",mimetype);
           continue;
         }
         isDjVuType=true;
       }
-      const GURL url=GURL::UTF8(args[datapos],(args[datapos][0] == '/')?codebase.base():codebase);
+      const GURL url = (pdjvufile) ? *pdjvufile 
+        : GURL::UTF8(args[datapos], 
+                     (args[datapos][0] == '/') ? codebase.base() : codebase);
       int width;
       {
         GPosition widthPos=args.contains("width");

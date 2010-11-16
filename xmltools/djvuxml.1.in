@@ -74,7 +74,7 @@ djvutoxml, djvuxmlparser \- DjVuLibre XML Tools.
 .SH SYNOPSIS
 .BI "djvutoxml [" options "] " inputdjvufile " [" outputxmlfile "]"
 .br
-.BI "djvuxmlparser [" inputxmlfile "]"
+.BI "djvuxmlparser [ -o" djvufile " ] " inputxmlfile 
 
 
 .SH DESCRIPTION
@@ -164,10 +164,17 @@ Program
 .B djvuxmlparser
 parses the XML file 
 .I inputxmlfile
-and modifies the metadata of the DjVu files referenced 
-by the 
+in order to modify the metadata of a DjVu file.
+In principle the target DjVu file is the file 
+referenced by the
 .I OBJECT 
-elements.
+element of the XML file. 
+However the option
+.BI -o djvufile
+provides the means to override the filename
+specified in the 
+.I OBJECT
+element.
 
 .SH DJVUXML DOCUMENT TYPE DEFINITION
 The document type definition file (DTD)

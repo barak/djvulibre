@@ -75,51 +75,59 @@
 #include <locale.h>
 #include <stdlib.h>
 
+static void 
+usage(char *argv0)
+{
+  DjVuPrintErrorUTF8("Usage: %s [-o <djvufile>] <xmlfile> ...\n", argv0);
+  exit(1);
+}
+
+static void 
+nofile(char *s)
+{
+  DjVuPrintErrorUTF8("Error: File '%s' does not exist.\n",s);
+  exit(1);
+}
+
 int 
 main(int argc,char *argv[],char *[])
 {
   setlocale(LC_ALL,"");
   djvu_programname(argv[0]);
-  GArray<GUTF8String> dargv(0,argc-1);
-  for(int i=0;i<argc;++i)
-    dargv[i]=GNativeString(argv[i]);
   G_TRY
-  {
-    bool is_valid=(argc >= 2);
-    if((is_valid=(argc>=2)))
     {
-      int i=1;
-      do {
-        if(! GURL::Filename::Native(argv[i]).is_file())
+      int i;
+      if (argc < 2)
+        usage(argv[0]);
+      for (int i=1; i<argc; i++)
         {
-          is_valid=false;
-          DjVuPrintErrorUTF8("Error: File '%s' does not exist.\n",argv[i]);
-          exit(1);
+          GURL djvufile;
+          GURL *pdjvufile = 0;
+          if (! strcmp(argv[i], "-o"))
+            {
+              if (++i >= argc) 
+                usage(argv[0]);
+              djvufile = GURL::Filename::Native(argv[i]);
+              pdjvufile = &djvufile;
+              if (! djvufile.is_file())
+                nofile(argv[i]);
+              if (++i >= argc) 
+                usage(argv[0]);
+            }
+          GURL xmlfile = GURL::Filename::Native(argv[i]);
+          if (! xmlfile.is_file())
+            nofile(argv[i]);
+          GP<lt_XMLParser> parser(lt_XMLParser::create());
+          GP<lt_XMLTags> tag(lt_XMLTags::create(xmlfile));
+          parser->parse(*tag, pdjvufile);
+          parser->save();
         }
-      } while (++i<argc);
     }
-    if(! is_valid)
+  G_CATCH(ex)
     {
-      DjVuPrintErrorUTF8("Usage: %s <inputfiles>\n",argc?argv[0]:"-");
+      ex.perror();
       exit(1);
     }
-
-    for(int i=1;i<argc;++i)
-    {
-      const GP<lt_XMLParser> parser(lt_XMLParser::create());
-      {
-        const GP<lt_XMLTags> tag(
-          lt_XMLTags::create(GURL::Filename::Native(dargv[i])));
-        parser->parse(*tag);
-      }
-      parser->save();
-    }
-  }
-  G_CATCH(ex)
-  {
-    ex.perror();
-    exit(1);
-  }
   G_ENDCATCH;
   exit(0);
 #ifdef WIN32

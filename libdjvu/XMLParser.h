@@ -100,9 +100,9 @@ protected:
 public:
   static GP<lt_XMLParser> create(void);
   /// Parse the specified bytestream.
-  virtual void parse(const GP<ByteStream> &bs) = 0;
+  virtual void parse(const GP<ByteStream> &bs, GURL *pdjvufile=0) = 0;
   /// Parse the specified tags - this one does all the work
-  virtual void parse(const lt_XMLTags &tags) = 0;
+  virtual void parse(const lt_XMLTags &tags, GURL *pdjvufile=0) = 0;
   /// write to disk.
   virtual void save(void) = 0;
   /// erase.
