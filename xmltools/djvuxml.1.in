@@ -74,7 +74,7 @@ djvutoxml, djvuxmlparser \- DjVuLibre XML Tools.
 .SH SYNOPSIS
 .BI "djvutoxml [" options "] " inputdjvufile " [" outputxmlfile "]"
 .br
-.BI "djvuxmlparser [ -o" djvufile " ] " inputxmlfile 
+.BI "djvuxmlparser [ -o " djvufile " ] " inputxmlfile 
 
 
 .SH DESCRIPTION
