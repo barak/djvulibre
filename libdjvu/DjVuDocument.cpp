@@ -1829,7 +1829,7 @@ DjVuDocument::save_as(const GURL &where, bool bundled)
    }
 }
 
-static const char prolog[]="<?xml version=\"1.0\" ?>\n<!DOCTYPE DjVuXML PUBLIC \"-//W3C//DTD DjVuXML 1.1//EN\" \"pubtext/DjVuXML-s.dtd\">\n<DjVuXML>\n<HEAD>";
+static const char prolog[]="<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<!DOCTYPE DjVuXML PUBLIC \"-//W3C//DTD DjVuXML 1.1//EN\" \"pubtext/DjVuXML-s.dtd\">\n<DjVuXML>\n<HEAD>";
 static const char start_xml[]="</HEAD>\n<BODY>\n";
 static const char end_xml[]="</BODY>\n</DjVuXML>\n";
 
