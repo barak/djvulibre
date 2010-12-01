@@ -4054,6 +4054,24 @@ ddjvu_anno_get_metadata(miniexp_t p, miniexp_t key)
   return 0;
 }
 
+const char *
+ddjvu_anno_get_xmp(miniexp_t p)
+{
+  miniexp_t s = miniexp_symbol("xmp");
+  while (miniexp_consp(p))
+    {
+      miniexp_t a = miniexp_car(p);
+      p = miniexp_cdr(p);
+      if (miniexp_car(a) == s)
+        {
+          miniexp_t q = miniexp_nth(1, a);
+          if (miniexp_stringp(q))
+            return miniexp_to_str(q);
+        }
+    }
+  return 0;
+}
+
 
 // ----------------------------------------
 // Backdoors

@@ -115,6 +115,7 @@ extern "C" {
      20    Added:
               ddjvu_get_version_string()
               ddjvu_format_set_white()
+              ddjvu_anno_get_xmp()
      19    Added:
               ddjvu_document_create_by_filename_utf8()
      18    Added:
@@ -1611,6 +1612,15 @@ ddjvu_anno_get_metadata_keys(miniexp_t annotations);
 DDJVUAPI const char *
 ddjvu_anno_get_metadata(miniexp_t annotations, miniexp_t key);
 
+
+/* ddjvu_anno_get_xmp --
+   Parse the annotations and returns the xmp metadata string.
+   The string remains allocated as long as the 
+   annotations s-expression remain allocated.
+   Returns zero if no such key is present. */
+
+DDJVUAPI const char *
+ddjvu_anno_get_xmp(miniexp_t annotations, miniexp_t xmp);
 
 
 /* -------------------------------------------------- */

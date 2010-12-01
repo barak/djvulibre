@@ -751,6 +751,7 @@ command_set_page_title(ParsingByteStream &pbs)
 
 
 #define DELMETA     1
+#define DELXMP      8
 #define CHKCOMPAT   2
 #define EIGHTBIT    4
 
@@ -833,6 +834,16 @@ filter_ant(GP<ByteStream> in,
             {
               GUTF8String token = inp->get_token();
               if (token == "metadata")
+                copy = unchanged = false;
+              if (copy) {
+                out->write8('(');
+                out->write((const char*)token, token.length());
+              }
+            }
+          if ((flags & DELXMP) && plevel==0 && c=='x')
+            {
+              GUTF8String token = inp->get_token();
+              if (token == "xmp")
                 copy = unchanged = false;
               if (copy) {
                 out->write8('(');
@@ -1086,7 +1097,7 @@ file_remove_meta(const GP<DjVuFile> &f, const char *id)
 void 
 command_remove_meta(ParsingByteStream &)
 {
-  GPList<DjVmDir::File> &lst = g().selected;
+   GPList<DjVmDir::File> &lst = g().selected;
   { // extra nesting for windows
     for (GPosition p=lst; p; ++p)
     {
@@ -1132,11 +1143,11 @@ command_set_meta(ParsingByteStream &pbs)
       GP<DjVmDir::File> frec = g().doc->get_djvm_dir()->get_shared_anno_file();
       if (frec)
         {
-          vprint("print-meta: implicitly selecting shared annotations.");
+          vprint("set-meta: implicitly selecting shared annotations.");
         }
       else if (metadata.size() > 0)
         {
-          vprint("print-meta: implicitly creating and selecting shared annotations.");
+          vprint("set-meta: implicitly creating and selecting shared annotations.");
           g().doc->create_shared_anno_file();
           frec = g().doc->get_djvm_dir()->get_shared_anno_file();
         }
@@ -1151,6 +1162,153 @@ command_set_meta(ParsingByteStream &pbs)
     vprint("set-meta: modified \"%s\"", 
            (const char*)ToNative(g().fileid));
 }
+
+static void
+print_xmp(IFFByteStream &iff, ByteStream &out)
+{
+  GUTF8String chkid;  
+  while (iff.get_chunk(chkid))
+    {
+      bool ok = false;
+      GP<DjVuANT> ant=DjVuANT::create();
+      if (chkid == "ANTz") {
+          GP<ByteStream> bsiff=BSByteStream::create(iff.get_bytestream());
+          ant->decode(*bsiff);
+          ok = true;
+      } else if (chkid == "ANTa") {
+        ant->decode(*iff.get_bytestream());
+        ok = true;
+      }
+      if (ok && ant->xmpmetadata.length()>0)
+        {
+          out.writestring(ant->xmpmetadata);
+          out.write8('\n');
+        }
+      iff.close_chunk();
+    }
+}
+
+void 
+command_print_xmp(ParsingByteStream &)
+{
+  if (! g().file )
+    {
+      GP<DjVmDir::File> frec = g().doc->get_djvm_dir()->get_shared_anno_file();
+      if (frec)
+        {
+          vprint("print-xmp: implicitly selecting shared annotations");
+          select_clear();
+          select_add(frec);
+        }
+    }
+  if ( g().file )
+    {
+      GP<ByteStream> out=ByteStream::create("w");
+      GP<ByteStream> anno = g().file->get_anno();
+      if (! (anno && anno->size())) return;
+      GP<IFFByteStream> iff=IFFByteStream::create(anno); 
+      print_xmp(*iff,*out);
+    }
+}
+
+static bool
+modify_xmp(const GP<DjVuFile> &f, GUTF8String *newxmp)
+{
+  bool changed = false;
+  GP<ByteStream> newant = ByteStream::create();
+  if (newxmp && newxmp->length() > 0)
+    {
+      newant->writestring(GUTF8String("(xmp "));
+      print_c_string((const char*)(*newxmp), newxmp->length(), *newant, true);
+      newant->write(" )\n",3);
+      changed = true;
+    }
+  GP<ByteStream> anno = f->get_anno();
+  if (anno && anno->size()) 
+    {
+      GP<IFFByteStream> iff=IFFByteStream::create(anno);
+      if (print_ant(iff, newant, DELXMP|CHKCOMPAT|EIGHTBIT))
+        changed = true;
+    }
+  const GP<ByteStream> newantz=ByteStream::create();
+  if (changed)
+    {
+      newant->seek(0);
+      { 
+        GP<ByteStream> bzz = BSByteStream::create(newantz,100); 
+        bzz->copy(*newant); 
+        bzz = 0;
+      }
+      newantz->seek(0);
+      modify_ant(f, "ANTz", newantz);
+    }
+  return changed;
+}
+
+void
+file_remove_xmp(const GP<DjVuFile> &f, const char *id)
+{
+  if (modify_xmp(f, 0))
+    vprint("remove_xmp: modified \"%s\"", id);
+}
+
+void 
+command_remove_xmp(ParsingByteStream &)
+{
+  GPList<DjVmDir::File> &lst = g().selected;
+  { // extra nesting for windows
+    for (GPosition p=lst; p; ++p)
+      {
+        GUTF8String id = lst[p]->get_load_name();
+        const GP<DjVuFile> f(g().doc->get_djvu_file(id));
+        file_remove_xmp(f, id);
+      }
+  }
+}
+
+void 
+command_set_xmp(ParsingByteStream &pbs)
+{
+  // get xmpmetadata
+  GP<ByteStream> metastream = ByteStream::create();
+  get_data_from_file("set-meta", pbs, *metastream);
+  metastream->seek(0);
+  // read xmpmetadata
+  int size = metastream->size();
+  char *buffer = new char[size+1];
+  metastream->readall(buffer,size);
+  buffer[size] = 0;
+  GUTF8String xmpmetadata(buffer);
+  delete [] buffer;
+  // possibly select shared annotations.
+  if (! g().file)
+    {
+      GP<DjVmDir::File> frec = g().doc->get_djvm_dir()->get_shared_anno_file();
+      if (frec)
+        {
+          vprint("set-xmp: implicitly selecting shared annotations.");
+        }
+      else if (xmpmetadata.length() > 0)
+        {
+          vprint("set-xmp: implicitly creating and selecting shared annotations.");
+          g().doc->create_shared_anno_file();
+          frec = g().doc->get_djvm_dir()->get_shared_anno_file();
+        }
+      if (frec)
+        {
+          select_clear();
+          select_add(frec);
+        }
+    }
+  // set metadata
+  if (g().file && modify_xmp(g().file, &xmpmetadata))
+    vprint("set-xmp: modified \"%s\"", 
+           (const char*)ToNative(g().fileid));
+}
+
+
+
+
 
 struct  zone_names_struct
 { 
@@ -1836,18 +1994,21 @@ command_help(void)
           "   print-txt              -- prints hidden text using a lisp syntax\n"
           "   print-pure-txt         -- print hidden text without coordinates\n"
           " _ print-outline          -- print outline (bookmarks)\n"
+          " . print-xmp              -- print xmp annotations\n"
           "   output-ant             -- dumps ant as a valid cmdfile\n"
           "   output-txt             -- dumps text as a valid cmdfile\n"
           "   output-all             -- dumps ant and text as a valid cmdfile\n"
           " . set-ant [<antfile>]    -- copies <antfile> into the annotation chunk\n"
-          " . set-meta [<metafile>]  -- copies <metafile> into the metadata part of the annotations\n"
+          " . set-meta [<metafile>]  -- copies <metafile> into the metadata annotation tag\n"
           " . set-txt [<txtfile>]    -- copies <txtfile> into the hidden text chunk\n"
+          " . set-xmp [<xmpfile>]    -- copies <xmpfile> into the xmp metadata annotation tag\n" 
           " _ set-outline [<bmfile>] -- sets outline (bootmarks)\n"
           " _ set-thumbnails [<sz>]  -- generates all thumbnails with given size\n"
           "   remove-ant             -- removes annotations\n"
           "   remove-meta            -- removes metadatas without changing other annotations\n"
           "   remove-txt             -- removes hidden text\n"
           " _ remove-outline         -- removes outline (bookmarks)\n"
+          " . remove-xmp             -- removes xmp metadata from annotation chunk\n"
           " _ remove-thumbnails      -- removes all thumbnails\n"
           " . set-page-title <title> -- sets an alternate page title\n"
           " . save-page <name>       -- saves selected page/file as is\n"
@@ -1900,6 +2061,7 @@ static GMap<GUTF8String,CommandFunc> &command_map() {
     xcommand_map["print-txt"] = command_print_txt;
     xcommand_map["print-pure-txt"] = command_print_pure_txt;
     xcommand_map["print-outline"] = command_print_outline;
+    xcommand_map["print-xmp"] = command_print_xmp;
     xcommand_map["output-ant"] = command_output_ant;
     xcommand_map["output-txt"] = command_output_txt;
     xcommand_map["output-all"] = command_output_all;
@@ -1907,11 +2069,13 @@ static GMap<GUTF8String,CommandFunc> &command_map() {
     xcommand_map["set-meta"] = command_set_meta;
     xcommand_map["set-txt"] = command_set_txt;
     xcommand_map["set-outline"] = command_set_outline;
+    xcommand_map["set-xmp"] = command_set_xmp;
     xcommand_map["set-thumbnails"] = command_set_thumbnails;
     xcommand_map["remove-ant"] = command_remove_ant;
     xcommand_map["remove-meta"] = command_remove_meta;
     xcommand_map["remove-txt"] = command_remove_txt;
     xcommand_map["remove-thumbnails"] = command_remove_thumbnails;
+    xcommand_map["remove-xmp"] = command_remove_xmp;
     xcommand_map["set-page-title"] = command_set_page_title;
     xcommand_map["save-page"] = command_save_page;
     xcommand_map["save-page-with"] = command_save_page_with;

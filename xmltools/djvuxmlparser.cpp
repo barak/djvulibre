@@ -99,7 +99,7 @@ main(int argc,char *argv[],char *[])
       int i;
       if (argc < 2)
         usage(argv[0]);
-      for (int i=1; i<argc; i++)
+      for (i=1; i<argc; i++)
         {
           GURL djvufile;
           GURL *pdjvufile = 0;

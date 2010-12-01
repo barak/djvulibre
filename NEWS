@@ -5,6 +5,7 @@ SINCE 3.5.23
 - Added option "-u" in djvused.
 - Added option "-o djvufile" in djvuxmlparser.
 - Added support for <CHARACTER> tag in djvuxmlparser.
+- Added print-xmp, set-xmp, remove-smp in djvused.
 
 
 NEW IN VERSION 3.5.23

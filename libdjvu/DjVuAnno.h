@@ -163,14 +163,14 @@ public:
       /** List of defined map areas. They may be just areas of highlighting
 	  or hyperlink. Please refer to \Ref{GMapArea}, \Ref{GMapRect},
 	  \Ref{GMapPoly} and \Ref{GMapOval} for details. */
-   GPList<GMapArea>	map_areas;
-#ifndef NO_METADATA_IN_ANT_CHUNK
+   GPList<GMapArea> map_areas;
       /** Metainformations like title, author ... */
    GMap<GUTF8String,GUTF8String> metadata;
-#endif
+      /** Metainformations like title, author ... */
+   GUTF8String xmpmetadata;
       /** Returns TRUE if no features are specified or specified features
-	  are not different from default ones */
-   bool		is_empty(void) const;
+         are not different from default ones */
+   bool	is_empty(void) const;
 
       /** Decodes contents of annotation chunk #ANTa#. The chunk data is
 	  read from ByteStream #bs# until reaching an end-of-stream marker.
@@ -218,9 +218,8 @@ private:
    static alignment get_hor_align(class GLParser & parser);
    static alignment get_ver_align(class GLParser & parser);
    static GPList<GMapArea> get_map_areas(class GLParser & parser);
-#ifndef NO_METADATA_IN_ANT_CHUNK
    static GMap<GUTF8String, GUTF8String>get_metadata(GLParser & parser);
-#endif
+   static GUTF8String get_xmpmetadata(GLParser & parser);
    static void del_all_items(const char * name, class GLParser & parser);
 };
 
