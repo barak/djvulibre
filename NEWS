@@ -4,6 +4,7 @@ SINCE 3.5.23
 - Added ddjvuapi support for changing the white point.
 - Added option "-u" in djvused.
 - Added option "-o djvufile" in djvuxmlparser.
+- Added support for <CHARACTER> tag in djvuxmlparser.
 
 
 NEW IN VERSION 3.5.23

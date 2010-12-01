@@ -94,6 +94,7 @@ static const char areatag[]="AREA";
 static const char maptag[]="MAP";
 static const char objecttag[]="OBJECT";
 static const char paramtag[]="PARAM";
+static const char charactertag[]="CHARACTER";
 static const char wordtag[]="WORD";
 static const char linetag[]="LINE";
 static const char paragraphtag[]="PARAGRAPH";
@@ -801,7 +802,12 @@ make_child_layer(
   DjVuTXT::Zone *self_ptr;
   char sepchar;
   const GUTF8String name(tag.get_name());
-  if(name == wordtag)
+  if(name == charactertag)
+  {
+    self_ptr=parent.append_child();
+    self_ptr->ztype = DjVuTXT::CHARACTER;
+    sepchar=0;  
+  }else if(name == wordtag)
   {
     self_ptr=parent.append_child();
     self_ptr->ztype = DjVuTXT::WORD;
@@ -876,7 +882,7 @@ make_child_layer(
       }
     }
   }
-  if(self.ztype == DjVuTXT::WORD)
+  if(self.ztype == DjVuTXT::CHARACTER)
   {
     if(! pos)
     {

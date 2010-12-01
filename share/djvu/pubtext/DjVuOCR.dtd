@@ -16,9 +16,15 @@
                                 alternating x and y values (a total
                                 of four values) -->
 
-<!--===================== HIDDEN TEXT LAYER =====================================-->
+<!--================= HIDDEN TEXT LAYER ==================================-->
 
-<!ELEMENT WORD (#PCDATA)>
+<!ELEMENT CHARACTER (#PCDATA)>
+<!ATTLIST CHARACTER 
+  shape      CDATA      "rect"
+  coords     %Coords;   #IMPLIED
+>
+
+<!ELEMENT WORD ( (CHARACTER+) | (#PCDATA) ) >
 <!ATTLIST WORD 
   shape      CDATA      "rect"
   coords     %Coords;   #IMPLIED
