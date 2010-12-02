@@ -46,7 +46,7 @@ testlibver:
 	@echo library major version: upstream $(libver0), debian $(libver) $(libver1) $(libver2)
 
 build clean install binary-arch binary-indep binary:
-	dh $@ --with autotools_dev
+	dh $@ --with autotools_dev --parallel
 
 override_dh_auto_configure:
 	dh_auto_configure -- --disable-djview --disable-desktopfiles --enable-static --enable-shared
