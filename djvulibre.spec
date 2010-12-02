@@ -87,31 +87,10 @@ fi
 # MIME TYPES
 test -x /usr/share/djvu/osi/desktop/register-djvu-mime &&
   /usr/share/djvu/osi/desktop/register-djvu-mime install 2>/dev/null
-# MENU
-test -x /usr/share/djvu/djview3/desktop/register-djview-menu &&
-  /usr/share/djvu/djview3/desktop/register-djview-menu install 2>/dev/null
-# HACK: Create links to nsdejavu.so in mozilla dirs
-( for n in %{_prefix}/lib/mozilla*  ; do \
-  if [ -d $n ] ; then \
-   test -d $n/plugins || mkdir $n/plugins ; \
-   test -h $n/plugins/nsdjvu.so && rm $n/plugins/nsdjvu.so ; \
-   test -h $n/plugins/nsdejavu.so && rm $n/plugins/nsdejavu.so ; \
-   ln -s ../../netscape/plugins/nsdejavu.so $n/plugins/nsdejavu.so ; \
- fi ; done ) 2>/dev/null || true
 exit 0
 
 %preun
 if test "$1" = 0 ; then 
- # HACK: Remove links to nsdejavu.so in all mozilla dirs
- ( if [ ! -r %{_prefix}/lib/netscape/plugins/nsdejavu.so ] ; then \
-    for n in %{_prefix}/lib/mozilla* ; do \
-     if [ -h $n/plugins/nsdejavu.so ] ; then \
-      rm $n/plugins/nsdejavu.so ; \
-      rmdir $n/plugins ; \
-   fi ; done ; fi ) 2>/dev/null || true
- # MENU
- test -x /usr/share/djvu/djview3/desktop/register-djview-menu &&
-   /usr/share/djvu/djview3/desktop/register-djview-menu uninstall 2>/dev/null
  # MIME TYPES
  test -x /usr/share/djvu/osi/desktop/register-djvu-mime &&
    /usr/share/djvu/osi/desktop/register-djvu-mime uninstall 2>/dev/null
