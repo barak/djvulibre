@@ -62,28 +62,12 @@ find %{buildroot}%{_libdir} -name "*.so*" -exec chmod 755 {} \;
 # Quick cleanup of the docs
 rm -rf doc/CVS 2>/dev/null || :
 
-# Remove symlinks to djview when there are alternatives
-if test -x /usr/sbin/update-alternatives ; then
-  test -h %{buildroot}%{_bindir}/djview \
-    && rm %{buildroot}%{_bindir}/djview
-  test -h %{buildroot}%{_mandir}/man1/djview.1 \
-    && rm %{buildroot}%{_mandir}/man1/djview.1
-fi
-
 %clean
 rm -rf %{buildroot}
 
 %post 
 # LIBS: Run ldconfig
 /sbin/ldconfig
-# ALTERNATIVES
-if test -x /usr/sbin/update-alternatives ; then
-  m1=`ls -1 %{_mandir}/man1/djview3.* | head -1`
-  m2=`echo $m1 | sed -e 's/djview3/djview/'`
-  /usr/sbin/update-alternatives \
-    --install %{_bindir}/djview djview %{_bindir}/djview3 103 \
-    --slave $m2 `basename $m2` $m1
-fi
 # MIME TYPES
 test -x /usr/share/djvu/osi/desktop/register-djvu-mime &&
   /usr/share/djvu/osi/desktop/register-djvu-mime install 2>/dev/null
@@ -94,10 +78,6 @@ if test "$1" = 0 ; then
  # MIME TYPES
  test -x /usr/share/djvu/osi/desktop/register-djvu-mime &&
    /usr/share/djvu/osi/desktop/register-djvu-mime uninstall 2>/dev/null
- # ALTERNATIVES
- if test -x /usr/sbin/update-alternatives ; then
-   /usr/sbin/update-alternatives --remove djview %{_bindir}/djview3
- fi
 fi
 exit 0
 
