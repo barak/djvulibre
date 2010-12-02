@@ -95,17 +95,6 @@ Description: CGI program for unbundling DjVu files on the fly
  indirect DjVu document on the fly.  This provides for efficiently
  browsing large DjVu documents without transferring unnecessary pages.
 
-Package: djvulibre-plugin
-Section: web
-Architecture: any
-Depends: ${shlibs:Depends}, ${misc:Depends}, djview4 | djview3
-Enhances: mozilla-browser, mozilla, firefox, iceweasel, iceape-browser, konqueror, galeon
-Recommends: mozilla-browser | mozilla | firefox | iceweasel | iceape-browser | konqueror | galeon
-Suggests: mime-support
-Conflicts: djvulibre-bin (<< 3.5.19)
-Description: Browser plugin for the DjVu image format
- DjVu browser plugin.
-
 Package: djvulibre-bin
 Section: graphics
 Architecture: any

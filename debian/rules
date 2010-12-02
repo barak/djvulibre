@@ -61,20 +61,13 @@ ifeq ($(DEB_HOST_GNU_TYPE),arm-linux-gnueabi)
 endif
 	$(MAKE) OPTS="$(CFLAGS)" # hotwire compiler options
 
-plugsubdir=netscape/plugins-libc6
-plug=$(plugsubdir)/nsdejavu.so
-
 override_dh_auto_install:
-	dh_auto_install -- plugindir=/usr/lib/$(plugsubdir)
+	dh_auto_install
 	chmod +x debian/tmp/usr/bin/any2djvu
 	mkdir --parents debian/tmp/usr/lib/cgi-bin
 	cp --preserve=timestamps debian/djvuserve.sh \
 		debian/tmp/usr/lib/cgi-bin/djvuserve
 	chmod +x debian/tmp/usr/lib/cgi-bin/djvuserve
-	mkdir --parents      debian/tmp/usr/lib/mozilla/plugins
-	ln -sf ../../$(plug) debian/tmp/usr/lib/mozilla/plugins/
-	mkdir --parents      debian/tmp/usr/lib/mozilla-firefox/plugins
-	ln -sf ../../$(plug) debian/tmp/usr/lib/mozilla-firefox/plugins/
 	@echo "install djvu icon and mime types"
 	for n in 22 32 48 64 ; do \
 	  d="debian/tmp/usr/share/icons/hicolor/$${n}x$${n}/mimetypes"; \
@@ -95,8 +88,6 @@ override_dh_auto_install:
 
 override_dh_install:
 	dh_install
-	@echo remove from djvulibre-bin, already in djvulibre-plugin
-	find debian/djvulibre-bin -name nsdejavu\* -print -delete
 	@echo remove from djvulibre-bin, already in djvuserve
 	find debian/djvulibre-bin -name djvuserve\* -print -delete
 # 	@echo "remove from djvulibre-bin, not in Debian: needs gsdjvu, direct complaints to AT&T"
