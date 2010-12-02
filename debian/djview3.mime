@@ -1,3 +1,0 @@
-image/vnd.djvu; /usr/bin/djview %s; test=test -n "$DISPLAY"; description=DjVu file; nametemplate=%s.djvu
-image/x.djvu; /usr/bin/djview %s; test=test -n "$DISPLAY"; description=DjVu file; nametemplate=%s.djvu
-image/x-djvu; /usr/bin/djview %s; test=test -n "$DISPLAY"; description=DjVu file; nametemplate=%s.djvu

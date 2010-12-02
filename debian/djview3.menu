@@ -1,4 +1,0 @@
-?package(djview3):needs="X11" \
-    section="Applications/Viewers" \
-    title="DjView3" command="/usr/bin/djview3" \
-    icon="/usr/share/icons/hicolor/32x32/apps/djvulibre-djview3.xpm"

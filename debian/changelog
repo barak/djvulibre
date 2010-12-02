@@ -1,8 +1,9 @@
 djvulibre (3.5.23-4) UNRELEASED; urgency=low
 
   * bump to debhelper 8
+  * get rid of djview3, generate transition packages to djview4 instead
 
- -- Barak A. Pearlmutter <bap@debian.org>  Sun, 21 Nov 2010 22:14:03 +0000
+ -- Barak A. Pearlmutter <bap@debian.org>  Sun, 21 Nov 2010 22:28:49 +0000
 
 djvulibre (3.5.23-3) unstable; urgency=low
 

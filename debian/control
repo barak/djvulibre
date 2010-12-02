@@ -8,7 +8,6 @@ Build-Depends: autotools-dev (>= 20100122.1~),
 	       libxext-dev,
 	       libxt-dev,
 	       libglib2.0-dev,
-	       libqt3-mt-dev (>= 3:3.3.4-4),
 	       libjpeg-dev,
 	       libtiff4-dev | libtiff3g-dev | libtiff-dev,
 	       librsvg2-bin | imagemagick
@@ -71,23 +70,19 @@ Replaces: libdjvulibre15 (<= 3.5.20-5)
 Description: Desktop support for the DjVu image format
  Miscellaneous files to support the DjVu image format on the desktop.
 
-Package: djview3
-Section: graphics
-Architecture: any
-Conflicts: djview (<= 3.5.20-5), libdjvulibre-text (= 3.5.20-9)
-Provides: djvu-viewer
-Depends: ${shlibs:Depends}, ${misc:Depends}
-Recommends: djvulibre-desktop
-Suggests: djvulibre-bin, djvulibre-plugin
-Description: Viewer for the DjVu image format
- DjVu viewer djview3, formerly knows as just djview.
-
 Package: djview
 Section: graphics
 Architecture: any
 Depends: ${shlibs:Depends}, ${misc:Depends}, djview4 | djview3
-Description: Transition package for djview to djview3
- Ease transition of package name from djview to djview3.
+Description: Transition package, djview3 to djview4
+ Ease transition from djview3 to djview4.
+
+Package: djview3
+Section: graphics
+Architecture: any
+Depends: ${shlibs:Depends}, ${misc:Depends}, djview4
+Description: Transition package, djview3 to djview4
+ Ease transition from djview3 to djview4.
 
 Package: djvuserve
 Section: web

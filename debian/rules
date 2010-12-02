@@ -49,7 +49,7 @@ build clean install binary-arch binary-indep binary:
 	dh $@ --with autotools_dev
 
 override_dh_auto_configure:
-	dh_auto_configure -- --enable-djview --disable-desktopfiles --enable-static --enable-shared
+	dh_auto_configure -- --disable-djview --disable-desktopfiles --enable-static --enable-shared
 
 override_dh_auto_make:
 	$(MAKE) -k depend	# otherwise a missing Makefile.dep blows up
@@ -92,23 +92,9 @@ override_dh_auto_install:
 	mkdir --parents debian/tmp/usr/share/mimelnk/image
 	install --mode=644 desktopfiles/vnd.djvu.desktop \
 	  debian/tmp/usr/share/mimelnk/image/
-	@echo "install djview3 icon and menu"
-	mkdir --parents debian/tmp/usr/share/icons/hicolor/scalable/apps
-	install --mode=644 desktopfiles/hi-djview3.svgz \
-	  debian/tmp/usr/share/icons/hicolor/scalable/apps/djvulibre-djview3.svgz
-	mkdir --parents debian/tmp/usr/share/icons/hicolor/32x32/apps
-	install --mode=644 debian/djvulibre-djview3.xpm \
-	  debian/tmp/usr/share/icons/hicolor/32x32/apps/
-	mkdir --parents debian/tmp/usr/share/applications
-	install --mode=755 desktopfiles/djvulibre-djview3.desktop \
-	  debian/tmp/usr/share/applications/
 
 override_dh_install:
 	dh_install
-	@echo remove from djvulibre-bin, already in djview3
-	find debian/djvulibre-bin -name djview3\* -print -delete
-	@echo remove from djvulibre-bin, just links
-	find debian/djvulibre-bin -name djview\* -print -delete
 	@echo remove from djvulibre-bin, already in djvulibre-plugin
 	find debian/djvulibre-bin -name nsdejavu\* -print -delete
 	@echo remove from djvulibre-bin, already in djvuserve
