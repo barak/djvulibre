@@ -82,7 +82,12 @@
 static void
 usage(void)
 {
-  DjVuPrintErrorUTF8("Usage: %s [--with[out]-anno] [--with[out]-text] <inputfile> <outputfile>\n",(const char *)GOS::basename(DjVuMessage::programname()));
+  DjVuPrintErrorUTF8("Usage: %s [options] <inputfile> <outputfile>\n"
+                     "Options:\n"
+                     "  --with[out]-anno\n"
+                     "  --with[out]-text\n"
+                     "  --page p\n",
+                     (const char *)GOS::basename(DjVuMessage::programname()));
 }
 
 //------------------------ implementation ------------------------
@@ -95,55 +100,12 @@ main(int argc, char * argv[], char *env[])
   for(int i=0;i<argc;++i)
     dargv[i]=GNativeString(argv[i]);
 
-  GUTF8String name;
-  int notext=(-1);		// You can turn off outputting text
-  int noanno=(-1);		//  or annotations here!
-  if(argc>0)
-  {
-    const char * prog=(const char *)dargv[0];
-    name=GOS::basename(dargv[0]);
-    for(;argc>1;--argc, dargv.shift(-1))
-    {
-      const GUTF8String &arg=dargv[1];
-      if(arg == "--with-text")
-      {
-        notext=0;
-        if(noanno<0)
-          noanno=1;
-      }else if(arg == "--without-text")
-      {
-        notext=1;
-        if(noanno<0)
-          noanno=0;
-      }else if(arg == "--with-anno")
-      {
-        noanno=0;
-        if(notext<0)
-          notext=1;
-      }else if(arg == "--without-anno")
-      {
-        noanno=1;
-        if(notext<0)
-        {
-          notext=0;
-        }
-      }else
-      {
-        break;
-      }
-    }
-    dargv[0]=prog;
-  }
-  int flags=0;
-  if(noanno > 0)
-    flags|=DjVuImage::NOMAP;
-  if(notext > 0)
-    flags|=DjVuImage::NOTEXT;
-    
   G_TRY
   {
       GUTF8String name_in, name_out;
-      int page_num=-1;
+      int notext = -1;
+      int noanno = -1;
+      int page_num = -1;
       
       for(int i=1;i<argc;i++)
       {
@@ -159,35 +121,64 @@ main(int argc, char * argv[], char *env[])
               exit(1);
             }
             name_in=arg;
-          } else if (!name_out.length())
+          } 
+          else if (!name_out.length())
           {
             name_out=arg;
-          }else
+          }
+          else
           {
             usage();
             exit(1);
           }
-        } else if (arg == "--page")
+        }
+        else if (arg == "--page")
         {
           if (i+1>=argc)
-          {
-            DjVuMessage::perror( ERR_MSG("DjVuToXML.no_num") );
-            usage();
-            exit(1);
-          }
+            {
+              DjVuMessage::perror( ERR_MSG("DjVuToXML.no_num") );
+              usage();
+              exit(1);
+            }
           i++;
           page_num=dargv[i].toInt() - 1;
           if (page_num<0)
-          {
-            DjVuMessage::perror( ERR_MSG("DjVuToXML.negative_num") );
-            usage();
-            exit(1);
-          }
-        } else if (arg == "--help")
+            {
+              DjVuMessage::perror( ERR_MSG("DjVuToXML.negative_num") );
+              usage();
+              exit(1);
+            }
+        }
+        else if(arg == "--with-text")
+        {
+          notext=0;
+          if(noanno<0)
+            noanno=1;
+        }
+        else if(arg == "--without-text")
+        {
+          notext=1;
+          if(noanno<0)
+            noanno=0;
+        }
+        else if(arg == "--with-anno")
+        {
+          noanno=0;
+          if(notext<0)
+            notext=1;
+        }
+        else if(arg == "--without-anno")
+        {
+          noanno=1;
+          if(notext<0)
+            notext=0;
+        }
+        else if (arg == "--help")
         {
           usage();
           exit(1);
-        } else
+        } 
+        else
         {
           DjVuMessage::perror( ERR_MSG("DjVuToXML.unrecog_opt") "\t"+arg);
         }
@@ -204,14 +195,18 @@ main(int argc, char * argv[], char *env[])
         name_out="-";
       }
       
-      GP<DjVuDocument> doc=DjVuDocument::create_wait(GURL::Filename::UTF8(name_in));
+      GP<DjVuDocument> doc = 
+        DjVuDocument::create_wait(GURL::Filename::UTF8(name_in));
 
-      GP<ByteStream> gstr_out=ByteStream::create(GURL::Filename::UTF8(name_out), "w");
-      doc->writeDjVuXML(gstr_out,flags);
-//      ByteStream &str_out=*gstr_out;
-//      extract.writeXMLprolog( str_out);
-//      extract.writeMainElement( str_out, doc, page_num );
+      GP<ByteStream> gstr_out = 
+        ByteStream::create(GURL::Filename::UTF8(name_out), "w");
 
+      int flags=0;
+      if(noanno > 0)
+        flags |= DjVuImage::NOMAP;
+      if(notext > 0)
+        flags |= DjVuImage::NOTEXT;
+      doc->writeDjVuXML(gstr_out,flags, page_num);
   }
   G_CATCH(exc)
   {

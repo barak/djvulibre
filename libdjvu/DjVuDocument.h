@@ -792,7 +792,8 @@ public:
    GP<DjVuNavDir>	get_nav_dir(void) const;
 
    /// Create a complete DjVuXML file.
-   void writeDjVuXML(const GP<ByteStream> &gstr_out,int flags) const;
+   void writeDjVuXML(const GP<ByteStream> &gstr_out,
+                     int flags, int page = -1) const;
 
       /// Returns TRUE if #class_name# is #"DjVuDocument"# or #"DjVuPort"#
    virtual bool		inherits(const GUTF8String &class_name) const;

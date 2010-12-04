@@ -1834,13 +1834,16 @@ static const char start_xml[]="</HEAD>\n<BODY>\n";
 static const char end_xml[]="</BODY>\n</DjVuXML>\n";
 
 void
-DjVuDocument::writeDjVuXML(const GP<ByteStream> &gstr_out,int flags) const
+DjVuDocument::writeDjVuXML(const GP<ByteStream> &gstr_out,
+                           int flags, int page) const
 {
   ByteStream &str_out=*gstr_out;
   str_out.writestring(
     prolog+get_init_url().get_string().toEscaped()+start_xml);
   const int pages=wait_get_pages_num();
-  for(int page_num=0;page_num<pages;++page_num)
+  int pstart = (page < 0) ? 0 : page;
+  int pend = (page < 0) ? pages : page+1;
+  for(int page_num=pstart; page_num<pend; ++page_num)
   {
     const GP<DjVuImage> dimg(get_page(page_num,true));
     if(!dimg)
