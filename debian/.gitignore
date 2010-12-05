@@ -1,0 +1,14 @@
+/*.debhelper
+/*.log
+/*.substvars
+/djview/
+/djview3/
+/djvulibre-bin/
+/djvulibre-dbg/
+/djvulibre-desktop/
+/djvuserve/
+/files
+/libdjvulibre-dev/
+/libdjvulibre-text/
+/libdjvulibre21/
+/tmp/
