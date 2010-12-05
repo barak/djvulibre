@@ -76,14 +76,14 @@ Section: graphics
 Architecture: any
 Depends: ${shlibs:Depends}, ${misc:Depends}, djview4 | djview3
 Description: Transition package, djview3 to djview4
- Ease transition from djview3 to djview4.
+ Ease transition from djview3 to djview4 with this dummy package.
 
 Package: djview3
 Section: graphics
 Architecture: any
 Depends: ${shlibs:Depends}, ${misc:Depends}, djview4
 Description: Transition package, djview3 to djview4
- Ease transition from djview3 to djview4.
+ Ease transition from djview3 to djview4 with this dummy package.
 
 Package: djvuserve
 Section: web
