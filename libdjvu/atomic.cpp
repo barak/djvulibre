@@ -146,7 +146,7 @@ static void cond_wait()
 #endif
 #if HAVE_INTEL_ATOMIC_BUILTINS
 # define USE_INTEL_ATOMIC_BUILTINS 1
-#elif defined(WIN32)
+#elif defined(WIN32) && !defined(USE_WIN32_INTERLOCKED)
 # define USE_WIN32_INTERLOCKED 1
 #elif defined(__GNUC__) && defined(__i386__)
 # define USE_GCC_I386_ASM 1
