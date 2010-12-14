@@ -325,6 +325,7 @@ public:
 
 
 private:
+  friend class JB2Codec;
   int inherited_shapes;
   GP<JB2Dict> inherited_dict;
   GArray<JB2Shape> shapes;
