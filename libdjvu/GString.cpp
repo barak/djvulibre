@@ -1254,7 +1254,7 @@ GStringRep::isCharType(bool (*xiswtest)(const unsigned long wc),
   if(ptr != xptr)
     {
       if (sizeof(wchar_t) == 2)
-        w &= ~0xffff;
+        w &= 0xffff;
       if (reverse ^ xiswtest(w))
         ptr = xptr;
     }
