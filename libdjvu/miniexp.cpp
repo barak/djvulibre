@@ -1003,8 +1003,11 @@ must_quote_symbol(const char *s)
         minilisp_macrochar_parser[c] )
       return true;
   char *end;
-  strtol(s,&end,0);
-  return !(*end);
+#ifdef __GNUC__
+  static long junk __attribute__ ((unused)) = 
+#endif
+  strtol(s, &end, 0);
+  return (!*end);
 }
 
 BEGIN_ANONYMOUS_NAMESPACE
