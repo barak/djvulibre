@@ -34,5 +34,5 @@
 /xmltools/djvutoxml
 /xmltools/djvuxml.1
 /xmltools/djvuxmlparser
+/BUILD*
 Makefile
-BUILD*
