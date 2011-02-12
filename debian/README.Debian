@@ -15,28 +15,4 @@ give it up.  Just ask.  (In fact, that goes for all my packages!)  If
 someone does take it over, I'm happy to serve as an interface to the
 upstream authors as I am in contact with them professionally anyway.
 
-The Debian CVS repository is shared with upstream.
-
- cvs -d :ext:UID@djvu.cvs.sourceforge.net:/cvsroot/djvu checkout djvulibre-3.5
-
-This makes the appropriate build command something like
-
- cvs-buildpackage -U release_3_5_23 -M djvulibre-3.5 -F
-
-Some work is done in a git repo which holds a converted version of the
-CVS repo,
-
- git clone git://git.debian.org/git/collab-maint/djvulibre.git
-
-Upstream CVS activity can be pulled into git and tracked with
-
- git cvsimport -v -i -k -u -a djvulibre-3.5 -d :ext:bpearlmutter@djvu.cvs.sourceforge.net:/cvsroot/djvu
- git tag -d i18n-mergepoint
- git branch -D i18n-branch
- git branch -D cygwin-branch
- git branch -D cygwin.3.5.11
-
-at which point you may wish to consider git rebase origin, cherry
-picking only relevant commits, etc.
-
- -- Barak A. Pearlmutter <bap@debian.org>, Wed, 22 Sep 2010 22:33:31 +0100
+ -- Barak A. Pearlmutter <bap@debian.org>, Sat, 12 Feb 2011 13:23:34 +0000
