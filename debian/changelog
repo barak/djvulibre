@@ -1,4 +1,4 @@
-djvulibre (3.5.23-4) UNRELEASED; urgency=low
+djvulibre (3.5.23-4) unstable; urgency=low
 
   * bump to debhelper 8
   * flush djview3, generate djview4 transition package (closes: #604347)
@@ -6,8 +6,9 @@ djvulibre (3.5.23-4) UNRELEASED; urgency=low
   * dh --parallel
   * include phrase "dummy" in package descriptions to silence lintian
   * dpkg source format 3.0 (quilt)
+  * upstream has switched to git (debian/README.Debian, debian/copyright)
 
- -- Barak A. Pearlmutter <bap@debian.org>  Sun, 05 Dec 2010 14:25:16 +0000
+ -- Barak A. Pearlmutter <bap@debian.org>  Sat, 12 Feb 2011 13:26:14 +0000
 
 djvulibre (3.5.23-3) unstable; urgency=low
 
