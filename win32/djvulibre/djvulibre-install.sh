@@ -4,9 +4,9 @@ c=/cygdrive/c
 qtdir=$c/qt/4.4.0
 djdir=$HOME/djvulibre-3.5
 dwdir=$djdir/win32/djvulibre/Release
-djsrc=$HOME/djview/src
-msvc="$c/Program Files/Microsoft Visual Studio 9.0/VC"
-msredist="$msvc/redist/x86/Microsoft.VC90.CRT"
+djsrc=$HOME/djvulibre-djview/src
+msvc="$c/Program Files/Microsoft Visual Studio 10.0/VC"
+msredist="$msvc/redist/x86/Microsoft.VC100.CRT"
 
 target=$HOME/DjVuLibre
 

@@ -2,7 +2,7 @@
 
 ; HM NIS Edit Wizard helper defines
 !define PRODUCT_NAME "DjVuLibre+DjView"
-!define PRODUCT_VERSION "3.5.22+4.5"
+!define PRODUCT_VERSION "3.5.23d+4.6c"
 !define PRODUCT_PUBLISHER "DjVuZone"
 !define PRODUCT_WEB_SITE "http://djvu.sourceforge.net"
 !define PRODUCT_DIR_REGKEY "Software\Microsoft\Windows\CurrentVersion\App Paths\djview.exe"
@@ -28,7 +28,7 @@ SetCompressor bzip2
 ; Instfiles page
 !insertmacro MUI_PAGE_INSTFILES
 ; Finish page
-!define MUI_FINISHPAGE_SHOWREADME "$INSTDIR\README.txt"
+; !define MUI_FINISHPAGE_SHOWREADME "$INSTDIR\README.txt"
 !insertmacro MUI_PAGE_FINISH
 
 ; Uninstaller pages
@@ -60,11 +60,11 @@ Section "MainSection" SEC01
   File /r "plugins"
   File /r "share"
   File "qt.conf"
-  File "README.txt"
   File "djvulibre.nsi"
   WriteIniStr "$INSTDIR\${PRODUCT_NAME}.url" "InternetShortcut" "URL" "${PRODUCT_WEB_SITE}"
   CreateShortCut "$DESKTOP\DjView.lnk" "$INSTDIR\djview.exe"
   CreateShortCut "$SMPROGRAMS\DjVuLibre\Website.lnk" "$INSTDIR\${PRODUCT_NAME}.url"
+  CreateShortCut "$SMPROGRAMS\DjVuLibre\Documentation.lnk" "$INSTDIR\man"
   CreateShortCut "$SMPROGRAMS\DjVuLibre\Uninstall.lnk" "$INSTDIR\uninst.exe"
   CreateDirectory "$SMPROGRAMS\DjVuLibre"
   CreateShortCut "$SMPROGRAMS\DjVuLibre\DjView.lnk" "$INSTDIR\djview.exe"
