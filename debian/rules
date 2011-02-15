@@ -1,33 +1,5 @@
 #!/usr/bin/make -f
 
-DEB_HOST_GNU_TYPE   ?= $(shell dpkg-architecture -qDEB_HOST_GNU_TYPE)
-DEB_BUILD_GNU_TYPE  ?= $(shell dpkg-architecture -qDEB_BUILD_GNU_TYPE)
-DEB_BUILD_OPTIONS   ?= debug nostrip
-
-ifeq ($(DEB_HOST_GNU_TYPE),m68k-linux-gnu) # m68k GCC 4.0 breakage
-	CFLAGS = -Wall -Wno-non-virtual-dtor
-else
-	CFLAGS = -Wall
-endif
-
-ifneq (,$(findstring debug,$(DEB_BUILD_OPTIONS)))
-	CFLAGS += -g
-else
-	CFLAGS += -DNDEBUG
-endif
-
-ifeq (,$(findstring nostrip,$(DEB_BUILD_OPTIONS)))
-	INSTALL_PROGRAM += -s
-endif
-
-ifeq ($(DEB_HOST_GNU_TYPE),m68k-linux-gnu) # m68k GCC 4.0 breakage
-	CFLAGS += -O2
-else ifeq ($(DEB_HOST_GNU_TYPE),alpha-linux-gnu) # alpha GCC 4.1/4.2 breakage
-	CFLAGS += -O0
-else
-	CFLAGS += -O2
-endif
-
 # extract library major version from source build system
 libver0 := $(shell egrep '^LIBDJVU_VER_COMPAT=[0-9]+$$' configure \
 		   | head -1 \
@@ -48,8 +20,21 @@ testlibver:
 build clean install binary-arch binary-indep binary:
 	dh $@ --with autotools_dev --parallel
 
+configure_options += --disable-djview
+configure_options += --disable-desktopfiles
+configure_options += --enable-static
+configure_options += --enable-shared
+ifneq (,$(findstring debug,$(DEB_BUILD_OPTIONS)))
+configure_options += --enable-debug
+else ifneq (,$(findstring noopt,$(DEB_BUILD_OPTIONS)))
+# consider modifying the autoconf scripts to accept a --disable-optimization flag
+configure_options += --enable-debug
+endif
+
 override_dh_auto_configure:
-	dh_auto_configure -- --disable-djview --disable-desktopfiles --enable-static --enable-shared
+	dh_auto_configure -- $(configure_options)
+
+DEB_HOST_GNU_TYPE   ?= $(shell dpkg-architecture -qDEB_HOST_GNU_TYPE)
 
 override_dh_auto_make:
 	$(MAKE) -k depend	# otherwise a missing Makefile.dep blows up
@@ -59,15 +44,13 @@ ifeq ($(DEB_HOST_GNU_TYPE),arm-linux-gnueabi)
 	sed -i.orig '/^LIBS/s/-lm/-lm -lsupc++ -lgcc/' libdjvu/Makefile
 	touch -r libdjvu/Makefile.orig libdjvu/Makefile
 endif
-	$(MAKE) OPTS="$(CFLAGS)" # hotwire compiler options
+	dh_auto_make
 
 override_dh_auto_install:
 	dh_auto_install
-	chmod +x debian/tmp/usr/bin/any2djvu
 	mkdir --parents debian/tmp/usr/lib/cgi-bin
-	cp --preserve=timestamps debian/djvuserve.sh \
+	cp --preserve=mode,timestamps debian/djvuserve.sh \
 		debian/tmp/usr/lib/cgi-bin/djvuserve
-	chmod +x debian/tmp/usr/lib/cgi-bin/djvuserve
 	@echo "install djvu icon and mime types"
 	for n in 22 32 48 64 ; do \
 	  d="debian/tmp/usr/share/icons/hicolor/$${n}x$${n}/mimetypes"; \
