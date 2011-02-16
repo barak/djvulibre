@@ -1,16 +1,10 @@
 #! /bin/bash -f
-# CVS version control block - do not edit manually
-#  $RCSfile$
-#  $Revision$
-#  $Date$
-#  $Source$
 
 function copyright()
 {
     echo "Copyright (C) 2002 David Kreil <D.Kreil@IEEE.Org>"
     echo "Modified by Barak A. Pearlmutter <bap@debian.org>"
     echo "         and Yaroslav Halchenko <debian@onerussian.com>"
-    echo 'CVS $Revision$'
     echo "Released under the GNU GPL v2, 21-Oct-2002."
 }
 
