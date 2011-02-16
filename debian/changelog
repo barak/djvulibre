@@ -1,3 +1,17 @@
+djvulibre (3.5.23-5) unstable; urgency=low
+
+  * changes to debian/rules
+    - honor DEB_BUILD_OPTIONS=noopt (closes: #613521) and debug
+    - remove unused/inappropriate/old variables
+    - let upstream ./configure choose optimisation flags; remove all special
+      cases for particular broken versions of GCC on particular architectures
+    - use dh_auto_make instead of invoking $(MAKE) directly
+    - no need for "chmod +x ..." since git maintains that bit
+    - remove "INSTALL_PROGRAM = $(INSTALL) --strip", as dh handles it
+  * djvulibre-bin depends: same version of libdjvulibre21 (closes: #613530)
+
+ -- Barak A. Pearlmutter <bap@debian.org>  Wed, 16 Feb 2011 13:37:56 +0000
+
 djvulibre (3.5.23-4) unstable; urgency=low
 
   * bump to debhelper 8
