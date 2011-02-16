@@ -15,7 +15,6 @@
 // GNU General Public License for more details.
 // -------------------------------------------------------------------
 */
-/* $Id$ */
 
 #ifdef HAVE_CONFIG_H
 # include "config.h"

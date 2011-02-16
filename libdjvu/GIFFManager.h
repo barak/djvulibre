@@ -52,9 +52,6 @@
 //C- | TO ANY WARRANTY OF NON-INFRINGEMENT, OR ANY IMPLIED WARRANTY OF
 //C- | MERCHANTABILITY OR FITNESS FOR A PARTICULAR PURPOSE.
 //C- +------------------------------------------------------------------
-// 
-// $Id$
-// $Name$
 
 #ifndef _GIFFMANAGER_H
 #define _GIFFMANAGER_H
@@ -95,8 +92,7 @@ namespace DJVU {
     Interface to IFF files.
     @author 
     Andrei Erofeev <eaf@geocities.com> -- Initial implementation.
-    @version 
-    #$Id$# */
+*/
 
 /** #GIFFChunk# is the base class for other IFF chunks understood by
     {\Ref GIFFManager}. It provides some basic interface, and is not supposed

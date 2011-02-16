@@ -52,9 +52,6 @@
 //C- | TO ANY WARRANTY OF NON-INFRINGEMENT, OR ANY IMPLIED WARRANTY OF
 //C- | MERCHANTABILITY OR FITNESS FOR A PARTICULAR PURPOSE.
 //C- +------------------------------------------------------------------
-// 
-// $Id$
-// $Name$
 
 #ifndef _MMX_H_
 #define _MMX_H_
@@ -106,8 +103,6 @@ namespace DJVU {
 
     @memo
     Essential support for MMX.
-    @version 
-    #$Id$#
     @author: 
     L\'eon Bottou <leonb@research.att.com> -- initial implementation */
 //@{

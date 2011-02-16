@@ -54,8 +54,6 @@
 //C- +------------------------------------------------------------------
 */
 
-/* $Id$ */
-
 #define vertex_mask_width 14
 #define vertex_mask_height 14
 static unsigned char vertex_mask_bits[] = {

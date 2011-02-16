@@ -52,9 +52,6 @@
 //C- | TO ANY WARRANTY OF NON-INFRINGEMENT, OR ANY IMPLIED WARRANTY OF
 //C- | MERCHANTABILITY OR FITNESS FOR A PARTICULAR PURPOSE.
 //C- +------------------------------------------------------------------
-// 
-// $Id$
-// $Name$
 
 #ifndef _DJVUERRORLIST_H
 #define _DJVUERRORLIST_H
@@ -83,7 +80,6 @@ class ByteStream;
 
     @memo DjVuErrorList class.
     @author Bill C Riemers <docbill@sourceforge.net>
-    @version #$Id$#
 */
 
 //@{

@@ -54,8 +54,6 @@
 //C- +------------------------------------------------------------------
 */
 
-/* $Id$ */
-
 #define zoom_select_mask_width 24
 #define zoom_select_mask_height 24
 static unsigned char zoom_select_mask_bits[] = {

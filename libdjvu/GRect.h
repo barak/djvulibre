@@ -52,9 +52,6 @@
 //C- | TO ANY WARRANTY OF NON-INFRINGEMENT, OR ANY IMPLIED WARRANTY OF
 //C- | MERCHANTABILITY OR FITNESS FOR A PARTICULAR PURPOSE.
 //C- +------------------------------------------------------------------
-// 
-// $Id$
-// $Name$
 
 #ifndef _GRECT_H_
 #define _GRECT_H_
@@ -76,8 +73,7 @@
     Rectangle manipulation class.
     @author
     L\'eon Bottou <leonb@research.att.com> -- initial implementation.
-    @version
-    #$Id$# */
+*/
 //@{
 
 #include "DjVuGlobal.h"

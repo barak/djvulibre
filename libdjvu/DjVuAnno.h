@@ -52,9 +52,6 @@
 //C- | TO ANY WARRANTY OF NON-INFRINGEMENT, OR ANY IMPLIED WARRANTY OF
 //C- | MERCHANTABILITY OR FITNESS FOR A PARTICULAR PURPOSE.
 //C- +------------------------------------------------------------------
-// 
-// $Id$
-// $Name$
 
 #ifndef _DJVUANNO_H
 #define _DJVUANNO_H
@@ -86,8 +83,7 @@
     and fills them with decoded data. 
     @memo Implements support for DjVuImage annotations
     @author Andrei Erofeev <eaf@geocities.com>
-    @version
-    #$Id$# */
+*/
 //@{
 
 

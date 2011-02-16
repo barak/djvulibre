@@ -52,9 +52,6 @@
 //C- | TO ANY WARRANTY OF NON-INFRINGEMENT, OR ANY IMPLIED WARRANTY OF
 //C- | MERCHANTABILITY OR FITNESS FOR A PARTICULAR PURPOSE.
 //C- +------------------------------------------------------------------
-//
-// $Id$
-// $Name$
 
 #ifndef _GSTRING_H_
 #define _GSTRING_H_
@@ -104,8 +101,7 @@
 // attempt to use the type system to enforce coding policies.
 // This could be fixed.  But there are better things to do in djvulibre.
     
-    @version
-    #$Id$# */
+*/
 //@{
 
 

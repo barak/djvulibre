@@ -52,9 +52,6 @@
 //C- | TO ANY WARRANTY OF NON-INFRINGEMENT, OR ANY IMPLIED WARRANTY OF
 //C- | MERCHANTABILITY OR FITNESS FOR A PARTICULAR PURPOSE.
 //C- +------------------------------------------------------------------
-// 
-// $Id$
-// $Name$
 
 #ifndef _GOS_H_
 #define _GOS_H_
@@ -81,8 +78,6 @@
     Operating System dependent functions.
     @author
     L\'eon Bottou <leonb@research.att.com> -- Initial implementation
-    @version
-    #$Id$#
 */
 //@{
 

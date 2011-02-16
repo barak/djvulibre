@@ -15,8 +15,6 @@
 //C- GNU General Public License for more details.
 //C-  ------------------------------------------------------------------
 
-// $Id$
-
 #ifndef TIFF2PDF_H
 # define TIFF2PDF_H
 # if HAVE_CONFIG_H

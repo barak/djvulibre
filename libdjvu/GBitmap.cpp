@@ -52,9 +52,6 @@
 //C- | TO ANY WARRANTY OF NON-INFRINGEMENT, OR ANY IMPLIED WARRANTY OF
 //C- | MERCHANTABILITY OR FITNESS FOR A PARTICULAR PURPOSE.
 //C- +------------------------------------------------------------------
-// 
-// $Id$
-// $Name$
 
 #ifdef HAVE_CONFIG_H
 # include "config.h"
@@ -71,7 +68,6 @@
 #include "GException.h"
 #include <string.h>
 
-// File "$Id$"
 // - Author: Leon Bottou, 05/1997
 
 

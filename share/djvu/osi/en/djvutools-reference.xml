@@ -1,7 +1,6 @@
-﻿<?xml version="1.0" ?>
+<?xml version="1.0" ?>
 <!DOCTYPE DjVuMessages PUBLIC "-//W3C/DTD DjVuMessages 1.0//EN" "../../../pubtext/DjVuMessages.dtd">
 <!-- Error messages from the reference library -->
-<!-- $Id$ -->
 <DjVuMessages>
 <BODY>
 <MESSAGE name="annotate.failed_chunk" number="17000" 

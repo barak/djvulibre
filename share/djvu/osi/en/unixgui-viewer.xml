@@ -1,7 +1,6 @@
-﻿<?xml version="1.0" ?>
+<?xml version="1.0" ?>
 <!DOCTYPE DjVuMessages PUBLIC "-//W3C/DTD DjVuMessages 1.0//EN" "../../../pubtext/DjVuMessages.dtd">
 <!-- Messages from libdjvu++ -->
-<!-- $Id$ -->
 <DjVuMessages>
 <BODY>
 <MESSAGE name="main.cant_display_remote" number="20000">

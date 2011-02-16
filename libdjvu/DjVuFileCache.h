@@ -52,9 +52,6 @@
 //C- | TO ANY WARRANTY OF NON-INFRINGEMENT, OR ANY IMPLIED WARRANTY OF
 //C- | MERCHANTABILITY OR FITNESS FOR A PARTICULAR PURPOSE.
 //C- +------------------------------------------------------------------
-// 
-// $Id$
-// $Name$
 
 #ifndef _DJVUFILECACHE_H
 #define _DJVUFILECACHE_H
@@ -95,7 +92,6 @@ namespace DJVU {
     
     @memo Simple DjVuFile caching class.
     @author Andrei Erofeev <eaf@geocities.com>
-    @version #$Id$#
 */
 
 //@{

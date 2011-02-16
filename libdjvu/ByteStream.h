@@ -52,9 +52,6 @@
 //C- | TO ANY WARRANTY OF NON-INFRINGEMENT, OR ANY IMPLIED WARRANTY OF
 //C- | MERCHANTABILITY OR FITNESS FOR A PARTICULAR PURPOSE.
 //C- +------------------------------------------------------------------
-// 
-// $Id$
-// $Name$
 
 #ifndef _BYTESTREAM_H
 #define _BYTESTREAM_H
@@ -97,9 +94,7 @@
 // Our original implementation consisted of multiple classes.
 // <http://prdownloads.sourceforge.net/djvu/DjVu2_2b-src.tgz>.
 
-
-    @version
-    #$Id$# */
+*/
 //@{
 
 

@@ -52,9 +52,6 @@
 //C- | TO ANY WARRANTY OF NON-INFRINGEMENT, OR ANY IMPLIED WARRANTY OF
 //C- | MERCHANTABILITY OR FITNESS FOR A PARTICULAR PURPOSE.
 //C- +------------------------------------------------------------------
-// 
-// $Id$
-// $Name$
 
 #ifndef _DJVMDOC_H
 #define _DJVMDOC_H
@@ -87,7 +84,6 @@ class DjVmNav;
 
     @memo DjVu multipage documents reader/writer.
     @author Andrei Erofeev <eaf@geocities.com>
-    @version #$Id$#
 */
 
 //@{

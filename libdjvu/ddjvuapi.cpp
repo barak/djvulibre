@@ -53,8 +53,6 @@
 //C- | MERCHANTABILITY OR FITNESS FOR A PARTICULAR PURPOSE.
 //C- +------------------------------------------------------------------
 
-/* $Id$ */
-
 #ifdef HAVE_CONFIG_H
 # include "config.h"
 #endif

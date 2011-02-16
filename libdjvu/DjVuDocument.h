@@ -52,9 +52,6 @@
 //C- | TO ANY WARRANTY OF NON-INFRINGEMENT, OR ANY IMPLIED WARRANTY OF
 //C- | MERCHANTABILITY OR FITNESS FOR A PARTICULAR PURPOSE.
 //C- +------------------------------------------------------------------
-// 
-// $Id$
-// $Name$
 
 #ifndef _DJVUDOCUMENT_H
 #define _DJVUDOCUMENT_H
@@ -92,7 +89,6 @@ class ByteStream;
 
     @memo DjVu document class.
     @author Andrei Erofeev <eaf@geocities.com>
-    @version #$Id$#
 */
 
 //@{

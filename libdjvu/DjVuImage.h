@@ -52,9 +52,6 @@
 //C- | TO ANY WARRANTY OF NON-INFRINGEMENT, OR ANY IMPLIED WARRANTY OF
 //C- | MERCHANTABILITY OR FITNESS FOR A PARTICULAR PURPOSE.
 //C- +------------------------------------------------------------------
-// 
-// $Id$
-// $Name$
 
 #ifndef _DJVUIMAGE_H
 #define _DJVUIMAGE_H
@@ -101,8 +98,7 @@
     @author
     L\'eon Bottou <leonb@research.att.com> - initial implementation
     Andrei Erofeev <eaf@geocities.com> - multipage support
-    @version
-    #$Id$# */
+*/
 //@{
 
 

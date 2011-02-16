@@ -52,9 +52,6 @@
 //C- | TO ANY WARRANTY OF NON-INFRINGEMENT, OR ANY IMPLIED WARRANTY OF
 //C- | MERCHANTABILITY OR FITNESS FOR A PARTICULAR PURPOSE.
 //C- +------------------------------------------------------------------
-// 
-// $Id$
-// $Name$
 
 #ifndef _DJVUPALETTE_H_
 #define _DJVUPALETTE_H_
@@ -85,8 +82,6 @@ namespace DJVU {
     palettes, coding color palettes, and coding sequences of color indices.
     @memo 
     DjVuPalette header file
-    @version 
-    #$Id$#
     @author: 
     L\'eon Bottou <leonb@research.att.com> */
 //@{

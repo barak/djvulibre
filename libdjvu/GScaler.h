@@ -52,9 +52,6 @@
 //C- | TO ANY WARRANTY OF NON-INFRINGEMENT, OR ANY IMPLIED WARRANTY OF
 //C- | MERCHANTABILITY OR FITNESS FOR A PARTICULAR PURPOSE.
 //C- +------------------------------------------------------------------
-// 
-// $Id$
-// $Name$
 
 #ifndef _GSCALER_H_
 #define _GSCALER_H_
@@ -99,8 +96,7 @@ namespace DJVU {
     Rescaling images with bilinear interpolation.
     @author
     L\'eon Bottou <leonb@research.att.com>
-    @version
-    #$Id$# */
+*/
 //@{
 
 

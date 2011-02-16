@@ -52,9 +52,6 @@
 //C- | TO ANY WARRANTY OF NON-INFRINGEMENT, OR ANY IMPLIED WARRANTY OF
 //C- | MERCHANTABILITY OR FITNESS FOR A PARTICULAR PURPOSE.
 //C- +------------------------------------------------------------------
-// 
-// $Id$
-// $Name$
 
 #ifndef _ARRAYS_H_
 #define _ARRAYS_H_
@@ -124,8 +121,7 @@ namespace DJVU {
     @memo Template array classes.
     @author 
     Andrei Erofeev <eaf@geocities.com> -- Copy-on-demand implementation.
-    @version 
-    #$Id$# */
+*/
 //@{
 
 // Auxiliary classes: Will be used in place of GPBase and GPEnabled objects

@@ -52,9 +52,6 @@
 //C- | TO ANY WARRANTY OF NON-INFRINGEMENT, OR ANY IMPLIED WARRANTY OF
 //C- | MERCHANTABILITY OR FITNESS FOR A PARTICULAR PURPOSE.
 //C- +------------------------------------------------------------------
-// 
-// $Id$
-// $Name$
 
 #ifndef _DJVUNAVDIR_H
 #define _DJVUNAVDIR_H
@@ -89,7 +86,6 @@ class ByteStream;
 
     @memo DjVu Navigation Directory
     @author Andrei Erofeev <eaf@geocities.com>
-    @version #$Id$#
 */
 
 //@{

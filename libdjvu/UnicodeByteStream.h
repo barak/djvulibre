@@ -52,9 +52,6 @@
 //C- | TO ANY WARRANTY OF NON-INFRINGEMENT, OR ANY IMPLIED WARRANTY OF
 //C- | MERCHANTABILITY OR FITNESS FOR A PARTICULAR PURPOSE.
 //C- +------------------------------------------------------------------
-//
-// $Id$
-// $Name$
 
 #ifndef _UNICODEBYTESTREAM_H_
 #define _UNICODEBYTESTREAM_H_
@@ -84,8 +81,7 @@
     XML file parser.
     @author
     Bill C Riemers <docbill@sourceforge.net>
-    @version
-    #$Id$# */
+*/
 //@{
 
 #include "DjVuGlobal.h"

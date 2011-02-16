@@ -52,9 +52,6 @@
 //C- | TO ANY WARRANTY OF NON-INFRINGEMENT, OR ANY IMPLIED WARRANTY OF
 //C- | MERCHANTABILITY OR FITNESS FOR A PARTICULAR PURPOSE.
 //C- +------------------------------------------------------------------
-// 
-// $Id$
-// $Name$
 
 #ifndef _BSBYTESTREAM_H
 #define _BSBYTESTREAM_H
@@ -143,8 +140,7 @@
     Andrei Erofeev <eaf@geocities.com> -- Improved Block Sorting algorithm.
     @memo
     Simple Burrows-Wheeler general purpose compressor.
-    @version
-    #$Id$# */
+*/
 //@{
 
 

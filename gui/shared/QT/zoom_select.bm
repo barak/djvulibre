@@ -54,8 +54,6 @@
 //C- +------------------------------------------------------------------
 */
 
-/* $Id$ */
-
 #define zoom_select_width 24
 #define zoom_select_height 24
 #define zoom_select_x 5

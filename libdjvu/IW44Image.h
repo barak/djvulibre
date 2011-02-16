@@ -52,9 +52,6 @@
 //C- | TO ANY WARRANTY OF NON-INFRINGEMENT, OR ANY IMPLIED WARRANTY OF
 //C- | MERCHANTABILITY OR FITNESS FOR A PARTICULAR PURPOSE.
 //C- +------------------------------------------------------------------
-// 
-// $Id$
-// $Name$
 
 #ifndef IW44IMAGE_H_
 #define IW44IMAGE_H_
@@ -161,8 +158,7 @@
 // Lizardtech has split the corresponding cpp file into a decoder and an encoder.
 // Only superficial changes.  The meat is mine.
 
-    @version
-    #$Id$# */
+*/
 //@{
 
 

@@ -52,9 +52,6 @@
 //C- | TO ANY WARRANTY OF NON-INFRINGEMENT, OR ANY IMPLIED WARRANTY OF
 //C- | MERCHANTABILITY OR FITNESS FOR A PARTICULAR PURPOSE.
 //C- +------------------------------------------------------------------
-// 
-// $Id$
-// $Name$
 
 #ifndef _GSMARTPOINTER_H_
 #define _GSMARTPOINTER_H_
@@ -87,8 +84,6 @@
 // Our original implementation consisted of multiple classes.
 // <http://prdownloads.sourceforge.net/djvu/DjVu2_2b-src.tgz>.
 
-    @version 
-    #$Id$# 
     @args
 */
 //@{

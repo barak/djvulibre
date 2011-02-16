@@ -52,9 +52,6 @@
 //C- | TO ANY WARRANTY OF NON-INFRINGEMENT, OR ANY IMPLIED WARRANTY OF
 //C- | MERCHANTABILITY OR FITNESS FOR A PARTICULAR PURPOSE.
 //C- +------------------------------------------------------------------
-// 
-// $Id$
-// $Name$
 
 #ifndef _JB2IMAGE_H
 #define _JB2IMAGE_H
@@ -157,8 +154,6 @@
     \item ICFDD Draft Proposed American National Standard, 1999-08-26.
     \end{itemize}
 
-    @version
-    #$Id$#
     @memo
     Coding bilevel images with JB2.
     @author

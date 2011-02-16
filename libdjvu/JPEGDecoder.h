@@ -52,9 +52,6 @@
 //C- | TO ANY WARRANTY OF NON-INFRINGEMENT, OR ANY IMPLIED WARRANTY OF
 //C- | MERCHANTABILITY OR FITNESS FOR A PARTICULAR PURPOSE.
 //C- +------------------------------------------------------------------
-// 
-// $Id$
-// $Name$
 
 #ifndef _JPEGDECODER_H_
 #define _JPEGDECODER_H_
@@ -88,8 +85,6 @@ class GPixmap;
     interface to the decoding subset of the IJG JPEG library.
     @memo
     Decoding interface to the IJG JPEG library.
-    @version
-    #$Id$#
     @author
     Parag Deshmukh <parag@sanskrit.lz.att.com> 
 */

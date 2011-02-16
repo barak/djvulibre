@@ -52,9 +52,6 @@
 //C- | TO ANY WARRANTY OF NON-INFRINGEMENT, OR ANY IMPLIED WARRANTY OF
 //C- | MERCHANTABILITY OR FITNESS FOR A PARTICULAR PURPOSE.
 //C- +------------------------------------------------------------------
-// 
-// $Id$
-// $Name$
 
 #ifndef _GEXCEPTION_H_
 #define _GEXCEPTION_H_
@@ -117,8 +114,7 @@
     @author 
     L\'eon Bottou <leonb@research.att.com> -- initial implementation.\\
     Andrei Erofeev <eaf@geocities.com> -- fixed message memory allocation.
-    @version 
-    #$Id$# */
+*/
 //@{
 
 #include "DjVuGlobal.h"

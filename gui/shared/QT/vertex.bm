@@ -54,8 +54,6 @@
 //C- +------------------------------------------------------------------
 */
 
-/* $Id$ */
-
 #define vertex_width 14
 #define vertex_height 14
 #define vertex_x 7

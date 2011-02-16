@@ -52,9 +52,6 @@
 //C- | TO ANY WARRANTY OF NON-INFRINGEMENT, OR ANY IMPLIED WARRANTY OF
 //C- | MERCHANTABILITY OR FITNESS FOR A PARTICULAR PURPOSE.
 //C- +------------------------------------------------------------------
-// 
-// $Id$
-// $Name$
 
 #ifndef _GTHREADS_H_
 #define _GTHREADS_H_
@@ -128,8 +125,7 @@
 // Almost unchanged by Lizardtech.
 // GSafeFlags should go because it not as safe as it claims.
 
-    @version
-    #$Id$# */
+*/
 //@{
 
 

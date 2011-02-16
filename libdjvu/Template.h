@@ -52,9 +52,6 @@
 //C- | TO ANY WARRANTY OF NON-INFRINGEMENT, OR ANY IMPLIED WARRANTY OF
 //C- | MERCHANTABILITY OR FITNESS FOR A PARTICULAR PURPOSE.
 //C- +------------------------------------------------------------------
-// 
-// $Id$
-// $Name$
 
 //T// This is a template for the header files in the
 //T// DjVu reference library. It describes the general
@@ -126,8 +123,6 @@ namespace DJVU {
 
     @memo 
     Template header file
-    @version 
-    #$Id$# 
     @author: 
     L\'eon Bottou <leonb@research.att.com> -- initial implementation \\
     Andrew Erofeev <eaf@geocities.com> -- implemented EXTERNAL_TEMPLATES */

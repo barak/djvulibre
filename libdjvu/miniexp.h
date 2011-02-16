@@ -15,7 +15,6 @@
 // GNU General Public License for more details.
 // -------------------------------------------------------------------
 */
-/* $Id$ */
 
 #ifndef MINIEXP_H
 #define MINIEXP_H

@@ -52,9 +52,6 @@
 //C- | TO ANY WARRANTY OF NON-INFRINGEMENT, OR ANY IMPLIED WARRANTY OF
 //C- | MERCHANTABILITY OR FITNESS FOR A PARTICULAR PURPOSE.
 //C- +------------------------------------------------------------------
-// 
-// $Id$
-// $Name$
 
 #ifndef _MMRDECODER_H_
 #define _MMRDECODER_H_
@@ -132,8 +129,6 @@ class JB2Image;
 
     @memo
     CCITT-G4/MMR decoder.
-    @version
-    #$Id$#
     @author
     Parag Deshmukh <parag@sanskrit.lz.att.com> \\
     Leon Bottou <leonb@research.att.com> */

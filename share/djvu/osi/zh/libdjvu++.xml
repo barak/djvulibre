@@ -1,7 +1,6 @@
-﻿<?xml version="1.0" ?>
+<?xml version="1.0" ?>
 <!DOCTYPE DjVuMessages PUBLIC "-//W3C/DTD DjVuMessages 1.0//EN" "../../../pubtext/DjVuMessages.dtd">
 <!-- Error messages from libdjvu++ -->
-<!-- $Id$ -->
 <DjVuMessages>
 <BODY>
 <MESSAGE name="DjVuMessage.Unrecognized" value="不明错误信息:&#10;&#09;错误信息名称: %1!s!" />

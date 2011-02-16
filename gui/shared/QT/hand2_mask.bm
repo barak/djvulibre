@@ -54,8 +54,6 @@
 //C- +------------------------------------------------------------------
 */
 
-/* $Id$ */
-
 #define hand2_mask_width 16
 #define hand2_mask_height 16
 static unsigned char hand2_mask_bits[] = {

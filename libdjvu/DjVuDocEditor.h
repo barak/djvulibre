@@ -52,9 +52,6 @@
 //C- | TO ANY WARRANTY OF NON-INFRINGEMENT, OR ANY IMPLIED WARRANTY OF
 //C- | MERCHANTABILITY OR FITNESS FOR A PARTICULAR PURPOSE.
 //C- +------------------------------------------------------------------
-// 
-// $Id$
-// $Name$
 
 #ifndef _DJVUDOCEDITOR_H
 #define _DJVUDOCEDITOR_H
@@ -84,7 +81,6 @@ namespace DJVU {
 
     @memo DjVu document editor class.
     @author Andrei Erofeev <eaf@geocities.com>
-    @version #$Id$#
 */
 
 //@{

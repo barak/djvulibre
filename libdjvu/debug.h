@@ -52,9 +52,6 @@
 //C- | TO ANY WARRANTY OF NON-INFRINGEMENT, OR ANY IMPLIED WARRANTY OF
 //C- | MERCHANTABILITY OR FITNESS FOR A PARTICULAR PURPOSE.
 //C- +------------------------------------------------------------------
-// 
-// $Id$
-// $Name$
 
 #ifndef _DEBUG_H_
 #define _DEBUG_H_
@@ -123,8 +120,6 @@ namespace DJVU {
 
     @memo 
     Macros for printing debug messages.
-    @version 
-    #$Id$#
     @author
     Andrew Erofeev <eaf@geocities.com> -- initial implementation \\
     Leon Bottou <leonb@research.att.com> -- cleanups */

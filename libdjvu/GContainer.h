@@ -52,9 +52,6 @@
 //C- | TO ANY WARRANTY OF NON-INFRINGEMENT, OR ANY IMPLIED WARRANTY OF
 //C- | MERCHANTABILITY OR FITNESS FOR A PARTICULAR PURPOSE.
 //C- +------------------------------------------------------------------
-// 
-// $Id$
-// $Name$
 
 #ifndef _GCONTAINER_H_
 #define _GCONTAINER_H_
@@ -131,8 +128,7 @@ namespace DJVU {
     @author 
     L\'eon Bottou <leonb@research.att.com> -- initial implementation.\\
     Andrei Erofeev <eaf@geocities.com> -- bug fixes.
-    @version 
-    #$Id$# */
+*/
 //@{
 
 

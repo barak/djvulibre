@@ -52,9 +52,6 @@
 //C- | TO ANY WARRANTY OF NON-INFRINGEMENT, OR ANY IMPLIED WARRANTY OF
 //C- | MERCHANTABILITY OR FITNESS FOR A PARTICULAR PURPOSE.
 //C- +------------------------------------------------------------------
-// 
-// $Id$
-// $Name$
 
 #ifndef _DJVU_TO_PS_H_
 #define _DJVU_TO_PS_H_
@@ -73,8 +70,6 @@
     @memo PostScript file generator
     @author Andrei Erofeev <eaf@geocities.com> \\
             Florin Nicsa <Florin.Nicsa@insa-lyon.fr>
-    @version
-    #$Id$#
 */
 //@{
 

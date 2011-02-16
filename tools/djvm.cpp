@@ -52,9 +52,6 @@
 //C- | TO ANY WARRANTY OF NON-INFRINGEMENT, OR ANY IMPLIED WARRANTY OF
 //C- | MERCHANTABILITY OR FITNESS FOR A PARTICULAR PURPOSE.
 //C- +------------------------------------------------------------------
-// 
-// $Id$
-// $Name$
 
 #ifdef HAVE_CONFIG_H
 # include "config.h"
@@ -128,8 +125,7 @@
     DjVu multipage documents creator.
     @author
     Andrei Erofeev <eaf@geocities.com>
-    @version
-    #$Id$# */
+*/
 //@{
 //@}
 
