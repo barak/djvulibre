@@ -465,6 +465,7 @@ GPixmap::init(ByteStream &bs)
   bool raw = false;
   bool grey = false;
   int magic = bs.read16();
+  GP<GBitmap> bm;
   switch (magic)
     {
     case ('P'<<8)+'2':
@@ -477,6 +478,12 @@ GPixmap::init(ByteStream &bs)
     case ('P'<<8)+'6':
       raw = true;
       break;
+    case ('P'<<8)+'1':
+    case ('P'<<8)+'4': 
+      bs.seek(0L);
+      bm = GBitmap::create(bs); 
+      init(*bm);
+      return;
     default:
 #ifdef NEED_JPEG_DECODER
       bs.seek(0L);
