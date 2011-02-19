@@ -1,7 +1,7 @@
 #!/bin/sh
 
 c=/cygdrive/c
-qtdir=$c/qt/4.4.0
+qtdir=$c/qt/4.7.1
 djdir=$HOME/djvulibre-3.5
 dwdir=$djdir/win32/djvulibre/Release
 djsrc=$HOME/djvulibre-djview/src
@@ -11,6 +11,7 @@ msredist="$msvc/redist/x86/Microsoft.VC100.CRT"
 target=$HOME/DjVuLibre
 
 function run() {
+    echo "$@"
     "$@"
     if test $? -ne 0 ; then
       echo "FAILED: " "$@"
@@ -52,7 +53,11 @@ test -d $target/share || mkdir $target/share
 run cp -r $djdir/share/djvu $target/share
 run find $target/share -name CVS -exec rm -rf {} \; -prune
 
-run cp $djsrc/release/djview.exe $target
+if test -r $dwdir/djview.exe ; then
+  run cp $dwdir/djview.exe $target
+else
+  run cp $djsrc/release/djview.exe $target
+fi
 ( cd $djsrc; run $qtdir/bin/lrelease djview.pro )
 test -d $target/share/djvu/djview4 || run mkdir $target/share/djvu/djview4
 run cp $djsrc/*.qm $target/share/djvu/djview4
@@ -74,3 +79,4 @@ test -d $target/man || run mkdir $target/man
   done )
 
 
+run cp $djdir/win32/djvulibre/djvulibre.nsi $target
