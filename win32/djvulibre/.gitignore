@@ -1,5 +1,6 @@
 Release/
 Debug/
-/djvulibre.sdf
-/djvulibre.opensdf
-/djvulibre.suo
+/*.sdf
+/*.opensdf
+/*.suo
+/djvulibre+djview.sln
