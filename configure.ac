@@ -251,7 +251,7 @@ if test x$ac_enable_djview != xno ; then
         AC_CHECK_HEADER(X11/Shell.h, [], [no_xt=yes])
         AC_CHECK_HEADER(X11/IntrinsicP.h, [], [no_xt=yes])
         CFLAGS="$savedCFLAGS"
-        if test "$no_xt" == "yes" ; then
+        if test "$no_xt" = "yes" ; then
             AC_MSG_WARN([Xt include files not found])
         else
             AC_DEFINE(HAVE_XT,1,[Define if you have the Xt include files.])
