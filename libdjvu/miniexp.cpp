@@ -1003,7 +1003,7 @@ must_quote_symbol(const char *s)
       return true;
   char *end;
 #ifdef __GNUC__
-  static long junk __attribute__ ((unused)) = 
+  long junk __attribute__ ((unused)) =
 #endif
   strtol(s, &end, 0);
   return (!*end);
