@@ -154,6 +154,7 @@
 #endif
 
 #if USE_XT
+# define XTSTRINGDEFINES 1
 # include <X11/Intrinsic.h>
 # include <X11/IntrinsicP.h>
 # include <X11/StringDefs.h>
@@ -164,6 +165,7 @@
 # pragma weak XtRemoveCallback
 # pragma weak XtRemoveEventHandler
 # pragma weak XtRemoveInput
+# pragma weak XtShellStrings
 # pragma weak XtStrings
 # pragma weak XtVaGetValues
 # pragma weak XtWidgetToApplicationContext
@@ -1095,15 +1097,19 @@ SaveStatic(void)
 {
   SavedStatic *storage = 0;
   char *value = getenv(ENV_DJVU_STORAGE_PTR);
+  int pid = -1;
   if (value) 
-    sscanf(value, "%p", &storage);
+    sscanf(value, "%p-%d", &storage, &pid);
+  if (pid != getpid())
+    storage = 0;
   if (! storage)
     {
       char *buffer = malloc(128);
       if (buffer) {
         storage = malloc(sizeof(SavedStatic));
         if (storage) {
-          sprintf(buffer, ENV_DJVU_STORAGE_PTR "=%p", (void*)storage);
+          sprintf(buffer, ENV_DJVU_STORAGE_PTR "=%p-%d", 
+                  (void*)storage, getpid());
           putenv(buffer);
         }
       }
@@ -1128,9 +1134,12 @@ LoadStatic(void)
         nsdejavu.so */
 {
   SavedStatic *storage = 0;
+  int pid = -1;
   char *value = getenv(ENV_DJVU_STORAGE_PTR);
   if (value) 
-    sscanf(value, "%p", &storage);
+    sscanf(value, "%p-%d", &storage, &pid);
+  if (pid != getpid())
+    storage = 0;
   if (storage)
     {
       pipe_read = storage->pipe_read;
@@ -1791,7 +1800,8 @@ Attach(Display * displ, Window window, void * id)
           cell.flags = DoRed | DoGreen | DoBlue;
           cell.pixel = back_color;
           XQueryColor(displ, cmap, &cell);
-          sprintf(protocol_str, "rgb:%X/%X/%X", cell.red, cell.green, cell.blue);
+          sprintf(protocol_str, "rgb:%X/%X/%X", 
+                  cell.red, cell.green, cell.blue);
         }
       if (widget && !inst->xembed_mode)
         XtMapWidget(widget);
