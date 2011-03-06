@@ -1,5 +1,5 @@
-SINCE 3.5.23
-------------
+NEW IN VERSION 3.5.24
+---------------------
 - Set ddjvuapi_version to 20.
 - Added ddjvuapi support for changing the white point.
 - Added option "-u" in djvused.
