@@ -7,10 +7,6 @@
 <INCLUDE name="djvutools-reference.xml" />
 <!-- Message numbers 10000-16999 -->
 <INCLUDE name="libdjvu++.xml" />
-<!-- Message numbers 00000-19999 -->
-<INCLUDE name="unixgui-shared.xml" />
-<!-- Message numbers 20000-39999 -->
-<INCLUDE name="unixgui-viewer.xml" />
 </HEAD>
 <BODY>
 </BODY>
