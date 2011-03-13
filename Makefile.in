@@ -59,8 +59,6 @@ install-utils: install-tools
 
 @XML_YES@install-utils: install-xmltools
 
-@I18N_YES@install: install-i18n
-
 @DESKTOP_YES@install: install-desktopfiles
 
 install-libdjvu: FORCE
@@ -71,9 +69,6 @@ install-tools: FORCE
 
 install-xmltools: FORCE
 	( cd xmltools && ${MAKE} install )
-
-install-i18n: FORCE
-	( cd i18n && ${MAKE} install )
 
 install-desktopfiles: FORCE
 	( cd desktopfiles && ${MAKE} install )
