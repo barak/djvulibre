@@ -35,14 +35,12 @@ version of that code maintained by the original inventors of DjVu. It is
 compatible with version 3.5 of the LizardTech DjVu software suite.
 
 DjVulibre-3.5 contains:
-- a standalone DjVu viewer based on the Qt library. 
-- A browser plugin that works with most Unix browsers.
+- An up-to-date version of the C++ DjVu Reference Library.
 - A full-fledged wavelet-based compressor for pictures. 
 - A simple compressor for bitonal (black and white) scanned pages. 
 - A compressor for palettized images (a la GIF/PNG). 
 - A set of utilities to manipulate and assemble DjVu images and documents. 
 - A set of decoders to convert DjVu to a number of other formats. 
-- An up-to-date version of the C++ DjVu Reference Library.
 
 %prep
 %setup -q

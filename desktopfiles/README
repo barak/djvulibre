@@ -25,9 +25,6 @@ There are two ways to exploit them.
 
   Calling "${datadir}/djvu/osi/desktop/register-djvu-mime install"
   installs icons for the djvu files and registers the djvu mime type.
-  Calling  "${datadir}/djvu/djview3/desktop/register-djview-menu install",
-  installs menu icons and menu entries for the djview3 viewer.
-
 
 
 2 - Install desktop files by hand.
@@ -67,13 +64,3 @@ There are two ways to exploit them.
       because djvu information comes with the freedesktop.org
       mime type database.
      
-  * Menu icons for djview3:
-    - Install "hi32-djview3.png" 
-      as "${datadir}/icons/hicolor/32x32/apps/djvulibre-djview3.png".
-
-  * Menu entries for djview3:
-    - Install "djvulibre-djview3.desktop"
-      as "${datadir}/applications/djvulibre-djview3.desktop".
-    - Arrange to execute script "update-desktop-database".
-      at installation time.
-

@@ -208,7 +208,6 @@ AC_PATH_THREADS(,
 # What to compile
 # ----------------------------------------
 
-
 # Check compilation of xmltools
 ac_enable_xmltools=yes
 AC_ARG_ENABLE(xmltools,
@@ -223,96 +222,6 @@ else
 fi
 AC_SUBST(XML_YES)
 AC_SUBST(XML_NO)
-
-
-# Check compilation of djview
-AC_ARG_ENABLE(djview,
-   AS_HELP_STRING([--enable-djview],[Enable the compilation of djview3.]),
-   [ac_enable_djview=$enableval], 
-   [ac_enable_djview=no] ) 
-if test x$ac_enable_djview != xno ; then
-    AC_MSG_WARN([Enabling compilation of djview3.
---------------------------------------------------------
-*** The Qt2 or Qt3 based viewer, djview3, is considered obsolete.
-*** The recommended viewer is now the Qt4 based viewer, djview4.
-*** Djview4 comes in a separate source package that should be
-*** compiled after installing the djvulibre library.
---------------------------------------------------------])
-    # Search QT library
-    AC_PATH_QT(,
-        [ no_qt=yes
-            AC_MSG_WARN([Qt3 support is disabled]) ])
-    
-    # Search X11 and Xt headers
-    if test "$no_x" != "yes" ; then
-        savedCFLAGS="$CFLAGS"
-        CFLAGS="$CFLAGS ${X_CFLAGS}"
-        AC_CHECK_HEADERS(X11/extensions/Xext.h,,,[include <X11/Xlib.h>])
-        AC_CHECK_HEADER(X11/Shell.h, [], [no_xt=yes])
-        AC_CHECK_HEADER(X11/IntrinsicP.h, [], [no_xt=yes])
-        CFLAGS="$savedCFLAGS"
-        if test "$no_xt" = "yes" ; then
-            AC_MSG_WARN([Xt include files not found])
-        else
-            AC_DEFINE(HAVE_XT,1,[Define if you have the Xt include files.])
-        fi
-    fi
-
-    if test x$no_threads = xyes || test x$no_qt = xyes || test x$no_xt = xyes 
-    then
-       AC_MSG_WARN([Disabling compilation of djview.
---------------------------------------------------------
-*** The GUI portion of this package will not be compiled.
-*** This is probably not what you want.  Chech the output
-*** of configure for warning messages.  Read file INSTALL. 
-*** Investigate options --with-qt and --enable-threads.
-*** Make sure the Xt include files are present.
---------------------------------------------------------])
-       ac_enable_djview=no;
-    fi
-fi
-if test x$ac_enable_djview != xno ; then
-   GUI_YES=''
-   GUI_NO='#'
-else
-   GUI_YES='#'
-   GUI_NO=''
-fi
-AC_SUBST(GUI_YES)
-AC_SUBST(GUI_NO)   
-
-
-# Check compilation of i18n files.
-AC_ARG_ENABLE(i18n,
-   AS_HELP_STRING([--disable-i18n],[Do not prepare the localization files.]),
-   [ac_enable_i18n=$enableval], 
-   [ac_enable_i18n=all] ) 
-if test "$ac_enable_i18n" != xno ; then
-   I18N_YES=''
-   I18N_NO='#'
-   LINGUAS=
-   if test "$ac_enable_i18n" = all ; then
-     for n in $srcdir/i18n/* ; do
-         if test -r $n/Makefile.in ; then 
-             LINGUAS="$LINGUAS `basename $n`"
-         fi
-     done
-   else
-     for n in $ac_enable_i18n ; do
-         if test -r $srcdir/i18n/$n/Makefile.in ; then
-             LINGUAS="$LINGUAS $n"
-         fi
-     done
-   fi
-else
-   I18N_YES='#'
-   I18N_NO=''
-fi
-AC_SUBST(LINGUAS)
-AC_SUBST(I18N_YES)
-AC_SUBST(I18N_NO)   
-
-
 
 # ----------------------------------------
 # Desktop files
@@ -353,151 +262,6 @@ fi
 AC_SUBST(DESKTOP_YES)
 AC_SUBST(DESKTOP_NO)
 
-
-# ----------------------------------------
-# Flags for NSDEJAVU.SO
-# ----------------------------------------
-
-NSDEJAVU_CFLAGS=
-NSDEJAVU_LIBS=
-if test x$ac_enable_djview != xno 
-then
-    AC_PATH_GLIB
-    NSDEJAVU_CFLAGS=${X_CFLAGS}
-    case "$host" in
-        *-cygwin* | *-mingw*)
-            NSDEJAVU_LIBS="`echo ${X_LIBS} | sed -e 's/-lXext/-lXt -lXext/'`"
-            NSDEJAVU_LIBS="-no-undefined $NSDEJAVU_LIBS"
-            ;;
-    esac
-fi
-AC_SUBST(NSDEJAVU_CFLAGS)
-AC_SUBST(NSDEJAVU_LIBS)
-
-# -----------
-# How to install shared libraries
-if test -z "$INSTALL_SHLIB" ; then
-  INSTALL_SHLIB="${INSTALL_DATA}"
-  case "$host" in
-    *-cygwin* | *-mingw*)
-        INSTALL_SHLIB="cp"
-        ;;
-  esac
-fi
-AC_SUBST(INSTALL_SHLIB)
-
-
-
-# ----------------------------------------
-# Compiler version check
-# ----------------------------------------
-
-# Work around broken compilers with the famous LPR0 bug
-if test x$ac_shared_libdjvu != xno && test x$GXX = xyes; then
-    AC_MSG_CHECKING([if $CXX has the LPR0 bug])
-    echo 'extern "C"{inline int sqr(int x)throw(){return x*x;}}int main(){}' \
-        > conftest.cc
-    if ${CXX} -fPIC ${OPTS} conftest.cc -o conftest \
-        > /dev/null 2> /dev/null ; then
-        AC_MSG_RESULT([no])
-    else
-        AC_MSG_RESULT([yes])
-        OPTS=`echo $OPTS | sed -e 's/-mcpu=i686/-mpentium/'`
-    fi
-fi
-
-# What compiler are we using ?
-if test x$GXX != xyes ; then
-  AC_MSG_WARN([The recommended c++ compiler is g++.])
-  if test $ac_cv_cxx_exceptions = no ; then
-    AC_MSG_ERROR([Exception support in c++ compiler is mandatory.]) 
-  fi
-else
-  AC_MSG_CHECKING([g++ version]) 
-changequote(<<, >>)dnl
-  cxxver="`$CXX --version | head -1 | 
-             sed -e 's/^.*[^0-9.]\([2-4]\.[0-9.]*\).*$/\1/'`"
-changequote([, ])dnl 
-  AC_MSG_RESULT($cxxver)
-  action=none
-  case "$cxxver" in
-changequote(<<, >>)dnl          
-    1.*)            action=error  ;;
-    2.[0-8]*)       action=error  ;;
-    2.90*)          action=error  ;;
-    2.91.[6-9]*)    ;;
-    2.91*)          action=warn2  ;;
-    2.96*)          action=redhat ;;
-    2.9*)           ;;
-    3.0)            action=warn3  ;;
-changequote([, ])dnl 
-  esac
-  case $action in
-    error)
-        AC_MSG_ERROR([Your c++ compiler ($cxxver) is outdated.])
-        ;;
-    warn2)
-        AC_MSG_WARN([Your c++ compiler ($cxxver) has known problems.
--------------------------------------------
-*** Please upgrade to gcc-2.95.3 or better.
--------------------------------------------])
-        ;;
-    warn3)
-        AC_MSG_WARN([Your c++ compiler ($cxxver) has known problems.
--------------------------------------------
-*** Please upgrade to gcc-3.0.2 or better.
--------------------------------------------])
-        ;;
-    redhat)
-        # Check for infamous early 2.96 compiler
-        for n in `g++ -v 2>&1 | grep version` ; do rhversion=$n ; done 
-        case "$rhversion" in
-changequote(<<, >>)dnl
-          2.96-1[0-9][0-9]*) ;;
-          2.96-8[5-9]*) ;;
-          2.96-9*) ;;
-          *)
-changequote([, ])dnl 
-             AC_MSG_WARN([Your c++ compiler ($cxxver) has known problems.
--------------------------------------------------------
-*** You have an early version of the gcc-2.96 compiler.
-*** The good news is that the new version works nicely.
-*** Check <http://www.redhat.com/support/errata/RHBA-2001-082.html>.
-*** Please upgrade.
--------------------------------------------------------])
-            ;;
-        esac
-  esac
-  # Do we want the pragmas interface/implementation
-  case "$cxxver" in
-changequote(<<, >>)dnl
-    2*) cxxpragmas=yes ;;
-    3.0*) cxxpragmas=yes ;;
-    *) cxxpragmas=no ;;
-changequote([, ])dnl
-  esac
-  if test x$cxxpragmas = xyes ; then 
-    AC_DEFINE(NEED_GNUG_PRAGMAS,1,
-             [Define to use g++ pragmas interface/implementation])
-  fi
-fi
-
-
-
-# ----------------------------------------
-# Qt version check
-# ----------------------------------------
-
-# What version of QT are we using
-if test x${qt_version+set} = xset ; then
-  if test "$qt_version" -lt 200 ; then
-     AC_MSG_ERROR([We no longer support Qt-1x.])
-  elif test "$qt_version" -lt 220 ; then
-     AC_MSG_WARN([We suggest using QT-2.2.0 or better.])
-  fi
-fi
-
-
 # ----------------------------------------
 # End
 # ----------------------------------------
@@ -513,15 +277,6 @@ AC_CONFIG_FILES(libdjvu/ddjvuapi.pc)
 AC_CONFIG_FILES(tools/Makefile)
 AC_CONFIG_FILES(tools/jb2cmp/Makefile)
 AC_CONFIG_FILES(xmltools/Makefile)
-AC_CONFIG_FILES(gui/Makefile)
-AC_CONFIG_FILES(gui/bin2cpp/Makefile)
-AC_CONFIG_FILES(gui/djview/Makefile)
-AC_CONFIG_FILES(gui/nsdejavu/Makefile)
-AC_CONFIG_FILES(i18n/Makefile)
-AC_CONFIG_FILES(i18n/ja/Makefile)
-AC_CONFIG_FILES(i18n/de/Makefile)
-AC_CONFIG_FILES(i18n/fr/Makefile)
-AC_CONFIG_FILES(i18n/cs/Makefile)
 AC_CONFIG_FILES(desktopfiles/Makefile)
 
 # Go
@@ -595,13 +350,6 @@ AH_BOTTOM([
 #define GCONTAINER_NO_TYPENAME 1
 #endif
 
-/* - COTHREAD */
-#ifdef HAVE_COTHREAD
-#ifndef HAVE_COTHREAD_PATCH
-#define NO_LIBGCC_HOOKS 1
-#endif
-#endif
-
 /* - JPEG */
 #ifdef HAVE_JPEG
 #define NEED_JPEG_DECODER 1
@@ -612,24 +360,6 @@ AH_BOTTOM([
 #define HAS_MEMMAP 1
 #else
 #define HAS_MEMMAP 0
-#endif
-
-/* - QT */
-#ifdef HAVE_QT
-#if HAVE_QT < 200
-#define QT1
-#elif HAVE_QT < 300
-#define QT2
-#else
-#define QT3
-#endif
-#endif
-
-/* - X STUFF */
-#ifdef HAVE_SYS_IPC_H
-#ifdef HAVE_SYS_SHM_H
-#define USE_XSHM 1
-#endif
 #endif
 
 /* config.h: end */

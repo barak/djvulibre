@@ -1,7 +1,0 @@
-*.inc
-*_moc.cpp
-.libs
-Makefile
-bmp_*.cpp
-djview
-ppm_*.cpp

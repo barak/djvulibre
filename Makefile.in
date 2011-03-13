@@ -32,17 +32,9 @@ SUBDIRS_FIRST = libdjvu tools
 @XML_YES@SUBDIRS_XML = xmltools
 @XML_NO@SUBDIRS_XML = 
 
-@GUI_YES@SUBDIRS_GUI = gui
-@GUI_NO@SUBDIRS_GUI =
-
-@I18N_YES@SUBDIRS_I18N = i18n
-@I18N_NO@SUBDIRS_I18N =
-
 SUBDIRS_LAST = desktopfiles
 
-SUBDIRS = ${SUBDIRS_FIRST} ${SUBDIRS_XML} \
-          ${SUBDIRS_GUI} ${SUBDIRS_I18N} \
-	  ${SUBDIRS_LAST}
+SUBDIRS = ${SUBDIRS_FIRST} ${SUBDIRS_XML} ${SUBDIRS_I18N} ${SUBDIRS_LAST}
 
 world: all
 	@echo "Congratulations: the compilation was successful!"
@@ -67,8 +59,6 @@ install-utils: install-tools
 
 @XML_YES@install-utils: install-xmltools
 
-@GUI_YES@install: install-gui
-
 @I18N_YES@install: install-i18n
 
 @DESKTOP_YES@install: install-desktopfiles
@@ -81,9 +71,6 @@ install-tools: FORCE
 
 install-xmltools: FORCE
 	( cd xmltools && ${MAKE} install )
-
-install-gui: FORCE
-	( cd gui && ${MAKE} install )
 
 install-i18n: FORCE
 	( cd i18n && ${MAKE} install )

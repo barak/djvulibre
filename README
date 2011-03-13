@@ -52,33 +52,17 @@ GNU GPL in October 2000. DjVuLibre (pronounced like the French "déjà vu
 libre"), is an enhanced version of that code maintained by the original
 inventors of DjVu. It is compatible with LizardTech's DjVu software v3.5.
 
-DjVuLibre includes: 
-
-- A standalone DjVu viewer for Unix under X11 (based on the Qt library). 
-
-- A browser plugin that works with most Unix browsers, including: 
-  Netscape-4.x, Netscape-6.x, Mozilla, Galeon, Konqueror, and Opera. 
-
-- A full-fledged wavelet-based compressor for pictures. 
-
-- A simple compressor for bitonal (black and white) scanned pages. 
-
-- A compressor for palettized images (a la GIF). 
-
-- A full set of utilities to manipulate and 
-  assemble DjVu images and documents. 
-
-- A set of decoders to convert DjVu to a number of other formats. 
+This package includes: 
 
 - An up-to-date version of the C++ DjVu Reference Library 
+- A full-fledged wavelet-based compressor for pictures. 
+- A simple compressor for bitonal (black and white) scanned pages. 
+- A compressor for palettized images (a la GIF). 
+- A full set of utilities to manipulate and assemble DjVu images and documents. 
+- A set of decoders to convert DjVu to a number of other formats. 
 
-Windows and Mac versions of the viewer/plug-in, as well as commercial versions
-of the compressors and OCR engines are available from LizardTech Inc.. The
-compressors provided here are slower, produce larger files, and sometimes
-lower quality images than the commercial compressors, but they do the job.
-
-A variety of free web-based conversion services are also available, including
-any2djvu.djvuzone.org, bib2web.djvuzone.org, and openlib.djvuzone.org.
+The full-fledged DjVu file viewer and browser plugin DjView4
+is available as a separate package.
 
 
 

@@ -37,22 +37,7 @@ You can also compile DjVuLibre with neither JPEG nor TIFF support.
 You might never notice the difference.
 
 
-1.3 - QT
---------
-
-The graphical user interface of the viewer relies on the Qt library
-from TrollTech <http://www.trolltech.com>. The command line tools 
-do not rely on Qt and can be compiled independently.
-
-The source code of the Qt library can be downloaded from 
-<ftp://ftp.trolltech.com/qt/source/qt-x11-3.3.6.tar.gz>.
-
-Avoid versions earlier than Qt-2.2.0.
-The suggested version is Qt-3.3.6
-Qt-4 support is under development.
-
-
-1.4 - THREADS
+1.3 - THREADS
 -------------
 
 The DjVu viewer makes heavy use of multiple threads of execution.  Modern 
@@ -60,13 +45,10 @@ Unix operating systems come with the standardized Posix threads.
 DjVuLibre-3.5 fully supports detecting and using Posix threads.
 
 For the sake of older operating systems, DjVuLibre-3.5 offers a custom
-threading model called CoThreads.  CoThreads work best with a two line patch
-to the GCC compiler.  This is described in files "etc/README.libgcc".  The
-configuration script will auto-detect the available threading model and suggest
-applying the GCC patch when it is needed.
+threading model called CoThreads.  This should be considered obsolete.
 
 
-1.5 - MAKE
+1.4 - MAKE
 ----------
 
 There are various kind of "make" programs around with various capabilities.  
@@ -98,30 +80,14 @@ configuration script.  A complete list can be obtained by typing
 * Option "--enable-desktopfiles[=(yes|no)]"
 
   Installs the scripts 
-   /usr/share/djvu/osi/desktop/register-djvu-mime and
-   /usr/share/djvu/osi/desktop/register-djview-menu
+   /usr/share/djvu/osi/desktop/register-djvu-mime 
   to setup the xdg mime type database and menu entries.
-
-* Option "--enable-i18n[=(yes|no|languages)]"
-
-  Enable generation of translation files and man pages 
-  for the specified languages.  By default, translation files 
-  and man pages are generated for all available languages
 
 * Options "--with-extra-includes=DIR" 
       and "--with-extra-libraries=DIR"
 
   This option defines additional directories for 
   searching include files or libraries.
-
-* Option "--with-qt=QTDIR"
-
-  This option specifies the base location of the Qt library.
-  Without this option, the configuration script will inspect
-  environment variable QTDIR as well as a few typical locations.
-  When everything else fails (that should not happen), you 
-  can simply define the environment variables 
-  QT_CFLAGS, QT_LIBS and MOC.
 
 * Option "--with-jpeg=JPEGDIR"
 
@@ -176,9 +142,8 @@ successful.  You can then proceed with the installation.
 The installation procedure will:
 
 - install the executable programs into "${prefix}/bin".
-- possibly install the shared library "${prefix}/lib/libdjvu-3.5.so".
+- possibly install the shared library "${prefix}/lib/libdjvulibre-3.5.so".
 - install the man pages under "${prefix}/man or ${prefix}/share/man".
-- install the Netscape plug-in as "${prefix}/lib/netscape/plugins/nsdejavu.so".
 - install various ancillary files under "${prefix}/share/djvu".
 - optionally install information files for desktop environments.
 
@@ -192,244 +157,4 @@ To perform the installation, simply type :
 Of course you must have the appropriate permissions to 
 perform the installation.  Chances are that you need to
 be root to install something into /usr or /usr/local.
-
-
-
-
-3- PLUG-IN ISSUES
-================
-
-
-3.1- NETSCAPE 4.7
------------------
-
-
-The DjVu Netscape plug-in is a shared library which runs program djview
-in slave mode. This shared library is normally installed in:
-
-        ${prefix}/lib/netscape/plugins/nsdejavu.so.
-
-Therefore, unless you specified a different prefix to the configure program,
-the shared library is installed in /usr/local/lib/netscape/plugins.  This is a
-good thing since Netscape 4 always searches this directory for plug-ins.
-
-3.1.1- DISABLING PREVIOUS VERSIONS OF THE DJVU PLUG-IN
-
-You might have however to first disable any previous version of the plug-in.
-Selecting menu "Help->About Plugins" in Netscape displays the current list of
-plug-ins.  Previous versions of the plug-in were often installed in one of the
-following locations.
-
-        ${HOME}/.netscape/plugins/nsdejavu.so
-        /usr/lib/netscape/plugins/nsdejavu.so
-        /opt/netscape/plugins/nsdejavu.so
-
-You can safely remove these files to disable the previous version of the DjVu
-plug-in. You can also remove the directory "DjVu" that was installed under the
-corresponding "netscape" or ".netscape" directory.  Note that "nsdejavu.so"
-and "DjVu" are often symbolic links to the actual installation directory.
-Removing the symbolic links is sufficient to disable the plug-in.
-
-3.1.2- ALTERNATIVE PLUG-IN INSTALLATION STRATEGIES
-
-More complicated cases can be dealt using one of the following strategies.
-
-- You can explicitly set the plug-in search path by setting the
-  environment variable NPX_PLUGIN_PATH before starting Netscape.
-  Setting this variable overrides Netscape default search directories.
-
-    $ NPX_PLUGIN_PATH="${prefix}/lib/netscape/plugins:$HOME/.netscape/plugins"
-    $ export NPX_PLUGIN_PATH ; netscape
-
-- You can create a symbolic link to nsdejavu.so from a place that
-  is normally searched by Netscape.
-
-    $ cd $HOME/.netscape ; mkdir plugins ; cd plugins
-    $ ln -s ${prefix}/lib/netscape/plugins/nsdejavu.so nsdejavu.so
- 
-  You must not copy nsdejavu.so but create a symbolic link.  This is necessary
-  because nsdejavu.so will first locate its normal installation directory by 
-  following the symbolic link, and then will locate the DjVu viewer djview.
-  
-You can then restart Netscape and select menu "Help->About Plugins" to check
-that the DjVu plug-in is properly recognized.  The Netscape plug-in search rules
-are explained in the README file that usually comes with the Netscape
-distribution.
-
-3.1.3- TROUBLESHOOTING
-
-Sometimes Netscape creates a huge mess in configuration files
-named ${HOME}/.mailcap and ${HOME}/.mime.types.  The following
-command cleans the djvu related entries in these files:
-
-     $ djview -fix
-
-Then restart Netscape and hope for the best.
-
-
-
-3.2- NETSCAPE 6.1
------------------
-
-It seems that Netscape 6 only recognize plug-ins installed inside its own
-plug-in directory.  This can be done using a symbolic link.  Let us assume that
-Netscape 6 is installed in /usr/local/netscape6 and that the DjVu plug-in is
-installed in /usr/local/lib/netscape/plugins.  
-
-    $ cd /usr/local/netscape6/plugins
-    $ ln -s /usr/local/lib/netscape/plugins/nsdejavu.so nsdejavu.so
-
-You can then run Netscape 6.1 and view DjVu images.
-
-
-3.3- KONQUEROR
---------------
-
-The DjVu plug-in works nicely with the Konqueror web browser. 
-
-In Konqueror, select "Settings->Configure Konqueror".  When the dialog
-appears, select the icon "Netscape Plugins".  Make sure that directory
-"${prefix}/lib/netscape/plugins" appears in the list of plug-in directories.
-Then press button "Scan for new plugins".  Clicking the "Plugins" tab button
-should display a list of recognized plug-ins.  Check that "nsdejavu.so" appears
-there.  You should now be able to use DjVu with Konqueror.
-
-
-3.4- MOZILLA
-------------
-
-You must establish a link from the mozilla plugin directory.  Let us assume
-that mozilla is installed under /usr/lib/mozilla-1.1 and that the DjVu plug-in 
-is installed in /usr/local/lib/netscape/plugins.
-
-    $ cd /usr/lib/mozilla-1.1/plugins
-    $ ln -s /usr/local/lib/netscape/plugins/nsdejavu.so nsdejavu.so
-
-Works nicely.
-
-
-3.5- GALEON
------------
-
-Install the plugin for mozilla and it will work for galeon.
-
-
-3.6- MOZILLA FIREBIRD/FIREFOX
------------------------------
-
-You must establish a link from the appropriate plugin directory.  
-Let us assume that mozilla is installed under /usr/lib/mozilla-firefox
-and that the DjVu plug-in is installed in /usr/local/lib/netscape/plugins.
-
-    $ cd /usr/lib/mozilla-firefox/plugins
-    $ ln -s /usr/local/lib/netscape/plugins/nsdejavu.so nsdejavu.so
-
-Works nicely.
-
-
-3.7- OPERA
-----------
-
-You must install openmotif to have plugin support in Opera.
-The DjVu plugin then works okay.  
-
-
-
-
-
-4- PORTING NOTES
-================
-
-
-4.1- GNU/LINUX
---------------
-
-Simply typing "configure ; make" should work on most recent distributions.
-
-In addition, the tarball contains a valid spec file for the rpm packager.
-The following command should perform all the compilation steps.
-
-        $ rpm -ta djvulibre-3.5.X.tar.gz
-
-The resulting rpm files can be found in the usual places.
-
-
-4.2- SGI IRIX 6.5
------------------
-
-Successful compilation using qt-2.3.0.  
-Compilation was made with gcc-3.0.2 with the thread patch discussed at
-<http://gcc.gnu.org/ml/gcc-patches/2001-08/msg00072.html>.
-The configure command line was:
-  $ ./configure --enable-rpo \
-        --with-qt=/home/leonb/djvulibre-3.5/BUILDI/qt-2.3.0 \
-        --with-jpeg=/home/leonb/djvulibre-3.5/BUILDI/libjpeg
-
-
-
-4.3- SUN SOLARIS 5
-------------------
-
-SPARC-SUN-SOLARIS-5.6:
-Successful compilation using qt-2.3.0
-Compilation was made with gcc-3.0.2 with option -fpermissive.
-The configure command line was:
-  $ ./configure --enable-rpo \
-        --with-qt=/home/leonb/djvulibre-3.5/BUILDS/qt-2.3.0 \
-        --with-jpeg=/home/leonb/djvulibre-3.5/BUILDS/libjpeg \
-        CXX='g++ -fpermissive'
-
-I386-SUN-SOLARIS-5.9:
-Successful compilation using qt-3.2 and gcc-3.3.
-  1) Installed gcc 3.3
-  2) Installed and built Qt
-  3) export QTDIR=/usr/local/qt
-  4) export QT_CFLAGS=-I/usr/local/qt/include
-  5) export QT_LIBS='-L/usr/local/qt/lib -lqt -ldl'
-  6) export PATH=$PATH:/usr/ccs/bin
-  7) export PATH=/usr/local/bin:/opt/sfw/bin:$PATH
-  8) export LD_LIBRARY_PATH=/opt/sfw/qt/lib:$LD_LIBRARY_PATH
-     export LD_LIBRARY_PATH=/usr/local/lib:/opt/sfw/lib:$LD_LIBRARY_PATH
-  9) cd DjVu/djvulibre-3.5
- 11) ./configure --with-qt=/usr/local/qt --prefix=/usr/local \
-           CXX='g++ -fpermissive  -DNO_MMX -static-libgcc '
- 12) make
- 13) make install
-
-
-
-4.4- FREEBSD-4.4
-----------------
-
-Successful compilation using gnu-make, qt-2.3.1 and gcc-2.95.3.
-The configure command line was:
-  $ ./configure \
-        JPEG_LIBS='/usr/local/lib/libjpeg.a' \
-        JPEG_CFLAGS='-I/usr/local/include'
-
-
-
-4.5- MAC OS X 10.3.2
---------------------
-
-We envision two ways to compile DjVuLibre on the Mac.
-- either using DarwinPorts or Fink
-- or using XCode and the native OS-X utilities.
-
-4.5.1- USING XCODE AND THE NATIVE UTILITIES
-
-Not much has been done at this point.
-Please check the file djvulibre-3.5/mac/README.
-
-4.5.2- USING DARWINPORTS OR FINK
-
-DjVuLibre assumes that you have DarwinPorts in /opt/local
-or Fink in /sw.  Required packages: libjpeg libtiff qt3.
-The configure command line is
-  $ ./configure
-
-DjVuLibre should then compile and install without problems.
-The DjVuLibre viewer 'djview' runs under X11.
-Similarly, the DjVuLibre plugin does not run in Safari or MSIE.
-It only runs in X11 based browsers such as mozilla or konqueror.
 

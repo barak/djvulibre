@@ -1,5 +1,0 @@
-nsdejavu.o: nsdejavu.c ../../config.h ../../gui/npsdk/npapi.h \
-  ../../gui/npsdk/prtypes.h ../../gui/npsdk/prcpucfg.h \
-  ../../gui/npsdk/obsolete/protypes.h ../../gui/npsdk/npruntime.h \
-  ../../gui/npsdk/nptypes.h ../../gui/npsdk/npupp.h \
-  ../../gui/npsdk/npruntime.h ../../gui/npsdk/jri.h

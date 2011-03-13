@@ -20,7 +20,6 @@ testlibver:
 build clean install binary-arch binary-indep binary:
 	dh $@ --with autotools_dev --parallel
 
-configure_options += --disable-djview
 configure_options += --disable-desktopfiles
 configure_options += --enable-static
 configure_options += --enable-shared
