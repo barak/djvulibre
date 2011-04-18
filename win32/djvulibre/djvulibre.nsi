@@ -2,7 +2,7 @@
 
 ; HM NIS Edit Wizard helper defines
 !define PRODUCT_NAME "DjVuLibre+DjView"
-!define PRODUCT_VERSION "3.5.23d+4.6c"
+!define PRODUCT_VERSION "3.5.24+4.7b"
 !define PRODUCT_PUBLISHER "DjVuZone"
 !define PRODUCT_WEB_SITE "http://djvu.sourceforge.net"
 !define PRODUCT_DIR_REGKEY "Software\Microsoft\Windows\CurrentVersion\App Paths\djview.exe"

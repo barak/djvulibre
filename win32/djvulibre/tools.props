@@ -8,5 +8,10 @@
       <AdditionalIncludeDirectories>$(DjVuLibreRoot);$(DjVuLibreRoot)\libdjvu;$(TiffRoot);$(TiffDir);%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>HAVE_NAMESPACES;HAVE_TIFF;%(PreprocessorDefinitions)</PreprocessorDefinitions>
     </ClCompile>
+    <Link />
+    <Link />
+    <Link>
+      <AdditionalDependencies>setargv.obj;%(AdditionalDependencies)</AdditionalDependencies>
+    </Link>
   </ItemDefinitionGroup>
 </Project>
