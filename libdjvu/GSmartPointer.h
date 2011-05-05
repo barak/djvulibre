@@ -97,6 +97,8 @@
 #include "DjVuGlobal.h"
 #include "atomic.h"
 
+#include <stddef.h>
+
 #ifdef HAVE_NAMESPACES
 namespace DJVU {
 # ifdef NOT_DEFINED // Just to fool emacs c++ mode

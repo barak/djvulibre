@@ -70,6 +70,7 @@
 #include <stdio.h>
 #include <ctype.h>
 #include <locale.h>
+#include <stddef.h>
 #include <stdlib.h>
 
 static void 

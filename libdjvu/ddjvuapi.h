@@ -64,6 +64,7 @@ extern "C" {
 }
 #endif
 
+#include <stddef.h>
 #include <stdlib.h>
 #include <stdio.h>
 

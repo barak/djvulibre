@@ -105,6 +105,7 @@
 #include "GOS.h"
 #include "DjVuMessage.h"
 #include <locale.h>
+#include <stddef.h>
 #include <stdlib.h>
 
 

@@ -94,6 +94,7 @@
 #include "GURL.h"
 #include "DjVuMessage.h"
 #include <locale.h>
+#include <stddef.h>
 #include <stdlib.h>
 
 static const char *program = "(unknown)";

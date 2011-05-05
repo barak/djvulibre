@@ -22,6 +22,7 @@
 # endif
 # if HAVE_TIFF
 #  include <stdio.h>
+#  include <stddef.h>
 #  include <stdlib.h>
 #  include <tiff.h>
 #  include <tiffio.h>
