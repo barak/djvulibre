@@ -3,6 +3,7 @@ NEW SINCE VERSION 3.5.24
 - Removed the deprecated djview3 code.
 - Removed the deprecated cothreads code.
 - Removed the unmaintained japanese man pages.
+- Added ddjvu option to skip corrupted pages.
 
 
 NEW IN VERSION 3.5.24

@@ -178,6 +178,13 @@ select specific layers of a DjVu image.
 These modes can fail if the DjVu image does 
 not contain the selected layer.
 .RE
+.TP
+.BI "-skip"
+Instead of aborting when encountering a corrupted page,
+this option causes
+.BR ddjvu
+to simply skip the corrupted page and continue with the next.
+This is useful for processing certain damaged files.
 
 .SH RESOLUTION OPTIONS
 The following options control the resolution of the output image.  

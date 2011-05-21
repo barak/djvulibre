@@ -132,6 +132,7 @@ ddjvu_rect_t info_size;
 ddjvu_rect_t info_segment;
 const char  *inputfilename = 0;
 const char  *outputfilename = 0;
+int          flag_skip_corrupted = 0;
 
 #if HAVE_TIFF2PDF
 char *tempfilename = 0;
@@ -164,7 +165,6 @@ handle(int wait)
           if (msg->m_error.filename)
             fprintf(stderr,"ddjvu: '%s:%d'\n", 
                     msg->m_error.filename, msg->m_error.lineno);
-          exit(10);
         default:
           break;
         }
@@ -554,8 +554,16 @@ dopage(int pageno)
   while (! ddjvu_page_decoding_done(page))
     handle(TRUE);
   if (ddjvu_page_decoding_error(page))
-    die(i18n("Cannot decode page %d."), pageno);
-  
+    {
+      handle(FALSE);
+      fprintf(stderr,"ddjvu: ");
+      fprintf(stderr,i18n("Cannot decode page %d."), pageno);
+      fprintf(stderr,"\n");
+      if (flag_skip_corrupted)
+        return;
+      else
+        exit(10);
+    }
   timingdata[1] = ticks();
   /* Open files */
   if (flag_format == 't')
@@ -753,19 +761,20 @@ usage()
     i18n("DjVu decompression utility\n\n"
          "Usage: ddjvu [options] [<djvufile> [<outputfile>]]\n\n"
          "Options:\n"
-         "  -verbose          Prints various informational messages.\n"
-         "  -format=FMT       Selects output format: pbm,pgm,ppm,pnm,rle,tiff.\n"
-         "  -scale=N          Selects display scale.\n"
-         "  -size=WxH         Selects size of rendered image.\n"
-         "  -subsample=N      Selects direct subsampling factor.\n"
-         "  -aspect=no        Authorizes aspect ratio changes\n"
-         "  -segment=WxH+X+Y  Selects which segment of the rendered image\n"
-         "  -mode=black       Renders a meaningful bitonal image.\n"
-         "  -mode=mask        Only renders the mask layer.\n"
-         "  -mode=foreground  Only renders the foreground layer.\n"
-         "  -mode=background  Only renders the background layer.\n"
-         "  -page=PAGESPEC    Selects page(s) to be decoded.\n"
-         "  -quality=QUALITY  Specifies jpeg quality for lossy tiff output.\n"
+         "  -verbose          Print various informational messages.\n"
+         "  -format=FMT       Select output format: pbm,pgm,ppm,pnm,rle,tiff.\n"
+         "  -scale=N          Select display scale.\n"
+         "  -size=WxH         Select size of rendered image.\n"
+         "  -subsample=N      Select direct subsampling factor.\n"
+         "  -aspect=no        Authorize aspect ratio changes\n"
+         "  -segment=WxH+X+Y  Select which segment of the rendered image\n"
+         "  -mode=black       Render a meaningful bitonal image.\n"
+         "  -mode=mask        Only render the mask layer.\n"
+         "  -mode=foreground  Only render the foreground layer.\n"
+         "  -mode=background  Only render the background layer.\n"
+         "  -page=PAGESPEC    Select page(s) to be decoded.\n"
+         "  -skip             Skip corrupted pages instead of aborting.\n"
+         "  -quality=QUALITY  Specify jpeg quality for lossy tiff output.\n"
          "\n"
          "If <outputfile> is a single dash or omitted, the decompressed image\n"
          "is sent to the standard output.  If <djvufile> is a single dash or\n"
@@ -845,6 +854,12 @@ parse_option(int argc, char **argv, int i)
       if (arg) 
         die(i18n(errarg), opt);
       flag_verbose = 1;
+    }
+  if (!strcmp(opt,"skip"))
+    {
+      if (arg) 
+        die(i18n(errarg), opt);
+      flag_skip_corrupted = 1;
     }
   else if (!strcmp(opt,"scale"))
     {
@@ -1012,6 +1027,8 @@ main(int argc, char **argv)
     die(i18n("Cannot open djvu document '%s'."), inputfilename);
   while (! ddjvu_document_decoding_done(doc))
     handle(TRUE);
+  if (ddjvu_document_decoding_error(doc))
+    die(i18n("Cannot decode document."));
   
   /* Process all pages */
   i = ddjvu_document_get_pagenum(doc);
