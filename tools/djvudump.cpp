@@ -122,6 +122,9 @@ xxx
 #include <stddef.h>
 #include <stdlib.h>
 
+const char *outputfile = 0;
+FILE *outputf = stdout;
+
 void
 display(const GURL &url)
 {
@@ -134,7 +137,7 @@ display(const GURL &url)
    obs->seek(0);
    obs->readall(buf, size);
    GNativeString ns = str;
-   fputs((const char*)ns, stdout);
+   fputs((const char*)ns, outputf);
 }
 
 
@@ -146,7 +149,7 @@ usage()
           "DJVUDUMP --- DjVuLibre-" DJVULIBRE_VERSION "\n"
 #endif
           "Describes DjVu and IFF85 files\n\n"
-          "Usage: djvudump <iff_filenames>\n" );
+          "Usage: djvudump [-o outputfile] <iff_filenames>\n" );
   exit(1);
 }
 
@@ -156,24 +159,37 @@ main(int argc, char **argv)
   setlocale(LC_ALL,"");
   setlocale(LC_NUMERIC,"C");
   djvu_programname(argv[0]);
-  GArray<GUTF8String> dargv(0,argc-1);
+  // get output file name
+  if (argc>2 && !strcmp(argv[1],"-o"))
+    {
+      outputfile = argv[2];
+      argv += 2;
+      argc -= 2;
+    }
+  // convert iff file name
+  GArray<GUTF8String> dargv(0, argc-1);
   for(int i=0;i<argc;++i)
     dargv[i]=GNativeString(argv[i]);
-  G_TRY
+  if (argc <= 1)
+    usage();
+  if (outputfile && !(outputf = fopen(outputfile,"w")))
     {
-      if (argc<=1)
-        usage();
-      for (int i=1; i<argc; i++)
-      {
-        const GURL::Filename::UTF8 url(dargv[i]);
-        display(url);
-      }
-    }
-  G_CATCH(ex)
-    {
-      ex.perror();
+      DjVuPrintErrorUTF8("djvudump: Cannot open output file.\n");
       exit(1);
     }
+  G_TRY
+    {
+      for (int i=1; i<argc; i++)
+        {
+        const GURL::Filename::UTF8 url(dargv[i]);
+        display(url);
+        }
+    }
+  G_CATCH(ex)
+  {
+      ex.perror();
+      exit(1);
+  }
   G_ENDCATCH;
   return 0;
 }
