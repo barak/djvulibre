@@ -404,7 +404,7 @@ case "${host_cpu}-${host_os}" in
         ;;
 esac
 case "${host_os}-${GCC}" in
-        *linux*-yes)
+        *linux*-yes | *freebsd*-yes )
         # On Linux/GCC, libtool uses -nostdlib for linking, which cancel part
         # of the -pthread flag effect (libpthread is not automatically linked).
         # So we'll try to link with both -pthread and -lpthread first:
