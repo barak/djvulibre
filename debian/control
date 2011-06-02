@@ -1,5 +1,5 @@
 Source: djvulibre
-Section: web
+Section: libs
 Priority: optional
 Maintainer: Barak A. Pearlmutter <bap@debian.org>
 Build-Depends: autotools-dev (>= 20100122.1~),
