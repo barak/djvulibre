@@ -261,7 +261,8 @@ GLObject::print(ByteStream & str, int compact, int indent, int * cur_pos) const
     to_print=buffer.format("%d",number);
     break;
   case STRING:
-    to_print=make_c_string(string);
+    buffer=make_c_string(string);
+    to_print=(const char *)buffer;
     break;
   case SYMBOL:
     to_print=buffer.format("%s",(const char *)symbol);
