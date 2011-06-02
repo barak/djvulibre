@@ -1,3 +1,9 @@
+djvulibre (3.5.24-5) unstable; urgency=low
+
+  * fix kbsd pthreads linkage more gently
+
+ -- Barak A. Pearlmutter <bap@debian.org>  Thu, 02 Jun 2011 12:32:53 +0100
+
 djvulibre (3.5.24-4) unstable; urgency=low
 
   * merge upstream kbsd pthreads linkage mod (closes: #628800)
