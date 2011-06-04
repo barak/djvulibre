@@ -855,7 +855,7 @@ parse_option(int argc, char **argv, int i)
         die(i18n(errarg), opt);
       flag_verbose = 1;
     }
-  if (!strcmp(opt,"skip"))
+  else if (!strcmp(opt,"skip"))
     {
       if (arg) 
         die(i18n(errarg), opt);

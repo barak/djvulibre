@@ -721,7 +721,6 @@ tiff2pdf(TIFF *input, FILE *outputfile, int argc, const char **argv)
   const char *outfilename = "<null>";
   T2P *t2p = NULL;
   TIFF *output = NULL;
-  tsize_t written=0;
   int c;
 
   /* T2P */
@@ -874,7 +873,7 @@ tiff2pdf(TIFF *input, FILE *outputfile, int argc, const char **argv)
   TIFFSeekFile(output, (toff_t) 0, SEEK_SET);
 
   /* Write */
-  written = t2p_write_pdf(t2p, input, output);
+  t2p_write_pdf(t2p, input, output);
   if(t2p->t2p_error != 0){
     TIFFError(TIFF2PDF_MODULE, "An error occurred creating output PDF file");
     goto fail;
@@ -2633,7 +2632,6 @@ static tsize_t t2p_readwrite_pdf_image_tile(T2P* t2p, TIFF* input, TIFF* output,
 	tsize_t read=0;
 	uint16 i=0;
 	ttile_t tilecount=0;
-	tsize_t tilesize=0;
 	ttile_t septilecount=0;
 	tsize_t septilesize=0;
 #ifdef JPEG_SUPPORT
@@ -2819,7 +2817,6 @@ static tsize_t t2p_readwrite_pdf_image_tile(T2P* t2p, TIFF* input, TIFF* output,
 		if(t2p->pdf_sample == T2P_SAMPLE_PLANAR_SEPARATE_TO_CONTIG){
 			septilesize=TIFFTileSize(input);
 			septilecount=TIFFNumberOfTiles(input);
-			tilesize=septilesize*t2p->tiff_samplesperpixel;
 			tilecount=septilecount/t2p->tiff_samplesperpixel;
 			buffer = (unsigned char*) _TIFFmalloc(t2p->tiff_datasize);
 			if(buffer==NULL){
@@ -3802,7 +3799,6 @@ static tsize_t t2p_write_pdf_info(T2P* t2p, TIFF* input, TIFF* output){
 	tsize_t written=0;
 	char* info;
 	char buffer[512];
-	int buflen=0;
 	
 	if(t2p->pdf_datetime==NULL){
 		t2p_pdf_tifftime(t2p, input);
@@ -3815,7 +3811,8 @@ static tsize_t t2p_write_pdf_info(T2P* t2p, TIFF* input, TIFF* output){
 	}
 	written += TIFFWriteFile(output, (tdata_t) "\r/Producer ", 11);
 	_TIFFmemset((tdata_t)buffer, 0x00, 512);
-	buflen=sprintf(buffer, "libtiff / tiff2pdf - %d / %s", TIFFLIB_VERSION, T2P_VERSION);
+	sprintf(buffer, "libtiff / tiff2pdf - %d / %s", 
+                TIFFLIB_VERSION, T2P_VERSION);
 	written += t2p_write_pdf_string(buffer, output);
 	written += TIFFWriteFile(output, (tdata_t) "\r", 1);
 	if(t2p->pdf_creator != NULL){ 

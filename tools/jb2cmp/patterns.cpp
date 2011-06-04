@@ -303,11 +303,8 @@ static int32 distance_by_pixeldiff_functions(Image *i1, Image *i2,
     int32 (*compare_row)(byte *, byte *, int32),
     int32 (*compare_with_white)(byte *, int32), int32 ceiling)
 {
-    byte **p1, **p2;
     int32 w1, w2, h1, h2;
     int32 shift_x, shift_y; /* of i1's coordinate system with respect to i2 */
-    /*int32 s = 0, i, i_start, i_cap;
-    int32 right_margin_start, right_margin_width;*/
 
     /* make i1 to be narrower than i2 */
     if (i1->width > i2->width)
@@ -317,8 +314,8 @@ static int32 distance_by_pixeldiff_functions(Image *i1, Image *i2,
         i2 = img;
     }
 
-    w1 = i1->width; h1 = i1->height; p1 = i1->pixels;
-    w2 = i2->width; h2 = i2->height; p2 = i2->pixels;
+    w1 = i1->width; h1 = i1->height;
+    w2 = i2->width; h2 = i2->height; 
 
     /* (shift_x, shift_y) */
     /*     is what should be added to i1's coordinates to get i2's coordinates. */
@@ -339,86 +336,6 @@ static int32 distance_by_pixeldiff_functions(Image *i1, Image *i2,
 
     return distance_by_pixeldiff_functions_by_shift(
         i1, i2, compare_row, compare_with_white, ceiling, shift_x, shift_y);
-
-/* FIXME */
-#if 0
-    /* Compute difference in the non-overlapping top margin */
-
-    if (shift_y < 0)
-    {
-        /* i1 has top rows not covered by i2 */
-        i_cap = -shift_y;
-        for (i = 0; i < i_cap; i++)
-        {
-            assert(i >= 0 && i < h1);
-            s += compare_with_white(p1[i], w1);
-            if (s > ceiling) return maxint;
-        }
-        i_start = i_cap; /* topmost overlapping row in i1's coords */
-    }
-    else
-    {
-        /* i2 has top rows not covered by i1 */
-        for (i = 0; i < shift_y; i++)
-        {
-            assert(i >= 0 && i < h2);
-            s += compare_with_white(p2[i], w2);
-            if (s > ceiling) return maxint;
-        }
-        i_start = 0;
-    }
-
-    /* Compute difference in the overlapping area */
-
-    i_cap = h2 - shift_y;
-    if (h1 < i_cap) i_cap = h1;
-
-    right_margin_start = shift_x + w1;
-    right_margin_width = w2 - right_margin_start;
-
-    for (i = i_start; i < i_cap; i++) /* i is a coordinate in i1 system */
-    {
-        int32 y = i + shift_y; /* same row coordinate in i2 system */
-        assert(y >= 0 && y < h2);
-        s += compare_with_white(p2[y], shift_x);
-        if (s > ceiling) return maxint;
-        assert(i >= 0 && i < h1);
-        assert(shift_x + w1 <= w2);
-        assert(i < h1);
-        s += compare_row(p2[y] + shift_x, p1[i], w1);
-        if (s > ceiling) return maxint;
-        s += compare_with_white(p2[y] + right_margin_start, right_margin_width);
-        if (s > ceiling) return maxint;
-    }
-
-
-    /* Compute difference in the non-overlapping bottom margin */
-
-    if (i_cap == h1)
-    {
-        /* i2 has bottom rows not covered by i1 */
-        i_start = i_cap + shift_y;
-        for (i = i_start; i < h2; i++)
-        {
-            assert(i >= 0 && i < h2);
-            s += compare_with_white(p2[i], w2);
-            if (s > ceiling) return maxint;
-        }
-    }
-    else
-    {
-        /* i1 has bottom rows not covered by i2 */
-        i_start = i_cap;
-        for (i = i_cap; i < h1; i++)
-        {
-            assert(i >= 0 && i < h1);
-            s += compare_with_white(p1[i], w1);
-            if (s > ceiling) return maxint;
-        }
-    }
-
-    return s;
-#endif
 }
 
 #endif
