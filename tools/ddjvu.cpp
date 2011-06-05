@@ -846,7 +846,6 @@ parse_option(int argc, char **argv, int i)
       arg = opt;
       opt = "subsample";
     }
-  
   /* Parse options */
   if (!strcmp(opt,"v") ||
       !strcmp(opt,"verbose"))
