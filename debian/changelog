@@ -1,3 +1,10 @@
+djvulibre (3.5.24-6) unstable; urgency=low
+
+  * upstream GCC 4.6 fixes
+  * upstream MMX fix addresses 32-bit MMX issue (closes: #629235)
+
+ -- Barak A. Pearlmutter <bap@debian.org>  Sun, 05 Jun 2011 08:08:01 +0100
+
 djvulibre (3.5.24-5) unstable; urgency=low
 
   * fix kbsd pthreads linkage more gently
