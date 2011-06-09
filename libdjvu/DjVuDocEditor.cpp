@@ -561,6 +561,7 @@ DjVuDocEditor::insert_file(const GURL &file_url, bool is_page,
        IFFByteStream::create(file_pool->get_stream()));
     IFFByteStream &iff=*giff;
     GUTF8String chkid;
+    iff.get_chunk(chkid);
     if (chkid!="FORM:DJVI" && chkid!="FORM:DJVU" &&
         chkid!="FORM:BM44" && chkid!="FORM:PM44")
       G_THROW( ERR_MSG("DjVuDocEditor.not_1_page") "\t"
