@@ -1288,7 +1288,7 @@ Comments::textmark(GP<TxtMark> mark)
       int shx = (mark->x - lastx) * 100 / fontsize;
       int shy = (mark->y - lasty) * 100 / fontsize;
       int inter = dirx * shx + diry * shy;
-      if ( (dirx == lastdirx) && (diry == lastdiry) &&
+      if ( (dirx || diry) && (dirx == lastdirx) && (diry == lastdiry) &&
            (inter > -150) && (inter < 300) && 
            abs(diry * shx + dirx * shy) < 80 )
         mark->inter = inter;
