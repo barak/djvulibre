@@ -1619,7 +1619,7 @@ ddjvu_anno_get_metadata(miniexp_t annotations, miniexp_t key);
    Returns zero if no such key is present. */
 
 DDJVUAPI const char *
-ddjvu_anno_get_xmp(miniexp_t annotations, miniexp_t xmp);
+ddjvu_anno_get_xmp(miniexp_t annotations);
 
 
 /* -------------------------------------------------- */
