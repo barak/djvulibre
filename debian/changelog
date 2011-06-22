@@ -1,3 +1,9 @@
+djvulibre (3.5.24-8) unstable; urgency=low
+
+  * ddjvu_anno_get_xmp consistent prototype vs implementation (closes: #613547)
+
+ -- Barak A. Pearlmutter <bap@debian.org>  Wed, 22 Jun 2011 11:48:22 +0100
+
 djvulibre (3.5.24-7) unstable; urgency=low
 
   * upstream fix to page extraction bug (closes: #629941)
