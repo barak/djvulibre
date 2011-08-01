@@ -17,8 +17,12 @@ endif
 testlibver:
 	@echo library major version: upstream $(libver0), debian $(libver) $(libver1) $(libver2)
 
-build clean install binary-arch binary-indep binary:
+dh_targets=binary binary-arch binary-indep build build-arch build-indep clean install
+
+$(dh_targets) %:
 	dh $@ --with autotools_dev --parallel
+
+.PHONY: $(dh_targets)
 
 configure_options += --disable-desktopfiles
 configure_options += --enable-static
@@ -84,5 +88,4 @@ override_dh_strip:
 override_dh_makeshlibs:
 	dh_makeshlibs --version-info --exclude=/plugins
 
-.PHONY: build clean install binary-arch binary-indep binary
 .PHONY: testlibver
