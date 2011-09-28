@@ -1,3 +1,9 @@
+djvulibre (3.5.24-9) unstable; urgency=low
+
+  * single debian patch source option (closes: #643094)
+
+ -- Barak A. Pearlmutter <bap@debian.org>  Wed, 28 Sep 2011 16:57:18 +0100
+
 djvulibre (3.5.24-8) unstable; urgency=low
 
   * ddjvu_anno_get_xmp consistent prototype vs implementation (closes: #613547)
