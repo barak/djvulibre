@@ -26,7 +26,7 @@ AC_PREREQ([2.65])
 AC_INIT([djvulibre],[3.5.24])
 AC_CONFIG_AUX_DIR(config)
 AC_CONFIG_MACRO_DIR(config)
-AC_CONFIG_SRCDIR(INSTALL)
+AC_CONFIG_SRCDIR(libdjvu/ddjvuapi.cpp)
 AC_CONFIG_HEADER(config.h:config/config.h.in)
 AC_PREFIX_DEFAULT(/usr/local)
 AC_CANONICAL_HOST
@@ -108,7 +108,6 @@ RM="$RM -f"
 
 # Libtool & Compilers
 AC_DISABLE_STATIC
-AC_PROG_RANLIB
 LT_INIT
 AC_PROG_CC
 AC_PROG_CXX
