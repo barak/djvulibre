@@ -480,7 +480,7 @@ command_ls(ParsingByteStream &)
       else if (f->is_include())
         fprintf(stdout,"     I ");
       else if (f->is_thumbnails())
-        fprintf(stdout,"     T ");
+        continue;
       else if (f->is_shared_anno())
         fprintf(stdout,"     A ");
       else
