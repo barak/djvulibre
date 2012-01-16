@@ -142,9 +142,13 @@ dopage(int pageno)
   const char *lvl = (detail) ? detail : "page";
   while ((r = ddjvu_document_get_pagetext(doc,pageno-1,lvl))==miniexp_dummy)
     handle(TRUE);
-  minilisp_print_7bits = escape;
   if (detail)
-    miniexp_pprint(r, 72);
+    {
+      miniexp_io_t io;
+      miniexp_io_init(&io);
+      io.print_7bits = escape;
+      miniexp_pprint_r(&io, r, 72);
+    }
   else if ((r = miniexp_nth(5, r)) && miniexp_stringp(r))
     {
       const char *s = miniexp_to_str(r); 
