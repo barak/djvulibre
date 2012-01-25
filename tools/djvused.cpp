@@ -150,6 +150,7 @@ public:
   inline int get();
   int get_spaces(bool skipseparator=false);
   GUTF8String get_token(bool skipseparator=false, bool compat=false);
+  const char *get_error_context(int c=EOF);
 };
 
 ParsingByteStream::ParsingByteStream(const GP<ByteStream> &xgbs)
@@ -261,6 +262,19 @@ ParsingByteStream::get_spaces(bool skipseparator)
    return c;
 }
   
+const char *
+ParsingByteStream::get_error_context(int c)
+{
+  static char buffer[22];
+  unget(c);
+  int len = read((void*)buffer, sizeof(buffer)-1);
+  buffer[(len>0)?len:0] = 0;
+  for (int i=0; i<len; i++)
+    if (buffer[i]=='\n')
+      buffer[i] = 0;
+  return buffer;
+}
+
 GUTF8String
 ParsingByteStream::get_token(bool skipseparator, bool compat)
 {
@@ -1507,25 +1521,26 @@ construct_djvutxt_sub(ParsingByteStream &pbs,
   // Get zone type
   c = pbs.get_spaces(true);
   if (c != '(')
-    verror("syntax error in txt data: got '%c', expecting '('", c);
+    verror("syntax error in txt data: expecting '(',\n\tnear '%s'", 
+           pbs.get_error_context(c) );
   token = pbs.get_token(true);
   int zinfo;
   for (zinfo=0; zone_names()[zinfo].name; zinfo++)
     if (token == zone_names()[zinfo].name)
       break;
   if (! zone_names()[zinfo].name)
-    verror("Syntax error in txt data: undefined token '%s'",
-           (const char*)ToNative(token));
+    verror("Syntax error in txt data: undefined token '%s',\n\tnear '%s'",
+           (const char*)ToNative(token), pbs.get_error_context());
   zone.ztype = zone_names()[zinfo].ztype;
   if (zone.ztype<mintype || (exact && zone.ztype>mintype))
-    verror("Syntax error in txt data: illegal zone token '%s'",
-           (const char*)ToNative(token));           
+    verror("Syntax error in txt data: illegal zone token '%s',\n\tnear '%s'",
+           (const char*)ToNative(token), pbs.get_error_context());           
   // Get zone rect
   GUTF8String str;
   str = pbs.get_token(true);
   if (!str || !str.is_int()) 
-    nerror: verror("Syntax error in txt data: number expected, got '%s'",
-                   (const char*)ToNative(str));  
+    nerror: verror("Syntax error in txt data: number expected,\n\tnear '%s%s'",
+                   (const char*)ToNative(str), pbs.get_error_context());  
   zone.rect.xmin = atoi(str);
   str = pbs.get_token(true);
   if (!str || !str.is_int()) 
@@ -1569,7 +1584,8 @@ construct_djvutxt_sub(ParsingByteStream &pbs,
       while (c != ')')
         {
           if (c != '(')
-            verror("Syntax error in txt data: expecting subzone");
+            verror("Syntax error in text data: expecting subzone,\n\tnear '%s'",
+                   pbs.get_error_context() );
           DjVuTXT::Zone *nzone = zone.append_child();
           construct_djvutxt_sub(pbs, txt, *nzone, zone.ztype+1, false);
           c = pbs.get_spaces(true);
@@ -1579,7 +1595,8 @@ construct_djvutxt_sub(ParsingByteStream &pbs,
   // Skip last parenthesis
   c = pbs.get_spaces(true);
   if (c != ')')
-    verror("Syntax error in txt data: missing parenthesis");
+    verror("Syntax error in text data: missing parenthesis,\n\tnear '%s'",
+           pbs.get_error_context(c) );
 }
 
 GP<DjVuTXT>
@@ -1793,11 +1810,13 @@ construct_outline_sub(ParsingByteStream &pbs, GP<DjVmNav> nav, int &count)
   GUTF8String name, url;
   GP<DjVmNav::DjVuBookMark> mark;
   if ((c = pbs.get_spaces(true)) != '\"')
-    verror("Syntax error in outline data: expecting name string.");    
+    verror("Syntax error in outline: expecting name string,\n\tnear '%s'.",
+           pbs.get_error_context(c) );    
   pbs.unget(c);
   name = pbs.get_token();
   if ((c = pbs.get_spaces(true)) != '\"')
-    verror("Syntax error in outline data: expecting url string.");    
+    verror("Syntax error in outline: expecting url string,\n\tnear '%s'.",
+           pbs.get_error_context(c) );    
   pbs.unget(c);
   url = pbs.get_token();
   mark = DjVmNav::DjVuBookMark::create(0, name, url);
@@ -1806,7 +1825,8 @@ construct_outline_sub(ParsingByteStream &pbs, GP<DjVmNav> nav, int &count)
   while ((c = pbs.get_spaces(true)) == '(')
     construct_outline_sub(pbs, nav, mark->count);
   if (c != ')')
-    verror("Syntax error in outline data: expecting ')'.");
+    verror("Syntax error in outline: expecting ')',\n\tnear '%s'.",
+           pbs.get_error_context(c) );    
 }
 
 GP<DjVmNav>
@@ -1818,15 +1838,17 @@ construct_outline(ParsingByteStream &pbs)
   if (c == EOF)
     return 0;
   if (c!='(')
-    verror("Syntax error in outline data: expecting '(bookmarks ...'");
+    verror("Syntax error in outline data: expecting '(bookmarks'");
   if (pbs.get_token()!="bookmarks")
-    verror("Syntax error in outline data: expecting 'bookmarks ...'");    
+    verror("Syntax error in outline data: expecting '(bookmarks'");    
   while ((c = pbs.get_spaces(true)) == '(')
     construct_outline_sub(pbs, nav, count);
   if (c != ')')
-    verror("Syntax error in outline data: expecting ')'.");
+    verror("Syntax error in outline: expecting parenthesis,\n\tnear '%s'.",
+           pbs.get_error_context(c) );
   if (pbs.get_spaces(true) != EOF)
-    verror("Syntax error in outline data: garbage after last ')'");
+    verror("Syntax error in outline: garbage after last ')',\n\tnear '%s'",
+           pbs.get_error_context(c) );
   if (nav->getBookMarkCount() < 1)
     return 0;
   if (!nav->isValidBookmark())
