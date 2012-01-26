@@ -1614,6 +1614,10 @@ read_miniexp(miniexp_io_t *io, int &c)
         {
           return read_quoted_symbol(io, c);
         }
+      else if (c == '#')
+        {
+          return read_error(io, c);
+        }
       else if (io->p_macrochar && io->p_macroqueue 
                && c >= 0 && c < 128 
                && io->p_macrochar[c])
