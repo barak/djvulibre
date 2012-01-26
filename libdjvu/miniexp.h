@@ -472,7 +472,7 @@ MINILISPAPI void minilisp_finish(void);
    of a minilisp expression. Set argument <width> to zero
    to output a single line, or to a positive value to
    perform pretty line breaks for this intended number of columns.
-   These functions can cause a garbage collection to occur. */
+   This function can cause a garbage collection to occur. */
 
 MINILISPAPI miniexp_t miniexp_pname(miniexp_t p, int width);
 
