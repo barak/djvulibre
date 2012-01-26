@@ -478,13 +478,19 @@ MINILISPAPI miniexp_t miniexp_pname(miniexp_t p, int width);
 
 
 /* miniexp_io_t -- 
-   This structure is used to describe how to perform input/output operations.
-   Input/output operations are performed through function pointers <fputs>,
-   <fgetc>, and <ungetc>, which are similar to their stdio counterparts. When
-   flag <print_7bits> is set, all non-ascii characters in strings are output
-   as octal escapes. Variable <data> defines four pointers that can be used as
-   a closure by the I/O functions. Variable <macrochar> and <macroqueue> are 
-   explained later in the documentation for <miniexp_macrochar>. */
+   This structure is used to describe how to perform input/output
+   operations. Input/output operations are performed through function 
+   pointers <fputs>, <fgetc>, and <ungetc>, which are similar to their 
+   stdio counterparts. Variable <data> defines four pointers that can 
+   be used as a closure by the I/O functions.
+      When <p_print7bits> is nonzero and points to a nonzero integer, all
+   non-ascii characters in strings are output as octal escapes. When both
+   <p_macrochar> and <p_macroqueue> are non zero, a non zero entry in
+   <p_macrochar[c]> defines a special parsing function that is called when
+   <miniexp_read_r> encounters the character <c> (in range 0 to 127.) The
+   parsing function returns a list of <miniexp_t> that function
+   <miniexp_read_r> returns one-by-one before processing more input. This 
+   list is in fact stored in the variable pointed by <io.p_macroqueue>.  */
 
 typedef struct miniexp_io_s miniexp_io_t;
 typedef miniexp_t (*miniexp_macrochar_t)(miniexp_io_t*);
@@ -494,15 +500,17 @@ struct miniexp_io_s
   int (*fputs)(miniexp_io_t*, const char*);
   int (*fgetc)(miniexp_io_t*);
   int (*ungetc)(miniexp_io_t*, int);
-  int print_7bits;
-  miniexp_macrochar_t *macrochar;
-  minivar_t *macroqueue;
+  int *p_print7bits;
+  miniexp_macrochar_t *p_macrochar;
+  minivar_t *p_macroqueue;
   void *data[4];
 };
 
 /* miniexp_io_init --
    Initialize a default <miniexp_io_t> structure
-   that reads from stdin and prints to stdout. */
+   that reads from stdin and prints to stdout. 
+   It also initializes <p_print7bits>, <p_macrochar>,
+   and <p_macroqueue> to shared values. */
 
 MINILISPAPI void miniexp_io_init(miniexp_io_t *io);
 
@@ -543,7 +551,7 @@ MINILISPAPI miniexp_t miniexp_pprint_r(miniexp_io_t *io, miniexp_t p, int w);
    Variable <miniexp_io> contains the pre-initialized input/output data
    structure that is used by the non-reentrant input/output functions. */
 
-extern MINILISPAPI miniexp_io_t minilisp_io;
+extern MINILISPAPI miniexp_io_t miniexp_io;
 MINILISPAPI miniexp_t miniexp_read(void);
 MINILISPAPI miniexp_t miniexp_prin(miniexp_t p);
 MINILISPAPI miniexp_t miniexp_print(miniexp_t p);
@@ -567,9 +575,8 @@ extern MINILISPAPI minivar_t miniexp_macroqueue;
 extern MINILISPAPI int (*minilisp_puts)(const char *);
 extern MINILISPAPI int (*minilisp_getc)(void);
 extern MINILISPAPI int (*minilisp_ungetc)(int);
+extern MINILISPAPI miniexp_t (*minilisp_macrochar_parser[128])(void);
 extern MINILISPAPI int minilisp_print_7bits;
-#define minilisp_print_7bits (minilisp_io.print_7bits)
-#define minilisp_macrochar_parser ((miniexp_t(**)())miniexp_macrochar)
 #if defined(stdin)
 MINILISPAPI void minilisp_set_output(FILE *f);
 MINILISPAPI void minilisp_set_input(FILE *f);

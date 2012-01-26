@@ -146,7 +146,7 @@ dopage(int pageno)
     {
       miniexp_io_t io;
       miniexp_io_init(&io);
-      io.print_7bits = escape;
+      io.p_print7bits = &escape;
       miniexp_pprint_r(&io, r, 72);
     }
   else if ((r = miniexp_nth(5, r)) && miniexp_stringp(r))
