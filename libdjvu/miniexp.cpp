@@ -761,7 +761,7 @@ miniobj_t::pname() const
 {
   const char *cname = miniexp_to_name(classof());
   char *res = new char[strlen(cname)+24];
-  sprintf(res,"#<%s:%p>",cname,this);
+  sprintf(res,"#%s:<%p>",cname,this);
   return res;
 }
 
@@ -1033,10 +1033,11 @@ extern "C"
 
 
 miniexp_io_t miniexp_io = { 
-  stdio_fputs, stdio_fgetc, stdio_ungetc, 
+  stdio_fputs, stdio_fgetc, stdio_ungetc, { 0, 0, 0, 0 },
   (int*)&minilisp_print_7bits,
   (miniexp_macrochar_t*)minilisp_macrochar_parser, 
-  (minivar_t*)&minilisp_macroqueue
+  (minivar_t*)&minilisp_macroqueue,
+  0
 };  
 
 int (*minilisp_puts)(const char *) = compat_puts;
@@ -1049,10 +1050,11 @@ miniexp_io_init(miniexp_io_t *io)
   io->fputs = stdio_fputs;
   io->fgetc = stdio_fgetc;
   io->ungetc = stdio_ungetc;
+  io->data[0] = io->data[1] = io->data[2] = io->data[3] = 0;
   io->p_print7bits = (int*)&minilisp_print_7bits;;
   io->p_macrochar = (miniexp_macrochar_t*)minilisp_macrochar_parser;
   io->p_macroqueue = (minivar_t*)&minilisp_macroqueue;
-  io->data[0] = io->data[1] = io->data[2] = io->data[3] = 0;
+  io->p_reserved = 0;
 }
 
 void 
@@ -1141,7 +1143,7 @@ printer_t::print(miniexp_t p)
     }
   else if (p == miniexp_dummy)
     {
-      mlput("#<dummy>");
+      mlput("#dummy");
     }
   else if (miniexp_numberp(p))
     {

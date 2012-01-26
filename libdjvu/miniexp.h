@@ -500,17 +500,20 @@ struct miniexp_io_s
   int (*fputs)(miniexp_io_t*, const char*);
   int (*fgetc)(miniexp_io_t*);
   int (*ungetc)(miniexp_io_t*, int);
+  void *data[4];
   int *p_print7bits;
   miniexp_macrochar_t *p_macrochar;
   minivar_t *p_macroqueue;
-  void *data[4];
+  minivar_t *p_reserved;
 };
 
 /* miniexp_io_init --
    Initialize a default <miniexp_io_t> structure
    that reads from stdin and prints to stdout. 
-   It also initializes <p_print7bits>, <p_macrochar>,
-   and <p_macroqueue> to shared values. */
+   Field <data[0]> is used to hold the stdin file pointer.
+   Field <data[1]> is used to hold the stdout file pointer.
+   Fields <p_print7bits>, <p_macrochar>, and <p_macroqueue> 
+   are set to point to shared variables. */
 
 MINILISPAPI void miniexp_io_init(miniexp_io_t *io);
 
