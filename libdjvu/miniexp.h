@@ -461,7 +461,7 @@ MINILISPAPI void minilisp_finish(void);
      representation of the cdr.
 
    - When the parser encounters an ascii character corresponding
-     to a non zero function pointer in <minilisp_macrochar_parser>,
+     to a non zero function pointer in the macrocharacter array,
      the function is invoked and must return a possibly empty
      list of miniexps to be returned by subsequent 
      invocations of the parser. */
