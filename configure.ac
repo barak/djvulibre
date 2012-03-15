@@ -23,7 +23,7 @@
 # ----------------------------------------
 
 AC_PREREQ([2.65])
-AC_INIT([djvulibre],[3.5.24])
+AC_INIT([djvulibre],[3.5.25])
 AC_CONFIG_AUX_DIR(config)
 AC_CONFIG_MACRO_DIR(config)
 AC_CONFIG_SRCDIR(libdjvu/ddjvuapi.cpp)

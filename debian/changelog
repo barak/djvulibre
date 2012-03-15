@@ -1,3 +1,9 @@
+djvulibre (3.5.25-1) unstable; urgency=low
+
+  * new upstream version
+
+ -- Leon Bottou <leon@bottou.org>  Thu, 15 Mar 2012 15:32:02 +0900
+
 djvulibre (3.5.24-9) unstable; urgency=low
 
   * single debian patch source option (closes: #643094)
