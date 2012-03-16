@@ -28,31 +28,31 @@ bzz \- DjVu general purpose compression utility.
 
 .SH SYNOPSIS
 .SS Encoding:
-.BI "bzz -e" "[blocksize]" " " "inputfile" " " "outputfile"
+.BI "bzz \-e" "[blocksize]" " " "inputfile" " " "outputfile"
 .SS Decoding:
-.BI "bzz -d " "inputfile" " " "outputfile"
+.BI "bzz \-d " "inputfile" " " "outputfile"
 .PP
 
 .SH DESCRIPTION
 The first form of the command line (option 
-.B -e
-) compresses the data from file
+.BR \-e )
+compresses the data from file
 .I inputfile 
 and writes the compressed data into 
 .IR outputfile .
 The second form of the command line (option
-.B -d
-) decompressed file
+.BR \-d )
+decompressed file
 .I inputfile
 and writes the output to
 .IR outputfile .
 
 .SH OPTIONS
 .TP
-.B "-d"
+.B "\-d"
 Decoding mode.
 .TP
-.BI "-e" "[blocksize]"
+.BI "\-e" "[blocksize]"
 Encoding mode.
 The optional argument 
 .I blocksize
@@ -112,8 +112,8 @@ Compression performance
 	html	lisp	man	play	Weighted	Average
 =
 \0compress\0	3.27	0.97	3.56	2.41	4.21	3.06	3.38	3.68	3.90	4.43	3.51	2.55	3.31
-\0gzip -9\0	2.85	0.82	2.24	1.63	2.67	2.71	3.23	2.59	2.65	3.31	3.12	2.08	2.53
-\0bzip2 -9\0	2.27	0.78	2.18	1.01	2.70	2.02	2.42	2.48	2.79	3.33	2.53	1.54	2.23
+\0gzip \-9\0	2.85	0.82	2.24	1.63	2.67	2.71	3.23	2.59	2.65	3.31	3.12	2.08	2.53
+\0bzip2 \-9\0	2.27	0.78	2.18	1.01	2.70	2.02	2.42	2.48	2.79	3.33	2.53	1.54	2.23
 \0ppmd\0	2.31	0.99	2.11	1.08	2.68	2.19	2.48	2.38	2.43	3.00	2.53	1.65	2.20
 \0fsmx\0	2.10	0.79	1.89	1.48	2.52	1.84	2.21	2.24	2.29	2.91	2.35	1.63	2.06
 \0bzz\0	2.25	0.76	2.13	0.78	2.67	2.00	2.40	2.52	2.60	3.19	2.52	1.44	2.16
