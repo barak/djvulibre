@@ -3,7 +3,7 @@ Section: libs
 Priority: optional
 Maintainer: Barak A. Pearlmutter <bap@debian.org>
 Build-Depends: dh-autoreconf,
-	       debhelper (>= 8),
+	       debhelper (>= 9),
 	       libx11-dev,
 	       libxext-dev,
 	       libxt-dev,
