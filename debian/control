@@ -2,6 +2,7 @@ Source: djvulibre
 Section: libs
 Priority: optional
 Maintainer: Barak A. Pearlmutter <bap@debian.org>
+Uploaders: Leon Bottou <leonb@bottou.org>
 Build-Depends: dh-autoreconf,
 	       debhelper (>= 9),
 	       libx11-dev,
