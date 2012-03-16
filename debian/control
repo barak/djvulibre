@@ -14,7 +14,7 @@ Build-Depends: dh-autoreconf,
 Vcs-Git: git://git.debian.org/git/collab-maint/djvulibre.git
 Vcs-Browser: http://git.debian.org/?p=collab-maint/djvulibre.git
 Homepage: http://djvu.sourceforge.net/
-Standards-Version: 3.9.2
+Standards-Version: 3.9.3
 
 Package: libdjvulibre-dev
 Section: libdevel
