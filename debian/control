@@ -38,7 +38,6 @@ Description: Development files for the DjVu image format
  color.
 
 Package: libdjvulibre21
-Section: libs
 Architecture: any
 Depends: ${shlibs:Depends}, ${misc:Depends}, libdjvulibre-text (>= ${binary:Version})
 Conflicts: libdjvulibre1
@@ -47,7 +46,6 @@ Description: Runtime support for the DjVu image format
  DjVu runtime library.
 
 Package: libdjvulibre-text
-Section: libs
 Architecture: any
 Depends: ${misc:Depends}
 Replaces: libdjvulibre15, djview3 (= 3.5.20-9), djvulibre-desktop (<< 3.5.20-9)
@@ -63,7 +61,6 @@ Description: Debug symbols for the DjVu image format
  DjVu runtime debug symbols.
 
 Package: djvulibre-desktop
-Section: libs
 Architecture: any
 Depends: ${misc:Depends}
 Suggests: djview4 | djvu-viewer | evince
