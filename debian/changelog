@@ -1,8 +1,21 @@
 djvulibre (3.5.25-1) unstable; urgency=low
 
+  [ Leon Bottou ]
   * new upstream version
 
- -- Leon Bottou <leon@bottou.org>  Thu, 15 Mar 2012 15:32:02 +0900
+  [ Barak A. Pearlmutter ]
+  * bump debian standards version
+  * bump to dh 9
+  * add Leon Bottou as co-maintainer
+  * updates for multiarch
+    - update debian/*.install for multiarch: /usr/lib/ to /usr/lib/ARCH/
+    - ibid for pkgconfig
+    - debian/control shared library Pre-Depends: multiarch-support
+  * use NEWS file as upstream changelog
+  * minor lintian-suggested tweaks to debian/control
+  * merge minor upstream changes
+
+ -- Barak A. Pearlmutter <bap@debian.org>  Fri, 16 Mar 2012 16:54:05 +0000
 
 djvulibre (3.5.24-9) unstable; urgency=low
 
