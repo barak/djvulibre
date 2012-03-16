@@ -79,6 +79,9 @@ override_dh_install:
 # 	@echo "remove from djvulibre-bin, not in Debian: needs gsdjvu, direct complaints to AT&T"
 # 	find debian/djvulibre-bin -name djvudigital\* -print -delete
 
+override_dh_installchangelogs:
+	dh_installchangelogs --keep NEWS
+
 override_dh_compress:
 	dh_compress --exclude=.djvu
 
