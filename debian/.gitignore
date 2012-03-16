@@ -1,6 +1,8 @@
 /*.debhelper
 /*.log
 /*.substvars
+/autoreconf.after
+/autoreconf.before
 /djview/
 /djview3/
 /djvulibre-bin/
