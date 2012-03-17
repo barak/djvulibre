@@ -1685,12 +1685,15 @@ miniexp_t miniexp_pprint(miniexp_t p, int w)
 void 
 minilisp_set_output(FILE *f)
 {
+  minilisp_puts = compat_puts;
   miniexp_io_set_output(&miniexp_io, f);
 }
 
 void 
 minilisp_set_input(FILE *f)
 {
+  minilisp_getc = compat_getc;
+  minilisp_ungetc = compat_ungetc;
   miniexp_io_set_input(&miniexp_io, f);
 }
 
