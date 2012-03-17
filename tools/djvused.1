@@ -282,6 +282,11 @@ This command only selects the shared annotation component file if such
 a component file already exists.  Otherwise it creates a new shared
 annotation component file and makes sure that it is imported by all
 pages in the document.
+.TP
+.BI "showsel"
+Shows the currently selected component files
+with the same format as command
+.BR ls .
 
 .SS Text and annotation commands
 .TP
@@ -378,6 +383,10 @@ a double-quoted string representing the
 .SM UTF-8
 encoded meta-data value.
 .TP
+.BI "remove-meta"
+Remove the meta-data part of the annotations of 
+the selected component files.
+.TP
 .BI "set-meta [" "djvusedmetafile" "]"
 Set the meta-data part of the annotations of the selected component file.
 The remaining part of the annotations is left unchanged.
@@ -427,6 +436,9 @@ with option
 .BI "print-outline"
 Print the outline of the document.
 Nothing is printed if the document contains no outline.
+.TP
+.BI "remove-outline"
+Removes the outline from the document.
 .TP
 .BI "set-outline [" djvusedoutlinefile "]"
 Insert outline information into the document.
