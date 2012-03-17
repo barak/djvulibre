@@ -1027,6 +1027,7 @@ extern "C"
   // SunCC needs this to be defined inside extern "C" { ... }
   // Beware the difference between extern "C" {...} and extern "C".
   miniexp_t (*minilisp_macrochar_parser[128])(void);
+  miniexp_t (*minilisp_diezechar_parser[128])(void);
   minivar_t minilisp_macroqueue;
   int minilisp_print_7bits;
 }
@@ -1036,6 +1037,7 @@ miniexp_io_t miniexp_io = {
   stdio_fputs, stdio_fgetc, stdio_ungetc, { 0, 0, 0, 0 },
   (int*)&minilisp_print_7bits,
   (miniexp_macrochar_t*)minilisp_macrochar_parser, 
+  (miniexp_macrochar_t*)minilisp_diezechar_parser, 
   (minivar_t*)&minilisp_macroqueue,
   0
 };  
@@ -1053,6 +1055,7 @@ miniexp_io_init(miniexp_io_t *io)
   io->data[0] = io->data[1] = io->data[2] = io->data[3] = 0;
   io->p_print7bits = (int*)&minilisp_print_7bits;;
   io->p_macrochar = (miniexp_macrochar_t*)minilisp_macrochar_parser;
+  io->p_diezechar = (miniexp_macrochar_t*)minilisp_diezechar_parser;
   io->p_macroqueue = (minivar_t*)&minilisp_macroqueue;
   io->p_reserved = 0;
 }
@@ -1614,13 +1617,8 @@ read_miniexp(miniexp_io_t *io, int &c)
         {
           return read_quoted_symbol(io, c);
         }
-      else if (c == '#')
-        {
-          return read_error(io, c);
-        }
       else if (io->p_macrochar && io->p_macroqueue 
-               && c >= 0 && c < 128 
-               && io->p_macrochar[c])
+               && c >= 0 && c < 128 && io->p_macrochar[c])
         {
           miniexp_t p = io->p_macrochar[c](io);
           if (miniexp_length(p) > 0)
@@ -1628,10 +1626,22 @@ read_miniexp(miniexp_io_t *io, int &c)
           c = io->fgetc(io);
           continue;
         }
-      else 
+      else if (c == '#' && io->p_diezechar && io->p_macroqueue)
         {
-          return read_symbol_or_number(io, c);
+          int nc = io->fgetc(io);
+          if (nc >= 0 && nc < 128 && io->p_diezechar[nc])
+            {
+              miniexp_t p = io->p_macrochar[nc](io);
+              if (miniexp_length(p) > 0)
+                *io->p_macroqueue = p;
+              c = io->fgetc(io);
+              continue;
+            }
+          io->ungetc(io, nc);
+          // fall thru
         }
+      // default
+      return read_symbol_or_number(io, c);
     }
 }
 
