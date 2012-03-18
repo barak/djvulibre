@@ -1,14 +1,15 @@
 djvulibre (3.5.25.2-1) unstable; urgency=low
 
+  [ Leon Bottou ]
   * new upstream version
 
- -- Leon Bottou <leon@bottou.org>  Thu, 17 Mar 2012 15:40:22 +0900
+  [ Barak A. Pearlmutter ]
+  * upstream fix for diezechar issue (closes: #664280)
+  * upstream fix for minilisp I/O problem (closes: #664442)
+  * include upstream patch completing man page djvused(1) (closes: #551517)
+  * allow dh_install to work on non-multiarch build
 
-djvulibre (3.5.25.1-1) unstable; urgency=low
-
-  * new upstream version
-
- -- Leon Bottou <leon@bottou.org>  Thu, 17 Mar 2012 11:36:22 +0900
+ -- Barak A. Pearlmutter <bap@debian.org>  Sun, 18 Mar 2012 23:09:59 +0000
 
 djvulibre (3.5.25-1) unstable; urgency=low
 
