@@ -1,1 +1,2 @@
-usr/lib/*/lib*.so.*
+#! /usr/lib/debhelper/dh_subst
+usr/lib/${DEB_HOST_MULTIARCH}/lib*.so.*
