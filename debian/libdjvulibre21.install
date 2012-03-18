@@ -1,2 +1,4 @@
-#! /usr/lib/debhelper/dh_subst
+#! /bin/sh
+cat <<EOF
 usr/lib/${DEB_HOST_MULTIARCH}/lib*.so.*
+EOF
