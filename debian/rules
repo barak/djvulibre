@@ -1,7 +1,7 @@
 #!/usr/bin/make -f
 
 # extract library major version from source build system
-libver0 := $(shell egrep '^LIBDJVU_VER_COMPAT=[0-9]+$$' configure \
+libver0 := $(shell egrep '^LIBDJVU_VER_COMPAT=[0-9]+$$' configure.ac \
 		   | head -1 \
 		   | sed 's/LIBDJVU_VER_COMPAT=//')
 
