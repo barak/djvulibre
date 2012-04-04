@@ -39,7 +39,7 @@ Description: Development files for the DjVu image format
 
 Package: libdjvulibre21
 Architecture: any
-Pre-Depends: multiarch-support
+Pre-Depends: ${misc:Pre-Depends}
 Depends: ${shlibs:Depends}, ${misc:Depends}, libdjvulibre-text (>= ${binary:Version})
 Conflicts: libdjvulibre1
 Replaces: libdjvulibre1, libdjvulibre15
