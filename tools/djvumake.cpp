@@ -768,22 +768,22 @@ parse_color_name(const char *s, char *rgb)
     const char *name; 
     unsigned char r, g, b; 
   } stdcols[] = { 
-    {"aqua",    '\x00', '\xFF', '\xFF'},
-    {"black",   '\x00', '\x00', '\x00'},
-    {"blue",    '\x00', '\x00', '\xFF'},
-    {"fuchsia", '\xFF', '\x00', '\xFF'},
-    {"gray",    '\x80', '\x80', '\x80'},
-    {"green",   '\x00', '\x80', '\x00'},
-    {"lime",    '\x00', '\xFF', '\x00'},
-    {"maroon",  '\x80', '\x00', '\x00'},
-    {"navy",    '\x00', '\x00', '\x80'},
-    {"olive",   '\x80', '\x80', '\x00'},
-    {"purple",  '\x80', '\x00', '\x80'},
-    {"red",     '\xFF', '\x00', '\x00'},
-    {"silver",  '\xC0', '\xC0', '\xC0'},
-    {"teal",    '\x00', '\x80', '\x80'},
-    {"white",   '\xFF', '\xFF', '\xFF'},
-    {"yellow",  '\xFF', '\xFF', '\x00'},
+    {"aqua",    0x00, 0xFF, 0xFF},
+    {"black",   0x00, 0x00, 0x00},
+    {"blue",    0x00, 0x00, 0xFF},
+    {"fuchsia", 0xFF, 0x00, 0xFF},
+    {"gray",    0x80, 0x80, 0x80},
+    {"green",   0x00, 0x80, 0x00},
+    {"lime",    0x00, 0xFF, 0x00},
+    {"maroon",  0x80, 0x00, 0x00},
+    {"navy",    0x00, 0x00, 0x80},
+    {"olive",   0x80, 0x80, 0x00},
+    {"purple",  0x80, 0x00, 0x80},
+    {"red",     0xFF, 0x00, 0x00},
+    {"silver",  0xC0, 0xC0, 0xC0},
+    {"teal",    0x00, 0x80, 0x80},
+    {"white",   0xFF, 0xFF, 0xFF},
+    {"yellow",  0xFF, 0xFF, 0x00},
     {0}
   };
   // potential color names
