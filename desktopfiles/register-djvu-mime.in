@@ -56,35 +56,29 @@ export XDG_DATA_DIRS
 # proceed
 case "$1" in
 install)
-   "$xdg_icon_resource" install --noupdate --context mimetypes \
-       --size 22 ./hi22-djvu.png image-vnd.djvu
-   "$xdg_icon_resource" install --noupdate --context mimetypes \
-       --size 32 ./hi32-djvu.png image-vnd.djvu
-   "$xdg_icon_resource" install --noupdate --context mimetypes \
-       --size 48 ./hi48-djvu.png image-vnd.djvu
-   "$xdg_icon_resource" install --noupdate --context mimetypes \
-       --size 64 ./hi64-djvu.png image-vnd.djvu
+   for n in hi*-djvu.png ; do
+       s=`echo $n | sed -e 's/[a-z]*\([0-9]*\).*/\1/'`
+       "$xdg_icon_resource" install --noupdate --mode system \
+           --context mimetypes --size $s "$n" image-vnd.djvu
+   done
    "$xdg_icon_resource" forceupdate
    ## This is disabled to avoid conflicting with the
    ## djvu information provided by freedesktop.org
    ## "$xdg_mime" install ./djvulibre-mime.xml
    ;;
 uninstall)
-   "$xdg_icon_resource" uninstall --noupdate --context mimetypes \
-       --size 22 image-vnd.djvu
-   "$xdg_icon_resource" uninstall --noupdate --context mimetypes \
-       --size 32 image-vnd.djvu
-   "$xdg_icon_resource" uninstall --noupdate --context mimetypes \
-       --size 48 image-vnd.djvu
-   "$xdg_icon_resource" uninstall --noupdate --context mimetypes \
-       --size 64 image-vnd.djvu
+   for n in hi*-djvu.png ; do
+       s=`echo $n | sed -e 's/[a-z]*\([0-9]*\).*/\1/'`
+       "$xdg_icon_resource" uninstall --noupdate --mode system \
+           --context mimetypes --size $s "$n" image-vnd.djvu
+   done
    "$xdg_icon_resource" forceupdate
    ## This is disabled to avoid conflicting with the
    ## djvu information provided by freedesktop.org
    ## "$xdg_mime" uninstall ./djvulibre-mime.xml
    ;;
 *)
-   echo 1>&2 "Usage: $0 {install|uninstall}"
+   echo 1>&2 "Usage: $0 install"
    exit 10
    ;;
 esac

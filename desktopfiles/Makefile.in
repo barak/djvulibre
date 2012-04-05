@@ -45,9 +45,13 @@ datadir_djvu = ${datadir}/djvu/osi/desktop
 
 all: icons register-djvu-mime 
 
-icons: hi22-djvu.png hi32-djvu.png hi48-djvu.png hi64-djvu.png hi-djvu.svgz 
+PNGICONS = hi16-djvu.png hi20-djvu.png hi22-djvu.png hi24-djvu.png \
+           hi32-djvu.png hi48-djvu.png hi64-djvu.png hi72-djvu.png \
+           hi96-djvu.png hi128-djvu.png hi256-djvu.png
 
-hi22-djvu.png hi32-djvu.png hi48-djvu.png hi64-djvu.png: djvu.svg
+icons: ${PNGICONS} hi-djvu.svgz 
+
+${PNGICONS}: djvu.svg
 	s=`echo $@ | sed -e 's/[a-z]*\([0-9]*\).*/\1/'`; \
 	  ${RSVG} -w $${s} -h $${s} -o $@ $< \
           || ${CONVERT} -geometry $${s}x$${s} -depth 8 -background none $< $@ \
