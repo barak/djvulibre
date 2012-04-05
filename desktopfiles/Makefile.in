@@ -49,7 +49,7 @@ icons: hi22-djvu.png hi32-djvu.png hi48-djvu.png hi64-djvu.png hi-djvu.svgz
 
 hi22-djvu.png hi32-djvu.png hi48-djvu.png hi64-djvu.png: djvu.svg
 	s=`echo $@ | sed -e 's/[a-z]*\([0-9]*\).*/\1/'`; \
-	  ${RSVG} -w $${s} -h $${s} $< $@ \
+	  ${RSVG} -w $${s} -h $${s} -o $@ $< \
           || ${CONVERT} -geometry $${s}x$${s} -depth 8 -background none $< $@ \
 	  || cp ${srcdir}/prebuilt-$@ $@
 
