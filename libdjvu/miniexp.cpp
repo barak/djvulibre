@@ -868,11 +868,9 @@ print_c_string(const char *s, char *d, bool eightbits)
           char letter = 0;
           static const char *tr1 = "\"\\tnrbf";
           static const char *tr2 = "\"\\\t\n\r\b\f";
-          { // extra nesting for windows
-            for (int i=0; tr2[i]; i++)
-              if (c == tr2[i])
-                letter = tr1[i];
-          }
+          for (int i=0; tr2[i]; i++)
+            if (c == tr2[i])
+              letter = tr1[i];
           char_out('\\', d, n);
           if (letter)
             char_out(letter, d, n);
@@ -1437,9 +1435,18 @@ read_c_string(miniexp_io_t *io, int &c)
       else if (c=='\\')
         {
           c = io->fgetc(io);
-          if (c == '\n')
+          if (c == '\n')             // LF
             {
               c = io->fgetc(io);
+              if (c == '\r')         // LFCR
+                c = io->fgetc(io);
+              continue;
+            }
+          else if (c == '\r')        // CR
+            {
+              c = io->fgetc(io);
+              if (c == '\n')         // CRLF
+                c = io->fgetc(io);
               continue;
             }
           else if (c>='0' && c<='7')
@@ -1484,11 +1491,9 @@ read_c_string(miniexp_io_t *io, int &c)
             }
           static const char *tr1 = "tnrbfva";
           static const char *tr2 = "\t\n\r\b\f\013\007";
-          { // extra nesting for windows
-            for (int i=0; tr1[i]; i++)
-              if (c == tr1[i])
-                c = tr2[i];
-          }
+          for (int i=0; tr1[i]; i++)
+            if (c == tr1[i])
+              c = tr2[i];
         }
       append(c,s,l,m);
       c = io->fgetc(io);
@@ -1716,10 +1721,8 @@ minilisp_finish(void)
   ASSERT(!gc.lock);
   // clear minivars
   minivar_t::mark(gc_clear);
-  { // extra nesting for windows
-    for (int i=0; i<recentsize; i++)
-      gc.recent[i] = 0;
-  }
+  for (int i=0; i<recentsize; i++)
+    gc.recent[i] = 0;
   // collect everything
   gc_run();
   // deallocate mblocks

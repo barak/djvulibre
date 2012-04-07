@@ -100,6 +100,7 @@ AC_PATH_PROG(TOUCH, touch)
 AC_PATH_PROG(MKDIR, mkdir)
 AC_PATH_PROG(RSVG, rsvg-convert, false)
 AC_PATH_PROG(CONVERT, convert, false)
+AC_PATH_PROG(INKSCAPE, inkscape, false)
 AC_PROG_INSTALL
 
 # tweak rm to make libtool happy
