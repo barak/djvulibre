@@ -32,6 +32,7 @@ INSTALL = @INSTALL@
 INSTALL_PROGRAM = @INSTALL_PROGRAM@
 INSTALL_DATA = @INSTALL_DATA@
 CONVERT = @CONVERT@
+INKSCAPE = @INKSCAPE@
 RSVG = @RSVG@
 XDG_MIME = @XDG_MIME@
 XDG_ICON_RESOURCE = @XDG_ICON_RESOURCE@
@@ -55,6 +56,8 @@ ${PNGICONS}: djvu.svg
 	s=`echo $@ | sed -e 's/[a-z]*\([0-9]*\).*/\1/'`; \
 	  ${RSVG} -w $${s} -h $${s} -o $@ $< \
           || ${CONVERT} -geometry $${s}x$${s} -depth 8 -background none $< $@ \
+	  || ${INKSCAPE} --without-gui --export-width=$${s} \
+                         --export-height=$${s} --export-png=$@ $< \
 	  || cp ${srcdir}/prebuilt-$@ $@
 
 hi-djvu.svgz: djvu.svg
