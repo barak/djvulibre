@@ -2,8 +2,9 @@ djvulibre (3.5.25.2-4) unstable; urgency=low
 
   * generalize pre-dependency
   * remove unused override from debian/rules (closes: #664292)
+  * lower djvudigital default resolution from 600 to 300 dpi (closes: #507539)
 
- -- Barak A. Pearlmutter <bap@debian.org>  Sun, 08 Apr 2012 23:19:29 +0100
+ -- Barak A. Pearlmutter <bap@debian.org>  Sun, 08 Apr 2012 23:45:27 +0100
 
 djvulibre (3.5.25.2-3) unstable; urgency=low
 
