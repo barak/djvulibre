@@ -166,7 +166,7 @@ gsarg0="-sDEVICE=djvusep -dNOPAUSE -dBATCH -dSAFER"
 gsarg1=
 gsarg2=
 csepargs=
-dpi="600"
+dpi="300"
 gsprinted="-dPrinted"
 gsepsf="-dEPSCrop"
 gsverbosity=
