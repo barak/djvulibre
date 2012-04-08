@@ -39,18 +39,6 @@ endif
 override_dh_auto_configure:
 	dh_auto_configure -- $(configure_options)
 
-DEB_HOST_GNU_TYPE   ?= $(shell dpkg-architecture -qDEB_HOST_GNU_TYPE)
-
-override_dh_auto_make:
-	$(MAKE) -k depend	# otherwise a missing Makefile.dep blows up
-# deliciously monstrous libtool workaround by Cthulhu via H.P.Lovecraft@ubuntu.com,
-# http://patches.ubuntu.com/d/djvulibre/djvulibre_3.5.22-1ubuntu1.patch
-ifeq ($(DEB_HOST_GNU_TYPE),arm-linux-gnueabi)
-	sed -i.orig '/^LIBS/s/-lm/-lm -lsupc++ -lgcc/' libdjvu/Makefile
-	touch -r libdjvu/Makefile.orig libdjvu/Makefile
-endif
-	dh_auto_make
-
 override_dh_auto_install:
 	dh_auto_install
 	mkdir --parents debian/tmp/usr/lib/cgi-bin
