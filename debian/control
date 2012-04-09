@@ -47,7 +47,7 @@ Description: Runtime support for the DjVu image format
  DjVu runtime library.
 
 Package: libdjvulibre-text
-Architecture: any
+Architecture: all
 Depends: ${misc:Depends}
 Replaces: libdjvulibre15, djview3 (= 3.5.20-9), djvulibre-desktop (<< 3.5.20-9)
 Description: Linguistic support files for libdjvulibre
@@ -62,7 +62,7 @@ Description: Debug symbols for the DjVu image format
  DjVu runtime debug symbols.
 
 Package: djvulibre-desktop
-Architecture: any
+Architecture: all
 Depends: ${misc:Depends}
 Suggests: djview4 | djvu-viewer | evince
 Conflicts: libdjvulibre1, libdjvulibre21 (<= 3.5.20-5)
