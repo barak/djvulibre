@@ -27,9 +27,12 @@ for n in $djdll $djexe ; do
     run cp $dwdir/$n $target ; done
 
 qtdll="QtCore4.dll QtGui4.dll QtNetwork4.dll"
+qtssl="ssleay32.dll libeay32.dll libssl32.dll"
 qtplug="accessible codecs imageformats"
 for n in $qtdll ; do 
     run cp $qtdir/lib/$n $target ; done
+for n in $qtssl ; do 
+    test -r $qtdir/bin/$n && run cp $qtdir/bin/$n $target ; done
 test -d $target/plugins || run mkdir $target/plugins
 for n in $qtplug ; do 
     test -d $target/plugins/$n || run mkdir $target/plugins/$n 
@@ -38,6 +41,8 @@ for n in $qtplug ; do
     run chmod 0755 $target/plugins/$n/* ; done
     run rm $target/plugins/*/*d4.dll
     run rm $target/plugins/imageformats/qsvg*
+run find $target -name '*.dll' -exec chmod 0755 {} \;
+
 echo '[Paths]' > $target/qt.conf
 
 for n in "$msredist"/* ; do
