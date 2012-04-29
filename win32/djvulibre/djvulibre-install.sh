@@ -1,7 +1,7 @@
 #!/bin/sh
 
 c=/cygdrive/c
-qtdir=$c/qt/4.7.1
+qtdir=$c/QtSDK/Desktop/Qt/4.8.1/msvc2010
 djdir=$HOME/djvulibre-3.5
 dwdir=$djdir/win32/djvulibre/Release
 djsrc=$HOME/djvulibre-djview/src
