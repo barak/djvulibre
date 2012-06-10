@@ -1,5 +1,8 @@
 #!/usr/bin/make -f
 
+%:
+	dh $@ --with autoreconf --parallel
+
 # extract library major version from source build system
 libver0 := $(shell egrep '^LIBDJVU_VER_COMPAT=[0-9]+$$' configure.ac \
 		   | head -1 \
@@ -18,13 +21,6 @@ export DEB_HOST_MULTIARCH ?= $(shell dpkg-architecture -qDEB_HOST_MULTIARCH)
 
 testlibver:
 	@echo library major version: upstream $(libver0), debian $(libver) $(libver1) $(libver2)
-
-dh_targets=binary binary-arch binary-indep build build-arch build-indep clean install
-
-$(dh_targets) %:
-	dh $@ --with autoreconf --parallel
-
-.PHONY: $(dh_targets)
 
 configure_options += --disable-desktopfiles
 configure_options += --enable-static
