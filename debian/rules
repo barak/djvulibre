@@ -32,6 +32,9 @@ else ifneq (,$(findstring noopt,$(DEB_BUILD_OPTIONS)))
 configure_options += --enable-debug
 endif
 
+# Always keep dubugging symbols
+configure_options += CXXFLAGS=-g
+
 override_dh_auto_configure:
 	dh_auto_configure -- $(configure_options)
 
