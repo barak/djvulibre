@@ -5,9 +5,6 @@ Maintainer: Barak A. Pearlmutter <bap@debian.org>
 Uploaders: Leon Bottou <leonb@bottou.org>
 Build-Depends: dh-autoreconf,
 	       debhelper (>= 9),
-	       libx11-dev,
-	       libxext-dev,
-	       libxt-dev,
 	       libglib2.0-dev,
 	       libjpeg-dev,
 	       libtiff4-dev | libtiff3g-dev | libtiff-dev,
