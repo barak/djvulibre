@@ -1,4 +1,4 @@
-%define release 1
+%define release 3
 %define version 3.5.25
 
 Summary: DjVu viewers, encoders and utilities.
