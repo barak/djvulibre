@@ -4,10 +4,6 @@ Priority: optional
 Maintainer: Barak A. Pearlmutter <bap@debian.org>
 Build-Depends: dh-autoreconf,
 	       debhelper (>= 8),
-	       libx11-dev,
-	       libxext-dev,
-	       libxt-dev,
-	       libglib2.0-dev,
 	       libjpeg-dev,
 	       libtiff4-dev | libtiff3g-dev | libtiff-dev,
 	       librsvg2-bin | imagemagick
