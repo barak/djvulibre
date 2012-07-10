@@ -5,7 +5,6 @@ Maintainer: Barak A. Pearlmutter <bap@debian.org>
 Uploaders: Leon Bottou <leonb@bottou.org>
 Build-Depends: dh-autoreconf,
 	       debhelper (>= 9),
-	       libglib2.0-dev,
 	       libjpeg-dev,
 	       libtiff4-dev | libtiff3g-dev | libtiff-dev,
 	       librsvg2-bin | imagemagick
