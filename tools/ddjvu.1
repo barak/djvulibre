@@ -43,7 +43,6 @@ is not specified or equal to a single dash.
 However a valid output file name is always required when producing a
 TIFF or PDF file.
 
-
 .SH MAIN OPTIONS
 .TP
 .BI "-format=" "fmt"
@@ -144,6 +143,19 @@ outputs pages 1 to 10, and specification
 .BR "1,3,99999-4"
 outputs pages 1 and 3, followed by all the document
 pages in reverse order up to page 4.
+.TP
+.BI "-eachpage"
+When this option is specified, program
+.B ddjvu
+generates one separate file per page
+named by replacing the 
+.B %d
+specification in 
+.I outputfilename
+by the page number 
+in a manner simular to the 
+.BR printf (3)
+function.
 .TP
 .BI "-mode=" "mod"
 Selects which layers of the DjVu image should be rendered.
@@ -315,10 +327,13 @@ decodes all pages and produces a multipage TIFF file.
 
 Command
 .IP "" 3
-.BI "ddjvu -format=ppm -page=1 -size=100x100 " "myfile.djvu" " -"
+.BI "ddjvu -format=ppm -page=1-10 -eachpage -size=100x100 " "myfile.djvu" " thumb%03d.ppm"
 .PP
-produces a thumbnail for the first page of a document and 
-outputs it as a PPM file on the standard output.
+produces 100x100 thumbnails for the first ten page of a document 
+and outputs them as PPM files named
+.BR thumb001.ppm
+to 
+.BR thumb010.ppm .
 
 .SH CREDITS
 The new version of this program was written 
@@ -339,3 +354,4 @@ released under a BSD license.
 .BR cjpeg (1),
 .BR tiffsplit (1),
 .BR tiffcp (1)
+.BR printf (3)

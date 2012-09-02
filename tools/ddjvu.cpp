@@ -127,22 +127,24 @@ int          flag_verbose = 0;
 char         flag_mode = 0;     /* 'c', 'k', 's', 'f','b' */
 char         flag_format = 0;   /* '4','5','6','p','r','t', 'f' */
 int          flag_quality = -1;
+int          flag_skipcorrupted = 0;
+int          flag_eachpage = 0;
 const char  *flag_pagespec = 0; 
 ddjvu_rect_t info_size;
 ddjvu_rect_t info_segment;
+const char  *programname = 0;
 const char  *inputfilename = 0;
 const char  *outputfilename = 0;
-int          flag_skip_corrupted = 0;
 
+char *pagefilename = 0;
 #if HAVE_TIFF2PDF
 char *tempfilename = 0;
 int tiffd = -1;
 #endif
-
-FILE *fout = 0;
 #if HAVE_TIFF
 TIFF *tiff = 0;
 #endif
+FILE *fout = 0;
 
 
 
@@ -543,31 +545,20 @@ render(ddjvu_page_t *page, int pageno)
 
 
 
-void
-dopage(int pageno)
+void 
+openfile(int pageno)
 {
-  ddjvu_page_t *page;
-  /* Decode page */
-  timingdata[0] = ticks();
-  if (! (page = ddjvu_page_create_by_pageno(doc, pageno-1)))
-    die(i18n("Cannot access page %d."), pageno);
-  while (! ddjvu_page_decoding_done(page))
-    handle(TRUE);
-  if (ddjvu_page_decoding_error(page))
+  /* Compute filename */
+  const char *filename = outputfilename;
+  if (flag_eachpage)
     {
-      handle(FALSE);
-      fprintf(stderr,"ddjvu: ");
-      fprintf(stderr,i18n("Cannot decode page %d."), pageno);
-      fprintf(stderr,"\n");
-      if (flag_skip_corrupted)
-        return;
-      else
-        exit(10);
+      sprintf(pagefilename, filename, pageno);
+      filename = pagefilename;
     }
-  timingdata[1] = ticks();
-  /* Open files */
-  if (flag_format == 't')
-    {
+  
+  /* Open */
+  if (flag_format == 't') /* tiff file */
+    { 
 #if HAVE_TIFF
       if (tiff) 
         {
@@ -576,16 +567,16 @@ dopage(int pageno)
         }
       else
         {
-          if (! strcmp(outputfilename,"-"))
+          if (! strcmp(filename,"-"))
             die(i18n("TIFF output requires a valid output file name."));
-          if (! (tiff = TIFFOpen(outputfilename, "w")))
-            die(i18n("Cannot open output tiff file '%s'."), outputfilename);
+          if (! (tiff = TIFFOpen(filename, "w")))
+            die(i18n("Cannot open output tiff file '%s'."), filename);
         }
 #else
       die(i18n("TIFF output is not compiled"));
 #endif
     }
-  else if (flag_format == 'f')  
+  else if (flag_format == 'f') /* temporary tiff, later converted to pdf */
     {
 #if HAVE_TIFF2PDF
       if (tiff) 
@@ -595,7 +586,7 @@ dopage(int pageno)
         }
       else
         {
-          if (! strcmp(outputfilename,"-"))
+          if (! strcmp(filename,"-"))
             die(i18n("PDF output requires a valid output file name."));
           if (! (tempfilename = (char*)malloc(strlen(outputfilename) + 8)))
             die(i18n("Out of memory."));
@@ -620,22 +611,137 @@ dopage(int pageno)
       die(i18n("PDF output is not compiled"));
 #endif
     } 
-  else if (! fout) 
+  else if (! fout) /* file output */
     {
-      if (! strcmp(outputfilename,"-")) {
+      if (! strcmp(filename,"-")) {
         fout = stdout;
 #if defined(__CYGWIN32__)
         setmode(fileno(fout), O_BINARY);
 #elif defined(WIN32)
         _setmode(_fileno(fout), _O_BINARY);
 #endif
-      } else if (! (fout = fopen(outputfilename, "wb")))
-        die(i18n("Cannot open output file '%s'."), outputfilename);
+      } else if (! (fout = fopen(filename, "wb")))
+        die(i18n("Cannot open output file '%s'."), filename);
     }
+}
+
+void
+closefile(int pageno)
+{
+  /* Do not close when generating a single file */
+  if (pageno > 0 && ! flag_eachpage)
+    return;
+
+  /* Compute filename */
+  const char *filename = outputfilename;
+  if (flag_eachpage && pageno > 0)
+    {
+      sprintf(pagefilename, filename, pageno);
+      filename = pagefilename;
+    }
+
+  /* Close temporary tiff and generate pdf */
+#if HAVE_TIFF2PDF
+  if (tiff && tempfilename)
+    {
+      const char *args[3];
+      if (! TIFFFlush(tiff))
+        die(i18n("Error while flushing TIFF file."));
+      if (flag_verbose)
+        fprintf(stderr,i18n("Converting temporary TIFF to PDF.\n"));
+#ifndef WIN32
+      if (tiffd >= 0)
+        {
+          int fd = dup(tiffd);
+          TIFFClose(tiff);
+          close(tiffd);
+          tiffd = fd;
+          lseek(tiffd, 0, SEEK_SET);
+          if (! (tiff = TIFFFdOpen(tiffd, tempfilename, "r")))
+            die(i18n("Cannot reopen temporary TIFF file '%s'."), tempfilename);
+        }
+      else
+#endif
+        {
+          TIFFClose(tiff);
+          if (!(tiff = TIFFOpen(tempfilename, "r")))
+            die(i18n("Cannot reopen temporary TIFF file '%s'."), tempfilename);
+        }
+      // Convert
+      if (! (fout = fopen(filename, "wb")))
+        die(i18n("Cannot open output file '%s'."), filename);
+      args[0] = programname;
+      args[1] = "-o";
+      args[2] = filename;
+      if (tiff2pdf(tiff, fout, 3, args) != EXIT_SUCCESS)
+        die(i18n("Error occured while creating PDF file."));
+      TIFFClose(tiff);
+      tiff = 0;
+#ifndef WIN32
+      close(tiffd);
+      tiffd = -1;
+#endif
+      remove(tempfilename);
+      free(tempfilename);
+      tempfilename = 0;
+    }
+#endif
+  /* Close tiff */
+#if HAVE_TIFF
+  if (tiff)
+    {
+      if (! TIFFFlush(tiff))
+        die(i18n("Error while flushing tiff file."));
+      TIFFClose(tiff);
+      tiff = 0;
+    }
+#endif
+  /* Close fout */
+  if (fout)
+    {
+      if (fflush(fout) < 0)
+        die(i18n("Error while flushing output file: %s"), strerror(errno));
+      fclose(fout);
+      fout = 0;
+    }
+}
+
+
+void
+dopage(int pageno)
+{
+  ddjvu_page_t *page;
+  /* Decode page */
+  timingdata[0] = ticks();
+  if (! (page = ddjvu_page_create_by_pageno(doc, pageno-1)))
+    die(i18n("Cannot access page %d."), pageno);
+  while (! ddjvu_page_decoding_done(page))
+    handle(TRUE);
+  if (ddjvu_page_decoding_error(page))
+    {
+      handle(FALSE);
+      fprintf(stderr,"ddjvu: ");
+      fprintf(stderr,i18n("Cannot decode page %d."), pageno);
+      fprintf(stderr,"\n");
+      if (flag_skipcorrupted)
+        return;
+      else
+        exit(10);
+    }
+  timingdata[1] = ticks();
+  /* Create filename */
+  if (flag_eachpage)
+    {
+      
+    }
+
+
   /* Render */
+  openfile(pageno);
   inform(page, pageno);
   render(page, pageno);
   ddjvu_page_release(page);
+  closefile(pageno);
 }
 
 
@@ -774,6 +880,7 @@ usage()
          "  -mode=background  Only render the background layer.\n"
          "  -page=PAGESPEC    Select page(s) to be decoded.\n"
          "  -skip             Skip corrupted pages instead of aborting.\n"
+         "  -eachpage         Produce one file per page (using %d in outputfile).\n"
          "  -quality=QUALITY  Specify jpeg quality for lossy tiff output.\n"
          "\n"
          "If <outputfile> is a single dash or omitted, the decompressed image\n"
@@ -858,7 +965,13 @@ parse_option(int argc, char **argv, int i)
     {
       if (arg) 
         die(i18n(errarg), opt);
-      flag_skip_corrupted = 1;
+      flag_skipcorrupted = 1;
+    }
+  else if (! strcmp(opt,"eachpage"))
+    {
+      if (arg) 
+        die(i18n(errarg), opt);
+      flag_eachpage = 1;
     }
   else if (!strcmp(opt,"scale"))
     {
@@ -992,6 +1105,39 @@ parse_option(int argc, char **argv, int i)
 }
 
 
+int
+check_eachpage(const char *s)
+{
+  const char *p = s;
+  int hasd = 0;
+  int size = 0;
+  char c;
+  while ((c = *s++))
+    if (c == '%')
+      {
+        c = *s++;
+        if (c == '%')
+          continue;
+        if (hasd)
+          return 0;
+        if (c == '-' || c == '+' || c == ' ')
+          c = *s++;
+        while (c >= '0' && c <= '9')
+          {
+            size = 10 * size + c - '0';
+            c = *s++;
+          }
+        if (c != 'd')
+          return 0;
+        hasd = 1;
+      }
+  if (size == 0)
+    size = 30;
+  if (hasd == 1 && size>0 && size<1000)
+    return size + s - p;
+  return 0;
+}
+
 
 int
 main(int argc, char **argv)
@@ -1010,7 +1156,7 @@ main(int argc, char **argv)
       else
         usage();
     }
-  
+
   /* Defaults */
   if (! inputfilename)
     inputfilename = "-";
@@ -1018,9 +1164,19 @@ main(int argc, char **argv)
     outputfilename = "-";
   if (! flag_pagespec)
     flag_pagespec = (flag_format) ? "1-$" : "1";
-
+  if (flag_eachpage)
+    {
+      int sz = check_eachpage(outputfilename);
+      if (! sz)
+        die(i18n("Flag -eachpage demands a '%%d' specification in the output file name."));
+      pagefilename = (char*)malloc(sz);
+      if (! pagefilename)
+        die(i18n("Out of memory"));
+    }
+  
   /* Create context and document */
-  if (! (ctx = ddjvu_context_create(argv[0])))
+  programname = argv[0];
+  if (! (ctx = ddjvu_context_create(programname)))
     die(i18n("Cannot create djvu context."));
   if (! (doc = ddjvu_document_create_by_filename(ctx, inputfilename, TRUE)))
     die(i18n("Cannot open djvu document '%s'."), inputfilename);
@@ -1033,68 +1189,10 @@ main(int argc, char **argv)
   i = ddjvu_document_get_pagenum(doc);
   parse_pagespec(flag_pagespec, i, dopage);
 
-  /* Close */
-#if HAVE_TIFF2PDF
-  if (tiff && tempfilename)
-    {
-      if (! TIFFFlush(tiff))
-        die(i18n("Error while flushing TIFF file."));
-      if (flag_verbose)
-        fprintf(stderr,i18n("Converting temporary TIFF to PDF.\n"));
-#ifndef WIN32
-      // more elaborate method to work with mkstemp()
-      if (tiffd >= 0)
-        {
-          int fd = dup(tiffd);
-          TIFFClose(tiff);
-          close(tiffd);
-          tiffd = fd;
-          lseek(tiffd, 0, SEEK_SET);
-          if (! (tiff = TIFFFdOpen(tiffd, tempfilename, "r")))
-            die(i18n("Cannot reopen temporary TIFF file '%s'."), tempfilename);
-        }
-      else
-#endif
-        {
-          TIFFClose(tiff);
-          if (!(tiff = TIFFOpen(tempfilename, "r")))
-            die(i18n("Cannot reopen temporary TIFF file '%s'."), tempfilename);
-        }
-      if (! (fout = fopen(outputfilename, "wb")))
-        die(i18n("Cannot open output file '%s'."), outputfilename);
-      const char *args[3];
-      args[0] = argv[0];
-      args[1] = "-o";
-      args[2] = outputfilename;
-      if (tiff2pdf(tiff, fout, 3, args) != EXIT_SUCCESS)
-        die(i18n("Error occured while creating PDF file."));
-      TIFFClose(tiff);
-      tiff = 0;
-#ifndef WIN32
-      close(tiffd);
-      tiffd = -1;
-#endif
-      remove(tempfilename);
-      free(tempfilename);
-      tempfilename = 0;
-    }
-#endif
-#if HAVE_TIFF
-  if (tiff)
-    {
-      if (! TIFFFlush(tiff))
-        die(i18n("Error while flushing tiff file."));
-      TIFFClose(tiff);
-      tiff = 0;
-    }
-#endif
-  if (fout)
-    {
-      if (fflush(fout) < 0)
-        die(i18n("Error while flushing output file: %s"), strerror(errno));
-      fclose(fout);
-      fout = 0;
-    }
+  /* Close output file */
+  closefile(0);
+
+  /* Release */
   if (doc)
     ddjvu_document_release(doc);
   if (ctx)
