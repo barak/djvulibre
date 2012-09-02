@@ -3175,10 +3175,10 @@ ddjvu_savejob_s::parse_pagespec(const char *s, int npages, bool *flags)
         p += 1;
       if (! spec)
         return false;
-      if (end_page < 0)
-        end_page = 0;
-      if (start_page < 0)
-        start_page = 0;
+      if (end_page <= 0)
+        end_page = 1;
+      if (start_page <= 0)
+        start_page = 1;
       if (end_page > npages)
         end_page = npages;
       if (start_page > npages)

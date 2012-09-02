@@ -795,10 +795,10 @@ parse_pagespec(const char *s, int max_page, void (*dopage)(int))
         p += 1;
       if (! spec)
         die(i18n(err), s);
-      if (end_page < 0)
-        end_page = 0;
-      if (start_page < 0)
-        start_page = 0;
+      if (end_page <= 0)
+        end_page = 1;
+      if (start_page <= 0)
+        start_page = 1;
       if (end_page > max_page)
         end_page = max_page;
       if (start_page > max_page)
