@@ -312,7 +312,7 @@ render(ddjvu_page_t *page, int pageno)
   else if (flag_format == 'r' || flag_format == '4')
     mode = DDJVU_RENDER_BLACK;
 
-  /* Determine output pixel format */
+  /* Determine output pixel format and compression */
   style = DDJVU_FORMAT_RGB24;
   if (mode==DDJVU_RENDER_BLACK ||
       mode==DDJVU_RENDER_MASKONLY ||
@@ -324,8 +324,8 @@ render(ddjvu_page_t *page, int pageno)
     }
   switch(flag_format)
     {
-    case 't':
     case 'f':
+    case 't':
 #if HAVE_TIFF
       compression = COMPRESSION_NONE;
       if (flag_quality >= 1000)
@@ -346,21 +346,23 @@ render(ddjvu_page_t *page, int pageno)
       if (compression == COMPRESSION_NONE
           && (flag_format == 'f' || flag_quality == 900)
           && TIFFFindCODEC(COMPRESSION_DEFLATE))
+        /* All pdf engines understand deflate. */
         compression = COMPRESSION_DEFLATE;
 # endif
 # ifdef LZW_SUPPORT
       if (compression == COMPRESSION_NONE
-          && (flag_format == 'f' || flag_quality == 901)
+          && flag_quality == 901
           && TIFFFindCODEC(COMPRESSION_LZW))
-        // Because of patents that are now expired, some versions
-        // of libtiff only support lzw decoding and trigger an error
-        // condition when trying to encode. Unfortunately we cannot
-        // know this in advance and select another compression scheme.
+        /* Because of patents that are now expired, some versions
+           of libtiff only support lzw decoding and trigger an error
+           condition when trying to encode. Unfortunately we cannot
+           know this in advance and select another compression scheme. */
         compression = COMPRESSION_LZW;
 # endif
 # ifdef PACKBITS_SUPPORT
       if (compression == COMPRESSION_NONE 
           && TIFFFindCODEC(COMPRESSION_PACKBITS))
+        /* This mediocre default produces the most portable tiff files. */
         compression = COMPRESSION_PACKBITS;
 # endif
       break;
