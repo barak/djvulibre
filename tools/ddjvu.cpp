@@ -126,7 +126,7 @@ int          flag_segment = 0;
 int          flag_verbose = 0;
 char         flag_mode = 0;     /* 'c', 'k', 's', 'f','b' */
 char         flag_format = 0;   /* '4','5','6','p','r','t', 'f' */
-int          flag_quality = -1;
+int          flag_quality = -1; /* 1-100 jpg, 900 zip, 901 lzw, 1000 raw */
 int          flag_skipcorrupted = 0;
 int          flag_eachpage = 0;
 const char  *flag_pagespec = 0; 
@@ -337,19 +337,31 @@ render(ddjvu_page_t *page, int pageno)
 # endif
 # ifdef JPEG_SUPPORT
       if (compression == COMPRESSION_NONE 
-          && style!=DDJVU_FORMAT_MSBTOLSB && flag_quality>0 
+          && style!=DDJVU_FORMAT_MSBTOLSB 
+          && flag_quality>0 && flag_quality<=100
           && TIFFFindCODEC(COMPRESSION_JPEG))
         compression = COMPRESSION_JPEG;
 # endif
+# ifdef ZIP_SUPPORT
+      if (compression == COMPRESSION_NONE
+          && (flag_format == 'f' || flag_quality == 900)
+          && TIFFFindCODEC(COMPRESSION_DEFLATE))
+        compression = COMPRESSION_DEFLATE;
+# endif
+# ifdef LZW_SUPPORT
+      if (compression == COMPRESSION_NONE
+          && (flag_format == 'f' || flag_quality == 901)
+          && TIFFFindCODEC(COMPRESSION_LZW))
+        // Because of patents that are now expired, some versions
+        // of libtiff only support lzw decoding and trigger an error
+        // condition when trying to encode. Unfortunately we cannot
+        // know this in advance and select another compression scheme.
+        compression = COMPRESSION_LZW;
+# endif
 # ifdef PACKBITS_SUPPORT
-      if (compression == COMPRESSION_NONE && flag_format == 't' 
+      if (compression == COMPRESSION_NONE 
           && TIFFFindCODEC(COMPRESSION_PACKBITS))
         compression = COMPRESSION_PACKBITS;
-# endif
-# ifdef ZIP_SUPPORT
-      else if (compression == COMPRESSION_NONE
-               && TIFFFindCODEC(COMPRESSION_DEFLATE))
-        compression = COMPRESSION_DEFLATE;
 # endif
       break;
 #endif      
@@ -1084,7 +1096,11 @@ parse_option(int argc, char **argv, int i)
         die(i18n(errdupl), opt);
       else if (!arg) 
         flag_quality = 100;
-      else if (!strcmp(arg,"uncompressed"))
+      else if (!strcmp(arg,"deflate") || !strcmp(arg,"zip"))
+        flag_quality = 900;
+      else if (!strcmp(arg,"lzw"))
+        flag_quality = 901;
+      else if (!strcmp(arg,"uncompressed") || !strcmp(arg,"raw"))
         flag_quality = 1000;
       else
         {

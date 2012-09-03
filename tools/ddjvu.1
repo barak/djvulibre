@@ -82,9 +82,8 @@ and
 .IP "*"
 Format
 .B "tiff"
-produces a Tagged Image Format (TIFF) file.
-The resulting file uses the best available 
-lossless compression model.
+produces a Tagged Image Format (TIFF) 
+file using lossless compression.
 Enabling lossy JPEG compression (see option 
 .BI "-quality"
 below) often produces much smaller files.
@@ -100,7 +99,7 @@ Format
 produces a Portable Document Format (PDF) file.
 Each page in the resulting file is represented
 by an image at the specified resolution,
-using the best available lossless compression model.
+using lossless compression.
 Enabling lossy JPEG compression (see option 
 .BI "-quality"
 below) often produces much smaller files.
@@ -272,22 +271,30 @@ The output file will always have size
 when this option is specified.
 .TP
 .BI "-quality=" "factor"
-Enables lossy compression in TIFF and PDF files.
-Without this option, TIFF or PDF output files always 
-use lossless compression or no compression.  
+Enables lossy JPEG compression for TIFF and PDF files.
+This option only affects images that cannot be encoded
+using the preferred TIFF/G4 compression.
 Argument 
 .I factor
-specifies a JPEG quantization factor 
-ranging from 25 to 150. See command 
+is a quantization factor ranging from 25 to 150. 
+See command 
 .BR cjpeg (1)
 for more information on JPEG quantization factors.
 Value 80 is a good starting point.
-.TP
-.B "-quality=uncompressed"
+.TP 
+.BR "-quality=uncompressed"
 Completely disables compression in TIFF and PDF files.
 Although the resulting files are often huge,
 this is sometimes useful for maximal compatibility
 with hastily written software.
+.TP
+.BR "-quality=deflate"
+Enables DEFLATE compression for TIFF files.
+Images that cannot be encoded using the preferred TIFF/G4 compression
+will be encoded with DEFLATE compression if available.
+Otherwise the more portable PACKBITS compression is used.
+Specifying this option is not necessary for PDF files
+because this is the default behavior.
 
 .SH DEPRECATED OPTIONS
 
