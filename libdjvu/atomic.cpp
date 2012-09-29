@@ -55,12 +55,12 @@
 
 #if defined(WIN32)
 # define USE_WINDOWS_WAIT 1
-#elif defined(__cplusplus) && defined(_GTHREADS_H_)
-# define USE_GTHREAD_WAIT 1
-#elif defined(__cplusplus) && defined(QMUTEX_H)
-# define USE_QT4_WAIT 1
 #elif defined(PTHREAD_MUTEX_INITIALIZER)
 # define USE_PTHREAD_WAIT 1
+#elif defined(__cplusplus) && defined(_GTHREADS_H_)
+# define USE_GTHREAD_WAIT 1  /* pthread or win32 will probably win */
+#elif defined(__cplusplus) && defined(QMUTEX_H)
+# define USE_QT4_WAIT 1      /* not used */
 #endif
 
 
@@ -169,21 +169,16 @@ static void cond_wait()
 
 
 #if USE_WIN32_INTERLOCKED && !HAVE_SYNC
-# define SYNC_ACQ(l) \
-  (!InterlockedExchange((LONG volatile *)(l),1))
-# if defined(_M_ALPHA) || defined(_M_PPC) || defined(_M_IA64)
-#  define SYNC_REL(l) \
-  (InterlockedExchange((LONG volatile *)(l),0))
+# define SYNC_CASTP(l)   ((LONG volatile *)(l)) 
+# define SYNC_ACQ(l)     (!InterlockedExchange(SYNC_CASTP(l),1))
+# if defined(_M_IX86) || defined(_M_X64) || defined(_M_AMD64) 
+#  define SYNC_REL(l)    (*(int volatile *)(l)=0) /* strong memory ordering */
 # else
-#  define SYNC_REL(l) \
-  (*(int volatile *)(l)=0)
+#  define SYNC_REL(l)    (InterlockedExchange(SYNC_CASTP(l),0))
 # endif
-# define SYNC_INC(l) \
-  (InterlockedIncrement((LONG volatile *)(l)))
-# define SYNC_DEC(l) \
-  (InterlockedDecrement((LONG volatile *)(l)))
-# define SYNC_CAS(l,o,n) \
-  (InterlockedCompareExchange((LONG volatile *)(l),n,o)==(o))
+# define SYNC_INC(l)     (InterlockedIncrement(SYNC_CASTP(l)))
+# define SYNC_DEC(l)     (InterlockedDecrement(SYNC_CASTP(l)))
+# define SYNC_CAS(l,o,n) (InterlockedCompareExchange(SYNC_CASTP(l),n,o)==(o))
 # define HAVE_SYNC 1
 #endif
 
