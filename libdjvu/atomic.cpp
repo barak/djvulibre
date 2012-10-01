@@ -50,7 +50,7 @@
 /* ============================================================ 
 // PART1 - THE WAITING .
 // This part must define the four macros MUTEX_ENTER,
-// MUTEX_LEAVE, COND_WAIT and COND_WAKEALL working
+// MUTEX_LEAVE, COND_WAIT and COND_WAKEUP working
 // on a single monitor in a way that is consistent with
 // the pthread semantics. 
 */
@@ -73,7 +73,7 @@ static pthread_cond_t  ptc = PTHREAD_COND_INITIALIZER;
 # define MUTEX_ENTER  pthread_mutex_lock(&ptm)
 # define MUTEX_LEAVE  pthread_mutex_unlock(&ptm)
 # define COND_WAIT    pthread_cond_wait(&ptc,&ptm)
-# define COND_WAKEALL pthread_cond_broadcast(&ptc)
+# define COND_WAKEUP  pthread_cond_signal(&ptc)
 #endif
 
 
@@ -82,7 +82,7 @@ static GMonitor m;
 # define MUTEX_ENTER  m.enter()
 # define MUTEX_LEAVE  m.leave()
 # define COND_WAIT    m.wait()
-# define COND_WAKEALL m.broadcast()
+# define COND_WAKEUP  m.signal()
 #endif
 
 
@@ -92,7 +92,7 @@ static QWaitCondition qtc;
 # define MUTEX_ENTER  qtm.lock()
 # define MUTEX_LEAVE  qtm.unlock()
 # define COND_WAIT    qtc.wait(&qtm)
-# define COND_WAKEALL qtc.wakeAll()
+# define COND_WAKEUP  qtc.wakeOne()
 #endif
 
 
@@ -105,7 +105,7 @@ static void mutex_enter()
   if (!InterlockedExchange(&ini, 1))
     {
       InitializeCriticalSection(&cs);
-      ev = CreateEvent(NULL, TRUE, FALSE, NULL);
+      ev = CreateEvent(NULL, FALSE, FALSE, NULL);
       assert(ev);
     }
   EnterCriticalSection(&cs);
@@ -120,10 +120,10 @@ static void cond_wait()
 # define MUTEX_ENTER mutex_enter()
 # define MUTEX_LEAVE LeaveCriticalSection(&cs)
 # define COND_WAIT   cond_wait()
-# define COND_WAKEALL SetEvent(ev)
+# define COND_WAKEUP SetEvent(ev)
 #endif
 
-#if ! defined(COND_WAKEALL) || ! defined(COND_WAIT)
+#if ! defined(COND_WAKEUP) || ! defined(COND_WAIT)
 # error "Could not select suitable waiting code"
 #endif
 
@@ -319,7 +319,7 @@ atomicRelease(int volatile *lock)
     {
       MUTEX_ENTER;
       if (nwaiters > 0)
-        COND_WAKEALL;
+        COND_WAKEUP;
       MUTEX_LEAVE;
     }
 }
@@ -371,7 +371,7 @@ atomicRelease(int volatile *lock)
 {
   MUTEX_ENTER;
   *lock = 0;
-  COND_WAKEALL;
+  COND_WAKEUP;
   MUTEX_LEAVE;
 }
 
