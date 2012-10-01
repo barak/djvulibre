@@ -32,6 +32,9 @@
 #include <stdlib.h>
 #include <assert.h>
 #include "atomic.h"
+#if HAVE_SCHED_H
+# include <sched.h>
+#endif
 #if defined(WIN32)
 # include <windows.h>
 #endif
@@ -153,14 +156,17 @@ static void cond_wait()
 # define USE_GCC_I386_ASM 1
 #elif defined(__GNUC__) && (defined(__x86_64__) || defined(__amd64__))
 # define USE_GCC_I386_ASM 1
-#elif defined(__GNUC__) && (defined(__ppc__) || defined(__powerpc__))
-# define USE_GCC_PPC_ASM 1
 #endif
 
 
 #if USE_INTEL_ATOMIC_BUILTINS && !HAVE_SYNC
 # define SYNC_ACQ(l)     (! __sync_lock_test_and_set(l, 1))
 # define SYNC_REL(l)     (__sync_lock_release(l))
+# if defined(__i386__) || defined(__x86_64__) || defined(__amd64__)
+#  define SYNC_RELF(l)   (__sync_lock_test_and_set(l, 0) /* hack */)
+# else
+#  define SYNC_RELF(l)   (__sync_lock_release(l), __sync_synchronize())
+# endif
 # define SYNC_INC(l)     (__sync_add_and_fetch(l, 1))
 # define SYNC_DEC(l)     (__sync_add_and_fetch(l, -1))
 # define SYNC_CAS(l,o,n) (__sync_bool_compare_and_swap(l,o,n))
@@ -172,10 +178,11 @@ static void cond_wait()
 # define SYNC_CASTP(l)   ((LONG volatile *)(l)) 
 # define SYNC_ACQ(l)     (!InterlockedExchange(SYNC_CASTP(l),1))
 # if defined(_M_IX86) || defined(_M_X64) || defined(_M_AMD64) 
-#  define SYNC_REL(l)    (*(int volatile *)(l)=0) /* strong memory ordering */
+#  define SYNC_REL(l)    (*(SYNC_CASTP(l))=0)
 # else
 #  define SYNC_REL(l)    (InterlockedExchange(SYNC_CASTP(l),0))
 # endif
+# define SYNC_RELF(l)    (InterlockedExchange(SYNC_CASTP(l),0))
 # define SYNC_INC(l)     (InterlockedIncrement(SYNC_CASTP(l)))
 # define SYNC_DEC(l)     (InterlockedDecrement(SYNC_CASTP(l)))
 # define SYNC_CAS(l,o,n) (InterlockedCompareExchange(SYNC_CASTP(l),n,o)==(o))
@@ -211,6 +218,7 @@ static int cmpxchglf(int volatile *atomic, int oldval, int newval)
 }
 # define SYNC_ACQ(l)     (! xchgl(l,1))
 # define SYNC_REL(l)     (*(int volatile *)l = 0)
+# define SYNC_RELF(l)    (xchgl(l,0))
 # define SYNC_INC(l)     (xaddl(l, 1) + 1)
 # define SYNC_DEC(l)     (xaddl(l, -1) - 1)
 # define SYNC_CAS(l,o,n) (cmpxchglf(l,o,n))
@@ -218,57 +226,33 @@ static int cmpxchglf(int volatile *atomic, int oldval, int newval)
 #endif
 
 
-#if USE_GCC_PPC_ASM && !HAVE_SYNC
-static int xchg_acq(int volatile *atomic, int newval) 
-{
-  int oldval;
-  __asm __volatile ("1: lwarx   %0,0,%2\n"
-                    "   stwcx.  %3,0,%2\n"
-                    "   bne-    1b\n"
-                    "   isync"
-                    : "=&r" (oldval), "+m" (*atomic)
-                    : "b" (atomic), "r" (newval), "m" (*atomic)
-                    : "cr0", "memory");
-  return oldval;
-}
-static void st_rel(int volatile *atomic, int newval)
-{
-  __asm __volatile ("sync" ::: "memory");
-  *atomic = newval;
-}
-static int addlx(int volatile *atomic, int add) 
-{
-  int val;
-  __asm __volatile ("1: lwarx  %0,0,%2\n"
-                    "   add    %0,%0,%3\n"
-                    "   stwcx. %0,0,%2\n"
-                    "   bne-   1b"
-                    : "=&b" (val), "+m" (*atomic)  
-                    : "b" (atomic), "r" (add), "m" (*atomic)           
-                    : "cr0", "memory");
-  return val;
-}
-static int cmpxchgl(int volatile *atomic, int oldval, int newval)
-{
-  int ret;
-  __asm __volatile ("   sync\n"
-                    "1: lwarx  %0,0,%1\n"
-                    "   cmpw   %0,%2\n"
-                    "   bne    2f\n"
-                    "   stwcx. %3,0,%1\n"
-                    "   bne-   1b\n"
-                    "2: isync"
-                    : "=&r" (ret)
-                    : "b" (atomic), "r" (oldval), "r" (newval)
-                    : "cr0", "memory");
-  return ret;
-}
-# define SYNC_ACQ(l)     (!xchg_acq(l,1))
-# define SYNC_REL(l)     (st_rel(l,0))
-# define SYNC_INC(l)     (addlx(l, 1))
-# define SYNC_DEC(l)     (addlx(l, -1))
-# define SYNC_CAS(l,o,n) (cmpxchgl(l,o,n)==o)
-# define HAVE_SYNC 1
+// Spin lock hints
+
+#if HAVE_SYNC
+#ifndef SYNC_PAUSE
+# if defined(__GNUC__)
+#  if defined(__i386__) || defined(__x86_64__) || defined(__amd64__)
+#   define SYNC_PAUSE() __asm__ __volatile__ ("pause" : : : "memory")
+#  endif
+# endif
+#endif
+#ifndef SYNC_PAUSE
+# if defined(__GNUC__)
+#  if defined(__ia64__)
+#   define SYNC_PAUSE() __asm__ __volatile__ ("hint @pause" : : : "memory")
+#  endif
+# endif
+#endif
+#ifndef SYNC_PAUSE
+# if defined(_MSC_VER)
+#  if defined(_M_IX86) || defined(_M_X64) || defined(_M_AMD64) 
+#   define SYNC_PAUSE() __asm { pause } 
+#  endif
+# endif
+#endif
+# ifndef SYNC_PAUSE
+#  define SYNC_PAUSE /**/
+# endif
 #endif
 
 
@@ -280,36 +264,57 @@ static int cmpxchgl(int volatile *atomic, int oldval, int newval)
 
 /* We have fast synchronization */
 
-int volatile nwaiters = 0;
-int volatile dummy;
-
 int 
 atomicAcquire(int volatile *lock)
 {
   return SYNC_ACQ(lock);
 }
-    
+
+static int spinHelper(int *counter)
+{
+  *counter += 1;
+  if (*counter < 12)
+    SYNC_PAUSE();
+#if HAVE_SCHED_YIELD  
+  else if (*counter < 16)
+    sched_yield();
+#elif defined(WIN32)
+  else if (*counter < 16)
+    Sleep(1);
+#endif
+  else
+    return 1;
+  return 0;
+}
+
+static int (*spinHelperPtr)(int*) = spinHelper;
+static int volatile nwaiters = 0;
+
 void 
 atomicAcquireOrSpin(int volatile *lock)
 {
-  int spin = 16;
-  while (spin >= 0 && ! SYNC_ACQ(lock))
-    spin -= 1;
-  if (spin < 0)
+  int counter = 0;
+  while (! SYNC_ACQ(lock))
     {
-      MUTEX_ENTER;
-      nwaiters += 1;
-      while (! SYNC_ACQ(lock))
-        COND_WAIT;
-      nwaiters -= 1;
-      MUTEX_LEAVE;
+      /* call via pointer to prevent inlining */
+      if (spinHelperPtr(&counter))
+        {
+          /* default to system wait */
+          MUTEX_ENTER;
+          nwaiters += 1;
+          while (! SYNC_ACQ(lock))
+            COND_WAIT;
+          nwaiters -= 1;
+          MUTEX_LEAVE;
+          return;
+        }
     }
 }
 
 void 
 atomicRelease(int volatile *lock)
 {
-  SYNC_REL(lock);
+  SYNC_RELF(lock);
   if (nwaiters > 0)
     {
       MUTEX_ENTER;
@@ -336,7 +341,6 @@ atomicCompareAndSwap(int volatile *var, int oldval, int newval)
 {
   return SYNC_CAS(var,oldval,newval);
 }
-
 
 
 #else

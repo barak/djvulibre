@@ -144,7 +144,7 @@ AC_HEADER_STDC
 AC_HEADER_DIRENT
 AC_HEADER_TIME
 AC_HEADER_SYS_WAIT     
-AC_CHECK_HEADERS(wchar.h wctype.h sys/mman.h iconv.h)
+AC_CHECK_HEADERS(wchar.h wctype.h sys/mman.h iconv.h sched.h)
 AC_CHECK_HEADERS(stdint.h inttypes.h sys/ipc.h sys/shm.h)
 
 # ----------------------------------------
@@ -170,13 +170,15 @@ AC_FUNC_FSEEKO
 AC_CHECK_FUNCS(wcrtomb iswspace setenv)
 AC_CHECK_FUNCS(putc_unlocked strerror vsnprintf)
 AC_CHECK_FUNCS(gethostname strftime getpwuid)
-AC_CHECK_FUNCS(sigaction mkstemp)
+AC_CHECK_FUNCS(sigaction mkstemp sched_yield)
 
 # iconv function might be defined as libiconv in iconv.h
 AC_MSG_CHECKING([for iconv])
 ac_has_iconv=no
 AC_LANG_PUSH(C)
-AC_LINK_IFELSE([AC_LANG_PROGRAM([[#include "iconv.h"]], [[iconv((iconv_t)0, (char**)0, (size_t*)0, (char**)0, (size_t*)0);]])],[ac_has_iconv=yes],[])
+AC_LINK_IFELSE([AC_LANG_PROGRAM([[#include "iconv.h"]], 
+  [[iconv((iconv_t)0, (char**)0, (size_t*)0, (char**)0, (size_t*)0);]])],
+  [ac_has_iconv=yes],[])
 AC_MSG_RESULT($ac_has_iconv)
 AC_LANG_POP(C)
 if test x$ac_has_iconv = xyes ; then
