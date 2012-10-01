@@ -195,7 +195,7 @@ static int xchgl(int volatile *atomic, int newval)
 {
   int oldval;
   __asm__ __volatile__ ("xchgl %0, %1"
-			: "=r" (oldval), "+m" (*atomic)
+			: "=r" (oldval), "=m" (*atomic)
 			: "0" (newval), "m" (*atomic)); 
   return oldval; 
 }
@@ -203,17 +203,18 @@ static int xaddl(int volatile *atomic, int add)
 {
   int val; /* This works for the 486 and later */
   __asm__ __volatile__("lock; xaddl %0, %1" 
-                       : "=r" (val), "+m" (*atomic) 
-                       : "m" (*atomic), "0" (add) );
+                       : "=r" (val), "=m" (*atomic) 
+                       : "0" (add), "m" (*atomic) 
+                       : "cc" );
   return val;
 }
 static int cmpxchglf(int volatile *atomic, int oldval, int newval)
 {
   int ret;
-  __asm __volatile ("lock; cmpxchgl %2, %1\n"
-                    "sete %%al; movzbl %%al,%0"
+  __asm __volatile ("lock; cmpxchgl %2, %1; sete %%al; movzbl %%al,%0"
                     : "=a" (ret), "=m" (*atomic)
-                    : "r" (newval), "m" (*atomic), "0" (oldval));
+                    : "r" (newval), "0" (oldval), "m" (*atomic)
+                    : "cc");
   return ret;
 }
 # define SYNC_ACQ(l)     (! xchgl(l,1))
@@ -270,46 +271,45 @@ atomicAcquire(int volatile *lock)
   return SYNC_ACQ(lock);
 }
 
-static int spinHelper(int *counter)
-{
-  *counter += 1;
-  if (*counter < 12)
-    SYNC_PAUSE();
-#if HAVE_SCHED_YIELD  
-  else if (*counter < 16)
-    sched_yield();
-#elif defined(WIN32)
-  else if (*counter < 16)
-    Sleep(1);
-#endif
-  else
-    return 1;
-  return 0;
-}
-
-static int (*spinHelperPtr)(int*) = spinHelper;
 static int volatile nwaiters = 0;
+
+static void
+#ifdef __GNUC__
+__attribute__((noinline)) 
+#endif
+spinHelper(int volatile *lock)
+{
+  for(int counter=0; true; counter++)
+    {
+      if (counter < 12)
+        SYNC_PAUSE();
+#if HAVE_SCHED_YIELD  
+      else if (counter < 16)
+        sched_yield();
+#elif defined(WIN32)
+      else if (counter < 16)
+        Sleep(1);
+#endif
+      else 
+        break;
+      if (SYNC_ACQ(lock))
+        return;
+    }
+  MUTEX_ENTER;
+  nwaiters += 1;
+  while (! SYNC_ACQ(lock))
+    COND_WAIT;
+  nwaiters -= 1;
+  MUTEX_LEAVE;
+}
 
 void 
 atomicAcquireOrSpin(int volatile *lock)
 {
-  int counter = 0;
-  while (! SYNC_ACQ(lock))
-    {
-      /* call via pointer to prevent inlining */
-      if (spinHelperPtr(&counter))
-        {
-          /* default to system wait */
-          MUTEX_ENTER;
-          nwaiters += 1;
-          while (! SYNC_ACQ(lock))
-            COND_WAIT;
-          nwaiters -= 1;
-          MUTEX_LEAVE;
-          return;
-        }
-    }
+  if (! SYNC_ACQ(lock))
+    spinHelper(lock);
 }
+
 
 void 
 atomicRelease(int volatile *lock)
