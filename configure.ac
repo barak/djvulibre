@@ -144,7 +144,8 @@ AC_HEADER_STDC
 AC_HEADER_DIRENT
 AC_HEADER_TIME
 AC_HEADER_SYS_WAIT     
-AC_CHECK_HEADERS(wchar.h wctype.h sys/mman.h iconv.h sched.h)
+AC_CHECK_HEADERS(wchar.h wctype.h sys/mman.h iconv.h)
+AC_CHECK_HEADERS(langinfo.h sched.h)
 AC_CHECK_HEADERS(stdint.h inttypes.h sys/ipc.h sys/shm.h)
 
 # ----------------------------------------
@@ -167,7 +168,7 @@ AC_SYS_LARGEFILE
 AC_FUNC_MMAP
 AC_FUNC_FORK
 AC_FUNC_FSEEKO
-AC_CHECK_FUNCS(wcrtomb iswspace setenv)
+AC_CHECK_FUNCS(wcrtomb iswspace setenv nl_langinfo)
 AC_CHECK_FUNCS(putc_unlocked strerror vsnprintf)
 AC_CHECK_FUNCS(gethostname strftime getpwuid)
 AC_CHECK_FUNCS(sigaction mkstemp sched_yield)

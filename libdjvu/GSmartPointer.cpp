@@ -109,42 +109,26 @@ GPEnabled::destroy()
 // ------ GPBASE
 
 
-#define LOCKMASK 0x3f
-#define LOCKIDX(addr) ((((size_t)(addr))/sizeof(void*))&LOCKMASK)
-static int volatile locks[LOCKMASK+1];
-
-
 GPBase&
 GPBase::assign (const GPBase &sptr)
 {
-  int volatile *lockb = locks+LOCKIDX(&sptr);
-  atomicAcquireOrSpin(lockb);
   GPEnabled *nptr = sptr.ptr;
-  if (nptr)
-    nptr->ref();
-  atomicRelease(lockb);
-  int volatile *locka = locks+LOCKIDX(this);
-  atomicAcquireOrSpin(locka);
-  GPEnabled *old = ptr;
-  ptr = nptr;
-  atomicRelease(locka);
-  if (old)
-    old->unref();
+  if (nptr && atomicIncrement(&nptr->count) <= 0)
+    nptr = 0;
+  GPEnabled *optr = (GPEnabled*)atomicExchangePointer(&ptr, (void*)nptr);
+  if (optr)
+    optr->unref();
   return *this;
 }
 
 GPBase&
 GPBase::assign (GPEnabled *nptr)
 {
-  if (nptr)
-    nptr->ref();
-  int volatile *locka = locks+LOCKIDX(this);
-  atomicAcquireOrSpin(locka);
-  GPEnabled *old = ptr;
-  ptr = nptr;
-  atomicRelease(locka);
-  if (old)
-    old->unref();
+  if (nptr && atomicIncrement(&nptr->count) <= 0)
+    nptr = 0;
+  GPEnabled *optr = (GPEnabled*)atomicExchangePointer(&ptr, (void*)nptr);
+  if (optr)
+    optr->unref();
   return *this;
 }
 

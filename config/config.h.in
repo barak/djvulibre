@@ -73,6 +73,9 @@
 /* Define if you have the IJG JPEG library. */
 #undef HAVE_JPEG
 
+/* Define to 1 if you have the <langinfo.h> header file. */
+#undef HAVE_LANGINFO_H
+
 /* Define to 1 if you have the `m' library (-lm). */
 #undef HAVE_LIBM
 
@@ -99,6 +102,9 @@
 
 /* Define to 1 if you have the <ndir.h> header file, and it defines `DIR'. */
 #undef HAVE_NDIR_H
+
+/* Define to 1 if you have the `nl_langinfo' function. */
+#undef HAVE_NL_LANGINFO
 
 /* Define if pthreads are available */
 #undef HAVE_PTHREAD
