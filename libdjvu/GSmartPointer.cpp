@@ -101,7 +101,7 @@ GPEnabled::destroy()
   // If yes, set the counter to -0x7fff to mark 
   // the object as doomed and make sure things
   // will work if the destructor uses a GP...
-  if (atomicCompareAndSwap(&count, 0, -0x7fff))
+  if (! atomicCompareAndSwap(&count, 0, -0x7fff))
     delete this;
 }
 
