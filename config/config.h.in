@@ -30,12 +30,6 @@
 /* define if bool is a built-in type */
 #undef HAVE_BOOL
 
-/* Define if cothreads are available. */
-#undef HAVE_COTHREAD
-
-/* Define if libgcc contains the cothread patch. */
-#undef HAVE_COTHREAD_PATCH
-
 /* Define to 1 if you have the <dirent.h> header file, and it defines `DIR'.
    */
 #undef HAVE_DIRENT_H
@@ -61,9 +55,6 @@
 /* Define to 1 if you have the `getpwuid' function. */
 #undef HAVE_GETPWUID
 
-/* Define if you have glib-2.0. */
-#undef HAVE_GLIB
-
 /* Define to 1 if you have the iconv function. */
 #undef HAVE_ICONV
 
@@ -81,6 +72,9 @@
 
 /* Define if you have the IJG JPEG library. */
 #undef HAVE_JPEG
+
+/* Define to 1 if you have the <langinfo.h> header file. */
+#undef HAVE_LANGINFO_H
 
 /* Define to 1 if you have the `m' library (-lm). */
 #undef HAVE_LIBM
@@ -109,14 +103,20 @@
 /* Define to 1 if you have the <ndir.h> header file, and it defines `DIR'. */
 #undef HAVE_NDIR_H
 
+/* Define to 1 if you have the `nl_langinfo' function. */
+#undef HAVE_NL_LANGINFO
+
 /* Define if pthreads are available */
 #undef HAVE_PTHREAD
 
 /* Define to 1 if you have the `putc_unlocked' function. */
 #undef HAVE_PUTC_UNLOCKED
 
-/* Define to Qt version if available */
-#undef HAVE_QT
+/* Define to 1 if you have the <sched.h> header file. */
+#undef HAVE_SCHED_H
+
+/* Define to 1 if you have the `sched_yield' function. */
+#undef HAVE_SCHED_YIELD
 
 /* Define to 1 if you have the `setenv' function. */
 #undef HAVE_SETENV
@@ -210,18 +210,9 @@
 /* Define to 1 if `vfork' works. */
 #undef HAVE_WORKING_VFORK
 
-/* Define to 1 if you have the <X11/extensions/Xext.h> header file. */
-#undef HAVE_X11_EXTENSIONS_XEXT_H
-
-/* Define if you have the Xt include files. */
-#undef HAVE_XT
-
 /* Define to the sub-directory in which libtool stores uninstalled libraries.
    */
 #undef LT_OBJDIR
-
-/* Define to use g++ pragmas interface/implementation */
-#undef NEED_GNUG_PRAGMAS
 
 /* Define to the address where bug reports for this package should be sent. */
 #undef PACKAGE_BUGREPORT
@@ -246,9 +237,6 @@
 
 /* Define to 1 if you can safely include both <sys/time.h> and <time.h>. */
 #undef TIME_WITH_SYS_TIME
-
-/* Define to 1 if the X Window System is missing or not being used. */
-#undef X_DISPLAY_MISSING
 
 /* Number of bits in a file offset, on hosts where this is settable. */
 #undef _FILE_OFFSET_BITS
@@ -332,13 +320,6 @@
 #define GCONTAINER_NO_TYPENAME 1
 #endif
 
-/* - COTHREAD */
-#ifdef HAVE_COTHREAD
-#ifndef HAVE_COTHREAD_PATCH
-#define NO_LIBGCC_HOOKS 1
-#endif
-#endif
-
 /* - JPEG */
 #ifdef HAVE_JPEG
 #define NEED_JPEG_DECODER 1
@@ -349,24 +330,6 @@
 #define HAS_MEMMAP 1
 #else
 #define HAS_MEMMAP 0
-#endif
-
-/* - QT */
-#ifdef HAVE_QT
-#if HAVE_QT < 200
-#define QT1
-#elif HAVE_QT < 300
-#define QT2
-#else
-#define QT3
-#endif
-#endif
-
-/* - X STUFF */
-#ifdef HAVE_SYS_IPC_H
-#ifdef HAVE_SYS_SHM_H
-#define USE_XSHM 1
-#endif
 #endif
 
 /* config.h: end */

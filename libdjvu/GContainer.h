@@ -262,7 +262,7 @@ protected:
     static void   init(void* dst, int n) {}
     // Trivial copy constructor
     static void   copy(void* dst, const void* src, int n, int ) 
-      { memcpy(dst, src, SZ*n); }
+      { ::memcpy(dst, src, SZ*n); }
     // Trivial destructor
     static void   fini(void* dst, int n) {}
   };

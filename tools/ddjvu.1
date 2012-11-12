@@ -43,7 +43,6 @@ is not specified or equal to a single dash.
 However a valid output file name is always required when producing a
 TIFF or PDF file.
 
-
 .SH MAIN OPTIONS
 .TP
 .BI "-format=" "fmt"
@@ -83,9 +82,8 @@ and
 .IP "*"
 Format
 .B "tiff"
-produces a Tagged Image Format (TIFF) file.
-The resulting file uses the best available 
-lossless compression model.
+produces a Tagged Image Format (TIFF) 
+file using lossless compression.
 Enabling lossy JPEG compression (see option 
 .BI "-quality"
 below) often produces much smaller files.
@@ -101,7 +99,7 @@ Format
 produces a Portable Document Format (PDF) file.
 Each page in the resulting file is represented
 by an image at the specified resolution,
-using the best available lossless compression model.
+using lossless compression.
 Enabling lossy JPEG compression (see option 
 .BI "-quality"
 below) often produces much smaller files.
@@ -144,6 +142,19 @@ outputs pages 1 to 10, and specification
 .BR "1,3,99999-4"
 outputs pages 1 and 3, followed by all the document
 pages in reverse order up to page 4.
+.TP
+.BI "-eachpage"
+When this option is specified, program
+.B ddjvu
+generates one separate file per page
+named by replacing the 
+.B %d
+specification in 
+.I outputfilename
+by the page number 
+in a manner simular to the 
+.BR printf (3)
+function.
 .TP
 .BI "-mode=" "mod"
 Selects which layers of the DjVu image should be rendered.
@@ -260,22 +271,30 @@ The output file will always have size
 when this option is specified.
 .TP
 .BI "-quality=" "factor"
-Enables lossy compression in TIFF and PDF files.
-Without this option, TIFF or PDF output files always 
-use lossless compression or no compression.  
+Enables lossy JPEG compression for TIFF and PDF files.
+This option only affects images that cannot be encoded
+using the preferred TIFF/G4 compression.
 Argument 
 .I factor
-specifies a JPEG quantization factor 
-ranging from 25 to 150. See command 
+is a quantization factor ranging from 25 to 150. 
+See command 
 .BR cjpeg (1)
 for more information on JPEG quantization factors.
 Value 80 is a good starting point.
-.TP
-.B "-quality=uncompressed"
+.TP 
+.BR "-quality=uncompressed"
 Completely disables compression in TIFF and PDF files.
 Although the resulting files are often huge,
 this is sometimes useful for maximal compatibility
 with hastily written software.
+.TP
+.BR "-quality=deflate"
+Enables DEFLATE compression for TIFF files.
+Images that cannot be encoded using the preferred TIFF/G4 compression
+will be encoded with DEFLATE compression if available.
+Otherwise the more portable PACKBITS compression is used.
+Specifying this option is not necessary for PDF files
+because this is the default behavior.
 
 .SH DEPRECATED OPTIONS
 
@@ -315,10 +334,13 @@ decodes all pages and produces a multipage TIFF file.
 
 Command
 .IP "" 3
-.BI "ddjvu -format=ppm -page=1 -size=100x100 " "myfile.djvu" " -"
+.BI "ddjvu -format=ppm -page=1-10 -eachpage -size=100x100 " "myfile.djvu" " thumb%03d.ppm"
 .PP
-produces a thumbnail for the first page of a document and 
-outputs it as a PPM file on the standard output.
+produces 100x100 thumbnails for the first ten page of a document 
+and outputs them as PPM files named
+.BR thumb001.ppm
+to 
+.BR thumb010.ppm .
 
 .SH CREDITS
 The new version of this program was written 
@@ -338,4 +360,5 @@ released under a BSD license.
 .BR ppm (5),
 .BR cjpeg (1),
 .BR tiffsplit (1),
-.BR tiffcp (1)
+.BR tiffcp (1),
+.BR printf (3)

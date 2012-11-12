@@ -1871,6 +1871,16 @@ command_set_outline(ParsingByteStream &pbs)
     }
 }
 
+void
+command_remove_outline(ParsingByteStream &pbs)
+{
+  if (g().doc->get_djvm_nav())
+    {
+      g().doc->set_djvm_nav(0);
+      modified = true;
+    }
+}
+
 static bool
 callback_thumbnails(int page_num, void *)
 {
@@ -2094,6 +2104,7 @@ static GMap<GUTF8String,CommandFunc> &command_map() {
     xcommand_map["remove-ant"] = command_remove_ant;
     xcommand_map["remove-meta"] = command_remove_meta;
     xcommand_map["remove-txt"] = command_remove_txt;
+    xcommand_map["remove-outline"] = command_remove_outline;
     xcommand_map["remove-thumbnails"] = command_remove_thumbnails;
     xcommand_map["remove-xmp"] = command_remove_xmp;
     xcommand_map["set-page-title"] = command_set_page_title;
