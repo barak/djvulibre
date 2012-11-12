@@ -1,3 +1,10 @@
+djvulibre (3.5.25.3-3) unstable; urgency=low
+
+  * multiarch fix via dh-exec lossage
+  * merge upstream fixes
+
+ -- Barak A. Pearlmutter <bap@debian.org>  Mon, 12 Nov 2012 11:06:39 +0000
+
 djvulibre (3.5.25.3-2) unstable; urgency=low
 
   * remove more X11-related build dependencies
