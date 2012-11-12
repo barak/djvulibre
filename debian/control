@@ -4,7 +4,7 @@ Priority: optional
 Maintainer: Barak A. Pearlmutter <bap@debian.org>
 Uploaders: Leon Bottou <leonb@bottou.org>
 Build-Depends: dh-autoreconf,
-	       debhelper (>= 9),
+	       debhelper (>= 9), dh-exec,
 	       libjpeg-dev,
 	       libtiff5-dev | libtiff4-dev | libtiff3g-dev | libtiff-dev,
 	       librsvg2-bin | imagemagick
