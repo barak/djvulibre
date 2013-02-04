@@ -387,6 +387,7 @@ GMonitor::wait(unsigned long timeout)
 #define pthread_condattr_default   NULL
 #endif
 
+static pthread_t pthread_null; // portable zero initialization!
 
 void *
 GThread::start(void *arg)
@@ -440,13 +441,13 @@ GThread::start(void *arg)
 // GThread
 
 GThread::GThread(int stacksize) : 
-  hthr(0), xentry(0), xarg(0)
+  hthr(pthread_null), xentry(0), xarg(0)
 {
 }
 
 GThread::~GThread()
 {
-  hthr = 0;
+  hthr = pthread_null;
 }
 
 int  
@@ -506,7 +507,7 @@ GThread::current()
 // -- GMonitor
 
 GMonitor::GMonitor()
-  : ok(0), count(1), locker(0)
+  : ok(0), count(1), locker(pthread_null)
 {
   // none of this should be necessary ... in theory.
 #ifdef PTHREAD_MUTEX_INITIALIZER
@@ -549,7 +550,6 @@ GMonitor::enter()
 void 
 GMonitor::leave()
 {
-  static pthread_t pthread_null;
   pthread_t self = pthread_self();
   if (ok && (count>0 || !pthread_equal(locker, self)))
     G_THROW( ERR_MSG("GThreads.not_acq_broad") );
