@@ -67,10 +67,7 @@
 #elif defined(HAVE_NEW_H)
 # include <new.h>
 #else
-inline void* operator new(size_t, void * ptr) { return ptr; }
-inline void* operator new[](size_t, void * ptr) { return ptr; }
-inline void operator delete(void*, void*) { }
-inline void operator delete[](void*, void*) { }
+# include <new> // try standard c++ anyway!
 #endif
 
 #ifdef WIN32
