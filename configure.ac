@@ -145,7 +145,7 @@ AC_HEADER_DIRENT
 AC_HEADER_TIME
 AC_HEADER_SYS_WAIT     
 AC_CHECK_HEADERS(wchar.h wctype.h sys/mman.h iconv.h)
-AC_CHECK_HEADERS(langinfo.h sched.h)
+AC_CHECK_HEADERS(langinfo.h sched.h new.h)
 AC_CHECK_HEADERS(stdint.h inttypes.h sys/ipc.h sys/shm.h)
 
 # ----------------------------------------

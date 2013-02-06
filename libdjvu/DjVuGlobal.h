@@ -62,14 +62,15 @@
 # pragma interface
 #endif
 
-#if defined(UNDER_CE)
-# ifndef __WCEALT_H__
-inline void * operator new(size_t, void * ptr) { return ptr; }
-# endif
-#elif defined(AUTOCONF) && defined(HAVE_STDINCLUDES)
+#if defined(HAVE_STDINCLUDES)
 # include <new>
-#else
+#elif defined(HAVE_NEW_H)
 # include <new.h>
+#else
+inline void* operator new(size_t, void * ptr) { return ptr; }
+inline void* operator new[](size_t, void * ptr) { return ptr; }
+inline void operator delete(void*, void*) { }
+inline void operator delete[](void*, void*) { }
 #endif
 
 #ifdef WIN32
