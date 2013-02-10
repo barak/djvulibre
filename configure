@@ -15953,7 +15953,7 @@ ac_compiler_gnu=$ac_cv_cxx_compiler_gnu
  cat confdefs.h - <<_ACEOF >conftest.$ac_ext
 /* end confdefs.h.  */
 #include <new>
-struct X { int a; X(int a):a(a){}; };
+struct X { int a; X(int a):a(a){} };
 X* foo(void *x) { return new(x) X(2); }
 int
 main ()

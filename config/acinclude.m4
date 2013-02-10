@@ -244,7 +244,7 @@ ac_cv_cxx_stdincludes,
 [AC_LANG_SAVE
  AC_LANG_CPLUSPLUS
  AC_TRY_COMPILE([#include <new>
-struct X { int a; X(int a):a(a){}; };
+struct X { int a; X(int a):a(a){} };
 X* foo(void *x) { return new(x) X(2); } ],[],
  ac_cv_cxx_stdincludes=yes, ac_cv_cxx_stdincludes=no)
  AC_LANG_RESTORE
