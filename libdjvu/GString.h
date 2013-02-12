@@ -113,15 +113,17 @@
 #include <stdarg.h>
 #ifdef WIN32
 # include <windows.h>
-# define HAS_WCHAR 1
-# define HAS_WCTYPE 1
-# define HAS_MBSTATE 1
+# ifndef AUTOCONF
+#  define HAS_WCHAR 1
+#  define HAS_WCTYPE 1
+#  define HAS_MBSTATE 1
+# endif
 #endif
 
 #if HAS_WCHAR
-# if !defined(AUTOCONF) || HAVE_WCHAR_H
-#  include <wchar.h>
-# endif
+# include <wchar.h>
+#elif HAVE_WCHAR_H
+# include <wchar.h>
 #endif
 
 #if HAVE_STDINT_H

@@ -78,6 +78,7 @@
 
 #if defined(WIN32) && !defined(UNIX)
 # include <windows.h>
+# include <string.h>
 # include <direct.h>
 # define getcwd _getcwd
 #endif
@@ -148,7 +149,7 @@ strerror(int errno)
   extern char *sys_errlist[];
   if (errno>0 && errno<sys_nerr) 
     return sys_errlist[errno];
-  return "unknown stdio error";
+  return (char*) "unknown stdio error";
 }
 #endif
 
