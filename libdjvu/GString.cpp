@@ -88,16 +88,12 @@
 #endif
 #include <ctype.h>
 
+#ifndef LC_NUMERIC          //MingW
+# undef DO_CHANGELOCALE
+# define LC_NUMERIC 0
+#endif
 #ifndef DO_CHANGELOCALE
-#define DO_CHANGELOCALE 1
-#ifdef UNIX
-#if THREADMODEL != COTHREADS
-#if THREADMODEL != NOTHREADS
-#undef DO_CHANGELOCALE
-#define DO_CHANGELOCALE 0
-#endif
-#endif 
-#endif
+# define DO_CHANGELOCALE 0
 #endif
 
 
