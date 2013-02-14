@@ -2145,19 +2145,6 @@ GStringRep::concat(const GP<GStringRep> &s1,const GP<GStringRep> &s2) const
   return retval;
 }
 
-#ifdef WIN32
-static const char *setlocale_win32(void)
-{
-  static const char *locale=setlocale(LC_ALL,0);
-  if(! locale || (locale[0] == 'C' && !locale[1]))
-  {
-    locale=setlocale(LC_ALL,"");
-  }
-  return locale;
-}
-const char *setlocale_win32_var = setlocale_win32();
-#endif
-
 GStringRep::GStringRep(void)
 {
   size=0;
