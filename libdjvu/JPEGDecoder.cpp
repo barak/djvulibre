@@ -62,21 +62,25 @@
 
 #ifdef NEED_JPEG_DECODER
 
-#include "JPEGDecoder.h"
-
 #ifdef __cplusplus
 extern "C" {
 #endif
 #undef HAVE_STDLIB_H
 #undef HAVE_STDDEF_H
+#define INT32 jpeg_INT32
+#define INT16 jpeg_INT16
 #include <stdio.h>
 #include <jconfig.h>
 #include <jpeglib.h>
 #include <jerror.h>
+#undef FAR
+#undef INT32
+#undef INT16
 #ifdef __cplusplus
 }
 #endif
 
+#include "JPEGDecoder.h"
 #include "ByteStream.h"
 #include "GPixmap.h"
 #ifdef LIBJPEGNAME

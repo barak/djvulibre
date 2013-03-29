@@ -26,7 +26,7 @@ djdll="libdjvulibre.dll libjpeg.dll libtiff.dll libz.dll"
 for n in $djdll $djexe ; do 
     run cp $dwdir/$n $target ; done
 
-qtdll="QtCore4.dll QtGui4.dll QtNetwork4.dll"
+qtdll="QtCore4.dll QtGui4.dll QtNetwork4.dll QtOpenGL4.dll"
 qtssl="ssleay32.dll libeay32.dll libssl32.dll"
 qtplug="accessible codecs imageformats"
 for n in $qtdll ; do 
