@@ -73,20 +73,24 @@ SectionEnd
 Section -Post
   WriteUninstaller "$INSTDIR\uninst.exe"
   WriteRegStr HKLM "${PRODUCT_DIR_REGKEY}" "" "$INSTDIR\djview.exe"
+  WriteRegStr HKLM "${PRODUCT_DIR_REGKEY}" "Path" "$INSTDIR"
   WriteRegStr ${PRODUCT_UNINST_ROOT_KEY} "${PRODUCT_UNINST_KEY}" "DisplayName" "${PRODUCT_NAME}"
   WriteRegStr ${PRODUCT_UNINST_ROOT_KEY} "${PRODUCT_UNINST_KEY}" "UninstallString" "$INSTDIR\uninst.exe"
   WriteRegStr ${PRODUCT_UNINST_ROOT_KEY} "${PRODUCT_UNINST_KEY}" "DisplayIcon" "$INSTDIR\djview.exe"
   WriteRegStr ${PRODUCT_UNINST_ROOT_KEY} "${PRODUCT_UNINST_KEY}" "DisplayVersion" "${PRODUCT_VERSION}"
   WriteRegStr ${PRODUCT_UNINST_ROOT_KEY} "${PRODUCT_UNINST_KEY}" "URLInfoAbout" "${PRODUCT_WEB_SITE}"
   WriteRegStr ${PRODUCT_UNINST_ROOT_KEY} "${PRODUCT_UNINST_KEY}" "Publisher" "${PRODUCT_PUBLISHER}"
-  DeleteRegKey HKCR "DjVu.Document"
-  DeleteRegKey HKCR ".djvu"
-  DeleteRegKey HKCR ".djv"
-  WriteRegStr HKCR ".djvu" "" "DjVu.Document"
-  WriteRegStr HKCR ".djv" "" "DjVu.Document"
-  WriteRegStr HKCR "DjVu.Document" "" "DjVu Document"
-  WriteRegStr HKCR "DjVu.Document\DefaultIcon" "" "$INSTDIR\djview.exe,1"
-  WriteRegStr HKCR "DjVu.Document\shell\open\command" "" '"$INSTDIR\djview.exe" "%1"'
+  DeleteRegKey HKCR "Djview.DjVuFile"
+  WriteRegStr HKCR "Djview.DjVuFile" "" "DjVu Document"
+  WriteRegStr HKCR "Djview.DjVuFile\DefaultIcon" "" "$INSTDIR\djview.exe,1"
+  WriteRegStr HKCR "Djview.DjVuFile\shell\open\command" "" '"$INSTDIR\djview.exe" "%1"'
+  WriteRegStr HKCR "Applications\djview.exe" "FriendlyAppName" "DjView"
+  WriteRegStr HKCR ".djv\OpenWithProgids" "Djview.DjVuFile" ""
+  WriteRegStr HKCR ".djvu\OpenWithProgids" "Djview.DjVuFile" ""
+  WriteRegStr HKCR ".djv\OpenWithProgids" "DjVu.Document" ""     ; for windjview
+  WriteRegStr HKCR ".djvu\OpenWithProgids" "DjVu.Document" ""    ; for windjview
+  WriteRegStr HKCR ".djvu" "" "Djview.DjVuFile"
+  WriteRegStr HKCR ".djv" "" "Djview.DjVuFile"
 SectionEnd
 
 Function un.onUninstSuccess
@@ -105,8 +109,9 @@ Section Uninstall
   Delete "$DESKTOP\DjView.lnk"
   DeleteRegKey ${PRODUCT_UNINST_ROOT_KEY} "${PRODUCT_UNINST_KEY}"
   DeleteRegKey HKLM "${PRODUCT_DIR_REGKEY}"
-  DeleteRegKey HKCR "DjVu.Document"
-  DeleteRegKey HKCR ".djvu"
-  DeleteRegKey HKCR ".djv"
+  DeleteRegKey HKCR "Djview.DjVuFile"
+  DeleteRegKey HKCR "Applications\djview.exe"
+;  DeleteRegValue HKCR ".djvu\OpenWithProgids" "Djview.DjVuFile"
+;  DeleteRegValue HKCR ".djv\OpenWithProgids" "Djview.DjVuFile"
   SetAutoClose true
 SectionEnd
