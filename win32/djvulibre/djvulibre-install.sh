@@ -83,5 +83,5 @@ test -d $target/man || run mkdir $target/man
       run wget -q http://djvu.sourceforge.net/doc/man/$n -O $n
   done )
 
-
+run cp $djdir/COPYING $target/COPYING.txt
 run cp $djdir/win32/djvulibre/djvulibre.nsi $target
