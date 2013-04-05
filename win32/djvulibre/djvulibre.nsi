@@ -4,10 +4,6 @@
 !define DJVULIBRE_VERSION "3.5.25.3"
 !define DJVIEW_VERSION "4.9.2"
 
-!define MENU_NAME "DjVuLibre"
-!define INSTALLER_NAME "DjVuLibre and DjView"
-!define INSTALLER_FILE "DjVuLibre-${DJVULIBRE_VERSION}_DjView-${DJVIEW_VERSION}_Setup.exe"
-
 !define PRODUCT_NAME "DjVuLibre+DjView"
 !define PRODUCT_VERSION "${DJVULIBRE_VERSION}+${DJVIEW_VERSION}"
 !define PRODUCT_PUBLISHER "DjVuZone"
@@ -16,17 +12,28 @@
 !define PRODUCT_UNINST_KEY "Software\Microsoft\Windows\CurrentVersion\Uninstall\${PRODUCT_NAME}"
 !define PRODUCT_UNINST_ROOT_KEY "HKLM"
 
+!define INSTALLER_NAME "DjVuLibre (${DJVULIBRE_VERSION}) DjView (${DJVIEW_VERSION})"
+!define INSTALLER_FILE "DjVuLibre-${DJVULIBRE_VERSION}_DjView-${DJVIEW_VERSION}_Setup.exe"
+!define MENU_NAME "DjVuLibre"
+
 Var DjvuDefaultOpen
 Var DjvDefaultOpen
 
 VIProductVersion ${PRODUCT_VERSION}
 VIAddVersionKey "ProductName" ${PRODUCT_NAME}
-VIAddVersionKey "LegalCopyright" "GPL"
-VIAddVersionKey "CompanyName" "DjVuZone"
-VIAddVersionKey "FileDescription" "DjVu viewer and utilities"
+VIAddVersionKey "FileDescription" "Viewer and utilities for DjVu files"
 VIAddVersionKey "FileVersion" ${PRODUCT_VERSION}
+VIAddVersionKey "DjVuLibreVersion" ${DJVULIBRE_VERSION}
+VIAddVersionKey "DjViewVersion" ${DJVIEW_VERSION}
+VIAddVersionKey "LegalCopyright" "GPL2+"
+VIAddVersionKey "CompanyName" "DjVuZone"
 
 SetCompressor /SOLID lzma
+
+; WinVer -----
+
+!include "LogicLib.nsh"
+!include "WinVer.nsh"
 
 ; MUI 1.67 compatible ------
 
@@ -48,7 +55,11 @@ SetCompressor /SOLID lzma
 !insertmacro MUI_LANGUAGE "English"
 !insertmacro MUI_RESERVEFILE_INSTALLOPTIONS
 
-; MUI end ------
+; Utils ------
+
+
+
+; Sections ------
 
 Name "${INSTALLER_NAME}"
 OutFile "..\${INSTALLER_FILE}"
@@ -56,7 +67,6 @@ InstallDir "$PROGRAMFILES\DjVuZone\DjVuLibre"
 InstallDirRegKey HKLM "${PRODUCT_DIR_REGKEY}" ""
 ShowInstDetails show
 ShowUnInstDetails show
-
 
 SectionGroup /e "!DjVuLibre"
 
@@ -79,21 +89,27 @@ SectionGroupEnd
 
 SectionGroup /e "!DjView"
 
- Section "-progid"
-  ; app key
+ Section "-registry"
+  ; -- app registration
   WriteRegStr HKLM "${PRODUCT_DIR_REGKEY}" "" "$INSTDIR\djview.exe"
   WriteRegStr HKLM "${PRODUCT_DIR_REGKEY}" "Path" "$INSTDIR"
-  ; progid
+  WriteRegStr HKCR "Applications\djview.exe" "FriendlyAppName" "DjView"
+  WriteRegStr HKCR "Applications\djview.exe\SupportedTypes\.djvu" "" ""
+  WriteRegStr HKCR "Applications\djview.exe\SupportedTypes\.djv" "" ""
+  WriteRegStr HKCR "Applications\djview.exe\shell\open\command" "" '"$INSTDIR\djview.exe" "%1"'
+  ${If} ${AtLeastWin7}
+    WriteRegDWORD HKLM "${PRODUCT_DIR_REGKEY}" "UseUrl" 1
+    WriteRegStr HKCR "Applications\djview.exe\SupportedProtocols\http" "" ""
+    WriteRegStr HKCR "Applications\djview.exe\SupportedProtocols\https" "" ""
+  ${EndIf}
+  ; -- progid
   DeleteRegKey HKCR "Djview.DjVuFile"
   WriteRegStr HKCR "Djview.DjVuFile" "" "Djview.DjVuFile"
   WriteRegStr HKCR "Djview.DjVuFile\DefaultIcon" "" "$INSTDIR\djview.exe,1"
   WriteRegStr HKCR "Djview.DjVuFile\shell\open\command" "" '"$INSTDIR\djview.exe" "%1"'
-  WriteRegStr HKCR "Applications\djview.exe" "FriendlyAppName" "DjView"
-  ; openwith
+  ; -- openwith
   WriteRegStr HKCR ".djv\OpenWithProgids" "Djview.DjVuFile" ""
   WriteRegStr HKCR ".djvu\OpenWithProgids" "Djview.DjVuFile" ""
-  WriteRegStr HKCR ".djv\OpenWithProgids" "DjVu.Document" ""     ; for windjview
-  WriteRegStr HKCR ".djvu\OpenWithProgids" "DjVu.Document" ""    ; for windjview
  SectionEnd
 
  Section "-startmenu"
@@ -108,10 +124,14 @@ SectionGroup /e "!DjView"
  Section "Associate DjVu files with DjView"
   ReadRegStr $DjvuDefaultOpen HKCR ".djvu" ""
   ReadRegStr $DjvDefaultOpen HKCR ".djv" ""
-  WriteRegStr ${PRODUCT_UNINST_ROOT_KEY} "${PRODUCT_UNINST_KEY}" "sav.djvu" $DjvuDefaultOpen
-  WriteRegStr ${PRODUCT_UNINST_ROOT_KEY} "${PRODUCT_UNINST_KEY}" "sav.djv" $DjvDefaultOpen
   WriteRegStr HKCR ".djvu" "" "Djview.DjVuFile"
   WriteRegStr HKCR ".djv" "" "Djview.DjVuFile"
+  ${If} $DjvuDefaultOpen != "Djview.DjVuFile"
+    WriteRegStr ${PRODUCT_UNINST_ROOT_KEY} "${PRODUCT_UNINST_KEY}" "sav.djvu" $DjvuDefaultOpen
+  ${EndIf}
+  ${If} $DjvuDefaultOpen != "Djview.DjVuFile"
+    WriteRegStr ${PRODUCT_UNINST_ROOT_KEY} "${PRODUCT_UNINST_KEY}" "sav.djv" $DjvDefaultOpen
+  ${EndIf}
  SectionEnd
 
  SectionGroup /e "Create shortcuts" 
@@ -136,28 +156,35 @@ Section "-post"
 SectionEnd
 
 Section Uninstall
+  ; -- remove files
   SetOutPath $TEMP
-  ;remove files
   RMDir /r /REBOOTOK "$INSTDIR"
-  ;remove shortcuts
+  ; -- remove shortcuts
   RMDir /r /REBOOTOK "$SMPROGRAMS\${MENU_NAME}"
   Delete "$DESKTOP\DjView.lnk"
   Delete "$QUICKLAUNCH\DjView.lnk"
-  ;restore associations
+  ; -- restore associations
+  ClearErrors
   ReadRegStr $DjvuDefaultOpen ${PRODUCT_UNINST_ROOT_KEY} "${PRODUCT_UNINST_KEY}" "sav.djvu"
-  IfErrors +1 0
-  WriteRegStr HKCR ".djvu" "" $DjvuDefaultOpen
+  ${IfNot} ${Errors}
+  ${AndIf} $DjvuDefaultOpen != ""
+    WriteRegStr HKCR ".djvu" "" $DjvuDefaultOpen
+  ${EndIf}
+  ClearErrors
   ReadRegStr $DjvDefaultOpen ${PRODUCT_UNINST_ROOT_KEY} "${PRODUCT_UNINST_KEY}" "sav.djv"
-  IfErrors +1 0
-  WriteRegStr HKCR ".djv" "" $DjvDefaultOpen
-  ;delete progid
+  ${IfNot} ${Errors}
+  ${AndIf} $DjvDefaultOpen != ""
+    WriteRegStr HKCR ".djv" "" $DjvDefaultOpen
+  ${EndIf}
+  ; -- delete progid
   DeleteRegKey HKLM "${PRODUCT_DIR_REGKEY}"
-  DeleteRegKey HKCR "Djview.DjVuFile"
+  DeleteRegKey HKLM "Software\Classes\Djview.DjVuFile"
   DeleteRegKey HKCR "Applications\djview.exe"
   DeleteRegValue HKCR ".djvu\OpenWithProgids" "Djview.DjVuFile"
   DeleteRegValue HKCR ".djv\OpenWithProgids" "Djview.DjVuFile"
-  ;delete uninst
+  ; -- delete uninst
   DeleteRegKey ${PRODUCT_UNINST_ROOT_KEY} "${PRODUCT_UNINST_KEY}"
-  ;close
   SetAutoClose true
 SectionEnd
+
+; Language strings ------
