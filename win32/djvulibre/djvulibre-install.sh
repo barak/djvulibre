@@ -18,6 +18,9 @@ function run() {
     fi
 }
 
+## Djvulibre tools
+echo ---- DjVuLibre tools
+
 djexe="bzz.exe c44.exe cjb2.exe cpaldjvu.exe csepdjvu.exe
        ddjvu.exe djvm.exe djvmcvt.exe djvudump.exe djvuextract.exe 
        djvumake.exe djvups.exe djvused.exe djvuserve.exe djvutoxml.exe
@@ -25,6 +28,9 @@ djexe="bzz.exe c44.exe cjb2.exe cpaldjvu.exe csepdjvu.exe
 djdll="libdjvulibre.dll libjpeg.dll libtiff.dll libz.dll"
 for n in $djdll $djexe ; do 
     run cp $dwdir/$n $target ; done
+
+## Qt libs
+echo ---- Qt libs
 
 qtdll="QtCore4.dll QtGui4.dll QtNetwork4.dll QtOpenGL4.dll"
 qtssl="ssleay32.dll libeay32.dll libssl32.dll"
@@ -45,8 +51,21 @@ run find $target -name '*.dll' -exec chmod 0755 {} \;
 
 echo '[Paths]' > $target/qt.conf
 
+## MS libs
+echo ---- MS libs
+
 for n in "$msredist"/* ; do
     run cp "$n" $target; done
+
+## DjVuLibre shared files
+echo ---- DjVuLibre shared files
+
+test -d $target/share || mkdir $target/share
+run cp -r $djdir/share/djvu $target/share
+run find $target/share -name CVS -exec rm -rf {} \; -prune
+
+## DjVuLibre dev files
+echo ---- DjVuLibre dev files
 
 run cp $dwdir/libdjvulibre.lib $target
 test -d $target/include || run mkdir $target/include
@@ -54,9 +73,8 @@ test -d $target/include/libdjvu || run mkdir $target/include/libdjvu
 run cp $djdir/libdjvu/miniexp.h $target/include/libdjvu
 run cp $djdir/libdjvu/ddjvuapi.h $target/include/libdjvu
 
-test -d $target/share || mkdir $target/share
-run cp -r $djdir/share/djvu $target/share
-run find $target/share -name CVS -exec rm -rf {} \; -prune
+## DjView exe
+echo ---- DjView exe
 
 if test -r $dwdir/djview.exe ; then
   run cp $dwdir/djview.exe $target
@@ -71,17 +89,15 @@ run chmod 0644 $target/share/djvu/djview4/qt*.qm
 run rm -f $target/share/djvu/djview4/qt_help_*.qm
 
 
-manfiles="bzz.html ddjvu.html djvudump.html djvuserve.html 
-          c44.html djview4.html djvuextract.html  djvuxml.html 
-          cjb2.html djvm.html djvumake.html djvutxt.html cpaldjvu.html 
-          djvmcvt.html djvups.html djvuxml.html csepdjvu.html djvu.html 
-          djvused.html"
+## Doc
+echo ---- Doc
+
+run cp $djdir/win32/djvulibre/djvulibre.nsi $target
 
 test -d $target/man || run mkdir $target/man
-( cd $target/man;
-  for n in $manfiles ; do
-      run wget -q http://djvu.sourceforge.net/doc/man/$n -O $n
-  done )
-
+test -d $target/doc || run mkdir $target/doc
+run cp $djdir/doc/*.djvu $target/doc
+run cp $djdir/doc/*.txt $target/doc
+run unix2dos $target/doc/*.txt
 run cp $djdir/COPYING $target/COPYING.txt
-run cp $djdir/win32/djvulibre/djvulibre.nsi $target
+run unix2dos $target/COPYING.txt
