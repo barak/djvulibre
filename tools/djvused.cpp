@@ -396,7 +396,8 @@ get_data_from_file(const char *cmd, ParsingByteStream &pbs, ByteStream &out)
       int c = pbs.get_spaces(true);
       pbs.unget(c);
       char skip[4];
-      char term[4] = "\n.\n";
+      char term0[4] = "\n.\n";
+      char term1[4] = "\r.\r";
       char *s = skip;
       int state = 1;
       while (state < 3) 
@@ -404,7 +405,7 @@ get_data_from_file(const char *cmd, ParsingByteStream &pbs, ByteStream &out)
           c = pbs.get();
           if (c == EOF)
             break;
-          if ( c == term[state] )
+          if ( c == term0[state] || c == term1[state] )
             {
               state += 1;
               *s++ = c;
