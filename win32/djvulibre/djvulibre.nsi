@@ -1,5 +1,5 @@
 ;---------------------------------------------------------;
-;Created 08-20 april 2013 by                                 ;
+;Created 08-24 april 2013 by                                 ;
 ;(C) Kravtsov Konstantin Ivanovich, Novokuznetsk, Russia  ;
 ;State of Art edition version - see below NSI_VER                                   ;
 ;LogicLib and Winver applied by Leon Bottou               ;             ;
@@ -22,7 +22,7 @@
 ;prepare names
 
 RequestExecutionLevel admin
-!define NSI_VER "9.1"
+!define NSI_VER "9.2"
 !define DJVULIBRE_NAME "DjVuLibre"
 !define DJVULIBRE_VERSION "3.5.25.3"
 !define CLASSES "Software\Classes\"
@@ -33,7 +33,6 @@ RequestExecutionLevel admin
 !define UNINST_NAME "${DJVULIBRE_NAME}+${DJVIEW_NAME}" ; for uninstaller
 !define MENU_NAME "${DJVULIBRE_NAME}"
 !define PRODUCT_VERSION "${DJVULIBRE_VERSION}+${DJVIEW_VERSION}"
-
 
 ;provide other info
 !define PRODUCT_PUBLISHER "DjVuZone"
@@ -50,7 +49,10 @@ RequestExecutionLevel admin
 !define FILEID "Djview.DjVuFile"
 !define NO_EXT "no key"
 !define BACKUP_EXT "DjView.Backup"
-
+;const for url.lnk
+!define RUN_URL "$WINDIR\system32\rundll32.exe"
+!define ICO_URL "$WINDIR\system32\url.dll"
+!define URL_PAR " url.dll,FileProtocolHandler"
 Var Djvu_EXT ; ext var
 Var COUNT    ; counter var
 Var KEY_VAL  ; readed key valuse
@@ -199,20 +201,20 @@ Function LaunchReadme
   Exec '"$INSTDIR\djview.exe" --outline --continuous "$INSTDIR\doc\djvulibre-book-en.djvu"'
 FunctionEnd
 
-!define WriteUrlFile "!insertmacro WriteUrlFile"
-!macro WriteUrlFile file url
-  Push "${file}"
-  Push "${url}"
-  call WriteUrlFile
-!macroend
-Function WriteUrlFile
-  Pop $2
-  Pop $1
-  DetailPrint "Creating $1"
-  WriteIniStr "$1" "InternetShortcut" "URL" "$2"
-  WriteIniStr "$1" "InternetShortcut" "IconFile" "$WINDIR\system32\url.dll"
-  WriteIniStr "$1" "InternetShortcut" "IconIndex" "0"
-FunctionEnd
+;!define WriteUrlFile "!insertmacro WriteUrlFile"
+;!macro WriteUrlFile file url
+;  Push "${file}"
+;  Push "${url}"
+;  call WriteUrlFile
+;!macroend
+;Function WriteUrlFile
+;  Pop $2
+;  Pop $1
+;  DetailPrint "Creating $1"
+;  WriteIniStr "$1" "InternetShortcut" "URL" "$2"
+;  WriteIniStr "$1" "InternetShortcut" "IconFile" "$WINDIR\system32\url.dll"
+;  WriteIniStr "$1" "InternetShortcut" "IconIndex" "0"
+;FunctionEnd
 
 ;---rep
 ;SectionGroup "!DjVuLibre" scDjVuLibre
@@ -316,13 +318,14 @@ Section "-menuentries"
   CreateDirectory "$SMPROGRAMS\${MENU_NAME}\$(Uninst_DIR)"
   CreateShortCut "$SMPROGRAMS\${MENU_NAME}\$(Uninst_DIR)\$(Uninst_LNK).lnk" "$INSTDIR\uninst.exe"
   CreateDirectory "$SMPROGRAMS\${MENU_NAME}\$(Doc_DIR)"
-;  CreateShortCut "$SMPROGRAMS\${MENU_NAME}\$(Doc_DIR)\$(DjvuOrg_LNK).lnk" "$INSTDIR\DjVu.url" "" "$WINDIR\system32\url.dll" 0
-;  CreateShortCut "$SMPROGRAMS\${MENU_NAME}\$(Doc_DIR)\$(DjvuLibre_LNK).lnk" "$INSTDIR\DjVuLibre.url" "" "$WINDIR\system32\url.dll" 0
-;  CreateShortCut "$SMPROGRAMS\${MENU_NAME}\$(Doc_DIR)\$(WebDL_LNK).lnk" "$INSTDIR\Download page.url" "" "$WINDIR\system32\url.dll" 0
-  ${WriteUrlFile} "$SMPROGRAMS\${MENU_NAME}\$(Doc_DIR)\$(WEB_LNK) Djvu.org.url" "${DJVUORG_WEB_SITE}"
-  ${WriteUrlFile} "$SMPROGRAMS\${MENU_NAME}\$(Doc_DIR)\$(WEB_LNK) DjvuLibre.url" "${DJVULIBRE_WEB_SITE}"
-  ${WriteUrlFile} "$SMPROGRAMS\${MENU_NAME}\$(Doc_DIR)\${DJVULIBRE_NAME} $(WebDL_LNK).url" "${PRODUCT_DOWNLOAD_PAGE}"
-  ${WriteUrlFile} "$SMPROGRAMS\${MENU_NAME}\$(Doc_DIR)\On-line documentation.url" "${PRODUCT_ONLINEHELP_PAGE}"
+;  ${WriteUrlFile} "$SMPROGRAMS\${MENU_NAME}\$(Doc_DIR)\$(WEB_LNK) Djvu.org.url" "${DJVUORG_WEB_SITE}"
+;  ${WriteUrlFile} "$SMPROGRAMS\${MENU_NAME}\$(Doc_DIR)\$(WEB_LNK) DjvuLibre.url" "${DJVULIBRE_WEB_SITE}"
+;  ${WriteUrlFile} "$SMPROGRAMS\${MENU_NAME}\$(Doc_DIR)\${DJVULIBRE_NAME} $(WebDL_LNK).url" "${PRODUCT_DOWNLOAD_PAGE}"
+;  ${WriteUrlFile} "$SMPROGRAMS\${MENU_NAME}\$(Doc_DIR)\On-line documentation.url" "${PRODUCT_ONLINEHELP_PAGE}"
+  CreateShortCut "$SMPROGRAMS\${MENU_NAME}\$(Doc_DIR)\$(WEB_LNK) Djvu.org.lnk" ${RUN_URL} "${URL_PAR} ${DJVUORG_WEB_SITE}" ${ICO_URL} 0
+  CreateShortCut "$SMPROGRAMS\${MENU_NAME}\$(Doc_DIR)\$(WEB_LNK) DjvuLibre.lnk" ${RUN_URL} "${URL_PAR} ${DJVULIBRE_WEB_SITE}" ${ICO_URL} 0
+  CreateShortCut "$SMPROGRAMS\${MENU_NAME}\$(Doc_DIR)\${DJVULIBRE_NAME} $(WebDL_LNK).lnk" ${RUN_URL} "${URL_PAR} ${PRODUCT_DOWNLOAD_PAGE}" ${ICO_URL} 0
+  CreateShortCut "$SMPROGRAMS\${MENU_NAME}\$(Doc_DIR)\On-line documentation.lnk" ${RUN_URL} "${URL_PAR} ${PRODUCT_ONLINEHELP_PAGE}" ${ICO_URL} 0
 
 
   CreateShortCut "$SMPROGRAMS\${MENU_NAME}\$(Doc_DIR)\$(Lic_TXT).lnk" "$INSTDIR\COPYING.txt"
@@ -380,7 +383,7 @@ ${If} $INST_LOG_REN == "1"
 ${EndIf}
 
   DetailPrint "-----------------------------------------------------------------------------------------------"
-  DetailPrint "DjVuLibre installer script V.${NSI_VER} by Kravtsov Konstantin Ivanovich, Novokuznetsk, Russia."
+  DetailPrint "Installer NSI V.${NSI_VER} by Kravtsov Konstantin Ivanovich, Novokuznetsk, Russia."
   DetailPrint "-----------------------------------------------------------------------------------------------"
   
 SectionEnd
