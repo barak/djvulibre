@@ -93,6 +93,7 @@ run rm -f $target/share/djvu/djview4/qt_help_*.qm
 echo ---- Doc
 
 run cp $djdir/win32/djvulibre/djvulibre.nsi $target
+run cp $djdir/win32/djvulibre/djvulibre*.nsh $target
 
 test -d $target/man || run mkdir $target/man
 test -d $target/doc || run mkdir $target/doc

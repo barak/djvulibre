@@ -7,16 +7,20 @@
 
 ;Used software:
 ;--------------
-;NSIS 2.46+log (http://sourceforge.net/projects/nsis/files/NSIS%202/2.46/nsis-2.46-log.zip/download)
-;HM NIS Edit 2.0.3 -- it's good IDE for NSI building
-;Notepad ++ 5.9 UNICODE
+;NSIS 2.46 (http://sourceforge.net/projects/nsis/files/NSIS%202/2.46/nsis-2.46-setup.exe/download)
+;add-on NSIS 2.46+log (http://sourceforge.net/projects/nsis/files/NSIS%202/2.46/nsis-2.46-log.zip/download)
+;HM NIS Edit 2.0.3 -- it's good IDE for NSI building (http://prdownloads.sourceforge.net/hmne/nisedit2.0.3.exe?download)
+;with 2.46 NSIS update (http://nsis.sourceforge.net/mediawiki/images/6/64/HMnsiSyntaxConfig.zip)
+;Notepad ++ 6.3 (http://download.tuxfamily.org/notepadplus/6.3/npp.6.3.Installer.exe)
 ;Used docs
 ;---------
 ;NSIS docs and manuals at http://forum.oszone.net/thread-248731.html
 ;NSIS help at http://forum.oszone.net/thread-168287.html
-;NSIS 2.46 User Manual shipped with
-;
-;
+;NSIS 2.46 User Manual shipped with NSIS
+
+
+
+
 ;INSTALLER START
 ;---------------
 ;prepare names
