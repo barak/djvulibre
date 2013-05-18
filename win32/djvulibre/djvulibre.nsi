@@ -290,14 +290,14 @@ Section "-menuentries"
   CreateShortCut "$SMPROGRAMS\${MENU_NAME}\$(Doc_DIR)\$(WEB_LNK) DjVuLibre $(WebDL_LNK).lnk" ${RUN_URL} "${URL_PAR} ${PRODUCT_DOWNLOAD_PAGE}" ${ICO_URL} 0
   CreateShortCut "$SMPROGRAMS\${MENU_NAME}\$(Doc_DIR)\Online documentation.lnk" ${RUN_URL} "${URL_PAR} ${PRODUCT_ONLINEHELP_PAGE}" ${ICO_URL} 0
   CreateShortCut "$SMPROGRAMS\${MENU_NAME}\$(Doc_DIR)\$(Lic_TXT).lnk" "$INSTDIR\COPYING.txt"
-  CreateShortCut "$SMPROGRAMS\${MENU_NAME}\$(Doc_DIR)\DjVuLibre documentation.lnk" "$INSTDIR\djview.exe" '$DJVIEW_OPTS "$INSTDIR\doc\djvulibre-book-en.djvu"'
-  CreateShortCut "$SMPROGRAMS\${MENU_NAME}\$(Doc_DIR)\Specification of the DjVu format (v2).lnk" "$INSTDIR\djview.exe" '$DJVIEW_OPTS "$INSTDIR\doc\djvu2spec.djvu"'
-  CreateShortCut "$SMPROGRAMS\${MENU_NAME}\$(Doc_DIR)\Specification of the DjVu format (v3).lnk" "$INSTDIR\djview.exe" '$DJVIEW_OPTS "$INSTDIR\doc\djvu3spec.djvu"'
+  CreateShortCut "$SMPROGRAMS\${MENU_NAME}\$(Doc_DIR)\DjVuLibre documentation.lnk" "$INSTDIR\djview.exe" '${DJVIEW_OPTS} "$INSTDIR\doc\djvulibre-book-en.djvu"'
+  CreateShortCut "$SMPROGRAMS\${MENU_NAME}\$(Doc_DIR)\Specification of the DjVu format (v2).lnk" "$INSTDIR\djview.exe" '${DJVIEW_OPTS} "$INSTDIR\doc\djvu2spec.djvu"'
+  CreateShortCut "$SMPROGRAMS\${MENU_NAME}\$(Doc_DIR)\Specification of the DjVu format (v3).lnk" "$INSTDIR\djview.exe" '${DJVIEW_OPTS} "$INSTDIR\doc\djvu3spec.djvu"'
   CreateShortCut "$SMPROGRAMS\${MENU_NAME}\$(Doc_DIR)\Specification of the DjVu format (changes).lnk" "$INSTDIR\doc\djvuchanges.txt"
   CreateShortCut "$SMPROGRAMS\${MENU_NAME}\$(Doc_DIR)\Lizardtech License Notes 2002.lnk" "$INSTDIR\djview.exe" '"$INSTDIR\doc\lizard2002.djvu"'
   CreateShortCut "$SMPROGRAMS\${MENU_NAME}\$(Doc_DIR)\Lizardtech License Notes 2007.lnk" "$INSTDIR\djview.exe" '"$INSTDIR\doc\lizard2007.djvu"'
   ${If} $Language == ${LANG_RUSSIAN}
-    CreateShortCut "$SMPROGRAMS\${MENU_NAME}\$(Doc_DIR)\$(Doc_LNK) ${DJVULIBRE_NAME}.lnk" "$INSTDIR\djview.exe" '$DJVIEW_OPTS "$INSTDIR\doc\djvulibre-book-ru.djvu"'
+    CreateShortCut "$SMPROGRAMS\${MENU_NAME}\$(Doc_DIR)\$(Doc_LNK) ${DJVULIBRE_NAME}.lnk" "$INSTDIR\djview.exe" '${DJVIEW_OPTS} "$INSTDIR\doc\djvulibre-book-ru.djvu"'
   ${EndIf}
   LogSet off
 SectionEnd
@@ -562,10 +562,7 @@ SectionEnd
 ; Section descriptions set
 
 !insertmacro MUI_FUNCTION_DESCRIPTION_BEGIN
-!insertmacro MUI_DESCRIPTION_TEXT ${scDjVuLibre} $(DESC_DjVuLibre)
-!insertmacro MUI_DESCRIPTION_TEXT ${scDjView} $(DESC_DjView)
 !insertmacro MUI_DESCRIPTION_TEXT ${scAssoc} $(DESC_Assoc)
-!insertmacro MUI_DESCRIPTION_TEXT ${scShort} $(DESC_Short)
 !insertmacro MUI_DESCRIPTION_TEXT ${scQuick} $(DESC_Quick)
 !insertmacro MUI_DESCRIPTION_TEXT ${scDesk} $(DESC_Desk)
 !insertmacro MUI_FUNCTION_DESCRIPTION_END
