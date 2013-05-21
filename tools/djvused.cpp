@@ -60,15 +60,6 @@
 # pragma implementation
 #endif
 
-#include <stdio.h>
-#include <stddef.h>
-#include <stdlib.h>
-#include <stdarg.h>
-#include <errno.h>
-#include <locale.h>
-#ifdef WIN32
-# include <mbctype.h>
-#endif
 
 #include "IW44Image.h"
 #include "GOS.h"
@@ -84,6 +75,7 @@
 #include "DjVuPort.h"
 #include "DjVuFile.h"
 #include "DjVmNav.h"
+#include "common.h"
 
 static bool modified = false;
 static bool verbose = false;
@@ -2200,12 +2192,7 @@ execute()
 int 
 main(int argc, char **argv)
 {
-  setlocale(LC_ALL,"");
-  setlocale(LC_NUMERIC,"C");
-  djvu_programname(argv[0]);
-#ifdef WIN32
-  _setmbcp(_MB_CP_OEM);
-#endif
+  DJVU_LOCALE;
   G_TRY
      {
       { // extra nesting for windows

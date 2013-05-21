@@ -69,10 +69,7 @@
 #include "DjVuImage.h"
 #include "debug.h"
 
-#include <locale.h>
-#include <stdio.h>
-#include <stddef.h>
-#include <stdlib.h>
+#include "common.h"
 #include <sys/stat.h>
 #include <assert.h>
 #include <ctype.h>
@@ -92,8 +89,7 @@ usage(void)
 int
 main(int argc, char * argv[], char *env[])
 {
-  setlocale(LC_ALL,"");
-  djvu_programname(argv[0]);
+  DJVU_LOCALE;
   GArray<GUTF8String> dargv(0,argc-1);
   for(int i=0;i<argc;++i)
     dargv[i]=GNativeString(argv[i]);

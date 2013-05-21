@@ -222,12 +222,7 @@
 #include "GURL.h"
 #include "DjVuMessage.h"
 #include "JPEGDecoder.h"
-
-#include <locale.h>
-#include <stdio.h>
-#include <string.h>
-#include <stddef.h>
-#include <stdlib.h>
+#include "common.h"
 
 // command line data
 
@@ -688,9 +683,7 @@ create_photo_djvu_file(IW44Image &iw, int w, int h,
 int
 main(int argc, char **argv)
 {
-  setlocale(LC_ALL,"");
-  setlocale(LC_NUMERIC,"C");
-  djvu_programname(argv[0]);
+  DJVU_LOCALE;
   GArray<GUTF8String> dargv(0,argc-1);
   for(int i=0;i<argc;++i)
     dargv[i]=GNativeString(argv[i]);

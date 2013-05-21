@@ -116,12 +116,8 @@
 #include "GOS.h"
 #include "GURL.h"
 #include "DjVuMessage.h"
-
 #include "jb2tune.h"
-
-#include <locale.h>
-#include <stddef.h>
-#include <stdlib.h>
+#include "common.h"
 #if HAVE_TIFF
 #include <tiffio.h>
 #endif
@@ -932,9 +928,7 @@ usage()
 int 
 main(int argc, const char **argv)
 {
-  setlocale(LC_ALL,"");
-  setlocale(LC_NUMERIC,"C");
-  djvu_programname(argv[0]);
+  DJVU_LOCALE;
   GArray<GUTF8String> dargv(0,argc-1);
   for(int i=0;i<argc;++i)
     dargv[i]=GNativeString(argv[i]);

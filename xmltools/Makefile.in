@@ -49,7 +49,7 @@ THREAD_CFLAGS = @THREAD_CFLAGS@
 
 LIBDJVU = ${top_builddir}/libdjvu/libdjvulibre.la
 
-INCS = -I${top_builddir} -I${top_srcdir}/libdjvu -I${srcdir}
+INCS = -I${top_builddir} -I${top_srcdir}/libdjvu -I${top_srcdir}/tools -I${srcdir}
 FLAGS = ${DEFS} ${INCS} ${OPTS} ${JPEG_CFLAGS} ${THREAD_CFLAGS}
 LIBS= @LDFLAGS@ @LIBS@
 CFLAGS = ${FLAGS} @CPPFLAGS@ @CFLAGS@ 

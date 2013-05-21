@@ -115,12 +115,7 @@ xxx
 #include "GString.h"
 #include "GURL.h"
 #include "DjVuMessage.h"
-
-#include <locale.h>
-#include <stdio.h>
-#include <ctype.h>
-#include <stddef.h>
-#include <stdlib.h>
+#include "common.h"
 
 const char *outputfile = 0;
 FILE *outputf = stdout;
@@ -156,9 +151,7 @@ usage()
 int 
 main(int argc, char **argv)
 {
-  setlocale(LC_ALL,"");
-  setlocale(LC_NUMERIC,"C");
-  djvu_programname(argv[0]);
+  DJVU_LOCALE;
   // get output file name
   if (argc>2 && !strcmp(argv[1],"-o"))
     {

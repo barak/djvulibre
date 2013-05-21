@@ -53,78 +53,32 @@
 //C- | MERCHANTABILITY OR FITNESS FOR A PARTICULAR PURPOSE.
 //C- +------------------------------------------------------------------
 
-#ifdef HAVE_CONFIG_H
-# include "config.h"
+
+#ifndef _COMMON_H
+#define _COMMON_H
+
+#include <locale.h>
+#include <stddef.h>
+#include <stdlib.h>
+#include <stdarg.h>
+#include <stdio.h>
+#include <errno.h>
+
+#if defined(WIN32) && !defined(__CYGWIN32__)
+# include <mbctype.h>
 #endif
-#if NEED_GNUG_PRAGMAS
-# pragma implementation
+
+#if defined(WIN32) && !defined(__CYGWIN32__)
+# define DJVU_LOCALE do {          \
+       setlocale(LC_ALL,"");       \
+       setlocale(LC_NUMERIC,"C");  \
+       _setmbcp(_MB_CP_OEM);       \
+       djvu_programname(argv[0]); } while (0)
+#else
+# define DJVU_LOCALE do {          \
+       setlocale(LC_ALL,"");       \
+       setlocale(LC_NUMERIC,"C");  \
+       djvu_programname(argv[0]); } while (0)
 #endif
 
-#include "XMLParser.h"
-#include "XMLTags.h"
-#include "GOS.h"
-#include "GURL.h"
-#include "DjVuDocument.h"
-#include "ByteStream.h"
-#include "DjVuMessage.h"
-#include "common.h"
-
-static void 
-usage(char *argv0)
-{
-  DjVuPrintErrorUTF8("Usage: %s [-o <djvufile>] <xmlfile> ...\n", argv0);
-  exit(1);
-}
-
-static void 
-nofile(char *s)
-{
-  DjVuPrintErrorUTF8("Error: File '%s' does not exist.\n",s);
-  exit(1);
-}
-
-int 
-main(int argc,char *argv[],char *[])
-{
-  DJVU_LOCALE;
-  G_TRY
-    {
-      int i;
-      if (argc < 2)
-        usage(argv[0]);
-      for (i=1; i<argc; i++)
-        {
-          GURL djvufile;
-          GURL *pdjvufile = 0;
-          if (! strcmp(argv[i], "-o"))
-            {
-              if (++i >= argc) 
-                usage(argv[0]);
-              djvufile = GURL::Filename::Native(argv[i]);
-              pdjvufile = &djvufile;
-              if (! djvufile.is_file())
-                nofile(argv[i]);
-              if (++i >= argc) 
-                usage(argv[0]);
-            }
-          GURL xmlfile = GURL::Filename::Native(argv[i]);
-          if (! xmlfile.is_file())
-            nofile(argv[i]);
-          GP<lt_XMLParser> parser(lt_XMLParser::create());
-          GP<lt_XMLTags> tag(lt_XMLTags::create(xmlfile));
-          parser->parse(*tag, pdjvufile);
-          parser->save();
-        }
-    }
-  G_CATCH(ex)
-    {
-      ex.perror();
-      exit(1);
-    }
-  G_ENDCATCH;
-  exit(0);
-#ifdef WIN32
-  return 0;
 #endif
-}
-

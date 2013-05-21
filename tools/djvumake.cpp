@@ -151,11 +151,7 @@
 #include "GRect.h"
 #include "DjVuMessage.h"
 
-#include <locale.h>
-#include <stdio.h>
-#include <stddef.h>
-#include <stdlib.h>
-#include <ctype.h>
+#include "common.h"
 
 int flag_contains_fg      = 0;
 int flag_contains_bg      = 0;
@@ -864,9 +860,7 @@ parse_color_zones(const char *s)
 int
 main(int argc, char **argv)
 {
-  setlocale(LC_ALL,"");
-  setlocale(LC_NUMERIC,"C");
-  djvu_programname(argv[0]);
+  DJVU_LOCALE;
   GArray<GUTF8String> dargv(0,argc-1);
   for(int i=0;i<argc;++i)
     dargv[i]=GNativeString(argv[i]);

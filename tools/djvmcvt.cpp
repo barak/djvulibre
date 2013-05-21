@@ -141,11 +141,7 @@
 #include "GOS.h"
 #include "DjVuMessage.h"
 #include "debug.h"
-
-#include <locale.h>
-#include <stdio.h>
-#include <stddef.h>
-#include <stdlib.h>
+#include "common.h"
 
 static const char * progname;
 
@@ -203,9 +199,7 @@ do_indirect(GArray<GUTF8String> &argv)
 int 
 main(int argc, char ** argv)
 {
-  setlocale(LC_ALL,"");
-  setlocale(LC_NUMERIC,"C");
-  djvu_programname(argv[0]);
+  DJVU_LOCALE;
   GArray<GUTF8String> dargv(0,argc-1);
   for(int i=0;i<argc;++i)
     dargv[i]=GNativeString(argv[i]);

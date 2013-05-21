@@ -78,6 +78,7 @@
 #endif
 #if defined(WIN32) && !defined(__CYGWIN32__)
 # include <io.h>
+# include <mbctype.h>
 #endif
 
 #include "libdjvu/ddjvuapi.h"
@@ -1160,8 +1161,11 @@ check_eachpage(const char *s)
 int
 main(int argc, char **argv)
 {
-  /* Parse options */
   int i;
+#if defined(WIN32) && !defined(__CYGWIN32__)
+  _setmbcp(_MB_CP_OEM);
+#endif
+  /* Parse options */
   for (i=1; i<argc; i++)
     {
       char *s = argv[i];
