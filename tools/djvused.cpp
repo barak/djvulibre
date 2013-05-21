@@ -66,6 +66,9 @@
 #include <stdarg.h>
 #include <errno.h>
 #include <locale.h>
+#ifdef WIN32
+# include <mbctype.h>
+#endif
 
 #include "IW44Image.h"
 #include "GOS.h"
@@ -2200,6 +2203,9 @@ main(int argc, char **argv)
   setlocale(LC_ALL,"");
   setlocale(LC_NUMERIC,"C");
   djvu_programname(argv[0]);
+#ifdef WIN32
+  _setmbcp(_MB_CP_OEM);
+#endif
   G_TRY
      {
       { // extra nesting for windows
