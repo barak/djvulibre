@@ -121,6 +121,10 @@ ShowUnInstDetails show
 ;workaround lang change effect
 !define MUI_PAGE_CUSTOMFUNCTION_PRE preWelcomePage
 
+;set components decription layout bottom
+!define MUI_COMPONENTSPAGE_SMALLDESC
+
+
 ;welcome page
 !define MUI_WELCOMEPAGE_TITLE_3LINES
 !insertmacro MUI_PAGE_WELCOME
@@ -132,7 +136,6 @@ ShowUnInstDetails show
 !insertmacro MUI_PAGE_DIRECTORY
 
 ;install options page
-!define MUI_COMPONENTSPAGE_SMALLDESC
 !insertmacro MUI_PAGE_COMPONENTS
 
 ;instfiles page
@@ -277,6 +280,10 @@ SectionEnd
 Section "-menuentries"
   SectionIn RO
   DetailPrint "Creating menu entries"
+
+  ;clear old menu
+  rmdir /r "$SMPROGRAMS\${MENU_NAME}"
+
   ;; all menu entries
   LogSet on
   SetShellVarContext all
