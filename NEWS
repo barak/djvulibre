@@ -1,6 +1,14 @@
+NEW SINCE VERSION 3.5.25
+------------------------
+- New windows installer. 
+- Fixed Russian code page issues in windows
+- General speedup thanks to lock-free smart pointers
+- ddjvu can produce one file per page
+- Big fixes.
+
 
 NEW IN VERSION 3.5.25
-------------------------
+---------------------
 - Removed the deprecated djview3 code.
 - Removed the deprecated cothreads code.
 - Removed the unmaintained japanese man pages.
