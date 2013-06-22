@@ -4,6 +4,7 @@ NEW SINCE VERSION 3.5.25
 - Fixed Russian code page issues in windows
 - General speedup thanks to lock-free smart pointers
 - ddjvu can produce one file per page
+- djvused can now set the default page orientation
 - Big fixes.
 
 

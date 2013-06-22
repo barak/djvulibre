@@ -563,7 +563,10 @@ print_size(const GP<DjVuFile> &file)
         {
           GP<DjVuInfo> info=DjVuInfo::create();
           info->decode(*iff->get_bytestream());
-          fprintf(stdout,"width=%d height=%d\n", info->width, info->height);
+          fprintf(stdout,"width=%d height=%d", info->width, info->height);
+          if (info->orientation)
+            fprintf(stdout, " rotation=%d", info->orientation);
+          fprintf(stdout,"\n");
         }
     }
   else if (chkid == "FORM:BM44" || chkid == "FORM:PM44")
@@ -755,6 +758,76 @@ command_set_page_title(ParsingByteStream &pbs)
   g().doc->set_file_title(g().fileid, fname);
   vprint("set-page-title: modified \"%s\"", (const char*)ToNative(g().fileid));
   modified = true;
+}
+
+bool
+set_rotation(GP<DjVuFile> file, int rot, bool relative)
+{
+  // decode info
+  GP<DjVuInfo> info = file->info;
+  if (! info)
+    {
+      const GP<ByteStream> pbs(file->get_djvu_bytestream(false, false));
+      const GP<IFFByteStream> iff(IFFByteStream::create(pbs));
+      GUTF8String chkid;
+      if (! iff->get_chunk(chkid))
+        return false;
+      if (chkid == "FORM:DJVU")
+        {
+          while (iff->get_chunk(chkid) && chkid!="INFO")
+            iff->close_chunk();
+          if (chkid == "INFO")
+            {
+              info = DjVuInfo::create();
+              info->decode(*iff->get_bytestream());
+            }
+        }
+      file->info = info;
+    }
+  if (! info)
+    return false;
+  if (relative)
+    rot += info->orientation;
+  info->orientation = rot & 3;
+  file->set_modified(true);
+  modified = true;
+  return true;
+}
+
+void
+command_set_rotation(ParsingByteStream &pbs)
+{
+  GUTF8String rot = pbs.get_token();
+  if (! rot.is_int())
+    verror("usage: set-rotation [+-]<rot>");
+  int rotation = rot.toInt();
+  bool relative = (rot[0]=='+' || rot[0]=='-');
+  if (! relative)
+    if (rotation < 0 || rotation > 3)
+      verror("absolute rotation must be in range 0..3");
+  int rcount = 0;
+  if (g().file)
+    {
+      GUTF8String id = g().fileid;
+      if (set_rotation(g().file, rotation, relative))
+        rcount += 1;
+      else
+        fprintf(stderr, "Cannot rotate page '%s'\n", (const char*)id);
+    }
+  else
+    {
+      GPList<DjVmDir::File> &lst = g().selected;
+      for (GPosition p=lst; p; ++p)
+        {
+          GUTF8String id = lst[p]->get_load_name();
+          const GP<DjVuFile> f(g().doc->get_djvu_file(id));
+          if (set_rotation(f, rotation, relative))
+            rcount += 1;
+          else
+            fprintf(stderr, "Cannot rotate page '%s'\n", (const char*)id);
+        }
+    }
+  vprint("rotated %d pages", rcount);
 }
 
 
@@ -2030,6 +2103,7 @@ command_help(void)
           " . set-xmp [<xmpfile>]    -- copies <xmpfile> into the xmp metadata annotation tag\n" 
           " _ set-outline [<bmfile>] -- sets outline (bootmarks)\n"
           " _ set-thumbnails [<sz>]  -- generates all thumbnails with given size\n"
+          "   set-rotation [+-]<rot> -- sets page rotation\n"
           "   remove-ant             -- removes annotations\n"
           "   remove-meta            -- removes metadatas without changing other annotations\n"
           "   remove-txt             -- removes hidden text\n"
@@ -2097,6 +2171,7 @@ static GMap<GUTF8String,CommandFunc> &command_map() {
     xcommand_map["set-outline"] = command_set_outline;
     xcommand_map["set-xmp"] = command_set_xmp;
     xcommand_map["set-thumbnails"] = command_set_thumbnails;
+    xcommand_map["set-rotation"] = command_set_rotation;
     xcommand_map["remove-ant"] = command_remove_ant;
     xcommand_map["remove-meta"] = command_remove_meta;
     xcommand_map["remove-txt"] = command_remove_txt;

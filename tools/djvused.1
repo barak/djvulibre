@@ -542,7 +542,25 @@ Display the width and the height of the selected pages.  The
 dimensions of each page are displayed using a syntax suitable for
 direct insertion into the
 .SM <EMBED...></EMBED>
-tags.
+tags. Command
+.B size
+also displays the default page orientation
+when it is different from zero.
+.TP
+.BI "set-rotation [+-]" "rot"
+Changes the default orientation of a page.
+The orientation is expressed as an integer in range 0..3
+representing a number of 90 degree counter-clockwise rotations.
+When the argument is preceded by a sign
+.BR "+" " or " "-" ","
+argument
+.I rot
+counts how many additional 90 degree counter-clockwise rotations
+should be applied to the page. Otherwise, argument
+.I rot
+represents the desired absolute page orientation.
+Only DjVu pages can be rotated.
+Pages represented as a raw IW44 image cannot be rotated.
 .TP
 .BI "set-page-title " "title"
 Sets a page title for the selected page.
