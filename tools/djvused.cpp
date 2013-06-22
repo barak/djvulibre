@@ -811,8 +811,6 @@ command_set_rotation(ParsingByteStream &pbs)
       GUTF8String id = g().fileid;
       if (set_rotation(g().file, rotation, relative))
         rcount += 1;
-      else
-        fprintf(stderr, "Cannot rotate page '%s'\n", (const char*)id);
     }
   else
     {
@@ -823,8 +821,6 @@ command_set_rotation(ParsingByteStream &pbs)
           const GP<DjVuFile> f(g().doc->get_djvu_file(id));
           if (set_rotation(f, rotation, relative))
             rcount += 1;
-          else
-            fprintf(stderr, "Cannot rotate page '%s'\n", (const char*)id);
         }
     }
   vprint("rotated %d pages", rcount);
