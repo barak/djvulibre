@@ -550,36 +550,45 @@ command_dump(ParsingByteStream &)
 static void
 print_size(const GP<DjVuFile> &file)
 {
-  const GP<ByteStream> pbs(file->get_djvu_bytestream(false, false));
-  const GP<IFFByteStream> iff(IFFByteStream::create(pbs));
-  GUTF8String chkid;
-  if (! iff->get_chunk(chkid))
-    verror("Selected file contains no data");
-  if (chkid == "FORM:DJVU")
+  GP<DjVuInfo> info = file->info;
+  if (! info)
     {
-      while (iff->get_chunk(chkid) && chkid!="INFO")
-        iff->close_chunk();
-      if (chkid == "INFO")
+      const GP<ByteStream> pbs(file->get_djvu_bytestream(false, false));
+      const GP<IFFByteStream> iff(IFFByteStream::create(pbs));
+      GUTF8String chkid;
+      if (! iff->get_chunk(chkid))
+        verror("Selected file contains no data");
+      if (chkid == "FORM:DJVU")
         {
-          GP<DjVuInfo> info=DjVuInfo::create();
-          info->decode(*iff->get_bytestream());
-          fprintf(stdout,"width=%d height=%d", info->width, info->height);
-          if (info->orientation)
-            fprintf(stdout, " rotation=%d", info->orientation);
-          fprintf(stdout,"\n");
+          while (iff->get_chunk(chkid) && chkid!="INFO")
+            iff->close_chunk();
+          if (chkid == "INFO")
+            {
+              info = DjVuInfo::create();
+              info->decode(*iff->get_bytestream());
+            }
+        }
+      else if (chkid == "FORM:BM44" || chkid == "FORM:PM44")
+        {
+          while (iff->get_chunk(chkid) && chkid!="BM44" && chkid!="PM44")
+            iff->close_chunk();
+          if (chkid=="BM44" || chkid=="PM44")
+            {
+              GP<IW44Image> junk=IW44Image::create_decode(IW44Image::COLOR);
+              junk->decode_chunk(iff->get_bytestream());
+              fprintf(stdout,"width=%d height=%d\n", 
+                      junk->get_width(), junk->get_height());
+            }
         }
     }
-  else if (chkid == "FORM:BM44" || chkid == "FORM:PM44")
+  if (info)
     {
-      while (iff->get_chunk(chkid) && chkid!="BM44" && chkid!="PM44")
-        iff->close_chunk();
-      if (chkid=="BM44" || chkid=="PM44")
-        {
-          GP<IW44Image> junk=IW44Image::create_decode(IW44Image::COLOR);
-          junk->decode_chunk(iff->get_bytestream());
-          fprintf(stdout,"width=%d height=%d\n", 
-                  junk->get_width(), junk->get_height());
-        }
+      int w = (info->orientation & 1) ? info->width : info->height;
+      int h = (info->orientation & 1) ? info->height : info->width;
+      fprintf(stdout,"width=%d height=%d", w, h);
+      if (info->orientation)
+        fprintf(stdout, " rotation=%d", info->orientation);
+      fprintf(stdout,"\n");
     }
 }
 
