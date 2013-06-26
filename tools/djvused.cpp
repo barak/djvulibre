@@ -563,7 +563,7 @@ print_size(const GP<DjVuFile> &file)
           while (iff->get_chunk(chkid) && chkid!="INFO")
             iff->close_chunk();
           if (chkid == "INFO")
-            {
+            { 
               info = DjVuInfo::create();
               info->decode(*iff->get_bytestream());
             }
@@ -583,14 +583,13 @@ print_size(const GP<DjVuFile> &file)
     }
   if (info)
     {
-      int w = (info->orientation & 1) ? info->width : info->height;
-      int h = (info->orientation & 1) ? info->height : info->width;
-      fprintf(stdout,"width=%d height=%d", w, h);
+      fprintf(stdout,"width=%d height=%d", info->width, info->height);
       if (info->orientation)
         fprintf(stdout, " rotation=%d", info->orientation);
       fprintf(stdout,"\n");
     }
 }
+
 
 void
 command_size(ParsingByteStream &)
