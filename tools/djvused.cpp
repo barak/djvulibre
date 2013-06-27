@@ -2286,7 +2286,7 @@ main(int argc, char **argv)
             utf8 = true;
           else if (!strcmp(argv[i],"-f") && i+1<argc && !g().cmdbs) 
             g().cmdbs = ByteStream::create(GURL::Filename::UTF8(GNativeString(argv[++i])), "r");
-          else if (!strcmp(argv[i],"-e") && !g().cmdbs && ++i<argc) 
+          else if (!strcmp(argv[i],"-e") && !g().cmdbs && i+1<argc && ++i) 
             g().cmdbs = ByteStream::create_static(argv[i],strlen(argv[i]));
           else if (argv[i][0] != '-' && !g().djvufile)
             g().djvufile = GNativeString(argv[i]);
