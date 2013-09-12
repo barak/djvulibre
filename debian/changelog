@@ -1,3 +1,9 @@
+djvulibre (3.5.25.4-2) unstable; urgency=low
+
+  * merge upstream patches, including autotools refresh(closes: #722525)
+
+ -- Barak A. Pearlmutter <bap@debian.org>  Thu, 12 Sep 2013 09:40:49 +0100
+
 djvulibre (3.5.25.4-1) unstable; urgency=low
 
   * new upstream release
