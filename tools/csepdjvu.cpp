@@ -376,9 +376,37 @@ BufferByteStream::read_geometry(GRect &r)
   return false;
 }
 
+static void
+add_to_string(GUTF8String &s, char *buffer, int len, int &bom)
+{
+  if (!s && !bom && len>=2)
+    {
+      if (buffer[0]==(char)0xfe && buffer[1]==(char)0xff)
+        bom = 0xfeff;
+      if (buffer[0]==(char)0xff && buffer[1]==(char)0xfe)
+        bom = 0xfffe;
+      if (bom)
+        {
+          buffer += 2; 
+          len -= 2;
+        }
+    }
+  if (bom == 0xfeff)
+    for (int i=0; i<len; i+=2)
+      *(uint16_t*)(buffer+i) = ((buffer[i]<<8) | buffer[i+1]);
+  if (bom == 0xfffe)
+    for (int i=0; i<len; i+=2)
+      *(uint16_t*)(buffer+i) = ((buffer[i+1]<<8) | buffer[i]);
+  if (bom)
+    s += GUTF8String((const uint16_t*)buffer, len/2);
+  else
+    s += GUTF8String((const char*)buffer, len);
+}
+
 bool 
 BufferByteStream::read_ps_string(GUTF8String &s)
 {
+  int bom = 0;
   unsigned int pos = 0;
   char buffer[512];
   if (get() != '(') 
@@ -425,15 +453,14 @@ BufferByteStream::read_ps_string(GUTF8String &s)
         }
       if (c == EOF)
         return false;
-      if (pos+1 >= (int)sizeof(buffer))
+      if (pos >= (int)sizeof(buffer))
         {
-          buffer[pos] = 0;
-          s += buffer;
+          add_to_string(s, buffer, pos, bom);
+          pos = 0;
         }
       buffer[pos++] = c;
     }
-  buffer[pos] = 0;
-  s += buffer;
+  add_to_string(s, buffer, pos, bom);
   return true;
 }
 
