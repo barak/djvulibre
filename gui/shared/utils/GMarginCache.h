@@ -53,8 +53,8 @@
 //C- | MERCHANTABILITY OR FITNESS FOR A PARTICULAR PURPOSE.
 //C- +------------------------------------------------------------------
 // 
-// $Id$
-// $Name$
+// $Id: GMarginCache.h,v 1.10 2008/08/05 20:51:37 bpearlmutter Exp $
+// $Name: debian_version_3_5_23-3 $
 
 #ifndef HDR_GMARGIN_CACHE
 #define HDR_GMARGIN_CACHE

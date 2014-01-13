@@ -53,8 +53,8 @@
 //C- | MERCHANTABILITY OR FITNESS FOR A PARTICULAR PURPOSE.
 //C- +------------------------------------------------------------------
 // 
-// $Id$
-// $Name$
+// $Id: Template.h,v 1.9 2007/03/25 20:48:34 leonb Exp $
+// $Name: debian_version_3_5_23-3 $
 
 //T// This is a template for the header files in the
 //T// DjVu reference library. It describes the general
@@ -127,7 +127,7 @@ namespace DJVU {
     @memo 
     Template header file
     @version 
-    #$Id$# 
+    #$Id: Template.h,v 1.9 2007/03/25 20:48:34 leonb Exp $# 
     @author: 
     L\'eon Bottou <leonb@research.att.com> -- initial implementation \\
     Andrew Erofeev <eaf@geocities.com> -- implemented EXTERNAL_TEMPLATES */

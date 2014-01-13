@@ -53,8 +53,8 @@
 //C- | MERCHANTABILITY OR FITNESS FOR A PARTICULAR PURPOSE.
 //C- +------------------------------------------------------------------
 // 
-// $Id$
-// $Name$
+// $Id: GThreads.h,v 1.11 2007/03/25 20:48:32 leonb Exp $
+// $Name: debian_version_3_5_23-3 $
 
 #ifndef _GTHREADS_H_
 #define _GTHREADS_H_
@@ -129,7 +129,7 @@
 // GSafeFlags should go because it not as safe as it claims.
 
     @version
-    #$Id$# */
+    #$Id: GThreads.h,v 1.11 2007/03/25 20:48:32 leonb Exp $# */
 //@{
 
 

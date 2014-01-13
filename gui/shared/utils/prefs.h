@@ -53,8 +53,8 @@
 //C- | MERCHANTABILITY OR FITNESS FOR A PARTICULAR PURPOSE.
 //C- +------------------------------------------------------------------
 // 
-// $Id$
-// $Name$
+// $Id: prefs.h,v 1.12 2008/03/17 12:26:00 leonb Exp $
+// $Name: debian_version_3_5_23-3 $
 
 #ifndef HDR_PREFS
 #define HDR_PREFS

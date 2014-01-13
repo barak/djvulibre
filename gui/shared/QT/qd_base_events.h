@@ -53,8 +53,8 @@
 //C- | MERCHANTABILITY OR FITNESS FOR A PARTICULAR PURPOSE.
 //C- +------------------------------------------------------------------
 // 
-// $Id$
-// $Name$
+// $Id: qd_base_events.h,v 1.7 2007/03/25 20:48:25 leonb Exp $
+// $Name: debian_version_3_5_23-3 $
 
 #ifndef HDR_QD_BASE_EVENTS
 #define HDR_QD_BASE_EVENTS

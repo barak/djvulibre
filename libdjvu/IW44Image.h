@@ -53,8 +53,8 @@
 //C- | MERCHANTABILITY OR FITNESS FOR A PARTICULAR PURPOSE.
 //C- +------------------------------------------------------------------
 // 
-// $Id$
-// $Name$
+// $Id: IW44Image.h,v 1.13 2007/05/19 03:07:34 leonb Exp $
+// $Name: debian_version_3_5_23-3 $
 
 #ifndef IW44IMAGE_H_
 #define IW44IMAGE_H_
@@ -162,7 +162,7 @@
 // Only superficial changes.  The meat is mine.
 
     @version
-    #$Id$# */
+    #$Id: IW44Image.h,v 1.13 2007/05/19 03:07:34 leonb Exp $# */
 //@{
 
 

@@ -53,7 +53,7 @@
 //C- | MERCHANTABILITY OR FITNESS FOR A PARTICULAR PURPOSE.
 //C- +------------------------------------------------------------------
 
-/* $Id$ */
+/* $Id: ddjvuapi.cpp,v 1.96 2009/12/29 11:02:51 leonb Exp $ */
 
 #ifdef HAVE_CONFIG_H
 # include "config.h"

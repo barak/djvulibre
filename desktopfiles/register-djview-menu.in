@@ -12,7 +12,7 @@
 #C- MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 #C- GNU General Public License for more details.
 #C-
-#C- $Id$
+#C- $Id: register-djview-menu.in,v 1.10 2008/09/05 21:31:38 leonb Exp $
 
 
 xdg_mime=XDG_MIME

@@ -53,8 +53,8 @@
 //C- | MERCHANTABILITY OR FITNESS FOR A PARTICULAR PURPOSE.
 //C- +------------------------------------------------------------------
 // 
-// $Id$
-// $Name$
+// $Id: JB2Image.h,v 1.13 2008/01/27 11:36:27 leonb Exp $
+// $Name: debian_version_3_5_23-3 $
 
 #ifndef _JB2IMAGE_H
 #define _JB2IMAGE_H
@@ -158,7 +158,7 @@
     \end{itemize}
 
     @version
-    #$Id$#
+    #$Id: JB2Image.h,v 1.13 2008/01/27 11:36:27 leonb Exp $#
     @memo
     Coding bilevel images with JB2.
     @author

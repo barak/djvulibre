@@ -53,7 +53,7 @@
 //C- | MERCHANTABILITY OR FITNESS FOR A PARTICULAR PURPOSE.
 //C- +------------------------------------------------------------------
 // 
-// $Id$
+// $Id: ddjvu.cpp,v 1.45 2010/08/14 19:06:00 leonb Exp $
 
 
 /* Program ddjvu has been rewritten to use the ddjvuapi only.

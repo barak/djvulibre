@@ -53,8 +53,8 @@
 //C- | MERCHANTABILITY OR FITNESS FOR A PARTICULAR PURPOSE.
 //C- +------------------------------------------------------------------
 // 
-// $Id$
-// $Name$
+// $Id: Arrays.h,v 1.13 2007/05/19 03:07:33 leonb Exp $
+// $Name: debian_version_3_5_23-3 $
 
 #ifndef _ARRAYS_H_
 #define _ARRAYS_H_
@@ -125,7 +125,7 @@ namespace DJVU {
     @author 
     Andrei Erofeev <eaf@geocities.com> -- Copy-on-demand implementation.
     @version 
-    #$Id$# */
+    #$Id: Arrays.h,v 1.13 2007/05/19 03:07:33 leonb Exp $# */
 //@{
 
 // Auxiliary classes: Will be used in place of GPBase and GPEnabled objects

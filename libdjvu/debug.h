@@ -53,8 +53,8 @@
 //C- | MERCHANTABILITY OR FITNESS FOR A PARTICULAR PURPOSE.
 //C- +------------------------------------------------------------------
 // 
-// $Id$
-// $Name$
+// $Id: debug.h,v 1.14 2007/05/12 18:53:31 leonb Exp $
+// $Name: debian_version_3_5_23-3 $
 
 #ifndef _DEBUG_H_
 #define _DEBUG_H_
@@ -124,7 +124,7 @@ namespace DJVU {
     @memo 
     Macros for printing debug messages.
     @version 
-    #$Id$#
+    #$Id: debug.h,v 1.14 2007/05/12 18:53:31 leonb Exp $#
     @author
     Andrew Erofeev <eaf@geocities.com> -- initial implementation \\
     Leon Bottou <leonb@research.att.com> -- cleanups */

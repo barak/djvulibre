@@ -53,8 +53,8 @@
 //C- | MERCHANTABILITY OR FITNESS FOR A PARTICULAR PURPOSE.
 //C- +------------------------------------------------------------------
 // 
-// $Id$
-// $Name$
+// $Id: DjVuGlobal.cpp,v 1.8 2007/03/25 20:48:30 leonb Exp $
+// $Name: debian_version_3_5_23-3 $
 
 #ifdef HAVE_CONFIG_H
 # include "config.h"

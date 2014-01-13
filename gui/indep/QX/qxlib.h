@@ -53,8 +53,8 @@
 //C- | MERCHANTABILITY OR FITNESS FOR A PARTICULAR PURPOSE.
 //C- +------------------------------------------------------------------
 // 
-// $Id$
-// $Name$
+// $Id: qxlib.h,v 1.8 2007/03/25 20:48:24 leonb Exp $
+// $Name: debian_version_3_5_23-3 $
 
 #ifndef HDR_QXLIB
 #define HDR_QXLIB

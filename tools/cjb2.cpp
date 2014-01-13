@@ -53,8 +53,8 @@
 //C- | MERCHANTABILITY OR FITNESS FOR A PARTICULAR PURPOSE.
 //C- +------------------------------------------------------------------
 // 
-// $Id$
-// $Name$
+// $Id: cjb2.cpp,v 1.21 2010/05/27 20:47:57 leonb Exp $
+// $Name: debian_version_3_5_23-3 $
 
 #ifdef HAVE_CONFIG_H
 # include "config.h"
@@ -102,7 +102,7 @@
     Pascal Vincent <vincentp@iro.umontreal.ca>\\
     Ilya Mezhirov <ilya@mezhirov.mccme.ru>
     @version
-    $Id$ */
+    $Id: cjb2.cpp,v 1.21 2010/05/27 20:47:57 leonb Exp $ */
 //@{
 //@}
 

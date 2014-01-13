@@ -53,8 +53,8 @@
 //C- | MERCHANTABILITY OR FITNESS FOR A PARTICULAR PURPOSE.
 //C- +------------------------------------------------------------------
 // 
-// $Id$
-// $Name$
+// $Id: djvutoxml.cpp,v 1.9 2008/01/27 11:36:30 leonb Exp $
+// $Name: debian_version_3_5_23-3 $
 
 #ifdef HAVE_CONFIG_H
 # include "config.h"

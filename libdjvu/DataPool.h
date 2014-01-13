@@ -53,8 +53,8 @@
 //C- | MERCHANTABILITY OR FITNESS FOR A PARTICULAR PURPOSE.
 //C- +------------------------------------------------------------------
 // 
-// $Id$
-// $Name$
+// $Id: DataPool.h,v 1.13 2007/05/19 03:07:33 leonb Exp $
+// $Name: debian_version_3_5_23-3 $
 
 #ifndef _DATAPOOL_H
 #define _DATAPOOL_H
@@ -98,7 +98,7 @@ class ByteStream;
 
     @memo Thread safe data storage
     @author Andrei Erofeev <eaf@geocities.com>
-    @version #$Id$#
+    @version #$Id: DataPool.h,v 1.13 2007/05/19 03:07:33 leonb Exp $#
 */
 
 //@{

@@ -54,7 +54,7 @@
 //C- +------------------------------------------------------------------
 */
 
-/* $Id$ */
+/* $Id: zoom_select.bm,v 1.3 2007/03/25 20:48:27 leonb Exp $ */
 
 #define zoom_select_width 24
 #define zoom_select_height 24

@@ -53,8 +53,8 @@
 //C- | MERCHANTABILITY OR FITNESS FOR A PARTICULAR PURPOSE.
 //C- +------------------------------------------------------------------
 // 
-// $Id$
-// $Name$
+// $Id: GIFFManager.h,v 1.9 2007/03/25 20:48:31 leonb Exp $
+// $Name: debian_version_3_5_23-3 $
 
 #ifndef _GIFFMANAGER_H
 #define _GIFFMANAGER_H
@@ -96,7 +96,7 @@ namespace DJVU {
     @author 
     Andrei Erofeev <eaf@geocities.com> -- Initial implementation.
     @version 
-    #$Id$# */
+    #$Id: GIFFManager.h,v 1.9 2007/03/25 20:48:31 leonb Exp $# */
 
 /** #GIFFChunk# is the base class for other IFF chunks understood by
     {\Ref GIFFManager}. It provides some basic interface, and is not supposed

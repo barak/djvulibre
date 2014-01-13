@@ -53,8 +53,8 @@
 //C- | MERCHANTABILITY OR FITNESS FOR A PARTICULAR PURPOSE.
 //C- +------------------------------------------------------------------
 // 
-// $Id$
-// $Name$
+// $Id: JPEGDecoder.h,v 1.9 2007/03/25 20:48:32 leonb Exp $
+// $Name: debian_version_3_5_23-3 $
 
 #ifndef _JPEGDECODER_H_
 #define _JPEGDECODER_H_
@@ -89,7 +89,7 @@ class GPixmap;
     @memo
     Decoding interface to the IJG JPEG library.
     @version
-    #$Id$#
+    #$Id: JPEGDecoder.h,v 1.9 2007/03/25 20:48:32 leonb Exp $#
     @author
     Parag Deshmukh <parag@sanskrit.lz.att.com> 
 */

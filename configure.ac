@@ -18,7 +18,7 @@
 # DjVuLibre-3.5 is derived from the DjVu(r) Reference Library
 # distribued by Lizardtech Software.
 #
-# $Id$
+# $Id: configure.ac,v 1.105 2010/08/17 09:15:26 bpearlmutter Exp $
 #
 # ----------------------------------------
 # Initialization
@@ -26,7 +26,7 @@
 
 AC_PREREQ([2.67])
 AC_INIT([djvulibre],[3.5.23])
-AC_REVISION($Id$)
+AC_REVISION($Id: configure.ac,v 1.105 2010/08/17 09:15:26 bpearlmutter Exp $)
 AC_CONFIG_AUX_DIR(config)
 AC_CONFIG_MACRO_DIR(config)
 AC_CONFIG_SRCDIR(INSTALL)

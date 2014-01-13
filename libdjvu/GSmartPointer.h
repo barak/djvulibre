@@ -53,8 +53,8 @@
 //C- | MERCHANTABILITY OR FITNESS FOR A PARTICULAR PURPOSE.
 //C- +------------------------------------------------------------------
 // 
-// $Id$
-// $Name$
+// $Id: GSmartPointer.h,v 1.16 2008/03/05 01:44:20 leonb Exp $
+// $Name: debian_version_3_5_23-3 $
 
 #ifndef _GSMARTPOINTER_H_
 #define _GSMARTPOINTER_H_
@@ -88,7 +88,7 @@
 // <http://prdownloads.sourceforge.net/djvu/DjVu2_2b-src.tgz>.
 
     @version 
-    #$Id$# 
+    #$Id: GSmartPointer.h,v 1.16 2008/03/05 01:44:20 leonb Exp $# 
     @args
 */
 //@{

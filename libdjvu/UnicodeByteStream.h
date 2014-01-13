@@ -53,8 +53,8 @@
 //C- | MERCHANTABILITY OR FITNESS FOR A PARTICULAR PURPOSE.
 //C- +------------------------------------------------------------------
 //
-// $Id$
-// $Name$
+// $Id: UnicodeByteStream.h,v 1.11 2009/05/06 12:57:49 leonb Exp $
+// $Name: debian_version_3_5_23-3 $
 
 #ifndef _UNICODEBYTESTREAM_H_
 #define _UNICODEBYTESTREAM_H_
@@ -85,7 +85,7 @@
     @author
     Bill C Riemers <docbill@sourceforge.net>
     @version
-    #$Id$# */
+    #$Id: UnicodeByteStream.h,v 1.11 2009/05/06 12:57:49 leonb Exp $# */
 //@{
 
 #include "DjVuGlobal.h"

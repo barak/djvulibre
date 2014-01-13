@@ -53,8 +53,8 @@
 //C- | MERCHANTABILITY OR FITNESS FOR A PARTICULAR PURPOSE.
 //C- +------------------------------------------------------------------
 // 
-// $Id$
-// $Name$
+// $Id: DjVuMessageLite.h,v 1.11 2008/01/27 11:36:27 leonb Exp $
+// $Name: debian_version_3_5_23-3 $
 
 #ifndef __DJVU_MESSAGE_LITE_H__
 #define __DJVU_MESSAGE_LITE_H__

@@ -53,8 +53,8 @@
 //C- | MERCHANTABILITY OR FITNESS FOR A PARTICULAR PURPOSE.
 //C- +------------------------------------------------------------------
 //
-// $Id$
-// $Name$
+// $Id: GString.h,v 1.28 2009/07/30 01:49:02 leonb Exp $
+// $Name: debian_version_3_5_23-3 $
 
 #ifndef _GSTRING_H_
 #define _GSTRING_H_
@@ -105,7 +105,7 @@
 // This could be fixed.  But there are better things to do in djvulibre.
     
     @version
-    #$Id$# */
+    #$Id: GString.h,v 1.28 2009/07/30 01:49:02 leonb Exp $# */
 //@{
 
 

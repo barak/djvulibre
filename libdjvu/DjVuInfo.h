@@ -53,8 +53,8 @@
 //C- | MERCHANTABILITY OR FITNESS FOR A PARTICULAR PURPOSE.
 //C- +------------------------------------------------------------------
 // 
-// $Id$
-// $Name$
+// $Id: DjVuInfo.h,v 1.17 2008/01/27 11:36:27 leonb Exp $
+// $Name: debian_version_3_5_23-3 $
 
 #ifndef _DJVUINFO_H
 #define _DJVUINFO_H
@@ -75,7 +75,7 @@
     @author
     L\'eon Bottou <leonb@research.att.com>
     @version
-    #$Id$# */
+    #$Id: DjVuInfo.h,v 1.17 2008/01/27 11:36:27 leonb Exp $# */
 //@{
 
 

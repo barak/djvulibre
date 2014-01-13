@@ -53,8 +53,8 @@
 //C- | MERCHANTABILITY OR FITNESS FOR A PARTICULAR PURPOSE.
 //C- +------------------------------------------------------------------
 // 
-// $Id$
-// $Name$
+// $Id: ByteStream.h,v 1.16 2007/05/19 03:07:33 leonb Exp $
+// $Name: debian_version_3_5_23-3 $
 
 #ifndef _BYTESTREAM_H
 #define _BYTESTREAM_H
@@ -99,7 +99,7 @@
 
 
     @version
-    #$Id$# */
+    #$Id: ByteStream.h,v 1.16 2007/05/19 03:07:33 leonb Exp $# */
 //@{
 
 

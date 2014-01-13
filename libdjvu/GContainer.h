@@ -53,8 +53,8 @@
 //C- | MERCHANTABILITY OR FITNESS FOR A PARTICULAR PURPOSE.
 //C- +------------------------------------------------------------------
 // 
-// $Id$
-// $Name$
+// $Id: GContainer.h,v 1.21 2008/01/07 11:48:52 leonb Exp $
+// $Name: debian_version_3_5_23-3 $
 
 #ifndef _GCONTAINER_H_
 #define _GCONTAINER_H_
@@ -132,7 +132,7 @@ namespace DJVU {
     L\'eon Bottou <leonb@research.att.com> -- initial implementation.\\
     Andrei Erofeev <eaf@geocities.com> -- bug fixes.
     @version 
-    #$Id$# */
+    #$Id: GContainer.h,v 1.21 2008/01/07 11:48:52 leonb Exp $# */
 //@{
 
 

@@ -1,3 +1,11 @@
+djvulibre (3.5.23-3+squeeze1) squeeze-security; urgency=high
+
+  * Non-maintainer upload by the Security Team.
+  * Fix CVE-2012-6535: denial of service or possible arbitrary code
+    execution via a heap memory overflow.
+
+ -- Raphael Geissert <geissert@debian.org>  Mon, 13 Jan 2014 17:20:00 +0100
+
 djvulibre (3.5.23-3) unstable; urgency=low
 
   * revert switch to dpkg-source 3.0 (quilt) format

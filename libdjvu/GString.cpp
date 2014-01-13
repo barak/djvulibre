@@ -53,8 +53,8 @@
 //C- | MERCHANTABILITY OR FITNESS FOR A PARTICULAR PURPOSE.
 //C- +------------------------------------------------------------------
 // 
-// $Id$
-// $Name$
+// $Id: GString.cpp,v 1.29 2009/12/29 16:26:19 leonb Exp $
+// $Name: debian_version_3_5_23-3 $
 
 // From: Leon Bottou, 1/31/2002
 // This file has very little to do with my initial implementation.
@@ -1864,23 +1864,32 @@ GStringRep::UTF8::toNative(const EscapeMode escape) const
     mbstate_t ps;
     memset(&ps,0,sizeof(mbstate_t));
     for(const unsigned char *s=(const unsigned char *)data;(s<eptr)&& *s;)
-    {
-      const uint32_t w0=UTF8toUCS4(s,eptr);
-      const unsigned char * const r0=r;
-      r=UCS4toNative(w0,r,&ps);
-      if(r == r0)
       {
-        if(escape == IS_ESCAPED)
-        {
-          sprintf((char *)r,"&#%lu;",(unsigned long)w0);
-          r+=strlen((char *)r);
-        }
+        const unsigned char * const s0 = s;
+        const uint32_t w0=UTF8toUCS4(s,eptr);
+        if (s == s0)
+          {
+            s += 1;
+            *r++ = '?';
+          }
         else
-        {
-          *r++ = '?';
-        }
+          {
+            const unsigned char * const r0 = r;
+            r=UCS4toNative(w0,r,&ps);
+            if(r == r0)
+              {
+                if (escape == IS_ESCAPED)
+                  {
+                    sprintf((char *)r,"&#%lu;",(unsigned long)w0);
+                    r += strlen((char *)r);
+                  }
+                else
+                  {
+                    *r++ = '?';
+                  }
+              }
+          }
       }
-    }
     r[0]=0;
     retval = NATIVE_CREATE( (const char *)buf );
   } else

@@ -53,8 +53,8 @@
 //C- | MERCHANTABILITY OR FITNESS FOR A PARTICULAR PURPOSE.
 //C- +------------------------------------------------------------------
 // 
-// $Id$
-// $Name$
+// $Id: ByteStream.cpp,v 1.24 2007/07/14 01:21:56 leonb Exp $
+// $Name: debian_version_3_5_23-3 $
 
 // From: Leon Bottou, 1/31/2002
 // This file has very little to do with my initial implementation.

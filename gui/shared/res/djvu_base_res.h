@@ -53,8 +53,8 @@
 //C- | MERCHANTABILITY OR FITNESS FOR A PARTICULAR PURPOSE.
 //C- +------------------------------------------------------------------
 // 
-// $Id$
-// $Name$
+// $Id: djvu_base_res.h,v 1.9 2007/03/25 20:48:28 leonb Exp $
+// $Name: debian_version_3_5_23-3 $
 
 #ifndef HDR_DJVU_BASE_RES
 #define HDR_DJVU_BASE_RES
