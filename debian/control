@@ -6,7 +6,7 @@ Uploaders: Leon Bottou <leonb@bottou.org>
 Build-Depends: dh-autoreconf,
 	       debhelper (>= 9),
 	       libjpeg-dev,
-	       libtiff5-dev | libtiff4-dev | libtiff3g-dev | libtiff-dev,
+	       libtiff-dev,
 	       librsvg2-bin | imagemagick
 Vcs-Git: git://anonscm.debian.org/collab-maint/djvulibre.git
 Vcs-Browser: http://anonscm.debian.org/gitweb/?p=collab-maint/djvulibre.git
