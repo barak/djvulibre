@@ -1,3 +1,10 @@
+djvulibre (3.5.25.4-3) unstable; urgency=low
+
+  * remove build alts libtiff{5,4,3}-dev (closes: #735997)
+  * bump standards version
+
+ -- Barak A. Pearlmutter <bap@debian.org>  Tue, 21 Jan 2014 15:27:16 +0000
+
 djvulibre (3.5.25.4-2) unstable; urgency=low
 
   * merge upstream patches, including autotools refresh(closes: #722525)
