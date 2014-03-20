@@ -372,27 +372,27 @@ with option
 .BR -f .
 .TP
 .BI "print-meta"
-Print the meta-data part of the annotations for the selected component file.
+Print the metadata part of the annotations for the selected component file.
 This command displays a subset of the information printed by command
 .B print-ant
-using a different syntax.  Meta-data are organized as key\-value pairs.
+using a different syntax.  metadata are organized as key\-value pairs.
 Each printed line contains the key name such as
 .BR "author" ", " "title" ",etc.,"
 followed by a tab character ("\\t") and
 a double-quoted string representing the 
 .SM UTF-8
-encoded meta-data value.
+encoded metadata value.
 .TP
 .BI "remove-meta"
-Remove the meta-data part of the annotations of 
+Remove the metadata part of the annotations of 
 the selected component files.
 .TP
 .BI "set-meta [" "djvusedmetafile" "]"
-Set the meta-data part of the annotations of the selected component file.
+Set the metadata part of the annotations of the selected component file.
 The remaining part of the annotations is left unchanged.
 The optional argument
 .I djvusedmetafile
-names a file containing the meta-data.
+names a file containing the metadata.
 This file must contain data similar to what is produced
 by command
 .BR print-meta . 
@@ -886,7 +886,7 @@ Clicking the icon reveals the text.
 .RE
 .TP
 .BI "(metadata ... (" key " " value ") ... )"
-Define meta-data entries.
+Define metadata entries.
 Each entry is identified by a symbol
 .I key
 representing the nature of the meta data entry.
