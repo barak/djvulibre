@@ -1,3 +1,40 @@
+djvulibre (3.5.25.4-4) unstable; urgency=medium
+
+  * merge upstream patches
+   - f794f2d meta-data --> metadata.
+   - 6262fcc Update config/libtool.m4 to support ppc64le.
+   - 9e32594 Regenerate autotools files with new config/libtool.m4
+   - 4e62915 Fix to djvutoxml by "Imperatore" (bug 227)
+   - 93a13dd csepdjvu handles utf16 outlines
+
+ -- Barak A. Pearlmutter <bap@debian.org>  Thu, 20 Mar 2014 14:23:32 +0000
+
+djvulibre (3.5.25.4-3) unstable; urgency=low
+
+  * remove build alts libtiff{5,4,3}-dev (closes: #735997)
+  * bump standards version
+
+ -- Barak A. Pearlmutter <bap@debian.org>  Tue, 21 Jan 2014 15:27:16 +0000
+
+djvulibre (3.5.25.4-2) unstable; urgency=low
+
+  * merge upstream patches, including autotools refresh (closes: #722525)
+
+ -- Barak A. Pearlmutter <bap@debian.org>  Thu, 12 Sep 2013 09:40:49 +0100
+
+djvulibre (3.5.25.4-1) unstable; urgency=low
+
+  * new upstream release
+  * merge upstream changes for crash report, see
+    http://lists.debian.org/debian-devel/2013/06/msg00720.html
+    http://www.forallsecure.com/bug-reports/df37d30856756929f929ec8e508af1a574109c0d/
+  * flush dh-exec overkill
+  * enable full multiarch support
+  * bump standard version
+  * canonicalize development repo urls
+
+ -- Barak A. Pearlmutter <bap@debian.org>  Thu, 27 Jun 2013 16:23:00 +0100
+
 djvulibre (3.5.25.3-3) unstable; urgency=low
 
   * multiarch fix via dh-exec lossage

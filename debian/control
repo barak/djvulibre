@@ -4,18 +4,19 @@ Priority: optional
 Maintainer: Barak A. Pearlmutter <bap@debian.org>
 Uploaders: Leon Bottou <leonb@bottou.org>
 Build-Depends: dh-autoreconf,
-	       debhelper (>= 9), dh-exec,
+	       debhelper (>= 9),
 	       libjpeg-dev,
-	       libtiff5-dev | libtiff4-dev | libtiff3g-dev | libtiff-dev,
+	       libtiff-dev,
 	       librsvg2-bin | imagemagick
-Vcs-Git: git://git.debian.org/git/collab-maint/djvulibre.git
-Vcs-Browser: http://git.debian.org/?p=collab-maint/djvulibre.git
+Vcs-Git: git://anonscm.debian.org/collab-maint/djvulibre.git
+Vcs-Browser: http://anonscm.debian.org/gitweb/?p=collab-maint/djvulibre.git
 Homepage: http://djvu.sourceforge.net/
-Standards-Version: 3.9.3
+Standards-Version: 3.9.5
 
 Package: libdjvulibre-dev
 Section: libdevel
 Architecture: any
+Multi-Arch: same
 Depends: ${shlibs:Depends}, ${misc:Depends},
 	 libdjvulibre21 (= ${binary:Version}), libjpeg-dev
 Description: Development files for the DjVu image format
@@ -35,6 +36,7 @@ Description: Development files for the DjVu image format
 
 Package: libdjvulibre21
 Architecture: any
+Multi-Arch: same
 Pre-Depends: ${misc:Pre-Depends}
 Depends: ${shlibs:Depends}, ${misc:Depends}, libdjvulibre-text (>= ${source:Version})
 Conflicts: libdjvulibre1
@@ -44,6 +46,7 @@ Description: Runtime support for the DjVu image format
 
 Package: libdjvulibre-text
 Architecture: all
+Multi-Arch: foreign
 Depends: ${misc:Depends}
 Replaces: libdjvulibre15, djview3 (= 3.5.20-9), djvulibre-desktop (<< 3.5.20-9)
 Description: Linguistic support files for libdjvulibre
@@ -53,6 +56,7 @@ Package: djvulibre-dbg
 Section: debug
 Priority: extra
 Architecture: any
+Multi-Arch: same
 Depends: ${shlibs:Depends}, ${misc:Depends}, libdjvulibre21 (= ${binary:Version})
 Description: Debug symbols for the DjVu image format
  DjVu runtime debug symbols.

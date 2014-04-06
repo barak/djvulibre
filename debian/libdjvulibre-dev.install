@@ -1,5 +1,4 @@
-#! /usr/bin/dh-exec
 usr/include/*
-usr/lib/${DEB_HOST_MULTIARCH}/lib*.so
-usr/lib/${DEB_HOST_MULTIARCH}/lib*.a
-usr/lib/${DEB_HOST_MULTIARCH}/pkgconfig/*
+usr/lib/*/lib*.so
+usr/lib/*/lib*.a
+usr/lib/*/pkgconfig/*
