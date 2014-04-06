@@ -167,7 +167,7 @@ static const int   d16[] = {16,16};
 static void
 mmx_bv_1 ( short* &q, short* e, int s, int s3 )
 {
-  while (q<e && (((long)q)&0x7))
+  while (q<e && (((size_t)q)&0x7))
     {
       int a = (int)q[-s] + (int)q[s];
       int b = (int)q[-s3] + (int)q[s3];
@@ -211,7 +211,7 @@ mmx_bv_1 ( short* &q, short* e, int s, int s3 )
 static void
 mmx_bv_2 ( short* &q, short* e, int s, int s3 )
 {
-  while (q<e && (((long)q)&0x7))
+  while (q<e && (((size_t)q)&0x7))
     {
       int a = (int)q[-s] + (int)q[s];
       int b = (int)q[-s3] + (int)q[s3];
@@ -649,7 +649,7 @@ IW44Image::Map::allocp(int n)
   // Allocate enough room for pointers plus alignment
   short *p = alloc( (n+1) * sizeof(short*) / sizeof(short) );
   // Align on pointer size
-  while ( ((long)p) & (sizeof(short*)-1) )
+  while ( ((size_t)p) & (sizeof(short*)-1) )
     p += 1;
   // Cast and return
   return (short**)p;

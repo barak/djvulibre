@@ -178,7 +178,7 @@ hash(const unsigned long & x)
 static inline unsigned int 
 hash(const void * const & x) 
 { 
-  return (unsigned long) x; 
+  return (unsigned int)(size_t) x; 
 }
 
 /** Hashing function (float). */
