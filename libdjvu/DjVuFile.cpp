@@ -983,7 +983,7 @@ DjVuFile::decode_chunk( const GUTF8String &id, const GP<ByteStream> &gbs,
   }
   
   // FG44 (foreground wavelets)
-  else if (chkid == "FG44" && (djvu || djvu))
+  else if (chkid == "FG44" && (djvu || djvi))
   {
     if (fgpm || fgbc)
       G_THROW( ERR_MSG("DjVuFile.dupl_foregrnd") );
