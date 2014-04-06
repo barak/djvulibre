@@ -71,7 +71,6 @@ AC_SUBST(DLLFLAGS)
 case "$host" in
   *-mingw32)
      DLLFLAGS="$DLLFLAGS -Wl,--export-all-symbols"
-     LIBS=-lmsvcp60
   ;;
   *-darwin* | *-macos10*)
      if test -d /opt/local ; then
@@ -109,7 +108,7 @@ RM="$RM -f"
 
 # Libtool & Compilers
 AC_DISABLE_STATIC
-LT_INIT
+LT_INIT([win32-dll])
 AC_PROG_CC
 AC_PROG_CXX
 AC_SUBST(LIBTOOL_DEPS)
