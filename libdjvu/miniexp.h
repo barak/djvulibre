@@ -463,9 +463,16 @@ MINILISPAPI void minilisp_finish(void);
    - Numbers follow the syntax specified by the C
      function strtol() with base=0.
 
-   - Strings are delimited by double quotes.
-     All C string escapes are recognized.
-     Non printable ascii characters must be escaped.
+   - Strings are delimited by double quotes. 
+     All non printable ASCII characters must be escaped. 
+     The usual C string escapes are recognized.
+     The escape sequence \U followed by six hexadecimal
+     digits in range 0..0x10ffff represents the UTF8 encoding
+     of a unicode character. Alternatively, basic plane unicode 
+     characters can be represented using the escape sequence \u 
+     followed by four hexadecimal digits. Two successive \u escape
+     sequences representing a surrogate pair are encoded as
+     a single UTF8 character.
 
    - List are represented by an open parenthesis <(>
      followed by the space separated list elements,
@@ -501,18 +508,22 @@ MINILISPAPI miniexp_t miniexp_pname(miniexp_t p, int width);
    pointers <fputs>, <fgetc>, and <ungetc>, which are similar to their 
    stdio counterparts. Variable <data> defines four pointers that can 
    be used as a closure by the I/O functions.
-      When <p_print7bits> is nonzero and points to a nonzero integer, all
-   non-ascii characters in strings are output as octal escapes. When both
-   <p_macrochar> and <p_macroqueue> are non zero, a non zero entry in
-   <p_macrochar[c]> defines a special parsing function that is called when
-   <miniexp_read_r> encounters the character <c> (in range 0 to 127.) 
-   When both <p_diezechar> and <p_macroqueue> are non zero, a non zero 
-   entry in <p_diezechar[c]> defines a special parsing function that 
-   is called when <miniexp_read_r> encounters the character '#' followed
-   by character <c> (in range 0 to 127.)   These parsing functions return 
-   a list of <miniexp_t> that function <miniexp_read_r> returns one-by-one 
-   before processing more input. This list is in fact stored in the 
-   variable pointed by <io.p_macroqueue>.  */
+      When the pointer <p_print7bits> is nonzero and points to a nonzero
+   integer, all non-ASCII characters are output with escape sequences
+   that only use ASCII characters. Setting this integer to 1 outputs
+   the bytes representing these characters using octal escapes. Setting 
+   this integer to values 2 or 3 outputs valid UTF8 sequences using
+   unicode \u or \U escapes, possibly using surrogate pairs.
+      When both <p_macrochar> and <p_macroqueue> are non zero, a non zero 
+   entry in <p_macrochar[c]> defines a special parsing function that is called
+   when <miniexp_read_r> encounters the character <c> (in range 0 to 127.)
+   When both <p_diezechar> and <p_macroqueue> are non zero, a non zero entry
+   in <p_diezechar[c]> defines a special parsing function that is called when
+   <miniexp_read_r> encounters the character '#' followed by character <c> (in
+   range 0 to 127.)  These parsing functions return a list of <miniexp_t> that
+   function <miniexp_read_r> returns one-by-one before processing more
+   input. This list is stored in the variable pointed by <io.p_macroqueue>.  
+*/
 
 typedef struct miniexp_io_s miniexp_io_t;
 typedef miniexp_t (*miniexp_macrochar_t)(miniexp_io_t*);

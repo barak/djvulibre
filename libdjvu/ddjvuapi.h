@@ -111,6 +111,8 @@ extern "C" {
 
    Version   Change
    -----------------------------
+     22    Changed
+              miniexp strings accept unicode escapes
      21    Added:
               reentrant version of miniexp input/output
      20    Added:
@@ -140,7 +142,7 @@ extern "C" {
      14    Initial version.
 */
 
-#define DDJVUAPI_VERSION 21
+#define DDJVUAPI_VERSION 22
 
 typedef struct ddjvu_context_s    ddjvu_context_t;
 typedef union  ddjvu_message_s    ddjvu_message_t;

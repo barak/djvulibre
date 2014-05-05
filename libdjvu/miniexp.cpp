@@ -847,6 +847,34 @@ char_quoted(int c, bool eightbits)
   return true;
 }
 
+static bool
+char_utf8(int &c, const char* &s)
+{
+  int n = 0;
+  int x = c;
+  if (c >= 0 && c < 0x80) 
+    return true;
+  else if (c >= 0xc0 && c < 0xe0)
+    n = 1;
+  else if (c >= 0xe0 && c < 0xf0)
+    n = 2;
+  else if (c >= 0xf0 && c < 0xf8)
+    n = 3;
+  else 
+    return false;
+  x = c & (0x3f >> n);
+  for (int i=0; i<n; i++)
+    if ((s[i] & 0xc0) == 0x80)
+      x = (x << 6) + (s[i] & 0x3f);
+    else
+      return false;
+  if (x < 0 || x > 0x10ffff)
+    return false;
+  s += n;
+  c = x;
+  return true;
+}
+
 static void
 char_out(int c, char* &d, int &n)
 {
@@ -856,7 +884,7 @@ char_out(int c, char* &d, int &n)
 }
 
 static int
-print_c_string(const char *s, char *d, bool eightbits)
+print_c_string(const char *s, char *d, bool eightbits, int uescape = 0)
 {
   int c;
   int n = 0;
@@ -865,21 +893,29 @@ print_c_string(const char *s, char *d, bool eightbits)
     {
       if (char_quoted(c, eightbits))
         {
-          char letter = 0;
+          char buffer[10];
           static const char *tr1 = "\"\\tnrbf";
           static const char *tr2 = "\"\\\t\n\r\b\f";
+          buffer[0] = buffer[1] = 0;
+          char_out('\\', d, n);
           for (int i=0; tr2[i]; i++)
             if (c == tr2[i])
-              letter = tr1[i];
-          char_out('\\', d, n);
-          if (letter)
-            char_out(letter, d, n);
-          else
+              buffer[0] = tr1[i];
+          if (buffer[0] == 0 && uescape > 1 && c >= 0x80 && char_utf8(c, s)) 
             {
-              char_out('0'+ ((c>>6)&3), d, n);
-              char_out('0'+ ((c>>3)&7), d, n);
-              char_out('0'+ (c&7), d, n);
+              if (c <= 0xffff)
+                sprintf(buffer,"u%04X", c);
+              else if (uescape > 2)            // c# style
+                sprintf(buffer,"U%06X", c);
+              else                             // json style with utf16 pair
+                sprintf(buffer,"u%04X\\u%04X", 
+                        0xd800+(((c-0x10000)>>10)&0x3ff), 
+                        0xdc00+(c&0x3ff));
             }
+          if (buffer[0] == 0)
+            sprintf(buffer, "%03o", c);
+          for (int i=0; buffer[i]; i++)
+            char_out(buffer[i], d, n);
           continue;
         }
       char_out(c, d, n);
@@ -1162,10 +1198,11 @@ printer_t::print(miniexp_t p)
   else if (miniexp_stringp(p))
     {
       const char *s = miniexp_to_str(p);
-      bool print7bits = (io->p_print7bits && *io->p_print7bits);
-      int n = print_c_string(s, 0, !print7bits);
+      bool eightbits = io->p_print7bits == 0 || *io->p_print7bits == 0;
+      int uescape = (io->p_print7bits) ? *io->p_print7bits : 0;
+      int n = print_c_string(s, 0, eightbits, uescape);
       char *d = new char[n];
-      if (d) print_c_string(s, d, !print7bits);
+      if (d) print_c_string(s, d, eightbits, uescape);
       mlput(d);
       delete [] d;
     }
@@ -1387,19 +1424,49 @@ miniexp_pname(miniexp_t p, int width)
 /* ---- INPUT */
 
 static void
+grow(char* &s, int &l, int &m)
+{
+  int nm = ((m<256)?256:m) + ((m>32000)?32000:m);
+  char *ns = new char[nm+1];
+  memcpy(ns, s, l);
+  delete [] s;
+  m = nm;
+  s = ns;
+}
+
+static void
 append(int c, char* &s, int &l, int &m)
 {
   if (l >= m)
-    {
-      int nm = ((m<256)?256:m) + ((m>32000)?32000:m);
-      char *ns = new char[nm+1];
-      memcpy(ns, s, l);
-      delete [] s;
-      m = nm;
-      s = ns;
-    }
+    grow(s, l, m);
   s[l++] = c;
   s[l] = 0;
+}
+
+static void
+append_utf8(int x, char *&s, int &l, int &m)
+{
+  if (x >= 0 && x <= 0x10ffff)
+    { 
+      if (l + 4 >= m)
+        grow(s, l, m);
+      if (x <= 0x7f) {
+        s[l++] = (char)x;
+      } else if (x <= 0x7ff) {
+        s[l++] = (char)((x>>6)|0xc0);
+        s[l++] = (char)((x|0x80)&0xbf);
+      } else if (x <= 0xffff) {
+        s[l++] = (char)((x>>12)|0xe0);
+        s[l++] = (char)(((x>>6)|0x80)&0xbf);
+        s[l++] = (char)((x|0x80)&0xbf);
+      } else {
+        s[l++] = (char)((x>>18)|0xf0);
+        s[l++] = (char)(((x>>12)|0x80)&0xbf);
+        s[l++] = (char)(((x>>6)|0x80)&0xbf);
+        s[l++] = (char)((x|0x80)&0xbf);
+      }
+      s[l] = 0;
+    }
 }
 
 static void
@@ -1407,6 +1474,42 @@ skip_blank(miniexp_io_t *io, int &c)
 {
   while (isspace(c))
     c = io->fgetc(io);
+}
+
+static void
+skip_newline(miniexp_io_t *io, int &c)
+{
+  int d = c;
+  if (c == '\n' || c == '\r')
+    c = io->fgetc(io);
+  if ((c == '\n' || c == '\r') && (c != d))
+    c = io->fgetc(io);
+}
+
+static int
+skip_octal(miniexp_io_t *io, int &c, int maxlen=3)
+{
+  int n = 0;
+  int x = 0;
+  while (c >= '0' && c < '8' && n++ < maxlen)
+    {
+      x = (x<<3) + c - '0';
+      c = io->fgetc(io);
+    }
+  return x;
+}
+
+static int
+skip_hexadecimal(miniexp_io_t *io, int &c, int maxlen=2)
+{
+  int n = 0;
+  int x = 0;
+  while (isxdigit(c) && n++ < maxlen && x <= 0x10fff) // unicode range only
+    {
+      x = (x<<4) + (isdigit(c) ? c-'0' : toupper(c)-'A'+10);
+      c = io->fgetc(io);
+    }
+  return x;
 }
 
 static miniexp_t
@@ -1435,59 +1538,76 @@ read_c_string(miniexp_io_t *io, int &c)
       else if (c=='\\')
         {
           c = io->fgetc(io);
-          if (c == '\n')             // LF
+          if (c == '\n' || c == '\r')
             {
-              c = io->fgetc(io);
-              if (c == '\r')         // LFCR
-                c = io->fgetc(io);
-              continue;
-            }
-          else if (c == '\r')        // CR
-            {
-              c = io->fgetc(io);
-              if (c == '\n')         // CRLF
-                c = io->fgetc(io);
+              skip_newline(io, c);
               continue;
             }
           else if (c>='0' && c<='7')
             {
-              int x = (c-'0');
-              c = io->fgetc(io);
-              if (c>='0' && c<='7')
-                {
-                  x = (x<<3)+(c-'0');
-                  c = io->fgetc(io);
-                  if (c>='0' && c<='7')
-                    {
-                      x = (x<<3)+(c-'0');
-                      c = io->fgetc(io);
-                    }
-                }
+              int x = skip_octal(io, c, 3);
               append((char)x, s, l, m);
               continue;
             }
           else if (c=='x' || c=='X')
             {
-              int x = 0;
               int d = c;
               c = io->fgetc(io);
               if (isxdigit(c))
                 {
-                  x = (x<<4) + (isdigit(c) ? c-'0' : toupper(c)-'A'+10);
-                  c = io->fgetc(io);
-                  if (isxdigit(c))
-                    {
-                      x = (x<<4) + (isdigit(c) ? c-'0' : toupper(c)-'A'+10);
-                      c = io->fgetc(io);
-                    }
+                  int x = skip_hexadecimal(io, c, 2);
                   append((char)x, s, l, m);
                   continue;
                 }
-              else
+              io->ungetc(io, c);
+              c = d;
+            }
+          else if (c == 'U')
+            {
+              c = io->fgetc(io);
+              if (isxdigit(c))
                 {
-                  io->ungetc(io, c);
-                  c = d;
+                  int x = skip_hexadecimal(io, c, 6);
+                  append_utf8(x, s, l, m);
+                  continue;
                 }
+              io->ungetc(io, c);
+              c = 'U';
+            }
+          else if (c == 'u' || c == 'U')
+            {
+              int x = -1;
+              c = io->fgetc(io);
+              if (isxdigit(c))
+                x = skip_hexadecimal(io, c, 4);
+              while (x >= 0xd800 && x <= 0xdbff && c == '\\')
+                {
+                  c = io->fgetc(io);
+                  if (c != 'u') 
+                    {
+                      io->ungetc(io, c);
+                      c = '\\';
+                      break;
+                    }
+                  int z = -1;
+                  c = io->fgetc(io);
+                  if (isxdigit(c))
+                    z = skip_hexadecimal(io, c, 4);
+                  if (z >= 0xdc00 && z <= 0xdfff)
+                    {
+                      x = 0x10000 + ((x & 0x3ff) << 10) + (z & 0x3ff);
+                      break;
+                    }
+                  append_utf8(x, s, l, m);
+                  x = z;
+                }
+              if (x >= 0)
+                {
+                  append_utf8(x, s, l, m);
+                  continue;
+                }
+              io->ungetc(io, c);
+              c = 'u';
             }
           static const char *tr1 = "tnrbfva";
           static const char *tr2 = "\t\n\r\b\f\013\007";

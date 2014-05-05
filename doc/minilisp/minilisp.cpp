@@ -740,6 +740,13 @@ DEFUN(">",cmpgt,2,0) {
   return (compare(argv[0],argv[1])>0) ? s_true : 0;
 }
 
+DEFUN("strlen",strlen,1,1) {
+  if (! miniexp_stringp(argv[0]))
+    error("substr: string expected", argv[0]);
+  const char *s = miniexp_to_str(argv[0]);
+  return miniexp_number(strlen(s));
+}
+
 DEFUN("substr",substr,2,1) {
   if (! miniexp_stringp(argv[0]))
     error("substr: string expected", argv[0]);
@@ -948,6 +955,7 @@ main()
 #ifdef DEBUG
   minilisp_debug(1);
 #endif
+  minilisp_print_7bits = 0;
   minilisp_macrochar_parser[(int)';'] = parse_comment;
   minilisp_macrochar_parser[(int)'\''] = parse_quote;
   FILE *f = fopen("minilisp.in","r");
