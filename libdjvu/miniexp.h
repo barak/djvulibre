@@ -39,6 +39,18 @@ extern "C" {
 # define MINILISPAPI /**/
 #endif
 
+#ifndef __cplusplus
+# ifndef inline
+#  if defined(__GNUC__)
+#   define inline __inline__
+#  elif defined(_MSC_VER)
+#   define inline __inline
+#  else
+#   define inline /**/
+#  endif
+# endif
+#endif
+
 #include <stddef.h>  
 
 /* -------------------------------------------------- */
