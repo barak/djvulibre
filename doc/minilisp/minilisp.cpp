@@ -742,7 +742,7 @@ DEFUN(">",cmpgt,2,0) {
 
 DEFUN("strlen",strlen,1,1) {
   if (! miniexp_stringp(argv[0]))
-    error("substr: string expected", argv[0]);
+    error("strlen: string expected", argv[0]);
   const char *s = miniexp_to_str(argv[0]);
   return miniexp_number(strlen(s));
 }
@@ -891,6 +891,12 @@ DEFUN("symbol->string",symbol2string,1,0) {
   return miniexp_string(miniexp_to_name(argv[0]));
 }
 
+DEFUN("print7bits",print7bits,1,0) {
+  if (! miniexp_numberp(argv[0]))
+    error("print7bits: number expected");
+  minilisp_print_7bits = miniexp_to_int(argv[0]);
+  return argv[0];
+}
 
 /* ------------ toplevel */
 
@@ -955,7 +961,6 @@ main()
 #ifdef DEBUG
   minilisp_debug(1);
 #endif
-  minilisp_print_7bits = 0;
   minilisp_macrochar_parser[(int)';'] = parse_comment;
   minilisp_macrochar_parser[(int)'\''] = parse_quote;
   FILE *f = fopen("minilisp.in","r");

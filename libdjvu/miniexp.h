@@ -465,14 +465,13 @@ MINILISPAPI void minilisp_finish(void);
 
    - Strings are delimited by double quotes. 
      All non printable ASCII characters must be escaped. 
-     The usual C string escapes are recognized.
-     The escape sequence \U followed by six hexadecimal
-     digits in range 0..0x10ffff represents the UTF8 encoding
-     of a unicode character. Alternatively, basic plane unicode 
-     characters can be represented using the escape sequence \u 
-     followed by four hexadecimal digits. Two successive \u escape
-     sequences representing a surrogate pair are encoded as
-     a single UTF8 character.
+     Besides all the usual C string escape sequences,
+     UTF8-encoded Unicode characters in range 0..0x10ffff
+     can be represented by escape sequence <\u> followed
+     by four hexadecimal digits or escape sequence <\U>
+     followed by six hexadecimal digits. Surrogate pairs
+     are always recognized as a single Unicode character.
+     The effect of invalid escape sequences is unspecified.
 
    - List are represented by an open parenthesis <(>
      followed by the space separated list elements,
@@ -508,12 +507,14 @@ MINILISPAPI miniexp_t miniexp_pname(miniexp_t p, int width);
    pointers <fputs>, <fgetc>, and <ungetc>, which are similar to their 
    stdio counterparts. Variable <data> defines four pointers that can 
    be used as a closure by the I/O functions.
-      When the pointer <p_print7bits> is nonzero and points to a nonzero
-   integer, all non-ASCII characters are output with escape sequences
-   that only use ASCII characters. Setting this integer to 1 outputs
-   the bytes representing these characters using octal escapes. Setting 
-   this integer to values 2 or 3 outputs valid UTF8 sequences using
-   unicode \u or \U escapes, possibly using surrogate pairs.
+      All ASCII control characters present in strings are displayed
+   using C escapes sequences. All non-ASCII bytes are dispayed verbatim 
+   when <p_print7bits> is null or points to a zero. When <*p_print7bits> 
+   is 1, all non-ASCII bytes are represented with octal sequences. 
+   Greater values of <*p_print7bits> enable the use of Unicode escapes 
+   to represent valid UTF8 byte sequences. Code points greater than 0xFFFF 
+   are encoded as surrogate pairs when <*p_print7bits> is 2 or 
+   using \U escapes when <*p_print7bits> is greater than 2.
       When both <p_macrochar> and <p_macroqueue> are non zero, a non zero 
    entry in <p_macrochar[c]> defines a special parsing function that is called
    when <miniexp_read_r> encounters the character <c> (in range 0 to 127.)

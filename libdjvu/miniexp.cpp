@@ -868,7 +868,13 @@ char_utf8(int &c, const char* &s)
       x = (x << 6) + (s[i] & 0x3f);
     else
       return false;
-  if (x < 0 || x > 0x10ffff)
+  // validation
+  int limits[] = {0, 0x80, 0x800, 0x10000};
+  if (x < limits[n])
+    return false;
+  if (x > 0x10ffff)
+    return false;
+  if (x >= 0xd800 && x <= 0xdfff)
     return false;
   s += n;
   c = x;
@@ -905,9 +911,9 @@ print_c_string(const char *s, char *d, bool eightbits, int uescape = 0)
             {
               if (c <= 0xffff)
                 sprintf(buffer,"u%04X", c);
-              else if (uescape > 2)            // c# style
+              else if (uescape > 2)          // c# style
                 sprintf(buffer,"U%06X", c);
-              else                             // json style with utf16 pair
+              else                           // json style
                 sprintf(buffer,"u%04X\\u%04X", 
                         0xd800+(((c-0x10000)>>10)&0x3ff), 
                         0xdc00+(c&0x3ff));
@@ -1562,37 +1568,27 @@ read_c_string(miniexp_io_t *io, int &c)
               io->ungetc(io, c);
               c = d;
             }
-          else if (c == 'U')
-            {
-              c = io->fgetc(io);
-              if (isxdigit(c))
-                {
-                  int x = skip_hexadecimal(io, c, 6);
-                  append_utf8(x, s, l, m);
-                  continue;
-                }
-              io->ungetc(io, c);
-              c = 'U';
-            }
           else if (c == 'u' || c == 'U')
             {
               int x = -1;
+              int d = c;
               c = io->fgetc(io);
               if (isxdigit(c))
-                x = skip_hexadecimal(io, c, 4);
+                x = skip_hexadecimal(io, c, isupper(d) ? 6 : 4);
               while (x >= 0xd800 && x <= 0xdbff && c == '\\')
                 {
                   c = io->fgetc(io);
-                  if (c != 'u') 
+                  if (c != 'u' && c != 'U') 
                     {
                       io->ungetc(io, c);
                       c = '\\';
                       break;
                     }
-                  int z = -1;
+                  d = c;
                   c = io->fgetc(io);
+                  int z = -1;
                   if (isxdigit(c))
-                    z = skip_hexadecimal(io, c, 4);
+                    z = skip_hexadecimal(io, c, isupper(d) ? 6 : 4);
                   if (z >= 0xdc00 && z <= 0xdfff)
                     {
                       x = 0x10000 + ((x & 0x3ff) << 10) + (z & 0x3ff);
@@ -1607,7 +1603,7 @@ read_c_string(miniexp_io_t *io, int &c)
                   continue;
                 }
               io->ungetc(io, c);
-              c = 'u';
+              c = d;
             }
           static const char *tr1 = "tnrbfva";
           static const char *tr2 = "\t\n\r\b\f\013\007";
