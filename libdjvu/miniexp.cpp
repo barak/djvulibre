@@ -850,27 +850,19 @@ char_quoted(int c, bool eightbits)
 static bool
 char_utf8(int &c, const char* &s)
 {
-  int n = 0;
-  int x = c;
-  if (c >= 0 && c < 0x80) 
-    return true;
-  else if (c >= 0xc0 && c < 0xe0)
-    n = 1;
-  else if (c >= 0xe0 && c < 0xf0)
-    n = 2;
-  else if (c >= 0xf0 && c < 0xf8)
-    n = 3;
-  else 
+  if (c < 0xc0)
+    return (c < 0x80);
+  if (c >= 0xf8)
     return false;
-  x = c & (0x3f >> n);
+  int n = (c < 0xe0) ? 1 : (c < 0xf0) ? 2 : 3;
+  int x = c & (0x3f >> n);
   for (int i=0; i<n; i++)
     if ((s[i] & 0xc0) == 0x80)
       x = (x << 6) + (s[i] & 0x3f);
     else
       return false;
-  // validation
-  int limits[] = {0, 0x80, 0x800, 0x10000};
-  if (x < limits[n])
+  static int lim[] = {0, 0x80, 0x800, 0x10000};
+  if (x < lim[n])
     return false;
   if (x > 0x10ffff)
     return false;
