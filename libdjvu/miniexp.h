@@ -336,7 +336,7 @@ MINILISPAPI miniexp_t miniexp_concat(miniexp_t l);
 
    * Only the following miniexp functions can cause a
      garbage collection: miniexp_cons(), miniexp_object(),
-     miniexp_string(), miniexp_substring(),
+     miniexp_string(), miniexp_substring(), miniexp_pname(),
      miniexp_concat(), miniexp_pprin(), miniexp_pprint(),
      miniexp_gc(), and minilisp_release_gc_lock().  A
      function that does not cause calls to these functions
@@ -348,13 +348,10 @@ MINILISPAPI miniexp_t miniexp_concat(miniexp_t l);
      everywhere.
 
    * Function arguments should remain <miniexp_t> in order
-     to allow interoperability with the C language. As a
-     consequence, functions must often copy their arguments
-     into minivars in order to make sure they remain
-     allocated. A small performance improvement can be
-     achieved by deciding that the function should always be
-     called using properly secured arguments. This is more
-     difficult to get right.
+     to allow interoperability with the C language. 
+     It is assumed that these arguments have been properly
+     secured by the caller and cannot disappear if a 
+     garbage collection occurs.
 
    C programs cannot use minivars as easily as C++ programs.
    Wrappers are provided to allocate minivars and to access
