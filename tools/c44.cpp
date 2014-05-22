@@ -696,7 +696,7 @@ main(int argc, char **argv)
       ByteStream &ibs=*gibs;
       char prefix[16];
       memset(prefix, 0, sizeof(prefix));
-      if (ibs.read((void*)prefix, sizeof(prefix)) < 0)
+      if (ibs.readall((void*)prefix, sizeof(prefix)) < sizeof(prefix))
         G_THROW( ERR_MSG("c44.failed_pnm_header") );
 #ifdef DEFAULT_JPEG_TO_HALF_SIZE
       // Default specification for jpeg files

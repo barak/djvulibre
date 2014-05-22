@@ -167,7 +167,7 @@ struct DJVUNS ddjvu_job_s : public DjVuPort
   bool released;
   ddjvu_job_s();
   // virtual port functions:
-  virtual bool inherits(const GUTF8String&);
+  virtual bool inherits(const GUTF8String&) const;
   virtual bool notify_error(const DjVuPort*, const GUTF8String&);  
   virtual bool notify_status(const DjVuPort*, const GUTF8String&);
   // default implementation of virtual job functions:
@@ -192,7 +192,7 @@ struct DJVUNS ddjvu_document_s : public ddjvu_job_s
   virtual ddjvu_status_t status();
   virtual void release();
   // virtual port functions:
-  virtual bool inherits(const GUTF8String&);
+  virtual bool inherits(const GUTF8String&) const;
   virtual bool notify_error(const DjVuPort*, const GUTF8String&);  
   virtual bool notify_status(const DjVuPort*, const GUTF8String&);
   virtual void notify_doc_flags_changed(const DjVuDocument*, long, long);
@@ -211,7 +211,7 @@ struct DJVUNS ddjvu_page_s : public ddjvu_job_s
   virtual ddjvu_status_t status();
   virtual void release();
   // virtual port functions:
-  virtual bool inherits(const GUTF8String&);
+  virtual bool inherits(const GUTF8String&) const;
   virtual bool notify_error(const DjVuPort*, const GUTF8String&);  
   virtual bool notify_status(const DjVuPort*, const GUTF8String&);
   virtual void notify_file_flags_changed(const DjVuFile*, long, long);
@@ -580,7 +580,7 @@ ddjvu_job_s::ddjvu_job_s()
 }
 
 bool
-ddjvu_job_s::inherits(const GUTF8String &classname)
+ddjvu_job_s::inherits(const GUTF8String &classname) const
 {
   return (classname == "ddjvu_job_s") 
     || DjVuPort::inherits(classname);
@@ -810,7 +810,7 @@ ddjvu_document_s::status()
 }
 
 bool
-ddjvu_document_s::inherits(const GUTF8String &classname)
+ddjvu_document_s::inherits(const GUTF8String &classname) const
 {
   return (classname == "ddjvu_document_s")
     || ddjvu_job_s::inherits(classname);
@@ -1639,7 +1639,7 @@ ddjvu_page_s::status()
 }
 
 bool
-ddjvu_page_s::inherits(const GUTF8String &classname)
+ddjvu_page_s::inherits(const GUTF8String &classname) const
 {
   return (classname == "ddjvu_page_s")
     || ddjvu_job_s::inherits(classname);
@@ -2653,7 +2653,7 @@ struct DJVUNS ddjvu_runnablejob_s : public ddjvu_job_s
   // thread function
   virtual ddjvu_status_t run() = 0;
   // virtual port functions:
-  virtual bool inherits(const GUTF8String&);
+  virtual bool inherits(const GUTF8String&) const;
   virtual ddjvu_status_t status();
   virtual void stop();
 private:
@@ -2734,7 +2734,7 @@ ddjvu_runnablejob_s::cbstart(void *arg)
 }
 
 bool 
-ddjvu_runnablejob_s::inherits(const GUTF8String &classname)
+ddjvu_runnablejob_s::inherits(const GUTF8String &classname) const
 {
   return (classname == "ddjvu_runnablejob_s") 
     || ddjvu_job_s::inherits(classname);
@@ -2763,7 +2763,7 @@ struct DJVUNS ddjvu_printjob_s : public ddjvu_runnablejob_s
   GP<ByteStream> obs;
   virtual ddjvu_status_t run();
   // virtual port functions:
-  virtual bool inherits(const GUTF8String&);
+  virtual bool inherits(const GUTF8String&) const;
   // progress
   static void cbrefresh(void*);
   static void cbprogress(double, void*);
@@ -2773,7 +2773,7 @@ struct DJVUNS ddjvu_printjob_s : public ddjvu_runnablejob_s
 };
 
 bool 
-ddjvu_printjob_s::inherits(const GUTF8String &classname)
+ddjvu_printjob_s::inherits(const GUTF8String &classname) const
 {
   return (classname == "ddjvu_printjob_s") 
     || ddjvu_runnablejob_s::inherits(classname);
@@ -3101,7 +3101,7 @@ struct DJVUNS ddjvu_savejob_s : public ddjvu_runnablejob_s
   // thread routine
   virtual ddjvu_status_t run();
   // virtual port functions:
-  virtual bool inherits(const GUTF8String&);
+  virtual bool inherits(const GUTF8String&) const;
   virtual void notify_file_flags_changed(const DjVuFile*, long, long);
   // helpers
   bool parse_pagespec(const char *s, int npages, bool *flags);
@@ -3109,7 +3109,7 @@ struct DJVUNS ddjvu_savejob_s : public ddjvu_runnablejob_s
 };
 
 bool 
-ddjvu_savejob_s::inherits(const GUTF8String &classname)
+ddjvu_savejob_s::inherits(const GUTF8String &classname) const
 {
   return (classname == "ddjvu_savejob_s") 
     || ddjvu_runnablejob_s::inherits(classname);

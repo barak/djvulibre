@@ -2259,8 +2259,9 @@ GStringRep::UTF8::toLong(
     endpos=edata-data;
   }else
   {
+    GP<GStringRep> ptr = GStringRep::UTF8::create();
     endpos=(-1);
-    GP<GStringRep> ptr=ptr->strdup(data+pos);
+    ptr=ptr->strdup(data+pos);
     if(ptr)
       ptr=ptr->toNative(NOT_ESCAPED);
     if(ptr)
@@ -2304,8 +2305,9 @@ GStringRep::UTF8::toULong(
     endpos=edata-data;
   }else
   {
+    GP<GStringRep> ptr = GStringRep::UTF8::create();
     endpos=(-1);
-    GP<GStringRep> ptr=ptr->strdup(data+pos);
+    ptr=ptr->strdup(data+pos);
     if(ptr)
       ptr=ptr->toNative(NOT_ESCAPED);
     if(ptr)
@@ -2348,8 +2350,9 @@ GStringRep::UTF8::toDouble(const int pos, int &endpos) const
     endpos=edata-data;
   }else
   {
+    GP<GStringRep> ptr = GStringRep::UTF8::create();
     endpos=(-1);
-    GP<GStringRep> ptr=ptr->strdup(data+pos);
+    ptr=ptr->strdup(data+pos);
     if(ptr)
       ptr=ptr->toNative(NOT_ESCAPED);
     if(ptr)
