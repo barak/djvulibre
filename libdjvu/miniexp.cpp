@@ -176,7 +176,7 @@ miniexp_to_name(miniexp_t p)
     {
       struct symtable_t::sym *r;
       r = ((symtable_t::sym*)(((size_t)p)&~((size_t)3)));
-      return r->n;
+      return (r) ? r->n : "##(dummy)";
     }
   return 0;
 }
@@ -1176,10 +1176,6 @@ printer_t::print(miniexp_t p)
     {
       mlput("()");
     }
-  else if (p == miniexp_dummy)
-    {
-      mlput("#dummy");
-    }
   else if (miniexp_numberp(p))
     {
       sprintf(buffer, "%d", miniexp_to_int(p));
@@ -1705,7 +1701,7 @@ read_miniexp(miniexp_io_t *io, int &c)
                 }
               p = read_miniexp(io, c);
               if ((miniexp_t)p == miniexp_dummy)
-                return miniexp_dummy;
+                return read_error(io, c);
               *where = miniexp_cons(p, miniexp_nil);
               where = &cdr(*where);
             }
@@ -1736,20 +1732,27 @@ read_miniexp(miniexp_io_t *io, int &c)
           miniexp_t p = io->p_macrochar[c](io);
           if (miniexp_length(p) > 0)
             *io->p_macroqueue = p;
+          else if (p)
+            return read_error(io, c);
           c = io->fgetc(io);
           continue;
         }
-      else if (c == '#' && io->p_diezechar && io->p_macroqueue)
+      else if (c == '#')
         {
           int nc = io->fgetc(io);
-          if (nc >= 0 && nc < 128 && io->p_diezechar[nc])
+          if (io->p_diezechar && io->p_macroqueue
+              && nc >= 0 && nc < 128 && io->p_diezechar[nc])
             {
               miniexp_t p = io->p_macrochar[nc](io);
               if (miniexp_length(p) > 0)
                 *io->p_macroqueue = p;
+              else if (p)
+                return read_error(io, c);
               c = io->fgetc(io);
               continue;
             }
+          else if (nc == '#')
+            return read_error(io, c);
           io->ungetc(io, nc);
           // fall thru
         }

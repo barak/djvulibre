@@ -944,6 +944,8 @@ miniexp_t
 parse_quote(void)
 {
   minivar_t l = miniexp_read();
+  if (l == miniexp_dummy)
+    return miniexp_dummy;
   l = miniexp_cons(s_quote, miniexp_cons(l, miniexp_nil));
   return miniexp_cons(l,miniexp_nil);
 }

@@ -445,11 +445,11 @@ MINILISPAPI void minilisp_finish(void);
      * the parenthesis <(> and <)>,
      * the double quote <">,
      * the vertical bar <|>,
-     * the dieze character <#>, when followed by an 
-       ascii character with a non zero entry in the
-       dieze character array.
      * any other ascii character with a non zero entry 
        in the macro character array.
+     * the dieze character <#>, when followed by another
+       dieze or by an ascii character with a non zero entry 
+       in the dieze character array.
 
    - Symbols are represented by their name.
      Vertical bars <|> can be used to delimit names that
