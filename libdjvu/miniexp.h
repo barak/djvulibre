@@ -75,13 +75,13 @@ typedef struct miniexp_s* miniexp_t;
    numbers, symbols, pairs, and objects.
    The latter category can represent any c++ object
    that inherits class <miniobj_t> defined later in this file.
-   The only such objects defined in this file are strings. */
+   Strings and floating point numbers are implemented this way.*/
 
 
 /* -------- NUMBERS -------- */
 
-/* Minilisp numbers can represent any integer 
-   in range [-2^29...2^29-1] */
+/* Minilisp numbers represent integers 
+   covering at least range [-2^29...2^29-1] */
 
 
 /* miniexp_numberp --
@@ -287,6 +287,40 @@ MINILISPAPI miniexp_t miniexp_concat(miniexp_t l);
 
 
 
+/* -------- OBJECTS (FLOATNUM) -------- */
+
+/* miniexp_floatnump --
+   Tests if an expression is an object
+   representing a floating point number. */
+
+MINILISPAPI int miniexp_floatnump(miniexp_t p);
+
+/* miniexp_floatnum --
+   Returns a new floating point number object. */
+
+MINILISPAPI miniexp_t miniexp_floatnum(double x);
+
+/* miniexp_doublep --
+   Tests if an expression can be converted
+   to a double precision number. */
+
+static inline int miniexp_doublep(miniexp_t p) {
+  return miniexp_numberp(p) || miniexp_floatnump(p);
+}
+
+/* miniexp_to_double --
+   Returns a double precision number corresponding to 
+   a lisp expression (a number or a floatnum.) */
+
+MINILISPAPI double miniexp_to_double(miniexp_t p);
+
+/* miniexp_double --
+   Returns a lisp expression representing a double
+   precision number. This will be a number if it fits
+   and a floatnum otherwise.
+ */
+
+MINILISPAPI miniexp_t miniexp_double(double x);
 
 
 /* -------------------------------------------------- */
@@ -452,13 +486,21 @@ MINILISPAPI void minilisp_finish(void);
        in the dieze character array.
 
    - Symbols are represented by their name.
-     Vertical bars <|> can be used to delimit names that
-     contain blanks, special characters, non printable
-     characters, non ascii characters, or 
-     can be confused for a number.
+     Symbols whose name contains blanks, special characters, 
+     non printable characters, non ascii characters, 
+     or can be confused for a number are delimited
+     by vertical bars <|> and can contain two consecutive
+     vertical bars to represent a single vertical bar character.
      
    - Numbers follow the syntax specified by the C
-     function strtol() with base=0.
+     function strtol() with base=0, but are required
+     to start with a digit or with a sign character
+     followed by another character.
+
+   - Floating point follow the syntax specified by the C
+     function strtod() with base=0, but are required
+     to start with a digit or with a sign character
+     followed by another character.
 
    - Strings are delimited by double quotes. 
      All non printable ASCII characters must be escaped. 
@@ -504,14 +546,16 @@ MINILISPAPI miniexp_t miniexp_pname(miniexp_t p, int width);
    pointers <fputs>, <fgetc>, and <ungetc>, which are similar to their 
    stdio counterparts. Variable <data> defines four pointers that can 
    be used as a closure by the I/O functions.
-      All ASCII control characters present in strings are displayed
-   using C escapes sequences. All non-ASCII bytes are dispayed verbatim 
-   when <p_print7bits> is null or points to a zero. When <*p_print7bits> 
-   is 1, all non-ASCII bytes are represented with octal sequences. 
-   Greater values of <*p_print7bits> enable the use of Unicode escapes 
-   to represent valid UTF8 byte sequences. Code points greater than 0xFFFF 
-   are encoded as surrogate pairs when <*p_print7bits> is 2 or 
-   using \U escapes when <*p_print7bits> is greater than 2.
+      Variable <p_flags> optionally points to a flag word that customize the
+   printing operation. All ASCII control characters present in strings are
+   displayed using C escapes sequences. Flag <miniexp_io_print7bits> causes
+   all other non ASCII characters to be escaped. Flag <miniexp_io_u6escape>
+   and <miniexp_io_u4escape> respectively authorize using the long and
+   short utf8 escape sequences "\U" and "\u". Their absence may force
+   using surrogate short escape sequences or only octal sequences.
+   Flag <miniexp_io_quotemoresyms> causes the output code to also quote
+   all symbols that start with a digit or with a sign character followed
+   by another character.
       When both <p_macrochar> and <p_macroqueue> are non zero, a non zero 
    entry in <p_macrochar[c]> defines a special parsing function that is called
    when <miniexp_read_r> encounters the character <c> (in range 0 to 127.)
@@ -532,19 +576,24 @@ struct miniexp_io_s
   int (*fgetc)(miniexp_io_t*);
   int (*ungetc)(miniexp_io_t*, int);
   void *data[4];
-  int *p_print7bits;
+  int *p_flags; /* previously named p_print7bits */
   miniexp_macrochar_t *p_macrochar;
   miniexp_macrochar_t *p_diezechar;
   minivar_t *p_macroqueue;
   minivar_t *p_reserved;
 };
 
+#define miniexp_io_print7bits          0x1
+#define miniexp_io_u4escape            0x2
+#define miniexp_io_u6escape            0x4
+#define miniexp_io_quotemoresymbols    0x20
+
 /* miniexp_io_init --
    Initialize a default <miniexp_io_t> structure
    that reads from stdin and prints to stdout. 
    Field <data[0]> is used to hold the stdin file pointer.
    Field <data[1]> is used to hold the stdout file pointer.
-   Fields <p_print7bits>, <p_macrochar>, <p_diezechar>
+   Fields <p_flags>, <p_macrochar>, <p_diezechar>
    and <p_macroqueue> are set to point to zero-initialized
    shared variables. */
 
@@ -594,18 +643,6 @@ MINILISPAPI miniexp_t miniexp_print(miniexp_t p);
 MINILISPAPI miniexp_t miniexp_pprin(miniexp_t p, int width);
 MINILISPAPI miniexp_t miniexp_pprint(miniexp_t p, int width);
 
-/* miniexp_macrochar, miniexp_macroqueue --
-   Function <miniexp_io_init> causes the corresponding pointers in the
-   <miniexp_io_t> structure to point to these variables.  A non zero entry in
-   <io.macrochar> defines a special parsing function that runs when
-   <miniexp_read_r> encounters the corresponding character. The parsing
-   function return a list of <miniexp_t> that function <miniexp_read_r>
-   returns one-by-one before processing more input. This list is in fact
-   stored in the variable pointed to by <io.macroqueue>. */
- 
-extern MINILISPAPI miniexp_macrochar_t miniexp_macrochar[128];
-extern MINILISPAPI minivar_t miniexp_macroqueue;
-
 
 /* Backward compatibility. */
 extern MINILISPAPI int (*minilisp_puts)(const char *);
@@ -613,6 +650,8 @@ extern MINILISPAPI int (*minilisp_getc)(void);
 extern MINILISPAPI int (*minilisp_ungetc)(int);
 extern MINILISPAPI miniexp_t (*minilisp_macrochar_parser[128])(void);
 extern MINILISPAPI miniexp_t (*minilisp_diezechar_parser[128])(void);
+extern MINILISPAPI miniexp_macrochar_t miniexp_macrochar[128];
+extern MINILISPAPI minivar_t miniexp_macroqueue;
 extern MINILISPAPI int minilisp_print_7bits;
 #if defined(stdin)
 MINILISPAPI void minilisp_set_output(FILE *f);

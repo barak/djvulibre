@@ -117,7 +117,7 @@
 (defun (2/ x) (/ x 2))
 
 (defun (div n d)
-   (if (>= n 0) (/ n d) (- -1 (/ (- n) d))) )
+  (floor (/ n d)) )
 
 (defun (mod n d)
    (- n (* d (div n d))) )

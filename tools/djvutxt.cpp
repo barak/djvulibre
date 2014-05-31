@@ -150,7 +150,12 @@ dopage(int pageno)
     {
       miniexp_io_t io;
       miniexp_io_init(&io);
+#ifdef miniexp_io_print7bits
+      int flags = (escape) ? miniexp_io_print7bits : 0;
+      io.p_flags = &flags;
+#else
       io.p_print7bits = &escape;
+#endif
       miniexp_pprint_r(&io, r, 72);
     }
   else if ((r = miniexp_nth(5, r)) && miniexp_stringp(r))

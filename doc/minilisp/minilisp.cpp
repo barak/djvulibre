@@ -20,6 +20,7 @@
 #include <stdio.h>
 #include <string.h>
 #include <signal.h>
+#include <math.h>
 
 #include "miniexp.h"
 
@@ -553,6 +554,10 @@ DEFUN("numberp",numberp,1,0) {
   return miniexp_numberp(argv[0]) ? s_true : 0;
 }
 
+DEFUN("doublep",doublep,1,0) {
+  return miniexp_doublep(argv[0]) ? s_true : 0;
+}
+
 DEFUN("objectp",objectp,1,0) {
   return miniexp_objectp(argv[0]) ? s_true : 0;
 }
@@ -607,7 +612,7 @@ DEFUN("cons",cons,2,0) {
 
 DEFUN("nth",nth,2,0) {
   if (! miniexp_numberp(argv[0]))
-    error("nth: number expected");
+    error("nth: integer number expected");
   return miniexp_nth(miniexp_to_int(argv[0]), argv[1]);
 }
 
@@ -620,60 +625,60 @@ DEFUN("rplacd",rplacd,2,0) {
 }
 
 DEFUN("abs",abs,1,0) {
-  return miniexp_number(abs(miniexp_to_int(argv[0])));
+  return miniexp_double(fabs(miniexp_to_double(argv[0])));
 }
 
 DEFUN("+",plus,0,9999) {
-  int s = 0;
+  double s = 0;
   for (int i=0; i<argc; i++)
     {
-      if (!miniexp_numberp(argv[i]))
+      if (!miniexp_doublep(argv[i]))
 	error("+: number expected");
-      s += miniexp_to_int(argv[i]);
+      s += miniexp_to_double(argv[i]);
     }
-  return miniexp_number(s);
+  return miniexp_double(s);
 }
 
 DEFUN("*",times,0,9999) {
-  int s = 1;
+  double s = 1;
   for (int i=0; i<argc; i++)
     {
-      if (!miniexp_numberp(argv[i]))
+      if (!miniexp_doublep(argv[i]))
 	error("*: number expected");
-      s *= miniexp_to_int(argv[i]);
+      s *= miniexp_to_double(argv[i]);
     }
-  return miniexp_number(s);
+  return miniexp_double(s);
 }
 
 DEFUN("-",minus,1,9999) {
-  if (! miniexp_numberp(argv[0]))
+  if (! miniexp_doublep(argv[0]))
     error("-: number expected");
   int i = 0;
-  int s = 0;
-  if (argc>1 && miniexp_numberp(argv[0]))
-    s = miniexp_to_int(argv[i++]);
-  while (i<argc && miniexp_numberp(argv[i]))
-    s -= miniexp_to_int(argv[i++]);
+  double s = 0;
+  if (argc>1 && miniexp_doublep(argv[0]))
+    s = miniexp_to_double(argv[i++]);
+  while (i<argc && miniexp_doublep(argv[i]))
+    s -= miniexp_to_double(argv[i++]);
   if (i < argc)
     error("-: number expected", argv[i]);
-  return miniexp_number(s);
+  return miniexp_double(s);
 }
 
 DEFUN("/",div,1,9999) {
-  if (! miniexp_numberp(argv[0]))
+  if (! miniexp_doublep(argv[0]))
     error("/: number expected");
   int i = 0;
-  int s = 1;
-  if (argc>1 && miniexp_numberp(argv[0]))
-    s = miniexp_to_int(argv[i++]);
-  while (i<argc && miniexp_numberp(argv[i]) && miniexp_to_int(argv[i]))
-    s /= miniexp_to_int(argv[i++]);
+  double s = 1;
+  if (argc>1 && miniexp_doublep(argv[0]))
+    s = miniexp_to_double(argv[i++]);
+  while (i<argc && miniexp_doublep(argv[i]) && miniexp_to_double(argv[i]))
+    s /= miniexp_to_double(argv[i++]);
   if (i < argc)
-    if (miniexp_numberp(argv[i]))
+    if (miniexp_doublep(argv[i]))
       error("/: division by zero", argv[i]);
     else
       error("/: number expected", argv[i]);
-  return miniexp_number(s);
+  return miniexp_double(s);
 }
 
 DEFUN("==",equalequal,2,0) {
@@ -690,6 +695,8 @@ equal(miniexp_t a, miniexp_t b)
       &&   equal(miniexp_cdr(a),miniexp_cdr(b));
   else if (miniexp_stringp(a) && miniexp_stringp(b))
     return !strcmp(miniexp_to_str(a), miniexp_to_str(b));
+  else if (miniexp_doublep(a) && miniexp_doublep(b))
+    return miniexp_to_double(a) == miniexp_to_double(b);
   return false;
 }
 
@@ -704,10 +711,10 @@ DEFUN("<>",notequal,2,0) {
 static int
 compare(miniexp_t a, miniexp_t b)
 {
-  if (miniexp_numberp(a) && miniexp_numberp(b))
+  if (miniexp_doublep(a) && miniexp_doublep(b))
     {
-      int na = miniexp_to_int(a);
-      int nb = miniexp_to_int(b);
+      double na = miniexp_to_double(a);
+      double nb = miniexp_to_double(b);
       if (na < nb)
 	return -1;
       else if (na > nb)
@@ -740,6 +747,18 @@ DEFUN(">",cmpgt,2,0) {
   return (compare(argv[0],argv[1])>0) ? s_true : 0;
 }
 
+DEFUN("floor",floor,1,0) {
+  if (! miniexp_doublep(argv[0]))
+    error("-: number expected");
+  return miniexp_double(floor(miniexp_to_double(argv[0])));
+}
+
+DEFUN("ceil",ceil,1,0) {
+  if (! miniexp_doublep(argv[0]))
+    error("-: number expected");
+  return miniexp_double(ceil(miniexp_to_double(argv[0])));
+}
+
 DEFUN("strlen",strlen,1,1) {
   if (! miniexp_stringp(argv[0]))
     error("strlen: string expected", argv[0]);
@@ -753,16 +772,16 @@ DEFUN("substr",substr,2,1) {
   const char *s = miniexp_to_str(argv[0]);
   int l = strlen(s);
   if (! miniexp_numberp(argv[1]))
-    error("substr: number expected", argv[1]);
-  int f = miniexp_to_int(argv[1]);
+    error("substr: integer number expected", argv[1]);
+  int f = miniexp_to_double(argv[1]);
   f = (l < f) ? l : (f < 0) ? l : f;
   s += f;
   l -= f;
   if (argc>2)
     {
       if (! miniexp_numberp(argv[2]))
-	error("substr: number expected", argv[2]);
-      f = miniexp_to_int(argv[2]);
+	error("substr: integer number expected", argv[2]);
+      f = miniexp_to_double(argv[2]);
       l = (f > l) ? l : (f < 0) ? 0 : f;
     }
   return miniexp_substring(s,l);
@@ -891,9 +910,9 @@ DEFUN("symbol->string",symbol2string,1,0) {
   return miniexp_string(miniexp_to_name(argv[0]));
 }
 
-DEFUN("print7bits",print7bits,1,0) {
+DEFUN("printflags",printflags,1,0) {
   if (! miniexp_numberp(argv[0]))
-    error("print7bits: number expected");
+    error("printflags: integer number expected");
   minilisp_print_7bits = miniexp_to_int(argv[0]);
   return argv[0];
 }

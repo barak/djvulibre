@@ -27,6 +27,7 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include <ctype.h>
+#include <errno.h>
 #include <string.h>
 #include <time.h>
 #include <stdarg.h>
@@ -836,9 +837,10 @@ ministring_t::ministring_t(char *str, bool steal)
 END_ANONYMOUS_NAMESPACE
 
 static bool
-char_quoted(int c, bool eightbits)
+char_quoted(int c, int flags)
 {
-  if (eightbits && c>=0x80)
+  bool print7bits = (flags & miniexp_io_print7bits);
+  if (c>=0x80 && !print7bits)
     return false;
   if (c==0x7f || c=='\"' || c=='\\')
     return true;
@@ -882,14 +884,14 @@ char_out(int c, char* &d, int &n)
 }
 
 static int
-print_c_string(const char *s, char *d, bool eightbits, int uescape = 0)
+print_c_string(const char *s, char *d, int flags = 0)
 {
   int c;
   int n = 0;
   char_out('\"', d, n);
   while ((c = (unsigned char)(*s++)))
     {
-      if (char_quoted(c, eightbits))
+      if (char_quoted(c, flags))
         {
           char buffer[10];
           static const char *tr1 = "\"\\tnrbf";
@@ -899,13 +901,15 @@ print_c_string(const char *s, char *d, bool eightbits, int uescape = 0)
           for (int i=0; tr2[i]; i++)
             if (c == tr2[i])
               buffer[0] = tr1[i];
-          if (buffer[0] == 0 && uescape > 1 && c >= 0x80 && char_utf8(c, s)) 
+          if (buffer[0] == 0 && c >= 0x80 
+              && (flags & (miniexp_io_u4escape | miniexp_io_u6escape))
+              && char_utf8(c, s) )
             {
-              if (c <= 0xffff)
+              if (c <= 0xffff && (flags & miniexp_io_u4escape))
                 sprintf(buffer,"u%04X", c);
-              else if (uescape > 2)          // c# style
+              else if (flags & miniexp_io_u6escape) // c# style
                 sprintf(buffer,"U%06X", c);
-              else                           // json style
+              else if (flags & miniexp_io_u4escape) // json style
                 sprintf(buffer,"u%04X\\u%04X", 
                         0xd800+(((c-0x10000)>>10)&0x3ff), 
                         0xdc00+(c&0x3ff));
@@ -926,9 +930,9 @@ print_c_string(const char *s, char *d, bool eightbits, int uescape = 0)
 char *
 ministring_t::pname() const
 {
-  int n = print_c_string(s, 0, true);
+  int n = print_c_string(s, 0);
   char *d = new char[n];
-  if (d) print_c_string(s, d, true);
+  if (d) print_c_string(s, d);
   return d;
 }
 
@@ -987,6 +991,100 @@ miniexp_concat(miniexp_t p)
   ministring_t *obj = new ministring_t(b, true);
   return miniexp_object(obj);
 }
+
+
+/* -------------------------------------------------- */
+/* FLOATNUMS                                          */
+/* -------------------------------------------------- */
+
+
+BEGIN_ANONYMOUS_NAMESPACE
+
+class minifloat_t : public miniobj_t 
+{
+  MINIOBJ_DECLARE(minifloat_t,miniobj_t,"floatnum");
+public:
+  minifloat_t(double x) : val(x) {}
+  operator double() const { return val; }
+  virtual char *pname() const;
+private:
+  double val;
+};
+
+
+MINIOBJ_IMPLEMENT(minifloat_t,miniobj_t,"floatnum");
+
+END_ANONYMOUS_NAMESPACE
+
+int 
+miniexp_floatnump(miniexp_t p)
+{
+  return miniexp_isa(p, minifloat_t::classname) ? 1 : 0;
+}
+
+miniexp_t 
+miniexp_floatnum(double x)
+{
+  minifloat_t *obj = new minifloat_t(x);
+  return miniexp_object(obj);
+}
+
+double 
+miniexp_to_double(miniexp_t p)
+{
+  if (miniexp_numberp(p))
+    return (double) miniexp_to_int(p);
+  else if (miniexp_floatnump(p))
+    return (double) * (minifloat_t*) miniexp_to_obj(p);
+  return 0.0;
+}
+
+miniexp_t 
+miniexp_double(double x)
+{
+  miniexp_t exp = miniexp_number((int)(x));
+  if (x != (double)miniexp_to_int(exp))
+    exp = miniexp_floatnum(x);
+  return exp;
+}
+
+static bool
+str_looks_like_double(const char *s)
+{
+  if (isdigit(s[0]))
+    return true;
+  if ((s[0] == '+' || s[0] == '-') && s[1])
+    return true;
+  return false;
+}
+
+char *
+minifloat_t::pname() const
+{
+  char *r = new char[64];
+  sprintf(r,"%f",val);
+  if (! str_looks_like_double(r))
+    sprintf(r,"+%f",val);
+  return r;
+}
+
+static bool
+str_is_double(const char *s, double &x)
+{
+  if (str_looks_like_double(s))
+    {
+      char *end;
+      errno = 0;
+      x = (double) strtol(s, &end, 0);
+      if (*end == 0 && errno == 0) 
+        return true;
+      x = (double) strtod(s, &end);
+      if (*end == 0 && errno == 0) 
+        return true;
+    }
+  return false;
+}
+
 
 
 /* -------------------------------------------------- */
@@ -1085,7 +1183,7 @@ miniexp_io_init(miniexp_io_t *io)
   io->fgetc = stdio_fgetc;
   io->ungetc = stdio_ungetc;
   io->data[0] = io->data[1] = io->data[2] = io->data[3] = 0;
-  io->p_print7bits = (int*)&minilisp_print_7bits;;
+  io->p_flags = (int*)&minilisp_print_7bits;;
   io->p_macrochar = (miniexp_macrochar_t*)minilisp_macrochar_parser;
   io->p_diezechar = (miniexp_macrochar_t*)minilisp_diezechar_parser;
   io->p_macroqueue = (minivar_t*)&minilisp_macroqueue;
@@ -1121,7 +1219,8 @@ struct printer_t
   void mlput(const char *s);
   void mltab(int n);
   void print(miniexp_t p);
-  bool must_quote_symbol(const char *s);
+  bool must_quote_symbol(const char *s, int flags);
+  void mlput_quoted_symbol(const char *s);
   virtual miniexp_t begin() { return miniexp_nil; }
   virtual bool newline() { return false; }
   virtual void end(miniexp_t) { }
@@ -1150,7 +1249,7 @@ printer_t::mltab(int n)
 }
 
 bool
-printer_t::must_quote_symbol(const char *s)
+printer_t::must_quote_symbol(const char *s, int flags)
 {
   int c;
   const char *r = s;
@@ -1159,17 +1258,32 @@ printer_t::must_quote_symbol(const char *s)
         isspace(c) || !isascii(c) || !isprint(c) ||
         (c >= 0 && c < 128 && io->p_macrochar && io->p_macrochar[c]) )
       return true;
-  char *end;
-#ifdef __GNUC__
-  long junk __attribute__ ((unused)) =
-#endif
-  strtol(s, &end, 0);
-  return (!*end);
+  double x;
+  if (flags & miniexp_io_quotemoresymbols)
+    return str_looks_like_double(s);
+  return str_is_double(s, x);
+}
+
+void
+printer_t::mlput_quoted_symbol(const char *s)
+{
+  int l = strlen(s);
+  char *r = new char[l+l+3];
+  char *z = r;
+  *z++ = '|';
+  while (*s)
+    if ((*z++ = *s++) == '|')
+      *z++ = '|';
+  *z++ = '|';
+  *z++ = 0;
+  mlput(r);
+  delete [] r;
 }
 
 void
 printer_t::print(miniexp_t p)
 {
+  int flags = (io->p_flags) ? *io->p_flags : 0;
   static char buffer[32];
   miniexp_t b = begin();
   if (p == miniexp_nil)
@@ -1184,19 +1298,18 @@ printer_t::print(miniexp_t p)
   else if (miniexp_symbolp(p))
     {
       const char *s = miniexp_to_name(p);
-      bool needquote = must_quote_symbol(s);
-      if (needquote) mlput("|");
-      mlput(s);
-      if (needquote) mlput("|");
+      if (must_quote_symbol(s, flags))
+        mlput_quoted_symbol(s);
+      else
+        mlput(s);
     }
   else if (miniexp_stringp(p))
     {
       const char *s = miniexp_to_str(p);
-      bool eightbits = io->p_print7bits == 0 || *io->p_print7bits == 0;
-      int uescape = (io->p_print7bits) ? *io->p_print7bits : 0;
-      int n = print_c_string(s, 0, eightbits, uescape);
+      int n = print_c_string(s, 0, flags);
       char *d = new char[n];
-      if (d) print_c_string(s, d, eightbits, uescape);
+      if (d) 
+        print_c_string(s, d, flags);
       mlput(d);
       delete [] d;
     }
@@ -1622,10 +1735,10 @@ read_quoted_symbol(miniexp_io_t *io, int &c)
       if (c==EOF || (isascii(c) && !isprint(c)))
         return read_error(io, c);
       if (c=='|')
-        break;
+        if ((c = io->fgetc(io)) != '|')
+          break;
       append(c,s,l,m);
     }
-  c = io->fgetc(io);
   r = miniexp_symbol(s ? s : "");
   delete [] s;
   return r;
@@ -1650,12 +1763,11 @@ read_symbol_or_number(miniexp_io_t *io, int &c)
     }
   if (l <= 0)
     return read_error(io, c);
-  char *end;
-  long x = strtol(s, &end, 0);
-  if (*end)
-    r = miniexp_symbol(s);
+  double x;
+  if (str_is_double(s, x))
+    r = miniexp_double(x);
   else
-    r = miniexp_number((int)x);
+    r = miniexp_symbol(s);
   delete [] s;
   return r;
 }

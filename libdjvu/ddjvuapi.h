@@ -113,6 +113,8 @@ extern "C" {
    -----------------------------
      22    Changed
               miniexp strings accept unicode escapes
+              deprecated miniexp_io_t::p_print7bits
+              added miniexp_io_t::p_flags
      21    Added:
               reentrant version of miniexp input/output
      20    Added:
