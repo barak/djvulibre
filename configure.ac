@@ -106,8 +106,7 @@ AC_PATH_PROG(RM, rm)
 RM="$RM -f"
 
 # Libtool & Compilers
-AC_DISABLE_STATIC
-LT_INIT([win32-dll])
+LT_INIT([win32-dll disable-static])
 AC_PROG_CC
 AC_PROG_CXX
 AC_SUBST(LIBTOOL_DEPS)
