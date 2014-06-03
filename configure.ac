@@ -137,7 +137,6 @@ AC_CHECK_LIB(m,sqrt)
 # Header Files
 # ----------------------------------------
 
-AC_HEADER_STDC
 AC_HEADER_DIRENT
 AC_HEADER_TIME
 AC_HEADER_SYS_WAIT     
