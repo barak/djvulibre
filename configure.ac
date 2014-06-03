@@ -28,7 +28,6 @@ AC_CONFIG_AUX_DIR(config)
 AC_CONFIG_MACRO_DIR(config)
 AC_CONFIG_SRCDIR(libdjvu/ddjvuapi.cpp)
 AC_CONFIG_HEADER(config.h:config/config.h.in)
-AC_PREFIX_DEFAULT(/usr/local)
 AC_CANONICAL_HOST
 
 # Library version
