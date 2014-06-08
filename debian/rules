@@ -4,9 +4,11 @@
 	dh $@ --with autoreconf --parallel
 
 # extract library major version from source build system
-libver0 := $(shell egrep '^LIBDJVU_VER_COMPAT=[0-9]+$$' configure.ac \
-		   | head -1 \
-		   | sed 's/LIBDJVU_VER_COMPAT=//')
+libver0 := $(shell \
+	egrep 'm4_define..lt_compat.,' configure.ac \
+	 | head -1 \
+	 | sed 's:m4_define::' \
+	 | tr --delete --complement '[:digit:]')
 
 # extract library major version expected by debian packaging
 libver := $(shell egrep '^Package: libdjvulibre[0-9]+$$' debian/control \
