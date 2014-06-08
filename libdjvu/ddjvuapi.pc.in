@@ -2,18 +2,12 @@ prefix=@prefix@
 exec_prefix=@exec_prefix@
 libdir = @libdir@
 includedir = @includedir@
-PACKAGE_VERSION = @PACKAGE_VERSION@
-JPEG_LIBS = @JPEG_LIBS@
-PTHREAD_LIBS = @PTHREAD_LIBS@
-LIBS = @LIBS@
-JPEG_CFLAGS = @JPEG_CFLAGS@
-PTHREAD_CFLAGS = @PTHREAD_CFLAGS@
 
 Name: ddjvuapi
-Description: DjVu decoding api.
-Version: ${PACKAGE_VERSION}
+Description: DjVu Decoding API
+Version: @PACKAGE_VERSION@
 Requires:
 Conflicts:
-Libs: -L${libdir} -ldjvulibre 
-Libs.private: ${JPEG_LIBS} ${PTHREAD_LIBS} ${LIBS}
-Cflags: -I${includedir} ${JPEG_CFLAGS} ${PTHREAD_CFLAGS}
+Libs: @Libs@
+Libs.private: @Libsprivate@
+Cflags: @Cflags@
