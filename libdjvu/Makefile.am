@@ -133,6 +133,11 @@ $(SED) \
 -e 's,@includedir\@,$(includedir),g' \
 -e 's,@requirements_etui_pc\@,$(requirements_etui_pc),g' \
 -e 's,@requirements_etui_libs\@,$(requirements_etui_libs),g' \
+-e 's,@JPEG_LIBS\@,$(JPEG_LIBS),g' \
+-e 's,@PTHREAD_LIBS\@,$(PTHREAD_LIBS),g' \
+-e 's,@LIBS\@,$(LIBS),g' \
+-e 's,@JPEG_CFLAGS\@,$(JPEG_CFLAGS),g' \
+-e 's,@PTHREAD_CFLAGS\@,$(PTHREAD_CFLAGS),g' \
 < $< > $@ || rm $@
 
 pc_verbose = $(pc_verbose_@AM_V@)
