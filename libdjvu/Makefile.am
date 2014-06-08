@@ -143,7 +143,6 @@ ddjvuapi.pc: ddjvuapi.pc.in Makefile
 	$(AM_V_at)rm -f $@
 	$(pc_verbose)$(sed_process)
 
-pkgconfigdir = $(libdir)/pkgconfig
 pkgconfig_DATA = ddjvuapi.pc
 
 EXTRA_DIST = ddjvuapi.pc.in
