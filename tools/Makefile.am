@@ -39,9 +39,9 @@ c44_CXXFLAGS = $(OPTS) $(CXXRPOFLAGS) $(THREAD_CFLAGS)
 c44_LDADD = $(top_builddir)/libdjvu/libdjvulibre.la
 
 cjb2_SOURCES = cjb2.cpp jb2tune.cpp common.h jb2tune.h $(jb2cmp_SOURCES)
-cjb2_CPPFLAGS = -I$(top_srcdir)/libdjvu @TIFF_CFLAGS@
+cjb2_CPPFLAGS = -I$(top_srcdir)/libdjvu $(TIFF_CFLAGS)
 cjb2_CXXFLAGS = $(OPTS) $(CXXRPOFLAGS) $(THREAD_CFLAGS)
-cjb2_LDADD = $(top_builddir)/libdjvu/libdjvulibre.la @TIFF_LIBS@
+cjb2_LDADD = $(top_builddir)/libdjvu/libdjvulibre.la $(TIFF_LIBS)
 
 cpaldjvu_SOURCES = cpaldjvu.cpp jb2tune.cpp common.h jb2tune.h $(jb2cmp_SOURCES)
 cpaldjvu_CPPFLAGS = -I$(top_srcdir)/libdjvu
@@ -54,13 +54,13 @@ csepdjvu_CXXFLAGS = $(OPTS) $(CXXRPOFLAGS) $(THREAD_CFLAGS)
 csepdjvu_LDADD = $(top_builddir)/libdjvu/libdjvulibre.la
 
 ddjvu_SOURCES = ddjvu.cpp tiff2pdf.c tiff2pdf.h
-ddjvu_CPPFLAGS = -I$(top_srcdir) -I$(top_srcdir)/libdjvu @TIFF_CFLAGS@
+ddjvu_CPPFLAGS = -I$(top_srcdir) -I$(top_srcdir)/libdjvu $(TIFF_CFLAGS)
 if HAVE_OS_WIN32
 ddjvu_CPPFLAGS += -D__USE_MINGW_ANSI_STDIO
 endif
 ddjvu_CFLAGS = $(OPTS) $(THREAD_CFLAGS)
 ddjvu_CXXFLAGS = $(OPTS) $(CXXRPOFLAGS) $(THREAD_CFLAGS)
-ddjvu_LDADD = $(top_builddir)/libdjvu/libdjvulibre.la @TIFF_LIBS@
+ddjvu_LDADD = $(top_builddir)/libdjvu/libdjvulibre.la $(TIFF_LIBS)
 
 djvm_SOURCES = djvm.cpp common.h
 djvm_CPPFLAGS = -I$(top_srcdir)/libdjvu
