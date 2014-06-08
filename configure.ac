@@ -22,19 +22,32 @@
 # Initialization
 # ----------------------------------------
 
+m4_define([v_maj], [3])
+m4_define([v_min], [5])
+m4_define([v_mic], [25])
+m4_define([v_ver], [v_maj.v_min.v_mic])
+
+m4_define([lt_compat], [21])
+m4_define([lt_cur], [v_mic])
+m4_define([lt_rev], [0])
+m4_define([lt_age], [m4_eval(v_mic - lt_compat)])
+
 AC_PREREQ([2.65])
-AC_INIT([djvulibre],[3.5.25])
+AC_INIT([djvulibre],[v_ver])
 AC_CONFIG_AUX_DIR(config)
 AC_CONFIG_MACRO_DIR(config)
 AC_CONFIG_SRCDIR(libdjvu/ddjvuapi.cpp)
 AC_CONFIG_HEADER(config.h:config/config.h.in)
 AC_CANONICAL_HOST
 
+AM_INIT_AUTOMAKE([1.6 subdir-objects dist-bzip2 dist-xz])
+m4_ifdef([AM_SILENT_RULES], [AM_SILENT_RULES([yes])])
+
+LT_INIT([win32-dll disable-static])
+
 # Library version
-LIBDJVU_VER_COMPAT=21
-LIBDJVU_VER=`echo $PACKAGE_VERSION | sed -e 's/^3\.5\.//'`
-LIBDJVU_VER=$LIBDJVU_VER:0:`expr $LIBDJVU_VER - $LIBDJVU_VER_COMPAT`
-AC_SUBST(LIBDJVU_VER)
+version_info="lt_cur:lt_rev:lt_age"
+AC_SUBST([version_info])
 
 # Additional libraries
 AC_ARG_WITH(extra-includes,
@@ -62,14 +75,13 @@ if test -d $curwd/gnu/lib ; then
    LDFLAGS="$LDFLAGS -L$curwd/gnu/lib"
 fi
 
-# Extra flags to make dll
-DLLFLAGS=
-AC_SUBST(DLLFLAGS)
-
 # Special cases
+
+have_os_win32="no"
+
 case "$host" in
   *-mingw32)
-     DLLFLAGS="$DLLFLAGS -Wl,--export-all-symbols"
+     have_os_win32="yes"
   ;;
   *-darwin* | *-macos10*)
      if test -d /opt/local ; then
@@ -82,6 +94,8 @@ case "$host" in
   ;;
 esac
 
+AM_CONDITIONAL([HAVE_OS_WIN32], [test "x${have_os_win32}" = "xyes"])
+
 
 
 # ----------------------------------------
@@ -92,21 +106,55 @@ esac
 AC_PROG_MAKE_SET
 
 # Programs
+AC_PROG_INSTALL
 AC_PROG_LN_S
 AC_PROG_MKDIR_P
-AM_PROG_AR
-AC_PATH_PROG(TOUCH, touch)
-AC_PATH_PROG(RSVG, rsvg-convert, false)
-AC_PATH_PROG(CONVERT, convert, false)
-AC_PATH_PROG(INKSCAPE, inkscape, false)
-AC_PROG_INSTALL
+AC_PROG_SED
+AC_PATH_PROG([TOUCH], [touch])
+CONVERT=
+INKSCAPE="no"
+AC_PATH_PROG([RSVG], [rsvg-convert], [no])
+if test "x${RSVG}" = "xno" ; then
+   AC_PATH_PROG([INKSCAPE], [inkscape], [no])
+   if test "x${INKSCAPE}" = "xno" ; then
+# convert exists on Windows as system tool or as part of other projects
+# so we check that it belongs to the ImageMagick project
+      AC_MSG_CHECKING([for convert])
+      AC_PATH_PROGS_FEATURE_CHECK([CONVERT], [convert],
+      [[
+        convertout=`eval $ac_path_CONVERT -version 2>&1 |
+                         sed -n 's/^Version: ImageMagick .*/ImageMagick/p '`
+        test "x$convertout" = "xImageMagick" && \
+             ac_cv_path_CONVERT=$ac_path_CONVERT ac_path_CONVERT_found=:
+      ]], [CONVERT=no])
+      if test "x${CONVERT}" = "xno" ; then
+         AC_MSG_RESULT(${CONVERT})
+         conversion_tool="no"
+      else
+         conversion_tool="convert"
+         CONVERT="convert"
+         AC_MSG_RESULT(${CONVERT})
+      fi
+   else
+      conversion_tool="inkscape"
+   fi
+else
+  conversion_tool="rsvg"
+fi
+
+AC_SUBST([CONVERT])
+
+AM_CONDITIONAL([HAVE_CONVERSION_RSVG], [! test "x${RSVG}" = "xno"])
+AM_CONDITIONAL([HAVE_CONVERSION_CONVERT], [! test "x${CONVERT}" = "xno"])
+AM_CONDITIONAL([HAVE_CONVERSION_INKSCAPE], [! test "x${INKSCAPE}" = "xno"])
+
+AM_CONDITIONAL([HAVE_CONVERSION_TOOL], [! test "x${RSVG}" = "xno" || ! test "x${CONVERT}" = "xno" || ! test "x${INKSCAPE}" = "xno"])
 
 # tweak rm to make libtool happy
 AC_PATH_PROG(RM, rm) 
 RM="$RM -f"
 
 # Libtool & Compilers
-LT_INIT([win32-dll disable-static])
 AC_PROG_CC
 AC_PROG_CXX
 AC_SUBST(LIBTOOL_DEPS)
@@ -140,7 +188,7 @@ AC_CHECK_LIB(m,sqrt)
 AC_HEADER_DIRENT
 AC_HEADER_TIME
 AC_HEADER_SYS_WAIT     
-AC_CHECK_HEADERS(wchar.h wctype.h sys/mman.h iconv.h)
+AC_CHECK_HEADERS(wchar.h wctype.h sys/mman.h iconv.h getopt.h)
 AC_CHECK_HEADERS(langinfo.h sched.h new.h)
 AC_CHECK_HEADERS(stdint.h inttypes.h sys/ipc.h sys/shm.h)
 
@@ -189,14 +237,14 @@ fi
 # ----------------------------------------
 
 # Search JPEG library
-AC_PATH_JPEG(,
-[ no_jpeg=yes
-  AC_MSG_WARN([JPEG support is disabled]) ])
+AC_PATH_JPEG([have_jpeg="yes"], [have_jpeg="no"])
+AC_MSG_CHECKING([for libjpeg])
+AC_MSG_RESULT([${have_jpeg}])
 
 # Search TIFF library
-AC_PATH_TIFF(,
-[ no_tiff=yes
-  AC_MSG_WARN([Tiff support is disabled]) ])
+AC_PATH_TIFF([have_tiff="yes"], [have_tiff="no"])
+AC_MSG_CHECKING([for libtiff])
+AC_MSG_RESULT([${have_tiff}])
 
 # Search MULTITHREADING library
 AC_PATH_THREADS(,
@@ -208,19 +256,19 @@ AC_PATH_THREADS(,
 # ----------------------------------------
 
 # Check compilation of xmltools
-ac_enable_xmltools=yes
-AC_ARG_ENABLE(xmltools,
-   AS_HELP_STRING([--disable-xmltools],[Do not compile the djvu xml tools.]),
-   [ac_enable_xmltools=$enableval])
-if test x$ac_enable_xmltools != xno ; then
-   XML_YES=''
-   XML_NO='#'
-else
-   XML_YES='#'
-   XML_NO=''
-fi
-AC_SUBST(XML_YES)
-AC_SUBST(XML_NO)
+AC_ARG_ENABLE([xmltools],
+   [AS_HELP_STRING([--disable-xmltools],
+       [Disable djvu xml tools. @<:@default=enabled@:>@])],
+   [
+    if test "x${enableval}" = "xyes" ; then
+       want_xmltools="yes"
+    else
+       want_xmltools="no"
+    fi
+   ],
+   [want_xmltools="yes"])
+
+AM_CONDITIONAL([WANT_XMLTOOLS], [test "x${want_xmltools}" = "xyes"])
 
 # ----------------------------------------
 # Desktop files
@@ -270,26 +318,43 @@ AC_DEFINE_INSTALL_PATHS
 AC_DEFINE_UNQUOTED(DJVULIBRE_VERSION,["${PACKAGE_VERSION}"],[version string])
 
 # Output files
-AC_CONFIG_FILES(Makefile)
-AC_CONFIG_FILES(libdjvu/Makefile)
-AC_CONFIG_FILES(libdjvu/ddjvuapi.pc)
-AC_CONFIG_FILES(tools/Makefile)
-AC_CONFIG_FILES(tools/jb2cmp/Makefile)
-AC_CONFIG_FILES(xmltools/Makefile)
-AC_CONFIG_FILES(desktopfiles/Makefile)
+AC_CONFIG_FILES([
+Makefile
+libdjvu/Makefile
+tools/Makefile
+xmltools/Makefile
+share/Makefile
+desktopfiles/Makefile
+])
 
 # Go
 AC_OUTPUT
 
 # Final message
-echo ""
-echo "Configuration is done."
-echo "Compile with command:"
-test x$GXX = xyes && \
-echo "    $ make depend     (optional!)"
-echo "    $ make"
-echo "Then install the binaries in $prefix with command:"
-echo "    # make install"
+
+echo
+echo "$PACKAGE $VERSION"
+echo
+echo "Configuration Options Summary:"
+echo
+echo "  OS...................: ${host_os}"
+echo
+echo "  Thread support.......: ${ac_threads}"
+echo "  Iconv support........: ${ac_has_iconv}"
+echo "  JPEG support.........: ${have_jpeg}"
+echo "  TIFF support.........: ${have_tiff}"
+echo "  XML tools............: ${want_xmltools}"
+echo "  Conversion tools.....: ${conversion_tool}"
+echo
+echo "Compilation............: make (or gmake)"
+echo "  CPPFLAGS.............: $CPPFLAGS"
+echo "  CFLAGS...............: $CFLAGS"
+echo "  CXXFLAGS.............: $CXXFLAGS"
+echo "  LDFLAGS..............: $LDFLAGS"
+echo
+echo "Installation...........: make install (as root if needed, with 'su' or 'sudo')"
+echo "  prefix...............: $prefix"
+echo
 
 # ----------------------------------------
 # Stuff added to config.h
@@ -364,7 +429,3 @@ AH_BOTTOM([
 /* config.h: end */
 #endif
 ])
-
-
-
-
