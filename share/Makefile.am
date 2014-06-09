@@ -1,6 +1,3 @@
-
-MAINTAINERCLEANFILES = Makefile.in
-
 osi_langdir = $(datadir)/djvu/osi
 dist_osi_lang_DATA = \
 djvu/osi/languages.xml

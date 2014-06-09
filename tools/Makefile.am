@@ -1,6 +1,3 @@
-
-MAINTAINERCLEANFILES = Makefile.in
-
 bin_PROGRAMS = \
 bzz \
 c44 \

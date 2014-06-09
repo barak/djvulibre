@@ -1,6 +1,3 @@
-
-MAINTAINERCLEANFILES = Makefile.in
-
 all: icons register-djvu-mime 
 
 #icons
@@ -124,5 +121,4 @@ prebuilt-hi64-djvu.png \
 prebuilt-hi72-djvu.png \
 prebuilt-hi96-djvu.png
 
-clean-local:
-	rm -rf $(PNGICONS) hi-djvu.svgz register-djvu-mime 
+MOSTLYCLEANFILES = $(PNGICONS) hi-djvu.svgz register-djvu-mime 

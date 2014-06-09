@@ -1,6 +1,3 @@
-
-MAINTAINERCLEANFILES = Makefile.in
-
 bin_PROGRAMS = djvutoxml djvuxmlparser
 
 djvutoxml_SOURCES = djvutoxml.cpp
