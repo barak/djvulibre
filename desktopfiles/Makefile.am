@@ -51,6 +51,7 @@ png_verbose_0 = @echo "  PNG     " $@;
 ${PNGICONS}: djvu.svg Makefile
 if HAVE_CONVERSION_TOOL
 	$(png_verbose)$(convert_icons_process)
+else
 	$(AM_V_at)cp ${top_srcdir}/desktopfiles/prebuilt-$@ $@
 endif
 
