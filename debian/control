@@ -4,6 +4,7 @@ Priority: optional
 Maintainer: Barak A. Pearlmutter <bap@debian.org>
 Uploaders: Leon Bottou <leonb@bottou.org>
 Build-Depends: dh-autoreconf,
+	       pkg-config,
 	       debhelper (>= 9),
 	       libjpeg-dev,
 	       libtiff-dev,
