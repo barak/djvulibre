@@ -65,7 +65,7 @@ override_dh_auto_install:
 	  debian/tmp/usr/share/mimelnk/image/
 
 override_dh_install:
-	dh_install
+	dh_install --list-missing
 	@echo remove from djvulibre-bin, already in djvuserve
 	find debian/djvulibre-bin -name djvuserve\* -print -delete
 # 	@echo "remove from djvulibre-bin, not in Debian: needs gsdjvu, direct complaints to AT&T"
