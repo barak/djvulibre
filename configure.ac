@@ -42,8 +42,8 @@ AC_CANONICAL_HOST
 
 AM_INIT_AUTOMAKE([1.6 subdir-objects dist-bzip2 dist-xz])
 m4_ifdef([AM_SILENT_RULES], [AM_SILENT_RULES([yes])])
+m4_ifdef([AM_PROG_AR], [AM_PROG_AR])
 
-AM_PROG_AR
 LT_INIT([win32-dll disable-static])
 
 # Library version
