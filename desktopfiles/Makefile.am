@@ -91,17 +91,6 @@ djvu_data_DATA = \
 register-djvu-mime \
 hi-djvu.svgz \
 djvulibre-mime.xml \
-prebuilt-hi128-djvu.png \
-prebuilt-hi16-djvu.png \
-prebuilt-hi20-djvu.png \
-prebuilt-hi22-djvu.png \
-prebuilt-hi24-djvu.png \
-prebuilt-hi256-djvu.png \
-prebuilt-hi32-djvu.png \
-prebuilt-hi48-djvu.png \
-prebuilt-hi64-djvu.png \
-prebuilt-hi72-djvu.png \
-prebuilt-hi96-djvu.png \
 $(PNGICONS)
 
 EXTRA_DIST = \
