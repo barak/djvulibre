@@ -1,4 +1,4 @@
-
+BUILDING DJVULIBRE
 
 1- PREREQUISITES
 ================
@@ -14,13 +14,9 @@ at the end of this file.
 1.1 - C++ COMPILER
 ------------------
 
-We strongly suggest to use the well known g++ compiler on all platforms.  You
-need at least version gcc-2.91.66 (also known as egcs-1.1.2).  Development was
-achieved using gcc-2.95.3, gcc-2.96-85, gcc-3.02, and gcc-3.2.2.
-
-RedHat 7.x users should make sure they have the latest redhat updates of the
-compiler.  Early versions of gcc-2.96 have serious bugs.  See
-<http://www.redhat.com/support/errata/RHBA-2001-082.html>.
+Development is done with the GCC g++ compiler, which is therefore
+recommended for all platforms.  The CLANG compiler has been tried and
+seems to work, but its output has not been seriously tested.
 
 
 1.2 - LIBJPEG/LIBTIFF
@@ -47,14 +43,6 @@ DjVuLibre-3.5 fully supports detecting and using Posix threads.
 For the sake of older operating systems, DjVuLibre-3.5 offers a custom
 threading model called CoThreads.  This should be considered obsolete.
 
-
-1.4 - MAKE
-----------
-
-There are various kind of "make" programs around with various capabilities.  
-If you run into problems, get gnu-make !
-
-
 
 
 
@@ -62,7 +50,7 @@ If you run into problems, get gnu-make !
 ==========
 
 Chances are that everything will work by simply running 
-commands "configure", "make" and "make install". 
+commands "./configure", "make" and "make install". 
 
 
 2.1- CONFIGURE
@@ -70,7 +58,8 @@ commands "configure", "make" and "make install".
 
 Various options and environment variables affect the execution of the
 configuration script.  A complete list can be obtained by typing 
-"configure --help".  Here are the most important ones.
+"configure --help".  Also see the INSTALL file for further details.
+Here are the most important ones.
 
 * Option "--prefix=PREFIXDIR"
 
@@ -82,12 +71,7 @@ configuration script.  A complete list can be obtained by typing
   Installs the scripts 
    /usr/share/djvu/osi/desktop/register-djvu-mime 
   to setup the xdg mime type database and menu entries.
-
-* Options "--with-extra-includes=DIR" 
-      and "--with-extra-libraries=DIR"
-
-  This option defines additional directories for 
-  searching include files or libraries.
+  The default is "yes".
 
 * Option "--with-jpeg=JPEGDIR"
 
@@ -139,22 +123,24 @@ successful.  You can then proceed with the installation.
 2.2- INSTALL
 ------------
 
-The installation procedure will:
-
-- install the executable programs into "${prefix}/bin".
-- possibly install the shared library "${prefix}/lib/libdjvulibre-3.5.so".
-- install the man pages under "${prefix}/man or ${prefix}/share/man".
-- install various ancillary files under "${prefix}/share/djvu".
-- optionally install information files for desktop environments.
-
-The where ${prefix} refers to the directory specified by the prefix option of
-the configuration script.  The default prefix is /usr/local.
-
-To perform the installation, simply type :
+Typing:
 
         $ make install
 
-Of course you must have the appropriate permissions to 
-perform the installation.  Chances are that you need to
-be root to install something into /usr or /usr/local.
+or if necessary:
 
+        $ sudo make install
+
+should:
+
+- install the executable programs into "${prefix}/bin/".
+- possibly install the shared library into "${prefix}/lib/".
+- install the man pages under "${prefix}/man or ${prefix}/share/man/".
+- install various ancillary files under "${prefix}/share/djvu/".
+- install "${prefix}/share/pkgconfig.pc".
+- optionally install information files for desktop environments.
+
+Where ${prefix} refers to the directory specified by the prefix option
+of the configuration script, which defaults to "/usr/local", and the
+paths above can be fine-tuned using appropriate arguments to
+./configure and make.
