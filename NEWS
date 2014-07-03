@@ -1,11 +1,12 @@
 NEW SINCE VERSION 3.5.25
 ------------------------
-- New windows installer. 
-- Fixed Russian code page issues in windows
-- General speedup thanks to lock-free smart pointers
-- ddjvu can produce one file per page
-- djvused can now set the default page orientation
-- Big fixes.
+- Now using the standard autotools approach (thanks to Vincent Torri).
+- New windows installer (thanks to Konstantin Kravtsov).
+- Fixed Russian code page issues in windows.
+- General speedup thanks to lock-free smart pointers.
+- ddjvu can produce one file per page.
+- djvused can now set the default page orientation.
+- Bug fixes all around.
 
 
 NEW IN VERSION 3.5.25
