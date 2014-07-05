@@ -28,5 +28,4 @@ man1_MANS = djvuxml.1
 
 EXTRA_DIST = djvuxml.1.in
 
-clean-local:
-	rm -rf djvuxml.1
+MOSTLYCLEANFILES = djvuxml.1
