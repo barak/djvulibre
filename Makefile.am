@@ -13,5 +13,5 @@ SUBDIRS += desktopfiles
 libtool: $(LIBTOOL_DEPS)
 	$(SHELL) ./config.status libtool
 
-EXTRA_DIST = COPYRIGHT README_macosx README_win32 autogen.sh	\
- djvulibre.spec doc/ debian/ macosx/ win32/
+EXTRA_DIST = COPYRIGHT autogen.sh djvulibre.spec \
+ doc/ debian/ macosx/ win32/
