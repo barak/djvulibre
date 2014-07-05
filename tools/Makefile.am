@@ -126,4 +126,4 @@ djvused.1 \
 djvuserve.1 \
 djvutxt.1
 
-EXTRA_DIST = jb2cmp/README
+EXTRA_DIST = jb2cmp/README tiff2pdf.c.diff

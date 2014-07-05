@@ -1,4 +1,0 @@
-classify.o: classify.cpp mdjvucfg.h minidjvu.h patterns.h classify.h
-cuts.o: cuts.cpp mdjvucfg.h minidjvu.h patterns.h classify.h
-frames.o: frames.cpp mdjvucfg.h minidjvu.h patterns.h classify.h
-patterns.o: patterns.cpp mdjvucfg.h minidjvu.h patterns.h classify.h
