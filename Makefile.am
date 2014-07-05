@@ -13,5 +13,9 @@ SUBDIRS += desktopfiles
 libtool: $(LIBTOOL_DEPS)
 	$(SHELL) ./config.status libtool
 
-EXTRA_DIST = COPYRIGHT autogen.sh djvulibre.spec \
- doc/ debian/ macosx/ win32/
+EXTRA_DIST = COPYRIGHT autogen.sh djvulibre.spec
+
+# Distribute some entire subdirectories.
+# No trailing slashes, as they put foo/* in foo/foo/*.
+
+EXTRA_DIST += doc debian macosx win32
