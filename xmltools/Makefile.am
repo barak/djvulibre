@@ -1,14 +1,14 @@
 bin_PROGRAMS = djvutoxml djvuxmlparser
 
+AM_CPPFLAGS = -I$(top_srcdir)/libdjvu -I$(top_srcdir)/tools
+AM_CXXFLAGS = $(OPTS) $(CXXRPOFLAGS) $(THREAD_CFLAGS)
+DJLIB = $(top_builddir)/libdjvu/libdjvulibre.la
+
 djvutoxml_SOURCES = djvutoxml.cpp
-djvutoxml_CPPFLAGS = -I$(top_srcdir)/libdjvu -I$(top_srcdir)/tools
-djvutoxml_CXXFLAGS = $(OPTS) $(CXXRPOFLAGS) $(THREAD_CFLAGS) $(OPTS)
-djvutoxml_LDADD = $(top_builddir)/libdjvu/libdjvulibre.la
+djvutoxml_LDADD = $(DJLIB)
 
 djvuxmlparser_SOURCES = djvuxmlparser.cpp
-djvuxmlparser_CPPFLAGS = -I$(top_srcdir)/libdjvu -I$(top_srcdir)/tools
-djvuxmlparser_CXXFLAGS = $(OPTS) $(CXXRPOFLAGS) $(THREAD_CFLAGS) $(OPTS)
-djvuxmlparser_LDADD = $(top_builddir)/libdjvu/libdjvulibre.la
+djvuxmlparser_LDADD = $(DJLIB)
 
 sed_process = \
 $(SED) \

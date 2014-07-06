@@ -7,22 +7,23 @@ jb2cmp_SOURCES = jb2cmp/classify.cpp jb2cmp/cuts.cpp		\
 
 AM_CPPFLAGS = -I$(top_srcdir)/libdjvu
 AM_CXXFLAGS = $(OPTS) $(CXXRPOFLAGS) $(THREAD_CFLAGS)
+DJLIB = $(top_builddir)/libdjvu/libdjvulibre.la
 
 bzz_SOURCES = bzz.cpp common.h
-bzz_LDADD = $(top_builddir)/libdjvu/libdjvulibre.la
+bzz_LDADD = $(DJLIB)
 
 c44_SOURCES = c44.cpp common.h
-c44_LDADD = $(top_builddir)/libdjvu/libdjvulibre.la
+c44_LDADD = $(DJLIB)
 
 cjb2_SOURCES = cjb2.cpp jb2tune.cpp common.h jb2tune.h $(jb2cmp_SOURCES)
 cjb2_CPPFLAGS = $(AM_CPPFLAGS) $(TIFF_CFLAGS)
-cjb2_LDADD = $(top_builddir)/libdjvu/libdjvulibre.la $(TIFF_LIBS)
+cjb2_LDADD = $(DJLIB) $(TIFF_LIBS)
 
 cpaldjvu_SOURCES = cpaldjvu.cpp jb2tune.cpp common.h jb2tune.h $(jb2cmp_SOURCES)
-cpaldjvu_LDADD = $(top_builddir)/libdjvu/libdjvulibre.la
+cpaldjvu_LDADD = $(DJLIB)
 
 csepdjvu_SOURCES = csepdjvu.cpp jb2tune.cpp common.h jb2tune.h $(jb2cmp_SOURCES)
-csepdjvu_LDADD = $(top_builddir)/libdjvu/libdjvulibre.la
+csepdjvu_LDADD = $(DJLIB)
 
 ddjvu_SOURCES = ddjvu.cpp tiff2pdf.c tiff2pdf.h
 ddjvu_CPPFLAGS = -I$(top_srcdir)  $(AM_CPPFLAGS) $(TIFF_CFLAGS)
@@ -30,36 +31,36 @@ if HAVE_OS_WIN32
 ddjvu_CPPFLAGS += -D__USE_MINGW_ANSI_STDIO
 endif
 ddjvu_CFLAGS = $(OPTS) $(THREAD_CFLAGS)
-ddjvu_LDADD = $(top_builddir)/libdjvu/libdjvulibre.la $(TIFF_LIBS)
+ddjvu_LDADD = $(DJLIB) $(TIFF_LIBS)
 
 djvm_SOURCES = djvm.cpp common.h
-djvm_LDADD = $(top_builddir)/libdjvu/libdjvulibre.la
+djvm_LDADD = $(DJLIB)
 
 djvmcvt_SOURCES = djvmcvt.cpp common.h
-djvmcvt_LDADD = $(top_builddir)/libdjvu/libdjvulibre.la
+djvmcvt_LDADD = $(DJLIB)
 
 djvudump_SOURCES = djvudump.cpp common.h
-djvudump_LDADD = $(top_builddir)/libdjvu/libdjvulibre.la
+djvudump_LDADD = $(DJLIB)
 
 djvuextract_SOURCES = djvuextract.cpp common.h
-djvuextract_LDADD = $(top_builddir)/libdjvu/libdjvulibre.la
+djvuextract_LDADD = $(DJLIB)
 
 djvumake_SOURCES = djvumake.cpp common.h
-djvumake_LDADD = $(top_builddir)/libdjvu/libdjvulibre.la
+djvumake_LDADD = $(DJLIB)
 
 djvups_SOURCES = djvups.cpp
 djvups_CPPFLAGS = -I$(top_srcdir) $(AM_CPPFLAGS)
-djvups_LDADD = $(top_builddir)/libdjvu/libdjvulibre.la
+djvups_LDADD = $(DJLIB)
 
 djvused_SOURCES = djvused.cpp common.h
-djvused_LDADD = $(top_builddir)/libdjvu/libdjvulibre.la
+djvused_LDADD = $(DJLIB)
 
 djvuserve_SOURCES = djvuserve.cpp common.h
-djvuserve_LDADD = $(top_builddir)/libdjvu/libdjvulibre.la
+djvuserve_LDADD = $(DJLIB)
 
 djvutxt_SOURCES = djvutxt.cpp
 djvutxt_CPPFLAGS = -I$(top_srcdir) $(AM_CPPFLAGS)
-djvutxt_LDADD = $(top_builddir)/libdjvu/libdjvulibre.la
+djvutxt_LDADD = $(DJLIB)
 
 dist_bin_SCRIPTS = any2djvu djvudigital
 
