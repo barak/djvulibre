@@ -65,6 +65,10 @@
 # include <fcntl.h>
 #endif
 
+#ifdef HAVE_GETOPT_H
+# include <getopt.h>
+#endif
+
 #if defined(__GNUC__) || defined(HAVE_LONG_LONG_INT)
 # define uint64 unsigned long long
 #elif defined(_MSC_VER)
