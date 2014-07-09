@@ -318,7 +318,6 @@ AC_SUBST(DESKTOP_NO)
 PKG_INSTALLDIR
 
 # Define installation paths and version string
-AC_DEFINE_INSTALL_PATHS
 AC_DEFINE_UNQUOTED(DJVULIBRE_VERSION,["${PACKAGE_VERSION}"],[version string])
 
 # Output files

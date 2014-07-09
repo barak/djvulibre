@@ -27,6 +27,7 @@ libdjvulibre_la_SOURCES = Arrays.cpp BSByteStream.cpp			\
  IW44Image.h JB2Image.h JPEGDecoder.h MMRDecoder.h MMX.h Template.h	\
  UnicodeByteStream.h XMLParser.h XMLTags.h ZPCodec.h atomic.h debug.h
 
+libdjvulibre_la_CPPFLAGS = -DDIR_DATADIR=\"$(datadir)\"
 libdjvulibre_la_CXXFLAGS = $(OPTS) $(JPEG_CFLAGS) $(THREAD_CFLAGS)
 libdjvulibre_la_LIBADD = $(JPEG_LIBS) $(THREAD_LIBS)
 libdjvulibre_la_LDFLAGS = -no-undefined -version-info $(version_info)
