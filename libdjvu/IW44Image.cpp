@@ -684,7 +684,10 @@ IW44Image::Map::image(signed char *img8, int rowsize, int pixsep, int fast)
 {
   // Allocate reconstruction buffer
   short *data16;
-  GPBuffer<short> gdata16(data16,bw*bh);
+  size_t sz = bw * bh;
+  if (sz / (size_t)bw != (size_t)bh) // multiplication overflow
+    G_THROW("IW44Image: image size exceeds maximum (corrupted file?)");
+  GPBuffer<short> gdata16(data16,sz);
   // Copy coefficients
   int i;
   short *p = data16;
