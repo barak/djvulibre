@@ -1167,35 +1167,35 @@ Comments::process_comments(BufferByteStream &bs, int verbose)
   // Process comment lines
   while (c == '#')
     {
-      bs.skip();
-      bool status = parse_comment_line(bs);
-      bool display = false;
-      if (verbose>1)
+      const char *message = 0;
+      bs.skip(" \t");
+      G_TRY
         {
-          if (status)
-            {
-              bs.skip(" \t");
-              c = bs.get();
-              bs.unget(c);
-              if (c != '\r' && c != '\n')
-                display = true;
-              if (display)
-                DjVuPrintErrorUTF8("csepdjvu: garbage in comments: '");
-            }
-          else
-            {
-              display = true;
-              DjVuPrintErrorUTF8("csepdjvu: unrecognized comment '# ");
-            }              
+          if (! parse_comment_line(bs) && verbose > 1)
+            message = "csepdjvu: unrecognized comment '# ";
+          else if (bs.skip(" \t") && bs.expect(c, "\n\r"))
+            bs.unget(c);
+          else if (verbose > 1)
+            message = "csepdjvu: garbage in comments: '";
         }
+      G_CATCH(ex)
+      {
+        message = 0;
+        GUTF8String str = DjVuMessageLite::LookUpUTF8(ex.get_cause());
+        if (verbose > 1)
+          DjVuPrintErrorUTF8("%s\n",(const char *)str);
+      } 
+      G_ENDCATCH;
+      if (message)
+        DjVuPrintErrorUTF8(message);
       c = bs.get();
       while (c != EOF && c != '\r' && c != '\n')
         {
-          if (display)
+          if (message)
             DjVuPrintErrorUTF8("%c", c);
           c = bs.get();
         }
-      if (display)
+      if (message)
         DjVuPrintErrorUTF8("'\n");
       bs.skip();
       c = bs.get();
