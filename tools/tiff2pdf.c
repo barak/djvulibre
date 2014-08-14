@@ -5175,7 +5175,7 @@ static tsize_t t2p_write_pdf_trailer(T2P* t2p, TIFF* output)
 	char fileidbuf[16];
 	int i = 0;
 
-        for (i=0; i<sizeof(fileidbuf); i++)
+        for (i=0; i<(int)sizeof(fileidbuf); i++)
           fileidbuf[i] = (char) rand();
 
 	t2p->pdf_fileid = (unsigned char*)_TIFFmalloc(33);

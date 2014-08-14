@@ -1477,7 +1477,7 @@
 -	((int*)fileidbuf)[1] = rand();
 -	((int*)fileidbuf)[2] = rand();
 -	((int*)fileidbuf)[3] = rand();
-+        for (i=0; i<sizeof(fileidbuf); i++)
++        for (i=0; i<(int)sizeof(fileidbuf); i++)
 +          fileidbuf[i] = (char) rand();
 +
  	t2p->pdf_fileid = (unsigned char*)_TIFFmalloc(33);
