@@ -768,10 +768,8 @@ command_set_page_title(ParsingByteStream &pbs)
   modified = true;
 }
 
-bool
-set_rotation(GP<DjVuFile> file, int rot, bool relative)
+GP<DjVuInfo> decode_info(GP<DjVuFile> file)
 {
-  // decode info
   GP<DjVuInfo> info = file->info;
   if (! info)
     {
@@ -779,7 +777,7 @@ set_rotation(GP<DjVuFile> file, int rot, bool relative)
       const GP<IFFByteStream> iff(IFFByteStream::create(pbs));
       GUTF8String chkid;
       if (! iff->get_chunk(chkid))
-        return false;
+        return 0;
       if (chkid == "FORM:DJVU")
         {
           while (iff->get_chunk(chkid) && chkid!="INFO")
@@ -792,6 +790,14 @@ set_rotation(GP<DjVuFile> file, int rot, bool relative)
         }
       file->info = info;
     }
+  return info;
+}
+
+bool
+set_rotation(GP<DjVuFile> file, int rot, bool relative)
+{
+  // decode info
+  GP<DjVuInfo> info = decode_info(file);
   if (! info)
     return false;
   if (relative)
@@ -832,6 +838,49 @@ command_set_rotation(ParsingByteStream &pbs)
         }
     }
   vprint("rotated %d pages", rcount);
+}
+
+bool
+set_dpi(GP<DjVuFile> file, int dpi)
+{
+  // decode info
+  GP<DjVuInfo> info = decode_info(file);
+  if (! info)
+    return false;
+  info->dpi = dpi;
+  file->set_modified(true);
+  modified = true;
+  return true;
+}
+
+void
+command_set_dpi(ParsingByteStream &pbs)
+{
+  GUTF8String sdpi = pbs.get_token();
+  if (! sdpi.is_int())
+    verror("usage: set-dpi <dpi>");
+  int dpi = sdpi.toInt();
+  if (dpi < 25 || dpi > 6000)
+    verror("resolution should be in range 25..6000dpi");
+  int rcount = 0;
+  if (g().file)
+    {
+      GUTF8String id = g().fileid;
+      if (set_dpi(g().file, dpi))
+        rcount += 1;
+    }
+  else
+    {
+      GPList<DjVmDir::File> &lst = g().selected;
+      for (GPosition p=lst; p; ++p)
+        {
+          GUTF8String id = lst[p]->get_load_name();
+          const GP<DjVuFile> f(g().doc->get_djvu_file(id));
+          if (set_dpi(f, dpi))
+            rcount += 1;
+        }
+    }
+  vprint("set dpi on %d pages", rcount);
 }
 
 
@@ -2108,6 +2157,7 @@ command_help(void)
           " _ set-outline [<bmfile>] -- sets outline (bootmarks)\n"
           " _ set-thumbnails [<sz>]  -- generates all thumbnails with given size\n"
           "   set-rotation [+-]<rot> -- sets page rotation\n"
+          "   set-dpi <dpi>          -- sets page resolution\n"
           "   remove-ant             -- removes annotations\n"
           "   remove-meta            -- removes metadatas without changing other annotations\n"
           "   remove-txt             -- removes hidden text\n"
@@ -2176,6 +2226,7 @@ static GMap<GUTF8String,CommandFunc> &command_map() {
     xcommand_map["set-xmp"] = command_set_xmp;
     xcommand_map["set-thumbnails"] = command_set_thumbnails;
     xcommand_map["set-rotation"] = command_set_rotation;
+    xcommand_map["set-dpi"] = command_set_dpi;
     xcommand_map["remove-ant"] = command_remove_ant;
     xcommand_map["remove-meta"] = command_remove_meta;
     xcommand_map["remove-txt"] = command_remove_txt;
