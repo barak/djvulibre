@@ -1761,12 +1761,14 @@ command_set_txt(ParsingByteStream &pbs)
 
 void
 output(const GP<DjVuFile> &f, const GP<ByteStream> &out, 
-       int flag, const char *id=0)
+       int flag, const char *id=0, int pageno=0)
 {
   if (f)
     {
       const GP<ByteStream> ant(ByteStream::create());
       const GP<ByteStream> txt(ByteStream::create());
+      char pagenumber[16];
+      sprintf(pagenumber," # page %d", pageno);
       if (flag & 1) 
         { 
           const GP<ByteStream> anno(f->get_anno());
@@ -1788,6 +1790,7 @@ output(const GP<DjVuFile> &f, const GP<ByteStream> &out,
           static const char msg2[] = "\n\0";
           out->write(msg1, strlen(msg1));
           print_c_string(id, strlen(id), *out, utf8);
+          if (pageno > 0) out->write(pagenumber, strlen(pagenumber));
           out->write(msg2, strlen(msg2));
         }
       if (ant->size()) 
@@ -1821,9 +1824,10 @@ command_output_ant(ParsingByteStream &)
       { // extra nesting for windows
         for (GPosition p=lst; p; ++p)
         {
+          int pageno = lst[p]->get_page_num();
           GUTF8String id = lst[p]->get_load_name();
           const GP<DjVuFile> f(g().doc->get_djvu_file(id));
-          output(f, out, 1, id);
+          output(f, out, 1, id, pageno+1);
         }
       }
     }
@@ -1845,9 +1849,10 @@ command_output_txt(ParsingByteStream &)
       { // extra nesting for windows
         for (GPosition p=lst; p; ++p)
         {
+          int pageno = lst[p]->get_page_num();
           GUTF8String id = lst[p]->get_load_name();
           const GP<DjVuFile> f(g().doc->get_djvu_file(id));
-          output(f, out, 2, id);
+          output(f, out, 2, id, pageno+1);
         }
       }
     }
@@ -1869,9 +1874,10 @@ command_output_all(ParsingByteStream &)
       { // extra nesting for windows
         for (GPosition p=lst; p; ++p)
         {
+          int pageno = lst[p]->get_page_num();
           GUTF8String id = lst[p]->get_load_name();
           const GP<DjVuFile> f(g().doc->get_djvu_file(id));
-          output(f, out, 3, id);
+          output(f, out, 3, id, pageno+1);
         }
       }
     }
