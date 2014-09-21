@@ -1652,7 +1652,7 @@ DjVuDocument::get_url_names(void)
         // Why is this try/catch block here?
         G_TRY { 
           get_portcaster()->notify_error(this, ex.get_cause()); 
-          GUTF8String emsg = ERR_MSG("DjVuDocument.exclude_page") "\t" + (i+1);
+          GUTF8String emsg = ERR_MSG("DjVuDocument.exclude_page") "\t" + GUTF8String(i+1);
           get_portcaster()->notify_error(this, emsg);
         }
         G_CATCH_ALL
@@ -1741,7 +1741,7 @@ DjVuDocument::get_djvm_doc()
                    G_TRY { 
                      get_portcaster()->notify_error(this, ex.get_cause());
                      GUTF8String emsg = ERR_MSG("DjVuDocument.skip_page") "\t" 
-                                      + (page_num+1);
+                                      + GUTF8String(page_num+1);
                      get_portcaster()->notify_error(this, emsg);
                    }
                    G_CATCH_ALL

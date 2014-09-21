@@ -1357,7 +1357,7 @@ DjVuDocEditor::simplify_anno(void (* progress_cb)(float progress, void *),
    {
       GP<DjVuFile> djvu_file=get_djvu_file(page_num);
       if (!djvu_file)
-         G_THROW( ERR_MSG("DjVuDocEditor.page_fail") "\t"+page_num);
+        G_THROW( ERR_MSG("DjVuDocEditor.page_fail") "\t" + GUTF8String(page_num));
       int max_level=0;
       GP<ByteStream> anno;
       anno=djvu_file->get_merged_anno(ignore_list, &max_level);
