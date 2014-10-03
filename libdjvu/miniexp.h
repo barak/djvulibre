@@ -689,7 +689,7 @@ public:
   miniexp_t* operator&() { return &data; }
   minivar_t& operator=(miniexp_t p) { data = p; return *this; }
   minivar_t& operator=(const minivar_t &v) { data = v.data; return *this; }
-  ~minivar_t() { if ((*pprev = next)) next->pprev = pprev; }
+  ~minivar_t();
 #ifdef MINIEXP_IMPLEMENTATION
   static minivar_t *vars;
   static void mark(minilisp_mark_t*);

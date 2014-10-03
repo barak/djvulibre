@@ -3452,11 +3452,10 @@ miniexp_status(ddjvu_status_t status)
 static void
 miniexp_protect(ddjvu_document_t *document, miniexp_t expr)
 {
-  { // extra nesting for windows
-    for(miniexp_t p=document->protect; miniexp_consp(p); p=miniexp_cdr(p))
-      if (miniexp_car(p) == expr)
-        return;
-  }
+  GMonitorLock lock(&document->myctx->monitor);
+  for(miniexp_t p=document->protect; miniexp_consp(p); p=miniexp_cdr(p))
+    if (miniexp_car(p) == expr)
+      return;
   if (miniexp_consp(expr) || miniexp_objectp(expr))
     document->protect = miniexp_cons(expr, document->protect);
 }
@@ -3464,6 +3463,7 @@ miniexp_protect(ddjvu_document_t *document, miniexp_t expr)
 void
 ddjvu_miniexp_release(ddjvu_document_t *document, miniexp_t expr)
 {
+  GMonitorLock lock(&document->myctx->monitor);
   miniexp_t q = miniexp_nil;
   miniexp_t p = document->protect;
   while (miniexp_consp(p))
@@ -3505,6 +3505,7 @@ outline_sub(const GP<DjVmNav> &nav, int &pos, int count)
 miniexp_t
 ddjvu_document_get_outline(ddjvu_document_t *document)
 {
+  GMonitorLock lock(&document->myctx->monitor);
   G_TRY
     {
       ddjvu_status_t status = document->status();
@@ -3604,6 +3605,7 @@ miniexp_t
 ddjvu_document_get_pagetext(ddjvu_document_t *document, int pageno,
                             const char *maxdetail)
 {
+  GMonitorLock lock(&document->myctx->monitor);
   G_TRY
     {
       ddjvu_status_t status = document->status();
@@ -3854,6 +3856,7 @@ get_file_anno(GP<DjVuFile> file)
 miniexp_t
 ddjvu_document_get_pageanno(ddjvu_document_t *document, int pageno)
 {
+  GMonitorLock lock(&document->myctx->monitor);
   G_TRY
     {
       ddjvu_status_t status = document->status();
@@ -3881,6 +3884,7 @@ ddjvu_document_get_pageanno(ddjvu_document_t *document, int pageno)
 miniexp_t
 ddjvu_document_get_anno(ddjvu_document_t *document, int compat)
 {
+  GMonitorLock lock(&document->myctx->monitor);
   G_TRY
     {
       ddjvu_status_t status = document->status();
@@ -4038,10 +4042,8 @@ ddjvu_anno_get_metadata_keys(miniexp_t p)
   miniexp_t *k = (miniexp_t*)malloc((1+i)*sizeof(miniexp_t));
   if (! k) return 0;
   i = 0;
-  { // extra nesting for windows
-    for (GPosition p=m; p; ++p)
-      k[i++] = m.key(p);
-  }
+  for (GPosition p=m; p; ++p)
+    k[i++] = m.key(p);
   k[i] = 0;
   return k;
 }

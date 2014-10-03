@@ -581,6 +581,12 @@ minivar_t::minivar_t(const minivar_t &v)
   vars = this;
 }
 
+minivar_t::~minivar_t()
+{ 
+  if ((*pprev = next)) 
+    next->pprev = pprev; 
+}
+
 minivar_t *minivar_t::vars = 0;
 
 void
