@@ -79,7 +79,7 @@ AC_DEFUN([AC_CXX_OPTIMIZE],[
      dnl This triggers compiler bugs with gcc-3.2.2:
      dnl AC_CHECK_CXX_OPT([-funroll-loops], [OPTS="$OPTS -funroll-loops"])
      dnl QT3 has plenty of this:
-     AC_CHECK_CXX_OPT([-Wno-non-virtual-dtor],[OPTS="$OPTS -Wno-non-virtual-dtor"])
+     dnl AC_CHECK_CXX_OPT([-Wno-non-virtual-dtor],[OPTS="$OPTS -Wno-non-virtual-dtor"])
      cpu=`uname -m 2>/dev/null`
      test -z "$cpu" && cpu=${host_cpu}
      case "${host_cpu}" in
@@ -307,6 +307,33 @@ try { throw  1; } catch (int i) { return i; }
 ])
 if test "$ac_cv_cxx_exceptions" = yes; then
   AC_DEFINE(HAVE_EXCEPTIONS,1,[define if the compiler supports exceptions])
+fi
+])
+
+
+dnl -------------------------------------------------------
+dnl @synopsis AC_CXX_GCCTLS
+dnl Define HAVE_GCCTLS if the compiler recognizes 
+dnl keyword __thread for TLS variables.
+dnl -------------------------------------------------------
+AC_DEFUN([AC_CXX_GCCTLS],
+[AC_CACHE_CHECK(whether the compiler supports keyword __thread,
+ac_cv_cxx_gcctls,
+[AC_LANG_PUSH([C++])
+ AC_COMPILE_IFELSE(
+ [AC_LANG_PROGRAM(
+  [[
+__thread int i;
+  ]],
+  [[
+return i;
+  ]])],
+ [ac_cv_cxx_gcctls=yes],
+ [ac_cv_cxx_gcctls=no])
+ AC_LANG_POP([C++])
+])
+if test "$ac_cv_cxx_gcctls" = yes; then
+  AC_DEFINE(HAVE_GCCTLS,1,[define if the compiler supports keyword __thread])
 fi
 ])
 

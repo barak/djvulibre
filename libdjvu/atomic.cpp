@@ -35,21 +35,16 @@
 
 /* Select synchronization primitives */
 
-# if defined(WIN32) || defined(_WIN32) || defined(__WIN64)
+# if defined(_WIN32) || defined(_WIN64)
 
-static LONG ini = 0;
-static CRITICAL_SECTION cs;
-# define MUTEX_LEAVE LeaveCriticalSection(&cs)
-# define MUTEX_ENTER mutex_enter()
-static inline void mutex_enter() {
-  if (!InterlockedExchange(&ini, 1))
-    {
-      InitializeCriticalSection(&cs);
-      ev = CreateEvent(NULL, FALSE, FALSE, NULL);
-      assert(ev);
-    }
-  EnterCriticalSection(&cs);
-}
+namespace {
+  struct CS { 
+    CRITICAL_SECTION cs; 
+    CS() { InitializeCriticalSection(&cs); }
+    ~CS() { DeleteCriticalSecton(&cs); } }; }
+static CS globalCS;
+# define MUTEX_LEAVE LeaveCriticalSection(&globalCS.cs)
+# define MUTEX_ENTER EnterCriticalSection(&globalCS.cs);
 
 # elif defined (PTHREAD_MUTEX_INITIALIZER)
 
