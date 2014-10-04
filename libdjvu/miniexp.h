@@ -721,9 +721,9 @@ miniobj_t {
   /* pname: returns a printable name for this object.
      The caller must deallocate the result with delete[]. */
   virtual char *pname() const;
-  /* mark: iterates over miniexps contained by this object
+  /* mark: calls action() on all member miniexps of the object,
      for garbage collecting purposes. */
-  virtual void mark(minilisp_mark_t*);
+  virtual void mark(minilisp_mark_t *action);
   /* destroy: called by the garbage collector to
      deallocate the object. Defaults to 'delete this'. */
   virtual void destroy();
@@ -764,6 +764,15 @@ static inline miniobj_t *miniexp_to_obj(miniexp_t p) {
    Create an object expression for a given object. */
 
 MINILISPAPI miniexp_t miniexp_object(miniobj_t *obj);
+
+
+/* miniexp_mutate -- 
+   Atomically modifies a member of a garbage collected object. 
+   The object implementation must call this function to change 
+   the contents of a member variable <v> of object <obj>.
+   Returns <p>*/
+
+MINILISPAPI miniexp_t miniexp_mutate(miniexp_t obj, miniexp_t *v, miniexp_t p);
 
 
 #endif /* __cplusplus */

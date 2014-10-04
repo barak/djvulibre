@@ -20,7 +20,9 @@
 #include <stdio.h>
 #include <string.h>
 #include <signal.h>
+#include <ctype.h>
 #include <math.h>
+
 
 #include "miniexp.h"
 
@@ -973,6 +975,7 @@ DEFUN("join",threadjoin,1,0) {
 void
 toplevel(FILE *inp, FILE *out, bool print)
 {
+  miniexp_io_t saved_io = miniexp_io;
   minilisp_set_output(out);
   minilisp_set_input(inp);
   for(;;)
@@ -980,10 +983,9 @@ toplevel(FILE *inp, FILE *out, bool print)
       minivar_t s = miniexp_read();
       if (s == miniexp_dummy)
 	{
-	  if (feof(inp))
-	    break;
-	  printf("ERROR: while parsing\n");
-	  continue;
+          if (feof(inp)) break;
+          printf("ERROR: while parsing\n");
+	  break;
 	}
       try
 	{
@@ -999,7 +1001,7 @@ toplevel(FILE *inp, FILE *out, bool print)
 	{
 	}
     }
-  break_request = true;
+  miniexp_io = saved_io;
 }
 
 miniexp_t
@@ -1028,6 +1030,19 @@ sighandler(int signo)
   signal(signo, sighandler);
 }
 
+DEFUN("load",xload,1,0) {
+  if (! miniexp_stringp(argv[0]))
+    error("load: string expected");
+  FILE *f = fopen(miniexp_to_str(argv[0]), "r");
+  if (! f)
+    error("load: cannot open file");
+  toplevel(f, stdout, false);
+  fclose(f);
+}
+
+
+/* ------------ toplevel */
+
 int
 main()
 {
@@ -1037,15 +1052,15 @@ main()
   minilisp_macrochar_parser[(int)';'] = parse_comment;
   minilisp_macrochar_parser[(int)'\''] = parse_quote;
   FILE *f = fopen("minilisp.in","r");
-  if (f)
-    {
-      toplevel(f, stdout, false);
-      fclose(f);
-    }
-  else
+  if (f) {
+    toplevel(f, stdout, false);
+    fclose(f);
+  } else
     printf("WARNING: cannot find 'minilisp.in'\n");
   signal(SIGINT, sighandler);
-  toplevel(stdin, stdout, true);
+  while (! feof(stdin))
+    toplevel(stdin, stdout, true);
+  break_request = true;
   minilisp_finish();
   return 0;
 }

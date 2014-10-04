@@ -111,6 +111,8 @@ extern "C" {
 
    Version   Change
    -----------------------------
+     23    Added:
+              miniexp_mutate()
      22    Changed
               miniexp strings accept unicode escapes
               deprecated miniexp_io_t::p_print7bits

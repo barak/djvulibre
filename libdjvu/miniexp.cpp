@@ -649,6 +649,14 @@ minilisp_info(void)
   printf("--- end info -- %s", dat);
 }
 
+miniexp_t
+miniexp_mutate(miniexp_t, miniexp_t *var, miniexp_t val)
+{
+  CSLOCK(locker);
+  *var = val;
+  return val;
+}
+
 
 /* -------------------------------------------------- */
 /* MINIVARS                                           */
@@ -809,11 +817,7 @@ miniexp_t
 miniexp_rplaca(miniexp_t pair, miniexp_t newcar)
 {
   if (miniexp_consp(pair))
-    {
-      CSLOCK(locker);
-      car(pair) = newcar;
-      return pair;
-    }
+    return miniexp_mutate(pair, &car(pair), newcar);
   return 0;
 }
 
@@ -821,23 +825,18 @@ miniexp_t
 miniexp_rplacd(miniexp_t pair, miniexp_t newcdr)
 {
   if (miniexp_consp(pair))
-    {
-      CSLOCK(locker);
-      cdr(pair) = newcdr;
-      return pair;
-    }
+    return miniexp_mutate(pair, &cdr(pair), newcdr);
   return 0;
 }
 
 miniexp_t 
 miniexp_reverse(miniexp_t p)
 {
-  CSLOCK(locker);
   miniexp_t l = 0;
   while (miniexp_consp(p))
     {
       miniexp_t q = cdr(p);
-      cdr(p) = l;
+      miniexp_mutate(p, &cdr(p), l);
       l = p;
       p = q;
     }
@@ -1519,7 +1518,7 @@ pprinter_t::end(miniexp_t p)
       ASSERT(miniexp_numberp(car(p)));
       int pos = miniexp_to_int(car(p));
       ASSERT(tab >= pos);
-      car(p) = miniexp_number(tab - pos);
+      miniexp_rplaca(p, miniexp_number(tab - pos));
     }
 }
 
@@ -1881,7 +1880,8 @@ read_miniexp(miniexp_io_t *io, int &c)
       skip_blank(io, c);
       if (c == EOF)
         {
-          return read_error(io, c);
+          // clean end-of-file.
+          return miniexp_dummy;
         }
       else if (c == ')')
         {
@@ -1890,8 +1890,8 @@ read_miniexp(miniexp_io_t *io, int &c)
         }
       else if (c == '(')
         {
-          minivar_t l;
-          miniexp_t *where = &l;
+          minivar_t l = miniexp_cons(miniexp_nil, miniexp_nil);
+          miniexp_t tail = l;
           minivar_t p;
           c = io->fgetc(io);
           for(;;)
@@ -1909,21 +1909,22 @@ read_miniexp(miniexp_io_t *io, int &c)
               p = read_miniexp(io, c);
               if ((miniexp_t)p == miniexp_dummy)
                 return read_error(io, c);
-              *where = miniexp_cons(p, miniexp_nil);
-              where = &cdr(*where);
+              p = miniexp_cons(p, miniexp_nil);
+              miniexp_rplacd(tail, p);
+              tail = p;
             }
           if (c == '.')
             {
               c = io->fgetc(io);
               skip_blank(io, c);
               if (c != ')')
-                *where = read_miniexp(io, c);
+                miniexp_rplacd(tail, read_miniexp(io, c));
             }
           skip_blank(io, c);
           if (c != ')')
             return read_error(io, c);
           c = io->fgetc(io);
-          return l;
+          return cdr(l);
         }
       else if (c == '"')
         {
@@ -1973,7 +1974,8 @@ miniexp_read_r(miniexp_io_t *io)
 {
   int c = io->fgetc(io);
   miniexp_t p = read_miniexp(io, c);
-  io->ungetc(io, c);
+  if (c != EOF)
+    io->ungetc(io, c);
   return p;
 }
 
