@@ -946,7 +946,7 @@ public:
     void *p = 0; pthread_join(thr, &p); 
     return (p==0) ? res : miniexp_dummy; }
   miniexp_t status() { return run; }
-  ~thread_t() { join(); }
+  ~thread_t() { if (!run) abort(); join(); }
 };
 
 MINIOBJ_IMPLEMENT(thread_t, miniobj_t, "thread");
