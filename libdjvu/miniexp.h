@@ -644,7 +644,7 @@ MINILISPAPI miniexp_t miniexp_pprin(miniexp_t p, int width);
 MINILISPAPI miniexp_t miniexp_pprint(miniexp_t p, int width);
 
 
-/* Backward compatibility. */
+/* Backward compatibility (will eventually disappear) */
 extern MINILISPAPI int (*minilisp_puts)(const char *);
 extern MINILISPAPI int (*minilisp_getc)(void);
 extern MINILISPAPI int (*minilisp_ungetc)(int);

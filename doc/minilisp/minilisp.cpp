@@ -917,6 +917,57 @@ DEFUN("printflags",printflags,1,0) {
   return argv[0];
 }
 
+/* ------------ special */
+
+#ifdef HAVE_PTHREAD
+# include <pthread.h>
+
+class thread_t : public miniobj_t
+{
+  MINIOBJ_DECLARE(thread_t, miniobj_t, "thread");
+private:
+  pthread_t thr;
+  miniexp_t exp, env, res, run;
+  static void* start(void *arg) {
+    thread_t *pth = (thread_t*) arg;
+    try { 
+      pth->res = evaluate(pth->exp, pth->env); 
+      pth->run = miniexp_symbol("finished");
+      return 0; } 
+    catch(...) { 
+      pth->run = miniexp_symbol("error");
+      return (void*)1; } }
+public:
+  thread_t(miniexp_t exp, miniexp_t env) : exp(exp), env(env), res(0), run(0) { 
+    pthread_create(&this->thr, 0, thread_t::start, (void*)this); }
+  void mark(minilisp_mark_t action) {
+    action(&exp); action(&env), action(&res); }
+  miniexp_t join() {
+    void *p = 0; pthread_join(thr, &p); 
+    return (p==0) ? res : miniexp_dummy; }
+  miniexp_t status() { return run; }
+  ~thread_t() { join(); }
+};
+
+MINIOBJ_IMPLEMENT(thread_t, miniobj_t, "thread");
+
+DEFUN("thread",threadstart,1,0) {
+  return miniexp_object(new thread_t(argv[0],env));
+}
+DEFUN("threadp", threadtest,1,0) {
+  if (! miniexp_isa(argv[0], thread_t::classname)) return 0;
+  miniexp_t run = ((thread_t*)miniexp_to_obj(argv[0]))->status();
+  return (run) ? run : miniexp_symbol("running");
+}
+DEFUN("join",threadjoin,1,0) {
+  if (! miniexp_isa(argv[0], thread_t::classname))
+    error("join: thread expected");
+  return ((thread_t*)miniexp_to_obj(argv[0]))->join();
+}
+
+#endif
+
+
 /* ------------ toplevel */
 
 void
@@ -948,6 +999,7 @@ toplevel(FILE *inp, FILE *out, bool print)
 	{
 	}
     }
+  break_request = true;
 }
 
 miniexp_t

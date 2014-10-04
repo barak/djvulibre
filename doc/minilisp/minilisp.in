@@ -68,6 +68,17 @@
                 (list 'setq v (list '+ v 1)) )
           sym-res ) ) )
 
+(let ((sym-to  '|S 0001|)
+      (sym-res '|S 0002|) )
+  (defmacro (mapfor (v from to) . body)
+    (list 'let (list (list v from)
+                     (list sym-to to)
+                     (list sym-res ()) )
+          (list 'while (list <= v sym-to)
+                (list 'setq sym-res (list 'cons (list 'progn . body) sym-res))
+                (list 'setq v (list '+ v 1)) )
+          (list 'reverse sym-res) ) ) )
+
 (defmacro (cond . args)
    (let ((a (copyrev args))
          (r ()))

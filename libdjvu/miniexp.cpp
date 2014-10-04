@@ -67,6 +67,50 @@ assertfail(const char *fn, int ln)
 
 
 /* -------------------------------------------------- */
+/* GLOBAL MUTEX                                       */
+/* -------------------------------------------------- */
+
+#ifndef WITHOUT_THREADS
+# if defined(_WIN32) || defined(_WIN64)
+#  include <windows.h>
+#  define USE_WINTHREADS 1
+# elif defined(HAVE_PTHREAD)
+#  include <pthread.h>
+#  define USE_PTHREADS 1 
+# endif
+#endif
+
+#if defined(USE_WINTHREADS)
+// Windows critical section
+# define CSLOCK(name) CSLocker name
+BEGIN_ANONYMOUS_NAMESPACE
+struct CS { 
+  CRITICAL_SECTION cs; 
+  CS() { InitializeCriticalSection(&cs); }
+  ~CS() { DeleteCriticalSecton(&cs); } };
+static CS globalCS;
+struct CSLocker {
+  CSLocker() { EnterCriticalSection(&globalCS.cs); }
+  ~CSLocker() { LeaveCriticalSection(&globalCS.cs); } };
+END_ANONYMOUS_NAMESPACE
+
+#elif defined (USE_PTHREADS)
+// Pthread critical section
+# define CSLOCK(name) CSLocker name
+BEGIN_ANONYMOUS_NAMESPACE
+static pthread_mutex_t globalCS = PTHREAD_MUTEX_INITIALIZER;
+struct CSLocker {
+  CSLocker() { pthread_mutex_lock(&globalCS); }
+  ~CSLocker() { pthread_mutex_unlock(&globalCS); } };
+END_ANONYMOUS_NAMESPACE
+  
+#else
+// No critical sections
+# define CSLOCK(name) /**/
+#endif
+
+
+/* -------------------------------------------------- */
 /* SYMBOLS                                            */
 /* -------------------------------------------------- */
 
@@ -144,8 +188,6 @@ symtable_t::resize(int nb)
 struct symtable_t::sym *
 symtable_t::lookup(const char *n, bool create)
 {
-  if (nbuckets <= 0) 
-    resize(7);
   unsigned int h = hashcode(n);
   int i = h % nbuckets;
   struct sym *r = buckets[i];
@@ -153,6 +195,7 @@ symtable_t::lookup(const char *n, bool create)
     r = r->l;
   if (!r && create)
     {
+      CSLOCK(lock);
       nelems += 1;
       r = new sym;
       r->h = h;
@@ -186,8 +229,12 @@ miniexp_t
 miniexp_symbol(const char *name)
 {
   struct symtable_t::sym *r;
-  if (! symbols) 
-    symbols = new symtable_t;
+  if (! symbols)
+    {
+      CSLOCK(lock);
+      if (! symbols)
+        symbols = new symtable_t;
+    }
   r = symbols->lookup(name, true);
   return (miniexp_t)(((size_t)r)|((size_t)2));
 }
@@ -214,6 +261,127 @@ miniexp_symbol(const char *name)
 #define recentlog    (4)
 #define recentsize   (1<<recentlog)
 
+BEGIN_ANONYMOUS_NAMESPACE
+
+struct gctls_t {
+  gctls_t  *next;
+  gctls_t **pprev;
+  void    **recent[recentsize];
+  int       recentindex;
+  gctls_t();
+  ~gctls_t();
+};
+
+struct block_t 
+{
+  block_t *next;
+  void **lo;
+  void **hi;
+  void *ptrs[nptrs_block];
+};
+
+static struct {
+  int lock;
+  int request;
+  int debug;
+  int      pairs_total;
+  int      pairs_free;
+  void   **pairs_freelist;
+  block_t *pairs_blocks;
+  int      objs_total;
+  int      objs_free;
+  void   **objs_freelist;
+  block_t *objs_blocks;
+  gctls_t *tls;
+} gc;
+
+gctls_t::gctls_t()
+{
+  // CSLOCK(locker); [already locked]
+  recentindex = 0;
+  for (int i=0; i<recentsize; i++)
+    recent[i] = 0;
+  if ((next = gc.tls))
+    next->pprev = &next;
+  pprev = &gc.tls;
+  gc.tls = this;
+}
+
+gctls_t::~gctls_t()
+{
+  //CSLOCK(locker); [already locked]
+  if  ((*pprev = next))
+    next->pprev = pprev;
+}
+
+END_ANONYMOUS_NAMESPACE
+
+#if USE_PTHREADS
+// Manage thread specific data with pthreads
+static pthread_key_t gctls_key;
+static pthread_once_t gctls_once;
+static void gctls_destroy(void* arg) {
+  delete (gctls_t*)arg;
+}
+static void gctls_key_alloc() {
+  pthread_key_create(&gctls_key, gctls_destroy);
+}
+# if HAVE_GCCTLS
+static __thread gctls_t *gctls_tv = 0;
+static void gctls_alloc() {
+  pthread_once(&gctls_once, gctls_key_alloc);
+  gctls_tv = new gctls_t();
+  pthread_setspecific(gctls_key, (void*)gctls_tv);
+}
+static gctls_t *gctls() {
+  if (! gctls_tv) gctls_alloc();
+  return gctls_tv;
+}
+# else
+static  gctls_t *gctls_alloc() {
+  gctls_t *res = new gctls_t();
+  pthread_setspecific(gctls_key, (void*)res);
+  return res;
+}
+static gctls_t *gctls() {
+  pthread_once(&gctls_once, gctls_key_alloc);
+  void *arg = pthread_getspecific(gctls_key);
+  return (arg) ? (gctls_t*)(arg) : gctls_alloc();
+}
+# endif
+
+#elif USE_WINTHREADS
+// Manage thread specific data with win32
+# ifdef __MINGW32__ 
+static __thread gctls_t *gctls_tv = 0;
+# else
+static gctls_t * __declspec(thread) gctls_tv = 0;
+# endif
+static gctls_t *gctls() {
+  if (! gctls_tv)  gctls_tv = new gctls_t();
+  return gctls_tv;
+}
+// Black magic to deallocate tls data
+static void NTAPI gctls_cb(PVOID, DWORD dwReason, PVOID) {
+  if (dwReason == DLL_THREAD_DETACH && gctls_tv) 
+    { CSLOCK(locker); delete gctls_tv; gctls_tv=0; } }
+# if defined(_MSC_VER)
+#  pragma data_seg(".CRT$XLB")
+static PIMAGE_TLS_CALLBACK tlscb = gctls_cb;
+#  pragma data_seg()
+# elif defined(__GNUC__)
+static PIMAGE_TLS_CALLBACK tlscb __attribute__((section(".CRT$XLB"))) = gctls_cb;
+# endif
+
+#else
+// No threads
+static gctls_t *gctls() {
+  static gctls_t g;
+  return &g;
+}
+
+#endif
+
 static inline char *
 markbase(void **p)
 {
@@ -226,13 +394,6 @@ markbyte(void **p)
   char *base = markbase(p);
   return base + ((p - (void**)base)>>1);
 }
-
-struct block_t {
-  block_t *next;
-  void **lo;
-  void **hi;
-  void *ptrs[nptrs_block];
-};
 
 static block_t *
 new_block(void)
@@ -270,22 +431,6 @@ collect_free(block_t *b, void **&freelist, int &count, bool destroy)
           }
     }
 }
-
-static struct {
-  int lock;
-  int request;
-  int debug;
-  int      pairs_total;
-  int      pairs_free;
-  void   **pairs_freelist;
-  block_t *pairs_blocks;
-  int      objs_total;
-  int      objs_free;
-  void   **objs_freelist;
-  block_t *objs_blocks;
-  void **recent[recentsize];
-  int    recentindex;
-} gc;
 
 static void
 new_pair_block(void)
@@ -340,7 +485,6 @@ gc_mark_check(void *p)
 static void
 gc_mark_pair(void **v)
 {
-#ifndef MINIEXP_POINTER_REVERSAL
   // This is a simple recursive code.
   // Despite the tail recursion for the cdrs,
   // it consume a stack space that grows like
@@ -353,53 +497,6 @@ gc_mark_pair(void **v)
         break;
       v = (void**)v[1];
     }
-#else
-  // This is the classic pointer reversion code
-  // It saves stack memory by temporarily reversing the pointers. 
-  // This is a bit slower because of all these nonlocal writes.
-  // But it could be useful for memory-starved applications.
-  // That makes no sense for most uses of miniexp.
-  // I leave the code here because of its academic interest.
-  void **w = 0;
- docar:
-  if (gc_mark_check(v[0]))
-    { // reverse car pointer
-      void **p = (void**)v[0];
-      v[0] = (void*)w;
-      w = (void**)(((size_t)v)|(size_t)1);
-      v = p;
-      goto docar;
-    }
- docdr:
-  if (gc_mark_check(v[1]))
-    { // reverse cdr pointer
-      void **p = (void**)v[1];
-      v[1] = (void*)w;
-      w = v;
-      v = p;
-      goto docar;
-    }
- doup:
-  if (w)
-    {
-      if (((size_t)w)&1)
-        { // undo car reversion
-          void **p = (void**)(((size_t)w)&~(size_t)1);
-          w = (void**)p[0];
-          p[0] = (void*)v;
-          v = p;
-          goto docdr;
-        }
-      else
-        { // undo cdr reversion
-          void **p = w;
-          w = (void**)p[1];
-          p[1] = (void*)v;
-          v = p;
-          goto doup;
-        }
-    }
-#endif
 }
 
 static void
@@ -432,13 +529,12 @@ gc_run(void)
         clear_marks(b);
       for (b=gc.pairs_blocks; b; b=b->next)
         clear_marks(b);
-      // mark
+      // mark recents
+      for (gctls_t *tls = gc.tls; tls; tls=tls->next)
+        for (int i=0; i<recentsize; i++)
+          gc_mark((miniexp_t*)(char*)&(tls->recent[i]));
+      // mark roots
       minivar_t::mark(gc_mark);
-      for (int i=0; i<recentsize; i++)
-        { // extra cast for strict aliasing rules?
-          char *s = (char*)&gc.recent[i];
-          gc_mark((miniexp_t*)s);
-        }
       // sweep
       gc.objs_free = gc.pairs_free = 0;
       gc.objs_freelist = gc.pairs_freelist = 0;
@@ -500,6 +596,7 @@ gc_alloc_object(void *obj)
 miniexp_t
 minilisp_acquire_gc_lock(miniexp_t x)
 {
+  CSLOCK(locker);
   gc.lock++;
   return x;
 }
@@ -507,6 +604,7 @@ minilisp_acquire_gc_lock(miniexp_t x)
 miniexp_t
 minilisp_release_gc_lock(miniexp_t x)
 {
+  CSLOCK(locker);
   if (gc.lock > 0)
     if (--gc.lock == 0)
       if (gc.request > 0)
@@ -520,9 +618,10 @@ minilisp_release_gc_lock(miniexp_t x)
 void 
 minilisp_gc(void)
 {
-  int i;
-  for (i=0; i<recentsize; i++)
-    gc.recent[i] = 0;
+  CSLOCK(locker);
+  for (gctls_t *tls = gc.tls; tls; tls=tls->next)
+    for (int i=0; i<recentsize; i++)
+      tls->recent[i] = 0;
   gc_run();
 }
 
@@ -535,6 +634,7 @@ minilisp_debug(int debug)
 void 
 minilisp_info(void)
 {
+  CSLOCK(locker);
   time_t tim = time(0);
   const char *dat = ctime(&tim);
   printf("--- begin info -- %s", dat);
@@ -557,6 +657,7 @@ minilisp_info(void)
 minivar_t::minivar_t()
   : data(0)
 {
+  CSLOCK(locker);
   if ((next = vars))
     next->pprev = &next;
   pprev = &vars;
@@ -566,6 +667,7 @@ minivar_t::minivar_t()
 minivar_t::minivar_t(miniexp_t p)
   : data(p)
 {
+  CSLOCK(locker);
   if ((next = vars))
     next->pprev = &next;
   pprev = &vars;
@@ -575,6 +677,7 @@ minivar_t::minivar_t(miniexp_t p)
 minivar_t::minivar_t(const minivar_t &v)
   : data(v.data)
 {
+  CSLOCK(locker);
   if ((next = vars))
     next->pprev = &next;
   pprev = &vars;
@@ -583,6 +686,7 @@ minivar_t::minivar_t(const minivar_t &v)
 
 minivar_t::~minivar_t()
 { 
+  CSLOCK(locker);
   if ((*pprev = next)) 
     next->pprev = pprev; 
 }
@@ -694,8 +798,10 @@ miniexp_nth(int n, miniexp_t l)
 miniexp_t 
 miniexp_cons(miniexp_t a, miniexp_t d)
 {
+  CSLOCK(locker);
   miniexp_t r = (miniexp_t)gc_alloc_pair((void*)a, (void*)d); 
-  gc.recent[(++gc.recentindex) & (recentsize-1)] = (void**)r;
+  gctls_t *tls = gctls();
+  tls->recent[(++(tls->recentindex)) & (recentsize-1)] = (void**)r;
   return r;
 }
 
@@ -704,6 +810,7 @@ miniexp_rplaca(miniexp_t pair, miniexp_t newcar)
 {
   if (miniexp_consp(pair))
     {
+      CSLOCK(locker);
       car(pair) = newcar;
       return pair;
     }
@@ -715,6 +822,7 @@ miniexp_rplacd(miniexp_t pair, miniexp_t newcdr)
 {
   if (miniexp_consp(pair))
     {
+      CSLOCK(locker);
       cdr(pair) = newcdr;
       return pair;
     }
@@ -724,6 +832,7 @@ miniexp_rplacd(miniexp_t pair, miniexp_t newcdr)
 miniexp_t 
 miniexp_reverse(miniexp_t p)
 {
+  CSLOCK(locker);
   miniexp_t l = 0;
   while (miniexp_consp(p))
     {
@@ -775,9 +884,11 @@ miniobj_t::pname() const
 miniexp_t 
 miniexp_object(miniobj_t *obj)
 {
+  CSLOCK(locker);
   void **v = gc_alloc_object((void*)obj);
   v = (void**)(((size_t)v)|((size_t)1));
-  gc.recent[(++gc.recentindex) & (recentsize-1)] = v;
+  gctls_t *tls = gctls();
+  tls->recent[(++(tls->recentindex)) & (recentsize-1)] = (void**)v;
   return (miniexp_t)(v);
 }
 
@@ -1097,65 +1208,44 @@ str_is_double(const char *s, double &x)
 /* INPUT/OUTPUT                                       */
 /* -------------------------------------------------- */
 
-BEGIN_ANONYMOUS_NAMESPACE
-
-struct CompatCounter 
-{
-  static int count;
-  CompatCounter() { count += 1; }
-  ~CompatCounter() { count -= 1; }
-};
-
-int CompatCounter::count = 0;
-
-END_ANONYMOUS_NAMESPACE
-
-static int
-compat_puts(const char *s)
-{
-  CompatCounter count;
-  return miniexp_io.fputs(&miniexp_io, s);
-}
-
-static int
-compat_getc()
-{
-  CompatCounter count;
-  return miniexp_io.fgetc(&miniexp_io);
-}
-
-static int
-compat_ungetc(int c)
-{
-  CompatCounter count;
-  return miniexp_io.ungetc(&miniexp_io, c);
-}
-
-static int 
-stdio_fputs(miniexp_io_t *io, const char *s)
-{
-  if (io == &miniexp_io && !CompatCounter::count)
-    return (*minilisp_puts)(s); /* compatibility hack */
+static int true_stdio_fputs(miniexp_io_t *io, const char *s) {
   FILE *f = (io->data[1]) ? (FILE*)(io->data[1]) : stdout;
   return ::fputs(s, f);
 }
+static int compat_puts(const char *s) { 
+  return true_stdio_fputs(&miniexp_io, s); 
+}
+static int stdio_fputs(miniexp_io_t *io, const char *s) {
+  if (io == &miniexp_io) 
+    return (*minilisp_puts)(s);
+  return true_stdio_fputs(io, s);
+}
 
-static int 
-stdio_fgetc(miniexp_io_t *io)
-{
-  if (io == &miniexp_io && !CompatCounter::count)
-    return (*minilisp_getc)(); /* compatibility hack */
+static int true_stdio_fgetc(miniexp_io_t *io) {
   FILE *f = (io->data[0]) ? (FILE*)(io->data[0]) : stdin;
   return ::getc(f);
 }
-
-static int 
-stdio_ungetc(miniexp_io_t *io, int c)
+static int compat_getc() { 
+  return true_stdio_fgetc(&miniexp_io); 
+}
+static int stdio_fgetc(miniexp_io_t *io)
 {
-  if (io == &miniexp_io && !CompatCounter::count)
-    return (*minilisp_ungetc)(c); /* compatibility hack */
+  if (io == &miniexp_io) 
+    return (*minilisp_getc)();
+  return true_stdio_fgetc(io);
+}
+
+static int true_stdio_ungetc(miniexp_io_t *io, int c) {
   FILE *f = (io->data[0]) ? (FILE*)(io->data[0]) : stdin;
   return ::ungetc(c, f);
+}
+static int compat_ungetc(int c) { 
+  return true_stdio_ungetc(&miniexp_io, c); 
+}
+static int stdio_ungetc(miniexp_io_t *io, int c) {
+  if (io == &miniexp_io) 
+    return (*minilisp_ungetc)(c);
+  return true_stdio_ungetc(io, c);
 }
 
 extern "C" 
@@ -1167,7 +1257,6 @@ extern "C"
   minivar_t minilisp_macroqueue;
   int minilisp_print_7bits;
 }
-
 
 miniexp_io_t miniexp_io = { 
   stdio_fputs, stdio_fgetc, stdio_ungetc, { 0, 0, 0, 0 },
@@ -1947,14 +2036,16 @@ gc_clear(miniexp_t *pp)
 void
 minilisp_finish(void)
 {
+  CSLOCK(locker);
   ASSERT(!gc.lock);
   // clear minivars
   minivar_t::mark(gc_clear);
-  for (int i=0; i<recentsize; i++)
-    gc.recent[i] = 0;
+  for (gctls_t *tls = gc.tls; tls; tls=tls->next)
+    for (int i=0; i<recentsize; i++)
+      tls->recent[i] = 0;
   // collect everything
   gc_run();
-  // deallocate mblocks
+  // deallocate everything
   ASSERT(gc.pairs_free == gc.pairs_total);
   while (gc.pairs_blocks)
     {
@@ -1969,8 +2060,8 @@ minilisp_finish(void)
       gc.objs_blocks = b->next;
       delete b;
     }
-  // deallocate symbol table
   delete symbols;
+  symbols = 0;
 }
 
 
