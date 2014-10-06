@@ -70,7 +70,7 @@ extern "C" {
 
 #ifndef DDJVUAPI
 # ifdef WIN32
-#  ifdef DLL_EXPORT
+#  ifdef DDJVUAPI_EXPORT
 #   define DDJVUAPI __declspec(dllexport)
 #  else
 #   define DDJVUAPI __declspec(dllimport)

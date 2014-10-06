@@ -23,7 +23,6 @@
 #include <ctype.h>
 #include <math.h>
 
-
 #include "miniexp.h"
 
 #define CAT(a,b) __CAT(a,b)
@@ -35,9 +34,9 @@ miniexp_t s_true = miniexp_symbol("t");
 /* ------------ error */
 
 #ifdef __GNUC__
-void
-error(const char *msg, miniexp_t v=0)
-  __attribute__ ((noreturn));
+void error(const char *msg, miniexp_t v=0) __attribute__ ((noreturn));
+#else
+void error(const char *msg, miniexp_t v=0);
 #endif
 
 void
@@ -921,6 +920,51 @@ DEFUN("printflags",printflags,1,0) {
 
 /* ------------ special */
 
+#if defined(_WIN32) || defined(__WIN64)
+# include <process.h>
+
+class thread_t : public miniobj_t
+{
+  MINIOBJ_DECLARE(thread_t, miniobj_t, "thread");
+private:
+  uintptr_t thr;
+  miniexp_t exp, env, res, run;
+  static void start(void *arg) {
+    thread_t *pth = (thread_t*) arg;
+    try { 
+      pth->res = evaluate(pth->exp, pth->env); 
+      pth->run = miniexp_symbol("finished");
+    } catch(...) { 
+      pth->run = miniexp_symbol("error");
+    } }
+public:
+  thread_t(miniexp_t exp, miniexp_t env) : exp(exp), env(env), res(0), run(0) { 
+	  thr = _beginthread(thread_t::start, 0, (void*)this); }
+  void mark(minilisp_mark_t action) {
+    action(&exp); action(&env), action(&res); }
+  miniexp_t join() {
+	return (run) ? res : miniexp_dummy; }
+  miniexp_t status() { return run; }
+  ~thread_t() { if (!run) abort(); join(); }
+};
+
+MINIOBJ_IMPLEMENT(thread_t, miniobj_t, "thread");
+
+DEFUN("thread",threadstart,1,0) {
+  return miniexp_object(new thread_t(argv[0],env));
+}
+DEFUN("threadp", threadtest,1,0) {
+  if (! miniexp_isa(argv[0], thread_t::classname)) return 0;
+  miniexp_t run = ((thread_t*)miniexp_to_obj(argv[0]))->status();
+  return (run) ? run : miniexp_symbol("running");
+}
+DEFUN("join",threadjoin,1,0) {
+  if (! miniexp_isa(argv[0], thread_t::classname))
+    error("join: thread expected");
+  return ((thread_t*)miniexp_to_obj(argv[0]))->join();
+}
+#endif
+
 #ifdef HAVE_PTHREAD
 # include <pthread.h>
 
@@ -1038,6 +1082,7 @@ DEFUN("load",xload,1,0) {
     error("load: cannot open file");
   toplevel(f, stdout, false);
   fclose(f);
+  return miniexp_nil;
 }
 
 

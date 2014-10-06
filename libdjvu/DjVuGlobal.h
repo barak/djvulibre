@@ -71,7 +71,7 @@
 #endif
 
 #ifdef WIN32
-# ifdef DLL_EXPORT
+# ifdef DJVUAPI_EXPORT
 #  define DJVUAPI __declspec(dllexport)
 # else
 #  define DJVUAPI __declspec(dllimport)

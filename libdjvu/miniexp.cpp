@@ -71,7 +71,7 @@ assertfail(const char *fn, int ln)
 /* -------------------------------------------------- */
 
 #ifndef WITHOUT_THREADS
-# if defined(_WIN32) || defined(_WIN64)
+# if defined(_MSC_VER) && (defined(_WIN32) || defined(_WIN64))
 #  include <windows.h>
 #  define USE_WINTHREADS 1
 # elif defined(HAVE_PTHREAD)
@@ -87,7 +87,7 @@ BEGIN_ANONYMOUS_NAMESPACE
 struct CS { 
   CRITICAL_SECTION cs; 
   CS() { InitializeCriticalSection(&cs); }
-  ~CS() { DeleteCriticalSecton(&cs); } };
+  ~CS() { DeleteCriticalSection(&cs); } };
 static CS globalCS;
 struct CSLocker {
   CSLocker() { EnterCriticalSection(&globalCS.cs); }
@@ -305,11 +305,13 @@ gctls_t::gctls_t()
     next->pprev = &next;
   pprev = &gc.tls;
   gc.tls = this;
+  //fprintf(stderr,"Created gctls %p\n", this);
 }
 
 gctls_t::~gctls_t()
 {
   //CSLOCK(locker); [already locked]
+  //fprintf(stderr,"Deleting gctls %p\n", this);
   if  ((*pprev = next))
     next->pprev = pprev;
 }
@@ -352,11 +354,10 @@ static gctls_t *gctls() {
 
 #elif USE_WINTHREADS
 // Manage thread specific data with win32
-# ifdef __MINGW32__ 
-static __thread gctls_t *gctls_tv = 0;
-# else
-static gctls_t * __declspec(thread) gctls_tv = 0;
+# ifdef _MSC_VER
+#  define __thread __declspec(thread)
 # endif
+static __thread gctls_t *gctls_tv = 0;
 static gctls_t *gctls() {
   if (! gctls_tv)  gctls_tv = new gctls_t();
   return gctls_tv;
@@ -365,13 +366,17 @@ static gctls_t *gctls() {
 static void NTAPI gctls_cb(PVOID, DWORD dwReason, PVOID) {
   if (dwReason == DLL_THREAD_DETACH && gctls_tv) 
     { CSLOCK(locker); delete gctls_tv; gctls_tv=0; } }
-# if defined(_MSC_VER)
+#ifdef _M_IX86
+#pragma comment (linker, "/INCLUDE:_tlscb")
 #  pragma data_seg(".CRT$XLB")
-static PIMAGE_TLS_CALLBACK tlscb = gctls_cb;
+extern "C" PIMAGE_TLS_CALLBACK tlscb = gctls_cb;
 #  pragma data_seg()
-# elif defined(__GNUC__)
-static PIMAGE_TLS_CALLBACK tlscb __attribute__((section(".CRT$XLB"))) = gctls_cb;
-# endif
+#else
+#pragma comment (linker, "/INCLUDE:tlscb")
+#  pragma const_seg(".CRT$XLB")
+extern "C" PIMAGE_TLS_CALLBACK tlscb = gctls_cb;
+#  pragma const_seg()
+#endif
 
 #else
 // No threads
