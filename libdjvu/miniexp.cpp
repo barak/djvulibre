@@ -366,13 +366,13 @@ static gctls_t *gctls() {
 static void NTAPI gctls_cb(PVOID, DWORD dwReason, PVOID) {
   if (dwReason == DLL_THREAD_DETACH && gctls_tv) 
     { CSLOCK(locker); delete gctls_tv; gctls_tv=0; } }
-#ifdef _M_IX86
-#pragma comment (linker, "/INCLUDE:_tlscb")
+# ifdef _M_IX86
+#  pragma comment (linker, "/INCLUDE:_tlscb")
 #  pragma data_seg(".CRT$XLB")
 extern "C" PIMAGE_TLS_CALLBACK tlscb = gctls_cb;
 #  pragma data_seg()
 #else
-#pragma comment (linker, "/INCLUDE:tlscb")
+#  pragma comment (linker, "/INCLUDE:tlscb")
 #  pragma const_seg(".CRT$XLB")
 extern "C" PIMAGE_TLS_CALLBACK tlscb = gctls_cb;
 #  pragma const_seg()
