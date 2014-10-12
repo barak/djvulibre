@@ -1,5 +1,10 @@
-NEW SINCE VERSION 3.5.25
+NEW SINCE VERSION 3.5.26
 ------------------------
+
+
+NEW IN VERSION 3.5.26
+------------------------
+- Thread safe miniexp
 - Now using the standard autotools approach (thanks to Vincent Torri).
 - New windows installer (thanks to Konstantin Kravtsov).
 - Fixed Russian code page issues in windows.

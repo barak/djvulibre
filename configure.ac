@@ -24,7 +24,7 @@
 
 m4_define([v_maj], [3])
 m4_define([v_min], [5])
-m4_define([v_mic], [25])
+m4_define([v_mic], [26])
 m4_define([v_ver], [v_maj.v_min.v_mic])
 
 m4_define([lt_compat], [21])
