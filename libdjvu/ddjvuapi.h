@@ -146,7 +146,7 @@ extern "C" {
      14    Initial version.
 */
 
-#define DDJVUAPI_VERSION 22
+#define DDJVUAPI_VERSION 23
 
 typedef struct ddjvu_context_s    ddjvu_context_t;
 typedef union  ddjvu_message_s    ddjvu_message_t;
