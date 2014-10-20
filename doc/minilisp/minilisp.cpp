@@ -939,11 +939,11 @@ private:
     } }
 public:
   thread_t(miniexp_t exp, miniexp_t env) : exp(exp), env(env), res(0), run(0) { 
-	  thr = _beginthread(thread_t::start, 0, (void*)this); }
+    thr = _beginthread(thread_t::start, 0, (void*)this); }
   void mark(minilisp_mark_t action) {
     action(&exp); action(&env), action(&res); }
   miniexp_t join() {
-	return (run) ? res : miniexp_dummy; }
+    return (run) ? res : miniexp_dummy; }
   miniexp_t status() { return run; }
   ~thread_t() { if (!run) abort(); join(); }
 };
@@ -974,6 +974,7 @@ class thread_t : public miniobj_t
 private:
   pthread_t thr;
   miniexp_t exp, env, res, run;
+  bool joined;
   static void* start(void *arg) {
     thread_t *pth = (thread_t*) arg;
     try { 
@@ -984,13 +985,14 @@ private:
       pth->run = miniexp_symbol("error");
       return (void*)1; } }
 public:
-  thread_t(miniexp_t exp, miniexp_t env) : exp(exp), env(env), res(0), run(0) { 
+  thread_t(miniexp_t exp, miniexp_t env) 
+    : exp(exp), env(env), res(0), run(0), joined(false) { 
     pthread_create(&this->thr, 0, thread_t::start, (void*)this); }
   void mark(minilisp_mark_t action) {
     action(&exp); action(&env), action(&res); }
   miniexp_t join() {
-    void *p = 0; pthread_join(thr, &p); 
-    return (p==0) ? res : miniexp_dummy; }
+    if (! joined) pthread_join(thr, 0); joined=true;
+    return (run) ? res : miniexp_dummy; }
   miniexp_t status() { return run; }
   ~thread_t() { if (!run) abort(); join(); }
 };
