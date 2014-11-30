@@ -3505,7 +3505,6 @@ outline_sub(const GP<DjVmNav> &nav, int &pos, int count)
 miniexp_t
 ddjvu_document_get_outline(ddjvu_document_t *document)
 {
-  GMonitorLock lock(&document->myctx->monitor);
   G_TRY
     {
       ddjvu_status_t status = document->status();
@@ -3605,7 +3604,6 @@ miniexp_t
 ddjvu_document_get_pagetext(ddjvu_document_t *document, int pageno,
                             const char *maxdetail)
 {
-  GMonitorLock lock(&document->myctx->monitor);
   G_TRY
     {
       ddjvu_status_t status = document->status();
@@ -3856,7 +3854,6 @@ get_file_anno(GP<DjVuFile> file)
 miniexp_t
 ddjvu_document_get_pageanno(ddjvu_document_t *document, int pageno)
 {
-  GMonitorLock lock(&document->myctx->monitor);
   G_TRY
     {
       ddjvu_status_t status = document->status();
@@ -3884,7 +3881,6 @@ ddjvu_document_get_pageanno(ddjvu_document_t *document, int pageno)
 miniexp_t
 ddjvu_document_get_anno(ddjvu_document_t *document, int compat)
 {
-  GMonitorLock lock(&document->myctx->monitor);
   G_TRY
     {
       ddjvu_status_t status = document->status();
