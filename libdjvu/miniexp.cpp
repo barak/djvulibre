@@ -323,7 +323,7 @@ END_ANONYMOUS_NAMESPACE
 static pthread_key_t gctls_key;
 static pthread_once_t gctls_once;
 static void gctls_destroy(void* arg) {
-  delete (gctls_t*)arg;
+  CSLOCK(locker); delete (gctls_t*)arg;
 }
 static void gctls_key_alloc() {
   pthread_key_create(&gctls_key, gctls_destroy);
