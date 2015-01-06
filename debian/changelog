@@ -1,3 +1,13 @@
+djvulibre (3.5.26-1) unstable; urgency=medium
+
+  * upstream reworked build system, uses automake and pkg-config
+  * move debian vs upstream library version check into dh_testdir
+  * add --list-missing option to dh_install
+  * update upstream git URL
+  * new upstream release
+
+ -- Barak A. Pearlmutter <bap@debian.org>  Tue, 06 Jan 2015 05:52:05 -0500
+
 djvulibre (3.5.25.4-4) unstable; urgency=medium
 
   * merge upstream patches
