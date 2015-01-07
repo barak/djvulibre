@@ -74,7 +74,7 @@ $(SED) \
 -e 's,XDG_ICON_RESOURCE,$(XDG_ICON_RESOURCE),g' \
 -e 's,XDG_DESKTOP_MENU,$(XDG_DESKTOP_MENU),g' \
 -e 's,DATADIR,$(datadir),g' \
--e 's,MYDIR,$(datadir_djvu),g' \
+-e 's,MYDIR,$(djvu_datadir),g' \
 < $< > $@ || rm $@
 
 mime_verbose = $(mime_verbose_@AM_V@)
@@ -98,7 +98,6 @@ README \
 djvu.svg \
 djvulibre-mime.xml \
 register-djvu-mime.in \
-vnd.djvu.desktop \
 prebuilt-hi128-djvu.png \
 prebuilt-hi16-djvu.png \
 prebuilt-hi20-djvu.png \

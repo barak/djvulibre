@@ -18,9 +18,13 @@ xdg_icon_resource=XDG_ICON_RESOURCE
 xdg_desktop_menu=XDG_DESKTOP_MENU
 datadir=DATADIR
 mydir=MYDIR
+pgdir=`dirname "$0"`
 
 # test directory
-if test -d "$mydir" 
+if test -n "$pgdir" && test -d "$pgdir"
+then
+ cd $pgdir
+elif test -d "$mydir" 
 then
   cd $mydir
 else
@@ -59,23 +63,19 @@ install)
    for n in hi*-djvu.png ; do
        s=`echo $n | sed -e 's/[a-z]*\([0-9]*\).*/\1/'`
        "$xdg_icon_resource" install --noupdate --mode system \
-           --context mimetypes --size $s "$n" image-vnd.djvu
+           --context mimetypes --size $s "$n" djvu
    done
    "$xdg_icon_resource" forceupdate
-   ## This is disabled to avoid conflicting with the
-   ## djvu information provided by freedesktop.org
-   ## "$xdg_mime" install ./djvulibre-mime.xml
+   "$xdg_mime" install ./djvulibre-mime.xml
    ;;
 uninstall)
    for n in hi*-djvu.png ; do
        s=`echo $n | sed -e 's/[a-z]*\([0-9]*\).*/\1/'`
        "$xdg_icon_resource" uninstall --noupdate --mode system \
-           --context mimetypes --size $s "$n" image-vnd.djvu
+           --context mimetypes --size $s "$n" djvu
    done
    "$xdg_icon_resource" forceupdate
-   ## This is disabled to avoid conflicting with the
-   ## djvu information provided by freedesktop.org
-   ## "$xdg_mime" uninstall ./djvulibre-mime.xml
+   "$xdg_mime" uninstall ./djvulibre-mime.xml
    ;;
 *)
    echo 1>&2 "Usage: $0 install"

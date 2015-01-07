@@ -67,15 +67,15 @@ rm -rf %{buildroot}
 # LIBS: Run ldconfig
 /sbin/ldconfig
 # MIME TYPES
-test -x /usr/share/djvu/osi/desktop/register-djvu-mime &&
-  /usr/share/djvu/osi/desktop/register-djvu-mime install 2>/dev/null
+test -r /usr/share/djvu/osi/desktop/register-djvu-mime &&
+  sh /usr/share/djvu/osi/desktop/register-djvu-mime install 2>/dev/null
 exit 0
 
 %preun
 if test "$1" = 0 ; then 
  # MIME TYPES
- test -x /usr/share/djvu/osi/desktop/register-djvu-mime &&
-   /usr/share/djvu/osi/desktop/register-djvu-mime uninstall 2>/dev/null
+ test -r /usr/share/djvu/osi/desktop/register-djvu-mime &&
+   sh /usr/share/djvu/osi/desktop/register-djvu-mime uninstall 2>/dev/null
 fi
 exit 0
 

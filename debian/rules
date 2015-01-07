@@ -51,18 +51,14 @@ override_dh_auto_install:
 	  d="debian/tmp/usr/share/icons/hicolor/$${n}x$${n}/mimetypes"; \
 	  mkdir --parents $${d}; \
 	  install --mode=644 desktopfiles/hi$${n}-djvu.png \
-	    $${d}/image-vnd.djvu.png; \
-	  ln -sf image-vnd.djvu.png \
 	    $${d}/djvu.png; \
 	done
 	mkdir --parents debian/tmp/usr/share/icons/hicolor/scalable/mimetypes
 	install --mode=644 desktopfiles/hi-djvu.svgz \
-	  debian/tmp/usr/share/icons/hicolor/scalable/mimetypes/image-vnd.djvu.svgz
-	ln -sf image-vnd.djvu.svgz \
 	  debian/tmp/usr/share/icons/hicolor/scalable/mimetypes/djvu.svgz
-	mkdir --parents debian/tmp/usr/share/mimelnk/image
-	install --mode=644 desktopfiles/vnd.djvu.desktop \
-	  debian/tmp/usr/share/mimelnk/image/
+	mkdir --parents debian/tmp/usr/share/mime/packages
+	install --mode=644 desktopfiles/djvulibre-mime.xml \
+	  debian/tmp/usr/share/mime/packages
 
 override_dh_install:
 	dh_install --list-missing

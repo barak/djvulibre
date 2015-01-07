@@ -5,6 +5,8 @@
    <alias type="image/x-djvu"/>
    <glob pattern="*.djvu"/>
    <glob pattern="*.djv"/>
+   <icon name="djvu"/>
+   <generic-icon name="djvu"/>
    <magic priority="50">
      <match type="string" offset="0" value="AT&amp;TFORM">
        <match type="string" offset="12" value="DJVM"/>
@@ -17,11 +19,14 @@
    </magic>
    <comment>DjVu Document</comment>
    <comment xml:lang="af">DjVu Dokument</comment>
+   <comment xml:lang="ast">documentu DjVu</comment>
    <comment xml:lang="ar">مستند DjVu</comment>
    <comment xml:lang="az">DjVu Sənədi</comment>
    <comment xml:lang="be">Дакумэнт DjVu</comment>
+   <comment xml:lang="be@latin">Dakument DjVu</comment>
    <comment xml:lang="bg">Документ DjVu</comment>
    <comment xml:lang="bn">পি-ডি-এফ নথী</comment>
+   <comment xml:lang="bo">DjVu ཡིག་ཆ</comment>
    <comment xml:lang="br">Teul DjVu</comment>
    <comment xml:lang="bs">DjVu dokument</comment>
    <comment xml:lang="ca">Document DjVu</comment>
@@ -30,6 +35,8 @@
    <comment xml:lang="da">DjVu-dokument</comment>
    <comment xml:lang="de">DjVu-Dokument</comment>
    <comment xml:lang="el">Έγγραφο DjVu</comment>
+   <comment xml:lang="en_AU">DjVu document</comment>
+   <comment xml:lang="en_GB">DjVu document</comment>
    <comment xml:lang="eo">DjVu-dokumento</comment>
    <comment xml:lang="es">Documento DjVu</comment>
    <comment xml:lang="et">DjVu-dokument</comment>
@@ -47,6 +54,7 @@
    <comment xml:lang="it">Documento DjVu</comment>
    <comment xml:lang="ja">DjVu ドキュメント</comment>
    <comment xml:lang="km">ឯកសារ DjVu</comment>
+   <comment xml:lang="kk">DjVu құжаты</comment>
    <comment xml:lang="ko">DjVu 문서</comment>
    <comment xml:lang="lb">DjVu-Dokument</comment>
    <comment xml:lang="lt">DjVu dokumentas</comment>
@@ -60,6 +68,7 @@
    <comment xml:lang="nl">DjVu-document</comment>
    <comment xml:lang="nn">DjVu-dokument</comment>
    <comment xml:lang="nso">Tokomane ya DjVu</comment>
+   <comment xml:lang="oc">Document DjVu</comment>
    <comment xml:lang="pa">DjVu ਦਸਤਾਵੇਜ਼</comment>
    <comment xml:lang="pl">Dokument DjVu</comment>
    <comment xml:lang="pt">Documento DjVu</comment>
@@ -79,9 +88,11 @@
    <comment xml:lang="th">เอกสาร DjVu</comment>
    <comment xml:lang="tr">DjVu Belgesi</comment>
    <comment xml:lang="tt">DjVu İstälek</comment>
+   <comment xml:lang="ug">DjVu پۈتۈكى</comment>
    <comment xml:lang="uk">Документ DjVu</comment>
    <comment xml:lang="uz">DjVu ҳужжати</comment>
    <comment xml:lang="ven">Manwalwa a DjVu</comment>
+   <comment xml:lang="vi">Tài liệu DjVu</comment>
    <comment xml:lang="wa">Documint DjVu</comment>
    <comment xml:lang="xh">Uxwebhu lwe DjVu</comment>
    <comment xml:lang="zh_CN">DjVu 文档</comment>
