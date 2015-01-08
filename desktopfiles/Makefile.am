@@ -92,7 +92,6 @@ update-mime:
 # extra
 
 EXTRA_DIST = \
-README \
 djvu.svg \
 prebuilt-hi128-djvu.png \
 prebuilt-hi16-djvu.png \

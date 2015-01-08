@@ -114,9 +114,7 @@ Here are the most important ones.
   The default prefix is /usr/local.  
 
 * Option "--enable-desktopfiles[=(yes|no)]"
-  Installs the scripts 
-   /usr/share/djvu/osi/desktop/register-djvu-mime 
-  to setup the xdg mime type database and menu entries.
+  Installs icon and mime type files in the customary xdg directories.
   The default is "yes".
 
 * Option "--with-jpeg=JPEGDIR"
@@ -174,7 +172,7 @@ should:
 - install the man pages under "${prefix}/man or ${prefix}/share/man/".
 - install various ancillary files under "${prefix}/share/djvu/".
 - install "${prefix}/share/pkgconfig.pc".
-- optionally install information files for desktop environments.
+- optionally install the icon and mime type information files
 
 Where ${prefix} refers to the directory specified by the prefix option
 of the configuration script, which defaults to "/usr/local", and the
