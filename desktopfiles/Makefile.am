@@ -56,7 +56,8 @@ ${PNGICONS}: djvu.svg Makefile
 if HAVE_CONVERSION_TOOL
 	$(png_verbose)$(convert_icons_process)
 else
-	$(AM_V_at)cp ${top_srcdir}/desktopfiles/prebuilt-$@ $@
+	$(AM_V_at)s=`echo $@ | sed -e 's/[a-z]*\([0-9]*\).*/\1/'`; \
+	  cp ${top_srcdir}/desktopfiles/prebuilt-hi$${s}-djvu.png $@
 endif
 
 svg_process =\
