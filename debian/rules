@@ -17,7 +17,6 @@ libver := $(shell egrep '^Package: libdjvulibre[0-9]+$$' debian/control \
 
 export DEB_HOST_MULTIARCH ?= $(shell dpkg-architecture -qDEB_HOST_MULTIARCH)
 
-configure_options += --disable-desktopfiles
 configure_options += --enable-static
 configure_options += --enable-shared
 ifneq (,$(findstring debug,$(DEB_BUILD_OPTIONS)))
@@ -46,19 +45,6 @@ override_dh_auto_install:
 	mkdir --parents debian/tmp/usr/lib/cgi-bin
 	cp --preserve=mode,timestamps debian/djvuserve.sh \
 		debian/tmp/usr/lib/cgi-bin/djvuserve
-	@echo "install djvu icon and mime types"
-	for n in 22 32 48 64 ; do \
-	  d="debian/tmp/usr/share/icons/hicolor/$${n}x$${n}/mimetypes"; \
-	  mkdir --parents $${d}; \
-	  install --mode=644 desktopfiles/hi$${n}-djvu.png \
-	    $${d}/djvu.png; \
-	done
-	mkdir --parents debian/tmp/usr/share/icons/hicolor/scalable/mimetypes
-	install --mode=644 desktopfiles/hi-djvu.svgz \
-	  debian/tmp/usr/share/icons/hicolor/scalable/mimetypes/djvu.svgz
-	mkdir --parents debian/tmp/usr/share/mime/packages
-	install --mode=644 desktopfiles/djvulibre-mime.xml \
-	  debian/tmp/usr/share/mime/packages
 
 override_dh_install:
 	dh_install --list-missing

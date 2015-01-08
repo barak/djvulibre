@@ -281,26 +281,6 @@ AC_ARG_ENABLE(desktopfiles,
     AS_HELP_STRING([--disable-desktopfiles],[Do not install scripts to register icons and menus.]),
     [ac_desktopfiles=$enableval])
 
-# Check for xdg tools
-AC_PATH_PROG(XDG_MIME, xdg-mime)
-AC_PATH_PROG(XDG_ICON_RESOURCE, xdg-icon-resource)
-AC_PATH_PROG(XDG_DESKTOP_MENU, xdg-desktop-menu)
-if test -x ${XDG_MIME} && \
-   test -x ${XDG_ICON_RESOURCE} && \
-   test -x ${XDG_DESKTOP_MENU}
-then 
-  true
-elif test "$ac_desktopfiles" != no ; then
-  ac_desktopfiles=no
-  AC_MSG_WARN([Cannot find the Xdg Portland tools.
---------------------------------------------------------
-*** The scripts to register icons and menus 
-*** ${datadir}/djvu/osi/desktop/register-djvu-mimetype, and
-*** ${datadir}/djvu/djview3/desktop/register-djview3-menu
-*** will not be installed.
---------------------------------------------------------])
-fi
-
 if test ${ac_desktopfiles} != no ; then
   DESKTOP_YES=''
   DESKTOP_NO='#'

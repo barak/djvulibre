@@ -1,9 +1,9 @@
 ACLOCAL_AMFLAGS = -I config
 
-SUBDIRS = libdjvu tools
+SUBDIRS = libdjvu tools share
 
 if WANT_XMLTOOLS
-SUBDIRS += xmltools share
+SUBDIRS += xmltools
 endif
 
 # what about I18N subdir ?

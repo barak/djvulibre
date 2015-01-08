@@ -1,21 +1,24 @@
-all: icons register-djvu-mime 
+all: icons
 
 #icons
 
-PNGICONS = \
-hi16-djvu.png \
-hi20-djvu.png \
-hi22-djvu.png \
-hi24-djvu.png \
-hi32-djvu.png \
-hi48-djvu.png \
-hi64-djvu.png \
-hi72-djvu.png \
-hi96-djvu.png \
-hi128-djvu.png \
-hi256-djvu.png
+SVGICONS = \
+scalable/mimetypes/djvu.svgz
 
-icons: $(PNGICONS) hi-djvu.svgz
+PNGICONS = \
+16x16/mimetypes/djvu.png \
+20x20/mimetypes/djvu.png \
+22x22/mimetypes/djvu.png \
+24x24/mimetypes/djvu.png \
+32x32/mimetypes/djvu.png \
+48x48/mimetypes/djvu.png \
+64x64/mimetypes/djvu.png \
+72x72/mimetypes/djvu.png \
+96x96/mimetypes/djvu.png \
+128x128/mimetypes/djvu.png \
+256x256/mimetypes/djvu.png 
+
+icons: $(PNGICONS) $(SVGICONS)
 
 if HAVE_CONVERSION_RSVG
 convert_icons_process = \
@@ -49,6 +52,7 @@ png_verbose_ = $(png_verbose_@AM_DEFAULT_V@)
 png_verbose_0 = @echo "  PNG     " $@;
 
 ${PNGICONS}: djvu.svg Makefile
+	$(AM_V_at)$(MKDIR_P) `dirname $@`
 if HAVE_CONVERSION_TOOL
 	$(png_verbose)$(convert_icons_process)
 else
@@ -62,42 +66,34 @@ svg_verbose = $(svg_verbose_@AM_V@)
 svg_verbose_ = $(svg_verbose_@AM_DEFAULT_V@)
 svg_verbose_0 = @echo "  SVG     " $@;
 
-hi-djvu.svgz: djvu.svg Makefile
+$(SVGICONS): djvu.svg Makefile
+	$(AM_V_at)$(MKDIR_P) `dirname $@`
 	$(AM_V_at)rm -f $@
 	$(svg_verbose)$(svg_process)
 
+iconsdir = $(datadir)/icons/hicolor
+nobase_icons_DATA = $(PNGICONS) $(SVGICONS)
+
 # mime
 
-sed_mime_process = \
-$(SED) \
--e 's,XDG_MIME,$(XDG_MIME),g' \
--e 's,XDG_ICON_RESOURCE,$(XDG_ICON_RESOURCE),g' \
--e 's,XDG_DESKTOP_MENU,$(XDG_DESKTOP_MENU),g' \
--e 's,DATADIR,$(datadir),g' \
--e 's,MYDIR,$(djvu_datadir),g' \
-< $< > $@ || rm $@
+mimedir = $(datadir)/mime/packages
+dist_mime_DATA = djvulibre-mime.xml
 
-mime_verbose = $(mime_verbose_@AM_V@)
-mime_verbose_ = $(mime_verbose_@AM_DEFAULT_V@)
-mime_verbose_0 = @echo "  MIME    " $@;
+# hooks
 
-register-djvu-mime: register-djvu-mime.in Makefile
-	$(AM_V_at)rm -f $@
-	$(mime_verbose)$(sed_mime_process)
-	$(AM_V_at)chmod a+x register-djvu-mime
+install-data-hook: update-mime
+uninstall-hook: update-mime
 
-djvu_datadir = $(datadir)/djvu/osi/desktop
-djvu_data_DATA = \
-register-djvu-mime \
-hi-djvu.svgz \
-djvulibre-mime.xml \
-$(PNGICONS)
+update-mime:
+	echo "*** You must still update various caches with:" ; \
+	echo "*** # update-mime-database $(datadir)/mime" ; \
+	echo "*** # update-icon-caches $(iconsdir)" 
+
+# extra
 
 EXTRA_DIST = \
 README \
 djvu.svg \
-djvulibre-mime.xml \
-register-djvu-mime.in \
 prebuilt-hi128-djvu.png \
 prebuilt-hi16-djvu.png \
 prebuilt-hi20-djvu.png \
@@ -110,4 +106,12 @@ prebuilt-hi64-djvu.png \
 prebuilt-hi72-djvu.png \
 prebuilt-hi96-djvu.png
 
-MOSTLYCLEANFILES = $(PNGICONS) hi-djvu.svgz register-djvu-mime 
+# clean
+
+MOSTLYCLEANFILES = $(PNGICONS) $(SVGICONS) 
+
+mostlyclean-local:
+	$(AM_V_at)for n in $(PNGICONS) $(SVGICONS) ; do m=`dirname "$$n"` ; \
+	    while test "$$m" != "." ; do rmdir $$m ; m=`dirname "$$m"` ; done ; \
+	done
+
