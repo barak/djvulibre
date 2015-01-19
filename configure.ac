@@ -258,17 +258,11 @@ AC_PATH_THREADS(,
 # ----------------------------------------
 
 # Check compilation of xmltools
+want_xmltools="yes"
 AC_ARG_ENABLE([xmltools],
    [AS_HELP_STRING([--disable-xmltools],
-       [Disable djvu xml tools. @<:@default=enabled@:>@])],
-   [
-    if test "x${enableval}" = "xyes" ; then
-       want_xmltools="yes"
-    else
-       want_xmltools="no"
-    fi
-   ],
-   [want_xmltools="yes"])
+           [Disable djvu xml tools. @<:@default=enabled@:>@])],
+   [want_xmltools=${enableval}])
 
 AM_CONDITIONAL([WANT_XMLTOOLS], [test "x${want_xmltools}" = "xyes"])
 
@@ -276,20 +270,13 @@ AM_CONDITIONAL([WANT_XMLTOOLS], [test "x${want_xmltools}" = "xyes"])
 # Desktop files
 # ----------------------------------------
 
-ac_desktopfiles=yes
+ac_desktopfiles="yes"
 AC_ARG_ENABLE(desktopfiles,
-    AS_HELP_STRING([--disable-desktopfiles],[Do not install scripts to register icons and menus.]),
+    AS_HELP_STRING([--disable-desktopfiles], 
+        [Do not install icons and mime types. @<:@default=enabled@:>@]),
     [ac_desktopfiles=$enableval])
 
-if test ${ac_desktopfiles} != no ; then
-  DESKTOP_YES=''
-  DESKTOP_NO='#'
-else
-  DESKTOP_YES='#'
-  DESKTOP_NO=''
-fi
-AC_SUBST(DESKTOP_YES)
-AC_SUBST(DESKTOP_NO)
+AM_CONDITIONAL([WANT_DESKTOPFILES], [test "x${ac_desktopfiles}" = "xyes"])
 
 # ----------------------------------------
 # End
@@ -328,6 +315,7 @@ echo "  Iconv support........: ${ac_has_iconv}"
 echo "  JPEG support.........: ${have_jpeg}"
 echo "  TIFF support.........: ${have_tiff}"
 echo "  XML tools............: ${want_xmltools}"
+echo "  Desktop files........: ${ac_desktopfiles}"
 echo "  Conversion tools.....: ${conversion_tool}"
 echo
 echo "Compilation............: make (or gmake)"

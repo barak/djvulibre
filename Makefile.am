@@ -6,9 +6,9 @@ if WANT_XMLTOOLS
 SUBDIRS += xmltools
 endif
 
-# what about I18N subdir ?
-
+if WANT_DESKTOPFILES
 SUBDIRS += desktopfiles
+endif
 
 libtool: $(LIBTOOL_DEPS)
 	$(SHELL) ./config.status libtool
