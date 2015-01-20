@@ -609,14 +609,14 @@ minilisp_acquire_gc_lock(miniexp_t x)
 miniexp_t
 minilisp_release_gc_lock(miniexp_t x)
 {
-  CSLOCK(locker);
-  if (gc.lock > 0)
-    if (--gc.lock == 0)
-      if (gc.request > 0)
-        {
-          minivar_t v = x;
+  minivar_t v = x;
+  {
+    CSLOCK(locker);
+    if (gc.lock > 0)
+      if (--gc.lock == 0)
+        if (gc.request > 0)
           gc_run();
-        }
+  }
   return x;
 }
 
