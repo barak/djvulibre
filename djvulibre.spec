@@ -1,4 +1,4 @@
-%define release 3
+%define release 4
 %define version 3.5.26
 
 Summary: DjVu viewers, encoders and utilities.
@@ -66,19 +66,7 @@ rm -rf %{buildroot}
 %post 
 # LIBS: Run ldconfig
 /sbin/ldconfig
-# MIME TYPES
-test -r /usr/share/djvu/osi/desktop/register-djvu-mime &&
-  sh /usr/share/djvu/osi/desktop/register-djvu-mime install 2>/dev/null
 exit 0
-
-%preun
-if test "$1" = 0 ; then 
- # MIME TYPES
- test -r /usr/share/djvu/osi/desktop/register-djvu-mime &&
-   sh /usr/share/djvu/osi/desktop/register-djvu-mime uninstall 2>/dev/null
-fi
-exit 0
-
 
 %postun
 # LIBS: Run ldconfig
@@ -92,10 +80,12 @@ exit 0
 %{_bindir}
 %{_libdir}
 %{_includedir}/libdjvu
-%{_datadir}/djvu
+%{_datadir}
 %{_mandir}
 
 %changelog
+* Thu Jan 22 2015 Leon Bottou <leon@bottou.org> 3.5.26-4
+- no longer rely on xdg scripts for mime types
 * Sat Jan 15 2007 Leon Bottou <leon@bottou.org> 3.5.18-2
 - changed postun as preun
 * Tue Jan 15 2007 Leon Bottou <leon@bottou.org> 3.5.18-1
