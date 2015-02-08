@@ -249,9 +249,9 @@ AC_MSG_CHECKING([for libtiff])
 AC_MSG_RESULT([${have_tiff}])
 
 # Search MULTITHREADING library
-AC_PATH_THREADS(,
-[ no_threads=yes
-  AC_MSG_WARN([Thread support is disabled]) ])
+AC_PATH_THREADS(,[ 
+  AC_MSG_ERROR([Cannot compile djvulibre without thread support.])
+])
 
 # ----------------------------------------
 # What to compile
