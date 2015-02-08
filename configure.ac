@@ -172,7 +172,6 @@ AC_CXX_NAMESPACES
 AC_CXX_MEMBER_TEMPLATES
 AC_CXX_INTEL_ATOMIC_BUILTINS
 AC_CXX_GCCTLS
-AC_CXX_RPO
 
 # ----------------------------------------
 # Libraries
@@ -238,6 +237,9 @@ fi
 # Test auxilliary packages
 # ----------------------------------------
 
+# Search for PTHREADS
+AC_PATH_PTHREAD([have_pthread=yes], [have_pthread=no])
+
 # Search JPEG library
 AC_PATH_JPEG([have_jpeg="yes"], [have_jpeg="no"])
 AC_MSG_CHECKING([for libjpeg])
@@ -248,10 +250,6 @@ AC_PATH_TIFF([have_tiff="yes"], [have_tiff="no"])
 AC_MSG_CHECKING([for libtiff])
 AC_MSG_RESULT([${have_tiff}])
 
-# Search MULTITHREADING library
-AC_PATH_THREADS(,[ 
-  AC_MSG_ERROR([Cannot compile djvulibre without thread support.])
-])
 
 # ----------------------------------------
 # What to compile
@@ -309,14 +307,13 @@ echo
 echo "Configuration Options Summary:"
 echo
 echo "  OS...................: ${host_os}"
-echo
-echo "  Thread support.......: ${ac_threads}"
+echo "  Pthread support......: ${have_pthread}"
 echo "  Iconv support........: ${ac_has_iconv}"
 echo "  JPEG support.........: ${have_jpeg}"
 echo "  TIFF support.........: ${have_tiff}"
 echo "  XML tools............: ${want_xmltools}"
 echo "  Desktop files........: ${ac_desktopfiles}"
-echo "  Conversion tools.....: ${conversion_tool}"
+echo "  Icon generation......: ${conversion_tool}"
 echo
 echo "Compilation............: make (or gmake)"
 echo "  CPPFLAGS.............: $CPPFLAGS"

@@ -1,4 +1,0 @@
-
-#include "release.xcconfig"
-
-OTHER_LDFLAGS = 

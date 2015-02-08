@@ -6,24 +6,25 @@ jb2cmp_SOURCES = jb2cmp/classify.cpp jb2cmp/cuts.cpp		\
  jb2cmp/mdjvucfg.h jb2cmp/minidjvu.h jb2cmp/patterns.h
 
 AM_CPPFLAGS = -I$(top_srcdir)/libdjvu
-AM_CXXFLAGS = $(OPTS) $(CXXRPOFLAGS) $(THREAD_CFLAGS)
+AM_CXXFLAGS = $(OPTS) $(PTHREAD_CFLAGS)
+
 DJLIB = $(top_builddir)/libdjvu/libdjvulibre.la
 
 bzz_SOURCES = bzz.cpp common.h
-bzz_LDADD = $(DJLIB)
+bzz_LDADD = $(DJLIB) $(PTHREAD_LIBS)
 
 c44_SOURCES = c44.cpp common.h
-c44_LDADD = $(DJLIB)
+c44_LDADD = $(DJLIB) $(PTHREAD_LIBS)
 
 cjb2_SOURCES = cjb2.cpp jb2tune.cpp common.h jb2tune.h $(jb2cmp_SOURCES)
 cjb2_CPPFLAGS = $(AM_CPPFLAGS) $(TIFF_CFLAGS)
-cjb2_LDADD = $(DJLIB) $(TIFF_LIBS)
+cjb2_LDADD = $(DJLIB) $(TIFF_LIBS) $(PTHREAD_LIBS)
 
 cpaldjvu_SOURCES = cpaldjvu.cpp jb2tune.cpp common.h jb2tune.h $(jb2cmp_SOURCES)
-cpaldjvu_LDADD = $(DJLIB)
+cpaldjvu_LDADD = $(DJLIB) $(PTHREAD_LIBS)
 
 csepdjvu_SOURCES = csepdjvu.cpp jb2tune.cpp common.h jb2tune.h $(jb2cmp_SOURCES)
-csepdjvu_LDADD = $(DJLIB)
+csepdjvu_LDADD = $(DJLIB) $(PTHREAD_LIBS)
 
 ddjvu_SOURCES = ddjvu.cpp tiff2pdf.c tiff2pdf.h
 ddjvu_CPPFLAGS = -I$(top_srcdir)  $(AM_CPPFLAGS) $(TIFF_CFLAGS)
@@ -31,36 +32,36 @@ if HAVE_OS_WIN32
 ddjvu_CPPFLAGS += -D__USE_MINGW_ANSI_STDIO
 endif
 ddjvu_CFLAGS = $(OPTS) $(THREAD_CFLAGS)
-ddjvu_LDADD = $(DJLIB) $(TIFF_LIBS)
+ddjvu_LDADD = $(DJLIB) $(TIFF_LIBS) $(PTHREAD_LIBS)
 
 djvm_SOURCES = djvm.cpp common.h
-djvm_LDADD = $(DJLIB)
+djvm_LDADD = $(DJLIB) $(PTHREAD_LIBS)
 
 djvmcvt_SOURCES = djvmcvt.cpp common.h
-djvmcvt_LDADD = $(DJLIB)
+djvmcvt_LDADD = $(DJLIB) $(PTHREAD_LIBS)
 
 djvudump_SOURCES = djvudump.cpp common.h
-djvudump_LDADD = $(DJLIB)
+djvudump_LDADD = $(DJLIB) $(PTHREAD_LIBS)
 
 djvuextract_SOURCES = djvuextract.cpp common.h
-djvuextract_LDADD = $(DJLIB)
+djvuextract_LDADD = $(DJLIB) $(PTHREAD_LIBS)
 
 djvumake_SOURCES = djvumake.cpp common.h
-djvumake_LDADD = $(DJLIB)
+djvumake_LDADD = $(DJLIB) $(PTHREAD_LIBS)
 
 djvups_SOURCES = djvups.cpp
 djvups_CPPFLAGS = -I$(top_srcdir) $(AM_CPPFLAGS)
-djvups_LDADD = $(DJLIB)
+djvups_LDADD = $(DJLIB) $(PTHREAD_LIBS)
 
 djvused_SOURCES = djvused.cpp common.h
-djvused_LDADD = $(DJLIB)
+djvused_LDADD = $(DJLIB) $(PTHREAD_LIBS)
 
 djvuserve_SOURCES = djvuserve.cpp common.h
-djvuserve_LDADD = $(DJLIB)
+djvuserve_LDADD = $(DJLIB) $(PTHREAD_LIBS)
 
 djvutxt_SOURCES = djvutxt.cpp
 djvutxt_CPPFLAGS = -I$(top_srcdir) $(AM_CPPFLAGS)
-djvutxt_LDADD = $(DJLIB)
+djvutxt_LDADD = $(DJLIB) $(PTHREAD_LIBS)
 
 dist_bin_SCRIPTS = any2djvu djvudigital
 

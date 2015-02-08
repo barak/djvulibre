@@ -203,53 +203,6 @@ GException::cmp_cause(const char s2[]) const
   return cmp_cause(cause,s2);
 }
 
-#ifdef USE_EXCEPTION_EMULATION
-
-GExceptionHandler *GExceptionHandler::head = 0;
-
-void
-GExceptionHandler::emthrow(const GException &gex)
-{
-  if (head)
-    {
-      head->current = gex;
-      longjmp(head->jump, -1);
-    }
-  else
-    {
-      DjVuPrintErrorUTF8("\n*** Unhandled exception");
-      gex.perror();
-      abort();
-    }
-}
-
-#else // ! USE_EXCEPTION_EMULATION
-
-static int abort_on_exception = 0;
-
-void 
-#ifndef NO_LIBGCC_HOOKS
-GExceptionHandler::exthrow(const GException &ex)
-#else
-GExceptionHandler::exthrow(const GException ex)
-#endif /* NO_LIBGCC_HOOKS */
-{
-  if (abort_on_exception) 
-    abort();
-  throw ex;
-}
-
-void 
-GExceptionHandler::rethrow(void)
-{
-  if (abort_on_exception) 
-    abort();
-  throw;
-}
-
-#endif
-
-
 
 // ------ MEMORY MANAGEMENT HANDLER
 

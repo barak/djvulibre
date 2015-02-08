@@ -90,19 +90,14 @@
 #include "GException.h"
 
 // Known platforms
-#if !WINTHREADS && !POSIXTHREADS
 # ifdef WIN32
 #  define WINTHREADS 1
 # elif HAVE_PTHREAD
 #  define POSIXTHREADS 1
+# else
+#  error "Libdjvu requires thread support"
 # endif
-#endif
 
-// Exception emulation is not thread safe
-#ifdef USE_EXCEPTION_EMULATION
-# undef  WINTHREADS
-# undef  POSIXTHREADS
-#endif
 
 // ----------------------------------------
 // INCLUDES

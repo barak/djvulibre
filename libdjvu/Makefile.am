@@ -28,8 +28,8 @@ libdjvulibre_la_SOURCES = Arrays.cpp BSByteStream.cpp			\
  UnicodeByteStream.h XMLParser.h XMLTags.h ZPCodec.h atomic.h debug.h
 
 libdjvulibre_la_CPPFLAGS = -DDIR_DATADIR=\"$(datadir)\"
-libdjvulibre_la_CXXFLAGS = $(OPTS) $(JPEG_CFLAGS) $(THREAD_CFLAGS)
-libdjvulibre_la_LIBADD = $(JPEG_LIBS) $(THREAD_LIBS)
+libdjvulibre_la_CXXFLAGS = $(OPTS) $(JPEG_CFLAGS) $(PTHREAD_CFLAGS)
+libdjvulibre_la_LIBADD = $(JPEG_LIBS) $(PTHREAD_LIBS)
 libdjvulibre_la_LDFLAGS = -no-undefined -version-info $(version_info)
 
 if HAVE_OS_WIN32

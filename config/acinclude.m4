@@ -338,32 +338,6 @@ fi
 ])
 
 
-dnl -------------------------------------------------------
-dnl @synopsis AC_CXX_RPO
-dnl Defines option --enable-rpo and searches program RPO.
-dnl Set output variables CXXRPOFLAGS and RPO. 
-dnl -------------------------------------------------------
-AC_DEFUN([AC_CXX_RPO],
-[ CXXRPOFLAGS=
-  RPO_YES='#'
-  RPO_NO=''
-  if test x$GXX = xyes ; then
-    AC_ARG_ENABLE([rpo],
-      AS_HELP_STRING([--enable-rpo],
-                     [Enable compilation with option -frepo]),
-      [ac_rpo=$enableval], [ac_rpo=no] )
-    if test x$ac_rpo != xno ; then
-      CXXRPOFLAGS='-frepo -fno-rtti'
-      RPO_YES=''
-      RPO_NO='#'
-    fi
-  fi
-  AC_SUBST(CXXRPOFLAGS)
-  AC_SUBST(RPO_YES)
-  AC_SUBST(RPO_NO)
-])
-
-
 dnl ------------------------------------------------------------------
 dnl @synopsis AC_PATH_PTHREAD([ACTION-IF-FOUND[, ACTION-IF-NOT-FOUND]])
 dnl This macro figures out how to build C programs using POSIX
@@ -555,73 +529,6 @@ else
 fi
 ])
 
-
-dnl ------------------------------------------------------------------
-dnl @synopsis AC_PATH_THREADS([ACTION-IF-FOUND[, ACTION-IF-NOT-FOUND]])
-dnl Process optional option --enable-threads
-dnl Check availability of pthreads or cothreads using AC_PATH_PTHREAD
-dnl Set output variable THREADS_LIBS and THREADS_CFLAGS
-dnl ------------------------------------------------------------------
-
-AC_DEFUN([AC_PATH_THREADS], [
-AC_ARG_ENABLE(threads,
-            AS_HELP_STRING([--enable-threads],
-                           [select threading model (default is auto)]),
-            ac_use_threads=$enableval, ac_use_threads=auto)
-ac_threads=no
-if test x$ac_use_threads != xno ; then
-  if test x$ac_threads = xno ; then
-    case x$ac_use_threads in
-    x|xyes|xauto|xposix|xpthread)
-        AC_PATH_PTHREAD(
-                [ ac_threads=pthread
-                  ac_use_threads=pthread
-                  THREAD_LIBS="$PTHREAD_LIBS"
-                  THREAD_CFLAGS="$PTHREAD_CFLAGS -DPOSIXTHREADS"
-                ] )
-        ;;
-    esac
-  fi
-  if test x$ac_threads = xno ; then
-    case x$ac_use_threads in
-    x|xyes|xauto|xwin32|xwindows)
-        AC_LINK_IFELSE(
-        [AC_LANG_PROGRAM(
-         [[
-#include <windows.h>
-         ]],
-         [
-CreateThread(NULL,4096,NULL,NULL,0,NULL);
-         ])],
-         [
-          ac_threads=win32
-          ac_use_threads=win32
-          THREAD_LIBS=""
-          THREAD_CFLAGS="-DWINTHREADS"
-         ])
-        ;;
-    esac
-  fi
-fi
-AC_SUBST(THREAD_LIBS)
-AC_SUBST(THREAD_CFLAGS)
-AC_SUBST(PTHREAD_LIBS)
-AC_SUBST(PTHREAD_CFLAGS)
-AC_MSG_CHECKING([threading model])
-AC_MSG_RESULT($ac_threads)
-if test x$ac_threads = xwin32 ; then
-   AC_CHECK_CXX_OPT([-mthreads],
-	 [THREAD_CFLAGS="-mthreads $THREAD_CFLAGS"])
-fi
-if test $ac_threads != no ; then
-   AC_MSG_RESULT([setting THREAD_CFLAGS=$THREAD_CFLAGS])
-   AC_MSG_RESULT([setting THREAD_LIBS=$THREAD_LIBS])
-   ifelse([$1],,:,[$1])
-else
-   ifelse([$2],,:,[$2])
-fi
-])
-
 dnl ------------------------------------------------------------------
 dnl @synopsis AC_PATH_JPEG([ACTION-IF-FOUND[, ACTION-IF-NOT-FOUND]])
 dnl Process option --with-jpeg.
@@ -682,8 +589,8 @@ jpeg_CreateDecompress(0,0,0);
       ifelse([$2],,:,[$2])
    else
       AC_DEFINE(HAVE_JPEG,1,[Define if you have the IJG JPEG library.])
-      AC_MSG_RESULT([setting JPEG_CFLAGS=$JPEG_CFLAGS])
-      AC_MSG_RESULT([setting JPEG_LIBS=$JPEG_LIBS])
+      dnl AC_MSG_RESULT([setting JPEG_CFLAGS=$JPEG_CFLAGS])
+      dnl AC_MSG_RESULT([setting JPEG_LIBS=$JPEG_LIBS])
       ifelse([$1],,:,[$1])
    fi
 ])
@@ -748,8 +655,8 @@ TIFFOpen(0,0);
       ifelse([$2],,:,[$2])
    else
       AC_DEFINE(HAVE_TIFF,1,[Define if you have libtiff.])
-      AC_MSG_RESULT([setting TIFF_CFLAGS=$TIFF_CFLAGS])
-      AC_MSG_RESULT([setting TIFF_LIBS=$TIFF_LIBS])
+      dnl AC_MSG_RESULT([setting TIFF_CFLAGS=$TIFF_CFLAGS])
+      dnl AC_MSG_RESULT([setting TIFF_LIBS=$TIFF_LIBS])
       ifelse([$1],,:,[$1])
    fi
 ])

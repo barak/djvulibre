@@ -133,11 +133,6 @@ Here are the most important ones.
   When everything else fails, you can simply define the environment
   variables TIFF_CFLAGS and TIFF_LIBS.
 
-* Option "--enable-threads=(auto|win32|posix)"
-  This option specifies which threading model should be used.
-  You can help the search process by defining environment
-  variables PTHREAD_CFLAGS and PTHREAD_LIBS.
-
 Always check the output of the configuration script for warnings and errors.
 In particular, the configuration script might disable the compilation of
 djview if it cannot locate the required libraries and utilities.  The warning

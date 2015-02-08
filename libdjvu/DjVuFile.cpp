@@ -658,31 +658,22 @@ DjVuFile::report_error(const GException &ex,bool throw_errors)
 {
   data_pool->clear_stream();
   if((!verbose_eof)|| (ex.cmp_cause(ByteStream::EndOfFile)))
-  {
-    if(throw_errors)
     {
-      G_EMTHROW(ex);
-    }else
-    {
-      get_portcaster()->notify_error(this,ex.get_cause());
+      if(throw_errors)
+        G_RETHROW(ex);
+      else
+        get_portcaster()->notify_error(this,ex.get_cause());
     }
-  }else
-  {
-    GURL url=get_url();
-    GUTF8String url_str=url.get_string();
-//    if (url.is_local_file_url())
-//      url_str=url.filename();
-    
-    GUTF8String msg = GUTF8String( ERR_MSG("DjVuFile.EOF") "\t") + url;
-    if(throw_errors)
+  else
     {
-      G_EMTHROW(GException(msg, ex.get_file(), ex.get_line(), 
-                           ex.get_function() ));
-    }else
-    {
-      get_portcaster()->notify_error(this,msg);
+      GURL url=get_url();
+      GUTF8String url_str=url.get_string();
+      GUTF8String msg = GUTF8String( ERR_MSG("DjVuFile.EOF") "\t") + url;
+      if(throw_errors)
+        G_RETHROW(GException(msg,ex.get_file(),ex.get_line(),ex.get_function()));
+      else
+        get_portcaster()->notify_error(this,msg);
     }
-  }
 }
 
 void
