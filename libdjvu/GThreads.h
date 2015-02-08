@@ -90,7 +90,7 @@
 #include "GException.h"
 
 // Known platforms
-# ifdef WIN32
+# ifdef _WIN32
 #  define WINTHREADS 1
 # elif HAVE_PTHREAD
 #  define POSIXTHREADS 1
@@ -290,27 +290,6 @@ private:
 
 
 
-// ----------------------------------------
-// NOTHREADS INLINES
-
-#ifndef POSIXTHREADS
-# ifndef WINTHREADS
-inline GThread::GThread(int stacksize) {}
-inline GThread::~GThread(void) {}
-inline void GThread::terminate() {}
-inline int GThread::yield() { return 0; }
-inline void* GThread::current() { return 0; }
-inline GMonitor::GMonitor() {}
-inline GMonitor::~GMonitor() {}
-inline void GMonitor::enter() {}
-inline void GMonitor::leave() {}
-inline void GMonitor::wait() {}
-inline void GMonitor::wait(unsigned long timeout) {}
-inline void GMonitor::signal() {}
-inline void GMonitor::broadcast() {}
-# endif
-#endif
-
 
 // ----------------------------------------
 // SCOPE LOCK
@@ -350,8 +329,7 @@ public:
 
 
 // ----------------------------------------
-// GSAFEFLAGS (not so safe)
-
+// GSAFEFLAGS (LB: this is not foolproof-safe but can be used savely!)
 
 /** A thread safe class representing a set of flags. The flags are protected
     by \Ref{GMonitor}, which is attempted to be locked whenever somebody
@@ -361,6 +339,7 @@ public:
     (second). The flags remain locked between the moment of testing and
     modification, which guarantees, that their state cannot be changed in
     between of these operations. */
+
 class GSafeFlags : public GMonitor
 {
 private:

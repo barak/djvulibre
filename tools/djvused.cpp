@@ -2353,7 +2353,7 @@ main(int argc, char **argv)
       if (!g().djvufile)
         usage();
       // BOM
-#ifdef WIN32
+#ifdef _WIN32
       if (utf8)
         fwrite(utf8bom, sizeof(utf8bom), 1, stdout);
 #endif

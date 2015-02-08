@@ -76,7 +76,7 @@
 # include <sys/types.h>
 # include <unistd.h>
 #endif
-#if defined(WIN32) && !defined(__CYGWIN32__)
+#if defined(_WIN32) && !defined(__CYGWIN32__)
 # include <io.h>
 # include <mbctype.h>
 #endif
@@ -608,7 +608,7 @@ openfile(int pageno)
           strcpy(tempfilename, outputfilename);
           strcat(tempfilename, ".XXXXXX");
           tiff = 0;
-# ifdef WIN32
+# ifdef _WIN32
           if (_mktemp(tempfilename))
             tiff = TIFFOpen(tempfilename,"w");
 # elif HAVE_MKSTEMP
@@ -632,7 +632,7 @@ openfile(int pageno)
         fout = stdout;
 #if defined(__CYGWIN32__)
         setmode(fileno(fout), O_BINARY);
-#elif defined(WIN32)
+#elif defined(_WIN32)
         _setmode(_fileno(fout), _O_BINARY);
 #endif
       } else if (! (fout = fopen(filename, "wb")))
@@ -664,7 +664,7 @@ closefile(int pageno)
         die(i18n("Error while flushing TIFF file."));
       if (flag_verbose)
         fprintf(stderr,i18n("Converting temporary TIFF to PDF.\n"));
-#ifndef WIN32
+#ifndef _WIN32
       if (tiffd >= 0)
         {
           int fd = dup(tiffd);
@@ -692,7 +692,7 @@ closefile(int pageno)
         die(i18n("Error occured while creating PDF file."));
       TIFFClose(tiff);
       tiff = 0;
-#ifndef WIN32
+#ifndef _WIN32
       close(tiffd);
       tiffd = -1;
 #endif
@@ -1162,7 +1162,7 @@ int
 main(int argc, char **argv)
 {
   int i;
-#if defined(WIN32) && !defined(__CYGWIN32__)
+#if defined(_WIN32) && !defined(__CYGWIN32__)
   _setmbcp(_MB_CP_OEM);
 #endif
   /* Parse options */

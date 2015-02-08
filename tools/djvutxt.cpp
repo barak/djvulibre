@@ -70,7 +70,7 @@
 #include <fcntl.h>
 #include <errno.h>
 
-#if defined(WIN32) && !defined(__CYGWIN32__)
+#if defined(_WIN32) && !defined(__CYGWIN32__)
 # include <mbctype.h>
 #endif
 
@@ -278,7 +278,7 @@ int
 main(int argc, char **argv)
 {
   int i;
-#if defined(WIN32) && !defined(__CYGWIN32__)
+#if defined(_WIN32) && !defined(__CYGWIN32__)
   _setmbcp(_MB_CP_OEM);
 #endif
   /* Parse options */

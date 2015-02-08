@@ -67,7 +67,7 @@
 
 #include "libdjvu/ddjvuapi.h"
 
-#if defined(WIN32) || defined(__CYGWIN32__)
+#if defined(_WIN32) || defined(__CYGWIN32__)
 # include <io.h>
 # include <mbctype.h>
 #endif
@@ -226,7 +226,7 @@ main(int argc, char **argv)
   const char *infile = 0;
   const char *outfile = 0;
   FILE *fout;
-#if defined(WIN32) && !defined(__CYGWIN32__)
+#if defined(_WIN32) && !defined(__CYGWIN32__)
   _setmbcp(_MB_CP_OEM);
 #endif
   /* Sort options */
@@ -267,7 +267,7 @@ main(int argc, char **argv)
       fout = stdout;
 #if defined(__CYGWIN32__)
       setmode(fileno(fout), O_BINARY);
-#elif defined(WIN32)
+#elif defined(_WIN32)
       _setmode(_fileno(fout), _O_BINARY);
 #endif
     } 

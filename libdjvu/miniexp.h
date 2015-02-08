@@ -27,7 +27,7 @@ extern "C" {
 #endif
 
 #ifndef MINILISPAPI
-# ifdef WIN32
+# ifdef _WIN32
 #  ifdef MINILISPAPI_EXPORT
 #   define MINILISPAPI __declspec(dllexport)
 #  else

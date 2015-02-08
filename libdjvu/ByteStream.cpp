@@ -75,7 +75,7 @@
 #include "DjVuMessage.h"
 #include <stddef.h>
 #include <fcntl.h>
-#if defined(WIN32) || defined(__CYGWIN32__)
+#if defined(_WIN32) || defined(__CYGWIN32__)
 # include <io.h>
 #endif
 
@@ -106,7 +106,7 @@ __inline int dup2(int _a, int _b ) { return _dup2(_a, _b);}
 # endif
 #endif
 
-#ifdef WIN32
+#ifdef _WIN32
 # if !defined(__MINGW32__) && !defined(__CYGWIN32__)
 #  define close _close
 #  define fdopen _fdopen
@@ -624,7 +624,7 @@ ByteStream::Stdio::init(const char mode[])
   if(binary && fp) {
 #if defined(__CYGWIN32__)
     setmode(fileno(fp), O_BINARY);
-#elif defined(WIN32)
+#elif defined(_WIN32)
     _setmode(_fileno(fp), _O_BINARY);
 #endif
   }
@@ -648,7 +648,7 @@ ByteStream::Stdio::init(const char mode[])
 static FILE *
 urlfopen(const GURL &url,const char mode[])
 {
-#if defined(WIN32)
+#if defined(_WIN32)
   FILE *retval=0;
   const GUTF8String filename(url.UTF8Filename());
   wchar_t *wfilename;

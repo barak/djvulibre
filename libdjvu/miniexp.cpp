@@ -71,7 +71,7 @@ assertfail(const char *fn, int ln)
 /* -------------------------------------------------- */
 
 #ifndef WITHOUT_THREADS
-# if defined(_MSC_VER) && (defined(_WIN32) || defined(_WIN64))
+# ifdef _WIN32
 #  include <windows.h>
 #  define USE_WINTHREADS 1
 # elif defined(HAVE_PTHREAD)

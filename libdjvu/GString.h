@@ -111,7 +111,7 @@
 #include <stddef.h>
 #include <stdlib.h>
 #include <stdarg.h>
-#ifdef WIN32
+#ifdef _WIN32
 # include <windows.h>
 # ifndef AUTOCONF
 #  define HAS_WCHAR 1
@@ -131,7 +131,7 @@
 #elif HAVE_INTTYPES_H
 # include <inttypes.h>
 #else
-# ifdef WIN32
+# ifdef _WIN32
 typedef unsigned __int32 uint32_t;
 typedef unsigned __int16 uint16_t;
 # else

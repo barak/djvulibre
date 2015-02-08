@@ -221,7 +221,7 @@ main(int argc, char ** argv)
    } G_ENDCATCH;
 
    exit(0);
-#ifdef WIN32
+#ifdef _WIN32
    return 0;
 #endif
 }

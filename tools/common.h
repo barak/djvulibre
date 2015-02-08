@@ -64,11 +64,11 @@
 #include <stdio.h>
 #include <errno.h>
 
-#if defined(WIN32) && !defined(__CYGWIN32__)
+#if defined(_WIN32) && !defined(__CYGWIN32__)
 # include <mbctype.h>
 #endif
 
-#if defined(WIN32) && !defined(__CYGWIN32__)
+#if defined(_WIN32) && !defined(__CYGWIN32__)
 # define DJVU_LOCALE do {          \
        setlocale(LC_ALL,"");       \
        setlocale(LC_NUMERIC,"C");  \

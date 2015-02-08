@@ -75,7 +75,7 @@
 #include <stdio.h>
 #include <errno.h>
 
-#ifdef WIN32
+#ifdef _WIN32
 # include <windows.h>  // OutputDebugString
 #endif 
 
@@ -89,7 +89,7 @@ namespace DJVU {
 
 
 #ifndef UNIX
-#ifndef WIN32
+#ifndef _WIN32
 #ifndef macintosh
 #define UNIX
 #endif
@@ -150,7 +150,7 @@ DjVuDebug::format(const char *fmt, ... )
           fprintf(debug_file,"%s", (const char*)buffer);
           fflush(debug_file);
         }
-#ifdef WIN32
+#ifdef _WIN32
       else
         {
           OutputDebugStringA((const char *)buffer);

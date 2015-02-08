@@ -70,7 +70,7 @@
 # include <new> // try standard c++ anyway!
 #endif
 
-#ifdef WIN32
+#ifdef _WIN32
 # ifdef DJVUAPI_EXPORT
 #  define DJVUAPI __declspec(dllexport)
 # else

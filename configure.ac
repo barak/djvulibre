@@ -341,7 +341,7 @@ AH_BOTTOM([
 
 /* - Miscellaneous */
 #define AUTOCONF 1
-#if defined(__CYGWIN32__) || !defined(WIN32)
+#if defined(__CYGWIN32__) || !defined(_WIN32)
 # define UNIX 1
 #endif
 

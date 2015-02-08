@@ -1580,7 +1580,7 @@ GStringRep::setat(int n, char ch) const
 
 #if defined(AUTOCONF) && defined(HAVE_VSNPRINTF)
 # define USE_VSNPRINTF vsnprintf
-#elif defined(WIN32) && !defined(__CYGWIN32__)
+#elif defined(_WIN32) && !defined(__CYGWIN32__)
 # define USE_VSNPRINTF _vsnprintf
 #elif defined(linux)
 # define USE_VSNPRINTF vsnprintf

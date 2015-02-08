@@ -86,11 +86,11 @@
 #endif
 
 #ifndef _DEBUG
-#if defined(DEBUG) 
-#define _DEBUG /* */
-#elif DEBUGLVL >= 1
-#define _DEBUG /* */
-#endif
+# if defined(DEBUG) 
+#  define _DEBUG /* */
+# elif DEBUGLVL >= 1
+#  define _DEBUG /* */
+# endif
 #endif
 
 #if WINTHREADS
@@ -103,20 +103,6 @@ namespace DJVU {
 # ifdef NOT_DEFINED // Just to fool emacs c++ mode
 }
 #endif
-#endif
-
-
-// ----------------------------------------
-// NOTHREADS
-// ----------------------------------------
-
-#if NOTHREADS
-int
-GThread::create( void (*entry)(void*), void *arg)
-{
-  (*entry)(arg);
-  return 0;
-}
 #endif
 
 

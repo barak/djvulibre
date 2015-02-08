@@ -211,7 +211,7 @@ GException::cmp_cause(const char s2[]) const
 // is overidden.  The overriding functions handle
 // memory exceptions by themselves.
 static void throw_memory_error() { G_THROW(GException::outofmemory); }
-# if defined(WIN32) || defined(__CYGWIN32__) || defined(OS2)
+# if defined(_WIN32) || defined(__CYGWIN32__) || defined(OS2)
 static void (*old_handler)() = std::set_new_handler(throw_memory_error);
 # else 
 #   ifdef HAVE_STDINCLUDES
