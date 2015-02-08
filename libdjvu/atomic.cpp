@@ -28,10 +28,14 @@
 
 #ifndef ATOMIC_MACROS
 
-// #include "GThreads.h"
-#include <pthread.h>
-// #include <QMutex>
-// #include <QWaitCondition>
+#if HAVE_PTHREAD
+# include <pthread.h>
+#elif HAVE_QTHREAD  // never defined at the moment.
+# include <QMutex>
+# include <QWaitCondition>
+#else
+# include "GThreads.h"
+#endif
 
 /* Select synchronization primitives */
 

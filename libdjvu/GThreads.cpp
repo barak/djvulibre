@@ -79,17 +79,11 @@
 // ----------------------------------------
 // Consistency check
 
-#if THREADMODEL!=NOTHREADS
 #ifdef USE_EXCEPTION_EMULATION
-#warning "Compiler must support thread safe exceptions"
-#endif //USE_EXCEPTION_EMULATION
-#if defined(__GNUC__)
-#if (__GNUC__<2) || ((__GNUC__==2) && (__GNUC_MINOR__<=8))
-#warning "GCC 2.8 exceptions are not thread safe."
-#warning "Use properly configured EGCS-1.1 or greater."
-#endif // (__GNUC__<2 ...
-#endif // defined(__GNUC__)
-#endif // THREADMODEL!=NOTHREADS
+# if defined(WINTHREADS) || defined(POSIXTHREADS)
+#  warning "Compiler must support thread safe exceptions"
+# endif
+#endif
 
 #ifndef _DEBUG
 #if defined(DEBUG) 
@@ -99,7 +93,7 @@
 #endif
 #endif
 
-#if THREADMODEL==WINTHREADS
+#if WINTHREADS
 # include <process.h>
 #endif
 
@@ -116,7 +110,7 @@ namespace DJVU {
 // NOTHREADS
 // ----------------------------------------
 
-#if THREADMODEL==NOTHREADS
+#if NOTHREADS
 int
 GThread::create( void (*entry)(void*), void *arg)
 {
@@ -130,7 +124,7 @@ GThread::create( void (*entry)(void*), void *arg)
 // WIN32 IMPLEMENTATION
 // ----------------------------------------
 
-#if THREADMODEL==WINTHREADS
+#if WINTHREADS
 
 static unsigned __stdcall 
 start(void *arg)
@@ -373,14 +367,14 @@ GMonitor::wait(unsigned long timeout)
 // POSIXTHREADS IMPLEMENTATION
 // ----------------------------------------
 
-#if THREADMODEL==POSIXTHREADS
+#if POSIXTHREADS
 
 #if defined(CMA_INCLUDE)
-#define DCETHREADS
-#define pthread_key_create pthread_keycreate
+# define DCETHREADS 1
+# define pthread_key_create pthread_keycreate
 #else
-#define pthread_mutexattr_default  NULL
-#define pthread_condattr_default   NULL
+# define pthread_mutexattr_default  NULL
+# define pthread_condattr_default   NULL
 #endif
 
 static pthread_t pthread_null; // portable zero initialization!
@@ -389,18 +383,18 @@ void *
 GThread::start(void *arg)
 {
   GThread *gt = (GThread*)arg;
-#ifdef DCETHREADS
-#ifdef CANCEL_ON
+#if DCETHREADS
+# ifdef CANCEL_ON
   pthread_setcancel(CANCEL_ON);
   pthread_setasynccancel(CANCEL_ON);
-#endif
+# endif
 #else // !DCETHREADS
-#ifdef PTHREAD_CANCEL_ENABLE
+# ifdef PTHREAD_CANCEL_ENABLE
   pthread_setcancelstate(PTHREAD_CANCEL_ENABLE, 0);
-#endif
-#ifdef PTHREAD_CANCEL_ASYNCHRONOUS
+# endif
+# ifdef PTHREAD_CANCEL_ASYNCHRONOUS
   pthread_setcanceltype(PTHREAD_CANCEL_ASYNCHRONOUS, 0);
-#endif
+# endif
 #endif
   // Catch exceptions
 #ifdef __EXCEPTIONS
@@ -449,7 +443,7 @@ GThread::create(void (*entry)(void*), void *arg)
     return -1;
   xentry = entry;
   xarg = arg;
-#ifdef DCETHREADS
+#if DCETHREADS
   int ret = pthread_create(&hthr, pthread_attr_default, GThread::start, (void*)this);
   if (ret >= 0)
     pthread_detach(hthr);
@@ -473,7 +467,7 @@ GThread::terminate()
 int
 GThread::yield()
 {
-#ifdef DCETHREADS
+#if DCETHREADS
   pthread_yield();
 #else
   // should use sched_yield() when available.

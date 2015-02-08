@@ -133,7 +133,7 @@ Here are the most important ones.
   When everything else fails, you can simply define the environment
   variables TIFF_CFLAGS and TIFF_LIBS.
 
-* Option "--enable-threads=(auto|win32|posix|no)"
+* Option "--enable-threads=(auto|win32|posix)"
   This option specifies which threading model should be used.
   You can help the search process by defining environment
   variables PTHREAD_CFLAGS and PTHREAD_LIBS.

@@ -2988,7 +2988,7 @@
 				OTHER_CFLAGS = (
 					"-DHAVE_CONFIG_H",
 					"-DNDEBUG",
-					"-DTHREADMODEL=POSIXTHREADS",
+					"-DPOSIXTHREADS",
 					"-I$(SOURCE_ROOT)/../..",
 					"-I/usr/local/include",
 				);
@@ -3013,7 +3013,7 @@
 				OTHER_CFLAGS = (
 					"-DHAVE_CONFIG_H",
 					"-DNDEBUG",
-					"-DTHREADMODEL=POSIXTHREADS",
+					"-DPOSIXTHREADS",
 					"-I$(SOURCE_ROOT)/../..",
 					"-I/usr/local/include",
 				);
@@ -3074,7 +3074,7 @@
 				OTHER_CFLAGS = (
 					"-DHAVE_CONFIG_H",
 					"-DNDEBUG",
-					"-DTHREADMODEL=POSIXTHREADS",
+					"-DPOSIXTHREADS",
 					"-I$(SOURCE_ROOT)/../..",
 					"-I/usr/local/include",
 				);
@@ -3090,7 +3090,7 @@
 				OTHER_CFLAGS = (
 					"-DHAVE_CONFIG_H",
 					"-DNDEBUG",
-					"-DTHREADMODEL=POSIXTHREADS",
+					"-DPOSIXTHREADS",
 					"-I$(SOURCE_ROOT)/../..",
 					"-I/usr/local/include",
 				);

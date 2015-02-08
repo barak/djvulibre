@@ -106,16 +106,12 @@ static int              debug_id;
 static FILE            *debug_file;
 static int              debug_file_count;
 
-#if THREADMODEL==NOTHREADS
-static DjVuDebug debug_obj;
-#else
 static GMap<long, DjVuDebug> &
 debug_map(void)
 {
   static GMap<long, DjVuDebug> xmap;
   return xmap;
 }
-#endif
 
 DjVuDebug::DjVuDebug()
   : block(0), indent(0)
@@ -189,16 +185,10 @@ DjVuDebug::lock(int lvl, int noindent)
 {
   int threads_num=1;
   debug_lock.lock();
-  // Find Debug object
-#if THREADMODEL==NOTHREADS
-  // Get no-threads debug object
-  DjVuDebug &dbg = debug_obj;
-#else
   // Get per-thread debug object
   long threadid = (long) GThread::current();
   DjVuDebug &dbg = debug_map()[threadid];
   threads_num=debug_map().size();
-#endif
   // Check level
   dbg.block = (lvl > debug_level);
   // Output thread id and indentation

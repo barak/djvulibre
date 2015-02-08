@@ -577,7 +577,7 @@ if test x$ac_use_threads != xno ; then
                 [ ac_threads=pthread
                   ac_use_threads=pthread
                   THREAD_LIBS="$PTHREAD_LIBS"
-                  THREAD_CFLAGS="$PTHREAD_CFLAGS -DTHREADMODEL=POSIXTHREADS"
+                  THREAD_CFLAGS="$PTHREAD_CFLAGS -DPOSIXTHREADS"
                 ] )
         ;;
     esac
@@ -597,7 +597,7 @@ CreateThread(NULL,4096,NULL,NULL,0,NULL);
           ac_threads=win32
           ac_use_threads=win32
           THREAD_LIBS=""
-          THREAD_CFLAGS="-DTHREADMODEL=WINTHREADS"
+          THREAD_CFLAGS="-DWINTHREADS"
          ])
         ;;
     esac
