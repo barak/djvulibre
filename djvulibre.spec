@@ -1,5 +1,5 @@
-%define release 4
-%define version 3.5.26
+%define release 1
+%define version 3.5.27
 
 Summary: DjVu viewers, encoders and utilities.
 Name: djvulibre
@@ -84,46 +84,5 @@ exit 0
 %{_mandir}
 
 %changelog
-* Thu Jan 22 2015 Leon Bottou <leon@bottou.org> 3.5.26-4
-- no longer rely on xdg scripts for mime types
-* Sat Jan 15 2007 Leon Bottou <leon@bottou.org> 3.5.18-2
-- changed postun as preun
-* Tue Jan 15 2007 Leon Bottou <leon@bottou.org> 3.5.18-1
-- Use xdg scripts to install mime types and menu entries
-- Updated to 3.5.18-1
-* Mon Oct 31 2005 Leon Bottou <leon@bottou.org> 3.5.16-1
-- Updated to 3.5.16-1
-* Wed Jul  6 2005 Leon Bottou <leon@bottou.org> 3.5.15-1
-- Updated to 3.5.15-1
-* Thu Jun 17 2004 Leon Bottou <leon@bottou.org> 3.5.13-4
-- changed runtime generation of file list.
-* Mon May 31 2004 Leon Bottou <leon@bottou.org> 3.5.13-3
-- removed 'make install-desktop-files'
-* Wed May  5 2004 Leon Bottou <leon@bottou.org> 3.5.13-2
-* Fri Apr  9 2004 Leon Bottou <leon@bottou.org> 3.5.13-1
-- added runtime generation of file list.
-- using DESTDIR instead of %makeinstall.
-- added 'make install-desktop-files'
-* Wed Nov  5 2003 Leon Bottou <leon@bottou.org> 3.5.12-3
-- added support for i18n
-- renamed symlink in mozilla plugin dirs.
-* Mon Jul  7 2003 Leon Bottou <leon@bottou.org> 3.5.12-1
-* Thu Apr 24 2003 Leon Bottou <leon@bottou.org> 3.5.11-1
-* Thu Feb  6 2003 Leon Bottou <leon@bottou.org> 3.5.10-2
-* Fri Jan 24 2003 Leon Bottou <leon@bottou.org> 3.5.10-1
-* Wed Oct  9 2002 Leon Bottou <leonb@users.sourceforge.net> 3.5.9-2
-- fixed logic for uninstalling nsdejavu links.
-- learned a few tricks from the freshrpms spec file.
-* Sun Oct  6 2002 Leon Bottou <leonb@users.sourceforge.net> 3.5.9-1
-- added logic to install nsdejavu for mozilla.
-* Wed May 29 2002 Leon Bottou <leonb@users.sourceforge.net> 3.5.6-1
-* Mon Apr 1 2002  Leon Bottou <leonb@users.sourceforge.net> 3.5.5-2
-- changed group to Applications/Publishing.
-* Tue Mar 25 2002 Leon Bottou <leonb@users.sourceforge.net> 3.5.5-2
-* Tue Jan 22 2002 Leon Bottou <leonb@users.sourceforge.net> 3.5.4-2
-- added macros to locate man directory.
-* Wed Jan 16 2002 Leon Bottou <leonb@users.sourceforge.net> 3.5.3-1
-* Fri Dec  7 2001 Leon Bottou <leonb@users.sourceforge.net> 3.5.2-1
-* Wed Dec  5 2001 Leon Bottou <leonb@users.sourceforge.net> 3.5.1-1
-- created initial file.
-
+* Sun Feb 08 2015 Leon Bottou <leon@bottou.org> 3.5.27-1
+- new release

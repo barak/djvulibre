@@ -1,3 +1,9 @@
+djvulibre (3.5.27-0pre1) UNRELEASED; urgency=medium
+
+  * Prepare rev 3.5.27
+
+ -- Leon Bottou <leonb@fuji>  Sun, 08 Feb 2015 14:20:46 -0500
+
 djvulibre (3.5.26-1) experimental; urgency=medium
 
   * upstream reworked build system, uses automake and pkg-config
