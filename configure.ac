@@ -78,24 +78,18 @@ fi
 
 # Special cases
 
-have_os_win32="no"
-
-case "$host" in
-  *-mingw32)
-     have_os_win32="yes"
-  ;;
-  *-darwin* | *-macos10*)
-     if test -d /opt/local ; then
-       CPPFLAGS="$CPPFLAGS -I/opt/local/include"
-       LDFLAGS="$LDFLAGS -L/opt/local/lib"
-     elif test -d /sw ; then
-       CPPFLAGS="$CPPFLAGS -I/sw/include"
-       LDFLAGS="$LDFLAGS -L/sw/lib"
-     fi
-  ;;
-esac
-
+AC_CHECK_DECL([_WIN32],[have_os_win32=yes],[have_os_win32=no])
 AM_CONDITIONAL([HAVE_OS_WIN32], [test "x${have_os_win32}" = "xyes"])
+
+AC_CHECK_DECL([__APPLE__],[have_os_apple=yes],[have_os_apple=no])
+if test x$have_os_apple = xyes && test -d /opt/local ; then
+    CPPFLAGS="$CPPFLAGS -I/opt/local/include"
+    LDFLAGS="$LDFLAGS -L/opt/local/lib"
+elif test x$have_os_apple = xyes && test -d /sw ; then
+    CPPFLAGS="$CPPFLAGS -I/sw/include"
+    LDFLAGS="$LDFLAGS -L/sw/lib"
+fi
+
 
 
 
@@ -112,44 +106,21 @@ AC_PROG_LN_S
 AC_PROG_MKDIR_P
 AC_PROG_SED
 AC_PATH_PROG([TOUCH], [touch])
-CONVERT=
-INKSCAPE="no"
-AC_PATH_PROG([RSVG], [rsvg-convert], [no])
-if test "x${RSVG}" = "xno" ; then
-   AC_PATH_PROG([INKSCAPE], [inkscape], [no])
-   if test "x${INKSCAPE}" = "xno" ; then
-# convert exists on Windows as system tool or as part of other projects
-# so we check that it belongs to the ImageMagick project
-      AC_MSG_CHECKING([for convert])
-      AC_PATH_PROGS_FEATURE_CHECK([CONVERT], [convert],
-      [[
-        convertout=`eval $ac_path_CONVERT -version 2>&1 |
-                         sed -n 's/^Version: ImageMagick .*/ImageMagick/p '`
-        test "x$convertout" = "xImageMagick" && \
-             ac_cv_path_CONVERT=$ac_path_CONVERT ac_path_CONVERT_found=:
-      ]], [CONVERT=no])
-      if test "x${CONVERT}" = "xno" ; then
-         AC_MSG_RESULT(${CONVERT})
-         conversion_tool="no"
-      else
-         conversion_tool="convert"
-         CONVERT="convert"
-         AC_MSG_RESULT(${CONVERT})
-      fi
-   else
-      conversion_tool="inkscape"
-   fi
-else
-  conversion_tool="rsvg"
+AC_PATH_PROG([RSVG], [rsvg-convert], [false])
+AC_PATH_PROG([INKSCAPE], [inkscape], [false])
+AC_PATH_PROG([CONVERT], [convert], [false])
+conversion_tool=no
+if test "x${RSVG}" != xfalse ; then
+  conversion_tool=rsvg
+elif test "x${INKSCAPE}" != xfalse ; then
+  conversion_tool=inkscape
+elif test "x${CONVERT}" != xfalse ; then
+  ( ${CONVERT} --version 2>&1 | grep -q ImageMagick ) && conversion_tool=convert
 fi
-
-AC_SUBST([CONVERT])
-
-AM_CONDITIONAL([HAVE_CONVERSION_RSVG], [! test "x${RSVG}" = "xno"])
-AM_CONDITIONAL([HAVE_CONVERSION_CONVERT], [! test "x${CONVERT}" = "xno"])
-AM_CONDITIONAL([HAVE_CONVERSION_INKSCAPE], [! test "x${INKSCAPE}" = "xno"])
-
-AM_CONDITIONAL([HAVE_CONVERSION_TOOL], [! test "x${RSVG}" = "xno" || ! test "x${CONVERT}" = "xno" || ! test "x${INKSCAPE}" = "xno"])
+AM_CONDITIONAL([HAVE_CONVERSION_RSVG], [test x${conversion_tool} = xrsvg])
+AM_CONDITIONAL([HAVE_CONVERSION_INKSCAPE], [test x${conversion_tool} = xinkscape])
+AM_CONDITIONAL([HAVE_CONVERSION_CONVERT], [test x${conversion_tool} = xconvert])
+AM_CONDITIONAL([HAVE_CONVERSION_TOOL], [test x${conversion_tool} != xno])
 
 # tweak rm to make libtool happy
 AC_PATH_PROG(RM, rm) 
@@ -237,8 +208,9 @@ fi
 # Test auxilliary packages
 # ----------------------------------------
 
-# Search for PTHREADS
-AC_PATH_PTHREAD([have_pthread=yes], [have_pthread=no])
+# Search for PTHREADS (when not on windows)
+have_pthread=no
+AM_COND_IF([HAVE_OS_WIN32],,[AC_PATH_PTHREAD([have_pthread=yes])])
 
 # Search JPEG library
 AC_PATH_JPEG([have_jpeg="yes"], [have_jpeg="no"])
@@ -307,6 +279,7 @@ echo
 echo "Configuration Options Summary:"
 echo
 echo "  OS...................: ${host_os}"
+echo "  Win32 support........: ${have_os_win32}"
 echo "  Pthread support......: ${have_pthread}"
 echo "  Iconv support........: ${ac_has_iconv}"
 echo "  JPEG support.........: ${have_jpeg}"
