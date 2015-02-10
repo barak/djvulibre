@@ -76,7 +76,7 @@ exit 0
 
 %files
 %defattr(-, root, root)
-%doc README COPYRIGHT COPYING INSTALL NEWS TODO doc
+%doc README COPYRIGHT COPYING NEWS doc
 %{_bindir}
 %{_libdir}
 %{_includedir}/libdjvu
