@@ -69,6 +69,8 @@
 
 #if defined(_WIN32) || defined(__CYGWIN32__)
 # include <io.h>
+#endif
+#if defined(_WIN32) || !defined(__CYGWIN32__)
 # include <mbctype.h>
 #endif
 

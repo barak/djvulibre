@@ -106,8 +106,7 @@ __inline int dup2(int _a, int _b ) { return _dup2(_a, _b);}
 # endif
 #endif
 
-#ifdef _WIN32
-# if !defined(__MINGW32__) && !defined(__CYGWIN32__)
+#if defined(_WIN32) && !defined(__CYGWIN32__)
 #  define close _close
 #  define fdopen _fdopen
 #  define dup _dup
