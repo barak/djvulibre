@@ -110,7 +110,6 @@ __inline int dup2(int _a, int _b ) { return _dup2(_a, _b);}
 #  define close _close
 #  define fdopen _fdopen
 #  define dup _dup
-# endif
 #endif
 
 #ifdef HAVE_NAMESPACES

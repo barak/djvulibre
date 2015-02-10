@@ -60,14 +60,13 @@ AC_DEFUN([AC_CXX_OPTIMIZE],[
    CFLAGS=
    for opt in $saved_CXXFLAGS ; do
      case $opt in
-       -g*) test $ac_debug != no && OPTS="$OPTS $opt" ;;
        -O*) ;;
        *) CXXFLAGS="$CXXFLAGS $opt" ;;
      esac
    done
    for opt in $saved_CFLAGS ; do
      case $opt in
-       -O*|-g*) ;;
+       -O*) ;;
        *) CFLAGS="$CFLAGS $opt" ;;
      esac
    done
