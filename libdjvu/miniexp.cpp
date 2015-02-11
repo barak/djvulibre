@@ -352,31 +352,45 @@ static gctls_t *gctls() {
 }
 # endif
 
-#elif USE_WINTHREADS
+#elif USE_WINTHREADS 
 // Manage thread specific data with win32
-# ifdef _MSC_VER
-#  define __thread __declspec(thread)
-# endif
-static __thread gctls_t *gctls_tv = 0;
+#if defined(_MSC_VER) && defined(USE_MSVC_TLS)
+// -- Pre-vista os sometimes crashes on this.
+static __declspec(thread) gctls_t *gctls_tv = 0;
 static gctls_t *gctls() {
   if (! gctls_tv)  gctls_tv = new gctls_t();
   return gctls_tv;
 }
-// Black magic to deallocate tls data
 static void NTAPI gctls_cb(PVOID, DWORD dwReason, PVOID) {
   if (dwReason == DLL_THREAD_DETACH && gctls_tv) 
     { CSLOCK(locker); delete gctls_tv; gctls_tv=0; } }
+# else
+// -- Using Tls{Alloc,SetValue,GetValue,Free} instead.
+static DWORD tlsIndex = TLS_OUT_OF_INDEXES;
+static gctls_t *gctls() {
+  if (tlsIndex == TLS_OUT_OF_INDEXES) tlsIndex = TlsAlloc();
+  ASSERT(tlsIndex != TLS_OUT_OF_INDEXES);
+  gctls_t *addr = (gctls_t*)TlsGetValue(tlsIndex);
+  if (! addr) TlsSetValue(tlsIndex, (LPVOID)(addr = new gctls_t()));
+  ASSERT(addr != 0);
+  return addr;
+}
+static void NTAPI gctls_cb(PVOID, DWORD dwReason, PVOID) {
+  if (dwReason == DLL_THREAD_DETACH && tlsIndex != TLS_OUT_OF_INDEXES)
+    {CSLOCK(r);delete(gctls_t*)TlsGetValue(tlsIndex);TlsSetValue(tlsIndex,0);}
+  if (dwReason == DLL_PROCESS_DETACH && tlsIndex != TLS_OUT_OF_INDEXES)
+    {CSLOCK(r);TlsFree(tlsIndex);tlsIndex=TLS_OUT_OF_INDEXES;}
+}
+# endif
+// -- Very black magic to clean tls variables.
 # ifdef _M_IX86
 #  pragma comment (linker, "/INCLUDE:_tlscb")
-#  pragma data_seg(".CRT$XLB")
-extern "C" PIMAGE_TLS_CALLBACK tlscb = gctls_cb;
-#  pragma data_seg()
-#else
+# else
 #  pragma comment (linker, "/INCLUDE:tlscb")
-#  pragma const_seg(".CRT$XLB")
+# endif
+# pragma const_seg(".CRT$XLB")
 extern "C" PIMAGE_TLS_CALLBACK tlscb = gctls_cb;
-#  pragma const_seg()
-#endif
+# pragma const_seg()
 
 #else
 // No threads
