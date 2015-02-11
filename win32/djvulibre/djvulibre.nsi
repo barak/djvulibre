@@ -29,7 +29,7 @@ RequestExecutionLevel admin
 
 !define NSI_VER "9.2"
 !define DJVULIBRE_NAME "DjVuLibre"
-!define DJVULIBRE_VERSION "3.5.26"
+!define DJVULIBRE_VERSION "3.5.27"
 !define CLASSES "Software\Classes\"
 !define DJVIEW_NAME "DjView"
 !define DJVIEW_VERSION "4.9.2"
