@@ -1,7 +1,7 @@
 bin_PROGRAMS = djvutoxml djvuxmlparser
 
 AM_CPPFLAGS = -I$(top_srcdir)/libdjvu -I$(top_srcdir)/tools
-AM_CXXFLAGS = $(OPTS) $(PTHREAD_CFLAGS)
+AM_CXXFLAGS = $(PTHREAD_CFLAGS)
 DJLIB = $(top_builddir)/libdjvu/libdjvulibre.la
 
 djvutoxml_SOURCES = djvutoxml.cpp

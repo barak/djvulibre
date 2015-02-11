@@ -6,7 +6,7 @@ jb2cmp_SOURCES = jb2cmp/classify.cpp jb2cmp/cuts.cpp		\
  jb2cmp/mdjvucfg.h jb2cmp/minidjvu.h jb2cmp/patterns.h
 
 AM_CPPFLAGS = -I$(top_srcdir)/libdjvu
-AM_CXXFLAGS = $(OPTS) $(PTHREAD_CFLAGS)
+AM_CXXFLAGS = $(PTHREAD_CFLAGS)
 
 DJLIB = $(top_builddir)/libdjvu/libdjvulibre.la
 
@@ -31,7 +31,7 @@ ddjvu_CPPFLAGS = -I$(top_srcdir)  $(AM_CPPFLAGS) $(TIFF_CFLAGS)
 if HAVE_OS_WIN32
 ddjvu_CPPFLAGS += -D__USE_MINGW_ANSI_STDIO
 endif
-ddjvu_CFLAGS = $(OPTS) $(THREAD_CFLAGS)
+ddjvu_CFLAGS = $(THREAD_CFLAGS)
 ddjvu_LDADD = $(DJLIB) $(TIFF_LIBS) $(PTHREAD_LIBS)
 
 djvm_SOURCES = djvm.cpp common.h

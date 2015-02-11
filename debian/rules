@@ -26,9 +26,6 @@ else ifneq (,$(findstring noopt,$(DEB_BUILD_OPTIONS)))
 configure_options += --enable-debug
 endif
 
-# Always keep dubugging symbols
-configure_options += CXXFLAGS=-g
-
 override_dh_testdir:
 	@echo "library major version: upstream $(libver0), debian $(libver)"
 ifneq ($(libver0),$(libver))

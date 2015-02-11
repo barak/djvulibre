@@ -34,6 +34,7 @@ m4_define([lt_age], [m4_eval(v_mic - lt_compat)])
 
 AC_PREREQ([2.65])
 AC_INIT([djvulibre],[v_ver])
+
 AC_CONFIG_AUX_DIR(config)
 AC_CONFIG_MACRO_DIR(config)
 AC_CONFIG_SRCDIR(libdjvu/ddjvuapi.cpp)
@@ -92,7 +93,6 @@ fi
 
 
 
-
 # ----------------------------------------
 # Programs
 # ----------------------------------------
@@ -129,12 +129,10 @@ RM="$RM -f"
 # Libtool & Compilers
 AC_PROG_CC
 AC_PROG_CXX
-AC_SUBST(LIBTOOL_DEPS)
-
+AC_OPTIMIZE
 
 # C++
 AC_LANG(C++)
-AC_CXX_OPTIMIZE
 AC_CXX_BOOL
 AC_CXX_EXCEPTIONS
 AC_CXX_TYPENAME
@@ -289,10 +287,9 @@ echo "  Desktop files......: ${ac_desktopfiles}"
 echo "  Icon generation....: ${conversion_tool}"
 echo
 echo "Compilation..........: make (or gmake)"
-echo "  OPTS----...........: $OPTS"
 echo "  CPPFLAGS...........: $CPPFLAGS"
-echo "  CFLAGS.............: $CFLAGS \$OPTS"
-echo "  CXXFLAGS...........: $CXXFLAGS \$OPTS"
+echo "  CFLAGS.............: $CFLAGS"
+echo "  CXXFLAGS...........: $CXXFLAGS"
 echo "  LDFLAGS............: $LDFLAGS"
 echo
 echo "Installation...........: make install (as root if needed, with 'su' or 'sudo')"

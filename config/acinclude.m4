@@ -24,81 +24,105 @@ dnl -------------------------------------------------------
 dnl @synopsis AC_CHECK_CXX_OPT(OPTION,
 dnl               ACTION-IF-OKAY,ACTION-IF-NOT-OKAY)
 dnl Check if compiler accepts option OPTION.
+dnl Default action is to add option to CXXFLAGS.
 dnl -------------------------------------------------------
 AC_DEFUN([AC_CHECK_CXX_OPT],[
  opt="$1"
  AC_MSG_CHECKING([if $CXX accepts $opt])
  echo 'void f(){}' > conftest.cc
- if test -z "`${CXX} ${CXXFLAGS} ${OPTS} $opt -c conftest.cc 2>&1`"; then
+ if test -z "`${CXX} ${CXXFLAGS} $opt -c conftest.cc 2>&1`"; then
     AC_MSG_RESULT(yes)
     rm conftest.* 
-    $2
+    ifelse($2,,[CXXFLAGS="$CXXFLAGS $opt"],$2)
  else
     AC_MSG_RESULT(no)
     rm conftest.*
-    $3
+    ifelse($3,,:,$3)
  fi
 ])
 
 dnl -------------------------------------------------------
-dnl @synopsis AC_CXX_OPTIMIZE
-dnl Setup option --enable-debug
-dnl Collects optimization/debug option in variable OPTS
-dnl Filter options from CFLAGS and CXXFLAGS
+dnl @synopsis AC_CHECK_CC_OPT(OPTION,
+dnl               ACTION-IF-OKAY,ACTION-IF-NOT-OKAY)
+dnl Check if compiler accepts option OPTION.
+dnl Default action is to add option to CFLAGS.
 dnl -------------------------------------------------------
-AC_DEFUN([AC_CXX_OPTIMIZE],[
+AC_DEFUN([AC_CHECK_CC_OPT],[
+ opt="$1"
+ AC_MSG_CHECKING([if $CXX accepts $opt])
+ echo 'void f(){}' > conftest.cc
+ if test -z "`${CC} ${CFLAGS} $opt -c conftest.cc 2>&1`"; then
+    AC_MSG_RESULT(yes)
+    rm conftest.* 
+    ifelse($2,,[CFLAGS="$CFLAGS $opt"],$2)
+ else
+    AC_MSG_RESULT(no)
+    rm conftest.*
+    ifelse($3,,:,$3)
+ fi
+])
+
+dnl ------------------------------------------------------
+dnl @synopsis AC_REMOVE_OPTIONS(VAR,PATTERN)
+dnl ------------------------------------------------------
+AC_DEFUN([AC_REMOVE_OPTIONS],[
+   saved_var=${$1}
+   $1=
+   for opt in ${saved_var} ; do
+     case "$opt" in 
+      $2) ;;
+      *) $1="${$1} $opt" ;;
+     esac
+   done
+])
+
+dnl -------------------------------------------------------
+dnl @synopsis AC_OPTIMIZE
+dnl Setup option --enable-debug
+dnl Determine optimization options
+dnl Add them to CFLAGS and CXXFLAGS
+dnl -------------------------------------------------------
+AC_DEFUN([AC_OPTIMIZE],[
    AC_REQUIRE([AC_CANONICAL_HOST])
    AC_ARG_ENABLE(debug,
         AS_HELP_STRING([--enable-debug],
                        [Compile with debugging options (default: no)]),
         [ac_debug=$enableval],[ac_debug=no])
-   OPTS=
-   AC_SUBST(OPTS)
-   saved_CXXFLAGS="$CXXFLAGS"
-   saved_CFLAGS="$CFLAGS"
-   CXXFLAGS=
-   CFLAGS=
-   for opt in $saved_CXXFLAGS ; do
-     case $opt in
-       -O*) ;;
-       *) CXXFLAGS="$CXXFLAGS $opt" ;;
-     esac
-   done
-   for opt in $saved_CFLAGS ; do
-     case $opt in
-       -O*) ;;
-       *) CFLAGS="$CFLAGS $opt" ;;
-     esac
-   done
+   defines=
    if test x$ac_debug = xno ; then
-     OPTS=-DNDEBUG
-     AC_CHECK_CXX_OPT([-Wall],[OPTS="$OPTS -Wall"])
-     AC_CHECK_CXX_OPT([-O3],[OPTS="$OPTS -O3"],
-        [ AC_CHECK_CXX_OPT([-O2], [OPTS="$OPTS -O2"] ) ] )
-     dnl This triggers compiler bugs with gcc-3.2.2:
-     dnl AC_CHECK_CXX_OPT([-funroll-loops], [OPTS="$OPTS -funroll-loops"])
-     dnl QT3 has plenty of this:
-     dnl AC_CHECK_CXX_OPT([-Wno-non-virtual-dtor],[OPTS="$OPTS -Wno-non-virtual-dtor"])
+     defines="-DNDEBUG"
+     AC_REMOVE_OPTIONS([CFLAGS],[-O*])
+     AC_REMOVE_OPTIONS([CXXFLAGS],[-O*])
+     AC_CHECK_CC_OPT([-O3],,[AC_CHECK_CC_OPT([-O2])])
+     AC_CHECK_CXX_OPT([-O3],,[AC_CHECK_CXX_OPT([-O2])])
      cpu=`uname -m 2>/dev/null`
      test -z "$cpu" && cpu=${host_cpu}
      case "${host_cpu}" in
         i?86)
            opt="-mtune=${host_cpu}"
-           AC_CHECK_CXX_OPT([$opt], [OPTS="$OPTS $opt"],
-             [ opt="-mcpu=${host_cpu}"
-               AC_CHECK_CXX_OPT([$opt], [OPTS="$OPTS $opt"]) ])
+           AC_CHECK_CXX_OPT([-mtune=${host_cpu}],,
+                [AC_CHECK_CXX_OPT([-mcpu=${host_cpu}])])
+           AC_CHECK_CC_OPT([-mtune=${host_cpu}],,
+                [AC_CHECK_CC_OPT([-mcpu=${host_cpu}])])
            ;;
       esac
    else
-     AC_CHECK_CXX_OPT([-Wall],[OPTS="$OPTS -Wall"])
-     AC_CHECK_CXX_OPT([-Wno-non-virtual-dtor],[OPTS="$OPTS -Wno-non-virtual-dtor"])
+     AC_REMOVE_OPTIONS([CFLAGS],[-g*|-O*])
+     AC_REMOVE_OPTIONS([CXXFLAGS],[-g*|-O*])
+     AC_CHECK_CC_OPT([-g])
+     AC_CHECK_CXX_OPT([-g])
+     AC_CHECK_CXX_OPT([-Wno-non-virtual-dtor])
    fi
+   AC_CHECK_CC_OPT([-Wall])
+   AC_CHECK_CXX_OPT([-Wall])
    case x"$ac_debug" in
 changequote(<<, >>)dnl
-     x[0-9])  OPTS="$OPTS -DDEBUGLVL=$ac_debug" ;;
-     xr*)   OPTS="$OPTS -DRUNTIME_DEBUG_ONLY" ;;
+     x[0-9]) defines="-DDEBUGLVL=$ac_debug" ;;
+     xr*)    defines="-DRUNTIME_DEBUG_ONLY" ;;
 changequote([, ])dnl 
    esac
+   CFLAGS="$CFLAGS $defines"
+   CXXFLAGS="$CXXFLAGS $defines"
 ])
 
 dnl -------------------------------------------------------
