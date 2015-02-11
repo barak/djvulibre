@@ -50,8 +50,8 @@ dnl -------------------------------------------------------
 AC_DEFUN([AC_CHECK_CC_OPT],[
  opt="$1"
  AC_MSG_CHECKING([if $CXX accepts $opt])
- echo 'void f(){}' > conftest.cc
- if test -z "`${CC} ${CFLAGS} $opt -c conftest.cc 2>&1`"; then
+ echo 'void f(){}' > conftest.c
+ if test -z "`${CC} ${CFLAGS} $opt -c conftest.c 2>&1`"; then
     AC_MSG_RESULT(yes)
     rm conftest.* 
     ifelse($2,,[CFLAGS="$CFLAGS $opt"],$2)
@@ -90,9 +90,13 @@ AC_DEFUN([AC_OPTIMIZE],[
         [ac_debug=$enableval],[ac_debug=no])
    defines=
    if test x$ac_debug = xno ; then
-     defines="-DNDEBUG"
      AC_REMOVE_OPTIONS([CFLAGS],[-O*])
      AC_REMOVE_OPTIONS([CXXFLAGS],[-O*])
+     if test x$GCC != xyes ; then
+       AC_REMOVE_OPTIONS([CFLAGS],[-g*])
+       AC_REMOVE_OPTIONS([CXXFLAGS],[-g*])
+     fi
+     defines="-DNDEBUG"
      AC_CHECK_CC_OPT([-O3],,[AC_CHECK_CC_OPT([-O2])])
      AC_CHECK_CXX_OPT([-O3],,[AC_CHECK_CXX_OPT([-O2])])
      cpu=`uname -m 2>/dev/null`
@@ -107,8 +111,8 @@ AC_DEFUN([AC_OPTIMIZE],[
            ;;
       esac
    else
-     AC_REMOVE_OPTIONS([CFLAGS],[-g*|-O*])
-     AC_REMOVE_OPTIONS([CXXFLAGS],[-g*|-O*])
+     AC_REMOVE_OPTIONS([CFLAGS],[-O*|-g*])
+     AC_REMOVE_OPTIONS([CXXFLAGS],[-O*|-g*])
      AC_CHECK_CC_OPT([-g])
      AC_CHECK_CXX_OPT([-g])
      AC_CHECK_CXX_OPT([-Wno-non-virtual-dtor])
