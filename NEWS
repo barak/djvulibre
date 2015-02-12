@@ -1,6 +1,8 @@
-NEW SINCE VERSION 3.5.26
+NEW IN VERSION 3.5.27
 ------------------------
-
+- simplified configuration scripts
+- deadlock fixes
+- miniexp under win32 uses tlsalloc instead of _thread vars (pb under xp)
 
 NEW IN VERSION 3.5.26
 ------------------------
