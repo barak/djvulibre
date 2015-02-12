@@ -32,7 +32,8 @@ RequestExecutionLevel admin
 !define DJVULIBRE_VERSION "3.5.27"
 !define CLASSES "Software\Classes\"
 !define DJVIEW_NAME "DjView"
-!define DJVIEW_VERSION "4.9.2"
+!define DJVIEW_VERSION "4.10"
+!define VI_PRODUCT_VERSION "4.10.0.0"
 
 !define PRODUCT_NAME "${DJVULIBRE_NAME} ${DJVIEW_NAME}"
 !define UNINST_NAME "${DJVULIBRE_NAME}+${DJVIEW_NAME}" ; for uninstaller
@@ -69,7 +70,7 @@ Var TMP_EXT  ; for temp reading ext val from reg
 Var INST_LOG_REN ; flag of exist install.log
 
 ;fill installer description
-VIProductVersion "${PRODUCT_VERSION}"
+VIProductVersion "${VI_PRODUCT_VERSION}"
 
 ;end-user doesnot see
 ;djvulibre version anywhere except installer
