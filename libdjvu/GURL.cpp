@@ -300,7 +300,7 @@ GURL::beautify_path(GUTF8String xurl)
 	}
     for(ptr=start+offset;(ptr=strchr(ptr, '/'));)
 	{
-	  if(isalpha((++ptr)[0]))
+	  if(isalpha((unsigned char)((++ptr)[0])))
 	  {
 	    if((ptr[1] == ':')&&(ptr[2]=='/'))
 		{
@@ -1321,16 +1321,16 @@ GURL::UTF8Filename(void) const
     else if ( !GStringRep::cmp(localhostspec2, url_ptr, sizeof(localhostspec2)-1 ) )
       // RFC 1738 local host form
       url_ptr += sizeof(localhostspec2)-1;
-    else if ( (strlen(url_ptr) > 4)   // "file://<letter>:/<path>"
-        && (url_ptr[0] == slash)      // "file://<letter>|/<path>"
-        && (url_ptr[1] == slash)
-        && isalpha(url_ptr[2])
-        && ( url_ptr[3] == colon || url_ptr[3] == '|' )
-        && (url_ptr[4] == slash) )
+    else if ( (strlen(url_ptr) > 4)         // "file://<letter>:/<path>"
+              && (url_ptr[0] == slash)      // "file://<letter>|/<path>"
+              && (url_ptr[1] == slash)
+              && isalpha((unsigned char)(url_ptr[2]))
+              && ( url_ptr[3] == colon || url_ptr[3] == '|' )
+              && (url_ptr[4] == slash) )
       url_ptr += 2;
     else if ( (strlen(url_ptr)) > 2 // "file:/<path>"
-        && (url_ptr[0] == slash)
-        && (url_ptr[1] != slash) )
+              && (url_ptr[0] == slash)
+              && (url_ptr[1] != slash) )
       url_ptr++;
 #endif
 
