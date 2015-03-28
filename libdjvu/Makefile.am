@@ -33,6 +33,8 @@ libdjvulibre_la_LIBADD = $(JPEG_LIBS) $(PTHREAD_LIBS)
 libdjvulibre_la_LDFLAGS = -no-undefined -version-info $(version_info)
 
 if HAVE_OS_WIN32
+libdjvulibre_la_CPPFLAGS += -DDJVUAPI_EXPORT 
+libdjvulibre_la_CPPFLAGS += -DDDJVUAPI_EXPORT -DMINILISPAPI_EXPORT
 libdjvulibre_la_LDFLAGS += -Wl,--export-all-symbols
 endif
 
