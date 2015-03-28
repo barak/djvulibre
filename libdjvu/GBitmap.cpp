@@ -205,10 +205,12 @@ GBitmap::GBitmap(const GBitmap &ref, const GRect &rect, int border)
 void 
 GBitmap::init(int arows, int acolumns, int aborder)
 {
+  size_t np = arows * (acolumns + aborder) + aborder;
   if (arows != (unsigned short) arows ||
       acolumns != (unsigned short) acolumns ||
-      acolumns + aborder != (unsigned short)(acolumns + aborder))
-    G_THROW("Illegal arguments");
+      acolumns + aborder != (unsigned short)(acolumns + aborder) ||
+      (np-aborder)/(size_t)arows != (size_t)(acolumns + aborder))
+    G_THROW("GBitmap: image size exceeds maximum (corrupted file?)");
   GMonitorLock lock(monitor());
   destroy();
   grays = 2;
@@ -1283,7 +1285,7 @@ GBitmap::decode(unsigned char *runs)
   bytes_per_row = ncolumns + border;
   if (runs==0)
     G_THROW( ERR_MSG("GBitmap.null_arg") );
-  int npixels = nrows * bytes_per_row + border;
+  size_t npixels = nrows * bytes_per_row + border;
   if (!bytes_data)
   {
     gbytes_data.resize(npixels);
