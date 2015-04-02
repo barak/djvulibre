@@ -287,7 +287,7 @@ GPixmap::init(int arows, int acolumns, const GPixel *filler)
   size_t np = arows * acolumns;
   if (arows != (unsigned short) arows ||
       acolumns != (unsigned short) acolumns ||
-      np /(size_t)arows != (size_t)acolumns )
+      (arows>0 && np/(size_t)arows!=(size_t)acolumns) )
     G_THROW("GPixmap: image size exceeds maximum (corrupted file?)");
   destroy();
   nrows = arows;

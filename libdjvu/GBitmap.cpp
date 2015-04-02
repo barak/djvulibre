@@ -209,7 +209,7 @@ GBitmap::init(int arows, int acolumns, int aborder)
   if (arows != (unsigned short) arows ||
       acolumns != (unsigned short) acolumns ||
       acolumns + aborder != (unsigned short)(acolumns + aborder) ||
-      (np-aborder)/(size_t)arows != (size_t)(acolumns + aborder))
+      (arows > 0 && (np-aborder)/(size_t)arows!=(size_t)(acolumns+aborder)) )
     G_THROW("GBitmap: image size exceeds maximum (corrupted file?)");
   GMonitorLock lock(monitor());
   destroy();
