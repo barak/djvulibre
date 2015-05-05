@@ -1,3 +1,13 @@
+djvulibre (3.5.27.1-1) unstable; urgency=medium
+
+  * freeze is over, can target to unstable once more
+  * new upstream release
+    - has max image size check (closes: #781255)
+  * merge minor upstream patch to djvumake
+  * use mktemp in djvudigital (closes: #775193)
+
+ -- Barak A. Pearlmutter <bap@debian.org>  Tue, 05 May 2015 09:24:00 +0100
+
 djvulibre (3.5.27-0pre1) experimental; urgency=medium
 
   [ Leon Bottou ]
