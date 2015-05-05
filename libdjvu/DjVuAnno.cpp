@@ -404,7 +404,7 @@ GLObject::get_list(void)
 void
 GLParser::skip_white_space(const char * & start)
 {
-   while(*start && isspace(*start)) start++;
+  while(*start && isspace((unsigned char)(*start))) start++;
    if (!*start) 
        G_THROW( ByteStream::EndOfFile );
 }
@@ -497,7 +497,7 @@ GLParser::get_token(const char * & start)
      }
    
    GUTF8String str;
-   while(c != 0 && c != ')' && c != '(' && c != '"' && !isspace(c))
+   while(c != 0 && c != ')' && c != '(' && c != '"' && !isspace((unsigned char)c))
      {
        str += c;
        c = *++start;
@@ -520,7 +520,7 @@ GLParser::parse(const char * cur_name, GPList<GLObject> & list,
     GLToken token=get_token(start);
     if (token.type==GLToken::OPEN_PAR)
     {
-      if (isspace(*start))
+      if (isspace((unsigned char)(*start)))
       {
         GUTF8String mesg=GUTF8String( ERR_MSG("DjVuAnno.paren") "\t")+cur_name;
         G_THROW(mesg);
@@ -1401,7 +1401,7 @@ DjVuANT::is_empty(void) const
 {
    GUTF8String raw=encode_raw();
    for(int i=raw.length()-1;i>=0;i--)
-      if (isspace(raw[i])) raw.setat(i, 0);
+     if (isspace((unsigned char)raw[i])) raw.setat(i, 0);
       else break;
    return raw.length()==0;
 }

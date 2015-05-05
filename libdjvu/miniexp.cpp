@@ -1186,7 +1186,7 @@ miniexp_double(double x)
 static bool
 str_looks_like_double(const char *s)
 {
-  if (isdigit(s[0]))
+  if (isascii(*s) && isdigit(*s))
     return true;
   if ((s[0] == '+' || s[0] == '-') && s[1])
     return true;
@@ -1367,8 +1367,8 @@ printer_t::must_quote_symbol(const char *s, int flags)
   int c;
   const char *r = s;
   while ((c = *r++))
-    if (c=='(' || c==')' || c=='\"' || c=='|' || 
-        isspace(c) || !isascii(c) || !isprint(c) ||
+    if (c=='(' || c==')' || c=='\"' || c=='|' ||
+        !isascii(c) || isspace(c) || !isprint(c) ||
         (c >= 0 && c < 128 && io->p_macrochar && io->p_macrochar[c]) )
       return true;
   double x;

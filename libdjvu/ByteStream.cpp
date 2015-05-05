@@ -208,25 +208,26 @@ public:
   /** Returns the total number of bytes contained in the buffer.  Valid
       offsets for function #seek# range from 0 to the value returned by this
       function. */
-  virtual int size(void) const;
+  virtual long size(void) const;
   /** Returns a reference to the byte at offset #n#. This reference can be
       used to read (as in #mbs[n]#) or modify (as in #mbs[n]=c#) the contents
       of the buffer. */
   char &operator[] (int n);
+  char &operator[] (long n);
   /** Copies all internal data into \Ref{TArray} and returns it */
 private:
   // Cancel C++ default stuff
   Memory(const Memory &);
   Memory & operator=(const Memory &);
   // Current position
-  int where;
+  long where;
 protected:
   /** Reads data from a random position. This function reads at most #sz#
       bytes at position #pos# into #buffer# and returns the actual number of
       bytes read.  The current position is unchanged. */
-  virtual size_t readat(void *buffer, size_t sz, int pos);
+  virtual size_t readat(void *buffer, size_t sz, long pos);
   /** Number of bytes in internal buffer. */
-  int bsize;
+  long bsize;
   /** Number of 4096 bytes blocks. */
   int nblocks;
   /** Pointers (possibly null) to 4096 bytes blocks. */
@@ -237,7 +238,7 @@ protected:
 
 
 
-inline int
+inline long
 ByteStream::Memory::size(void) const
 {
   return bsize;
@@ -245,6 +246,12 @@ ByteStream::Memory::size(void) const
 
 inline char &
 ByteStream::Memory::operator[] (int n)
+{
+  return blocks[n>>12][n&0xfff];
+}
+
+inline char &
+ByteStream::Memory::operator[] (long n)
 {
   return blocks[n>>12][n&0xfff];
 }
@@ -272,17 +279,17 @@ public:
   /** Returns the total number of bytes contained in the buffer, file, etc.
       Valid offsets for function #seek# range from 0 to the value returned
       by this function. */
-  virtual int size(void) const;
+  virtual long size(void) const;
 protected:
   const char *data;
-  int bsize;
+  long bsize;
 private:
-  int where;
+  long where;
 };
 
 ByteStream::Static::~Static() {}
 
-inline int
+inline long
 ByteStream::Static::size(void) const
 {
   return bsize;
@@ -341,8 +348,8 @@ ByteStream::flush()
 int
 ByteStream::seek(long offset, int whence, bool nothrow)
 {
-  int nwhere = 0;
-  int ncurrent = tell();
+  long nwhere = 0;
+  long ncurrent = tell();
   switch (whence)
     {
     case SEEK_SET:
@@ -350,43 +357,44 @@ ByteStream::seek(long offset, int whence, bool nothrow)
     case SEEK_CUR:
       nwhere=ncurrent; break;
     case SEEK_END: 
-    {
-      if(offset)
       {
-        if (nothrow)
-          return -1;
-        G_THROW( ERR_MSG("ByteStream.backward") );
+        if(offset)
+          {
+            if (nothrow)
+              return -1;
+            G_THROW( ERR_MSG("ByteStream.backward") );
+          }
+        char buffer[1024];
+        int bytes;
+        while((bytes=read(buffer, sizeof(buffer))))
+          EMPTY_LOOP;
+        return 0;
       }
-      char buffer[1024];
-      int bytes;
-      while((bytes=read(buffer, sizeof(buffer))))
-        EMPTY_LOOP;
-      return 0;
-    }
     default:
       G_THROW( ERR_MSG("ByteStream.bad_arg") );       //  Illegal argument in seek
     }
   nwhere += offset;
   if (nwhere < ncurrent) 
-  {
-    //  Seeking backwards is not supported by this ByteStream
-    if (nothrow)
-      return -1;
-    G_THROW( ERR_MSG("ByteStream.backward") );
-  }
-  while (nwhere>ncurrent)
-  {
-    char buffer[1024];
-    const int xbytes=(ncurrent+(int)sizeof(buffer)>nwhere)
-      ?(nwhere - ncurrent):(int)sizeof(buffer);
-    const int bytes = read(buffer, xbytes);
-    ncurrent += bytes;
-    if (!bytes)
-      G_THROW( ByteStream::EndOfFile );
-    //  Seeking works funny on this ByteStream (ftell() acts strange)
-    if (ncurrent!=tell())
-      G_THROW( ERR_MSG("ByteStream.seek") );
-  }
+    {
+      //  Seeking backwards is not supported by this ByteStream
+      if (nothrow)
+        return -1;
+      G_THROW( ERR_MSG("ByteStream.backward") );
+    }
+  while (nwhere > ncurrent)
+    {
+      char buffer[1024];
+      long xbytes = nwhere - ncurrent;
+      if (xbytes > (long)sizeof(buffer))
+        xbytes = sizeof(buffer);
+      long bytes = (long)read(buffer, xbytes);
+      ncurrent += bytes;
+      if (!bytes)
+        G_THROW( ByteStream::EndOfFile );
+      //  Seeking works funny on this ByteStream (ftell() acts strange)
+      if (ncurrent != tell())
+        G_THROW( ERR_MSG("ByteStream.seek") );
+    }
   return 0;
 }
 
@@ -394,7 +402,7 @@ size_t
 ByteStream::readall(void *buffer, size_t size)
 {
   size_t total = 0;
-    while (size > 0)
+  while (size > 0)
     {
       int nitems = read(buffer, size);
       // Replaced perror() below with G_THROW(). It still makes little sense
@@ -476,8 +484,7 @@ ByteStream::copy(ByteStream &bsfrom, size_t size)
 {
   size_t total = 0;
   const size_t max_buffer_size=200*1024;
-  const size_t buffer_size=(size>0 && size<max_buffer_size)
-    ?size:max_buffer_size;
+  const size_t buffer_size=(size>0 && size<max_buffer_size)?size:max_buffer_size;
   char *buffer;
   GPBuffer<char> gbuf(buffer,buffer_size);
   for(;;)
@@ -833,7 +840,7 @@ ByteStream::Memory::~Memory()
 size_t 
 ByteStream::Memory::write(const void *buffer, size_t sz)
 {
-  int nsz = (int)sz;
+  long nsz = (long)sz;
   if (nsz <= 0)
     return 0;
   // check memory
@@ -842,29 +849,29 @@ ByteStream::Memory::write(const void *buffer, size_t sz)
       // reallocate pointer array
       if ( (where+nsz) > (nblocks<<12) )
         {
-          const int old_nblocks=nblocks;
+          const long old_nblocks=nblocks;
           nblocks = (((where+nsz)+0xffff)&~0xffff) >> 12;
           gblocks.resize(nblocks);
           char const ** eblocks=(char const **)(blocks+old_nblocks);
           for(char const * const * const new_eblocks=blocks+nblocks;
-            eblocks <new_eblocks; eblocks++) 
-          {
-            *eblocks = 0;
-          }
+              eblocks <new_eblocks; eblocks++) 
+            {
+              *eblocks = 0;
+            }
         }
       // allocate blocks
-      for (int b=(where>>12); (b<<12)<(where+nsz); b++)
-      {
-        if (! blocks[b])
-          blocks[b] = new char[0x1000];
-      }
+      for (long b=(where>>12); (b<<12)<(where+nsz); b++)
+        {
+          if (! blocks[b])
+            blocks[b] = new char[0x1000];
+        }
     }
   // write data to buffer
   while (nsz > 0)
     {
-      int n = (where|0xfff) + 1 - where;
+      long n = (where|0xfff) + 1 - where;
       n = ((nsz < n) ? nsz : n);
-      memcpy( (void*)&blocks[where>>12][where&0xfff], buffer, n);
+      memcpy( (void*)&blocks[where>>12][where&0xfff], buffer, (size_t)n);
       buffer = (void*) ((char*)buffer + n);
       where += n;
       nsz -= n;
@@ -876,19 +883,19 @@ ByteStream::Memory::write(const void *buffer, size_t sz)
 }
 
 size_t 
-ByteStream::Memory::readat(void *buffer, size_t sz, int pos)
+ByteStream::Memory::readat(void *buffer, size_t sz, long pos)
 {
-  if ((int) sz > bsize - pos)
-    sz = bsize - pos;
-  int nsz = (int)sz;
+  if ((long)sz > bsize - pos)
+    sz = (size_t)(bsize - pos);
+  long nsz = (long)sz;
   if (nsz <= 0)
     return 0;
   // read data from buffer
   while (nsz > 0)
     {
-      int n = (pos|0xfff) + 1 - pos;
+      long n = (pos|0xfff) + 1 - pos;
       n = ((nsz < n) ? nsz : n);
-      memcpy(buffer, (void*)&blocks[pos>>12][pos&0xfff], n);
+      memcpy(buffer, (void*)&blocks[pos>>12][pos&0xfff], (size_t)n);
       buffer = (void*) ((char*)buffer + n);
       pos += n;
       nsz -= n;
@@ -913,17 +920,17 @@ ByteStream::Memory::tell(void) const
 int
 ByteStream::Memory::seek(long offset, int whence, bool nothrow)
 {
-  int nwhere = 0;
+  long nwhere = 0;
   switch (whence)
     {
     case SEEK_SET: nwhere = 0; break;
     case SEEK_CUR: nwhere = where; break;
     case SEEK_END: nwhere = bsize; break;
-    default: G_THROW( ERR_MSG("bad_arg") "\tByteStream::Memory::seek()");      // Illegal argument in ByteStream::Memory::seek()
+    default: G_THROW( ERR_MSG("bad_arg") "\tByteStream::Memory::seek()");
     }
   nwhere += offset;
   if (nwhere<0)
-    G_THROW( ERR_MSG("ByteStream.seek_error2") );                          //  Attempt to seek before the beginning of the file
+    G_THROW( ERR_MSG("ByteStream.seek_error2") );
   where = nwhere;
   return 0;
 }
@@ -954,7 +961,7 @@ ByteStream::Static::Static(const void * const buffer, const size_t sz)
 size_t 
 ByteStream::Static::read(void *buffer, size_t sz)
 {
-  int nsz = (int)sz;
+  long nsz = (long)sz;
   if (nsz > bsize - where)
     nsz = bsize - where;
   if (nsz <= 0)
@@ -967,17 +974,19 @@ ByteStream::Static::read(void *buffer, size_t sz)
 int
 ByteStream::Static::seek(long offset, int whence, bool nothrow)
 {
-  int nwhere = 0;
+  long nwhere = 0;
   switch (whence)
     {
     case SEEK_SET: nwhere = 0; break;
     case SEEK_CUR: nwhere = where; break;
     case SEEK_END: nwhere = bsize; break;
-    default: G_THROW("bad_arg\tByteStream::Static::seek()");      //  Illegal argument to ByteStream::Static::seek()
+    default: G_THROW("bad_arg\tByteStream::Static::seek()");
+      //  Illegal argument to ByteStream::Static::seek()
     }
   nwhere += offset;
   if (nwhere<0)
-    G_THROW( ERR_MSG("ByteStream.seek_error2") );                          //  Attempt to seek before the beginning of the file
+    G_THROW( ERR_MSG("ByteStream.seek_error2") );
+  //  Attempt to seek before the beginning of the file
   where = nwhere;
   return 0;
 }
