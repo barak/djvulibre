@@ -98,7 +98,7 @@ checkps2utf8()
               grep -q WRITESYSTEMDICT )
         then
             djvutext="/tmp/dj$$.ps"
-            trap "rm 2>/dev/null $djvutext" 0
+	    trap "rm 2>/dev/null $djvutext" 0
             cat > $djvutext <<\EOF
 (ps2utf8.ps) runlibfile currentglobal /setglobal load true setglobal 
 .ps2utf8 begin /onpage { } bind def /onfont { pop pop pop } bind def
