@@ -125,7 +125,7 @@ static const float iw_norm[16] = {
 };
 
 static const int iw_shift  = 6;
-static const int iw_round  = (1<<(iw_shift-1));
+// static const int iw_round  = (1<<(iw_shift-1));
 
 static const struct { int start; int size; }  
 bandbuckets[] = 

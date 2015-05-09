@@ -848,7 +848,7 @@ GListImpl<TI>::newnode(const TI &elt)
 {
   LNode  *n = (LNode *) operator new (sizeof(LNode ));
 #if GCONTAINER_ZERO_FILL
-  memset(n, 0, sizeof(LNode ));
+  memset((void*)n, 0, sizeof(LNode ));
 #endif
   new ((void*)&(n->val)) TI(elt);
   return (Node*) n;

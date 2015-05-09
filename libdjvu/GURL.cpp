@@ -170,7 +170,6 @@ namespace DJVU {
 
 static const char djvuopts[]="DJVUOPTS";
 static const char localhost[]="file://localhost/";
-static const char backslash='\\';  
 static const char colon=':';
 static const char dot='.';
 static const char filespecslashes[] = "file://";
@@ -179,13 +178,14 @@ static const char slash='/';
 static const char percent='%';
 static const char localhostspec1[] = "//localhost/";
 static const char localhostspec2[] = "///";
-static const char nillchar=0;
 #if defined(UNIX)
   static const char tilde='~';
   static const char root[] = "/";
 #elif defined(_WIN32) || defined(OS2)
   static const char root[] = "\\";
+  static const char backslash='\\';  
 #elif defined(macintosh)
+  static const char nillchar=0;
   static char const * const root = &nillchar; 
 #else
 #error "Define something here for your operating system"

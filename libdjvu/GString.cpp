@@ -273,7 +273,9 @@ public:
   ~ChangeLocale();
 private:
   GUTF8String locale;
+#if DO_CHANGELOCALE
   int category;
+#endif
 };
 
 class GStringRep::Native : public GStringRep
@@ -452,7 +454,9 @@ GStringRep::Native::ncopy(
 }
 
 GStringRep::ChangeLocale::ChangeLocale(const int xcategory, const char xlocale[] )
+#if DO_CHANGELOCALE
   : category(xcategory)
+#endif
 {
 #if DO_CHANGELOCALE
   // This is disabled under UNIX because 

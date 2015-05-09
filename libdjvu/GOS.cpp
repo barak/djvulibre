@@ -154,13 +154,6 @@ strerror(int errno)
 #endif
 
 
-static const char slash='/';
-static const char percent='%';
-static const char backslash='\\';
-static const char colon=':';
-static const char dot='.';
-static const char nillchar=0;
-
 
 // -----------------------------------------
 // Functions for dealing with filenames
@@ -193,18 +186,18 @@ GOS::basename(const GUTF8String &gfname, const char *suffix)
   const char *fname=gfname;
 #if defined(_WIN32) || defined(OS2)
   // Special cases
-  if (fname[1] == colon)
+  if (fname[1] == ':')
   {
     if(!fname[2])
     {
       return gfname;
     }
-    if (!fname[3] && (fname[2]== slash || fname[2]== backslash))
+    if (!fname[3] && (fname[2]== '/' || fname[2]== '\\'))
     {
       char string_buffer[4];
       string_buffer[0] = fname[0];
-      string_buffer[1] = colon;
-      string_buffer[2] = backslash; 
+      string_buffer[1] = ':';
+      string_buffer[2] = '\\';
       string_buffer[3] = 0; 
       return string_buffer;
     }
@@ -219,7 +212,7 @@ GOS::basename(const GUTF8String &gfname, const char *suffix)
   // Process suffix
   if (suffix)
   {
-    if (suffix[0]== dot )
+    if (suffix[0]== '.' )
       suffix ++;
     if (suffix[0])
     {
@@ -229,7 +222,7 @@ GOS::basename(const GUTF8String &gfname, const char *suffix)
       if (s > fname + sl)
       {
         s = s - (sl + 1);
-        if(*s == dot && (GUTF8String(s+1).downcase() == gsuffix.downcase()))
+        if(*s == '.' && (GUTF8String(s+1).downcase() == gsuffix.downcase()))
         {
           retval.setat((int)((size_t)s-(size_t)fname),0);
         }
@@ -335,7 +328,7 @@ GOS::cwd(const GUTF8String &dirname)
   char drv[2];
   if (dirname.length() && _chdir(dirname.getUTF82Native())==-1)//MBCS cvt
     G_THROW(errmsg());
-  drv[0]= dot ; drv[1]=0;
+  drv[0]= '.' ; drv[1]=0;
   char *string_buffer;
   GPBuffer<char> gstring_buffer(string_buffer,MAXPATHLEN+1);
   char *result = getcwd(string_buffer,MAXPATHLEN);
