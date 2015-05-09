@@ -838,7 +838,12 @@ DjVuDocument::id_to_url(const GUTF8String & id) const
 	    break;
 	 case OLD_INDEXED:
 	 case SINGLE_PAGE:
-	    return GURL::UTF8(id,init_url.base());
+	    {
+	       GURL url = GURL::UTF8(id,init_url.base());
+	       if (url.fname() == "-")
+	          G_THROW("Illegal include chunk (corrupted file?)");
+	       return url;
+	    }
 	    break;
       }
    return GURL();
