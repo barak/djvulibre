@@ -595,7 +595,7 @@ IW44Image::Map::Map(int w, int h)
 {
   bw = (w+0x20-1) & ~0x1f;
   bh = (h+0x20-1) & ~0x1f;
-  nb = (bw * bh) / (32 * 32);
+  nb = (unsigned int)(bw*bh) / (32 * 32);
   blocks = new IW44Image::Block[nb];
   top = IWALLOCSIZE;
 }
