@@ -61,7 +61,7 @@ else
 endif
 
 svg_process =\
-cat $< | gzip >$@
+cat $< | gzip -n >$@
 
 svg_verbose = $(svg_verbose_@AM_V@)
 svg_verbose_ = $(svg_verbose_@AM_DEFAULT_V@)
