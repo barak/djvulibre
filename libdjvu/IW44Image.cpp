@@ -125,15 +125,6 @@ static const int iw_quant[16] = {
   0x040000, 0x040000, 0x080000
 };
 
-static const float iw_norm[16] = {
-  2.627989e+03F,
-  1.832893e+02F, 1.832959e+02F, 5.114690e+01F,
-  4.583344e+01F, 4.583462e+01F, 1.279225e+01F,
-  1.149671e+01F, 1.149712e+01F, 3.218888e+00F,
-  2.999281e+00F, 2.999476e+00F, 8.733161e-01F,
-  1.074451e+00F, 1.074511e+00F, 4.289318e-01F
-};
-
 static const int iw_border = 3;
 static const int iw_shift  = 6;
 static const int iw_round  = (1<<(iw_shift-1));
@@ -604,7 +595,7 @@ IW44Image::Map::Map(int w, int h)
 {
   bw = (w+0x20-1) & ~0x1f;
   bh = (h+0x20-1) & ~0x1f;
-  nb = (bw * bh) / (32 * 32);
+  nb = (unsigned int)(bw*bh) / (32 * 32);
   blocks = new IW44Image::Block[nb];
   top = IWALLOCSIZE;
 }
