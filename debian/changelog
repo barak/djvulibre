@@ -1,3 +1,11 @@
+djvulibre (3.5.27.1-2) unstable; urgency=medium
+
+  * merge upstream fix for string issue (closes: #784785)
+  * merge upstream signed/unsigned fix (closes: #784919)
+  * use gzip -n option for reproducible build (closes: #790371)
+
+ -- Barak A. Pearlmutter <bap@debian.org>  Tue, 30 Jun 2015 09:18:13 +0300
+
 djvulibre (3.5.27.1-1) unstable; urgency=medium
 
   * freeze is over, can target to unstable once more
