@@ -39,6 +39,15 @@ To maximize compatibility with earlier versions of the standard,
 values different from {1,6,2,5} should be ignored
 and interpreted as 1 : rightside up orientation.
 
+1.4- ORDERING OF THE DJBZ AND SJBZ CHUNK
+
+Although the specification does not make it clear, when a FORM:DJVU chunk
+contains a bitonal image represented by a Sjbz chunk that uses a shape
+dictionary represented by a Djbz chunk, the Djbz chunk must appear before the
+Sjbz chunk that references it.  This also holds when the chunks is accessed
+indirectly via INCL chunks. For instance, an INCL chunk that refers to a
+shared Djbz shape dictionary must be placed before the corresponding Sjbz
+chunk.
 
 
 2- ESCAPE SEQUENCES IN ANNOTATION CHUNK STRINGS.
