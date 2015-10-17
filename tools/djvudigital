@@ -97,10 +97,8 @@ checkps2utf8()
         if ( "$gsdjvu" 2>&1 -dNODISPLAY -c '(ps2utf8.ps) runlibfile quit' | \
               grep -q WRITESYSTEMDICT )
         then
-	    # consider using mktemp if available:
-            # djvutext=$(mktemp /tmp/djXXXXXXXXXX.ps || echo /tmp/dj$$.ps)
             djvutext="/tmp/dj$$.ps"
-	    trap "rm 2>/dev/null $djvutext" 0
+            trap "rm 2>/dev/null $djvutext" 0
             cat > $djvutext <<\EOF
 (ps2utf8.ps) runlibfile currentglobal /setglobal load true setglobal 
 .ps2utf8 begin /onpage { } bind def /onfont { pop pop pop } bind def
@@ -141,7 +139,7 @@ fi
 # Step 2 -- locate csepdjvu executable
 
 csepdjvu=
-for cs in ${CSEPDJVU} `pathexpand csepdjvu` `pathexpand msepdjvu`
+for cs in ${CSEPDJVU} `pathexpand msepdjvu` `pathexpand csepdjvu`
 do
   if [ -z "$csepdjvu" ] && ( "$cs" -h 2>&1 | grep -q quality )
   then
@@ -168,7 +166,7 @@ gsarg0="-sDEVICE=djvusep -dNOPAUSE -dBATCH -dSAFER"
 gsarg1=
 gsarg2=
 csepargs=
-dpi="300"
+dpi="600"
 gsprinted="-dPrinted"
 gsepsf="-dEPSCrop"
 gsverbosity=
@@ -353,11 +351,10 @@ case "$infile" in
           $gsdjvu "-r$dpi" $gsverbosity $gsprinted $gsepsf \
             "-sOutputFile=$backend" $gsarg0 $gsarg1 $gsarg2 -_ -c quit
         else
-          echo -n gzip -d -c '"'"$infile"'"' '|' ""
-          echo -n $gsdjvu "-r$dpi" $gsverbosity $gsprinted $gsepsf ""
-          echo -n "-sOutputFile=""'""$backend""'" ""
-          echo -n $gsarg0 $gsarg1 $gsarg2 -_ -c quit
-          echo
+          echo gzip -d -c '"'"$infile"'"' '|' "" \
+             $gsdjvu "-r$dpi" $gsverbosity $gsprinted $gsepsf "" \
+             "-sOutputFile=""'""$backend""'" "" \
+             $gsarg0 $gsarg1 $gsarg2 -_ -c quit
         fi
         ;;
     *)
@@ -366,10 +363,9 @@ case "$infile" in
             "-sOutputFile=$backend" $gsarg0 $gsarg1 $gsarg2 \
             -f "$infile" -c quit
         else
-          echo -n $gsdjvu "-r$dpi" $gsverbosity $gsprinted $gsepsf ""
-          echo -n "-sOutputFile=""'""$backend""'" ""
-          echo -n $gsarg0 $gsarg1 $gsarg2 -f '"'"$infile"'"' -c quit
-          echo
+          echo $gsdjvu "-r$dpi" $gsverbosity $gsprinted $gsepsf "" \
+             "-sOutputFile=""'""$backend""'" "" \
+             $gsarg0 $gsarg1 $gsarg2 -f '"'"$infile"'"' -c quit
         fi
         ;;
 esac
