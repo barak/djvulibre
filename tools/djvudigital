@@ -97,6 +97,8 @@ checkps2utf8()
         if ( "$gsdjvu" 2>&1 -dNODISPLAY -c '(ps2utf8.ps) runlibfile quit' | \
               grep -q WRITESYSTEMDICT )
         then
+	    # consider using mktemp if available:
+            # djvutext=$(mktemp /tmp/djXXXXXXXXXX.ps || echo /tmp/dj$$.ps)
             djvutext="/tmp/dj$$.ps"
             trap "rm 2>/dev/null $djvutext" 0
             cat > $djvutext <<\EOF
@@ -139,7 +141,7 @@ fi
 # Step 2 -- locate csepdjvu executable
 
 csepdjvu=
-for cs in ${CSEPDJVU} `pathexpand msepdjvu` `pathexpand csepdjvu`
+for cs in ${CSEPDJVU} `pathexpand csepdjvu` `pathexpand msepdjvu`
 do
   if [ -z "$csepdjvu" ] && ( "$cs" -h 2>&1 | grep -q quality )
   then
@@ -166,7 +168,7 @@ gsarg0="-sDEVICE=djvusep -dNOPAUSE -dBATCH -dSAFER"
 gsarg1=
 gsarg2=
 csepargs=
-dpi="600"
+dpi="300"
 gsprinted="-dPrinted"
 gsepsf="-dEPSCrop"
 gsverbosity=
