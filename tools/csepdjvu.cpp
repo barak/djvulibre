@@ -1121,6 +1121,7 @@ public:
   bool parse_comment_line(BufferByteStream &bs);
   void make_chunks(IFFByteStream &iff);
   GP<DjVmNav> get_djvm_nav();
+  GUTF8String get_pagetitle();
 protected:
   int w;
   int h;
@@ -1143,6 +1144,7 @@ protected:
   };
   GPList<LnkMark> links;
   GP<DjVmNav> nav;
+  GUTF8String pagetitle;
 protected:
   bool allspace(const TxtMark *mark);
   void textmark(GP<TxtMark> mark);
@@ -1253,6 +1255,15 @@ Comments::parse_comment_line(BufferByteStream &bs)
         nav = DjVmNav::create();
       if (b)
         nav->append(b);
+      return true;
+    }
+  // Page title comment
+  if (c == 'P')
+    {
+      if (pagetitle.length())
+        G_THROW("csepdjvu: corrupted file (multiple page title comments)");
+      if (! (bs.skip(" \t") && bs.read_ps_string(pagetitle) ))
+	G_THROW("csepdjvu: corrupted file (syntax error in title comment)");
       return true;
     }
   // Unrecognized
@@ -1487,6 +1498,12 @@ Comments::get_djvm_nav()
   return 0;
 }
 
+GUTF8String
+Comments::get_pagetitle()
+{
+  return pagetitle;
+}
+
 
 // --------------------------------------------------
 // MAIN COMPRESSION ROUTINE
@@ -1500,6 +1517,7 @@ void
 csepdjvu_page(BufferByteStream &bs, 
               GP<ByteStream> obs, 
               GP<DjVmNav> &nav,
+	      GUTF8String &pagetitle,
               const csepdjvuopts &opts)
 {
   // Read rle data from separation file
@@ -1671,7 +1689,8 @@ csepdjvu_page(BufferByteStream &bs,
   // -- terminate main composite chunk
   coms.make_chunks(iff);
   iff.close_chunk();
-  // -- store outline
+  // -- returns page title and outline
+  pagetitle = coms.get_pagetitle();
   if (! nav) 
     nav = coms.get_djvm_nav();
 }  
@@ -1765,6 +1784,7 @@ main(int argc, const char **argv)
     {
       GP<DjVmDoc> gdoc=DjVmDoc::create();
       GP<DjVmNav> gnav;
+      GUTF8String pagetitle;
       DjVmDoc &doc=*gdoc;
       GURL outputurl;
       GP<ByteStream> goutputpage=ByteStream::create();
@@ -1821,7 +1841,7 @@ main(int argc, const char **argv)
                 // Compress page 
                 goutputpage=ByteStream::create();
                 ByteStream &outputpage=*goutputpage;
-                csepdjvu_page(ibs, goutputpage, gnav, opts);
+                csepdjvu_page(ibs, goutputpage, gnav, pagetitle, opts);
                 if (opts.verbose) {
                   DjVuPrintErrorUTF8("csepdjvu: %d bytes for page %d",
                                      outputpage.size(), pageno);
@@ -1834,12 +1854,12 @@ main(int argc, const char **argv)
                 // Insert page into document
                 outputpage.seek(0);
                 doc.insert_file(outputpage, DjVmDir::File::PAGE, 
-                                pagename, pagename);
+                                pagename, pagename, pagetitle);
               } while (check_for_another_page(ibs, opts));
             }
         } 
       // Save file
-      if (pageno == 1 && ! gnav) 
+      if (pageno == 1 && ! gnav && ! pagetitle) 
         {
           ByteStream &outputpage=*goutputpage;
           // Save as a single page 

@@ -97,14 +97,14 @@ checkps2utf8()
         if ( "$gsdjvu" 2>&1 -dNODISPLAY -c '(ps2utf8.ps) runlibfile quit' | \
               grep -q WRITESYSTEMDICT )
         then
-	    # For added security, use mktemp if available.
-	    # When using mktemp, do *not* delete the file as that introduces a brief window of vulnerability.
-	    if mktemp --dry-run >/dev/null 2>&1; then
-		djvutext=$(mktemp djXXXXXXXXXX.ps) || exit 1
-	    else
-		djvutext="/tmp/dj$$.ps"
-		trap "rm 2>/dev/null $djvutext" 0
-	    fi
+            # For added security, use mktemp if available.
+            # When using mktemp, do *not* delete the file as that introduces a brief window of vulnerability.
+            if mktemp --dry-run >/dev/null 2>&1; then
+                djvutext=$(mktemp djXXXXXXXXXX.ps) || exit 1
+            else
+                djvutext="/tmp/dj$$.ps"
+                trap "rm 2>/dev/null $djvutext" 0
+            fi
             cat > $djvutext <<\EOF
 (ps2utf8.ps) runlibfile currentglobal /setglobal load true setglobal 
 .ps2utf8 begin /onpage { } bind def /onfont { pop pop pop } bind def
@@ -357,11 +357,10 @@ case "$infile" in
           $gsdjvu "-r$dpi" $gsverbosity $gsprinted $gsepsf \
             "-sOutputFile=$backend" $gsarg0 $gsarg1 $gsarg2 -_ -c quit
         else
-          echo -n gzip -d -c '"'"$infile"'"' '|' ""
-          echo -n $gsdjvu "-r$dpi" $gsverbosity $gsprinted $gsepsf ""
-          echo -n "-sOutputFile=""'""$backend""'" ""
-          echo -n $gsarg0 $gsarg1 $gsarg2 -_ -c quit
-          echo
+          echo gzip -d -c '"'"$infile"'"' '|' "" \
+             $gsdjvu "-r$dpi" $gsverbosity $gsprinted $gsepsf "" \
+             "-sOutputFile=""'""$backend""'" "" \
+             $gsarg0 $gsarg1 $gsarg2 -_ -c quit
         fi
         ;;
     *)
@@ -370,10 +369,9 @@ case "$infile" in
             "-sOutputFile=$backend" $gsarg0 $gsarg1 $gsarg2 \
             -f "$infile" -c quit
         else
-          echo -n $gsdjvu "-r$dpi" $gsverbosity $gsprinted $gsepsf ""
-          echo -n "-sOutputFile=""'""$backend""'" ""
-          echo -n $gsarg0 $gsarg1 $gsarg2 -f '"'"$infile"'"' -c quit
-          echo
+          echo $gsdjvu "-r$dpi" $gsverbosity $gsprinted $gsepsf "" \
+             "-sOutputFile=""'""$backend""'" "" \
+             $gsarg0 $gsarg1 $gsarg2 -f '"'"$infile"'"' -c quit
         fi
         ;;
 esac
