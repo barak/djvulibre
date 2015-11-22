@@ -32,8 +32,8 @@ RequestExecutionLevel admin
 !define DJVULIBRE_VERSION "3.5.27"
 !define CLASSES "Software\Classes\"
 !define DJVIEW_NAME "DjView"
-!define DJVIEW_VERSION "4.10.1"
-!define VI_PRODUCT_VERSION "4.10.1.0"
+!define DJVIEW_VERSION "4.10.4"
+!define VI_PRODUCT_VERSION "4.10.4.0"
 
 !define PRODUCT_NAME "${DJVULIBRE_NAME} ${DJVIEW_NAME}"
 !define UNINST_NAME "${DJVULIBRE_NAME}+${DJVIEW_NAME}" ; for uninstaller
