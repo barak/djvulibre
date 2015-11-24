@@ -23,7 +23,7 @@ echo ---- DjVuLibre tools
 
 djexe="bzz.exe c44.exe cjb2.exe cpaldjvu.exe csepdjvu.exe
        ddjvu.exe djvm.exe djvmcvt.exe djvudump.exe djvuextract.exe 
-       djvumake.exe djvups.exe djvused.exe djvuserve.exe djvutoxml.exe
+       djvumake.exe djvups.exe djvused.exe djvutoxml.exe
        djvutxt.exe djvuxmlparser.exe"
 djdll="libdjvulibre.dll libjpeg.dll libtiff.dll libz.dll"
 for n in $djdll $djexe ; do 

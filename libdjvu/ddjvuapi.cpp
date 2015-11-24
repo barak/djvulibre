@@ -1578,6 +1578,12 @@ ddjvu_page_create(ddjvu_document_t *document, ddjvu_job_t *job,
         p->img = doc->get_page(GNativeString(pageid), false, job);
       else
         p->img = doc->get_page(pageno, false, job);
+      // synthetize msgs for pages found in the cache
+      ddjvu_status_t status = p->status();
+      if (status == DDJVU_JOB_OK)
+        p->notify_redisplay(p->img);
+      if (status >= DDJVU_JOB_OK)
+        p->notify_file_flags_changed(p->img->get_djvu_file(), 0, 0);
     }
   G_CATCH(ex)
     {
