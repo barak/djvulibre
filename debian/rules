@@ -46,7 +46,7 @@ override_dh_auto_install:
 override_dh_install:
 	dh_install --list-missing
 	@echo remove from djvulibre-bin, already in djvuserve
-	find debian/djvulibre-bin -name djvuserve\* -print -delete
+	if test -d debian/djvulibre-bin; then find debian/djvulibre-bin -name djvuserve\* -print -delete; fi
 # 	@echo "remove from djvulibre-bin, not in Debian: needs gsdjvu, direct complaints to AT&T"
 # 	find debian/djvulibre-bin -name djvudigital\* -print -delete
 
