@@ -1,3 +1,10 @@
+djvulibre (3.5.27.1-5) unstable; urgency=medium
+
+  * guard find command in debian/rules (closes: 806017)
+  * merge upstream update which works around qt5 issue (closes: 804888)
+
+ -- Barak A. Pearlmutter <bap@debian.org>  Tue, 24 Nov 2015 15:58:16 +0000
+
 djvulibre (3.5.27.1-4) unstable; urgency=medium
 
   * merge minor upstream maintenance updates
