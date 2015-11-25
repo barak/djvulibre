@@ -98,13 +98,13 @@ checkps2utf8()
               grep -q WRITESYSTEMDICT )
         then
             # For added security, use mktemp if available.
-            # When using mktemp, do *not* delete the file as that introduces a brief window of vulnerability.
-            if mktemp --dry-run >/dev/null 2>&1; then
+            # Do *not* delete the file as that introduces a brief window of vulnerability.
+            if mktemp --dry-run djXXXXXXXXXX.ps >/dev/null 2>&1; then
                 djvutext=$(mktemp djXXXXXXXXXX.ps) || exit 1
             else
                 djvutext="/tmp/dj$$.ps"
-                trap "rm 2>/dev/null $djvutext" 0
             fi
+            trap "rm 2>/dev/null $djvutext" 0
             cat > $djvutext <<\EOF
 (ps2utf8.ps) runlibfile currentglobal /setglobal load true setglobal 
 .ps2utf8 begin /onpage { } bind def /onfont { pop pop pop } bind def
