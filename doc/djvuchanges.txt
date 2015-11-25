@@ -139,7 +139,7 @@ DjVuLibre has introduced metadata annotations a few years ago.
 Metadata entries for each page are represent by key/value pairs
 located in a metadata directive in the annotation chunk.
 Metadata entries for the document are represented similarly
-using the methods described in the next section.
+using the methods described in the section 4.3.
 
 The metadata directive has the form
 
