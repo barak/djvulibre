@@ -73,14 +73,14 @@ Description: Desktop support for the DjVu image format
 
 Package: djview
 Section: graphics
-Architecture: any
+Architecture: all
 Depends: ${shlibs:Depends}, ${misc:Depends}, djview4 | djview3
 Description: Transition package, djview3 to djview4
- Ease transition from djview3 to djview4 with this dummy package.
+ Ease transition from djview or djview3 to djview4 with this dummy package.
 
 Package: djview3
 Section: graphics
-Architecture: any
+Architecture: all
 Depends: ${shlibs:Depends}, ${misc:Depends}, djview4
 Description: Transition package, djview3 to djview4
  Ease transition from djview3 to djview4 with this dummy package.
