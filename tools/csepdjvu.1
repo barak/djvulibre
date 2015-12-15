@@ -188,22 +188,21 @@ Pixels are ordered in left to right, top to bottom.
 
 .SS Comments in separated files
 
-Each page is followed by an arbitrary number of comment lines 
-starting with character "#" and terminated by a linefeed character. 
-Comment lines whose first word starts with a capital letter have 
-special meanings. The following constructs are currently defined:
+Each page is followed by an arbitrary number of comment lines starting with
+character "#" and terminated by a linefeed character.  Certain comment lines
+have special meanings. In the following constructs, all the strings are UTF-8
+encoded and represent in the style of Postscript strings, that is, surrounded
+with parenthesis and using C-style escape sequences introduced by a backslash.
 .IP "*" 3
 .BI "# T " px ":" py " " dx ":" dy " " w "x" h "+" x "+" y " (" string ")"
 .br
-This constructs indicates that the piece of text
+Such a comment line indicates that the piece of text
 .I string
 must be associated with an area of size
 .IR w "x" h
 at position 
 .IR x "," y
 relative to the lower left corner of the page.
-The string is UTF-8 encoded. Special characters
-can be escaped as in PostScript using the backslash character.
 Integers
 .IR px ", and " py
 represent the position of the current point on the text baseline
@@ -218,7 +217,7 @@ corresponding pages.
 .IP "*" 3
 .BI "# L " w "x" h "+" x "+" y " (" url ")"
 .br
-This construct indicates that an hyperlink to url
+Such a comment line indicates that an hyperlink to url
 .I url
 should be associated with area of size
 .IR w "x" h
@@ -231,7 +230,7 @@ containing the specified hyperlinks.
 .IP "*" 3
 .BI "# B " count " (" string ") (#" pageno ")"
 .br
-This constructs provides outline information for the document.
+Such a comment line provides outline information for the document.
 An outline entry entitled
 .I string
 is associated with page
@@ -247,7 +246,7 @@ the specified outline.
 .IP "*" 3
 .BI "# P (" string ")"
 .br
-Provides title
+Such a comment line provides a title
 .I string
 for the current page.
 .SH CREDITS
