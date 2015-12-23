@@ -158,6 +158,38 @@ Insert extra arguments on the command line of
 program
 .BR csepdjvu " or " msepdjvu "."
 .TP
+.BI "--poppler=" "keywords"
+This option causes
+.B djvudigital
+to extract additional information from PDF files using the tool
+.B pdftotext
+that comes bundled with recent versions of the Poppler library.
+Selected information is then added to the djvu file
+as a postprocessing step. This option is ignored
+when the input file is not a PDF file.
+Argument
+.I keywords
+is a comma separated list of keywords.
+When this list contains keyword
+.BR meta ,
+the metadata extracted by 
+.B pdftotext
+is inserted into the djvu file.
+When this list contains keyword
+.BR text ,
+the textual information extracted by
+.B pdftotext
+is inserted into the djvu file,
+possibly replacing the information
+gathered using the options
+.BR --words
+or
+.BR --lines .
+This is useful for instance when a scanned
+PDF file contains a hidden text layer that
+is not recognized by Ghostscript and therefore
+not passed to the djvudigital backend.
+.TP
 .BI "--sepfile"
 Produces a separated data file instead of a DjVu file. Program
 .BR csepdjvu 
@@ -226,6 +258,32 @@ by the environment variable
 .B CSEPDJVU
 and continues with command line executables named
 .BR msepdjvu " and " csepdjvu "."
+
+.SH OTHER PROGRAMS
+
+The option
+.BI "--poppler=" "keywords"
+relies on the tool
+.B pdftotext
+that comes with the Poppler library
+and the tool
+.B djvused
+that comes with djvulibre.
+Only recent versions of 
+.B pdftotext
+that accept the option
+.B -bbox
+are supported.
+Both tools are searched by first trying
+the files specified by the environment variables
+.B PDFTOTEXT
+and 
+.BR DJVUSED ,
+and then trying executables named 
+.B pdftotext
+or 
+.B djvused 
+found along the shell executable path.
 
 .SH CREDITS
 

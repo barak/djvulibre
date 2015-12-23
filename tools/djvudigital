@@ -54,7 +54,18 @@
 #C- +------------------------------------------------------------------
 #C--------------------------------------------------------------------
 
-# Step 1 -- utilities
+
+# Step 1a -- temporary directory
+
+tempdir=`mktemp -d --tmpdir djXXXXXX 2>/dev/null` || tempdir=''
+while [ ! -d "$tempdir" -o ! -r "$tempdir" ] ; do
+    tempdir="/tmp/dj"`awk 'BEGIN{srand();printf("%d",rand()*100000)}'`
+    mkdir "$tempdir" || tempdir=''
+done
+trap 'rm -rf 2>/dev/null "$tempdir"' EXIT INT HUP QUIT
+
+
+# Step 1b -- utilities
 
 usage()
 {
@@ -97,14 +108,7 @@ checkps2utf8()
         if ( "$gsdjvu" 2>&1 -dNODISPLAY -c '(ps2utf8.ps) runlibfile quit' | \
               grep -q WRITESYSTEMDICT )
         then
-            # For added security, use mktemp if available.
-            # Do *not* delete the file as that introduces a brief window of vulnerability.
-            if mktemp --dry-run djXXXXXXXXXX.ps >/dev/null 2>&1; then
-                djvutext=$(mktemp djXXXXXXXXXX.ps) || exit 1
-            else
-                djvutext="/tmp/dj$$.ps"
-            fi
-            trap "rm 2>/dev/null $djvutext" 0
+            djvutext="$tempdir/djvutext.ps"
             cat > $djvutext <<\EOF
 (ps2utf8.ps) runlibfile currentglobal /setglobal load true setglobal 
 .ps2utf8 begin /onpage { } bind def /onfont { pop pop pop } bind def
@@ -117,7 +121,7 @@ EOF
 }
 
 
-# Step 1 -- locate gsdjvu executable
+# Step 2a -- locate gsdjvu executable
 
 gsdjvu=
 for gs in ${GSDJVU} `pathexpand gs` `pathexpand gsdjvu`
@@ -141,8 +145,7 @@ EOF
     exit 10
 fi
 
-
-# Step 2 -- locate csepdjvu executable
+# Step 2b -- locate csepdjvu executable
 
 csepdjvu=
 for cs in ${CSEPDJVU} `pathexpand csepdjvu` `pathexpand msepdjvu`
@@ -165,6 +168,30 @@ EOF
     exit 10
 fi
 
+# Step 2c -- locate djvused executable
+
+djvused=
+for ds in ${DJVUSED} `pathexpand djvused`
+do
+    if [ -z "$djvused" ] && ( "$ds" 2>&1 | grep -q -i djvulibre )
+    then
+        djvused="$ds"
+    fi
+done
+
+# Step 2d -- locate pdftotext executable
+
+pdftotext=
+for pt in ${PDFTOTEXT} `pathexpand pdftotext`
+do
+  if [ -z "$pdftotext" ] && \
+     ( "$pt" -bbox foo.pdf 2>&1 | grep -q foo.pdf )
+     ( "$pt" -v 2>&1 | grep -q Poppler )
+  then
+      pdftotext="$pt"
+  fi
+done
+
 
 # Step 3 -- process arguments
 
@@ -177,11 +204,14 @@ gsprinted="-dPrinted"
 gsepsf="-dEPSCrop"
 gsverbosity=
 csepverbosity='-v'
+dsedverbosity=
 djvutext=
 infile=
 outfile=
 run=
 sepfile=
+popplertext=0
+popplermeta=0
 
 for n
 do
@@ -200,6 +230,8 @@ do
       --check)
           echo 1>&2 "Using: $gsdjvu"
           echo 1>&2 "  and: $csepdjvu"
+          test -n "$pdftotext" && echo 1>&2 "  and: $pdftotext"
+          test -n "$djvused" && echo 1>&2 "  and: $djvused"
           exit 0
           ;;
       --dpi=[0-9]*)
@@ -208,9 +240,10 @@ do
       --verbose|--v)
           gsverbosity=''
           csepverbosity='-vv'
+          dsedverbosity='-v'
           ;;
       --dryrun)
-          run=echo
+          run="echo +"
           ;;
       --sepfile)
           sepfile=yes
@@ -260,6 +293,16 @@ do
           fi
           csepargs="$csepargs -t"
           ;;
+      --poppler=*)
+          for arg in `getargs $n` ; do
+            case "$arg" in 
+              text) popplertext=1 ;;
+              meta) popplermeta=1 ;;
+                 *) echo 1>&2 "djvudigital: unrecognized option --poppler=$arg"
+                    usage ;; 
+            esac
+          done
+          ;;
       --pdf=screen)
           gsprinted="-dPrinted=false"
           ;;
@@ -291,6 +334,7 @@ do
           csepargs="$csepargs `getargs $n`"
           ;;
       -*)
+          echo 1>&2 "djvudigital: unrecognized option $n"
           usage
           ;;
       *)
@@ -345,7 +389,7 @@ if [ "$sepfile" = "yes" ]
 then
   backend="$outfile"
 else
-  backend="|$csepdjvu -d "'"'"$dpi"'"'
+  backend="| "'"'"$csepdjvu"'"'" -d $dpi"
   backend="$backend $csepverbosity $csepargs - "'"'"$outfile"'"'
 fi
 
@@ -354,24 +398,268 @@ case "$infile" in
     *.gz|*.GZ)
         if test -z "$run" ; then
           gzip -d -c "$infile" | \
-          $gsdjvu "-r$dpi" $gsverbosity $gsprinted $gsepsf \
+          "$gsdjvu" "-r$dpi" $gsverbosity $gsprinted $gsepsf \
             "-sOutputFile=$backend" $gsarg0 $gsarg1 $gsarg2 -_ -c quit
         else
-          echo gzip -d -c '"'"$infile"'"' '|' "" \
-             $gsdjvu "-r$dpi" $gsverbosity $gsprinted $gsepsf "" \
+          $run gzip -d -c '"'"$infile"'"' '|' "" \
+             "$gsdjvu" "-r$dpi" $gsverbosity $gsprinted $gsepsf "" \
              "-sOutputFile=""'""$backend""'" "" \
              $gsarg0 $gsarg1 $gsarg2 -_ -c quit
         fi
         ;;
     *)
         if test -z "$run" ; then
-          $gsdjvu "-r$dpi" $gsverbosity $gsprinted $gsepsf \
+          "$gsdjvu" "-r$dpi" $gsverbosity $gsprinted $gsepsf \
             "-sOutputFile=$backend" $gsarg0 $gsarg1 $gsarg2 \
             -f "$infile" -c quit
         else
-          echo $gsdjvu "-r$dpi" $gsverbosity $gsprinted $gsepsf "" \
+          $run "$gsdjvu" "-r$dpi" $gsverbosity $gsprinted $gsepsf "" \
              "-sOutputFile=""'""$backend""'" "" \
              $gsarg0 $gsarg1 $gsarg2 -f '"'"$infile"'"' -c quit
         fi
         ;;
 esac
+
+
+# Step 6 -- Postprocess djvu file with metadata/text found by poppler
+
+if ( file "$infile" | grep -q -i pdf ) \
+    && test "$popplertext$popplermeta" != "00"
+then
+
+    # check for djvused
+    if [ -z "$djvused" ]
+    then
+        cat 1>&2 <<\EOF
+djvudigital: cannot locate djvused executable.
++--------------------------------------------------------------------+
+| DjVuDigital was not able to locate the djvulibre tool "djvused".   |
+| This tool is needed to use the --poppler=(text,data) options.      |
+| Please make sure that the djvulibre tools are properly installed.  |
++--------------------------------------------------------------------+
+EOF
+        exit 10
+    fi
+
+    # check for pdftotext
+    if [ -z "$pdftotext" ] 
+    then
+        cat 1>&2 <<\EOF
+djvudigital: cannot locate pdftotext executable.
++--------------------------------------------------------------------+
+| DjVuDigital was not able to locate the poppler tool "pdftotext".   |
+| This tool is needed to use the --poppler=(text,data) options.      |
+| Please make sure that the poppler tools are properly installed.    |
++--------------------------------------------------------------------+
+EOF
+        exit 10
+    fi
+
+    # xml parser for awk :-)
+    xml2dsed="$tempdir/xml2dsed.awk"
+    cat > "$xml2dsed" <<\EOF
+
+# initializations
+
+function _esc_init() {
+    _ctrl = ""
+    for (i=1; i<32; i++) { _ctrl = _ctrl sprintf("%c",i) }
+    _esc = "[\"\\&" _ctrl "]"
+    _ctrl = "[" _ctrl "]"
+}
+
+function _ord_init() {
+    for (i=0; i<256; i++) {
+	_ord[sprintf("%c",i)]=i
+    }
+}
+
+function _amp_init() {
+    _amp["&amp;"] = "&"
+    _amp["&lt;"] = "<"
+    _amp["&gt;"] = ">"
+    _amp["&apos;"] = "'"
+    _amp["&quot;"] = "\\\""
+}
+
+BEGIN {
+    _esc_init()
+    _ord_init()
+    _amp_init()
+    delete meta
+    pheight=0
+    pwidth=0
+    location=""
+    context=""
+    content=""
+    pageno=0
+    dpi = 300 # use awk -f xml2dsed.awk dpi=xxx to override
+    dometa=1  # use awk -f xml2dsed.awk dometa=0 to override
+    dotext=1  # use awk -f xml2dsed.awk dotext=0 to override
+    RS=">"    # xml parsing wants record delimiter set to ">"
+}
+
+# return character code
+
+function ord(str) {
+    return _ord[substr(str,1,1)]
+}
+
+# print properly escaped c string
+
+function pstr(str,tmp) {
+    printf("\"")
+    while (str) {
+	tmp = match(str,_esc) # char classes do not always work
+	if (tmp == 0) {
+	    printf("%s",str)
+	    str = ""
+	} else if (tmp > 1) {
+	    printf("%s",substr(str,1,tmp-1))
+	    str = substr(str,tmp)
+	} else {
+	    tmp = match(str,"^&[a-z]*;")
+	    if (tmp != 1) { tmp = "" }
+	    if (tmp) { tmp = _amp[substr(str,RSTART,RLENGTH)] }
+	    if (tmp) {
+		printf("%s",tmp)
+		str = substr(str,RLENGTH+1)
+	    } else {
+		printf("\\%03o", ord(str))
+		str = substr(str,2)
+	    }
+	}
+    }
+    printf("\"")
+}
+
+# sax-like callbacks
+
+function charData(str) {
+    if (context == "title") {
+	meta["Title"] = str
+    } else if (context == "word") {
+	gsub(_ctrl," ",str)      # kill control characters
+	gsub("\302\240"," ",str) # nbsp in utf-8
+	gsub(/  */," ",str)      # simplify spaces
+	gsub(/^ /,"",str)        # simplify spaces
+	gsub(/ $/,"",str)        # simplify spaces
+	if (match(str,/[^ ]/)) { content = str } else { content = "" }
+    }
+}
+
+function startElement(tag,attrs) {
+    if (tag=="head" && ! context && dometa) {
+	context = "head"
+    } else if (tag=="title" && context=="head") {
+	context = "title"
+    } else if (tag=="meta" && attrs["name"] && attrs["content"] ) {
+	meta[attrs["name"]] = attrs["content"]
+    } else if (tag=="body" && ! context && dotext) {
+	context = "body"
+    } else if (tag=="page" && context == "body") {
+	pageno = pageno + 1
+	pwidth = attrs["width"] * dpi / 72
+	pheight = attrs["height"] * dpi / 72
+	context = "page"
+	printf("select %d\n", pageno)
+	printf("set-txt\n")
+	printf("(page %d %d %d %d\n", 0, 0, pwidth, pheight)
+    } else if (tag=="word" && context == "page") {
+	if (attrs["xMin"] && attrs["xMax"] && attrs["yMin"] && attrs["yMax"]) {
+	    context = "word"
+	    location = sprintf("%d %d %d %d",
+			       attrs["xMin"] * dpi / 72,
+			       pheight - attrs["yMin"] * dpi / 72,
+			       attrs["xMax"] * dpi / 72,
+			       pheight - attrs["yMax"] * dpi / 72 )
+	}
+    }
+}
+
+function endElement(tag) {
+    if (tag == "title" && context == "title") {
+	context = "head"
+    } else if (tag == "head" && context == "head" && length(meta)>0) {
+	context = ""
+	printf("create-shared-ant\n")
+	printf("set-meta\n")
+	for (i in meta) {
+	    printf("%s\t",i)
+	    pstr(meta[i])
+	    printf("\n")
+	}
+	printf(".\n")
+    } else if (tag == "page" && context == "page") {
+	context = "body"
+	printf(")\n.\n")
+    } else if (tag == "word" && context == "word" && content) {
+	context = "page"
+	printf("  (word %s ", location)
+	pstr(content)
+	printf(")\n")
+	content = ""
+    }
+}
+
+# xml parser (for pdftotext!)
+{
+    str = $0
+    match(str,/^[ \n\r\t\f]*/)
+    if (RSTART == 1 && RLENGTH > 0) {
+	str = substr(str,RLENGTH+1)
+    }
+    if (! match(str,/</)) {
+	charData(str)
+    } else {
+	if (RSTART > 1) {
+	    arg = substr(str,1,RSTART-1)
+	    str = substr(str,RSTART)
+	    charData(arg)
+	}
+	match(str, "^</?[a-zA-Z][a-zA-Z0-9_]*")
+	if (RSTART == 1) {
+	    tag = substr(str,2,RLENGTH-1)
+	    arg = substr(str,RLENGTH+1)
+	    # parse attrs
+	    delete attrs
+	    if (match(arg,"/$")) { arg = substr(arg,1,RSTART-1) }
+	    while (arg && match(arg,/[a-zA-Z][a-zA-Z0-9_]*=/)) {
+		attr = substr(arg,RSTART,RLENGTH-1)
+		arg = substr(arg,RSTART+RLENGTH)
+		if (match(arg,/^[ \n\r\f\t]*"/) && match(arg,/"[^"]*"/)) {
+		    attrs[attr] = substr(arg,RSTART+1,RLENGTH-2)
+		    arg = substr(arg,RSTART+RLENGTH)
+		} else if (match(arg,/^[^ \n\r\g\t]*/)) {
+		    attrs[attr] = substr(arg,RSTART,RLENGTH)
+		    arg = substr(arg,RSTART+RLENGTH)
+		}
+	    }
+	    # callbacks
+	    if (match(tag,"^/")) {
+		endElement(substr(tag,2))
+	    } else {
+		startElement(tag,attrs)
+		if (match(str,"/$")) { endElement(tag) }
+	    }
+	} 
+    }	    
+}
+EOF
+
+    # prepare djvused script
+    dsedscript="$tempdir/dsed"
+    if test -z "$run" 
+    then
+        "$pdftotext" -bbox "$infile" "-" \
+            | awk -f $xml2dsed dpi=$dpi dometa=$popplermeta dotext=$popplertext \
+            > "$dsedscript"
+    else
+        $run "$pdftotext" -bbox "$infile" "-" \
+            \| awk -f $xml2dsed dpi=$dpi dometa=$popplermeta dotext=$popplertext \
+            \> "$dsedscript"
+    fi
+    
+    # execute dsed script
+    $run "$djvused" $dsedverbosity -f "$dsedscript" -s "$outfile"
+fi
