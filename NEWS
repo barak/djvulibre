@@ -3,6 +3,12 @@ NEW IN VERSION 3.5.27
 - simplified configuration scripts
 - deadlock fixes
 - miniexp under win32 uses tlsalloc instead of _thread vars (pb under xp)
+- djvudigital can extract text and metadata using pdftotext.
+- duplicate page titles are accepted
+- bug fixes: overflow in bitmap/pixmap/iw44image sizes
+- big fixes: handling INCL chunks in djvumake
+- bug fixes: better support for large files (2gb) 
+
 
 NEW IN VERSION 3.5.26
 ------------------------
