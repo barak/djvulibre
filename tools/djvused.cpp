@@ -66,6 +66,7 @@
 #include "GString.h"
 #include "DjVuDocEditor.h"
 #include "DjVuDumpHelper.h"
+#include "DjVuMessageLite.h"
 #include "BSByteStream.h"
 #include "DjVuText.h"
 #include "DjVuAnno.h"
@@ -2315,7 +2316,8 @@ execute()
       G_CATCH(ex)
         {
           vprint("Error (%s): %s",
-                 (const char*)ToNative(token), ex.get_cause());
+                 (const char*)ToNative(token), 
+                 (const char *)DjVuMessageLite::LookUpUTF8(ex.get_cause()));
           if (! verbose)
             G_RETHROW;
         }
