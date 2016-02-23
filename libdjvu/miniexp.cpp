@@ -940,11 +940,15 @@ class ministring_t : public miniobj_t
 public:
   ~ministring_t();
   ministring_t(const char *s);
-  ministring_t(char *s, bool steal);
+  ministring_t(int len, const char *s);
+  ministring_t(int len, char *s, bool steal);
   operator const char*() const { return s; }
   virtual char *pname() const;
+  const char *c_str() const { return s; }
+  int c_len() const { return l; }
 private:
   char *s;
+  int l;
 private:
   ministring_t(const ministring_t &);
   ministring_t& operator=(const ministring_t &);
@@ -957,14 +961,23 @@ ministring_t::~ministring_t()
   delete [] s;
 }
 
-ministring_t::ministring_t(const char *str) 
-  : s(new char[strlen(str)+1])
+ministring_t::ministring_t(const char *str)
+  : s(0), l(strlen(str))
 {
+  s = new char[l+1];
   strcpy(s,str);
 }
 
-ministring_t::ministring_t(char *str, bool steal) 
-  : s(str)
+ministring_t::ministring_t(int len, const char *str)
+  : s(0), l(len)
+{
+  s = new char[l+1];
+  memcpy(s, str, l);
+  s[l] = 0;
+}
+
+ministring_t::ministring_t(int len, char *str, bool steal) 
+  : s(str), l(len)
 {
   ASSERT(steal);
 }
@@ -1019,13 +1032,16 @@ char_out(int c, char* &d, int &n)
 }
 
 static int
-print_c_string(const char *s, char *d, int flags = 0)
+print_c_string(const char *s, char *d, int flags, int len)
 {
   int c;
   int n = 0;
+  if (len < 0) 
+    len = strlen(s);
   char_out('\"', d, n);
-  while ((c = (unsigned char)(*s++)))
+  while (len-- > 0) 
     {
+      c = (unsigned char)(*s++);
       if (char_quoted(c, flags))
         {
           char buffer[10];
@@ -1049,6 +1065,9 @@ print_c_string(const char *s, char *d, int flags = 0)
                         0xd800+(((c-0x10000)>>10)&0x3ff), 
                         0xdc00+(c&0x3ff));
             }
+          if (buffer[0] == 0 && c == 0)
+            if (*s < '0' || *s > '7')
+              buffer[0] = '0';
           if (buffer[0] == 0)
             sprintf(buffer, "%03o", c);
           for (int i=0; buffer[i]; i++)
@@ -1065,9 +1084,9 @@ print_c_string(const char *s, char *d, int flags = 0)
 char *
 ministring_t::pname() const
 {
-  int n = print_c_string(s, 0);
+  int n = print_c_string(s, 0, 0, l);
   char *d = new char[n];
-  if (d) print_c_string(s, d);
+  if (d) print_c_string(s, d, 0, l);
   return d;
 }
 
@@ -1082,8 +1101,17 @@ miniexp_to_str(miniexp_t p)
 {
   miniobj_t *obj = miniexp_to_obj(p);
   if (miniexp_stringp(p))
-    return (const char*) * (ministring_t*) obj;
+    return ((ministring_t*) obj)->c_str();
   return 0;
+}
+
+int
+miniexp_strlen(miniexp_t p)
+{
+  miniobj_t *obj = miniexp_to_obj(p);
+  if (miniexp_stringp(p))
+    return ((ministring_t*) obj)->c_len();
+  return -1;
 }
 
 miniexp_t 
@@ -1094,15 +1122,18 @@ miniexp_string(const char *s)
 }
 
 miniexp_t 
+miniexp_lstring(int len, const char *s)
+{
+  ministring_t *obj = new ministring_t(len,s);
+  return miniexp_object(obj);
+}
+
+miniexp_t 
 miniexp_substring(const char *s, int n)
 {
   int l = strlen(s);
   n = (n < l) ? n : l;
-  char *b = new char[n+1];
-  strncpy(b, s, n);
-  b[n] = 0;
-  ministring_t *obj = new ministring_t(b, true);
-  return miniexp_object(obj);
+  return miniexp_lstring(n, s);
 }
 
 miniexp_t 
@@ -1114,16 +1145,17 @@ miniexp_concat(miniexp_t p)
   if (miniexp_length(l) < 0)
     return miniexp_nil;
   for (p=l; miniexp_consp(p); p=cdr(p))
-    if ((s = miniexp_to_str(car(p))))
-      n += strlen(s);
+    if (miniexp_stringp(car(p)))
+      n += miniexp_strlen(car(p));
   char *b = new char[n+1];
   char *d = b;
   for (p=l; miniexp_consp(p); p=cdr(p))
     if ((s = miniexp_to_str(car(p)))) {
-      strcpy(d, s);
-      d += strlen(d);
+      int len = miniexp_strlen(car(p));
+      memcpy(d, s, len);
+      d += len;
     }
-  ministring_t *obj = new ministring_t(b, true);
+  ministring_t *obj = new ministring_t(n, b, true);
   return miniexp_object(obj);
 }
 
@@ -1419,10 +1451,11 @@ printer_t::print(miniexp_t p)
   else if (miniexp_stringp(p))
     {
       const char *s = miniexp_to_str(p);
-      int n = print_c_string(s, 0, flags);
+      int len = miniexp_strlen(p);
+      int n = print_c_string(s, 0, flags, len);
       char *d = new char[n];
       if (d) 
-        print_c_string(s, d, flags);
+        print_c_string(s, d, flags, len);
       mlput(d);
       delete [] d;
     }
@@ -1829,7 +1862,7 @@ read_c_string(miniexp_io_t *io, int &c)
       c = io->fgetc(io);
     }
   c = io->fgetc(io);
-  r = miniexp_string(s ? s : "");
+  r = miniexp_lstring(l, s);
   delete [] s;
   return r;
 }

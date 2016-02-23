@@ -269,16 +269,27 @@ MINILISPAPI int miniexp_stringp(miniexp_t p);
 
 MINILISPAPI const char *miniexp_to_str(miniexp_t p);
 
+/* miniexp_strlen --
+   Returns the length of thestring represented by the expression.
+   Returns -1 if the expression is not a string. */
+
+MINILISPAPI int miniexp_strlen(miniexp_t p);
+
 /* miniexp_string --
-   Constructs a string expression by copying string s. */
+   Constructs a string expression by copying zero terminated string s. */
 
 MINILISPAPI miniexp_t miniexp_string(const char *s);
 
-/* miniexp_substring --
-   Constructs a string expression by copying 
-   at most n character from string s. */
+/* miniexp_lstring --
+   Constructs a string expression by copying len bytes from s. */
 
-MINILISPAPI miniexp_t miniexp_substring(const char *s, int n);
+MINILISPAPI miniexp_t miniexp_lstring(int len, const char *s);
+
+/* miniexp_substring --
+   Constructs a string expression by copying at most len bytes 
+   from zero terminated string s. */
+
+MINILISPAPI miniexp_t miniexp_substring(const char *s, int len);
 
 /* miniexp_concat --
    Concat all the string expressions in list <l>. */

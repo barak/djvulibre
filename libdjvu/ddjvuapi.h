@@ -111,6 +111,9 @@ extern "C" {
 
    Version   Change
    -----------------------------
+     24    Added:
+              miniexp_lstring()
+              miniexp_strlen()
      23    Added:
               miniexp_mutate()
      22    Changed

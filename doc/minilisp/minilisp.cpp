@@ -690,14 +690,24 @@ static bool
 equal(miniexp_t a, miniexp_t b)
 {
   if (a == b)
-    return true;
+    {
+      return true;
+    }
   else if (miniexp_consp(a) && miniexp_consp(b))
-    return equal(miniexp_car(a),miniexp_car(b))
-      &&   equal(miniexp_cdr(a),miniexp_cdr(b));
-  else if (miniexp_stringp(a) && miniexp_stringp(b))
-    return !strcmp(miniexp_to_str(a), miniexp_to_str(b));
+    {
+      return equal(miniexp_car(a),miniexp_car(b))
+        && equal(miniexp_cdr(a),miniexp_cdr(b));
+    }
   else if (miniexp_doublep(a) && miniexp_doublep(b))
-    return miniexp_to_double(a) == miniexp_to_double(b);
+    {
+      return miniexp_to_double(a) == miniexp_to_double(b);
+    }
+  else if (miniexp_stringp(a) && miniexp_stringp(b)) 
+    {
+      int la = miniexp_strlen(a);
+      int lb = miniexp_strlen(b);
+      return (la == lb) && ! memcmp(miniexp_to_str(a), miniexp_to_str(b), la);
+    } 
   return false;
 }
 
@@ -716,17 +726,18 @@ compare(miniexp_t a, miniexp_t b)
     {
       double na = miniexp_to_double(a);
       double nb = miniexp_to_double(b);
-      if (na < nb)
-	return -1;
-      else if (na > nb)
-	return 1;
-      return 0;
+      return (na < nb) ? -1 : (na > nb) ? +1 : 0;
     }
   else if (miniexp_stringp(a) && miniexp_stringp(b))
     {
       const char *sa = miniexp_to_str(a);
       const char *sb = miniexp_to_str(b);
-      return strcmp(sa, sb);
+      int la = miniexp_strlen(a);
+      int lb = miniexp_strlen(b);
+      int r = memcmp(sa, sb, (la < lb) ? la : lb);
+      if (r == 0) 
+        return (la < lb) ? -1 : (la > lb) ? +1 : 0;
+      return r;
     }
   else
     error("compare: cannot rank these arguments");
@@ -763,15 +774,14 @@ DEFUN("ceil",ceil,1,0) {
 DEFUN("strlen",strlen,1,1) {
   if (! miniexp_stringp(argv[0]))
     error("strlen: string expected", argv[0]);
-  const char *s = miniexp_to_str(argv[0]);
-  return miniexp_number(strlen(s));
+  return miniexp_number(miniexp_strlen(argv[0]));
 }
 
 DEFUN("substr",substr,2,1) {
   if (! miniexp_stringp(argv[0]))
     error("substr: string expected", argv[0]);
   const char *s = miniexp_to_str(argv[0]);
-  int l = strlen(s);
+  int l = miniexp_strlen(argv[0]);
   if (! miniexp_numberp(argv[1]))
     error("substr: integer number expected", argv[1]);
   int f = miniexp_to_double(argv[1]);
@@ -785,7 +795,7 @@ DEFUN("substr",substr,2,1) {
       f = miniexp_to_double(argv[2]);
       l = (f > l) ? l : (f < 0) ? 0 : f;
     }
-  return miniexp_substring(s,l);
+  return miniexp_lstring(l,s);
 }
 
 DEFUN("concat",concat,0,9999) {
