@@ -1819,8 +1819,8 @@ read_c_string(miniexp_io_t *io, int &c)
               io->ungetc(io, c);
               c = d;
             }
-          static const char *tr1 = "tnrbfva";
-          static const char *tr2 = "\t\n\r\b\f\013\007";
+          static const char *tr1 = "tnrbfvae?";
+          static const char *tr2 = "\t\n\r\b\f\013\007\033?";
           for (int i=0; tr1[i]; i++)
             if (c == tr1[i])
               c = tr2[i];
