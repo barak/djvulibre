@@ -3,8 +3,8 @@
 // MiniExp - Library for handling lisp expressions
 // Copyright (c) 2005  Leon Bottou
 //
-// This software is subject to, and may be distributed under, the
-// GNU General Public License, either version 2 of the license
+// This software is subject to, and may be distributed under, the GNU
+// Lesser General Public License, either Version 2.1 of the license,
 // or (at your option) any later version. The license should have
 // accompanied the software or you may obtain a copy of the license
 // from the Free Software Foundation at http://www.fsf.org .
@@ -939,16 +939,14 @@ class ministring_t : public miniobj_t
   MINIOBJ_DECLARE(ministring_t,miniobj_t,"string");
 public:
   ~ministring_t();
-  ministring_t(const char *s);
-  ministring_t(int len, const char *s);
-  ministring_t(int len, char *s, bool steal);
+  ministring_t(size_t len, const char *s);
+  ministring_t(size_t len, char *s, bool steal);
   operator const char*() const { return s; }
-  virtual char *pname() const;
   const char *c_str() const { return s; }
-  int c_len() const { return l; }
+  size_t c_len() const { return l; }
 private:
   char *s;
-  int l;
+  size_t l;
 private:
   ministring_t(const ministring_t &);
   ministring_t& operator=(const ministring_t &);
@@ -961,14 +959,7 @@ ministring_t::~ministring_t()
   delete [] s;
 }
 
-ministring_t::ministring_t(const char *str)
-  : s(0), l(strlen(str))
-{
-  s = new char[l+1];
-  strcpy(s,str);
-}
-
-ministring_t::ministring_t(int len, const char *str)
+ministring_t::ministring_t(size_t len, const char *str)
   : s(0), l(len)
 {
   s = new char[l+1];
@@ -976,7 +967,7 @@ ministring_t::ministring_t(int len, const char *str)
   s[l] = 0;
 }
 
-ministring_t::ministring_t(int len, char *str, bool steal) 
+ministring_t::ministring_t(size_t len, char *str, bool steal)
   : s(str), l(len)
 {
   ASSERT(steal);
@@ -1032,7 +1023,7 @@ char_out(int c, char* &d, int &n)
 }
 
 static int
-print_c_string(const char *s, char *d, int flags, int len)
+print_c_string(const char *s, char *d, int flags, size_t len)
 {
   int c;
   int n = 0;
@@ -1081,15 +1072,6 @@ print_c_string(const char *s, char *d, int flags, int len)
   return n;
 }
 
-char *
-ministring_t::pname() const
-{
-  int n = print_c_string(s, 0, 0, l);
-  char *d = new char[n];
-  if (d) print_c_string(s, d, 0, l);
-  return d;
-}
-
 int 
 miniexp_stringp(miniexp_t p)
 {
@@ -1105,35 +1087,34 @@ miniexp_to_str(miniexp_t p)
   return 0;
 }
 
-int
+size_t
 miniexp_strlen(miniexp_t p)
 {
   miniobj_t *obj = miniexp_to_obj(p);
   if (miniexp_stringp(p))
     return ((ministring_t*) obj)->c_len();
-  return -1;
+  return 0;
 }
 
-miniexp_t 
+miniexp_t
 miniexp_string(const char *s)
 {
-  ministring_t *obj = new ministring_t(s);
-  return miniexp_object(obj);
+  return miniexp_lstring(strlen(s), s);
 }
 
 miniexp_t 
-miniexp_lstring(int len, const char *s)
+miniexp_lstring(size_t len, const char *s)
 {
   ministring_t *obj = new ministring_t(len,s);
   return miniexp_object(obj);
 }
 
 miniexp_t 
-miniexp_substring(const char *s, int n)
+miniexp_substring(const char *s, int len)
 {
-  int l = strlen(s);
-  n = (n < l) ? n : l;
-  return miniexp_lstring(n, s);
+  size_t l = strlen(s);
+  size_t n = (size_t)len;
+  return miniexp_lstring((l < n) ? l : n, s);
 }
 
 miniexp_t 
@@ -1141,7 +1122,7 @@ miniexp_concat(miniexp_t p)
 {
   miniexp_t l = p;
   const char *s;
-  int n = 0;
+  size_t n = 0;
   if (miniexp_length(l) < 0)
     return miniexp_nil;
   for (p=l; miniexp_consp(p); p=cdr(p))
@@ -1677,7 +1658,7 @@ miniexp_pname(miniexp_t p, int width)
 /* ---- INPUT */
 
 static void
-grow(char* &s, int &l, int &m)
+grow(char* &s, size_t &l, size_t &m)
 {
   int nm = ((m<256)?256:m) + ((m>32000)?32000:m);
   char *ns = new char[nm+1];
@@ -1688,7 +1669,7 @@ grow(char* &s, int &l, int &m)
 }
 
 static void
-append(int c, char* &s, int &l, int &m)
+append(int c, char* &s, size_t &l, size_t &m)
 {
   if (l >= m)
     grow(s, l, m);
@@ -1697,7 +1678,7 @@ append(int c, char* &s, int &l, int &m)
 }
 
 static void
-append_utf8(int x, char *&s, int &l, int &m)
+append_utf8(int x, char *&s, size_t &l, size_t &m)
 {
   if (x >= 0 && x <= 0x10ffff)
     { 
@@ -1778,8 +1759,8 @@ read_c_string(miniexp_io_t *io, int &c)
 {
   miniexp_t r;
   char *s = 0;
-  int l = 0;
-  int m = 0;
+  size_t l = 0;
+  size_t m = 0;
   ASSERT(c == '\"');
   c = io->fgetc(io);
   for(;;)
@@ -1872,8 +1853,8 @@ read_quoted_symbol(miniexp_io_t *io, int &c)
 {
   miniexp_t r;
   char *s = 0;
-  int l = 0;
-  int m = 0;
+  size_t l = 0;
+  size_t m = 0;
   ASSERT(c == '|');
   for(;;)
     {
@@ -1895,8 +1876,8 @@ read_symbol_or_number(miniexp_io_t *io, int &c)
 {
   miniexp_t r;
   char *s = 0;
-  int l = 0;
-  int m = 0;
+  size_t l = 0;
+  size_t m = 0;
   for(;;)
     {
       if (c==EOF || c=='(' || c==')' || c=='|' || c=='\"'  

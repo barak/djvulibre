@@ -3,8 +3,8 @@
 // MiniExp - Library for handling lisp expressions
 // Copyright (c) 2005  Leon Bottou
 //
-// This software is subject to, and may be distributed under, the
-// GNU General Public License, either Version 2 of the license,
+// This software is subject to, and may be distributed under, the GNU
+// Lesser General Public License, either Version 2.1 of the license,
 // or (at your option) any later version. The license should have
 // accompanied the software or you may obtain a copy of the license
 // from the Free Software Foundation at http://www.fsf.org .
@@ -273,7 +273,7 @@ MINILISPAPI const char *miniexp_to_str(miniexp_t p);
    Returns the length of thestring represented by the expression.
    Returns -1 if the expression is not a string. */
 
-MINILISPAPI int miniexp_strlen(miniexp_t p);
+MINILISPAPI size_t miniexp_strlen(miniexp_t p);
 
 /* miniexp_string --
    Constructs a string expression by copying zero terminated string s. */
@@ -283,7 +283,7 @@ MINILISPAPI miniexp_t miniexp_string(const char *s);
 /* miniexp_lstring --
    Constructs a string expression by copying len bytes from s. */
 
-MINILISPAPI miniexp_t miniexp_lstring(int len, const char *s);
+MINILISPAPI miniexp_t miniexp_lstring(size_t len, const char *s);
 
 /* miniexp_substring --
    Constructs a string expression by copying at most len bytes 
