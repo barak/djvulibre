@@ -113,7 +113,7 @@ extern "C" {
    -----------------------------
      24    Added:
               miniexp_lstring()
-              miniexp_strlen()
+              miniexp_to_lstr()
      23    Added:
               miniexp_mutate()
      22    Changed

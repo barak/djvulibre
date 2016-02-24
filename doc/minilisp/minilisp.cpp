@@ -706,9 +706,10 @@ equal(miniexp_t a, miniexp_t b)
     }
   else if (miniexp_stringp(a) && miniexp_stringp(b)) 
     {
-      int la = miniexp_strlen(a);
-      int lb = miniexp_strlen(b);
-      return (la == lb) && ! memcmp(miniexp_to_str(a), miniexp_to_str(b), la);
+      const char *sa, *sb;
+      int la = miniexp_to_lstr(a, &sa);
+      int lb = miniexp_to_lstr(b, &sb);
+      return (la == lb) && ! memcmp(sa, sb, la);
     } 
   return false;
 }
@@ -732,10 +733,9 @@ compare(miniexp_t a, miniexp_t b)
     }
   else if (miniexp_stringp(a) && miniexp_stringp(b))
     {
-      const char *sa = miniexp_to_str(a);
-      const char *sb = miniexp_to_str(b);
-      int la = miniexp_strlen(a);
-      int lb = miniexp_strlen(b);
+      const char *sa, *sb;
+      int la = miniexp_to_lstr(a, &sa);
+      int lb = miniexp_to_lstr(b, &sb);
       int r = memcmp(sa, sb, (la < lb) ? la : lb);
       if (r == 0) 
         return (la < lb) ? -1 : (la > lb) ? +1 : 0;
@@ -776,14 +776,14 @@ DEFUN("ceil",ceil,1,0) {
 DEFUN("strlen",strlen,1,1) {
   if (! miniexp_stringp(argv[0]))
     error("strlen: string expected", argv[0]);
-  return miniexp_number(miniexp_strlen(argv[0]));
+  return miniexp_number(miniexp_to_lstr(argv[0], 0));
 }
 
 DEFUN("substr",substr,2,1) {
   if (! miniexp_stringp(argv[0]))
     error("substr: string expected", argv[0]);
-  const char *s = miniexp_to_str(argv[0]);
-  int l = miniexp_strlen(argv[0]);
+  const char *s;
+  int l = miniexp_to_lstr(argv[0], &s);
   if (! miniexp_numberp(argv[1]))
     error("substr: integer number expected", argv[1]);
   int f = miniexp_to_double(argv[1]);

@@ -899,6 +899,18 @@ miniobj_t::pname() const
   return res;
 }
 
+bool
+miniobj_t::stringp(const char* &, size_t &) const
+{
+  return false;
+}
+
+bool
+miniobj_t::doublep(double&) const
+{
+  return false;
+}
+
 miniexp_t 
 miniexp_object(miniobj_t *obj)
 {
@@ -942,8 +954,7 @@ public:
   ministring_t(size_t len, const char *s);
   ministring_t(size_t len, char *s, bool steal);
   operator const char*() const { return s; }
-  const char *c_str() const { return s; }
-  size_t c_len() const { return l; }
+  virtual bool stringp(const char* &s, size_t &l) const;
 private:
   char *s;
   size_t l;
@@ -972,6 +983,15 @@ ministring_t::ministring_t(size_t len, char *str, bool steal)
 {
   ASSERT(steal);
 }
+
+bool
+ministring_t::stringp(const char* &rs, size_t &rl) const
+{
+  rs = s;
+  rl = l;
+  return true;
+}
+
 
 END_ANONYMOUS_NAMESPACE
 
@@ -1073,25 +1093,30 @@ print_c_string(const char *s, char *d, int flags, size_t len)
 int 
 miniexp_stringp(miniexp_t p)
 {
-  return miniexp_isa(p, ministring_t::classname) ? 1 : 0;
+  const char *s; size_t l;
+  if (miniexp_objectp(p) && miniexp_to_obj(p)->stringp(s,l))
+    return 1;
+  return 0;
 }
 
 const char *
 miniexp_to_str(miniexp_t p)
 {
-  miniobj_t *obj = miniexp_to_obj(p);
-  if (miniexp_stringp(p))
-    return ((ministring_t*) obj)->c_str();
-  return 0;
+  const char *s = 0;
+  size_t l = miniexp_to_lstr(p, &s);
+  return s;
 }
 
 size_t
-miniexp_strlen(miniexp_t p)
+miniexp_to_lstr(miniexp_t p, const char **sp)
 {
-  miniobj_t *obj = miniexp_to_obj(p);
-  if (miniexp_stringp(p))
-    return ((ministring_t*) obj)->c_len();
-  return 0;
+  const char *s = 0;
+  size_t l = 0;
+  if (miniexp_objectp(p))
+    miniexp_to_obj(p)->stringp(s,l);
+  if (sp)
+    *sp = s;
+  return l;
 }
 
 miniexp_t
@@ -1124,17 +1149,15 @@ miniexp_concat(miniexp_t p)
   if (miniexp_length(l) < 0)
     return miniexp_nil;
   for (p=l; miniexp_consp(p); p=cdr(p))
-    if (miniexp_stringp(car(p)))
-      n += miniexp_strlen(car(p));
+    n += miniexp_to_lstr(car(p), 0);
   char *b = new char[n+1];
   char *d = b;
   for (p=l; miniexp_consp(p); p=cdr(p))
-    if ((s = miniexp_to_str(car(p)))) {
-      int len = miniexp_strlen(car(p));
-      memcpy(d, s, len);
-      d += len;
+    if ((n = miniexp_to_lstr(car(p), &s))) {
+      memcpy(d, s, n);
+      d += n;
     }
-  ministring_t *obj = new ministring_t(n, b, true);
+  ministring_t *obj = new ministring_t(d-b, b, true);
   return miniexp_object(obj);
 }
 
@@ -1153,6 +1176,7 @@ public:
   minifloat_t(double x) : val(x) {}
   operator double() const { return val; }
   virtual char *pname() const;
+  virtual bool doublep(double &d) const { d=val; return true; }
 private:
   double val;
 };
@@ -1175,14 +1199,25 @@ miniexp_floatnum(double x)
   return miniexp_object(obj);
 }
 
+int
+miniexp_doublep(miniexp_t p)
+{
+  double v = 0.0;
+  if (miniexp_numberp(p) ||
+      (miniexp_objectp(p) && miniexp_to_obj(p)->doublep(v)) )
+    return 1;
+  return 0;
+}
+
 double 
 miniexp_to_double(miniexp_t p)
 {
+  double v = 0.0;
   if (miniexp_numberp(p))
-    return (double) miniexp_to_int(p);
-  else if (miniexp_floatnump(p))
-    return (double) * (minifloat_t*) miniexp_to_obj(p);
-  return 0.0;
+    v = (double) miniexp_to_int(p);
+  else if (miniexp_objectp(p))
+    miniexp_to_obj(p)->doublep(v);
+  return v;
 }
 
 miniexp_t 
@@ -1429,8 +1464,8 @@ printer_t::print(miniexp_t p)
     }
   else if (miniexp_stringp(p))
     {
-      const char *s = miniexp_to_str(p);
-      int len = miniexp_strlen(p);
+      const char *s;
+      size_t len = miniexp_to_lstr(p, &s);
       int n = print_c_string(s, 0, flags, len);
       char *d = new char[n];
       if (d) 

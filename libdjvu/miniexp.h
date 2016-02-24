@@ -269,11 +269,12 @@ MINILISPAPI int miniexp_stringp(miniexp_t p);
 
 MINILISPAPI const char *miniexp_to_str(miniexp_t p);
 
-/* miniexp_strlen --
-   Returns the length of thestring represented by the expression.
-   Returns -1 if the expression is not a string. */
+/* miniexp_to_lstr ---- 
+   Returns the length of the string represented by the expression.
+   Optionally returns the c string into *sp.  
+   Return 0 and makes *sp null if the expression is not a string. */
 
-MINILISPAPI size_t miniexp_strlen(miniexp_t p);
+MINILISPAPI size_t miniexp_to_lstr(miniexp_t p, const char **sp);
 
 /* miniexp_string --
    Constructs a string expression by copying zero terminated string s. */
@@ -315,13 +316,11 @@ MINILISPAPI miniexp_t miniexp_floatnum(double x);
    Tests if an expression can be converted
    to a double precision number. */
 
-static inline int miniexp_doublep(miniexp_t p) {
-  return miniexp_numberp(p) || miniexp_floatnump(p);
-}
+MINILISPAPI int miniexp_doublep(miniexp_t p);
 
 /* miniexp_to_double --
    Returns a double precision number corresponding to 
-   a lisp expression (a number or a floatnum.) */
+   a lisp expression. */
 
 MINILISPAPI double miniexp_to_double(miniexp_t p);
 
@@ -732,6 +731,11 @@ miniobj_t {
   /* pname: returns a printable name for this object.
      The caller must deallocate the result with delete[]. */
   virtual char *pname() const;
+  /* stringp, doublep: tells whether this object should be
+     interpreted/printed as a generic string (for miniexp_strinp) 
+     or a double (for miniexp_doublep). */
+  virtual bool stringp(const char* &s, size_t &l) const;
+  virtual bool doublep(double &d) const;
   /* mark: calls action() on all member miniexps of the object,
      for garbage collecting purposes. */
   virtual void mark(minilisp_mark_t *action);
