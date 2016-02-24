@@ -675,10 +675,12 @@ DEFUN("/",div,1,9999) {
   while (i<argc && miniexp_doublep(argv[i]) && miniexp_to_double(argv[i]))
     s /= miniexp_to_double(argv[i++]);
   if (i < argc)
-    if (miniexp_doublep(argv[i]))
-      error("/: division by zero", argv[i]);
-    else
-      error("/: number expected", argv[i]);
+    {
+      if (miniexp_doublep(argv[i]))
+        error("/: division by zero", argv[i]);
+      else
+        error("/: number expected", argv[i]);
+    }
   return miniexp_double(s);
 }
 
