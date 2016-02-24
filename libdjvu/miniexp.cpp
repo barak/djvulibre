@@ -1027,8 +1027,6 @@ print_c_string(const char *s, char *d, int flags, size_t len)
 {
   int c;
   int n = 0;
-  if (len < 0) 
-    len = strlen(s);
   char_out('\"', d, n);
   while (len-- > 0) 
     {
