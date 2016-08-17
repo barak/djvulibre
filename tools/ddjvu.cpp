@@ -691,7 +691,7 @@ closefile(int pageno)
       args[1] = "-o";
       args[2] = filename;
       if (tiff2pdf(tiff, fout, 3, args) != EXIT_SUCCESS)
-        die(i18n("Error occured while creating PDF file."));
+        die(i18n("Error occurred while creating PDF file."));
       TIFFClose(tiff);
       tiff = 0;
 #ifndef _WIN32
