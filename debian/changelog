@@ -1,3 +1,11 @@
+djvulibre (3.5.27.1-6) unstable; urgency=medium
+
+  * track upstream fixes and updates, including to djvudigital
+  * bump standards version
+  * enable hardening
+
+ -- Barak A. Pearlmutter <bap@debian.org>  Wed, 17 Aug 2016 22:35:47 +0200
+
 djvulibre (3.5.27.1-5) unstable; urgency=medium
 
   * guard find command in debian/rules (closes: 806017)
