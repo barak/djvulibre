@@ -10,7 +10,7 @@ Build-Depends: dh-autoreconf,
 	       libtiff-dev,
 	       librsvg2-bin | imagemagick
 Vcs-Git: git://anonscm.debian.org/collab-maint/djvulibre.git
-Vcs-Browser: http://anonscm.debian.org/gitweb/?p=collab-maint/djvulibre.git
+Vcs-Browser: https://anonscm.debian.org/gitweb/?p=collab-maint/djvulibre.git
 Homepage: http://djvu.sourceforge.net/
 Standards-Version: 3.9.8
 
