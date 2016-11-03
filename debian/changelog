@@ -1,3 +1,10 @@
+djvulibre (3.5.27.1-7) unstable; urgency=medium
+
+  * bump to debhelper 10
+  * update any2djvu server URL in any2djvu script (closes: #843009)
+
+ -- Barak A. Pearlmutter <bap@debian.org>  Thu, 03 Nov 2016 11:03:32 +0000
+
 djvulibre (3.5.27.1-6) unstable; urgency=medium
 
   * track upstream fixes and updates, including to djvudigital
