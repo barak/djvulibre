@@ -848,7 +848,8 @@ BSByteStream::Encode::encode()
       cx+=CTXIDS;
       b = (mtfno==1);
       zp.encoder(b, cx[ctxid]);
-      if (b) goto rotate; cx+=CTXIDS;
+      if (b) goto rotate;
+      cx+=CTXIDS;
       b = (mtfno<4);
       zp.encoder(b, cx[0]);
       if (b) { encode_binary(zp,cx+1,1,mtfno-2); goto rotate; } 
