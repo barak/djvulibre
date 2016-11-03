@@ -844,7 +844,8 @@ BSByteStream::Encode::encode()
       BitContext *cx = ctx;
       b = (mtfno==0);
       zp.encoder(b, cx[ctxid]);
-      if (b) goto rotate; cx+=CTXIDS;
+      if (b) goto rotate;
+      cx+=CTXIDS;
       b = (mtfno==1);
       zp.encoder(b, cx[ctxid]);
       if (b) goto rotate; cx+=CTXIDS;
