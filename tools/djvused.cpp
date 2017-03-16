@@ -2022,11 +2022,11 @@ command_set_thumbnails(ParsingByteStream &pbs)
 {
   GUTF8String sizestr = pbs.get_token();
   if (! sizestr)
-    sizestr = "128";
+    sizestr = "192";
   if (! sizestr.is_int() )
     verror("expecting integer argument");
   int size = atoi(sizestr);
-  if (size<32 || size >256) 
+  if (size < 32 || size > 512) 
     verror("size should be between 32 and 256 (e.g. 128)");
   g().doc->generate_thumbnails(size, callback_thumbnails, NULL);
   modified = true;
