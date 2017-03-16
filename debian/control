@@ -3,8 +3,7 @@ Section: libs
 Priority: optional
 Maintainer: Barak A. Pearlmutter <bap@debian.org>
 Uploaders: Leon Bottou <leonb@bottou.org>
-Build-Depends: dh-autoreconf,
-	       pkg-config,
+Build-Depends: pkg-config,
 	       debhelper (>= 10),
 	       libjpeg-dev,
 	       libtiff-dev,
