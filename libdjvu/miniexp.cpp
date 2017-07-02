@@ -319,6 +319,7 @@ gctls_t::~gctls_t()
 END_ANONYMOUS_NAMESPACE
 
 #if USE_PTHREADS
+
 // Manage thread specific data with pthreads
 static pthread_key_t gctls_key;
 static pthread_once_t gctls_once;
@@ -353,6 +354,7 @@ static gctls_t *gctls() {
 # endif
 
 #elif USE_WINTHREADS 
+
 // Manage thread specific data with win32
 #if defined(_MSC_VER) && defined(USE_MSVC_TLS)
 // -- Pre-vista os sometimes crashes on this.
@@ -382,17 +384,22 @@ static void NTAPI gctls_cb(PVOID, DWORD dwReason, PVOID) {
     {CSLOCK(r);TlsFree(tlsIndex);tlsIndex=TLS_OUT_OF_INDEXES;}
 }
 # endif
-// -- Very black magic to clean tls variables.
-# ifdef _M_IX86
-#  pragma comment (linker, "/INCLUDE:_tlscb")
-# else
-#  pragma comment (linker, "/INCLUDE:tlscb")
-# endif
-# pragma const_seg(".CRT$XLB")
+// -- Very black magic to clean the TLS variables
+//    This incantation only works when the code is compiled as part of a DLL.
+//    I do not know how to be informed of thread termination in a program context.
+# ifdef MINILISPAPI_EXPORT
+#  ifdef _M_IX86
+#   pragma comment (linker, "/INCLUDE:_tlscb")
+#  else
+#   pragma comment (linker, "/INCLUDE:tlscb")
+#  endif
+#  pragma const_seg(".CRT$XLB")
 extern "C" PIMAGE_TLS_CALLBACK tlscb = gctls_cb;
-# pragma const_seg()
+#  pragma const_seg()
+# endif
 
 #else
+
 // No threads
 static gctls_t *gctls() {
   static gctls_t g;
@@ -1103,7 +1110,7 @@ const char *
 miniexp_to_str(miniexp_t p)
 {
   const char *s = 0;
-  size_t l = miniexp_to_lstr(p, &s);
+  miniexp_to_lstr(p, &s);
   return s;
 }
 
