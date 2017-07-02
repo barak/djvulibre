@@ -385,9 +385,11 @@ static void NTAPI gctls_cb(PVOID, DWORD dwReason, PVOID) {
 }
 # endif
 // -- Very black magic to clean the TLS variables
-//    This incantation only works when the code is compiled as part of a DLL.
-//    I do not know how to be informed of thread termination in a program context.
-# ifdef MINILISPAPI_EXPORT
+# if !defined(_MSC_VER)
+#  warning "This only works with MSVC. Memory leak otherwise"
+# elif !defined(MINILISPAPI_EXPORT)
+#  pragma message("This only works for a DLL. Memory leak otherwise")
+# else
 #  ifdef _M_IX86
 #   pragma comment (linker, "/INCLUDE:_tlscb")
 #  else
