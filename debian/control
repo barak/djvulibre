@@ -11,7 +11,7 @@ Build-Depends: pkg-config,
 Vcs-Git: git://anonscm.debian.org/collab-maint/djvulibre.git
 Vcs-Browser: https://anonscm.debian.org/gitweb/?p=collab-maint/djvulibre.git
 Homepage: http://djvu.sourceforge.net/
-Standards-Version: 3.9.8
+Standards-Version: 4.1.1
 
 Package: libdjvulibre-dev
 Section: libdevel
