@@ -1018,13 +1018,15 @@ char_quoted(int c, int flags)
 }
 
 static bool
-char_utf8(int &c, const char* &s)
+char_utf8(int &c, const char* &s, size_t &len)
 {
   if (c < 0xc0)
     return (c < 0x80);
   if (c >= 0xf8)
     return false;
   int n = (c < 0xe0) ? 1 : (c < 0xf0) ? 2 : 3;
+  if ((size_t)n > len)
+    return false;
   int x = c & (0x3f >> n);
   for (int i=0; i<n; i++)
     if ((s[i] & 0xc0) == 0x80)
@@ -1038,6 +1040,7 @@ char_utf8(int &c, const char* &s)
     return false;
   if (x >= 0xd800 && x <= 0xdfff)
     return false;
+  len -= n;
   s += n;
   c = x;
   return true;
@@ -1072,7 +1075,7 @@ print_c_string(const char *s, char *d, int flags, size_t len)
               buffer[0] = tr1[i];
           if (buffer[0] == 0 && c >= 0x80 
               && (flags & (miniexp_io_u4escape | miniexp_io_u6escape))
-              && char_utf8(c, s) )
+              && char_utf8(c, s, len) )
             {
               if (c <= 0xffff && (flags & miniexp_io_u4escape))
                 sprintf(buffer,"u%04X", c);
