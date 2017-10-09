@@ -52,15 +52,6 @@ Replaces: libdjvulibre15, djview3 (= 3.5.20-9), djvulibre-desktop (<< 3.5.20-9)
 Description: Linguistic support files for libdjvulibre
  Runtime linguistic support files for the libdjvulibre library.
 
-Package: djvulibre-dbg
-Section: debug
-Priority: extra
-Architecture: any
-Multi-Arch: same
-Depends: ${shlibs:Depends}, ${misc:Depends}, libdjvulibre21 (= ${binary:Version})
-Description: Debug symbols for the DjVu image format
- DjVu runtime debug symbols.
-
 Package: djvulibre-desktop
 Architecture: all
 Depends: ${misc:Depends}
