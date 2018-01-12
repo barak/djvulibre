@@ -115,7 +115,7 @@ checkpsdvifix()
             djvutext=no
         fi
     fi
-    test "$djvutext" == psdvifix.ps
+    test "$djvutext" = psdvifix.ps
 }
 
 checkps2utf8()
