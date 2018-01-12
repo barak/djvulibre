@@ -100,24 +100,26 @@ EOF
     done
 }
 
+psdvifix=
 checkpsdvifix()
 {
-    if [ -z "$djvutext" ] 
+    if [ -z "$psdvifix" ] 
     then
-        djvutext=psdvifix.ps
+        psdvifix=psdvifix.ps
         if ( "$gsdjvu" 2>&1 -dNODISPLAY -f psdvifix.ps -c quit | \
               grep -q /undefinedfilename )
         then
-            djvutext=no
+            psdvifix=no
         elif ( "$gsdjvu" 2>&1 -dNODISPLAY -f psdvifix.ps -c quit | \
               grep -q WRITESYSTEMDICT )
         then
-            djvutext=no
+            psdvifix=no
         fi
     fi
-    test "$djvutext" = psdvifix.ps
+    test "$psdvifix" != no
 }
 
+djvutext=
 checkps2utf8()
 {
     if [ -z "$djvutext" ] 
@@ -135,7 +137,7 @@ checkps2utf8()
 EOF
         fi
     fi
-    test "$djvutext" != no && test "$djvutext" != "psdvifix.ps" && test -r "$djvutext"  
+    test "$djvutext" != no
 }
 
 
@@ -225,7 +227,6 @@ gsepsf="-dEPSCrop"
 gsverbosity=
 csepverbosity='-v'
 dsedverbosity=
-djvutext=
 infile=
 outfile=
 run=
@@ -298,7 +299,7 @@ do
       --words)
           gsarg0="$gsarg0 -dProvideUnicode -dExtractText"
           if checkpsdvifix; then
-            gsarg1="-f psdvifix.ps"
+            gsarg1="-f $psdvifix"
           elif checkps2utf8; then
             # Modern gs do not like DELAYBIND
             gsarg0="$gsarg0 -dDELAYBIND -dWRITESYSTEMDICT"
@@ -308,7 +309,7 @@ do
       --lines)
           gsarg0="$gsarg0 -dProvideUnicode -dExtractText"
           if checkpsdvifix; then
-            gsarg1="-f psdvifix.ps"
+            gsarg1="-f $psdvifix"
           elif checkps2utf8; then
             # Modern gs do not like DELAYBIND
             gsarg0="$gsarg0 -dDELAYBIND -dWRITESYSTEMDICT"
