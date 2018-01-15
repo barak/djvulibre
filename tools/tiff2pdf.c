@@ -630,7 +630,7 @@ t2p_seekproc(thandle_t handle, toff_t offset, int whence)
 #if HAVE_FSEEKO
         return fseeko(t2p->outputfile, (off_t) offset, whence);
 #else            
-        return fseek(t2p->ouqtputfile, (long) offset, whence);
+        return fseek(t2p->outputfile, (long) offset, whence);
 #endif
     }
 	return offset;
