@@ -83,6 +83,8 @@ AC_CHECK_DECL([_WIN32],[have_os_win32=yes],[have_os_win32=no])
 AM_CONDITIONAL([HAVE_OS_WIN32], [test "x${have_os_win32}" = "xyes"])
 
 AC_CHECK_DECL([__APPLE__],[have_os_apple=yes],[have_os_apple=no])
+AM_CONDITIONAL([HAVE_OS_APPLE], [test "x${have_os_apple}" = "xyes"])
+
 if test x$have_os_apple = xyes && test -d /opt/local ; then
     CPPFLAGS="$CPPFLAGS -I/opt/local/include"
     LDFLAGS="$LDFLAGS -L/opt/local/lib"

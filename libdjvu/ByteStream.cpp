@@ -78,6 +78,9 @@
 #if defined(_WIN32) || defined(__CYGWIN32__)
 # include <io.h>
 #endif
+#if defined(__APPLE__)
+# include <CoreFoundation/CFString.h>
+#endif
 
 #ifdef UNIX
 # ifndef HAS_MEMMAP
@@ -650,43 +653,84 @@ ByteStream::Stdio::init(const char mode[])
   return retval;
 }
 
+#ifdef __WIN32
+static wchar_t *
+utf8_to_wide(const char *cstr)
+{
+  int wlen = strlen(cstr) + 1;
+  wchar_t *wstr = new wchar_t[wlen];
+  if (GUTF8String(cstr).ncopy(wstr, wlen) > 0)
+    return wstr;
+  delete [] wstr;
+  return 0;
+}
+#endif
+
+#ifdef __APPLE__
+static char *
+utf8_to_utf8mac(const char *cstr)
+{
+  int len = strlen(cstr);
+  CFStringRef utf8 = CFStringCreateWithCString(NULL, cstr, kCFStringEncodingUTF8);
+  int buflen = CFStringGetMaximumSizeOfFileSystemRepresentation(utf8);
+  if (buflen < len+1) buflen = len+1;
+  char *nfdstr = new char[buflen];
+  if (! CFStringGetFileSystemRepresentation(utf8, nfdstr, buflen))
+    strcpy(nfdstr, cstr);
+  return nfdstr;
+}
+#endif
+
+
 static FILE *
 urlfopen(const GURL &url,const char mode[])
 {
+  FILE *retval = 0;
 #if defined(_WIN32)
-  FILE *retval=0;
-  const GUTF8String filename(url.UTF8Filename());
-  wchar_t *wfilename;
-  const size_t wfilename_size=filename.length()+1;
-  GPBuffer<wchar_t> gwfilename(wfilename,wfilename_size);
-  if(filename.ncopy(wfilename,wfilename_size) > 0)
-  {
-    const GUTF8String gmode(mode);
-    wchar_t *wmode;
-    const size_t wmode_size=gmode.length()+1;
-    GPBuffer<wchar_t> gwmode(wmode,wmode_size);
-	if(gmode.ncopy(wmode,wmode_size) > 0)
-	{
-	  retval=_wfopen(wfilename,wmode);
-	}
-  }
-  return retval?retval:fopen((const char *)url.NativeFilename(),mode);
+  // On Win, try to use _wfopen instead of fopen
+  wchar_t *wstr = utf8_to_wide((const char*)url.UTF8Filename());
+  wchar_t *wmode = utf8_to_wide(mode);
+  if (wstr && wmode)
+    retval = _wfopen(wstr, wmode);
+  delete [] wstr;
+  delete [] wmode;
+  if (! retval)
+    retval = fopen((const char *)url.NativeFilename(),mode);
 #elif defined(__APPLE__)
-  return fopen((const char *)url.UTF8Filename(),mode);
+  // On Mac, prefer the NFD version of the UTF8 filename
+  const char *cnfd = utf8_to_utf8mac((const char*)url.UTF8Filename());
+  retval = fopen(cnfd, mode);
+  delete [] cnfd;
+  if (! retval) // Otherwise try unnormalized UTF8
+    retval = fopen((const char*)url.UTF8Filename(), mode);
 #else
-  return fopen((const char *)url.NativeFilename(),mode);
+  // Unix filesystems are usually in native encoding
+  retval = fopen((const char *)url.NativeFilename(),mode);
+  if (! retval)
+    retval = fopen((const char *)url.NativeFilename(),mode);
 #endif
+  return retval;
 }
 
 #ifdef UNIX
 static int
 urlopen(const GURL &url, const int mode, const int perm)
 {
+  int retval = -1;
 #if defined(__APPLE__)
-  return open((const char *)url.UTF8Filename(),mode,perm);
+  // see above
+  const char *cnfd = utf8_to_utf8mac((const char*)url.UTF8Filename());
+  retval = open(cnfd, mode, perm);
+  delete [] cnfd;
+  if (retval < 0)
+    retval = open((const char*)url.UTF8Filename(), mode, perm);
 #else
-  return open((const char *)url.NativeFilename(),mode,perm);
+  // see above
+  retval = open((const char *)url.NativeFilename(),mode,perm);
+  if (retval < 0)
+    retval = open((const char *)url.UTF8Filename(),mode,perm);
 #endif
+  return retval;
 }
 #endif /* UNIX */
 

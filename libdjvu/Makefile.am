@@ -38,6 +38,10 @@ libdjvulibre_la_CPPFLAGS += -DDDJVUAPI_EXPORT -DMINILISPAPI_EXPORT
 libdjvulibre_la_LDFLAGS += -Wl,--export-all-symbols
 endif
 
+if HAVE_OS_APPLE
+libdjvulibre_la_LDFLAGS += -framework CoreFoundation
+endif
+
 sed_process = $(SED) \
  -e 's,@PACKAGE_VERSION\@,$(PACKAGE_VERSION),g' \
  -e 's,@prefix\@,$(prefix),g' \
