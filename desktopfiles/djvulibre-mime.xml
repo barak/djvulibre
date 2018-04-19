@@ -7,7 +7,7 @@
    <glob pattern="*.djv"/>
    <icon name="djvu"/>
    <generic-icon name="djvu"/>
-   <magic priority="50">
+   <magic priority="30">
      <match type="string" offset="0" value="AT&amp;TFORM">
        <match type="string" offset="12" value="DJVM"/>
        <match type="string" offset="12" value="DJVU"/>
