@@ -707,7 +707,7 @@ urlfopen(const GURL &url,const char mode[])
   // Unix filesystems are usually in native encoding
   retval = fopen((const char *)url.NativeFilename(),mode);
   if (! retval)
-    retval = fopen((const char *)url.NativeFilename(),mode);
+    retval = fopen((const char *)url.UTF8Filename(),mode);
 #endif
   return retval;
 }
