@@ -3,20 +3,20 @@ all: icons
 #icons
 
 SVGICONS = \
-scalable/mimetypes/djvu.svgz
+scalable/mimetypes/image-vnd.djvu.svgz
 
 PNGICONS = \
-16x16/mimetypes/djvu.png \
-20x20/mimetypes/djvu.png \
-22x22/mimetypes/djvu.png \
-24x24/mimetypes/djvu.png \
-32x32/mimetypes/djvu.png \
-48x48/mimetypes/djvu.png \
-64x64/mimetypes/djvu.png \
-72x72/mimetypes/djvu.png \
-96x96/mimetypes/djvu.png \
-128x128/mimetypes/djvu.png \
-256x256/mimetypes/djvu.png 
+16x16/mimetypes/image-vnd.djvu.png \
+20x20/mimetypes/image-vnd.djvu.png \
+22x22/mimetypes/image-vnd.djvu.png \
+24x24/mimetypes/image-vnd.djvu.png \
+32x32/mimetypes/image-vnd.djvu.png \
+48x48/mimetypes/image-vnd.djvu.png \
+64x64/mimetypes/image-vnd.djvu.png \
+72x72/mimetypes/image-vnd.djvu.png \
+96x96/mimetypes/image-vnd.djvu.png \
+128x128/mimetypes/image-vnd.djvu.png \
+256x256/mimetypes/image-vnd.djvu.png 
 
 icons: $(PNGICONS) $(SVGICONS)
 
@@ -76,9 +76,11 @@ iconsdir = $(datadir)/icons/hicolor
 nobase_icons_DATA = $(PNGICONS) $(SVGICONS)
 
 # mime
-
-mimedir = $(datadir)/mime/packages
-dist_mime_DATA = djvulibre-mime.xml
+# | No longer install mime type description
+# | because it conflicts with the defaults provided
+# | by shared-mime-info.
+# mimedir = $(datadir)/mime/packages
+# dist_mime_DATA = djvulibre-mime.xml
 
 # hooks
 
