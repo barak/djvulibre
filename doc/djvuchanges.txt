@@ -50,7 +50,9 @@ shared Djbz shape dictionary must be placed before the corresponding Sjbz
 chunk.
 
 
-2- ESCAPE SEQUENCES IN ANNOTATION CHUNK STRINGS.
+2- ANNOTATION CHUNK
+
+2.1- ESCAPE SEQUENCES IN ANNOTATION CHUNK STRINGS.
 
 The treatment of escape sequence in annotation chunk strings has
 historically been slightly different in Lizardtech DjVu and
@@ -84,6 +86,13 @@ It is expected that Lizardtech will at some point adopt the improved
 DjVuLibre rules. We will then be able to state that all DjVu files
 with version greater than some constant use the new convention.
 
+
+2.2- HIGHLIGHT ANNOTATION
+
+The standard specifies that highlight opacity ranges from 0 to 100
+with a default value of 50. Nothing says however that 100 represents
+a completely opaque color. In fact, in djview4, opacities are
+recognized up to 200, with 200 representing an opaque color.
 
 
 3- PAGE TITLES.
