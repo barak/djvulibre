@@ -1,6 +1,4 @@
 README
 doc/*.djvu
 doc/*.txt
-doc/DjVmNav*
-doc/GMapAreas*
 debian/tmp/usr/share/djvu/pubtext
