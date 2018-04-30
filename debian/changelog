@@ -1,3 +1,13 @@
+djvulibre (3.5.27.1-9) unstable; urgency=medium
+
+  * bump to debhelper 11
+  * bump policy, no changes required
+  * stop including mimetype xml file in desktop package, and rename icons.
+    For details see https://sourceforge.net/p/djvu/bugs/283/
+  * adjust to upstream renaming of documentation
+
+ -- Barak A. Pearlmutter <bap@debian.org>  Mon, 30 Apr 2018 17:13:35 +0100
+
 djvulibre (3.5.27.1-8) unstable; urgency=medium
 
   * track upstream updates
