@@ -77,7 +77,7 @@ Description: Transition package, djview3 to djview4
 
 Package: djvuserve
 Section: web
-Recommends: apache | httpd-cgi | httpd
+Recommends: apache2 | apache | httpd-cgi | httpd
 Conflicts: djvulibre-bin (<< 3.5.9-3)
 Architecture: any
 Depends: ${shlibs:Depends}, ${misc:Depends}
