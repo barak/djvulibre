@@ -265,7 +265,7 @@ djvulibre (3.5.24-1) unstable; urgency=low
 djvulibre (3.5.23-6) unstable; urgency=low
 
   * tiny patch to libdjvu/miniexp.cpp from  Jacob Wilk (closes: #613549)
-  
+
  -- Barak A. Pearlmutter <bap@debian.org>  Wed, 02 Mar 2011 08:47:43 +0000
 
 djvulibre (3.5.23-5) unstable; urgency=low
@@ -308,7 +308,7 @@ djvulibre (3.5.23-2) unstable; urgency=low
     - locale set internally as appropriate, e.g., PDF output (closes: #562156)
       also fixes https://bugs.launchpad.net/ubuntu/+source/djvulibre/+bug/499324
     - thread-related crash addressed, slightly post 3.5.23 (closes: #582961)
-  
+
  -- Barak A. Pearlmutter <bap@debian.org>  Tue, 07 Sep 2010 17:47:42 +0100
 
 djvulibre (3.5.23-1) unstable; urgency=low
@@ -385,7 +385,7 @@ djvulibre (3.5.22-1) unstable; urgency=low
 
   [ Leon Bottou ]
   * Upstream release candidate
-  
+
   [ Barak A. Pearlmutter ]
 
  -- Barak A. Pearlmutter <bap@debian.org>  Tue, 23 Jun 2009 22:53:13 +0200
@@ -394,7 +394,7 @@ djvulibre (3.5.21-3) unstable; urgency=low
 
   * Upstream browser plugin fix to gui/nsdejavu/nsdejavu.c (closes: #504340)
   * Upstream fix for djvups -text=yes non-ASCII crash (closes: #469122)
-  
+
  -- Barak A. Pearlmutter <bap@debian.org>  Wed, 10 Dec 2008 21:32:00 +0000
 
 djvulibre (3.5.21-2) unstable; urgency=low
@@ -468,7 +468,7 @@ djvulibre (3.5.20-8) unstable; urgency=low
   * Utilities package now recommends pdf2djvu package, coming soon
   * Fix update-alternatives in installation scripts (closes: #476444)
   * Rev deb policy
-  
+
  -- Barak A. Pearlmutter <bap@debian.org>  Fri, 02 May 2008 01:12:15 -0700
 
 djvulibre (3.5.20-7) unstable; urgency=low
