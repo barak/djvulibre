@@ -1065,7 +1065,7 @@ print_c_string(const char *s, char *d, int flags, size_t len)
       c = (unsigned char)(*s++);
       if (char_quoted(c, flags))
         {
-          char buffer[10];
+          char buffer[16]; /* 10+1 */
           static const char *tr1 = "\"\\tnrbf";
           static const char *tr2 = "\"\\\t\n\r\b\f";
           buffer[0] = buffer[1] = 0;

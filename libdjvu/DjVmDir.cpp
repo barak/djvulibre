@@ -299,7 +299,13 @@ DjVmDir::decode(const GP<ByteStream> &gstr)
          memcpy((char*) strings+strings_size, buffer, length);
       }
       DEBUG_MSG("size of decompressed names block=" << strings.size() << "\n");
-   
+      if (strings[strings.size()-1] != 0)
+        {
+         int strings_size=strings.size();
+         strings.resize(strings_size+1);
+         strings[strings_size] = 0;
+        }
+      
          // Copy names into the files
       const char * ptr=strings;
       for(pos=files_list;pos;++pos)

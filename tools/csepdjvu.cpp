@@ -1834,7 +1834,7 @@ main(int argc, const char **argv)
                 ByteStream::create(GURL::Filename::UTF8(arg),"rb");
               BufferByteStream ibs(*fbs);
               do {
-                char pagename[16];
+                char pagename[20];
                 sprintf(pagename, "p%04d.djvu", ++pageno);
                 if (opts.verbose > 1)
                   DjVuPrintErrorUTF8("%s","--------------------\n");
