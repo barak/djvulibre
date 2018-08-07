@@ -653,7 +653,7 @@ ByteStream::Stdio::init(const char mode[])
   return retval;
 }
 
-#ifdef __WIN32
+#ifdef _WIN32
 static wchar_t *
 utf8_to_wide(const char *cstr)
 {

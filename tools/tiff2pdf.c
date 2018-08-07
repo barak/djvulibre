@@ -90,6 +90,21 @@
 # include <getopt.h>
 #endif
 
+#ifdef _WIN32
+# ifndef HAVE_SNPRINTF
+#  undef snprintf
+#  define snprintf my_snprintf
+int snprintf(char* str, size_t size, const char* format, ...)
+{
+  int count;
+  va_list ap;
+  va_start(ap, format);
+  count = vsnprintf(str, size, format, ap);
+  va_end(ap);
+  return count;
+}
+# endif
+#endif
 
 
 #ifndef HAVE_GETOPT_H

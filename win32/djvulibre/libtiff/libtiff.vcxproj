@@ -130,6 +130,7 @@
     <ClCompile Include="..\..\tiff\tiff\libtiff\tif_warning.c" />
     <ClCompile Include="..\..\tiff\tiff\libtiff\tif_write.c" />
     <ClCompile Include="..\..\tiff\tiff\libtiff\tif_zip.c" />
+    <ClCompile Include="..\..\tiff\tiff\port\snprintf.c" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\tiff\tiff\libtiff\t4.h" />
