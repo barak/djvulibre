@@ -92,9 +92,8 @@
 
 #ifdef _WIN32
 # ifndef HAVE_SNPRINTF
-#  undef snprintf
-#  define snprintf my_snprintf
-int snprintf(char* str, size_t size, const char* format, ...)
+static int
+snprintf(char* str, size_t size, const char* format, ...)
 {
   int count;
   va_list ap;
