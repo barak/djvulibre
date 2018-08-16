@@ -482,6 +482,7 @@ GPixmap::init(ByteStream &bs)
       break;
     case ('P'<<8)+'5':
       raw = grey = true;
+      /* -fallthrough */
     case ('P'<<8)+'6':
       raw = true;
       break;

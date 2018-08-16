@@ -2134,6 +2134,7 @@ ddjvu_format_create(ddjvu_format_style_t style,
     case DDJVU_FORMAT_MSBTOLSB:
       if (!nargs) 
         break;
+      /* -fallthrough */
     default:
       return fmt_error(fmt);
     }
