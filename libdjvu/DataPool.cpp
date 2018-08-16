@@ -1737,7 +1737,7 @@ PoolByteStream::seek(long offset, int whence, bool nothrow)
   {
     case SEEK_CUR:
       offset+=position;
-      // fallthrough;
+      /* FALLTHRU */
     case SEEK_SET:
       if(offset<position)
       {
