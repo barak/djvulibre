@@ -4285,11 +4285,11 @@ void t2p_pdf_currenttime(T2P* t2p)
 	snprintf(t2p->pdf_datetime, sizeof(t2p->pdf_datetime),
              "D:%.4d%.2d%.2d%.2d%.2d%.2d",
              TIFFclip( (currenttime->tm_year + 1900) % 65536 , 9999),
-             TIFFclip( (currenttime->tm_mon + 1) % 256 , 100),
-             TIFFclip( (currenttime->tm_mday) % 256 , 100),
-             TIFFclip( (currenttime->tm_hour) % 256 , 100),
-             TIFFclip( (currenttime->tm_min) % 256 , 100),
-             TIFFclip( (currenttime->tm_sec) % 256 , 100));
+             TIFFclip( (currenttime->tm_mon + 1) % 256 , 99),
+             TIFFclip( (currenttime->tm_mday) % 256 , 99),
+             TIFFclip( (currenttime->tm_hour) % 256 , 99),
+             TIFFclip( (currenttime->tm_min) % 256 , 99),
+             TIFFclip( (currenttime->tm_sec) % 256 , 99));
 
 	return;
 }
