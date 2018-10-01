@@ -128,6 +128,9 @@
     <ClCompile Include="..\..\tiff\tiff\libtiff\tif_zip.c">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\tiff\tiff\port\snprintf.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\tiff\tiff\libtiff\t4.h">

@@ -85,11 +85,28 @@
 #ifndef TIFFmin
 # define TIFFmin(A,B) ((A)<(B)?(A):(B))
 #endif
+#ifndef TIFFclip
+# define TIFFclip(A,B) ((A)<(0)?(0):((A)>(B)?(B):(A)))
+#endif
 
 #ifdef HAVE_GETOPT_H
 # include <getopt.h>
 #endif
 
+#ifdef _WIN32
+# ifndef HAVE_SNPRINTF
+static int
+snprintf(char* str, size_t size, const char* format, ...)
+{
+  int count;
+  va_list ap;
+  va_start(ap, format);
+  count = vsnprintf(str, size, format, ap);
+  va_end(ap);
+  return count;
+}
+# endif
+#endif
 
 
 #ifndef HAVE_GETOPT_H
@@ -3848,8 +3865,8 @@ t2p_sample_rgbaa_to_rgb(tdata_t data, uint32 samplecount)
     /* For the 3 first samples, there is overlapping between souce and
        destination, so use memmove().
        See http://bugzilla.maptools.org/show_bug.cgi?id=2577 */
-    for(i = 0; i < 3 && i < samplecount; i++)
-        memmove((uint8*)data + i * 3, (uint8*)data + i * 4, 3);
+	for(i = 0; i < 3 && i < samplecount; i++)
+		memmove((uint8*)data + i * 3, (uint8*)data + i * 4, 3);
 	for(; i < samplecount; i++)
 		memcpy((uint8*)data + i * 3, (uint8*)data + i * 4, 3);
 
@@ -4266,13 +4283,13 @@ void t2p_pdf_currenttime(T2P* t2p)
 
 	currenttime = localtime(&timenow);
 	snprintf(t2p->pdf_datetime, sizeof(t2p->pdf_datetime),
-		 "D:%.4d%.2d%.2d%.2d%.2d%.2d",
-		 (currenttime->tm_year + 1900) % 65536,
-		 (currenttime->tm_mon + 1) % 256,
-		 (currenttime->tm_mday) % 256,
-		 (currenttime->tm_hour) % 256,
-		 (currenttime->tm_min) % 256,
-		 (currenttime->tm_sec) % 256);
+             "D:%.4d%.2d%.2d%.2d%.2d%.2d",
+             TIFFclip( (currenttime->tm_year + 1900) % 65536 , 9999),
+             TIFFclip( (currenttime->tm_mon + 1) % 256 , 99),
+             TIFFclip( (currenttime->tm_mday) % 256 , 99),
+             TIFFclip( (currenttime->tm_hour) % 256 , 99),
+             TIFFclip( (currenttime->tm_min) % 256 , 99),
+             TIFFclip( (currenttime->tm_sec) % 256 , 99));
 
 	return;
 }
