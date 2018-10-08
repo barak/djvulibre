@@ -155,7 +155,7 @@ MMXControl::enable_mmx()
   int cpuinfo[4];
   __cpuid(cpuinfo, 1);
   if (cpuinfo[3] & (1<<23))
-    return ((mmxflag = 0));
+    return ((mmxflag = 1));
 #endif
   
   return ((mmxflag = 0));
