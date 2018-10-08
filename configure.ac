@@ -163,6 +163,7 @@ AC_HEADER_SYS_WAIT
 AC_CHECK_HEADERS(wchar.h wctype.h sys/mman.h iconv.h getopt.h)
 AC_CHECK_HEADERS(langinfo.h sched.h new.h)
 AC_CHECK_HEADERS(stdint.h inttypes.h sys/ipc.h sys/shm.h)
+AC_CHECK_HEADERS(cpuid.h)
 
 # ----------------------------------------
 # Types
