@@ -169,16 +169,10 @@ MMXControl::enable_mmx()
 #endif
 #if defined(MMX) && defined(__GNUC__) && defined(__x86_64__)
   // Detection of MMX for GCC
-  __asm__ volatile (// Check that CR0:EM is clear
-                    "xorl %%edx,%%edx\n\t"
-                    "smsw %%ax\n\t"
-                    "andl $4,%%eax\n\t"
-                    "jnz 1f\n\t"
-                    // Execute CPUID
+  __asm__ volatile (// Execute CPUID
                     "movl $1,%%eax\n\t"
-                    "cpuid\n"
-                    // Finish
-		    "1:\tmovl %%edx, %0"
+                    "cpuid\n\t"
+		    "movl %%edx, %0"
                     : "=m" (cpuflags) :
                     : "eax","ebx","ecx","edx");
 #endif
