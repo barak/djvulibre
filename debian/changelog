@@ -1,8 +1,13 @@
-djvulibre (3.5.27.1-10) UNRELEASED; urgency=medium
+djvulibre (3.5.27.1-10) unstable; urgency=medium
 
+  [ Ondřej Nový ]
   * d/watch: Use https protocol
 
- -- Ondřej Nový <onovy@debian.org>  Mon, 01 Oct 2018 10:09:37 +0200
+  [ Barak A. Pearlmutter ]
+  * track upstream updates
+  * bump policy, no changes required
+
+ -- Barak A. Pearlmutter <bap@debian.org>  Fri, 02 Nov 2018 14:51:55 +0000
 
 djvulibre (3.5.27.1-9) unstable; urgency=medium
 
