@@ -89,8 +89,10 @@ namespace DJVU {
 
 GPEnabled::~GPEnabled()
 {
+#if DISABLED_BECAUSE_OF_CXX11_DESTRUCTORS_BEING_NOEXCEPT
   if (count > 0)
     G_THROW( ERR_MSG("GSmartPointer.suspicious") );
+#endif
 }
 
 void
