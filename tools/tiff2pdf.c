@@ -93,7 +93,7 @@
 # include <getopt.h>
 #endif
 
-#ifdef _WIN32
+#if defined(_WIN32) && defined(_MSC_VER)
 # ifndef HAVE_SNPRINTF
 static int
 snprintf(char* str, size_t size, const char* format, ...)
