@@ -309,7 +309,7 @@ DjVmDir::decode(const GP<ByteStream> &gstr)
       {
          GP<File> file=files_list[pos];
          if (ptr >= (const char*)strings + strings_size)
-           G_THROW( "DjVu document is corrupted (DjVmDir)" );
+           G_THROW( ByteStream::EndOfFile );
          file->id=ptr;
          ptr+=file->id.length()+1;
          if (file->flags & File::HAS_NAME)
