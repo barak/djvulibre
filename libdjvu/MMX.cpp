@@ -69,7 +69,7 @@
 # ifdef HAVE_CPUID_H
 #  include <cpuid.h>
 # endif
-# ifdef _WIN32
+# if defined(_MSC_VER) && defined(_WIN32)
 #  include <intrin.h>
 # endif
 #endif

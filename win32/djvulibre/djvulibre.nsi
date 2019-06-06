@@ -160,6 +160,7 @@ ShowUnInstDetails show
 ;language files
 !insertmacro MUI_LANGUAGE "English"
 !insertmacro MUI_LANGUAGE "Russian"
+!insertmacro MUI_LANGUAGE "Spanish"
 
 ; end MUI 1.67 compatible ------
 
@@ -566,6 +567,7 @@ SectionEnd
 
 !include "djvulibrelang-ru.nsh"
 !include "djvulibrelang-en.nsh"
+!include "djvulibrelang-es.nsh"
 
 ; Section descriptions set
 
