@@ -96,7 +96,7 @@ pathexpand()
       IFS=':' read tmpdir tmpvar <<EOF
 $tmpvar
 EOF
-      test -x $tmpdir/$1 && echo $tmpdir/$1
+      test -x "$tmpdir/$1" && echo "$tmpdir/$1"
     done
 }
 
@@ -488,7 +488,7 @@ EOF
 function _esc_init() {
     _ctrl = ""
     for (i=1; i<32; i++) { _ctrl = _ctrl sprintf("%c",i) }
-    _esc = "[\"\\&" _ctrl "]"
+    _esc = "[\"\\\\&" _ctrl "]"
     _ctrl = "[" _ctrl "]"
 }
 
