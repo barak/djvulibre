@@ -1216,11 +1216,11 @@ GP<GStringRep>
 GStringRep::getbuf(int n) const
 {
   GP<GStringRep> retval;
-  if(n< 0)
+  if(n < 0)
     n=strlen(data);
-  if(n>0)
+  if(n >= 0)
   {
-    retval=blank(n);
+    retval=blank((n>0) ? n : 1);
     char *ndata=retval->data;
     strncpy(ndata,data,n);
     ndata[n]=0;
