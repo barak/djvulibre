@@ -2161,7 +2161,7 @@ command_help(void)
           " . set-meta [<metafile>]  -- copies <metafile> into the metadata annotation tag\n"
           " . set-txt [<txtfile>]    -- copies <txtfile> into the hidden text chunk\n"
           " . set-xmp [<xmpfile>]    -- copies <xmpfile> into the xmp metadata annotation tag\n" 
-          " _ set-outline [<bmfile>] -- sets outline (bootmarks)\n"
+          " _ set-outline [<bmfile>] -- sets outline (bookmarks)\n"
           " _ set-thumbnails [<sz>]  -- generates all thumbnails with given size\n"
           "   set-rotation [+-]<rot> -- sets page rotation\n"
           "   set-dpi <dpi>          -- sets page resolution\n"
