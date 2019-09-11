@@ -1,9 +1,11 @@
-djvulibre (3.5.27.1-13) UNRELEASED; urgency=medium
+djvulibre (3.5.27.1-13) unstable; urgency=medium
 
-  * Add missing colon in closes line.
-  * Set upstream metadata fields: Archive.
+  * track upstream bug fixes
+  * Run lintian-brush:
+    - Add missing colon in closes line.
+    - Set upstream metadata fields: Archive.
 
- -- Barak A. Pearlmutter <bap@debian.org>  Wed, 11 Sep 2019 14:11:16 +0100
+ -- Barak A. Pearlmutter <bap@debian.org>  Wed, 11 Sep 2019 14:12:18 +0100
 
 djvulibre (3.5.27.1-12) unstable; urgency=medium
 
