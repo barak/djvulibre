@@ -146,13 +146,17 @@ EOF
 # Step 2a -- locate gsdjvu executable
 
 gsdjvu=
-for gs in ${GSDJVU} `pathexpand gs` `pathexpand gsdjvu`
+while read gs
 do
   if [ -z "$gsdjvu" ] && ( "$gs" -h 2>&1 | grep -q djvusep )
   then
      gsdjvu="$gs"
   fi
-done
+done <<EOF
+${GSDJVU}
+`pathexpand gs`
+`pathexpand gsdjvu`
+EOF
 
 if [ -z "$gsdjvu" ]
 then
@@ -170,13 +174,17 @@ fi
 # Step 2b -- locate csepdjvu executable
 
 csepdjvu=
-for cs in ${CSEPDJVU} `pathexpand csepdjvu` `pathexpand msepdjvu`
+while read cs
 do
   if [ -z "$csepdjvu" ] && ( "$cs" -h 2>&1 | grep -q quality )
   then
       csepdjvu="$cs"
   fi
-done
+done <<EOF
+${CSEPDJVU}
+`pathexpand csepdjvu`
+`pathexpand msepdjvu`
+EOF
 
 if [ -z "$csepdjvu" ]
 then
@@ -193,18 +201,21 @@ fi
 # Step 2c -- locate djvused executable
 
 djvused=
-for ds in ${DJVUSED} `pathexpand djvused`
+while read ds
 do
     if [ -z "$djvused" ] && ( "$ds" 2>&1 | grep -q -i djvulibre )
     then
         djvused="$ds"
     fi
-done
+done <<EOF
+${DJVUSED}
+`pathexpand djvused`
+EOF
 
 # Step 2d -- locate pdftotext executable
 
 pdftotext=
-for pt in ${PDFTOTEXT} `pathexpand pdftotext`
+while read pt
 do
   if [ -z "$pdftotext" ] && \
      ( "$pt" -bbox foo.pdf 2>&1 | grep -q foo.pdf )
@@ -212,7 +223,10 @@ do
   then
       pdftotext="$pt"
   fi
-done
+done <<EOF
+${PDFTOTEXT}
+`pathexpand pdftotext`
+EOF
 
 
 # Step 3 -- process arguments
@@ -251,6 +265,7 @@ do
       --check)
           echo 1>&2 "Using: $gsdjvu"
           echo 1>&2 "  and: $csepdjvu"
+          test -n "$djvused" && echo 1>&2 "  and: $djvused"
           test -n "$pdftotext" && echo 1>&2 "  and: $pdftotext"
           exit 0
           ;;
