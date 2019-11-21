@@ -389,6 +389,10 @@ public:
     { return bs->seek(offset,whence,nothrow); }
   virtual void flush(void)
     { bs->flush(); }
+private:
+  // Cancel C++ default stuff
+  Wrapper(const Wrapper &);
+  Wrapper & operator=(const Wrapper &);
 };
 
 

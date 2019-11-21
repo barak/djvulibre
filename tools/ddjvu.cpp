@@ -279,7 +279,7 @@ render(ddjvu_page_t *page, int pageno)
       prect.h = (ih * 100) / dpi;
     }
   /* Process aspect ratio */
-  if (flag_aspect <= 0)
+  if (flag_aspect <= 0 && iw>0 && ih>0)
     {
       double dw = (double)iw / prect.w;
       double dh = (double)ih / prect.h;

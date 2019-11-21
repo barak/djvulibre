@@ -405,7 +405,7 @@ filter_fv(short *p, int w, int h, int rowsize, int scale)
   int y = 0;
   int s = scale*rowsize;
   int s3 = s+s+s;
-  h = ((h-1)/scale)+1;
+  h = (h>0) ? ((h-1)/scale)+1 : 0;
   y += 1;
   p += s;
   while (y-3 < h)
