@@ -1,8 +1,9 @@
 djvulibre (3.5.27.1-14) unstable; urgency=medium
 
   * Merge upstream fix for CVE-2019-18804 (closes: #945114)
+  * bump policy
 
- -- Barak A. Pearlmutter <bap@debian.org>  Thu, 21 Nov 2019 15:13:40 +0000
+ -- Barak A. Pearlmutter <bap@debian.org>  Thu, 21 Nov 2019 15:30:21 +0000
 
 djvulibre (3.5.27.1-13) unstable; urgency=medium
 
