@@ -6,7 +6,7 @@ djdir=$HOME/djvu/djvulibre-3.5
 dwdir=$djdir/win32/djvulibre/Release
 djsrc=$HOME/djvu/djvulibre-djview/src
 msvc="$c/Program Files/Microsoft Visual Studio/2019/Community/VC"
-msredist="$msvc/Redist/MSVC/14.23.27820/x86/Microsoft.VC142.CRT"
+msredist="$msvc/Redist/MSVC/14.23.27820/vcredist_x86.exe"
 
 target=$HOME/djvu/DjVuLibre
 
@@ -55,7 +55,7 @@ echo '[Paths]' > $target/qt.conf
 ## MS libs
 echo ---- MS libs
 
-for n in "$msredist"/* ; do
+for n in "$msredist" ; do
     run cp "$n" $target; done
 
 ## DjVuLibre shared files
@@ -96,7 +96,6 @@ echo ---- Doc
 run cp $djdir/win32/djvulibre/djvulibre.nsi $target
 run cp $djdir/win32/djvulibre/djvulibre*.nsh $target
 
-test -d $target/man || run mkdir $target/man
 test -d $target/doc || run mkdir $target/doc
 run cp $djdir/doc/*.djvu $target/doc
 run cp $djdir/doc/*.txt $target/doc
