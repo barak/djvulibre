@@ -45,8 +45,12 @@ for n in $qtplug ; do
     test -d $target/plugins/$n || run mkdir $target/plugins/$n 
     for m in $qtdir/plugins/$n/*.dll ; do
         run cp $m $target/plugins/$n ; done
-    run chmod 0755 $target/plugins/$n/* ; done
-    run rm $target/plugins/*/*d4.dll
+    run chmod 0755 $target/plugins/$n/*.dll 
+    for m in $target/plugins/$n/*.dll; do
+	md="`dirname $m`/`basename $m .dll`d.dll"
+	test -r $md && run rm $md
+    done
+done
     run rm $target/plugins/imageformats/qsvg*
 run find $target -name '*.dll' -exec chmod 0755 {} \;
 
