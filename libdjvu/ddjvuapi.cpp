@@ -2041,12 +2041,10 @@ ddjvu_unmap_rect(ddjvu_rectmapper_t *mapper, ddjvu_rect_t *rect)
 // ----------------------------------------
 // Render
 
-typedef uint32_t uint32x256_t[256];
-
 struct DJVUNS ddjvu_format_s
 {
   ddjvu_format_style_t style;
-  uint32x256_t rgb[3];
+  uint32_t rgb[3][256];
   uint32_t palette[6*6*6];
   uint32_t xorval;
   double gamma;
@@ -2188,7 +2186,7 @@ static void
 fmt_convert_row(const GPixel *p, int w, 
                 const ddjvu_format_t *fmt, char *buf)
 {
-  const uint32x256_t *r = fmt->rgb;
+  const uint32_t (&r)[3][256] = fmt->rgb;
   const uint32_t xorval = fmt->xorval;
   switch(fmt->style)
     {
@@ -2270,8 +2268,7 @@ fmt_convert_row(const GPixel *p, int w,
 }
 
 static void
-fmt_convert(GPixmap *pm, const ddjvu_format_t *fmt,
-            char *buffer, unsigned long rowsize)
+fmt_convert(GPixmap *pm, const ddjvu_format_t *fmt, char *buffer, int rowsize)
 {
   int w = pm->columns();
   int h = pm->rows();
@@ -2292,7 +2289,7 @@ static void
 fmt_convert_row(unsigned char *p, unsigned char g[256][4], int w, 
                 const ddjvu_format_t *fmt, char *buf)
 {
-  const uint32x256_t *r = fmt->rgb;
+  const uint32_t (&r)[3][256] = fmt->rgb;
   const uint32_t xorval = fmt->xorval;
   switch(fmt->style)
     {
@@ -2386,8 +2383,7 @@ fmt_convert_row(unsigned char *p, unsigned char g[256][4], int w,
 }
 
 static void
-fmt_convert(GBitmap *bm, const ddjvu_format_t *fmt,
-            char *buffer, unsigned long rowsize)
+fmt_convert(GBitmap *bm, const ddjvu_format_t *fmt, char *buffer, int rowsize)
 {
   int w = bm->columns();
   int h = bm->rows();
