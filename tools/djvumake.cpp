@@ -524,6 +524,8 @@ create_jb2_chunk(IFFByteStream &iff, const char *chkid, const GURL &url)
 void 
 create_incl_chunk(IFFByteStream &iff, const char *chkid, const char *fileid)
 {
+  if (strchr(fileid, '/') || strchr(fileid, '\\') || strchr(fileid, ':'))
+    G_THROW( ERR_MSG("DjVuFile.malformed") );
   iff.put_chunk("INCL");
   iff.write(fileid, strlen(fileid));
   iff.close_chunk();

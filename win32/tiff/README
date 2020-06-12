@@ -1,4 +1,4 @@
 UNPACK THE SOURCE CODE OF LIBTIFF HERE.
-ftp://ftp.remotesensing.org/pub/libtiff/tiff-4.0.9.tar.gz
-
-Then rename directory "tiff-4.0.9" AS "tiff"
+Previously at 
+ftp://ftp.remotesensing.org/pub/libtiff/tiff-4.0.X.tar.gz
+Then rename directory "tiff-4.0.X" AS "tiff"

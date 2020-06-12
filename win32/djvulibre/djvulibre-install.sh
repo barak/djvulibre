@@ -1,14 +1,18 @@
 #!/bin/sh
 
-c=/cygdrive/c
-qtdir=$c/QtSDK/Desktop/Qt/4.8.1/msvc2010
-djdir=$HOME/djvulibre-3.5
+c=/c
+qtdir=$c/Qt/5.14.1/msvc2017
+djdir=$HOME/djvu/djvulibre-3.5
 dwdir=$djdir/win32/djvulibre/Release
-djsrc=$HOME/djvulibre-djview/src
-msvc="$c/Program Files/Microsoft Visual Studio 10.0/VC"
-msredist="$msvc/redist/x86/Microsoft.VC100.CRT"
+djsrc=$HOME/djvu/djvulibre-djview/src
+msvc="$c/Program Files/Microsoft Visual Studio/2019/Community/VC"
+msredist="$msvc/Redist/MSVC/14.23.27820/vcredist_x86.exe"
 
-target=$HOME/DjVuLibre
+target=$HOME/djvu/DjVuLibre
+
+if [ ! -d $target ] ; then
+    mkdir $target
+fi
 
 function run() {
     echo "$@"
@@ -32,20 +36,21 @@ for n in $djdll $djexe ; do
 ## Qt libs
 echo ---- Qt libs
 
-qtdll="QtCore4.dll QtGui4.dll QtNetwork4.dll QtOpenGL4.dll"
-qtssl="ssleay32.dll libeay32.dll libssl32.dll"
-qtplug="accessible codecs imageformats"
+qtdll="Qt5Core.dll Qt5Gui.dll Qt5Widgets.dll Qt5Network.dll Qt5OpenGL.dll Qt5PrintSupport.dll"
+qtplug="platforms styles imageformats"
 for n in $qtdll ; do 
-    run cp $qtdir/lib/$n $target ; done
-for n in $qtssl ; do 
-    test -r $qtdir/bin/$n && run cp $qtdir/bin/$n $target ; done
+    run cp $qtdir/bin/$n $target ; done
 test -d $target/plugins || run mkdir $target/plugins
 for n in $qtplug ; do 
     test -d $target/plugins/$n || run mkdir $target/plugins/$n 
     for m in $qtdir/plugins/$n/*.dll ; do
         run cp $m $target/plugins/$n ; done
-    run chmod 0755 $target/plugins/$n/* ; done
-    run rm $target/plugins/*/*d4.dll
+    run chmod 0755 $target/plugins/$n/*.dll 
+    for m in $target/plugins/$n/*.dll; do
+	md="`dirname $m`/`basename $m .dll`d.dll"
+	test -r $md && run rm $md
+    done
+done
     run rm $target/plugins/imageformats/qsvg*
 run find $target -name '*.dll' -exec chmod 0755 {} \;
 
@@ -54,7 +59,7 @@ echo '[Paths]' > $target/qt.conf
 ## MS libs
 echo ---- MS libs
 
-for n in "$msredist"/* ; do
+for n in "$msredist" ; do
     run cp "$n" $target; done
 
 ## DjVuLibre shared files
@@ -95,7 +100,6 @@ echo ---- Doc
 run cp $djdir/win32/djvulibre/djvulibre.nsi $target
 run cp $djdir/win32/djvulibre/djvulibre*.nsh $target
 
-test -d $target/man || run mkdir $target/man
 test -d $target/doc || run mkdir $target/doc
 run cp $djdir/doc/*.djvu $target/doc
 run cp $djdir/doc/*.txt $target/doc

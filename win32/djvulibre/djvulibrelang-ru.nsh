@@ -1,23 +1,22 @@
-;WARNING! This is ANSI Win 1251 codepage file
-;Прдупреждение! Это кодировка ANSI Win 1251
+п»ї;WARNING! This is a UTF-8 file with BOM
 ;Lang strings RU
 
-LangString DESC_Assoc ${LANG_RUSSIAN} "Установка ${PRODUCT_NAME} программой по умолчанию для djv и djvu"
-LangString DESC_Quick ${LANG_RUSSIAN} "Создать ярлык DjView на Панели быстрого запуска текущего пользователя"
-LangString DESC_Desk ${LANG_RUSSIAN} "Создать ярлык DjView на Рабочем столе"
-LangString secAssoc ${LANG_RUSSIAN} "Ассоциировать DjView с файлами DjVu"
-LangString secQuick ${LANG_RUSSIAN} 'Создать ярлык на панели "Быстрый запуск"'
-LangString secDesk ${LANG_RUSSIAN} "Создать ярлык на Рабочем столе"
-LangString Uninst_DIR ${LANG_RUSSIAN} "Удаление"
-LangString Uninst_LNK ${LANG_RUSSIAN} "Удалить полностью ${PRODUCT_NAME}"
-LangString Doc_DIR ${LANG_RUSSIAN} "Справочник"
-LangString WEB_LNK ${LANG_RUSSIAN} "Веб-сайт"
-LangString WebDL_LNK ${LANG_RUSSIAN} "- страница загрузки"
-LangString Doc_LNK ${LANG_RUSSIAN} "Справка "
-LangString Lic_TXT ${LANG_RUSSIAN} "Лицензия"
-LangString Uninst_MSG ${LANG_RUSSIAN} "Вы точно хотите полностью удалить с компьютера $(^Name)?"
-LangString UninstSux_MSG ${LANG_RUSSIAN} "Программа $(^Name) благополучно удалена."
-LangString Launch_LAB ${LANG_RUSSIAN} "Запустить DjView"
-LangString Message_AlreadyInstalled ${LANG_RUSSIAN} "${PRODUCT_NAME}  ${PRODUCT_VERSION} уже установлен. Удалить?"
-LangString Message_OldFound ${LANG_RUSSIAN} "У Вас установлена старая версия ${PRODUCT_NAME} $COUNT. Удалить?"
-LangString Message_NewFound ${LANG_RUSSIAN} "У Вас установлена более новая версия ${PRODUCT_NAME} $COUNT. Удалить?"
+LangString DESC_Assoc ${LANG_RUSSIAN} "РЈСЃС‚Р°РЅРѕРІРєР° ${PRODUCT_NAME} РїСЂРѕРіСЂР°РјРјРѕР№ РїРѕ СѓРјРѕР»С‡Р°РЅРёСЋ РґР»СЏ djv Рё djvu"
+LangString DESC_Quick ${LANG_RUSSIAN} "РЎРѕР·РґР°С‚СЊ СЏСЂР»С‹Рє DjView РЅР° РџР°РЅРµР»Рё Р±С‹СЃС‚СЂРѕРіРѕ Р·Р°РїСѓСЃРєР° С‚РµРєСѓС‰РµРіРѕ РїРѕР»СЊР·РѕРІР°С‚РµР»СЏ"
+LangString DESC_Desk ${LANG_RUSSIAN} "РЎРѕР·РґР°С‚СЊ СЏСЂР»С‹Рє DjView РЅР° Р Р°Р±РѕС‡РµРј СЃС‚РѕР»Рµ"
+LangString secAssoc ${LANG_RUSSIAN} "РђСЃСЃРѕС†РёРёСЂРѕРІР°С‚СЊ DjView СЃ С„Р°Р№Р»Р°РјРё DjVu"
+LangString secQuick ${LANG_RUSSIAN} 'РЎРѕР·РґР°С‚СЊ СЏСЂР»С‹Рє РЅР° РїР°РЅРµР»Рё "Р‘С‹СЃС‚СЂС‹Р№ Р·Р°РїСѓСЃРє"'
+LangString secDesk ${LANG_RUSSIAN} "РЎРѕР·РґР°С‚СЊ СЏСЂР»С‹Рє РЅР° Р Р°Р±РѕС‡РµРј СЃС‚РѕР»Рµ"
+LangString Uninst_DIR ${LANG_RUSSIAN} "РЈРґР°Р»РµРЅРёРµ"
+LangString Uninst_LNK ${LANG_RUSSIAN} "РЈРґР°Р»РёС‚СЊ РїРѕР»РЅРѕСЃС‚СЊСЋ ${PRODUCT_NAME}"
+LangString Doc_DIR ${LANG_RUSSIAN} "РЎРїСЂР°РІРѕС‡РЅРёРє"
+LangString WEB_LNK ${LANG_RUSSIAN} "Р’РµР±-СЃР°Р№С‚"
+LangString WebDL_LNK ${LANG_RUSSIAN} "- СЃС‚СЂР°РЅРёС†Р° Р·Р°РіСЂСѓР·РєРё"
+LangString Doc_LNK ${LANG_RUSSIAN} "РЎРїСЂР°РІРєР° "
+LangString Lic_TXT ${LANG_RUSSIAN} "Р›РёС†РµРЅР·РёСЏ"
+LangString Uninst_MSG ${LANG_RUSSIAN} "Р’С‹ С‚РѕС‡РЅРѕ С…РѕС‚РёС‚Рµ РїРѕР»РЅРѕСЃС‚СЊСЋ СѓРґР°Р»РёС‚СЊ СЃ РєРѕРјРїСЊСЋС‚РµСЂР° $(^Name)?"
+LangString UninstSux_MSG ${LANG_RUSSIAN} "РџСЂРѕРіСЂР°РјРјР° $(^Name) Р±Р»Р°РіРѕРїРѕР»СѓС‡РЅРѕ СѓРґР°Р»РµРЅР°."
+LangString Launch_LAB ${LANG_RUSSIAN} "Р—Р°РїСѓСЃС‚РёС‚СЊ DjView"
+LangString Message_AlreadyInstalled ${LANG_RUSSIAN} "${PRODUCT_NAME}  ${PRODUCT_VERSION} СѓР¶Рµ СѓСЃС‚Р°РЅРѕРІР»РµРЅ. РЈРґР°Р»РёС‚СЊ?"
+LangString Message_OldFound ${LANG_RUSSIAN} "РЈ Р’Р°СЃ СѓСЃС‚Р°РЅРѕРІР»РµРЅР° СЃС‚Р°СЂР°СЏ РІРµСЂСЃРёСЏ ${PRODUCT_NAME} $COUNT. РЈРґР°Р»РёС‚СЊ?"
+LangString Message_NewFound ${LANG_RUSSIAN} "РЈ Р’Р°СЃ СѓСЃС‚Р°РЅРѕРІР»РµРЅР° Р±РѕР»РµРµ РЅРѕРІР°СЏ РІРµСЂСЃРёСЏ ${PRODUCT_NAME} $COUNT. РЈРґР°Р»РёС‚СЊ?"

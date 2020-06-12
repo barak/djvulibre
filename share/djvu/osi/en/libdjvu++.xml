@@ -511,7 +511,7 @@ There may be only one such file in a multipage document.
 [1-%0!05u!] Illegal chunk number.
 </MESSAGE>
 <MESSAGE name="DjVuFile.malformed" number="12517">
-[1-%0!05u!] Malformed INCL chunk. No slashes allowed.
+[1-%0!05u!] Malformed INCL chunk. Slashes, backslashes, or colons are not allowed.
 </MESSAGE>
 <MESSAGE name="DjVuFile.missing_chunk" number="12518">
 [1-%0!05u!] Too few chunks.
