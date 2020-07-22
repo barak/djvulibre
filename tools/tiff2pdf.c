@@ -3638,8 +3638,10 @@ int t2p_process_jpeg_strip(
 			case 0xd8:	/* SOI - start of image */
                 if( *bufferoffset + 2 > buffersize )
                     return(0);
-				_TIFFmemcpy(&(buffer[*bufferoffset]), &(strip[i-1]), 2);
-				*bufferoffset+=2;
+                if ( *bufferoffset == 0) { /* LB: do not repeat SOI marker */
+                    _TIFFmemcpy(&(buffer[*bufferoffset]), &(strip[i-1]), 2);
+                    *bufferoffset+=2;
+                }
 				break;
 			case 0xc0:	/* SOF0 */
 			case 0xc1:	/* SOF1 */
