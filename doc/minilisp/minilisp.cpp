@@ -930,6 +930,40 @@ DEFUN("printflags",printflags,1,0) {
   return argv[0];
 }
 
+DEFUN("dict",dict,0,1) {
+  return miniexp_dict((argc > 0) ? argv[0] : miniexp_nil);
+}
+
+DEFUN("dictp",dictp,1,0) {
+  return miniexp_dictp(argv[0]) ? s_true : 0;
+}
+
+DEFUN("dict-get",dict_get,2,1) {
+  if (! miniexp_dictp(argv[0]))
+    error("dict-get: dict expected as first argument", argv[0]);
+  if (! miniexp_stringp(argv[1]))
+    error("dict-get: string expected as second argument", argv[1]);
+  return miniexp_dict_get(argv[0], miniexp_to_str(argv[1]),
+                          (argc > 2) ? argv[2] : miniexp_nil);
+}
+
+DEFUN("dict-set",dict_set,3,0) {
+  if (! miniexp_dictp(argv[0]))
+    error("dict-set: dict expected as first argument", argv[0]);
+  if (! miniexp_stringp(argv[1]))
+    error("dict-set: string expected as second argument", argv[1]);
+  return miniexp_dict_set(argv[0], miniexp_to_str(argv[1]), argv[2]);
+}
+
+DEFUN("dict-alist",dict_alist,1,0) {
+  if (! miniexp_dictp(argv[0]))
+    error("dict-alist: dict expected", argv[0]);
+  return miniexp_dict_alist(argv[0]);
+}
+
+
+
+
 /* ------------ special */
 
 #if defined(_WIN32) || defined(__WIN64)
@@ -1081,6 +1115,21 @@ parse_quote(void)
   return miniexp_cons(l,miniexp_nil);
 }
 
+miniexp_t
+parse_dict(void)
+{
+  miniexp_t l = miniexp_read();
+  miniexp_t d = miniexp_dict(l);
+  if (d == miniexp_dummy)
+    return miniexp_dummy;
+  int c = minilisp_getc();
+  while (isascii(c) && isblank(c))
+    c = minilisp_getc();
+  if (c != '}')
+    return miniexp_dummy;
+  return miniexp_cons(miniexp_dict(l), miniexp_nil);
+}
+
 static void
 sighandler(int signo)
 {
@@ -1110,6 +1159,7 @@ main()
 #endif
   minilisp_macrochar_parser[(int)';'] = parse_comment;
   minilisp_macrochar_parser[(int)'\''] = parse_quote;
+  minilisp_diezechar_parser[(int)'{'] = parse_dict;
   FILE *f = fopen("minilisp.in","r");
   if (f) {
     toplevel(f, stdout, false);
