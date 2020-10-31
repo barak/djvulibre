@@ -254,7 +254,7 @@ MINILISPAPI miniexp_t miniexp_classof(miniexp_t p);
 MINILISPAPI miniexp_t miniexp_isa(miniexp_t p, miniexp_t c);
 
 
-/* -------- OBJECTS (STRING) -------- */
+/* -------- OBJECTS (STRINGS) -------- */
 
 /* miniexp_stringp --
    Tests if an expression is a string. */
@@ -333,48 +333,6 @@ MINILISPAPI double miniexp_to_double(miniexp_t p);
 MINILISPAPI miniexp_t miniexp_double(double x);
 
 
-/* -------- OBJECTS (DICT) -------- */
-
-/* Dictionaries are simple hash table whose keys are 
-   zero-terminated strings and values are miniexps.
-   The contents of a dictionary can be represented
-   by an association list, that is, a list of pairs
-   whose car is a key string and cdr is a value.
-*/
-
-/* miniexp_dictp --
-   Tests whether a lisp expression represents a hash table. 
-*/
-
-MINILISPAPI int miniexp_dictp(miniexp_t p);
-
-/* miniexp_dict --
-   Constructs a lisp expression representing a dictionary initialized
-   with the association list alist.
-*/ 
-
-MINILISPAPI miniexp_t miniexp_dict(miniexp_t alist);
-
-/* miniexp_dict_get --
-   Returns the value associated with the specified key if it exists.
-   Otherwise returns the default value def.
-*/
-
-MINILISPAPI miniexp_t miniexp_dict_get(miniexp_t p, const char *key, miniexp_t def);
-
-/* minilisp_dict_set --
-   Sets and returns the value associated with the specified key.
-*/
-
-MINILISPAPI miniexp_t miniexp_dict_set(miniexp_t p, const char *key, miniexp_t val);
-
-/* minilisp_dict_alist --
-   Returns an association list representing the contents
-   of the dictionary.
-*/
-
-MINILISPAPI miniexp_t miniexp_dict_alist(miniexp_t p);
-
 /* -------------------------------------------------- */
 /* GARBAGE COLLECTION                                 */
 /* -------------------------------------------------- */
@@ -420,9 +378,18 @@ MINILISPAPI miniexp_t miniexp_dict_alist(miniexp_t p);
      s-expressions without modifying them does not need to
      bother about minivars.
 
-   * Otherwise, all functions should make sure that all useful
-     s-expression are directly or indirectly secured by a minivar_t
-     object. In case of doubt, use minivars everywhere.
+   * Only the following miniexp functions can cause a
+     garbage collection: miniexp_cons(), miniexp_object(),
+     miniexp_string(), miniexp_substring(), miniexp_pname(),
+     miniexp_concat(), miniexp_pprin(), miniexp_pprint(),
+     miniexp_gc(), and minilisp_release_gc_lock().  A
+     function that does not cause calls to these functions
+     does not need to bother about minivars.
+
+   * Other functions should make sure that all useful
+     s-expression are directly or indirectly secured by a
+     minivar_t object. In case of doubt, use minivars
+     everywhere.
 
    * Function arguments should remain <miniexp_t> in order
      to allow interoperability with the C language. 

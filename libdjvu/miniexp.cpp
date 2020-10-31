@@ -134,7 +134,7 @@ class symtable_t
 public:
   int nelems;
   int nbuckets;
-  struct sym { unsigned int h; struct sym *l; char *n; miniexp_t v; };
+  struct sym { unsigned int h; struct sym *l; char *n; };
   struct sym **buckets;
   symtable_t();
   ~symtable_t();
@@ -201,7 +201,6 @@ symtable_t::lookup(const char *n, bool create)
       r->h = h;
       r->l = buckets[i];
       r->n = new char [1+strlen(n)];
-      r->v = (miniexp_t)(((size_t)r)|((size_t)2));
       strcpy(r->n, n);
       buckets[i] = r;
       if ( 2 * nelems > 3 * nbuckets)
@@ -221,7 +220,7 @@ miniexp_to_name(miniexp_t p)
     {
       struct symtable_t::sym *r;
       r = ((symtable_t::sym*)(((size_t)p)&~((size_t)3)));
-      return (r && r->v==p) ? r->n : "##(dummy)";
+      return (r) ? r->n : "##(dummy)";
     }
   return 0;
 }
@@ -237,7 +236,7 @@ miniexp_symbol(const char *name)
         symbols = new symtable_t;
     }
   r = symbols->lookup(name, true);
-  return r->v;
+  return (miniexp_t)(((size_t)r)|((size_t)2));
 }
 
 
@@ -1280,98 +1279,6 @@ str_is_double(const char *s, double &x)
 }
 
 
-/* -------------------------------------------------- */
-/* DICTS                                          */
-/* -------------------------------------------------- */
-
-
-BEGIN_ANONYMOUS_NAMESPACE
-
-class minidict_t : public miniobj_t 
-{
-  MINIOBJ_DECLARE(minidict_t,miniobj_t,"dict");
-public:
-  minidict_t() {}
-  virtual void mark(minilisp_mark_t *action);
-  symtable_t h;
-};
-
-MINIOBJ_IMPLEMENT(minidict_t,miniobj_t,"dict");
-
-END_ANONYMOUS_NAMESPACE
-
-void
-minidict_t::mark(minilisp_mark_t *f)
-{
-  for (int i=0; i<h.nbuckets; i++)
-    for(struct symtable_t::sym *s = h.buckets[i]; s; s=s->l)
-      f(&(s->v));
-}
-
-int 
-miniexp_dictp(miniexp_t p)
-{
-  return miniexp_isa(p, minidict_t::classname) ? 1 : 0;
-}
-
-miniexp_t
-miniexp_dict_get(miniexp_t p, const char *key, miniexp_t def)
-{
-  if (miniexp_dictp(p) && (key != 0))
-    {
-      minidict_t *dict = (minidict_t*) miniexp_to_obj(p);
-      struct symtable_t::sym *s = dict->h.lookup(key, false);
-      return (s) ? s->v : def;
-    }
-  return miniexp_dummy;
-}
-
-miniexp_t
-miniexp_dict_set(miniexp_t p, const char *key, miniexp_t val)
-{
-  if (miniexp_dictp(p) && (key != 0))
-    {
-      minidict_t *dict = (minidict_t*) miniexp_to_obj(p);
-      struct symtable_t::sym *s = dict->h.lookup(key, true);
-      miniexp_mutate(p, &(s->v), val);
-      return val;
-    }
-  return miniexp_dummy;
-}
-
-miniexp_t
-miniexp_dict(miniexp_t alist)
-{
-  minidict_t *obj = new minidict_t();
-  miniexp_t dict = miniexp_object(obj);
-  while (miniexp_consp(alist))
-    {
-      miniexp_t p = car(alist);
-      alist = cdr(alist);
-      if (miniexp_consp(p) && miniexp_stringp(car(p)))
-        miniexp_dict_set(dict, miniexp_to_str(car(p)), cdr(p));
-      else
-        return miniexp_dummy;
-    }
-  return (alist) ? miniexp_dummy : dict;
-}
-
-miniexp_t
-miniexp_dict_alist(miniexp_t p)
-{
-  if (miniexp_dictp(p))
-    {
-      minidict_t *dict = (minidict_t*) miniexp_to_obj(p);
-      minivar_t alist = miniexp_nil;
-      for (int i=0; i<dict->h.nbuckets; i++)
-        for(struct symtable_t::sym *s = dict->h.buckets[i]; s; s=s->l)
-          alist = miniexp_cons(miniexp_cons(miniexp_string(s->n),s->v), alist);
-      return alist;
-    }
-  return miniexp_dummy;
-}
-
-
 
 /* -------------------------------------------------- */
 /* INPUT/OUTPUT                                       */
@@ -1573,15 +1480,10 @@ printer_t::print(miniexp_t p)
       size_t len = miniexp_to_lstr(p, &s);
       int n = print_c_string(s, 0, flags, len);
       char *d = new char[n];
-      print_c_string(s, d, flags, len);
+      if (d) 
+        print_c_string(s, d, flags, len);
       mlput(d);
       delete [] d;
-    }
-  else if (miniexp_dictp(p))
-    {
-      mlput("#{");
-      print(miniexp_dict_alist(p));
-      mlput("}");
     }
   else if (miniexp_objectp(p))
     {
@@ -1636,7 +1538,10 @@ printer_t::print(miniexp_t p)
           mlput(". ");
           print(p);
         }
-      mlput(multiline ? " )" : ")");
+      if (multiline)
+        mlput(" )");
+      else
+        mlput(")");
     }
   end(b);
 }
@@ -2124,7 +2029,7 @@ read_miniexp(miniexp_io_t *io, int &c)
           if (io->p_diezechar && io->p_macroqueue
               && nc >= 0 && nc < 128 && io->p_diezechar[nc])
             {
-              miniexp_t p = io->p_diezechar[nc](io);
+              miniexp_t p = io->p_macrochar[nc](io);
               if (miniexp_length(p) > 0)
                 *io->p_macroqueue = p;
               else if (p)
