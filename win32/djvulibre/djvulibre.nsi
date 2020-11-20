@@ -29,11 +29,11 @@ Unicode true
 
 !define NSI_VER "9.2"
 !define DJVULIBRE_NAME "DjVuLibre"
-!define DJVULIBRE_VERSION "3.5.27"
+!define DJVULIBRE_VERSION "3.5.28"
 !define CLASSES "Software\Classes\"
 !define DJVIEW_NAME "DjView"
-!define DJVIEW_VERSION "4.11"
-!define VI_PRODUCT_VERSION "4.11.0.0"
+!define DJVIEW_VERSION "4.12"
+!define VI_PRODUCT_VERSION "4.12.0.0"
 
 !define PRODUCT_NAME "${DJVULIBRE_NAME} ${DJVIEW_NAME}"
 !define UNINST_NAME "${DJVULIBRE_NAME}+${DJVIEW_NAME}" ; for uninstaller

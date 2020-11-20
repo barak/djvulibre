@@ -1,3 +1,18 @@
+NEW IN VERSION 3.5.28
+------------------------
+- ddjvu: tiff generation improvements
+- djvumake: security checks on INCL chunks
+- all: updated for modern compilers
+- win: moved to msvc2019
+- osx: nfd filename normalization
+- bugs: fixed several crashes on invalid inputs
+- miniexp: fixed escape printout and macrochars
+- djvudigital: can use poppler to find text
+- csepdjvu: handle T comments for page titles
+- bytestream: fixed 2GB limit
+- gexception, gthread: cleanup obsolete code
+
+
 NEW IN VERSION 3.5.27
 ------------------------
 - simplified configuration scripts
