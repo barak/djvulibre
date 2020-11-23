@@ -1,12 +1,13 @@
 #!/bin/sh
 
 c=/c
-qtdir=$c/Qt/5.14.1/msvc2017
+qtdir=$c/Qt/5.15.1/msvc2019
 djdir=$HOME/djvu/djvulibre-3.5
 dwdir=$djdir/win32/djvulibre/Release
 djsrc=$HOME/djvu/djvulibre-djview/src
 msvc="$c/Program Files/Microsoft Visual Studio/2019/Community/VC"
 msredist="$msvc/Redist/MSVC/14.23.27820/vcredist_x86.exe"
+ssl="$c/Qt/Tools/OpenSSL/win_x86_pre/lib*-1_1.dll"
 
 target=$HOME/djvu/DjVuLibre
 
@@ -93,6 +94,11 @@ run cp $qtdir/translations/qt_*.qm  $target/share/djvu/djview4
 run chmod 0644 $target/share/djvu/djview4/qt*.qm
 run rm -f $target/share/djvu/djview4/qt_help_*.qm
 
+## OpenSSL
+
+for n in $ssl ; do
+   run cp "$n" "$target"
+done
 
 ## Doc
 echo ---- Doc

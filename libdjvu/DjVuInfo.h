@@ -113,7 +113,7 @@ class ByteStream;
 #ifndef DJVULIBRE_VERSION
 /** DjVu library version string.
    This is normally defined by autoconf, except on windows */
-# define DJVULIBRE_VERSION       "3.5.27"
+# define DJVULIBRE_VERSION       "3.5.28"
 #endif
 //@}
 
