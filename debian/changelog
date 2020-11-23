@@ -1,7 +1,13 @@
-djvulibre (3.5.28-1) experimental; urgency=medium
+djvulibre (3.5.28-1) unstable; urgency=medium
+
+  [ Leon Bottou ]
   * version number change
 
- -- Leon Bottou <leonb@users.sourceforge.net>  Fri, 20 Nov 2020 11:50:30 +0500
+  [ Barak A. Pearlmutter ]
+  * rules does not require root
+  * version-4 debian/watch uscan support file
+
+ -- Barak A. Pearlmutter <bap@debian.org>  Mon, 23 Nov 2020 13:10:15 +0000
 
 djvulibre (3.5.27.1-15) unstable; urgency=medium
 
