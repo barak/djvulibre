@@ -1,0 +1,24 @@
+From: "Barak A. Pearlmutter" <barak+git@pearlmutter.net>
+Date: Mon, 10 May 2021 15:47:32 +0100
+Subject: djvulibre-fedora Patch6 djvulibre-3.5.27-export-file.patch
+
+---
+ desktopfiles/Makefile.am | 3 +--
+ 1 file changed, 1 insertion(+), 2 deletions(-)
+
+diff --git a/desktopfiles/Makefile.am b/desktopfiles/Makefile.am
+index 9e952e1..5b8cae3 100644
+--- a/desktopfiles/Makefile.am
++++ b/desktopfiles/Makefile.am
+@@ -32,10 +32,9 @@ if HAVE_CONVERSION_INKSCAPE
+ convert_icons_process = \
+ s=`echo $@ | sed -e 's/[a-z]*\([0-9]*\).*/\1/'`; \
+ ${INKSCAPE} \
+---without-gui \
+ --export-width=$${s} \
+ --export-height=$${s} \
+---export-png=$@ $<
++--export-filename=$@ $<
+ endif
+ 
+ if HAVE_CONVERSION_CONVERT

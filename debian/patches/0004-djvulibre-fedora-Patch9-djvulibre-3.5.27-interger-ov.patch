@@ -1,0 +1,31 @@
+From: "Barak A. Pearlmutter" <barak+git@pearlmutter.net>
+Date: Mon, 10 May 2021 15:48:53 +0100
+Subject: djvulibre-fedora Patch9 djvulibre-3.5.27-interger-overflow.patch
+
+---
+ tools/ddjvu.cpp | 5 ++++-
+ 1 file changed, 4 insertions(+), 1 deletion(-)
+
+diff --git a/tools/ddjvu.cpp b/tools/ddjvu.cpp
+index 7109952..2f3e0f9 100644
+--- a/tools/ddjvu.cpp
++++ b/tools/ddjvu.cpp
+@@ -70,6 +70,7 @@
+ #include <locale.h>
+ #include <fcntl.h>
+ #include <errno.h>
++#include <stdint.h>
+ 
+ #ifdef UNIX
+ # include <sys/time.h>
+@@ -394,7 +395,9 @@ render(ddjvu_page_t *page, int pageno)
+     rowsize = rrect.w;
+   else
+     rowsize = rrect.w * 3; 
+-  if (! (image = (char*)malloc(rowsize * rrect.h)))
++  if ((size_t)rowsize > SIZE_MAX / rrect.h)
++    die(i18n("Integer overflow when allocating image buffer for page %d"), pageno);
++  if (! (image = (char*)malloc((size_t)rowsize * rrect.h)))
+     die(i18n("Cannot allocate image buffer for page %d"), pageno);
+ 
+   /* Render */

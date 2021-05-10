@@ -1,0 +1,21 @@
+From: "Barak A. Pearlmutter" <barak+git@pearlmutter.net>
+Date: Mon, 10 May 2021 15:43:26 +0100
+Subject: djvulibre-fedora Patch0 djvulibre-3.5.22-cdefs.patch
+
+---
+ libdjvu/GSmartPointer.h | 2 ++
+ 1 file changed, 2 insertions(+)
+
+diff --git a/libdjvu/GSmartPointer.h b/libdjvu/GSmartPointer.h
+index 8a8bb8a..08540f7 100644
+--- a/libdjvu/GSmartPointer.h
++++ b/libdjvu/GSmartPointer.h
+@@ -62,6 +62,8 @@
+ # pragma interface
+ #endif
+ 
++#include <cstddef>
++
+ /** @name GSmartPointer.h
+ 
+     Files #"GSmartPointer.h"# and #"GSmartPointer.cpp"# define a smart-pointer
