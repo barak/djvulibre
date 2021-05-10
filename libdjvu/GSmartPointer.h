@@ -62,6 +62,8 @@
 # pragma interface
 #endif
 
+#include <cstddef>
+
 /** @name GSmartPointer.h
 
     Files #"GSmartPointer.h"# and #"GSmartPointer.cpp"# define a smart-pointer
