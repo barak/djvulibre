@@ -507,10 +507,19 @@ GP<DjVuFile>
 DjVuPortcaster::id_to_file(const DjVuPort * source, const GUTF8String &id)
 {
    GPList<DjVuPort> list;
+
+   if (!!opening_id && opening_id == id)
+      G_THROW("DjVuPortcaster: recursive opening of the same file (corrupted file?)");
+   else
+      opening_id = id;
+
    compute_closure(source, list, true);
    GP<DjVuFile> file;
    for(GPosition pos=list;pos;++pos)
       if ((file=list[pos]->id_to_file(source, id))) break;
+
+   opening_id = GUTF8String();
+
    return file;
 }
 
