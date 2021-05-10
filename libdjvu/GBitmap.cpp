@@ -888,11 +888,13 @@ GBitmap::read_rle_raw(ByteStream &bs)
   int c = 0;
   while (n >= 0)
     {
-      bs.read(&h, 1);
+      if (bs.read(&h, 1) <= 0)
+        G_THROW( ByteStream::EndOfFile );
       int x = h;
       if (x >= (int)RUNOVERFLOWVALUE)
         {
-          bs.read(&h, 1);
+          if (bs.read(&h, 1) <= 0)
+            G_THROW( ByteStream::EndOfFile );
           x = h + ((x - (int)RUNOVERFLOWVALUE) << 8);
         }
       if (c+x > ncolumns)
