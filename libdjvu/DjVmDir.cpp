@@ -300,6 +300,9 @@ DjVmDir::decode(const GP<ByteStream> &gstr)
          memcpy((char*) strings+strings_size, buffer, length);
       }
       DEBUG_MSG("size of decompressed names block=" << strings.size() << "\n");
+      int strings_size=strings.size();
+      strings.resize(strings_size+3);
+      memset((char*) strings+strings_size, 0, 4);
    
          // Copy names into the files
       const char * ptr=strings;
@@ -307,6 +310,8 @@ DjVmDir::decode(const GP<ByteStream> &gstr)
       {
          GP<File> file=files_list[pos];
 
+         if (ptr >= (const char*)strings + strings_size)
+           G_THROW( "DjVu document is corrupted (DjVmDir)" );
          file->id=ptr;
          ptr+=file->id.length()+1;
          if (file->flags & File::HAS_NAME)
