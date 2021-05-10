@@ -484,6 +484,7 @@ private:
                        const DjVuPort *dst, int distance);
    void compute_closure(const DjVuPort *src, GPList<DjVuPort> &list,
                         bool sorted=false);
+   GUTF8String opening_id;
 };
 
 
