@@ -32,10 +32,9 @@ if HAVE_CONVERSION_INKSCAPE
 convert_icons_process = \
 s=`echo $@ | sed -e 's/[a-z]*\([0-9]*\).*/\1/'`; \
 ${INKSCAPE} \
---without-gui \
 --export-width=$${s} \
 --export-height=$${s} \
---export-png=$@ $<
+--export-filename=$@ $<
 endif
 
 if HAVE_CONVERSION_CONVERT
