@@ -393,8 +393,11 @@ render(ddjvu_page_t *page, int pageno)
   } else if (style == DDJVU_FORMAT_GREY8)
     rowsize = rrect.w;
   else
-    rowsize = rrect.w * 3; 
-  if (! (image = (char*)malloc(rowsize * rrect.h)))
+    rowsize = rrect.w * 3;
+  size_t bufsize = (size_t)rowsize * rrect.h;
+  if (bufsize / rowsize != rrect.h)
+    die(i18n("Integer overflow when allocating image buffer for page %d"), pageno);
+  if (! (image = (char*)malloc(bufsize)))
     die(i18n("Cannot allocate image buffer for page %d"), pageno);
 
   /* Render */

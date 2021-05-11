@@ -1284,6 +1284,8 @@ GBitmap::decode(unsigned char *runs)
   // initialize pixel array
   if (nrows==0 || ncolumns==0)
     G_THROW( ERR_MSG("GBitmap.not_init") );
+  if (ncolumns + border != (unsigned short)(ncolumns+border))
+    G_THROW("GBitmap: image size exceeds maximum (corrupted file?)");
   bytes_per_row = ncolumns + border;
   if (runs==0)
     G_THROW( ERR_MSG("GBitmap.null_arg") );
