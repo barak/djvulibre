@@ -1,3 +1,19 @@
+djvulibre (3.5.27.1-7+deb9u1) stretch-security; urgency=high
+
+  * Non-maintainer upload by the LTS Security Team.
+  * CVE-2019-15142: heap-buffer-overflow when reading a crafted file
+  * CVE-2019-15143: infinite loop that can be triggered by crafted file
+  * CVE-2019-15144: stack-overflow error when processing a crafted file
+  * CVE-2019-15145: invalid read error when reading a crafted file
+  * CVE-2019-18804: NULL pointer dereference issue in the IW44 encoder/decoder
+  * CVE-2021-3500: stack overflow in DJVU::DjVuDocument::get_djvu_file()
+  * CVE-2021-32490: out of bounds write in function DJVU::filter_bv()
+  * CVE-2021-32491: integer overflow in function render() in tools/ddjvu
+  * CVE-2021-32492: out of bounds read in function DJVU::DataPool::has_data()
+  * CVE-2021-32493: heap buffer overflow in function DJVU::GBitmap::decode()
+
+ -- Sylvain Beucler <beuc@debian.org>  Tue, 25 May 2021 18:02:31 +0200
+
 djvulibre (3.5.27.1-7) unstable; urgency=medium
 
   * bump to debhelper 10
