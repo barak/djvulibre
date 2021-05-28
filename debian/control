@@ -55,6 +55,7 @@ Description: Linguistic support files for libdjvulibre
 
 Package: djvulibre-desktop
 Architecture: all
+Multi-Arch: foreign
 Depends: ${misc:Depends}
 Suggests: djview4 | djvu-viewer | evince
 Conflicts: libdjvulibre1, libdjvulibre21 (<= 3.5.20-5)
