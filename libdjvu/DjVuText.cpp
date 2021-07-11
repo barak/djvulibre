@@ -345,7 +345,7 @@ DjVuTXT::decode(const GP<ByteStream> &gbs)
   int textsize = bs.read24();
   char *buffer = textUTF8.getbuf(textsize);
   int readsize = bs.read(buffer,textsize);
-  if (readsize < textsize || testsize <= 0)
+  if (readsize < textsize || textsize <= 0)
     G_THROW( ERR_MSG("DjVuText.corrupt_chunk") );
   buffer[readsize] = 0;
   // Try reading zones
