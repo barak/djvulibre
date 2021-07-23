@@ -486,9 +486,9 @@ render(ddjvu_page_t *page, int pageno)
         TIFFSetField(tiff, TIFFTAG_IMAGEWIDTH, (uint32)rrect.w);
         TIFFSetField(tiff, TIFFTAG_IMAGELENGTH, (uint32)rrect.h);
         TIFFSetField(tiff, TIFFTAG_XRESOLUTION, 
-		     (float)((dpi*rrect.w+iw/2)/iw));
+		     (float)((dpi*prect.w+iw/2)/iw));
         TIFFSetField(tiff, TIFFTAG_YRESOLUTION, 
-		     (float)((dpi*rrect.h+ih/2)/ih));
+		     (float)((dpi*prect.h+ih/2)/ih));
         TIFFSetField(tiff, TIFFTAG_PLANARCONFIG, PLANARCONFIG_CONTIG);
         TIFFSetField(tiff, TIFFTAG_ORIENTATION, ORIENTATION_TOPLEFT);
 # ifdef CCITT_SUPPORT

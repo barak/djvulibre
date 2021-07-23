@@ -1276,9 +1276,9 @@ print_bg(ByteStream &str,
   int ps_chunk_height = 30960/prn_rect.width()+1;
   buffer_size = buffer_size*23/10;
   bool do_color = options.get_color();
-  if ((!dimg->is_legal_photo() &&
-       !dimg->is_legal_compound())
-      || options.get_mode()==Options::BW)
+  if (//(!dimg->is_legal_photo() &&
+      // !dimg->is_legal_compound()) ||
+      options.get_mode()==Options::BW)
     do_color = false;
   if (do_color) 
     buffer_size *= 3;
