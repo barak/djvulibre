@@ -2,8 +2,9 @@ djvulibre (3.5.28-3) UNRELEASED; urgency=medium
 
   * Most patches merged upstream
   * Multiarch hinter suggests marking djvulibre-desktop as Multi-Arch: foreign
+  * Bump policy version
 
- -- Barak A. Pearlmutter <bap@debian.org>  Fri, 28 May 2021 11:37:47 +0100
+ -- Barak A. Pearlmutter <bap@debian.org>  Thu, 02 Sep 2021 14:17:07 +0100
 
 djvulibre (3.5.28-2) unstable; urgency=high
 
