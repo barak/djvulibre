@@ -415,11 +415,11 @@ CCImage::merge_and_split_ccs(int smallsize, int largesize)
       CC* cc = &ccs[ccid];
       if (cc->nrun <= 0) continue;
       Grid_x_Color key;
-      key.color = cc->color;
       int ccheight = cc->bb.height();
       int ccwidth = cc->bb.width();
       if (ccheight<=smallsize && ccwidth<=smallsize)
         {
+          key.color = cc->color;
           key.gridi = (cc->bb.ymin+cc->bb.ymax)/splitsize/2;
           key.gridj = (cc->bb.xmin+cc->bb.xmax)/splitsize/2;
           int newccid = makeccid(key, map, ncc);
@@ -428,6 +428,7 @@ CCImage::merge_and_split_ccs(int smallsize, int largesize)
         }
       else if (ccheight>=largesize || ccwidth>=largesize)
         {
+          key.color = -ccid;
           for(int runid=cc->frun; runid<cc->frun+cc->nrun; runid++)
             {
               Run *r = & runs[runid];
