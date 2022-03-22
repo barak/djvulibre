@@ -1,5 +1,7 @@
 #!/usr/bin/make -f
 
+# for DEB_HOST_MULTIARCH
+include /usr/share/dpkg/default.mk
 export DEB_BUILD_MAINT_OPTIONS = hardening=+all
 
 %:
@@ -16,8 +18,6 @@ libver0 := $(shell \
 libver := $(shell egrep '^Package: libdjvulibre[0-9]+$$' debian/control \
 		  | head -1 \
 		  | sed 's/Package: libdjvulibre//')
-
-export DEB_HOST_MULTIARCH ?= $(shell dpkg-architecture -qDEB_HOST_MULTIARCH)
 
 configure_options += --enable-static
 configure_options += --enable-shared
