@@ -245,17 +245,39 @@ This can cause portability problems because different djvu
 viewers support different sets of CGI style options.
 
 
+6- DOCUMENT OUTLINE
 
-6- THE "SECURE DJVU" FORMAT.
+The NAVM chunk format specification (section 8.3.3) states that each
+bookmark encoding starts with a single byte specifying the number of
+child bookmarks followed by three bytes specifying the bookmark
+description text length in big-endian order. In order to allow more
+complex document outlines, this format has been subtly changed: the
+number of child bookmarks is now encoded as two bytes in small-endian
+order, and the length of the description text is encoded as two bytes
+in big-endian order.
 
-Recently Lizardtech introduced an incompatible "Secure DJVU" format.
-This format encrypt djvu data in the hope of controlling
-whether users can use, copy or print djvu documents.
-A recent specification describes the container format
-but does not provide enough information to decode the content.
-Providing such an information would obviously provide
-a means to avoid the usage restrictions. In fact there is no durable 
-way to enforce such constraints besides "security through obscurity".
+This change results in the same encoding as long as there are less
+than 256 child bookmarks and less that 65536 bytes in the bookmark
+description text. Since it is unlikely that a description text
+contains more than 64k characters, djvu files created with the
+specified NAVM format are read correctly by a program implementing the
+new NAVM format. However, djvu files created with the new NAVM format
+and containing bookmark entries with more than 256 children will be
+read incorrectly by a program that strictly implements the
+specification.
+
+
+
+7- THE "SECURE DJVU" FORMAT.
+
+Around 2010, Lizardtech introduced an incompatible "Secure DJVU"
+format.  This format encrypt djvu data in the hope of controlling
+whether users can use, copy or print djvu documents.  A recent
+specification describes the container format but does not provide
+enough information to decode the content.  Providing such an
+information would obviously provide a means to avoid the usage
+restrictions. In fact there is no durable way to enforce such
+constraints besides "security through obscurity".
 
 The current djvulibre library simply emits an 
 error message when encountering such files.

@@ -327,7 +327,7 @@ parse_bpp(const char *q)
         G_THROW( ERR_MSG("c44.bitrate_comma_expected") );
       q = (*ptr ? ptr+1 : ptr);
       argv_bpp[argc_bpp++] = (float)x;
-      if (argc_bpp>MAXCHUNKS)
+      if (argc_bpp>=MAXCHUNKS)
         G_THROW( ERR_MSG("c44.bitrate_too_many") );
     }
   if (argc_bpp < 1)
