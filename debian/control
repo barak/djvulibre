@@ -10,7 +10,7 @@ Build-Depends: pkg-config,
 	       librsvg2-bin | imagemagick
 Vcs-Git: https://salsa.debian.org/debian/djvulibre.git
 Vcs-Browser: https://salsa.debian.org/debian/djvulibre
-Homepage: http://djvu.sourceforge.net/
+Homepage: https://djvu.sourceforge.net/
 Standards-Version: 4.6.0
 Rules-Requires-Root: no
 
