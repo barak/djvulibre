@@ -452,6 +452,41 @@ CCImage::erase_tiny_ccs()
 }
  
 
+// -- Helper for merge_and_split_ccs
+struct Grid_x_CCid 
+{
+  short gridi;
+  short gridj;
+  int ccid;
+};
+
+
+// -- Helper for merge_and_split_ccs
+static inline unsigned int
+hash(const Grid_x_CCid &x) 
+{
+  return (x.gridi<<16) ^ (x.gridj<<8) ^ x.ccid;
+}
+
+
+// -- Helper for merge_and_split_ccs
+static inline bool
+operator==(const Grid_x_CCid &x, const Grid_x_CCid &y)
+{
+  return (x.gridi==y.gridi) && (x.gridj==y.gridj) && (x.ccid==y.ccid);
+}
+
+
+// -- Helper for merge_and_split_ccs
+static int
+makeccid(const Grid_x_CCid &x, GMap<Grid_x_CCid,int> &map, int &ncc)
+{
+  GPosition p = map.contains(x);
+  if (p) return map[p];
+  return map[x] = ncc++;
+}
+
+
 // -- Merges small ccs and split large ccs
 void
 CCImage::merge_and_split_ccs()
@@ -460,64 +495,61 @@ CCImage::merge_and_split_ccs()
   int nruns = runs.size();
   int splitsize = largesize;
   if (ncc <= 0) return;
-  // Grid of special components
-  int gridwidth = (width+splitsize-1)/splitsize;
+    // Associative map for storing merged ccids
+  GMap<Grid_x_CCid,int> map;
   nregularccs = ncc;
   // Set the correct ccids for the runs
-  for (int ccid=0; ccid<ncc; ccid++)
+  for (int ccid=0; ccid<ccs.size(); ccid++)
     {
       CC* cc = &ccs[ccid];
       if (cc->nrun <= 0) continue;
+      Grid_x_CCid key;
       int ccheight = cc->bb.height();
       int ccwidth = cc->bb.width();
       if (ccheight<=smallsize && ccwidth<=smallsize)
         {
-          int gridi = (cc->bb.ymin+cc->bb.ymax)/splitsize/2;
-          int gridj = (cc->bb.xmin+cc->bb.xmax)/splitsize/2;
-          int newccid = ncc + gridi*gridwidth + gridj;
+          key.ccid = -1;
+          key.gridi = (cc->bb.ymin+cc->bb.ymax)/splitsize/2;
+          key.gridj = (cc->bb.xmin+cc->bb.xmax)/splitsize/2;
+          int newccid = makeccid(key, map, ncc);
           for(int runid=cc->frun; runid<cc->frun+cc->nrun; runid++)
             runs[runid].ccid = newccid;
         }
       else if (ccheight>=largesize || ccwidth>=largesize)
         {
+          key.ccid = ccid;
           for(int runid=cc->frun; runid<cc->frun+cc->nrun; runid++)
             {
-              Run& r = runs[runid];
-              int y = r.y;
-              int x_start = r.x1;
-              int x_end = r.x2;
-              int gridi = y/splitsize;
-              int gridj_start = x_start/splitsize;
-              int gridj_end = x_end/splitsize;
-              int gridj_span = gridj_end-gridj_start;
-              int newccid = ncc + gridi*gridwidth + gridj_start;
-              if (! gridj_span)
+              Run *r = & runs[runid];
+              key.gridi = r->y/splitsize;
+              key.gridj = r->x1/splitsize;
+              int gridj_end = r->x2/splitsize;
+              int gridj_span = gridj_end - key.gridj;
+              r->ccid = makeccid(key, map, ncc);
+              if (gridj_span>0)
                 {
-                  r.ccid = newccid;
-                }
-              else // gridj_span>0
-                {
-                  // truncate the current run 
-                  r.ccid = newccid++;
-                  int x = (gridj_start+1)*splitsize;
-                  r.x2 = x-1;
+                  // truncate current run 
                   runs.touch(nruns+gridj_span-1);
+                  r = &runs[runid];
+                  int x = key.gridj*splitsize + splitsize;
+                  int x_end = r->x2;
+                  r->x2 = x-1;
                   // append additional runs to the runs array
-                  for(int gridj=gridj_start+1; gridj<gridj_end; gridj++)
+                  while (++key.gridj < gridj_end)
                     {
                       Run& newrun = runs[nruns++];
-                      newrun.y = y;
+                      newrun.y = r->y;
                       newrun.x1 = x;
                       x += splitsize;
                       newrun.x2 = x-1;
-                      newrun.ccid = newccid++;
+                      newrun.ccid = makeccid(key, map, ncc);
                     }
                   // append last run to the run array
                   Run& newrun = runs[nruns++];
-                  newrun.y = y;
+                  newrun.y = r->y;
                   newrun.x1 = x;
                   newrun.x2 = x_end;
-                  newrun.ccid = newccid++;                      
+                  newrun.ccid = makeccid(key, map, ncc);
                 }
             }
         }
