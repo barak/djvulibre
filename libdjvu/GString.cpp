@@ -1869,7 +1869,11 @@ GStringRep::UTF8::toNative(const EscapeMode escape) const
               {
                 if (escape == IS_ESCAPED)
                   {
-                    sprintf((char *)r,"&#%lu;",(unsigned long)w0);
+#if HAVE_SNPRINTF
+                    snprintf((char *)r, 12, "&#%lu;", (unsigned long)w0);
+#else
+                    sprintf((char *)r,"&#%lu;", (unsigned long)w0);
+#endif
                     r += strlen((char *)r);
                   }
                 else
@@ -2496,10 +2500,12 @@ GStringRep::UTF16toUCS4(
       if(rr <= eptr)
       {
         uint32_t const W2=s[1];
-        if(((W2>=0xDC00)||(W2<=0xDFFF))&&((U=(0x10000+((W1&0x3ff)<<10))|(W2&0x3ff))))
+        if(((W2>=0xDC00)&&(W2<=0xDFFF)) &&
+           ((U=(0x10000+((W1&0x3ff)<<10))|(W2&0x3ff))) )
         {
           retval=2;
-        }else
+        }
+        else
         {
           retval=(-1);
         }

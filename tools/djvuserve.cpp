@@ -148,10 +148,17 @@ fprintdate(FILE *f, const char *fmt, const time_t *tim)
   char ctim[128];
   struct tm *ttim = gmtime(tim);
   /* strftime(ctim, sizeof(ctim)-1, "%a, %d %b %Y %H:%M:%S GMT", ttim); */
+#if HAVE_SNPRINTF
+  snprintf(ctim,sizeof(ctim),"%3s, %02d %3s %04d %02d:%02d:%02d GMT",
+	  day_name(ttim->tm_wday), ttim->tm_mday,
+	  month_name(ttim->tm_mon), 1900+ttim->tm_year,
+	  ttim->tm_hour, ttim->tm_min, ttim->tm_sec);
+#else
   sprintf(ctim,"%3s, %02d %3s %04d %02d:%02d:%02d GMT",
 	  day_name(ttim->tm_wday), ttim->tm_mday,
 	  month_name(ttim->tm_mon), 1900+ttim->tm_year,
 	  ttim->tm_hour, ttim->tm_min, ttim->tm_sec);
+#endif
   fprintf(stdout, fmt, ctim);
 }
 

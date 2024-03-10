@@ -12,7 +12,7 @@ djvuxmlparser_LDADD = $(DJLIB) $(PTHREAD_LIBS)
 
 sed_process = \
 $(SED) \
--e 's,DATADIR,$(datadir),g' \
+-e 's,@DATADIR@,$(datadir),g' \
 < $< > $@ || rm $@
 
 man_verbose = $(man_verbose_@AM_V@)

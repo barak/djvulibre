@@ -186,7 +186,7 @@ AC_FUNC_MMAP
 AC_FUNC_FORK
 AC_FUNC_FSEEKO
 AC_CHECK_FUNCS(wcrtomb iswspace setenv nl_langinfo)
-AC_CHECK_FUNCS(putc_unlocked strerror vsnprintf)
+AC_CHECK_FUNCS(putc_unlocked strerror vsnprintf snprintf)
 AC_CHECK_FUNCS(gethostname strftime getpwuid)
 AC_CHECK_FUNCS(sigaction mkstemp sched_yield)
 

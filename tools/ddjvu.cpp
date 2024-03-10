@@ -139,6 +139,7 @@ const char  *programname = 0;
 const char  *inputfilename = 0;
 const char  *outputfilename = 0;
 
+size_t pagefilenamesz = 0;
 char *pagefilename = 0;
 #if HAVE_TIFF2PDF
 char *tempfilename = 0;
@@ -572,7 +573,11 @@ openfile(int pageno)
   const char *filename = outputfilename;
   if (flag_eachpage)
     {
+#if HAVE_SNPRINTF
+      snprintf(pagefilename, pagefilenamesz, filename, pageno);
+#else
       sprintf(pagefilename, filename, pageno);
+#endif
       filename = pagefilename;
     }
   
@@ -656,7 +661,11 @@ closefile(int pageno)
   const char *filename = outputfilename;
   if (flag_eachpage && pageno > 0)
     {
+#if HAVE_SNPRINTF
+      snprintf(pagefilename, pagefilenamesz, filename, pageno);
+#else
       sprintf(pagefilename, filename, pageno);
+#endif
       filename = pagefilename;
     }
 
@@ -1193,10 +1202,10 @@ main(int argc, char **argv)
     flag_pagespec = (flag_format) ? "1-$" : "1";
   if (flag_eachpage)
     {
-      int sz = check_eachpage(outputfilename);
-      if (! sz)
+      pagefilenamesz = check_eachpage(outputfilename);
+      if (! pagefilenamesz)
         die(i18n("Flag -eachpage demands a '%%d' specification in the output file name."));
-      pagefilename = (char*)malloc(sz);
+      pagefilename = (char*)malloc(pagefilenamesz);
       if (! pagefilename)
         die(i18n("Out of memory"));
     }

@@ -1835,7 +1835,11 @@ main(int argc, const char **argv)
               BufferByteStream ibs(*fbs);
               do {
                 char pagename[20];
+#if HAVE_SNPRINTF
+                snprintf(pagename, sizeof(pagename), "p%04d.djvu", ++pageno);
+#else
                 sprintf(pagename, "p%04d.djvu", ++pageno);
+#endif
                 if (opts.verbose > 1)
                   DjVuPrintErrorUTF8("%s","--------------------\n");
                 // Compress page 

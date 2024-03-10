@@ -3742,7 +3742,11 @@ anno_fgetc(miniexp_io_t *io)
             anno_dat.state = '\\';
           else if (isascii(c) && !isprint(c))
             {
+#if HAVE_SNPRINTF
+              snprintf(anno_dat.buf, sizeof(anno_dat.buf), "%03o", c);
+#else
               sprintf(anno_dat.buf,"%03o", c);
+#endif
               anno_dat.blen = strlen(anno_dat.buf);
               c = '\\';
             }
@@ -3751,7 +3755,11 @@ anno_fgetc(miniexp_io_t *io)
           anno_dat.state = '\"';
           if (c != '\"')
             {
-              sprintf(anno_dat.buf,"\\%03o", c);
+#if HAVE_SNPRINTF
+              snprintf(anno_dat.buf, sizeof(anno_dat.buf), "\\%03o", c);
+#else
+              sprintf(anno_dat.buf, "\\%03o", c);
+#endif
               anno_dat.blen = strlen(anno_dat.buf);
               c = '\\';
             }

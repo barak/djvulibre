@@ -461,7 +461,11 @@ print_c_string(const char *data, int length, ByteStream &out, bool eightbit)
           char buf[5];
           static const char *tr1 = "\"\\tnrbf";
           static const char *tr2 = "\"\\\t\n\r\b\f";
+#if HAVE_SNPRINTF
+          snprintf(buf,sizeof(buf),"\\%03o", (int)(((unsigned char*)data)[0]));
+#else
           sprintf(buf,"\\%03o", (int)(((unsigned char*)data)[0]));
+#endif
           { // extra nesting for windows
             for (int i=0; tr2[i]; i++)
               if (*(char*)data == tr2[i])
@@ -1474,11 +1478,9 @@ get_text(const GP<DjVuFile> &file)
   const GP<ByteStream> bs(file->get_text());
   if (bs) 
     {
-      long int i=0;
       const GP<IFFByteStream> iff(IFFByteStream::create(bs));
       while (iff->get_chunk(chkid))
         {
-          i++;
           if (chkid == GUTF8String("TXTa")) 
             {
               GP<DjVuTXT> txt = DjVuTXT::create();
@@ -1769,7 +1771,11 @@ output(const GP<DjVuFile> &f, const GP<ByteStream> &out,
       const GP<ByteStream> ant(ByteStream::create());
       const GP<ByteStream> txt(ByteStream::create());
       char pagenumber[16];
+#if HAVE_SNPRINTF
+      snprintf(pagenumber,sizeof(pagenumber)," # page %d", pageno);
+#else      
       sprintf(pagenumber," # page %d", pageno);
+#endif
       if (flag & 1) 
         { 
           const GP<ByteStream> anno(f->get_anno());

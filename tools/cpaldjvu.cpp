@@ -684,7 +684,6 @@ cpaldjvu(ByteStream *ibs, GURL &urlout, const cpaldjvuopts &opts)
                        bgcolor.r, bgcolor.g, bgcolor.b);
   
   // Fill CCImage with color runs
-  int xruncount=0,yruncount=0;
   CCImage rimg(w, h);
   int *line;
   GPBuffer<int> gline(line,w);
@@ -711,12 +710,9 @@ cpaldjvu(ByteStream *ibs, GURL &urlout, const cpaldjvuopts &opts)
           while (x<w && line[x]==index) { x++; }
           if (index != bgindex)
             {
-              xruncount++;
               rimg.add_single_run(y, x1, x-1, index);
             }
         }
-      for(x=0;x<w;x++)
-        if(prevline[x] != line[x]) yruncount++;
       gprevline.swap(gline);
     }
   ginput = 0; //save memory
