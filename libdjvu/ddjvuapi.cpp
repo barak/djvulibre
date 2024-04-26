@@ -1460,6 +1460,7 @@ ddjvu_document_get_pageinfo_imp(ddjvu_document_t *document, int pageno,
                           myinfo.rotation = 0;
                           myinfo.version = (vhi<<8)+vlo;
                           memcpy(pageinfo, &myinfo, infosz);
+                          return DDJVU_JOB_OK;
                         }
                     }
                 }
