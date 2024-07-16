@@ -874,6 +874,9 @@ JB2Dict::JB2Codec::code_bitmap_by_cross_coding (GBitmap &bm, GP<GBitmap> &cbm, c
   const LibRect &l = libinfo[libno];
   const int xd2c = (dw/2 - dw + 1) - ((l.right - l.left + 1)/2 - l.right);
   const int yd2c = (dh/2 - dh + 1) - ((l.top - l.bottom + 1)/2 - l.top);
+  // Corrupted files might lead to 
+  if (xd2c < -15 || xd2c > 15 || yd2c < -15 || yd2c > 15)
+    G_THROW( ERR_MSG("JB2Image.bad_number") );
   // Ensure borders are adequate
   bm.minborder(2);
   cbm->minborder(2-xd2c);
