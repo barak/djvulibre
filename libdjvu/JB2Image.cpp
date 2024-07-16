@@ -481,9 +481,15 @@ JB2Dict::JB2Codec::CodeNum(int low, int high, NumContext *pctx, int v)
           if (cur_ncell >= max_ncell)
             {
               const int nmax_ncell = max_ncell+CELLCHUNK;
+              NumContext *oleft = leftcell;
+              NumContext *oright = rightcell;
               gbitcells.resize(nmax_ncell);
               gleftcell.resize(nmax_ncell);
               grightcell.resize(nmax_ncell);
+              if (pctx >= oleft && pctx < oleft + max_ncell)
+                pctx = leftcell + (pctx - oleft);
+              else if (pctx >= oright && pctx < oright + max_ncell)
+                pctx = rightcell + (pctx - oright);
             }
           *pctx = cur_ncell ++;
           bitcells[*pctx] = 0;
