@@ -897,7 +897,7 @@ usage()
          "Usage: ddjvu [options] [<djvufile> [<outputfile>]]\n\n"
          "Options:\n"
          "  -verbose          Print various informational messages.\n"
-         "  -format=FMT       Select output format: pbm,pgm,ppm,pnm,rle,tiff.\n"
+         "  -format=FMT       Select output format: pbm,pgm,ppm,pnm,rle,tiff,pdf.\n"
          "  -scale=N          Select display scale.\n"
          "  -size=WxH         Select size of rendered image.\n"
          "  -subsample=N      Select direct subsampling factor.\n"
