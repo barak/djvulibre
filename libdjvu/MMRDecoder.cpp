@@ -537,7 +537,7 @@ MMRDecoder::~MMRDecoder() {}
 MMRDecoder::MMRDecoder( const int xwidth, const int xheight )
 : width(xwidth), height(xheight), lineno(0), 
   striplineno(0), rowsperstrip(0), gline(line,width+8),
-  glineruns(lineruns,width+4), gprevruns(prevruns,width+4)
+  glineruns(lineruns,width+8), gprevruns(prevruns,width+8)
 {
   gline.clear();
   glineruns.clear();
