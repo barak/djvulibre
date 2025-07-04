@@ -1,3 +1,11 @@
+djvulibre (3.5.28-2.1) unstable; urgency=high
+
+  * Non-maintainer upload.
+  * Fix potential buffer overflow in MMRDecoder (CVE-2025-53367)
+    (Closes: #1108729)
+
+ -- Salvatore Bonaccorso <carnil@debian.org>  Fri, 04 Jul 2025 07:38:58 +0200
+
 djvulibre (3.5.28-2) unstable; urgency=high
 
   * bump policy version
