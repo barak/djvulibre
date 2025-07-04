@@ -1,0 +1,37 @@
+From: Leon Bottou <leonb@fb.com>
+Date: Wed, 2 Jul 2025 12:49:40 -0400
+Subject: Fix potential buffer overflow in MMRDecoder
+Origin: https://sourceforge.net/p/djvu/djvulibre-git/ci/33f645196593d70bd5e37f55b63886c31c82c3da/
+Bug-Debian: https://bugs.debian.org/1108729
+Bug-Debian-Security: https://security-tracker.debian.org/tracker/CVE-2025-53367
+
+---
+ libdjvu/MMRDecoder.cpp | 5 ++++-
+ 1 file changed, 4 insertions(+), 1 deletion(-)
+
+diff --git a/libdjvu/MMRDecoder.cpp b/libdjvu/MMRDecoder.cpp
+index b56fa336d353..bbbaa0c5e2ef 100644
+--- a/libdjvu/MMRDecoder.cpp
++++ b/libdjvu/MMRDecoder.cpp
+@@ -589,6 +589,9 @@ MMRDecoder::scanruns(const unsigned short **endptr)
+   int a0,rle,b1;
+   for(a0=0,rle=0,b1=*pr++;a0 < width;)
+     {
++      // Check for buffer overflow
++      if (xr > lineruns+width+2 || pr > prevruns+width+2)
++	G_THROW(invalid_mmr_data);
+       // Process MMR codes
+       const int c=mrtable->decode(src);
+       switch ( c )
+@@ -714,7 +717,7 @@ MMRDecoder::scanruns(const unsigned short **endptr)
+                         rle++;
+                         a0++;
+                       }
+-                    if (a0 > width)
++                    if (a0 > width || xr > lineruns+width+2)
+                       G_THROW(invalid_mmr_data);
+                   }
+                 // Analyze uncompressed termination code.
+-- 
+2.50.0
+

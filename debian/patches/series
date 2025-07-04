@@ -5,3 +5,4 @@
 0005-djvulibre-fedora-Patch10-djvulibre-3.5.27-check-inpu.patch
 0006-djvulibre-fedora-Patch11-djvulibre-3.5.27-djvuport-s.patch
 0007-djvulibre-fedora-Patch12-djvulibre-3.5.27-unsigned-s.patch
+0008-Fix-potential-buffer-overflow-in-MMRDecoder.patch
