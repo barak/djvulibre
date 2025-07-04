@@ -49,7 +49,7 @@ Package: libdjvulibre-text
 Architecture: all
 Multi-Arch: foreign
 Depends: ${misc:Depends}
-Replaces: libdjvulibre15, djview3 (= 3.5.20-9), djvulibre-desktop (<< 3.5.20-9)
+Replaces: libdjvulibre15
 Description: Linguistic support files for libdjvulibre
  Runtime linguistic support files for the libdjvulibre library.
 
@@ -58,7 +58,7 @@ Architecture: all
 Multi-Arch: foreign
 Depends: ${misc:Depends}
 Suggests: djview4 | djvu-viewer | evince
-Conflicts: libdjvulibre1, libdjvulibre21 (<= 3.5.20-5)
+Conflicts: libdjvulibre1
 Replaces: libdjvulibre15 (<= 3.5.20-5)
 Description: Desktop support for the DjVu image format
  Miscellaneous files to support the DjVu image format on the desktop.
@@ -80,7 +80,6 @@ Description: Transition package, djview3 to djview4
 Package: djvuserve
 Section: web
 Recommends: apache2 | apache | httpd-cgi | httpd
-Conflicts: djvulibre-bin (<< 3.5.9-3)
 Architecture: any
 Depends: ${shlibs:Depends}, ${misc:Depends}
 Description: CGI program for unbundling DjVu files on the fly
