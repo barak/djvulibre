@@ -79,7 +79,7 @@ Description: Transition package, djview3 to djview4
 
 Package: djvuserve
 Section: web
-Recommends: apache2 | apache | httpd-cgi | httpd
+Recommends: apache2 | httpd-cgi | httpd
 Architecture: any
 Depends: ${shlibs:Depends}, ${misc:Depends}
 Description: CGI program for unbundling DjVu files on the fly
