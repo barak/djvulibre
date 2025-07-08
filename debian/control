@@ -11,7 +11,7 @@ Build-Depends: pkg-config,
 Vcs-Git: https://salsa.debian.org/debian/djvulibre.git
 Vcs-Browser: https://salsa.debian.org/debian/djvulibre
 Homepage: https://djvu.sourceforge.net/
-Standards-Version: 4.6.2
+Standards-Version: 4.7.2
 Rules-Requires-Root: no
 
 Package: libdjvulibre-dev
