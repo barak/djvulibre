@@ -428,8 +428,8 @@ if [ "$sepfile" = "yes" ]
 then
   backend="$outfile"
 else
-  backend="| "'"'"$csepdjvu"'"'" -d $dpi"
-  backend="$backend $csepverbosity $csepargs - "'"'"$outfile"'"'
+  backend="| '$csepdjvu' -d $dpi"
+  backend="$backend $csepverbosity $csepargs - '$outfile'"
 fi
 
 
@@ -442,7 +442,7 @@ case "$infile" in
         else
           $run gzip -d -c '"'"$infile"'"' '|' "" \
              "$gsdjvu" "-r$dpi" $gsverbosity $gsprinted $gsepsf "" \
-             "-sOutputFile=""'""$backend""'" "" \
+             '"'"-sOutputFile=$backend"'"' \
              $gsarg0 $gsarg1 $gsarg2 -_ -c quit
         fi
         ;;
@@ -453,7 +453,7 @@ case "$infile" in
             -f "$infile" -c quit
         else
           $run "$gsdjvu" "-r$dpi" $gsverbosity $gsprinted $gsepsf "" \
-             "-sOutputFile=""'""$backend""'" "" \
+             '"'"-sOutputFile=$backend"'"' \
              $gsarg0 $gsarg1 $gsarg2 -f '"'"$infile"'"' -c quit
         fi
         ;;

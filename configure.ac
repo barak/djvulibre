@@ -24,7 +24,7 @@
 
 m4_define([v_maj], [3])
 m4_define([v_min], [5])
-m4_define([v_mic], [28])
+m4_define([v_mic], [29])
 m4_define([v_ver], [v_maj.v_min.v_mic])
 
 m4_define([lt_compat], [21])
@@ -186,7 +186,7 @@ AC_FUNC_MMAP
 AC_FUNC_FORK
 AC_FUNC_FSEEKO
 AC_CHECK_FUNCS(wcrtomb iswspace setenv nl_langinfo)
-AC_CHECK_FUNCS(putc_unlocked strerror vsnprintf)
+AC_CHECK_FUNCS(putc_unlocked strerror vsnprintf snprintf)
 AC_CHECK_FUNCS(gethostname strftime getpwuid)
 AC_CHECK_FUNCS(sigaction mkstemp sched_yield)
 

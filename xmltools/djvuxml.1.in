@@ -179,7 +179,7 @@ element.
 .SH DJVUXML DOCUMENT TYPE DEFINITION
 The document type definition file (DTD)
 .IP "" 2
-.B DATADIR/djvu/pubtext/DjVuXML-s.dtd
+.B @DATADIR@/djvu/pubtext/DjVuXML-s.dtd
 .PP
 defines the input and output of the DjVu XML tools.
 

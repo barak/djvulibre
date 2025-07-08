@@ -1460,6 +1460,7 @@ ddjvu_document_get_pageinfo_imp(ddjvu_document_t *document, int pageno,
                           myinfo.rotation = 0;
                           myinfo.version = (vhi<<8)+vlo;
                           memcpy(pageinfo, &myinfo, infosz);
+                          return DDJVU_JOB_OK;
                         }
                     }
                 }
@@ -3742,7 +3743,11 @@ anno_fgetc(miniexp_io_t *io)
             anno_dat.state = '\\';
           else if (isascii(c) && !isprint(c))
             {
+#if HAVE_SNPRINTF
+              snprintf(anno_dat.buf, sizeof(anno_dat.buf), "%03o", c);
+#else
               sprintf(anno_dat.buf,"%03o", c);
+#endif
               anno_dat.blen = strlen(anno_dat.buf);
               c = '\\';
             }
@@ -3751,7 +3756,11 @@ anno_fgetc(miniexp_io_t *io)
           anno_dat.state = '\"';
           if (c != '\"')
             {
-              sprintf(anno_dat.buf,"\\%03o", c);
+#if HAVE_SNPRINTF
+              snprintf(anno_dat.buf, sizeof(anno_dat.buf), "\\%03o", c);
+#else
+              sprintf(anno_dat.buf, "\\%03o", c);
+#endif
               anno_dat.blen = strlen(anno_dat.buf);
               c = '\\';
             }

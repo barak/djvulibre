@@ -1846,7 +1846,7 @@ GURL::expand_name(const GUTF8String &xfname, const char *from)
       char* s2=s;//MBCS DBCS
       for(;*s;s++) 
         EMPTY_LOOP;
-	  if (s > string_buffer && s[-1] != slash && s[-1] != backslash)
+      if (s > string_buffer && s[-1] != slash && s[-1] != backslash)
         *s++ = backslash;
       while (*fname && (*fname!= slash) && (*fname!=backslash))
       {
