@@ -676,10 +676,10 @@ IW44Image::Map::image(signed char *img8, int rowsize, int pixsep, int fast)
   // Allocate reconstruction buffer
   short *data16;
   size_t sz = bw * bh;
-  if (sz == 0)
-    G_THROW("IW44Image: image size is zero (corrupted file?)");
   if (sz / (size_t)bw != (size_t)bh) // multiplication overflow
     G_THROW("IW44Image: image size exceeds maximum (corrupted file?)");
+  if (sz == 0)
+    G_THROW("IW44Image: image size is zero (corrupted file?)");
   GPBuffer<short> gdata16(data16,sz);
   if (data16 == 0)
     G_THROW("IW44Image: unable to allocate image buffer");
