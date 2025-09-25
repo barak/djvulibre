@@ -1,12 +1,13 @@
-djvulibre (3.5.29-1) UNRELEASED; urgency=medium
+djvulibre (3.5.29-1) unstable; urgency=medium
 
   * Most patches merged upstream
   * Multiarch hinter suggests marking djvulibre-desktop as Multi-Arch: foreign
   * Bump policy version
   * New upstream version
     - includes 0008-Fix-potential-buffer-overflow-in-MMRDecoder.patch
+  * Track upstream bug fixes
 
- -- Barak A. Pearlmutter <bap@debian.org>  Tue, 08 Jul 2025 07:56:05 +0100
+ -- Barak A. Pearlmutter <bap@debian.org>  Thu, 25 Sep 2025 15:42:58 +0100
 
 djvulibre (3.5.28-2.1) unstable; urgency=high
 
