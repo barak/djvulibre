@@ -1,2 +1,4 @@
-version=4
-https://sf.net/djvu/@PACKAGE@-@ANY_VERSION@@ARCHIVE_EXT@
+Version: 5
+
+Source: https://sf.net/djvu/
+Matching-Pattern: @PACKAGE@-@ANY_VERSION@@ARCHIVE_EXT@
