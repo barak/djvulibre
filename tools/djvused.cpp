@@ -69,7 +69,6 @@
 #include "DjVuMessageLite.h"
 #include "BSByteStream.h"
 #include "DjVuText.h"
-#include "DjVuAnno.h"
 #include "DjVuInfo.h"
 #include "IFFByteStream.h"
 #include "DataPool.h"
@@ -77,6 +76,8 @@
 #include "DjVuFile.h"
 #include "DjVmNav.h"
 #include "common.h"
+#include "libdjvu/ddjvuapi.h"
+#include "libdjvu/miniexp.h"
 
 static bool modified = false;
 static bool verbose = false;
@@ -1121,38 +1122,35 @@ command_set_ant(ParsingByteStream &pbs)
 }
 
 static void
-print_meta(IFFByteStream &iff, ByteStream &out)
+print_meta(ByteStream &out)
 {
-  GUTF8String chkid;  
-  while (iff.get_chunk(chkid))
+  if (! g().file)
+    return;
+  GP<ByteStream> anno = g().file->get_anno();
+  if (! (anno && anno->size()))
+    return;
+  miniexp_t expr = ddjvu_get_anno_from_ByteStream(anno);
+  if (miniexp_consp(expr))
     {
-      bool ok = false;
-      GP<DjVuANT> ant=DjVuANT::create();
-      if (chkid == "ANTz") {
-          GP<ByteStream> bsiff=BSByteStream::create(iff.get_bytestream());
-          ant->decode(*bsiff);
-          ok = true;
-      } else if (chkid == "ANTa") {
-        ant->decode(*iff.get_bytestream());
-        ok = true;
-      }
-      if (ok)
+      miniexp_t *keys = ddjvu_anno_get_metadata_keys(expr);
+      if (keys)
         {
-          { // extra nesting for windows
-            for (GPosition pos=ant->metadata; pos; ++pos)
-            { 
-              GUTF8String tmp;
-              tmp=ant->metadata.key(pos);
-              out.writestring(tmp); 
-              out.write8('\t');
-              tmp=ant->metadata[pos];
-              print_c_string((const char*)tmp, tmp.length(), out, utf8);
-              out.write8('\n');
+          for (int i = 0; keys[i]; ++i)
+            {
+              const char *key = miniexp_to_name(keys[i]);
+              const char *val = ddjvu_anno_get_metadata(expr, keys[i]);
+              if (key && val)
+                {
+                  out.writestring(GUTF8String(key));
+                  out.write8('\t');
+                  print_c_string(val, strlen(val), out, utf8);
+                  out.write8('\n');
+                }
             }
-          }
+          free(keys);
         }
-      iff.close_chunk();
     }
+
 }
 
 void 
@@ -1171,10 +1169,7 @@ command_print_meta(ParsingByteStream &)
   if ( g().file )
     {
       GP<ByteStream> out=ByteStream::create("w");
-      GP<ByteStream> anno = g().file->get_anno();
-      if (! (anno && anno->size())) return;
-      GP<IFFByteStream> iff=IFFByteStream::create(anno); 
-      print_meta(*iff,*out);
+      print_meta(*out);
     }
 }
 
@@ -1303,28 +1298,24 @@ command_set_meta(ParsingByteStream &pbs)
 }
 
 static void
-print_xmp(IFFByteStream &iff, ByteStream &out)
+print_xmp(ByteStream &out)
 {
-  GUTF8String chkid;  
-  while (iff.get_chunk(chkid))
+  if (! g().file)
+    return;
+  GP<ByteStream> anno = g().file->get_anno();
+  if (! (anno && anno->size()))
+    return;
+  miniexp_t expr = ddjvu_get_anno_from_ByteStream(anno);
+  if (miniexp_consp(expr))
     {
-      bool ok = false;
-      GP<DjVuANT> ant=DjVuANT::create();
-      if (chkid == "ANTz") {
-          GP<ByteStream> bsiff=BSByteStream::create(iff.get_bytestream());
-          ant->decode(*bsiff);
-          ok = true;
-      } else if (chkid == "ANTa") {
-        ant->decode(*iff.get_bytestream());
-        ok = true;
-      }
-      if (ok && ant->xmpmetadata.length()>0)
+      const char *xmp = ddjvu_anno_get_xmp(expr);
+      if (xmp)
         {
-          out.writestring(ant->xmpmetadata);
+          out.writestring(GUTF8String(xmp));
           out.write8('\n');
         }
-      iff.close_chunk();
     }
+
 }
 
 void 
@@ -1343,10 +1334,7 @@ command_print_xmp(ParsingByteStream &)
   if ( g().file )
     {
       GP<ByteStream> out=ByteStream::create("w");
-      GP<ByteStream> anno = g().file->get_anno();
-      if (! (anno && anno->size())) return;
-      GP<IFFByteStream> iff=IFFByteStream::create(anno); 
-      print_xmp(*iff,*out);
+      print_xmp(*out);
     }
 }
 

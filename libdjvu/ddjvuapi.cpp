@@ -4105,4 +4105,10 @@ ddjvu_get_DjVuDocument(ddjvu_document_t *document)
   return document->doc;
 }
 
+DDJVUAPI miniexp_t
+ ddjvu_get_anno_from_ByteStream(GP<ByteStream> annobs)
+{
+  return get_bytestream_anno(annobs);
+}
+
 
