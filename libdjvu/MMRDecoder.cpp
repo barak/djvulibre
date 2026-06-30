@@ -795,8 +795,10 @@ const unsigned char *
 MMRDecoder::scanrle(const bool invert, const unsigned char **endptr)
 {
   // Obtain run lengths
-  const unsigned short *xr = scanruns();
-  if (!xr) return 0;
+  const unsigned short *xre;
+  const unsigned short *xr = scanruns(&xre);
+  if (!xr)
+    return 0;
   unsigned char *p=line;
   // Process inversion
   if (invert)
@@ -812,6 +814,7 @@ MMRDecoder::scanrle(const bool invert, const unsigned char **endptr)
   // Encode lenghts using the RLE format
   for(int a0=0;a0 < width;)
   {
+    if (xr > xre) return 0;
     int count = *xr++;
     a0 += count;
     GBitmap::append_run(p, count);
@@ -829,6 +832,7 @@ const unsigned char *
 MMRDecoder::scanline(void)
 {
   // Obtain run lengths
+  const unsigned short *xre;
   const unsigned short *xr = scanruns();
   if (!xr) return 0;
   // Allocate data buffer if needed
@@ -838,6 +842,7 @@ MMRDecoder::scanline(void)
   int a0color = 0;
   while (a0 < width)
     {
+      if (xr > xre) return 0;
       int a1 = a0 + *xr++;
       while (a0<a1 && a0<width)
         line[a0++] = a0color;
@@ -898,7 +903,8 @@ MMRDecoder::decode(GP<ByteStream> gbs)
       for(; bandline >= 0; bandline--,line--)
       {
         // Decode one scanline
-        const unsigned short *s = dcd.scanruns();
+        const unsigned short *send;
+        const unsigned short *s = dcd.scanruns(&send);
         if (s)
         {
 	  // Loop on blocks
@@ -908,6 +914,8 @@ MMRDecoder::decode(GP<ByteStream> gbs)
           bool c = !!invert;
           while (x < width)
             {
+              if (s > send)
+                G_THROW(invalid_mmr_data);
               int xend = x + *s++;
               while (b<blocksperline)
                 {
