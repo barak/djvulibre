@@ -1082,8 +1082,7 @@ ByteStream::create(const GURL &url,char const * const xmode)
                 retval=0;
               else
                 close(fd);
-              }
-        }
+            }
 #endif
           if (! retval)
             {
