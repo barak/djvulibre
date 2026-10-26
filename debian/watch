@@ -1,4 +1,5 @@
 Version: 5
 
-Source: https://sf.net/djvu/
-Matching-Pattern: @PACKAGE@-@ANY_VERSION@@ARCHIVE_EXT@
+Source: https://git.code.sf.net/p/djvu/djvulibre-git
+Mode: git
+Matching-Pattern: refs/tags/release\.@ANY_VERSION@

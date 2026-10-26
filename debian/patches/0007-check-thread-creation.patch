@@ -1,0 +1,56 @@
+From: "Barak A. Pearlmutter" <bap@debian.org>
+Date: Mon, 26 Oct 2026 12:00:00 +0000
+Subject: Fail instead of hanging when a thread cannot be created
+
+DjVuFile::start_decode() and DjVuDocument::start_init() ignored the
+return value of GThread::create().  When pthread_create() fails, e.g.,
+because a low "ulimit -v" leaves no room for the thread stack, the
+file stays flagged DECODING (or the document init STARTED but never
+FINISHED) and anyone waiting on it, such as a page waiting on a
+shared JB2 dictionary from an included file, blocks forever.
+
+Check the return value and throw, so the existing error paths mark the
+file or document as failed.
+
+Bug-Debian: https://bugs.debian.org/1017745
+Forwarded: no
+---
+--- a/libdjvu/DjVuDocument.cpp
++++ b/libdjvu/DjVuDocument.cpp
+@@ -205,7 +205,15 @@
+ 
+    init_thread_flags=STARTED;
+    init_life_saver=this;
+-   init_thr.create(static_init_thread, this);
++   if (init_thr.create(static_init_thread, this) != 0)
++     {
++       // Otherwise wait_for_complete_init() would hang
++       GP<DjVuDocument> life_saver=this;
++       init_life_saver=0;
++       flags |= DOC_INIT_FAILED;
++       init_thread_flags |= FINISHED;
++       G_THROW("DjVuDocument: cannot create initialization thread");
++     }
+ }
+ 
+ DjVuDocument::~DjVuDocument(void)
+--- a/libdjvu/DjVuFile.cpp
++++ b/libdjvu/DjVuFile.cpp
+@@ -1340,11 +1340,16 @@
+       decode_life_saver=this;
+       
+       decode_thread=new GThread();
+-      decode_thread->create(static_decode_func, this);
++      // Otherwise DECODING stays set forever and waiters hang
++      if (decode_thread->create(static_decode_func, this) != 0)
++        G_THROW("DjVuFile: cannot create decoding thread");
+     }
+   }
+   G_CATCH_ALL
+   {
++    // No decoding thread will release the life saver
++    GP<DjVuFile> life_saver=this;
++    decode_life_saver=0;
+     flags&=~DECODING;
+     flags|=DECODE_FAILED;
+     flags.leave();

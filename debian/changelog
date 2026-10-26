@@ -8,6 +8,12 @@ djvulibre (3.5.30.1-1) unstable; urgency=medium
   * Track upstream changes which includes a security fix addressing
     https://github.com/barak/djvulibre/issues/4
     https://github.com/barak/djvulibre/issues/7
+  * Fail instead of hanging when a decoding thread cannot be created,
+    e.g., under a low ulimit -v (closes: #1017745)
+  * Fix typo remove-smp -> remove-xmp in NEWS (closes: #793206)
+  * Replace Fedora djvuport-stack-overflow patch, which missed INCL
+    cycles longer than one, with a per-thread INCL nesting depth limit
+  * Watch upstream git release.VERSION tags instead of sf tarballs
 
  -- Barak A. Pearlmutter <bap@debian.org>  Mon, 26 Oct 2026 10:14:28 +0000
 

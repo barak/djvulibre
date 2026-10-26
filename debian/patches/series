@@ -1,2 +1,4 @@
 0002-djvulibre-fedora-Patch6-djvulibre-3.5.27-export-file.patch
-0006-djvulibre-fedora-Patch11-djvulibre-3.5.27-djvuport-s.patch
+0007-check-thread-creation.patch
+0008-NEWS-typo-remove-xmp.patch
+0009-limit-INCL-nesting-depth.patch

@@ -1,0 +1,64 @@
+From: "Barak A. Pearlmutter" <bap@debian.org>
+Date: Mon, 26 Oct 2026 12:00:00 +0000
+Subject: Limit INCL nesting depth to stop stack overflow on INCL cycles
+
+DjVuDocument::url_to_file() registers a new DjVuFile under its name
+only after DjVuFile::create() returns, but when the data is already
+present create() synchronously processes the file's INCL chunks.  A
+cycle of INCL chunks (b includes c includes b) thus creates fresh
+files forever and the recursion overflows the stack.
+
+Upstream commit cd8b5c9 rejects a file including itself, which covers
+only cycles of length one.  The Fedora patch previously carried here
+(djvulibre-3.5.27-djvuport-stack-overflow.patch, for CVE-2021-3500)
+remembers only the single most recent id, so it misses any cycle of
+length two or more, and it keeps that id in the process-wide
+DjVuPortcaster without locking.
+
+Instead bound the per-thread INCL nesting depth.  Legitimate documents
+nest INCL chunks only a couple of levels deep.
+
+Forwarded: no
+---
+--- a/libdjvu/DjVuFile.cpp
++++ b/libdjvu/DjVuFile.cpp
+@@ -97,6 +97,11 @@
+ 
+ static GP<GPixmap> (*djvu_decode_codec)(ByteStream &bs)=0;
+ 
++#if HAVE_GCCTLS
++// Nesting depth of INCL chunk processing in this thread
++static __thread int incl_depth=0;
++#endif
++
+ class ProgressByteStream : public ByteStream
+ {
+ public:
+@@ -596,7 +601,27 @@
+     GP<DjVuFile> file;
+     G_TRY
+     {
++#if HAVE_GCCTLS
++      // Included files are created, and process their own INCL chunks,
++      // before they can be found by name.  A cycle of INCL chunks would
++      // thus recurse until the stack overflows.
++      if (incl_depth >= 32)
++        G_THROW("DjVuFile: INCL chunks nested too deeply (corrupted file?)");
++      incl_depth++;
++      G_TRY
++      {
++        file=pcaster->id_to_file(this, incl_str);
++      }
++      G_CATCH_ALL
++      {
++        incl_depth--;
++        G_RETHROW;
++      }
++      G_ENDCATCH;
++      incl_depth--;
++#else
+       file=pcaster->id_to_file(this, incl_str);
++#endif
+     }
+     G_CATCH(ex)
+     {

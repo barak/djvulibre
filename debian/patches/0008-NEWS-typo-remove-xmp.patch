@@ -1,0 +1,12 @@
+From: "Barak A. Pearlmutter" <bap@debian.org>
+Date: Mon, 26 Oct 2026 12:00:00 +0000
+Subject: Fix typo in NEWS: remove-smp -> remove-xmp
+
+Bug-Debian: https://bugs.debian.org/793206
+Forwarded: no
+---
+--- a/NEWS
++++ b/NEWS
+@@ -70 +70 @@
+-- Added print-xmp, set-xmp, remove-smp in djvused.
++- Added print-xmp, set-xmp, remove-xmp in djvused.
