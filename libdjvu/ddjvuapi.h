@@ -1663,6 +1663,9 @@ union ddjvu_message_s {
 } // extern "C"
 #endif
 
+#ifdef __cplusplus
+# ifndef NOT_USING_DJVU_NAMESPACE
+
 /* ddjvu_get_DjVuImage ---
    ddjvu_get_DjVuDocument ---
    These functions provide an access to the libdjvu objects 
@@ -1672,8 +1675,6 @@ union ddjvu_message_s {
    after the libdjvu header files <"DjVuImage.h"> and
    <"DjVuDocument.h">. */
 
-#ifdef __cplusplus
-# ifndef NOT_USING_DJVU_NAMESPACE
 #  ifdef _DJVUIMAGE_H
 DDJVUAPI GP<DjVuImage>
 ddjvu_get_DjVuImage(ddjvu_page_t *page);
@@ -1682,6 +1683,18 @@ ddjvu_get_DjVuImage(ddjvu_page_t *page);
 DDJVUAPI GP<DjVuDocument>
 ddjvu_get_DjVuDocument(ddjvu_document_t *document);
 #  endif
+
+/* ddjvu_get_anno_from_ByteStream ---
+   This function provides the means to decode annotation chunks in a
+   libdjvu ByteStream. It is only declared in C++ when file
+   <"ddjvuapi.h"> is included after the libdjvu header files
+   <"ByteStream.h"> */
+
+#  ifdef _BYTESTREAM_H
+DDJVUAPI miniexp_t
+ddjvu_get_anno_from_ByteStream(GP<ByteStream> annobs);
+#  endif
+
 # endif
 #endif
 
