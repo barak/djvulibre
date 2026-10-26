@@ -1,7 +1,12 @@
-djvulibre (3.5.30-1) experimental; urgency=medium
-  * version number change
+djvulibre (3.5.30.1-1) UNRELEASED; urgency=medium
 
- -- Leon Bottou <leonb@users.sourceforge.net>  Tue, 16 Jun 2026 15:55:30 +0600
+  * New upstream version
+  * Bump debhelper to compat level 14
+  * Bump debian standards version to 4.7.4
+  * Remove redundant Priority: optional from source stanza
+  * Replace FSF postal address with https://www.gnu.org/licenses/
+
+ -- Barak A. Pearlmutter <bap@debian.org>  Mon, 26 Oct 2026 10:10:16 +0000
 
 djvulibre (3.5.30-1) unstable; urgency=medium
 
